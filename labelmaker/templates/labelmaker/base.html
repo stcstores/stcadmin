@@ -1,0 +1,12 @@
+{% extends "home/base.html" %}
+{% load staticfiles %}
+{% block additional_head %}
+<link rel="stylesheet" href="{% static 'css/labelmaker.css' %}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script src="{% static 'scripts/label_form.js' %}"></script>
+{% endblock %}
+{% block page_title %}Labelmaker{% endblock %}
+{% block section_navigation %}
+{% include "labelmaker/section_navigation.html" %}
+{% endblock %}
+{% block content %}{% endblock %}

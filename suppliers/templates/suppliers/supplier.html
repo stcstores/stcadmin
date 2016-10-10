@@ -1,0 +1,59 @@
+{% extends "suppliers/base.html" %}
+
+{% block content %}
+<div class="supplier_details">
+    <h1>{{supplier.name}}</h1>
+    <p>Phone: {{supplier.phone}}</p><p>Email: {{supplier.email}}</p>
+    <a href="add_item/">Add Stock Item</a>
+</div>
+<table id="supplier_item_list">
+    <thead>
+        <th><button id="export_table">Export</button><br><button id="toggle_selected">Toggle Selected</button></th>
+        <th>Product Code</th>
+        <th>Supplier Title</th>
+        <th>Order Quantity</th>
+        <th>Notes</th>
+        <th>Linnworks Title</th>
+    </thead>
+    {% for item in items %}
+    <tbody>
+        <td><input class="checkbox" type="checkbox"></td>
+        <td class="product_code">{{item.product_code}}</td>
+        <td class="supplier_title">{{item.supplier_title}}</td>
+        <td class="quantity"><input type="number" value="0"></td>
+        <td class="notes">{{item.notes}}</td>
+        <td class="linnworks_title">{{item.linnworks_title}}</td>
+        <td class="pk" hidden>{{item.id}}</td>
+    </tbody>
+    {% endfor %}
+</table>
+<form id="export_form" method="POST" target="_blank" action="/api/export/" hidden>
+    {% csrf_token %}
+    <input id="supplier_id" name="supplier_id" value="{{supplier.id}}">
+    <input id="json_field" type="text" name="item_id-quantity"/>
+</form>
+<script>
+    $( document ).ready(function() {
+        var csrftoken = $.cookie('csrftoken');
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        var table = SelectionTable($('#supplier_item_list'));
+        $('#export_table').click(function() {
+            table.export();
+        });
+    });
+
+</script>
+{% endblock %}

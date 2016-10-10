@@ -1,0 +1,31 @@
+{% extends "labelmaker/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<table id="size_charts">
+    <thead></thead>
+    <tbody>
+        {% for size_chart in size_charts %}
+        <tr>
+            <td>{{ size_chart }}</td>
+            <td><a class="edit" href="{% url 'labelmaker:edit_size_chart_form' size_chart.id %}"><button class="edit_button" type="button">Edit</button></a></td>
+            <td><a class="delete" href="{% url 'labelmaker:delete_size_chart' size_chart.id %}"><button class="delete_button" type="button">Delete</button></a></td>
+            <td class="url" hidden >{{ size_chart.id }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script>
+    $( document ).ready(function() {
+        $('a.delete').click(function(event) {
+            var row = $(this).parent().parent();
+            var chart_name = row.find('td:first').text();
+            return confirm_delete(chart_name);
+        });
+
+        function confirm_delete(chart_name) {
+            return confirm('Are you sure you want to delete ' + chart_name + '?');
+        }
+    });
+</script>
+{% endblock %}

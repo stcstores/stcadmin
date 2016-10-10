@@ -1,0 +1,10 @@
+{% extends 'home/base.html' %}
+{% load staticfiles %}
+{% block content %}
+{% for error in errors %}
+<p class="error">{{error}}</p>
+{% endfor %}
+{% for message in messages %}
+<p class="message">{{message}}</p>
+{% endfor %}
+{% endblock %}

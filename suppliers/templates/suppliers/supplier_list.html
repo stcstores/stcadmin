@@ -1,0 +1,69 @@
+{% extends "suppliers/base.html" %}
+
+{% block content %}
+<form action="{% url 'suppliers:supplier_search' %}" method="POST">
+    {% csrf_token %}
+    <label for="search_string">Search Suppliers: </label>
+    <input type="text" name="search_string">
+    <button type="submit">Search</button>
+</form>
+<a href="{% url 'suppliers:add_supplier' %}">Add New Supplier</a>
+ {% if suppliers|length == 0 %}
+ <p>No Results</p>
+ {% else %}
+<table>
+    <thead>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for supplier in suppliers %}
+        <tr>
+            <td><a href="/supplier/{{supplier.id}}">{{supplier.name}}</a></td>
+            <td>{{supplier.email}}</td>
+            <td>{{supplier.phone}}</td>
+            <td><input type="button" id="delete_{{supplier.id}}" class="delete_button" value="Delete"></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script>
+    function delete_button_generator(button_id) {
+        return function(event) {
+            var supplier_id = button_id.replace('delete_', '');
+            var url = '/delete_supplier/' + supplier_id + '/';
+            $('div.content').hide();
+            $.post(url, function() {
+                location.reload();
+            });
+        };
+    };
+
+    $( document ).ready(function() {
+        var csrftoken = $.cookie('csrftoken');
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $(".delete_button").each(function(index, button) {
+            $(button).click(delete_button_generator(button.id));
+        });
+    });
+
+
+</script>
+{% endif %}
+
+{% endblock %}

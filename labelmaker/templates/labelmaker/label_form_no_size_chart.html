@@ -1,0 +1,47 @@
+{% extends "labelmaker/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <div id="size_chart_label_setup" class="size_chart_label_setup">
+        <div id="add_product_code" class="form_section">
+            <p class="form_section_header">Product Code</p>
+            <input type="text" id="product_code" name="product_code">
+        </div>
+        <div id="add_size_colour"></div>
+        <br>
+        <button id="create_table_button">Create Table</button>
+        <div id="selection_table"></div>
+        <form action="{% url 'labelmaker:generate_pdf_no_size_chart' %}" method="POST" id="label_selection_form" class="hidden">
+            {% csrf_token %}
+            <input type="text" name="data" id="data">
+        </form>
+    </div>
+    <script>
+        $( document ).ready(function() {
+            var size_and_colour = LabelForm($('#add_size_colour'), ['size', 'colour']);
+
+            get_sizes = function() {
+                var sizes = []
+                $.each(size_and_colour['size'].get_list().sort(), function(index, size) {
+                    sizes.push([size, size]);
+                });
+                return sizes;
+
+            };
+
+            get_colours = function() {
+                return size_and_colour['colour'].get_list().sort();
+            };
+
+            var create_table_button = $('#create_table_button');
+            create_table_button.click(function() {
+                var data = {
+                    sizes: get_sizes(),
+                    colours: get_colours()
+                }
+                var form = $('#label_selection_form');
+                var table = LabelSelectionTable($('#selection_table'), data, form);
+                return table;
+            })
+        });
+    </script>{% endblock %}

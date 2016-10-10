@@ -1,0 +1,43 @@
+{% extends "suppliers/base.html" %}
+
+{% block content %}
+
+<form action="{% url 'suppliers:create_item' %}" method="POST">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <td><label for="supplier">Supplier</label></td>
+            <td>
+                <select name="supplier">
+                    {% for s in suppliers %}<option value="{{s.id}}"{% if s.id == supplier.id %} selected="selected"{% endif %}>{{s.name}}</option>{% endfor %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="item_title">Item Title</label></td>
+            <td><input type="text" name="item_title" size="50" required>&nbsp;Required</td>
+        </tr>
+        <tr>
+            <td><label for="product_code">Product Code</label></td>
+            <td><input type="text" name="product_code" size="50" required>&nbsp;Required</td>
+        </tr>
+        <tr>
+            <td><label for="linnworks_title">Linnworks Title</label></td>
+            <td><input type="text" name="linnworks_title" size="50"></td>
+        </tr>
+        <tr>
+            <td><label for="linnworks_sku">Linnworks SKU</label></td>
+            <td><input type="text" name="linnworks_sku" size="50"></td>
+        </tr>
+        <tr>
+            <td><label for="notes">Notes</label></td>
+            <td><input type="text" name="notes" size="50"></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="Create Item"></td>
+            <td></td>
+        </tr>
+    </table>
+</form>
+
+{% endblock %}

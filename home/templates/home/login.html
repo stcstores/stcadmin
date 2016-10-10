@@ -1,0 +1,23 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>STC Admin - Login</title>
+    <link rel="stylesheet" href="{% static 'css/stcadmin.css' %}">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+</head>
+<body>
+    {% for message in message %}<p class="message">{{ message }}</p>{% endfor %}
+    {% for error in errors %}<p class="error">{{ error }}</p>{% endfor %}
+    <form action="{% url 'home:login_user' %}" method="POST">
+        {% csrf_token %}
+        <label for="username">Username:&nbsp;</label>
+        <input type="text" name="username">
+        <label for="password">Password:&nbsp;</label>
+        <input type="password" name="password">
+        <input type="submit" value="Login">
+    </form>
+</body>
+</html>

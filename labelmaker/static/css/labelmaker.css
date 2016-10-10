@@ -1,0 +1,30 @@
+.form_section_header {
+    text-transform:capitalize;
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
+.form_section {
+    display: inline-block;
+    margin: 1em;
+    padding: 1em;
+    vertical-align: top;
+}
+
+.label_selection_table {
+    margin: 1em;
+    border-collapse: collapse;
+}
+
+.label_selection_table td, .label_selection_table th {
+    border: 1px black solid;
+    padding: 0.25em;
+}
+
+input[type=number]{
+    width: 80px;
+}
+
+.hidden {
+    display: none;
+}
