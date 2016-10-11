@@ -16,30 +16,25 @@
         <th>Name</th>
         <th>Email</th>
         <th>Phone</th>
+        <th>Item Count</th>
         <th></th>
     </thead>
     <tbody>
         {% for supplier in suppliers %}
         <tr>
-            <td><a href="/supplier/{{supplier.id}}">{{supplier.name}}</a></td>
+            <td><a href="{% url 'suppliers:supplier' supplier.id %}">{{supplier.name}}</a></td>
             <td>{{supplier.email}}</td>
             <td>{{supplier.phone}}</td>
-            <td><input type="button" id="delete_{{supplier.id}}" class="delete_button" value="Delete"></td>
+            <td>{{supplier.items|length}}</td>
+            <td><form action="{% url 'suppliers:delete_supplier' supplier.id %}" class="delete_form" method="POST">
+                {% csrf_token %}
+                <button>Delete</button>
+            </form></td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 <script>
-    function delete_button_generator(button_id) {
-        return function(event) {
-            var supplier_id = button_id.replace('delete_', '');
-            var url = '/delete_supplier/' + supplier_id + '/';
-            $('div.content').hide();
-            $.post(url, function() {
-                location.reload();
-            });
-        };
-    };
 
     $( document ).ready(function() {
         var csrftoken = $.cookie('csrftoken');
@@ -57,8 +52,16 @@
             }
         });
 
-        $(".delete_button").each(function(index, button) {
-            $(button).click(delete_button_generator(button.id));
+        $( document ).ready(function() {
+            $('.delete_form').submit(function(event) {
+                var row = $(this).parent().parent();
+                var supplier_name = row.find('td:first').text();
+                return confirm_delete(supplier_name);
+            });
+
+            function confirm_delete(supplier_name) {
+                return confirm('Are you sure you want to delete ' + supplier_name + '?');
+            }
         });
     });
 

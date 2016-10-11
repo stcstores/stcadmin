@@ -145,3 +145,8 @@ th {
 .message {
     color: green;
 }
+
+.delete_form {
+    margin: 0;
+    padding: 0;
+}

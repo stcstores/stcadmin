@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<form action="{% url 'suppliers:create_item' %}" method="POST">
+<form action="{% url 'suppliers:create_item' %}" method="POST" id="add_item_form">
     {% csrf_token %}
     <table>
         <tr>
@@ -14,24 +14,24 @@
             </td>
         </tr>
         <tr>
-            <td><label for="item_title">Item Title</label></td>
-            <td><input type="text" name="item_title" size="50" required>&nbsp;Required</td>
+            <td><label for="product_code">Product Code</label></td>
+            <td><input id="product_code_input" type="text" name="product_code" size="50" required autofocus>&nbsp;Required</td>
         </tr>
         <tr>
-            <td><label for="product_code">Product Code</label></td>
-            <td><input type="text" name="product_code" size="50" required>&nbsp;Required</td>
+            <td><label for="item_title">Item Title</label></td>
+            <td><input id="item_title_input" type="text" name="item_title" size="50" required>&nbsp;Required</td>
         </tr>
         <tr>
             <td><label for="linnworks_title">Linnworks Title</label></td>
-            <td><input type="text" name="linnworks_title" size="50"></td>
+            <td><input id="linnworks_title_input" type="text" name="linnworks_title" size="50"></td>
         </tr>
         <tr>
             <td><label for="linnworks_sku">Linnworks SKU</label></td>
-            <td><input type="text" name="linnworks_sku" size="50"></td>
+            <td><input id="linnworks_sku_input" type="text" name="linnworks_sku" size="50"></td>
         </tr>
         <tr>
             <td><label for="notes">Notes</label></td>
-            <td><input type="text" name="notes" size="50"></td>
+            <td><input id="notes_input" type="text" name="notes" size="50"></td>
         </tr>
         <tr>
             <td><input type="submit" value="Create Item"></td>
@@ -39,5 +39,29 @@
         </tr>
     </table>
 </form>
+<p class="error" id="error_message" hidden></p>
+<script>
+    $( document ).ready(function() {
+        var product_codes = [
+            {% for code in product_codes %}'{{ code }}',
+            {% endfor %}
+        ];
 
+        $('#add_item_form').submit(function() {
+            var product_code = $('#product_code_input').val();
+            var error_message = $('#error_message');
+            if ($.inArray(product_code, product_codes) !== -1) {
+                console.log('Product Code already exists')
+                error_message.html('Product Code already exists');
+                error_message.show();
+                return false;
+            } else {
+                console.log('Product Code is new')
+                error_message.html('');
+                error_message.hide();
+                return true;
+            }
+        });
+    });
+</script>
 {% endblock %}

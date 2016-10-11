@@ -3,7 +3,7 @@ from django.contrib import admin
 
 
 class Supplier(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     email = models.CharField(max_length=200, null=True, blank=True)
     phone = models.CharField(max_length=200, null=True, blank=True)
 
@@ -18,7 +18,7 @@ class SupplierAdmin(admin.ModelAdmin):
 class StockItem(models.Model):
     supplier = models.ForeignKey(Supplier)
     supplier_title = models.CharField(max_length=200)
-    product_code = models.CharField(max_length=200)
+    product_code = models.CharField(max_length=200, unique=True)
     linnworks_title = models.CharField(max_length=200, null=True, blank=True)
     linnworks_sku = models.CharField(max_length=200, null=True, blank=True)
     notes = models.CharField(max_length=200, null=True, blank=True)

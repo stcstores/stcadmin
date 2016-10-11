@@ -14,18 +14,25 @@
         <th>Order Quantity</th>
         <th>Notes</th>
         <th>Linnworks Title</th>
+        <th></th>
     </thead>
-    {% for item in items %}
     <tbody>
-        <td><input class="checkbox" type="checkbox"></td>
-        <td class="product_code">{{item.product_code}}</td>
-        <td class="supplier_title">{{item.supplier_title}}</td>
-        <td class="quantity"><input type="number" value="0"></td>
-        <td class="notes">{{item.notes}}</td>
-        <td class="linnworks_title">{{item.linnworks_title}}</td>
-        <td class="pk" hidden>{{item.id}}</td>
-    </tbody>
+    {% for item in items %}
+        <tr>
+            <td><input class="checkbox" type="checkbox"></td>
+            <td class="product_code">{{item.product_code}}</td>
+            <td class="supplier_title">{{item.supplier_title}}</td>
+            <td class="quantity"><input type="number" value="0"></td>
+            <td class="notes">{{item.notes}}</td>
+            <td class="linnworks_title">{{item.linnworks_title}}</td>
+            <td><button type="button" class="delete_button">Delete</button></td>
+            <td class="pk" hidden>{{item.id}}</td>
+            <td class="update_url" hidden>{% url 'suppliers:api_update_item' item.id %}</td>
+            <td class="reload_url" hidden>{% url 'suppliers:api_get_item' item.id %}</td>
+            <td class="delete_url" hidden>{% url 'suppliers:api_delete_item' item.id %}</td>
+        </tr>
     {% endfor %}
+    </tbody>
 </table>
 <form id="export_form" method="POST" target="_blank" action="/api/export/" hidden>
     {% csrf_token %}

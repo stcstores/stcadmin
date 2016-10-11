@@ -60,9 +60,12 @@ def add_item(request):
 def add_item_to_supplier(request, supplier_id):
     supplier = get_object_or_404(Supplier, pk=supplier_id)
     suppliers = Supplier.objects.all()
+    product_codes = StockItem.objects.order_by().values_list(
+        'product_code', flat=True)
     return render(request, 'suppliers/add_item.html', {
         'supplier': supplier,
-        'suppliers': suppliers})
+        'suppliers': suppliers,
+        'product_codes': product_codes})
 
 
 @login_required(login_url=settings.LOGIN_URL)
@@ -79,7 +82,7 @@ def create_item(request):
             product_code=product_code, linnworks_title=linnworks_title,
             linnworks_sku=linnworks_sku, notes=notes)
         new_item.save()
-        return redirect('/supplier/{}/add_item/'.format(supplier_id))
+        return redirect('suppliers:add_item', supplier_id)
     except Exception as e:
         return HttpResponse(
             '<h3>Item Creaton Error</h3><p>{}</p>'.format(str(e)))
@@ -98,7 +101,7 @@ def create_supplier(request):
         phone = request.POST['phone']
         supplier = Supplier(name=name, email=email, phone=phone)
         supplier.save()
-        return redirect('add_supplier')
+        return redirect('suppliers:add_supplier')
     except Exception as e:
         return HttpResponse(
             '<h3>Supplier Creation Error</h3><p>{}</p>'.format(str(e)))
@@ -106,22 +109,16 @@ def create_supplier(request):
 
 @login_required(login_url=settings.LOGIN_URL)
 def delete_item(request, item_id):
-    try:
-        item = StockItem.objects.get(pk=item_id)
-        item.delete()
-        return HttpResponse('1')
-    except:
-        return HttpResponse('0')
+    item = StockItem.objects.get(pk=item_id)
+    item.delete()
+    return redirect('suppliers:supplier_list')
 
 
 @login_required(login_url=settings.LOGIN_URL)
 def delete_supplier(request, supplier_id):
-    try:
-        supplier = Supplier.objects.get(pk=supplier_id)
-        supplier.delete()
-        return HttpResponse('1')
-    except:
-        return HttpResponse('0')
+    supplier = Supplier.objects.get(pk=supplier_id)
+    supplier.delete()
+    return redirect('suppliers:supplier_search')
 
 
 @login_required(login_url=settings.LOGIN_URL)
@@ -143,6 +140,13 @@ def api_update_item(request, item_id):
     item.linnworks_title = request.POST['linnworks_title']
     item.notes = request.POST['notes']
     item.save()
+    return HttpResponse('1')
+
+
+@login_required(login_url=settings.LOGIN_URL)
+def api_delete_item(request, item_id):
+    item = get_object_or_404(StockItem, pk=item_id)
+    item.delete()
     return HttpResponse('1')
 
 

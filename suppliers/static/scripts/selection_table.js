@@ -48,6 +48,9 @@ var SelectionTable = function(table) {
 var SelectionTableRow = function(row) {
 
     var self = {
+        update_url: row.find(".update_url").text(),
+        reload_url: row.find(".reload_url").text(),
+        delete_url: row.find(".delete_url").text(),
         checkbox: CheckboxField(row.find(".checkbox")),
         product_code: TextField(row.find(".product_code")),
         supplier_title: TextField(row.find(".supplier_title")),
@@ -55,6 +58,7 @@ var SelectionTableRow = function(row) {
         linnworks_title: TextField(row.find(".linnworks_title")),
         quantity: QuantityField(row.find(".quantity")),
         item_id: row.find(".pk").html(),
+        delete_button: row.find('.delete_button'),
         colour: function(colour) {
             self.row.css('background', colour);
         },
@@ -71,7 +75,7 @@ var SelectionTableRow = function(row) {
             self.checkbox.toggle();
         },
         reload: function() {
-            $.post('/api/get_item/' + self.item_id + '/', function(response) {
+            $.post(self.reload_url, function(response) {
                 var result = $.parseJSON(response);
                 self.product_code.field.html(result.product_code);
                 self.supplier_title.field.html(result.supplier_title);
@@ -81,7 +85,7 @@ var SelectionTableRow = function(row) {
         },
         update: function() {
             $.post(
-                '/api/update_item/' + self.item_id + '/',
+                self.update_url,
                 {
                     'product_code': self.product_code.value(),
                     'supplier_title': self.supplier_title.value(),
@@ -91,6 +95,10 @@ var SelectionTableRow = function(row) {
             );
         }
     };
+    self.delete_button.click(function() {
+        $.post(self.delete_url);
+        row.remove();
+    });
     return self;
 };
 
