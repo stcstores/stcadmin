@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 
 from stcadmin import settings
 
-from labelmaker import labeler
+import labeler
 from labelmaker.models import SizeChart, SizeChartSize
 
 
@@ -143,7 +143,8 @@ def get_label_data_for_size_chart(product_code, json_data, size_chart_id):
 def generate_pdf(data):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'filename="labels.pdf"'
-    sheet = labeler.STW046025PO()
+    label_format = labeler.DefaultLabelFormat
+    sheet = labeler.STW046025PO(label_format=label_format)
     canvas = sheet.generate_PDF_from_data(data)
     canvas._filename = response
     canvas.save()
