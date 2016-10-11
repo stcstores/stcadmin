@@ -17,8 +17,9 @@ class SupplierAdmin(admin.ModelAdmin):
 
 class StockItem(models.Model):
     supplier = models.ForeignKey(Supplier)
-    supplier_title = models.CharField(max_length=200)
     product_code = models.CharField(max_length=200, unique=True)
+    supplier_title = models.CharField(max_length=200)
+    box_quantity = models.PositiveSmallIntegerField(blank=True, null=True)
     linnworks_title = models.CharField(max_length=200, null=True, blank=True)
     linnworks_sku = models.CharField(max_length=200, null=True, blank=True)
     notes = models.CharField(max_length=200, null=True, blank=True)
@@ -29,8 +30,8 @@ class StockItem(models.Model):
 
 class StockItemAdmin(admin.ModelAdmin):
     list_display = (
-        'linnworks_title', 'linnworks_sku', 'supplier', 'supplier_title',
-        'product_code')
+        'product_code', 'supplier_title', 'box_quantity', 'linnworks_title',
+        'linnworks_sku', 'supplier',)
 
 admin.site.register(Supplier, SupplierAdmin)
 admin.site.register(StockItem, StockItemAdmin)

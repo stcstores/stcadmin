@@ -41,6 +41,8 @@ var SelectionTable = function(table) {
         row.notes.row = row;
         row.linnworks_title.table = self;
         row.linnworks_title.row = row;
+        row.box_quantity.table = self;
+        row.box_quantity.row = row;
     });
     return self;
 };
@@ -54,6 +56,7 @@ var SelectionTableRow = function(row) {
         checkbox: CheckboxField(row.find(".checkbox")),
         product_code: TextField(row.find(".product_code")),
         supplier_title: TextField(row.find(".supplier_title")),
+        box_quantity: TextField(row.find(".box_quantity")),
         notes: TextField(row.find(".notes")),
         linnworks_title: TextField(row.find(".linnworks_title")),
         quantity: QuantityField(row.find(".quantity")),
@@ -79,6 +82,7 @@ var SelectionTableRow = function(row) {
                 var result = $.parseJSON(response);
                 self.product_code.field.html(result.product_code);
                 self.supplier_title.field.html(result.supplier_title);
+                self.box_quantity.field.html(result.box_quantity);
                 self.notes.field.html(result.notes);
                 self.linnworks_title.field.html(result.linnworks_title);
             });
@@ -89,6 +93,7 @@ var SelectionTableRow = function(row) {
                 {
                     'product_code': self.product_code.value(),
                     'supplier_title': self.supplier_title.value(),
+                    'box_quantity': self.box_quantity.value(),
                     'notes': self.notes.value(),
                     'linnworks_title': self.linnworks_title.value(),
                 }

@@ -74,13 +74,15 @@ def create_item(request):
         supplier_id = request.POST['supplier']
         item_title = request.POST['item_title']
         product_code = request.POST['product_code']
+        box_quantity = request.POST['box_quantity']
         linnworks_title = request.POST['linnworks_title']
         linnworks_sku = request.POST['linnworks_sku']
         notes = request.POST['notes']
         new_item = StockItem(
             supplier_id=supplier_id, supplier_title=item_title,
-            product_code=product_code, linnworks_title=linnworks_title,
-            linnworks_sku=linnworks_sku, notes=notes)
+            product_code=product_code, box_quantity=box_quantity,
+            linnworks_title=linnworks_title, linnworks_sku=linnworks_sku,
+            notes=notes)
         new_item.save()
         return redirect('suppliers:add_item', supplier_id)
     except Exception as e:
@@ -127,6 +129,7 @@ def api_get_item(request, item_id):
     return HttpResponse(json.dumps({
         'product_code': item.product_code,
         'supplier_title': item.supplier_title,
+        'box_quantity': item.box_quantity,
         'notes': item.notes,
         'linnworks_title': item.linnworks_title
     }))
@@ -137,6 +140,7 @@ def api_update_item(request, item_id):
     item = StockItem.objects.get(pk=item_id)
     item.supplier_title = request.POST['supplier_title']
     item.product_code = request.POST['product_code']
+    item.box_quantity = request.POST['box_quantity']
     item.linnworks_title = request.POST['linnworks_title']
     item.notes = request.POST['notes']
     item.save()
@@ -158,10 +162,12 @@ class ApiExport():
 
     def get_response(self, item_id_quantity, supplier):
         response = HttpResponse(content_type='text/csv')
-        lines = [['Product Code', 'Item Title', 'Quantity']]
+        lines = [['Product Code', 'Item Title', 'Box Quantity', 'Quantity']]
         for item_id, quantity in item_id_quantity.items():
             item = StockItem.objects.get(pk=item_id)
-            lines.append([item.product_code, item.supplier_title, quantity])
+            lines.append([
+                item.product_code, item.supplier_title, item.box_quantity,
+                quantity])
         writer = csv.writer(response)
         writer.writerow([supplier.name])
         writer.writerow([])
