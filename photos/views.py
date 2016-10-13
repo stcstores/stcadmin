@@ -1,23 +1,20 @@
 import os
 import json
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth import models
 from django.core.exceptions import PermissionDenied
 from stcadmin import settings
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 
 def is_photo_user(user):
-    group = models.Group.objects.get(name='photos')
-    users = group.user_set.all()
-    if user in users:
-        return True
-    return False
+    return user.groups.filter(name__in=['photos'])
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_photo_user)
 def index(request):
     if is_photo_user(request.user):
         return render(request, 'photos/index.html')
@@ -26,6 +23,7 @@ def index(request):
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_photo_user)
 def api_photo_list(request):
     if not is_photo_user(request.user):
         raise PermissionDenied("User not set up for photos")
@@ -37,6 +35,7 @@ def api_photo_list(request):
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_photo_user)
 def api_photo_delete(request):
     if not is_photo_user(request.user):
         raise PermissionDenied("User not set up for photos")
