@@ -13,14 +13,20 @@
     </div>
     <script>
         $( document ).ready(function() {
+            var size_chart_urls = {
+                {% for size_chart in size_charts %}
+                '{{ size_chart.id }}': '{% url 'labelmaker:label_form' size_chart.id %}',
+                {% endfor %}
+            };
+
             $('#size_chart_go').click(function() {
                 var selected_size_chart = $('#select_size_chart').val();
                 if (selected_size_chart === "none") {
-                    window.location = "{% url 'labelmaker:label_form_no_size_chart' %}"
+                    window.location = "{% url 'labelmaker:label_form' %}"
                 } else if (selected_size_chart === "add") {
 
                 } else {
-                    window.location = '/labelmaker/label_form_size_chart/' + selected_size_chart;
+                    window.location = size_chart_urls[selected_size_chart]
                 }
             });
 

@@ -20,11 +20,11 @@ urlpatterns = [
         r'^edit_size_chart_form/(?P<size_chart_id>[0-9]+)/$',
         views.edit_size_chart_form, name='edit_size_chart_form'),
     url(
-        r'^label_form_size_chart/(?P<size_chart_id>[0-9]+)/$',
-        views.label_form_size_chart, name='label_form_size_chart'),
+        r'^label_form/(?P<size_chart_id>[0-9]+)/$',
+        views.label_form_size_chart, name='label_form'),
     url(
-        r'^label_form_no_size_chart/', views.label_form_no_size_chart,
-        name='label_form_no_size_chart'),
+        r'^label_form/$', views.label_form_no_size_chart,
+        name='label_form'),
     url(
         r'^generate_pdf_no_size_chart/',
         views.generate_pdf_no_size_chart, name='generate_pdf_no_size_chart'),

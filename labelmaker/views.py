@@ -113,14 +113,14 @@ def size_charts(request):
 def label_form_size_chart(request, size_chart_id):
     size_chart = get_object_or_404(SizeChart, pk=size_chart_id)
     sizes = size_chart.sizechartsize_set.all()
-    return render(request, 'labelmaker/label_form_size_chart.html', {
+    return render(request, 'labelmaker/label_form.html', {
         'size_chart': size_chart, 'sizes': sizes})
 
 
 @login_required(login_url=settings.LOGIN_URL)
 @user_passes_test(is_labelmaker_user)
 def label_form_no_size_chart(request):
-    return render(request, 'labelmaker/label_form_no_size_chart.html')
+    return render(request, 'labelmaker/label_form.html')
 
 
 @login_required(login_url=settings.LOGIN_URL)
