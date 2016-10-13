@@ -41,6 +41,8 @@
     <input id="supplier_id" name="supplier_id" value="{{supplier.id}}">
     <input id="json_field" type="text" name="item_id-quantity"/>
 </form>
+{% endblock %}
+{% block script %}
 <script>
     $( document ).ready(function() {
         var csrftoken = $.cookie('csrftoken');

@@ -31,6 +31,8 @@
     <button class="add_row" type="button">Add Size</button>
     <input type="submit" name="submit" value="{% if size_chart %}Save{% else %}Create{% endif %}">
 </form>
+{% endblock %}
+{% block script %}
 <script>
     $( document ).ready(function() {
         var table = $('.edit_size_chart');
