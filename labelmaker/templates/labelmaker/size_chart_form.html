@@ -21,37 +21,10 @@
         <tbody>
             {% if sizes %}
             {% for size in sizes %}
-            <tr>
-                <td>
-                    <button type="button" class="up">Up</button>
-                    <button type="button"  class="down">Down</button>
-                </td>
-                <td hidden><input type="text" class="id" value="{{size.id}}"></td>
-                <td hidden><input type="text" class="action" value="edit"></td>
-                <td><input type="text" class="name" value="{{size.name|default_if_none:""}}"></td>
-                <td><input type="text" class="uk_size" value="{{size.uk_size|default_if_none:""}}" required></td>
-                <td><input type="text" class="eu_size" value="{{size.eu_size|default_if_none:""}}"></td>
-                <td><input type="text" class="us_size" value="{{size.us_size|default_if_none:""}}"></td>
-                <td><input type="text" class="au_size" value="{{size.au_size|default_if_none:""}}"></td>
-                <td><button type="button"  class="delete">Delete</button></td>
-
-            </tr>
+            {% include 'labelmaker/size_chart_form_row.html' %}
             {% endfor %}
             {% else %}
-            <tr>
-                <td>
-                    <button type="button" class="up">Up</button>
-                    <button type="button"  class="down">Down</button>
-                </td>
-                <td hidden><input type="text" class="id"></td>
-                <td hidden><input type="text" class="action" value="add"></td>
-                <td><input type="text" class="name"></td>
-                <td><input type="text" class="uk_size" required></td>
-                <td><input type="text" class="eu_size"></td>
-                <td><input type="text" class="us_size"></td>
-                <td><input type="text" class="au_size"></td>
-                <td><button type="button"  class="delete">Delete</button></td>
-            </tr>
+            {% include 'labelmaker/size_chart_form_row.html' %}
             {% endif %}
         </tbody>
     </table>
@@ -146,6 +119,8 @@
             $('.size_chart_name').remove();
             var input = $('<input type="text" name="data">');
             input.val(JSON.stringify(data));
+            $('.content').append('<div class="loading"></div>');
+            $('.size_chart_form').hide();
             $('.edit_size_chart').replaceWith(input);
          });
     });

@@ -1,0 +1,14 @@
+<tr>
+    <td>
+        <button type="button" class="up">Up</button>
+        <button type="button"  class="down">Down</button>
+    </td>
+    <td hidden><input type="text" class="id" value="{{size.id}}"></td>
+    <td hidden><input type="text" class="action" value="edit"></td>
+    <td><input type="text" class="name" value="{{size.name|default_if_none:""}}"></td>
+    <td><input type="text" class="uk_size" value="{{size.uk_size|default_if_none:""}}" required></td>
+    <td><input type="text" class="eu_size" value="{{size.eu_size|default_if_none:""}}"></td>
+    <td><input type="text" class="us_size" value="{{size.us_size|default_if_none:""}}"></td>
+    <td><input type="text" class="au_size" value="{{size.au_size|default_if_none:""}}"></td>
+    <td><button type="button"  class="delete">Delete</button></td>
+</tr>

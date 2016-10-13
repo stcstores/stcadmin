@@ -50,6 +50,15 @@ body {
     background: #eee;
 }
 
+.loading {
+    padding: 1em;
+    background-image: url('/media/images/loading.gif');
+    min-width: 500px;
+    min-height: 500px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 .user_details {
     font-size: 0.75em;
     display: inline-block;
