@@ -7,11 +7,11 @@ app_name = 'labelmaker'
 
 urlpatterns = [
     url(
-        r'^create_size_chart$', views.create_size_chart,
+        r'^create_size_chart$', views.EditSizeChart.as_view(),
         name='create_size_chart'),
     url(
-        r'^edit_size_chart/(?P<size_chart_id>[0-9]+)/$', views.edit_size_chart,
-        name='edit_size_chart'),
+        r'^edit_size_chart/(?P<size_chart_id>[0-9]+)/$',
+        views.EditSizeChart.as_view(), name='edit_size_chart'),
     url(
         r'^create_size_chart_form$', views.create_size_chart_form,
         name='create_size_chart_form'),

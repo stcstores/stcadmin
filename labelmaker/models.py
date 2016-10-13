@@ -21,7 +21,7 @@ class SizeChartSize(models.Model):
     class Meta:
         ordering = ('sort',)
 
-    supplier = models.ForeignKey('SizeChart', on_delete=models.CASCADE)
+    size_chart = models.ForeignKey('SizeChart', on_delete=models.CASCADE)
     sort = models.PositiveSmallIntegerField(default=0)
     name = models.CharField(
         max_length=300, null=True, blank=True, default=None)
@@ -50,7 +50,7 @@ class SizeChartAdmin(admin.ModelAdmin):
 
 class SizeChartSizeAdmin(admin.ModelAdmin):
     fields = [
-        'supplier', 'name', 'uk_size', 'eu_size', 'us_size', 'au_size',
+        'size_chart', 'name', 'uk_size', 'eu_size', 'us_size', 'au_size',
         'sort']
     list_display = fields
 
