@@ -34,6 +34,6 @@ urlpatterns = [
     url(
         r'^api/delete_item/(?P<item_id>[0-9]+)/$', views.api_delete_item,
         name='api_delete_item'),
-    url(r'^api/export/$', views.ApiExport().as_view, name='api_export'),
+    url(r'^api/export/$', views.ApiExport.as_view, name='api_export'),
     url(r'^', views.index, name='index'),
 ]

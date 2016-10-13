@@ -1,24 +1,33 @@
-from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
-import operator
-from functools import reduce
-from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
-
-from suppliers.models import Supplier, StockItem
-from stcadmin import settings
-
 import json
 import csv
 import datetime
 
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.core.exceptions import PermissionDenied
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.views import View
+import operator
+from functools import reduce
+
+from suppliers.models import Supplier, StockItem
+from stcadmin import settings
+
+
+def is_suppliers_user(user):
+    return user.groups.filter(name__in=['suppliers'])
+
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def index(request):
     return supplier_list(request)
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def supplier_list(request):
     suppliers = Supplier.objects.all()
     return render(
@@ -26,6 +35,7 @@ def supplier_list(request):
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def supplier_search(request):
     if request.method == 'POST':
         search_string = request.POST['search_string']
@@ -43,6 +53,7 @@ def supplier_search(request):
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def supplier(request, supplier_id):
     supplier = get_object_or_404(Supplier, pk=supplier_id)
     items = supplier.stockitem_set.all()
@@ -51,12 +62,14 @@ def supplier(request, supplier_id):
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def add_item(request):
     supplier_id = Supplier.objects.all()[0].id
     return add_item_to_supplier(request, supplier_id)
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def add_item_to_supplier(request, supplier_id):
     supplier = get_object_or_404(Supplier, pk=supplier_id)
     suppliers = Supplier.objects.all()
@@ -69,6 +82,7 @@ def add_item_to_supplier(request, supplier_id):
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def create_item(request):
     try:
         supplier_id = request.POST['supplier']
@@ -91,11 +105,13 @@ def create_item(request):
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def add_supplier(request):
     return render(request, 'suppliers/add_supplier.html')
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def create_supplier(request):
     try:
         name = request.POST['name']
@@ -110,22 +126,25 @@ def create_supplier(request):
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def delete_item(request, item_id):
-    item = StockItem.objects.get(pk=item_id)
+    item = get_object_or_404(StockItem, pk=item_id)
     item.delete()
     return redirect('suppliers:supplier_list')
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def delete_supplier(request, supplier_id):
-    supplier = Supplier.objects.get(pk=supplier_id)
+    supplier = get_object_or_404(Supplier, pk=supplier_id)
     supplier.delete()
     return redirect('suppliers:supplier_search')
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def api_get_item(request, item_id):
-    item = StockItem.objects.get(pk=item_id)
+    item = get_object_or_404(StockItem, pk=item_id)
     return HttpResponse(json.dumps({
         'product_code': item.product_code,
         'supplier_title': item.supplier_title,
@@ -136,8 +155,9 @@ def api_get_item(request, item_id):
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def api_update_item(request, item_id):
-    item = StockItem.objects.get(pk=item_id)
+    item = get_object_or_404(StockItem, pk=item_id)
     item.supplier_title = request.POST['supplier_title']
     item.product_code = request.POST['product_code']
     item.box_quantity = request.POST['box_quantity']
@@ -148,13 +168,14 @@ def api_update_item(request, item_id):
 
 
 @login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def api_delete_item(request, item_id):
     item = get_object_or_404(StockItem, pk=item_id)
     item.delete()
     return HttpResponse('1')
 
 
-class ApiExport():
+class ApiExport(View):
 
     def get_filename(self, supplier_name):
         date_string = datetime.date.today().strftime("%d-%m-%Y")
@@ -164,7 +185,7 @@ class ApiExport():
         response = HttpResponse(content_type='text/csv')
         lines = [['Product Code', 'Item Title', 'Box Quantity', 'Quantity']]
         for item_id, quantity in item_id_quantity.items():
-            item = StockItem.objects.get(pk=item_id)
+            item = get_object_or_404(StockItem, pk=item_id)
             lines.append([
                 item.product_code, item.supplier_title, item.box_quantity,
                 quantity])
@@ -179,9 +200,10 @@ class ApiExport():
                 self.get_filename(supplier.name))
         return response
 
-    @login_required(login_url=settings.LOGIN_URL)
-    def as_view(self, request):
+    def post(self, request):
+        if not request.user.groups.filter(name__in=['suppliers']):
+            raise PermissionDenied
         item_id_quantity = json.loads(request.POST['item_id-quantity'])
-        supplier = Supplier.objects.get(pk=request.POST['supplier_id'])
+        supplier = get_object_or_404(Supplier, pk=request.POST['supplier_id'])
         response = self.get_response(item_id_quantity, supplier)
         return response
