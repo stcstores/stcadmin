@@ -36,6 +36,19 @@ def supplier_list(request):
 
 @login_required(login_url=settings.LOGIN_URL)
 @user_passes_test(is_suppliers_user)
+def edit_supplier(request, supplier_id):
+    supplier = get_object_or_404(Supplier, pk=supplier_id)
+    if 'name' in request.POST:
+        supplier.name = request.POST['name']
+        supplier.email = request.POST['email']
+        supplier.phone = request.POST['phone']
+        supplier.save()
+    return render(request, 'suppliers/supplier_form.html', {
+        'supplier': supplier})
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_suppliers_user)
 def supplier_search(request):
     if request.method == 'POST':
         search_string = request.POST['search_string']
@@ -107,7 +120,7 @@ def create_item(request):
 @login_required(login_url=settings.LOGIN_URL)
 @user_passes_test(is_suppliers_user)
 def add_supplier(request):
-    return render(request, 'suppliers/add_supplier.html')
+    return render(request, 'suppliers/supplier_form.html')
 
 
 @login_required(login_url=settings.LOGIN_URL)
@@ -119,7 +132,7 @@ def create_supplier(request):
         phone = request.POST['phone']
         supplier = Supplier(name=name, email=email, phone=phone)
         supplier.save()
-        return redirect('suppliers:add_supplier')
+        return redirect('suppliers:edit_supplier', supplier.id)
     except Exception as e:
         return HttpResponse(
             '<h3>Supplier Creation Error</h3><p>{}</p>'.format(str(e)))

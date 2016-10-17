@@ -18,6 +18,7 @@
         <th>Phone</th>
         <th>Item Count</th>
         <th></th>
+        <th></th>
     </thead>
     <tbody>
         {% for supplier in suppliers %}
@@ -26,10 +27,13 @@
             <td>{{supplier.email}}</td>
             <td>{{supplier.phone}}</td>
             <td>{{supplier.stockitem_set.all | length}}</td>
-            <td><form action="{% url 'suppliers:delete_supplier' supplier.id %}" class="delete_form" method="POST">
-                {% csrf_token %}
-                <button>Delete</button>
-            </form></td>
+            <td><a href="{% url 'suppliers:edit_supplier' supplier.id %}"><button type="button">Edit</button></a></td>
+            <td>
+                <form action="{% url 'suppliers:delete_supplier' supplier.id %}" class="delete_form" method="POST">
+                    {% csrf_token %}
+                    <button>Delete</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
