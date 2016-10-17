@@ -54,7 +54,13 @@ var MakeList = function(parent, name) {
                     values.push(value);
                 }
             });
-            return values;
+            if (values.length < 1) {
+                return [''];
+
+            } else {
+                return values;
+            }
+
         }
     };
 
