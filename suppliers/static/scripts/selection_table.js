@@ -39,8 +39,6 @@ var SelectionTable = function(table) {
         row.supplier_title.row = row;
         row.notes.table = self;
         row.notes.row = row;
-        row.linnworks_title.table = self;
-        row.linnworks_title.row = row;
         row.box_quantity.table = self;
         row.box_quantity.row = row;
     });
@@ -58,7 +56,6 @@ var SelectionTableRow = function(row) {
         supplier_title: TextField(row.find(".supplier_title")),
         box_quantity: TextField(row.find(".box_quantity")),
         notes: TextField(row.find(".notes")),
-        linnworks_title: TextField(row.find(".linnworks_title")),
         quantity: QuantityField(row.find(".quantity")),
         item_id: row.find(".pk").html(),
         delete_button: row.find('.delete_button'),
@@ -84,7 +81,6 @@ var SelectionTableRow = function(row) {
                 self.supplier_title.field.html(result.supplier_title);
                 self.box_quantity.field.html(result.box_quantity);
                 self.notes.field.html(result.notes);
-                self.linnworks_title.field.html(result.linnworks_title);
             });
         },
         update: function() {
@@ -95,7 +91,6 @@ var SelectionTableRow = function(row) {
                     'supplier_title': self.supplier_title.value(),
                     'box_quantity': self.box_quantity.value(),
                     'notes': self.notes.value(),
-                    'linnworks_title': self.linnworks_title.value(),
                 }
             );
         }

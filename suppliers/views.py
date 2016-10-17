@@ -150,7 +150,6 @@ def api_get_item(request, item_id):
         'supplier_title': item.supplier_title,
         'box_quantity': item.box_quantity,
         'notes': item.notes,
-        'linnworks_title': item.linnworks_title
     }))
 
 
@@ -161,7 +160,6 @@ def api_update_item(request, item_id):
     item.supplier_title = request.POST['supplier_title']
     item.product_code = request.POST['product_code']
     item.box_quantity = request.POST['box_quantity']
-    item.linnworks_title = request.POST['linnworks_title']
     item.notes = request.POST['notes']
     item.save()
     return HttpResponse('1')
