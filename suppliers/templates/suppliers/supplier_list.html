@@ -25,7 +25,7 @@
             <td><a href="{% url 'suppliers:supplier' supplier.id %}">{{supplier.name}}</a></td>
             <td>{{supplier.email}}</td>
             <td>{{supplier.phone}}</td>
-            <td>{{supplier.items|length}}</td>
+            <td>{{supplier.stockitem_set.all | length}}</td>
             <td><form action="{% url 'suppliers:delete_supplier' supplier.id %}" class="delete_form" method="POST">
                 {% csrf_token %}
                 <button>Delete</button>
