@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'suppliers',
     'labelmaker',
     'photos',
+    'reference',
 ]
 
 MIDDLEWARE = [

@@ -27,7 +27,8 @@ urlpatterns = [
     url(r'^labelmaker/', include(
         'labelmaker.urls', namespace='labelmaker')),
     url(r'^photos/', include('photos.urls', namespace='photos')),
-    url(r'^', include('home.urls', namespace='home'))
+    url(r'^reference/', include('reference.urls', namespace='reference')),
+    url(r'^', include('home.urls', namespace='home')),
 ]
 
 if settings.DEBUG:

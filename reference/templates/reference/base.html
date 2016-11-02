@@ -1,0 +1,11 @@
+{% extends "home/base.html" %}
+{% load staticfiles %}
+{% block additional_head %}
+<link rel="stylesheet" href="{% static 'css/reference.css' %}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+{% endblock %}
+{% block page_title %}Reference{% endblock %}
+{% block section_navigation %}
+{% include "reference/section_navigation.html" %}
+{% endblock %}
+{% block content %}{% endblock %}
