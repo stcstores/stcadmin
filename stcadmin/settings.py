@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'labelmaker',
     'photos',
     'reference',
+    'shopify',
 ]
 
 MIDDLEWARE = [

@@ -2,136 +2,28 @@
 {% load staticfiles %}
 
 {% block content %}
-<table>
-    <tr>
-        <th>Clothing</th>
-        <th>Home And Garden</th>
-        <th>Gifts</th>
-        <th>Outdoors</th>
-        <th>Jewellery</th>
-        <th>Fishing</th>
-        <th>Watersports</th>
-        <th>Sports</th>
-    </tr>
-    <tr>
-        <td>Clothing Accessories</td>
-        <td>Stationary</td>
-        <td>Gifts for Him</td>
-        <td>Shooting</td>
-        <td>Earrings</td>
-        <td>Bait &amp; Lures</td>
-        <td>Aqua Shoes</td>
-        <td>Darts</td>
-    </tr>
-    <tr>
-        <td>Children's Clothing</td>
-        <td>Kitchen</td>
-        <td>Gifts for Her</td>
-        <td>Camping</td>
-        <td>Rings</td>
-        <td>Nets</td>
-        <td>Inflatables</td>
-        <td>Longboards</td>
-    </tr>
-    <tr>
-        <td>Footwear</td>
-        <td>Bathroom</td>
-        <td>Gifts for Kids</td>
-        <td>Travel</td>
-        <td>Necklaces</td>
-        <td>Rods</td>
-        <td>Bodyboards</td>
-        <td>Racquet Sports</td>
-    </tr>
-    <tr>
-        <td>Nightwear</td>
-        <td>Artifical Flowers</td>
-        <td>Universal Gifts</td>
-        <td>Archery</td>
-        <td>Jewllery Accessories</td>
-        <td>Reels</td>
-        <td>Wetsuits</td>
-        <td>Sports Equipment</td>
-    </tr>
-    <tr>
-        <td>Summerwear</td>
-        <td>Bedroom</td>
-        <td></td>
-        <td>Knives</td>
-        <td></td>
-        <td>Line &amp; Hooks</td>
-        <td>Kayaks</td>
-        <td>Supports</td>
-    </tr>
-    <tr>
-        <td>Winterwear</td>
-        <td>Candles</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>Fishing Accessories</td>
-        <td>Safety Equipment</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Sportswear</td>
-        <td>Clocks</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>Underwater</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td>Decorations</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>Watersport Accessories</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td>Garden</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td>Incense</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td>Memorials</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td>Eyewear</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
+<div style="border: 3px solid black; padding: 1em;">
+    <h3>Categories</h3>
+    {% for main_cat in main_categories %}
+    <table style="display: inline-block; vertical-align: top; padding: 0; margin: 0;">
+        <tr><th>{{main_cat.tag}}</th></tr>
+        {% for sub_cat in main_cat.subcategory_set.all %}
+            <tr><td>{{sub_cat.tag}}</td></tr>
+        {% endfor %}
+    </table>
+    {% endfor %}
+</div>
+
+<table style="display: inline-block; vertical-align: top;">
+    <tr><th>Collections</th></tr>
+    {% for collection in collections %}
+        <tr><td>{{collection.tag}}</td></tr>
+    {% endfor %}
+</table>
+<table style="display: inline-block; vertical-align: top;">
+    <tr><th>Keywords</th></tr>
+    {% for keyword in keywords %}
+        <tr><td>{{keyword.tag}}</td></tr>
+    {% endfor %}
 </table>
 {% endblock %}

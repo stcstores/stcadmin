@@ -5,6 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 
 from stcadmin import settings
+from shopify.models import MainCategory, SubCategory, Collection, Keyword
 
 
 def index(request):
@@ -12,4 +13,13 @@ def index(request):
 
 
 def shopify_tags(request):
-    return render(request, 'reference/shopify_tags.html')
+    main_categories = MainCategory.objects.all()
+    sub_categories = SubCategory.objects.all()
+    collections = Collection.objects.all()
+    keywords = Keyword.objects.all()
+    return render(request, 'reference/shopify_tags.html', {
+        'main_categories': main_categories,
+        'sub_categories': sub_categories,
+        'collections': collections,
+        'keywords': keywords
+    })
