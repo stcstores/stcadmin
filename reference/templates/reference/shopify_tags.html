@@ -26,4 +26,19 @@
         <tr><td>{{keyword.tag}}</td></tr>
     {% endfor %}
 </table>
+<table style="display: inline-block; vertical-align: top;">
+    <tr>
+        <th colspan="2">Other Tags</th>
+    </tr>
+    <tr>
+        <th>Tag</th>
+        <th>Use</th>
+    </tr>
+    {% for tag in other_tags %}
+        <tr>
+            <td>{{ tag.tag }}</td>
+            <td>{{ tag.use }}</td>
+        </tr>
+    {% endfor %}
+<table>
 {% endblock %}
