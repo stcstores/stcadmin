@@ -28,6 +28,7 @@ urlpatterns = [
         'labelmaker.urls', namespace='labelmaker')),
     url(r'^photos/', include('photos.urls', namespace='photos')),
     url(r'^reference/', include('reference.urls', namespace='reference')),
+    url(r'^linnworks/', include('linnworks.urls', namespace='linnworks')),
     url(r'^', include('home.urls', namespace='home')),
 ]
 

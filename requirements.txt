@@ -4,4 +4,4 @@ Pillow==3.4.2
 pylabels==1.2.1
 PyMySQL==0.7.9
 reportlab==3.3.0
-git+ssh://lseagle@lsgit.uk/~/lsgit.uk/pylinnworks.git@v1.5
+git+ssh://lseagle@lsgit.uk/~/lsgit.uk/pylinnworks.git@v1.6
