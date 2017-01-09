@@ -16,5 +16,9 @@ def manifest(request):
 
 
 def cancel_order(request):
-    order_id = request.POST['order_id']
-    return HttpResponse(order_id)
+    pylinnworks.PyLinnworks.connect(config=PYLINNWORKS_CONFIG)
+    consignments = pylinnworks.Shipping.get_manifest_consignments()
+    for consignment in consignments:
+        if int(consignment.order_id) == int(request.POST['order_id']):
+            return HttpResponse(str(consignment))
+    return HttpResponse('Order Not Found', status=400)
