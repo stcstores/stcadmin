@@ -78,7 +78,7 @@
         function cancel_button_gen(order_id) {
             return function(event) {
                 console.log(order_id);
-                $.post('{% url 'linnworks:cancel_order' %}', {'order_id': order_id})
+                $.post("{% url 'linnworks:cancel_consignment' %}", {'order_id': order_id})
             }};
 
         $('.manifest_table tbody tr').each(function() {

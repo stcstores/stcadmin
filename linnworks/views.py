@@ -15,7 +15,7 @@ def manifest(request):
         {'consignments': consignments})
 
 
-def cancel_order(request):
+def cancel_consignment(request):
     pylinnworks.PyLinnworks.connect(config=PYLINNWORKS_CONFIG)
     consignments = pylinnworks.Shipping.get_manifest_consignments()
     for consignment in consignments:
