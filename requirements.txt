@@ -6,3 +6,4 @@ PyMySQL==0.7.9
 reportlab==3.3.0
 git+https://github.com/stcstores/pylinnworks.git@v1.6
 git+https://github.com/axevalley/labeler.git@v1.0
+git+https://github.com/stcstores/linnskuconvert.git
