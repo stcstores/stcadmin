@@ -22,3 +22,7 @@ def cancel_consignment(request):
         if int(consignment.order_id) == int(request.POST['order_id']):
             return HttpResponse(str(consignment))
     return HttpResponse('Order Not Found', status=400)
+
+
+def sku_converter(request):
+    return render(request, 'linnworks/sku_converter.html')

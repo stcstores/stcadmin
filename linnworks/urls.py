@@ -10,4 +10,7 @@ urlpatterns = [
     url(
         r'^cancel_consignment$', linnworks_views.cancel_consignment,
         name='cancel_consignment'),
+    url(
+        r'^sku_converter/$', linnworks_views.sku_converter,
+        name='sku_converter'),
 ]
