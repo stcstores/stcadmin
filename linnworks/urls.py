@@ -13,4 +13,8 @@ urlpatterns = [
     url(
         r'^sku_converter/$', linnworks_views.sku_converter,
         name='sku_converter'),
+    url(
+        r'^get_linked_for_channel_sku$',
+        linnworks_views.get_linked_for_channel_sku,
+        name='get_linked_for_channel_sku')
 ]

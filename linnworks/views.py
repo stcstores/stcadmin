@@ -28,21 +28,20 @@ def cancel_consignment(request):
 
 
 def sku_converter(request):
-    def get_sku_lookup(linking_table):
-        channels = list(set(linking_table.get_column('Sub Source')))
-        SKUs = {}
-        blank_sku_data = {channel: [] for channel in channels}
-        for row in linking_table:
-            linn_sku = row['StockSKU']
-            if linn_sku not in SKUs:
-                SKUs[linn_sku] = copy.deepcopy(blank_sku_data)
-            SKUs[linn_sku][row['Sub Source']].append(row['ChannelSKU'])
-        return SKUs
-
     pylinnworks.PyLinnworks.connect(config=PYLINNWORKS_CONFIG)
-    linking_table = pylinnworks.Export.get_linking()
-    sku_lookup = get_sku_lookup(linking_table)
-    sku_lookup_string = json.dumps(
-        sku_lookup, indent=4, separators=(',', ': '))
-    return render(request, 'linnworks/sku_converter.html', {
-        'lookup_data': sku_lookup_string})
+    channels = pylinnworks.Linking()
+    return render(
+        request, 'linnworks/sku_converter.html', {'channels': channels})
+
+
+def get_linked_for_channel_sku(request):
+    channel_id = int(request.POST['channel_id'])
+    channel_sku = request.POST['channel_sku']
+    pylinnworks.PyLinnworks.connect(config=PYLINNWORKS_CONFIG)
+    channel = pylinnworks.Linking.get_channel_by_ID(channel_id)
+    items = channel.get_items(keyword=channel_sku)
+    data = [{
+        'linnworks_sku': item.linked_item_sku, 'stock_id': item.linked_item_id,
+        'linnworks_title': item.linked_item_title,
+        'channel_title': item.title} for item in items]
+    return HttpResponse(json.dumps(data))

@@ -4,6 +4,6 @@ Pillow==3.4.2
 pylabels==1.2.1
 PyMySQL==0.7.9
 reportlab==3.3.0
-git+https://github.com/stcstores/pylinnworks.git@v1.6
+git+https://github.com/stcstores/pylinnworks.git@stcadmin_itegration
 git+https://github.com/axevalley/labeler.git@v1.0
 git+https://github.com/stcstores/linnskuconvert.git
