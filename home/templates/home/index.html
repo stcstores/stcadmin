@@ -3,4 +3,25 @@
 {% block page_title %}STC Admin{% endblock %}
 {% block content %}
     <h1>STC Admin</h1>
+    <div class="site_index">
+        <p>From here you can access:</p>
+        <ul class='app'>
+            {% for group in request.user.groups.all %}{% if group.name == 'reference' %}
+                <li><a href="{% url 'reference:index' %}">Reference</a></li>
+                <p>Access reference material</p>
+                <ul class='section'>
+                    <li><a href="{% url 'reference:shopify_tags' %}">Shopify Tags</a></li>
+                    <p>List of available tags for shopify</p>
+                </ul>
+            {% endif %}{% endfor %}
+            {% for group in request.user.groups.all %}{% if group.name == 'suppliers' %}
+                <li><a href="{% url 'suppliers:index' %}">Suppliers</a></li>
+                <p>Manage supplier lists</p>
+            {% endif %}{% endfor %}
+            {% for group in request.user.groups.all %}{% if group.name == 'labelmaker' %}
+                <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
+                <p>Make printable product labels</p>
+            {% endif %}{% endfor %}
+        </ul>
+    </div>
 {% endblock %}
