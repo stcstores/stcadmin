@@ -1,15 +1,25 @@
 import json
-import copy
 
+from stcadmin import settings
 from django.shortcuts import render, HttpResponse
 from stcadmin.settings import PYLINNWORKS_CONFIG
+from django.contrib.auth.decorators import login_required, user_passes_test
+
 import pylinnworks
 
 
+def is_linnworks_user(user):
+    return user.groups.filter(name__in=['linnworks'])
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_linnworks_user)
 def index(request):
     return render(request, 'linnworks/index.html')
 
 
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_linnworks_user)
 def manifest(request):
     pylinnworks.PyLinnworks.connect(config=PYLINNWORKS_CONFIG)
     consignments = pylinnworks.Shipping.get_manifest_consignments()
@@ -18,6 +28,8 @@ def manifest(request):
         {'consignments': consignments})
 
 
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_linnworks_user)
 def cancel_consignment(request):
     pylinnworks.PyLinnworks.connect(config=PYLINNWORKS_CONFIG)
     consignments = pylinnworks.Shipping.get_manifest_consignments()
@@ -27,6 +39,8 @@ def cancel_consignment(request):
     return HttpResponse('Order Not Found', status=400)
 
 
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_linnworks_user)
 def sku_converter(request):
     pylinnworks.PyLinnworks.connect(config=PYLINNWORKS_CONFIG)
     channels = pylinnworks.Linking()
@@ -34,6 +48,8 @@ def sku_converter(request):
         request, 'linnworks/sku_converter.html', {'channels': channels})
 
 
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_linnworks_user)
 def get_linked_for_channel_sku(request):
     channel_id = int(request.POST['channel_id'])
     channel_sku = request.POST['channel_sku']
