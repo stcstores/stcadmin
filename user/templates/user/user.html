@@ -1,0 +1,12 @@
+{% extends 'home/base.html' %}
+
+{% block content %}
+<h2>{{ request.user.username }}</h2>
+<a href="{% url 'user:change_password' %}">Change Password</a>
+<ul>
+    Available Apps
+    {% for group in user.groups.all %}
+    <li>{{ group }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

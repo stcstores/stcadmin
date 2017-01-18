@@ -16,7 +16,7 @@
         <div class="head">
             {% include "home/main_navigation.html" %}
             <div class="user_details">
-                <p>Welcome {{ request.user.username|title }}</p>
+                <p>Welcome <a href="{% url 'user:user' %}">{{ request.user.username|title }}</a></p>
                 <a href="{% url 'home:logout_user' %}">Logout</a>
             </div>
             {% block section_navigation %}

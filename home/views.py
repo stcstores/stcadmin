@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from stcadmin import settings
+from django.contrib.auth import logout
 
 
 @login_required(login_url=settings.LOGIN_URL)
@@ -34,6 +35,5 @@ def login_user(request):
 
 
 def logout_user(request):
-    from django.contrib.auth import logout
     logout(request)
     return redirect(reverse('home:login_user'))

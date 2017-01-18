@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'reference',
     'shopify',
     'linnworks',
+    'user',
 ]
 
 MIDDLEWARE = [
