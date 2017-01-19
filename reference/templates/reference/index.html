@@ -2,5 +2,11 @@
 {% load staticfiles %}
 
 {% block content %}
-<a href="{% url 'reference:shopify_tags' %}">Shopify Tags</a>
+<div class="site_index">
+    <ul class="section">
+        <li><a href="{% url 'reference:shopify_tags' %}">Shopify Tags</a></li>
+        <p>View available tags for Shopify listings</p>
+    </ul>
+</div>
+
 {% endblock %}
