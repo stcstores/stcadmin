@@ -170,6 +170,7 @@ th {
 
 .site_index .section li {
     font-size: 1.25em;
+    line-height: normal;
 }
 
 .site_index p {

@@ -6,14 +6,12 @@
     <div class="site_index">
         <p>From here you can access:</p>
         <ul class='app'>
-            {% for group in request.user.groups.all %}{% if group.name == 'reference' %}
-                <li><a href="{% url 'reference:index' %}">Reference</a></li>
-                <p>Access reference material</p>
-                <ul class='section'>
-                    <li><a href="{% url 'reference:shopify_tags' %}">Shopify Tags</a></li>
-                    <p>List of available tags for shopify</p>
-                </ul>
-            {% endif %}{% endfor %}
+            <li><a href="{% url 'reference:index' %}">Reference</a></li>
+            <p>Access reference material</p>
+            <ul class='section'>
+                <li><a href="{% url 'reference:shopify_tags' %}">Shopify Tags</a></li>
+                <p>List of available tags for shopify</p>
+            </ul>
             {% for group in request.user.groups.all %}{% if group.name == 'suppliers' %}
                 <li><a href="{% url 'suppliers:index' %}">Suppliers</a></li>
                 <p>Manage supplier lists</p>
@@ -21,6 +19,28 @@
             {% for group in request.user.groups.all %}{% if group.name == 'labelmaker' %}
                 <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
                 <p>Make printable product labels</p>
+            {% endif %}{% endfor %}
+            {% for group in request.user.groups.all %}{% if group.name == 'photos' %}
+                <li><a href="{% url 'photos:index' %}">Photos</a></li>
+                <p>Download and manage product photos</p>
+            {% endif %}{% endfor %}
+            {% for group in request.user.groups.all %}{% if group.name == 'linnworks' %}
+                <li><a href="{% url 'linnworks:index' %}">Linnworks</a></li>
+                <p>Tools for working with linnworks</p>
+                <ul class="section">
+                    <li><a href="{% url 'linnworks:manifest' %}">Manifest</a></li>
+                    <p>View and remove consignments from the current manifest</p>
+                    <li>SKU Converter</li>
+                    <p>Find Linnworks items by channel SKU</p>
+                </ul>
+            {% endif %}{% endfor %}
+            {% for group in request.user.groups.all %}{% if group.name == 'admin' %}
+                <li><a href="/admin/">Admin</a></li>
+                <p>Tools for administering STC Admin</p>
+                <ul class="section">
+                    <li>View and edit database tables</li>
+                    <li>Manage users and groups</li>
+                </ul>
             {% endif %}{% endfor %}
         </ul>
     </div>
