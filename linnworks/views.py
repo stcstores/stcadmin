@@ -35,6 +35,7 @@ def cancel_consignment(request):
     consignments = pylinnworks.Shipping.get_manifest_consignments()
     for consignment in consignments:
         if int(consignment.order_id) == int(request.POST['order_id']):
+            consignment.cancel()
             return HttpResponse(str(consignment))
     return HttpResponse('Order Not Found', status=400)
 
