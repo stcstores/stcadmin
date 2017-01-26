@@ -6,6 +6,8 @@
 <div class="site_index">
     <p>From here you can access:</p>
     <ul class='app'>
+        <li><a href="{% url 'linnworks:new_item' %}">New Item</a></li>
+        <p>Create new Linnworks inventory item</p>
         <li><a href="{% url 'linnworks:manifest' %}">Manifest</a></li>
         <p>View and remove consignments from the current manifest</p>
         <li><a href="{% url 'linnworks:sku_converter' %}">SKU Converter</a></li>

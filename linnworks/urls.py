@@ -16,5 +16,12 @@ urlpatterns = [
     url(
         r'^get_linked_for_channel_sku$',
         linnworks_views.get_linked_for_channel_sku,
-        name='get_linked_for_channel_sku')
+        name='get_linked_for_channel_sku'),
+    url(r'^new_item/$', linnworks_views.new_item, name='new_item'),
+    url(
+        r'^search_inventory/$', linnworks_views.search_inventory,
+        name='search_inventory'),
+    url(
+        r'^inventory_item/(?P<stock_id>[0-9a-z-]+)/$',
+        linnworks_views.inventory_item, name='inventory_item'),
 ]

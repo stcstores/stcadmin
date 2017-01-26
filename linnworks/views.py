@@ -4,6 +4,7 @@ from stcadmin import settings
 from django.shortcuts import render, HttpResponse
 from stcadmin.settings import PYLINNWORKS_CONFIG
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import Http404
 
 import pylinnworks
 
@@ -62,3 +63,32 @@ def get_linked_for_channel_sku(request):
         'linnworks_title': item.linked_item_title,
         'channel_title': item.title} for item in items]
     return HttpResponse(json.dumps(data))
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_linnworks_user)
+def inventory_item(request, stock_id):
+    pylinnworks.PyLinnworks.connect(config=PYLINNWORKS_CONFIG)
+    try:
+        item = pylinnworks.Inventory.get_item_by_stock_ID(stock_id)
+    except:
+        raise Http404
+    return render(request, 'linnworks/inventory_item.html', {'item': item})
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_linnworks_user)
+def search_inventory(request):
+    pylinnworks.PyLinnworks.connect(config=PYLINNWORKS_CONFIG)
+    if request.method == 'POST':
+        items = pylinnworks.Inventory.search_by_SKU(
+            request.POST['search_term'])
+    else:
+        items = []
+    return render(request, 'linnworks/search_inventory.html', {'items': items})
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_linnworks_user)
+def new_item(request):
+    return render(request, 'linnworks/new_item.html')

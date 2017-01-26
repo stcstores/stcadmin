@@ -1,0 +1,28 @@
+{% extends "linnworks/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<form method='POST'>
+    {% csrf_token %}
+    <label for="search_term">Search</label>
+    <input type="text" name="search_term">
+</form>
+<table>
+    <tr>
+        <th>SKU</th>
+        <th>Ttile</th>
+        <th>Barcode</th>
+        <th>Available</th>
+        <th></th>
+    </tr>
+    {% for item in items %}
+    <tr>
+        <td>{{ item.sku }}</td>
+        <td>{{ item.title }}</td>
+        <td>{{ item.barcode }}</td>
+        <td>{{ item.available }}</td>
+        <td><a href="{% url 'linnworks:inventory_item' item.stock_id %}">Edit</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

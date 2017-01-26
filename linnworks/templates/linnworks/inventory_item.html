@@ -1,0 +1,29 @@
+{% extends "linnworks/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<form action="">
+    <table>
+        <tr>
+            <th>SKU</th>
+            <td><input type="text" name="sku", value="{{ item.sku }}"></td>
+        </tr>
+        <tr>
+            <th>Title</th>
+            <td><input type="text" name='title' value='{{ item.title }}'></td>
+        </tr>
+        <tr>
+            <th>Barcode</th>
+            <td><input type="text" name='barcode' value="{{ item.barcode }}"></td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>
+                <textarea name="description" cols="30" rows="10">
+                    {{ item.meta_data }}
+                </textarea>
+            </td>
+        </tr>
+    </table>
+</form>
+{% endblock %}
