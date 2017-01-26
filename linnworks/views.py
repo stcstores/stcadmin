@@ -69,11 +69,13 @@ def get_linked_for_channel_sku(request):
 @user_passes_test(is_linnworks_user)
 def inventory_item(request, stock_id):
     pylinnworks.PyLinnworks.connect(config=PYLINNWORKS_CONFIG)
+    settings = pylinnworks.Settings()
     try:
         item = pylinnworks.Inventory.get_item_by_stock_ID(stock_id)
     except:
         raise Http404
-    return render(request, 'linnworks/inventory_item.html', {'item': item})
+    return render(request, 'linnworks/inventory_item.html', {
+        'item': item, 'settings': settings})
 
 
 @login_required(login_url=settings.LOGIN_URL)
