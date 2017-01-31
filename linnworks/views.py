@@ -5,6 +5,7 @@ from django.shortcuts import render, HttpResponse
 from stcadmin.settings import PYLINNWORKS_CONFIG
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404
+from . forms import EditItemForm
 
 import pylinnworks
 
@@ -68,6 +69,7 @@ def get_linked_for_channel_sku(request):
 @login_required(login_url=settings.LOGIN_URL)
 @user_passes_test(is_linnworks_user)
 def inventory_item(request, stock_id):
+    form = EditItemForm
     pylinnworks.PyLinnworks.connect(config=PYLINNWORKS_CONFIG)
     settings = pylinnworks.Settings()
     try:
@@ -75,7 +77,7 @@ def inventory_item(request, stock_id):
     except:
         raise Http404
     return render(request, 'linnworks/inventory_item.html', {
-        'item': item, 'settings': settings})
+        'item': item, 'settings': settings, 'form': form})
 
 
 @login_required(login_url=settings.LOGIN_URL)

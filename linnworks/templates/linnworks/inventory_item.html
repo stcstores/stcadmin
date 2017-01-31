@@ -4,70 +4,7 @@
 {% block content %}
 <form action="">
     <table>
-        <tr>
-            <th>SKU</th>
-            <td><input type="text" name="sku" value="{{ item.sku }}"></td>
-        </tr>
-        <tr>
-            <th>Title</th>
-            <td><input type="text" name="title" value="{{ item.title }}" size="75"></td>
-        </tr>
-        <tr>
-            <th>Barcode</th>
-            <td><input type="text" name='barcode' value="{{ item.barcode }}"></td>
-        </tr>
-        <tr>
-            <th>Purchase Price</th>
-            <td><input type="text" name="purchase_price" value="{{ item.purchase_price }}"></td>
-        </tr>
-        <tr>
-            <th>Retail Price</th>
-            <td><input type="text" name="retail_price" value="{{ item.retail_price }}"></td>
-        </tr>
-        <tr>
-            <th>Category</th>
-            <td>
-                <select name="category">
-                    {% for category in settings.categories %}
-                    <option value="{{ category.guid }}" {% if category.guid == item.category.guid %} selected{% endif %}>{{ category.name }}</option>
-                    {% endfor %}
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th>Postage Method</th>
-            <td>
-                <select name="package_group">
-                    {% for package_group in settings.package_groups %}
-                        <option value="{{ package_group.guid }}" {% if package_group.guid == item.package_group.guid %} selected{% endif %}>{{ package_group.name }}</option>
-                    {% endfor %}
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th>Weight</th>
-            <td><input type="text" name="weight" value="{{ item.weight }}"></td>
-        </tr>
-        <tr>
-            <th>Description</th>
-            <td>
-                <textarea name="description" cols="50" rows="10">
-                    {{ item.meta_data }}
-                </textarea>
-            </td>
-        </tr>
-        <tr>
-            <th>Width</th>
-            <td><input type="text" name="widh" value="{{ item.width }}"></td>
-        </tr>
-        <tr>
-            <th>Height</th>
-            <td><input type="text" name="height" value="{{ item.height }}"></td>
-        </tr>
-        <tr>
-            <th>Depth</th>
-            <td><input type="text" name="depth" value="{{ item.depth }}"></td>
-        </tr>
+        {{ form.as_table }}
     </table>
 </form>
 {% endblock %}
