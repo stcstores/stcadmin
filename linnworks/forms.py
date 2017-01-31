@@ -12,8 +12,12 @@ class EditItemForm(forms.Form):
     SHIPPING_METHODS = [
         [method.guid, method.name] for method in
         pylinnworks.Settings.get_shipping_methods()]
-    sku = forms.CharField(required=True, label='SKU')
-    title = forms.CharField(required=True)
+    stock_id = forms.CharField(
+        required=True, disabled=True, label='Stock ID',
+        widget=forms.TextInput(attrs={'size': '40'}))
+    sku = forms.CharField(required=True, label='SKU', disabled=True)
+    title = forms.CharField(
+        required=True, widget=forms.TextInput(attrs={'size': '40'}))
     barcode = forms.CharField()
     retail_price = forms.DecimalField(max_digits=6, decimal_places=2)
     purchase_price = forms.DecimalField(max_digits=6, decimal_places=2)
@@ -29,6 +33,7 @@ class EditItemForm(forms.Form):
         item = kwargs.pop('item', None)
         super().__init__(*args, **kwargs)
         if item is not None:
+            self.fields['stock_id'].initial = item.stock_id
             self.fields['sku'].initial = item.sku
             self.fields['title'].initial = item.title
             self.fields['barcode'].initial = item.barcode
