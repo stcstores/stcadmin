@@ -24,3 +24,20 @@ class EditItemForm(forms.Form):
     width = forms.IntegerField()
     height = forms.IntegerField()
     depth = forms.IntegerField()
+
+    def __init__(self, *args, **kwargs):
+        item = kwargs.pop('item', None)
+        super().__init__(*args, **kwargs)
+        if item is not None:
+            self.fields['sku'].initial = item.sku
+            self.fields['title'].initial = item.title
+            self.fields['barcode'].initial = item.barcode
+            self.fields['retail_price'].initial = item.retail_price
+            self.fields['purchase_price'].initial = item.purchase_price
+            self.fields['category'].initial = item.category.guid
+            self.fields['shipping_method'].initial = item.postal_service.guid
+            self.fields['description'].initial = item.meta_data
+            self.fields['weight'].initial = item.weight
+            self.fields['width'].initial = item.width
+            self.fields['height'].initial = item.height
+            self.fields['depth'].initial = item.depth
