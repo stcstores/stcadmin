@@ -1,11 +1,11 @@
 import json
 
 from stcadmin import settings
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from stcadmin.settings import PYLINNWORKS_CONFIG
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import Http404
-from . forms import EditItemForm
+from . forms import EditItemForm, NewItemForm
 
 import pylinnworks
 
@@ -95,4 +95,13 @@ def search_inventory(request):
 @login_required(login_url=settings.LOGIN_URL)
 @user_passes_test(is_linnworks_user)
 def new_item(request):
-    return render(request, 'linnworks/new_item.html')
+    if request.method == 'POST':
+        form = NewItemForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(
+                'linnworks:inventory_item', form.cleaned_data['stock_id'])
+    else:
+        print('NO POST')
+        form = NewItemForm()
+    return render(request, 'linnworks/new_item.html', {'form': form})

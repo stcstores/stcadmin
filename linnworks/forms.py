@@ -1,6 +1,29 @@
+import uuid
+
 from django import forms
 from stcadmin.settings import PYLINNWORKS_CONFIG
 import pylinnworks
+
+
+class NewItemForm(forms.Form):
+    pylinnworks.PyLinnworks.connect(config=PYLINNWORKS_CONFIG)
+    new_sku = pylinnworks.Inventory.get_new_SKU()
+    stock_id = forms.CharField(
+        initial=str(uuid.uuid4()), required=True, disabled=True,
+        label='Stock ID', widget=forms.TextInput(attrs={'size': '40'}))
+    sku = forms.CharField(
+        initial=new_sku, required=True, label='SKU', disabled=True)
+    title = forms.CharField(
+        required=True, widget=forms.TextInput(attrs={'size': '40'}))
+    barcode = forms.CharField()
+
+    def save(self):
+        stock_id = self.cleaned_data['stock_id']
+        sku = self.cleaned_data['sku']
+        title = self.cleaned_data['title']
+        barcode = self.cleaned_data['barcode']
+        pylinnworks.Inventory.create_new_item(
+            stock_id=stock_id, sku=sku, title=title, barcode=barcode)
 
 
 class EditItemForm(forms.Form):
