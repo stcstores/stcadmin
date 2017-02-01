@@ -71,11 +71,8 @@ def get_linked_for_channel_sku(request):
 def inventory_item(request, stock_id):
     if request.method == 'POST':
         form = EditItemForm(request.POST, stock_id=stock_id)
-        print('posted')
         if form.is_valid():
-            print('valid')
             form.save()
-            print('saved')
             redirect('linnworks:inventory_item', stock_id)
     else:
         try:
@@ -107,6 +104,5 @@ def new_item(request):
             return redirect(
                 'linnworks:inventory_item', form.cleaned_data['stock_id'])
     else:
-        print('NO POST')
         form = NewItemForm()
     return render(request, 'linnworks/new_item.html', {'form': form})
