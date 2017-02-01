@@ -24,6 +24,9 @@ class NewItemForm(forms.Form):
         barcode = self.cleaned_data['barcode']
         pylinnworks.Inventory.create_new_item(
             stock_id=stock_id, sku=sku, title=title, barcode=barcode)
+        item = pylinnworks.Inventory.get_item_by_stock_ID(stock_id)
+        default_location = pylinnworks.Settings.get_location_by_name('Default')
+        item.get_locations().add_location(default_location)
 
 
 class EditItemForm(forms.Form):
@@ -45,6 +48,7 @@ class EditItemForm(forms.Form):
     barcode = forms.CharField()
     retail_price = forms.DecimalField(max_digits=6, decimal_places=2)
     purchase_price = forms.DecimalField(max_digits=6, decimal_places=2)
+    bin_rack = forms.CharField(label='Bin/Rack')
     category = forms.ChoiceField(choices=CATEGORIES)
     shipping_method = forms.ChoiceField(choices=SHIPPING_METHODS)
     description = forms.CharField(
@@ -73,6 +77,29 @@ class EditItemForm(forms.Form):
             self.fields['width'].initial = self.item.width
             self.fields['height'].initial = self.item.height
             self.fields['depth'].initial = self.item.depth
+            self.fields['bin_rack'].initial = self.get_item_bin_rack()
+
+    def get_item_bin_rack(self):
+        location = self.get_item_default_location()
+        return location.bin_rack
+
+    def set_item_bin_rack(self, bin_rack):
+        location = self.get_item_default_location()
+        location.bin_rack = bin_rack
+        location.save()
+
+    def get_item_default_location(self):
+        if self.item.locations is None:
+            self.item.get_locations()
+        try:
+            location = self.item.locations.get_location_by_name('Default')
+        except:
+            raise
+            default_location = pylinnworks.Settings.get_location_by_name(
+                'Default')
+            self.item.locations.add_location(default_location)
+            location = self.item.locations.get_location_by_name('Default')
+        return location
 
     def save(self):
         data = self.cleaned_data
@@ -89,4 +116,5 @@ class EditItemForm(forms.Form):
         self.item.width = data['width']
         self.item.height = data['height']
         self.item.depth = data['depth']
+        self.set_item_bin_rack(data['bin_rack'])
         self.item.save()
