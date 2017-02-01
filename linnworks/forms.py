@@ -29,12 +29,13 @@ class NewItemForm(forms.Form):
 class EditItemForm(forms.Form):
 
     pylinnworks.PyLinnworks.connect(config=PYLINNWORKS_CONFIG)
+    settings = pylinnworks.Settings
     CATEGORIES = [
         [category.guid, category.name] for category in
-        pylinnworks.Settings.get_categories()]
+        settings.get_categories()]
     SHIPPING_METHODS = [
         [method.guid, method.name] for method in
-        pylinnworks.Settings.get_shipping_methods()]
+        settings.get_shipping_methods()]
     stock_id = forms.CharField(
         required=True, disabled=True, label='Stock ID',
         widget=forms.TextInput(attrs={'size': '40'}))
@@ -46,26 +47,46 @@ class EditItemForm(forms.Form):
     purchase_price = forms.DecimalField(max_digits=6, decimal_places=2)
     category = forms.ChoiceField(choices=CATEGORIES)
     shipping_method = forms.ChoiceField(choices=SHIPPING_METHODS)
-    description = forms.CharField(widget=forms.widgets.Textarea)
+    description = forms.CharField(
+        widget=forms.widgets.Textarea, required=False)
     weight = forms.IntegerField(required=True)
     width = forms.IntegerField()
     height = forms.IntegerField()
     depth = forms.IntegerField()
 
     def __init__(self, *args, **kwargs):
-        item = kwargs.pop('item', None)
+        stock_id = kwargs.pop('stock_id', None)
         super().__init__(*args, **kwargs)
-        if item is not None:
-            self.fields['stock_id'].initial = item.stock_id
-            self.fields['sku'].initial = item.sku
-            self.fields['title'].initial = item.title
-            self.fields['barcode'].initial = item.barcode
-            self.fields['retail_price'].initial = item.retail_price
-            self.fields['purchase_price'].initial = item.purchase_price
-            self.fields['category'].initial = item.category.guid
-            self.fields['shipping_method'].initial = item.postal_service.guid
-            self.fields['description'].initial = item.meta_data
-            self.fields['weight'].initial = item.weight
-            self.fields['width'].initial = item.width
-            self.fields['height'].initial = item.height
-            self.fields['depth'].initial = item.depth
+        if stock_id is not None:
+            self.item = pylinnworks.Inventory.get_item_by_stock_ID(stock_id)
+            self.fields['stock_id'].initial = self.item.stock_id
+            self.fields['sku'].initial = self.item.sku
+            self.fields['title'].initial = self.item.title
+            self.fields['barcode'].initial = self.item.barcode
+            self.fields['retail_price'].initial = self.item.retail_price
+            self.fields['purchase_price'].initial = self.item.purchase_price
+            self.fields['category'].initial = self.item.category.guid
+            self.fields[
+                'shipping_method'].initial = self.item.postal_service.guid
+            self.fields['description'].initial = self.item.meta_data
+            self.fields['weight'].initial = self.item.weight
+            self.fields['width'].initial = self.item.width
+            self.fields['height'].initial = self.item.height
+            self.fields['depth'].initial = self.item.depth
+
+    def save(self):
+        data = self.cleaned_data
+        self.item.title = data['title']
+        self.item.barcode = data['barcode']
+        self.item.retail_price = data['retail_price']
+        self.item.purchase_price = data['purchase_price']
+        self.item.category = self.settings.get_category_by_ID(
+            data['category'])
+        self.item.postal_service = self.settings.get_shipping_method_by_ID(
+            data['shipping_method'])
+        self.item.meta_data = data['description']
+        self.item.weight = data['weight']
+        self.item.width = data['width']
+        self.item.height = data['height']
+        self.item.depth = data['depth']
+        self.item.save()
