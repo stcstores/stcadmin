@@ -3,9 +3,9 @@ Description=Gunicorn server for SITENAME
 
 [Service]
 Restart=on-failure
-User=lseagle
-WorkingDirectory=/home/lseagle/sites/SITENAME/source
-ExecStart=/home/lseagle/sites/SITENAME/virtualenv/bin/gunicorn \
+User=stcstores
+WorkingDirectory=/home/stcstores/sites/SITENAME/source
+ExecStart=/home/stcstores/sites/SITENAME/virtualenv/bin/gunicorn \
     --bind unix:/tmp/SITENAME.socket \
     cryostorm.wsgi:application
 
