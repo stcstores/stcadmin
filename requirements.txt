@@ -7,3 +7,5 @@ reportlab==3.3.0
 git+https://github.com/stcstores/pylinnworks.git@stcadmin_itegration
 git+https://github.com/axevalley/labeler.git@v1.0
 git+https://github.com/stcstores/linnskuconvert.git
+psycopg2==2.6.2
+gunicorn==19.6.0
