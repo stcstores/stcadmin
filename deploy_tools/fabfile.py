@@ -59,16 +59,16 @@ def _add_local_settings(source_folder):
         append(local_settings_file, "    'default': {")
         append(
             local_settings_file,
-            "        'ENGINE': 'django.db.backends.mysql',")
+            "        'ENGINE': 'django.db.backends.postgresql',")
         append(
             local_settings_file,
             "        'HOST': 'localhost',")
-        append(local_settings_file, "        'NAME': 'stcstores_stcadmin',")
-        append(local_settings_file, "        'USER': 'restock_django',")
+        append(local_settings_file, "        'NAME': 'stcadmin',")
+        append(local_settings_file, "        'USER': 'stcadmin_django',")
         append(
             local_settings_file,
             "        'PASSWORD': '{}',".format(db_password))
-        append(local_settings_file, "        'PORT': '3306',")
+        append(local_settings_file, "        'PORT': '5432',")
         append(local_settings_file, '    }')
         append(local_settings_file, '}')
         append(local_settings_file, 'DEBUG = False')
