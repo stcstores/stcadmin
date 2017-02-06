@@ -80,8 +80,8 @@ def _add_local_settings(source_folder):
         append(local_settings_file, "    'application_token': '{}',".format(
             application_token))
         append(
-            local_settings_file, "    'server': 'https://api.linnworks.net//'")
-        append(local_settings_file, "}")
+            local_settings_file,
+            "    'server': 'https://api.linnworks.net//'}")
 
 
 def _update_virtualenv(source_folder):
