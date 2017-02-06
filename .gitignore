@@ -93,3 +93,5 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+!deploy_tools/local_settings.py
