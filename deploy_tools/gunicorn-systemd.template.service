@@ -7,7 +7,7 @@ User=stcstores
 WorkingDirectory=/home/stcstores/sites/SITENAME/source
 ExecStart=/home/stcstores/sites/SITENAME/virtualenv/bin/gunicorn \
     --bind unix:/tmp/SITENAME.socket \
-    cryostorm.wsgi:application
+    stcadmin.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
