@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'shopify',
     'linnworks',
     'user',
+    'cloud_commerce',
 ]
 
 MIDDLEWARE = [

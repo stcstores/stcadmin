@@ -1,0 +1,19 @@
+{% extends "cloud_commerce/base.html" %}
+{% load staticfiles %}
+
+{% block additional_head %}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <label for="stock_search">Search</label>
+    <input type="text" id="stock_search" name="stock_search">
+    <button id="stock_search_button">Search</button>
+    <table id="stock_search_result"></table>
+{% endblock %}
+
+{% block script %}
+    <script>
+        var search_url = "{% url 'cloud_commerce:api_product_search' 'search_text' %}";
+    </script>
+{% endblock %}

@@ -31,6 +31,9 @@ urlpatterns = [
     url(r'^photos/', include('photos.urls', namespace='photos')),
     url(r'^reference/', include('reference.urls', namespace='reference')),
     url(r'^linnworks/', include('linnworks.urls', namespace='linnworks')),
+    url(
+        r'^cloud_commerce/',
+        include('cloud_commerce.urls', namespace='cloud_commerce')),
     url(r'^', include('home.urls', namespace='home')),
     url(
         r'^password_change_done/', user_views.change_password_done,
