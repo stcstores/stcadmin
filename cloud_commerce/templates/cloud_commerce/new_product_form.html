@@ -1,0 +1,9 @@
+{% extends "cloud_commerce/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <table class="new_product">
+        {% csrf_token %}
+        {{ form.as_table }}
+    </table>
+{% endblock %}

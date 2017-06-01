@@ -7,7 +7,7 @@
 
 {% block content %}
     <label for="stock_search">Search</label>
-    <input type="text" id="stock_search" name="stock_search">
+    <input type="text" id="stock_search" name="stock_search" value="bodyboard">
     <button id="stock_search_button">Search</button>
     <table id="stock_search_result"></table>
 {% endblock %}
@@ -15,5 +15,6 @@
 {% block script %}
     <script>
         var search_url = "{% url 'cloud_commerce:api_product_search' 'search_text' %}";
+        var get_stock_url = "{% url 'cloud_commerce:api_get_stock_for_product' %}";
     </script>
 {% endblock %}

@@ -1,0 +1,8 @@
+.new_product tr input, .new_product tr select, .new_product tr textarea {
+    border-radius: 3px;
+    padding: 0.25em;
+}
+
+.new_product tr input:required, .new_product tr select {
+    border: solid 1px black;
+}
