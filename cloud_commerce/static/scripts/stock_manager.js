@@ -25,14 +25,6 @@ $(document).ready(function() {
         $('#stock_search_result').append(row);
     }
 
-    function get_stock(variation_id) {
-        var url = get_stock_url.replace('variation_id', variation_id);
-        $.post(url, function(response) {
-            var stock_level = response;
-            $('#stock_' + variation_id).val(stock_level);
-        });
-    }
-
     function update_product_table() {
         reset_table();
         for (var i = 0; i < products.length; i++) {
