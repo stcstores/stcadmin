@@ -14,7 +14,7 @@ urlpatterns = [
         name='stock_manager'),
 
     url(
-        r'^api/product_search/(?P<search_text>[\w\-]+)$',
+        r'^api/product_search/(?P<search_text>.+?)$',
         views.api_product_search, name='api_product_search'),
 
     url(

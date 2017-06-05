@@ -36,7 +36,7 @@ $(document).ready(function() {
     function reset_table() {
         var table = $('#stock_search_result');
         table.empty();
-        table.append('<thead><tr><td>SKU></td><td>Name</td><td>Stock</td></tr></thead>')
+        table.append('<thead><tr><td>SKU</td><td>Name</td><td>Stock</td></tr></thead>')
 
     }
 
