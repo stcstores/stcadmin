@@ -1,5 +1,7 @@
+import os
+
 from fabric.contrib.files import append, exists, sed
-from fabric.api import env, local, run
+from fabric.api import env, local, run, put
 from fabric.operations import sudo
 import random
 
@@ -12,7 +14,7 @@ def deploy():
     _create_directory_structure_if_necessary(site_folder)
     _get_latest_source(source_folder)
     _update_settings(source_folder, env.host)
-    _add_local_settings(source_folder)
+    _add_server_settings(source_folder)
     _update_virtualenv(source_folder)
     _update_static_files(source_folder)
     _update_database(source_folder)
@@ -47,41 +49,11 @@ def _update_settings(source_folder, site_name):
     append(settings_path, '\nfrom . secret_key import SECRET_KEY')
 
 
-def _add_local_settings(source_folder):
-    local_settings_file = source_folder + '/stcadmin/local_settings.py'
-    if not exists(local_settings_file):
-        db_password = input('Database Password: ')
-        application_id = input('Application ID: ')
-        application_secret = input('Application Secret: ')
-        application_token = input('Application Token: ')
-
-        append(local_settings_file, 'DATABASES = {')
-        append(local_settings_file, "    'default': {")
-        append(
-            local_settings_file,
-            "        'ENGINE': 'django.db.backends.postgresql',")
-        append(
-            local_settings_file,
-            "        'HOST': 'localhost',")
-        append(local_settings_file, "        'NAME': 'stcadmin',")
-        append(local_settings_file, "        'USER': 'stcadmin_django',")
-        append(
-            local_settings_file,
-            "        'PASSWORD': '{}',".format(db_password))
-        append(local_settings_file, "        'PORT': '5432',")
-        append(local_settings_file, '    }')
-        append(local_settings_file, '}')
-        append(local_settings_file, 'DEBUG = False')
-        append(local_settings_file, "PYLINNWORKS_CONFIG = {")
-        append(local_settings_file, "    'application_id': '{}',".format(
-            application_id))
-        append(local_settings_file, "    'application_secret': '{}',".format(
-            application_secret))
-        append(local_settings_file, "    'application_token': '{}',".format(
-            application_token))
-        append(
-            local_settings_file,
-            "    'server': 'https://api.linnworks.net//'}")
+def _add_server_settings(source_folder):
+    server_settings_file = source_folder + '/stcadmin/local_settings.py'
+    local_server_settings_file = os.path.join(
+        os.path.dirname(__file__), 'server_settings.py')
+    put(local_server_settings_file, server_settings_file)
 
 
 def _update_virtualenv(source_folder):
