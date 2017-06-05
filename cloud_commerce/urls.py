@@ -1,5 +1,5 @@
-from django.conf.urls import include, url
-from django.contrib import admin
+from django.conf.urls import include, url  # noqa
+from django.contrib import admin  # noqa
 
 from cloud_commerce import views
 
@@ -32,4 +32,16 @@ urlpatterns = [
     url(
         r'^new_variation_product$',
         views.NewVariationProductView.as_view(), name='new_variation_product'),
+
+    url(
+        r'^sku_generator$',
+        views.sku_generator, name='sku_generator'),
+
+    url(
+        r'^api/api_get_new_sku$',
+        views.api_get_new_sku, name='api_get_new_sku'),
+
+    url(
+        r'^api/api_get_new_range_sku$',
+        views.api_get_new_range_sku, name='api_get_new_range_sku'),
 ]

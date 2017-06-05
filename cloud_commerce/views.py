@@ -58,6 +58,12 @@ def stock_manager(request):
 
 @login_required(login_url=settings.LOGIN_URL)
 @user_passes_test(is_cloud_commerce_user)
+def sku_generator(request):
+    return render(request, 'cloud_commerce/sku_generator.html')
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_cloud_commerce_user)
 @csrf_exempt
 def api_product_search(request, search_text):
     cc_api = ccapi.CCAPI(settings.CC_LOGIN, settings.CC_PWD)
@@ -85,3 +91,21 @@ def api_get_stock_for_product(request):
             variation_id).stock_level} for
         variation_id in variation_ids]
     return HttpResponse(json.dumps(stock_data))
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_cloud_commerce_user)
+@csrf_exempt
+def api_get_new_sku(request):
+    cc_api = ccapi.CCAPI(settings.CC_LOGIN, settings.CC_PWD)
+    sku = cc_api.get_sku(range_sku=False)
+    return HttpResponse(sku)
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_cloud_commerce_user)
+@csrf_exempt
+def api_get_new_range_sku(request):
+    cc_api = ccapi.CCAPI(settings.CC_LOGIN, settings.CC_PWD)
+    sku = cc_api.get_sku(range_sku=True)
+    return HttpResponse(sku)
