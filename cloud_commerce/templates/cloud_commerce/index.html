@@ -2,5 +2,16 @@
 {% load staticfiles %}
 
 {% block content %}
-    <h1>Cloud Commerce</h1>
+<h1>Cloud Commerce</h1>
+<div class="site_index">
+    <p>From here you can access:</p>
+    <ul class='app'>
+        <li><a href="{% url 'linnworks:new_item' %}">New Product</a></li>
+        <p>Create new Cloud Commerce inventory item</p>
+        <li><a href="{% url 'linnworks:sku_converter' %}">SKU Generator</a></li>
+        <p>Get unused product SKUs</p>
+        <li><a href="{% url 'linnworks:manifest' %}">Stock Manager</a></li>
+        <p>Find and update stock numbers</p>
+    </ul>
+</div>
 {% endblock %}
