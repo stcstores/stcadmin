@@ -44,4 +44,8 @@ urlpatterns = [
     url(
         r'^api/api_get_new_range_sku$',
         views.api_get_new_range_sku, name='api_get_new_range_sku'),
+
+    url(
+        r'^api/api_update_stock_level$',
+        views.api_update_stock_level, name='api_update_stock_level'),
 ]
