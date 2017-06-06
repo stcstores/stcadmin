@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'linnworks',
     'user',
     'cloud_commerce',
+    'cloud_commerce_api',
 ]
 
 MIDDLEWARE = [

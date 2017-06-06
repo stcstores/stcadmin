@@ -34,6 +34,9 @@ urlpatterns = [
     url(
         r'^cloud_commerce/',
         include('cloud_commerce.urls', namespace='cloud_commerce')),
+    url(
+        r'^cloud_commerce_api/',
+        include('cloud_commerce_api.urls', namespace='cloud_commerce_api')),
     url(r'^', include('home.urls', namespace='home')),
     url(
         r'^password_change_done/', user_views.change_password_done,
