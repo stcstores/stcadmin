@@ -135,7 +135,5 @@ MEDIA_ROOT = os.path.join(os.path.abspath(
 
 LOGIN_URL = '/login/'
 
-try:
-    from . local_settings import *
-except:
-    pass
+
+from . local_settings import *
