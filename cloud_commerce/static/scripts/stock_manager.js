@@ -86,12 +86,22 @@ $(document).ready(function() {
         }
     }
 
+    $('#stock_search').keydown(function(event) {
+        if (event.keyCode === 13) {
+            product_search();
+        }
+    });
+
     $('#stock_search_button').click(function() {
+        product_search();
+    });
+
+    function product_search() {
         var search_text = $('#stock_search').val();
         var url = search_url.replace('search_text', search_text);
         $.post(url, function(response) {
             products = JSON.parse(response);
             update_product_table()
         });
-    });
+    }
 });
