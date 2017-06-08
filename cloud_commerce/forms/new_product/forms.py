@@ -28,7 +28,6 @@ class NewSingleProductForm(NewProductForm):
 
     def __init__(self, *args, **kwargs):
         super(NewSingleProductForm, self).__init__(*args, **kwargs)
-        print(fields.option_fields)
         for option, field in fields.option_fields:
             self.fields[option] = field
 
