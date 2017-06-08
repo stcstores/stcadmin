@@ -1,14 +1,31 @@
 from django import forms
 
-DEPARTMENTS = [(d, d) for d in ['Sureware', 'Allsorts', 'Country Gifts', 'Sports Shop', 'Warehouse', 'Containers', 'Trelawney Attic', 'Top to Toe']] # Get from CC
-VAT_RATES = ([(0.2, 'Normal Rate 20%'), (0.05, 'Reduced 5%'), (0, 'VAT Exempt')]) # Get from CC?
-SUPPLIERS = [(d, d) for d in ['Baum Trading', 'KS Brands', 'Kandy Toys']] # Get from CC
-PACKAGE_TYPES = enumerate(['Packet', 'Large Letter', 'Heavy and Large', 'Courier']) # Get from CC
-OPTIONS = [
-    'Design', 'Colour', 'Size', 'Quantity', 'Weight', 'Strength', 'Calibre',
-    'Scent', 'Name', 'Finish', 'Word', 'Model']
+from stcadmin import settings
 
-text_input_size = 50
+from ccapi import CCAPI
+
+
+CCAPI.create_session(settings.CC_LOGIN, settings.CC_PWD)
+
+
+OPTIONS = [
+    option.option_name for option in CCAPI.get_product_options() if
+    option.exclusions['tesco'] is False]
+
+PACKAGE_TYPES = [
+    (service.id, service.value)
+    for service in CCAPI.get_option_values("33852")]
+
+DEPARTMENTS = [
+    (dept.id, dept.value) for dept in CCAPI.get_option_values("34325")]
+
+VAT_RATES = ([
+    (5, 'Normal Rate 20%'), (2, 'Reduced 5%'), (1, 'VAT Exempt')])
+
+SUPPLIERS = [
+    (supplier.id, supplier.value) for supplier in CCAPI.get_option_values(
+        "35131")]
+SUPPLIERS.sort(key=lambda x: x[1])
 
 
 class NewProductFormField:
