@@ -13,7 +13,7 @@ class NewSingleProductForm(NewProductForm):
     barcode = fields.barcode
     department = fields.department
     price = fields.price
-    cost_price = fields.cost_price
+    purchase_price = fields.purchase_price
     vat_rate = fields.vat_rate
     supplier = fields.supplier
     supplier_SKU = fields.supplier_SKU
@@ -29,7 +29,7 @@ class NewSingleProductForm(NewProductForm):
     def __init__(self, *args, **kwargs):
         super(NewSingleProductForm, self).__init__(*args, **kwargs)
         for option, field in fields.option_fields:
-            self.fields[option] = field
+            self.fields['opt_{}'.format(option)] = field
 
 
 class NewVariationProductForm(NewProductForm):

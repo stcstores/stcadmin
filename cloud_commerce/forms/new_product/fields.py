@@ -17,13 +17,13 @@ PACKAGE_TYPES = [
     for service in CCAPI.get_option_values("33852")]
 
 DEPARTMENTS = [
-    (dept.id, dept.value) for dept in CCAPI.get_option_values("34325")]
+    (dept.value, dept.value) for dept in CCAPI.get_option_values("34325")]
 
 VAT_RATES = ([
     (5, 'Normal Rate 20%'), (2, 'Reduced 5%'), (1, 'VAT Exempt')])
 
 SUPPLIERS = [
-    (supplier.id, supplier.value) for supplier in CCAPI.get_option_values(
+    (supplier.value, supplier.value) for supplier in CCAPI.get_option_values(
         "35131")]
 SUPPLIERS.sort(key=lambda x: x[1])
 
@@ -32,7 +32,7 @@ class NewProductFormField:
 
     def __new__(
             self, required_message=None, size=50, placeholder=None,
-            html_class='new_product_input', textarea=False):
+            html_class='new_product_input', textarea=False, label=None):
         if textarea is True:
             widget_class = forms.Textarea
         else:
@@ -51,7 +51,7 @@ class NewProductFormField:
         if size is not None:
             attrs['size'] = size
         return self.field_class(
-            required=required, error_messages=error_messages,
+            required=required, label=label, error_messages=error_messages,
             widget=widget_class(attrs=attrs))
 
 
@@ -74,8 +74,8 @@ department = forms.ChoiceField(choices=DEPARTMENTS)
 price = TextField(
     required_message="Please supply a price",
     placeholder='Price without shipping or VAT')
-cost_price = TextField(
-    required_message="Please supply a price", placeholder='Cost Price')
+purchase_price = TextField(
+    required_message="Please supply a price", placeholder='Purchase Price')
 vat_rate = forms.ChoiceField(choices=VAT_RATES)
 supplier = forms.ChoiceField(choices=SUPPLIERS)
 supplier_SKU = TextField(placeholder='Supplier SKU')
@@ -94,8 +94,8 @@ manufacturer = TextField(
 
 class OptionField:
 
-    def __new__(self, placeholder):
-        return TextField(placeholder=placeholder)
+    def __new__(self, name):
+        return TextField(placeholder=name, label=name)
 
 
 option_fields = [(option, OptionField(option)) for option in OPTIONS]

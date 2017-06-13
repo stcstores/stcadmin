@@ -2,8 +2,11 @@
 {% load staticfiles %}
 
 {% block content %}
-    <table class="new_product">
-        {% csrf_token %}
-        {{ form.as_table }}
-    </table>
+    <form method="POST">
+        <table class="new_product">
+            {% csrf_token %}
+            {{ form.as_table }}
+        </table>
+        <input type="submit">
+    </form>
 {% endblock %}
