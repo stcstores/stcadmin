@@ -35,12 +35,12 @@ def get_stock_for_product(request):
     variation_ids = json.loads(request.body)['variation_ids']
     stock_data = []
     for variation_id in variation_ids:
-        product = CCAPI.get_variation_by_id(variation_id)
+        product = CCAPI.get_product(variation_id)
         stock_data.append({
             'variation_id': variation_id,
             'stock_level': product.stock_level,
             'locations': ' '.join(
-                [location.name for location in product.product.locations])
+                [location.name for location in product.locations])
         })
     return HttpResponse(json.dumps(stock_data))
 
