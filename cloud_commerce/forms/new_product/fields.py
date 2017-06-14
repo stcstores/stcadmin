@@ -80,18 +80,20 @@ barcode = TextField(
 department = forms.ChoiceField(choices=DEPARTMENTS)
 price = TextField(
     required_message="Please supply a price",
-    placeholder='Price without shipping or VAT')
+    placeholder='Price without shipping or VAT',
+    label='Price (ex VAT)')
 purchase_price = TextField(
     required_message="Please supply a price", placeholder='Purchase Price')
-stock_level = NumberField(initial=0)
-vat_rate = forms.ChoiceField(choices=VAT_RATES)
+stock_level = NumberField(initial=0, label='Stock Level')
+vat_rate = forms.ChoiceField(choices=VAT_RATES, label='VAT Rate')
 supplier = forms.ChoiceField(choices=SUPPLIERS)
-supplier_SKU = TextField(placeholder='Supplier SKU')
-weight = NumberField(required_message="Please supply a weight")
-height = NumberField()
-width = NumberField()
-length = NumberField()
-package_type = forms.ChoiceField(choices=PACKAGE_TYPES)
+supplier_SKU = TextField(placeholder='Supplier SKU', label='Supplier SKU')
+weight = NumberField(
+    label='Weight (Grams)', required_message="Please supply a weight")
+height = NumberField(label='Height (Milimeters)')
+width = NumberField(label='Width (Milimeters)')
+length = NumberField(label='Length (Milimeters)')
+package_type = forms.ChoiceField(choices=PACKAGE_TYPES, label='Package Type')
 location = TextField(placeholder='Location')
 brand = TextField(
     required_message="Please supply a brand", placeholder='Brand')
