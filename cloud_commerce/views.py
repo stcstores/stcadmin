@@ -51,6 +51,8 @@ class NewSingleProductView(FormView):
         name = form.cleaned_data['title'].strip()
         barcode = form.cleaned_data['barcode'].strip()
         description = form.cleaned_data['description'].strip()
+        if len(description) == 0:
+            description = name
         vat_rate_id = int(form.cleaned_data['vat_rate'])
         self.product = self.range.add_product(
             name, barcode, description=description, vat_rate_id=vat_rate_id)

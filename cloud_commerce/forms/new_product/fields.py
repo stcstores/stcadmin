@@ -74,8 +74,8 @@ class NumberField(NewProductFormField):
 title = TextField(
     required_message="Please supply a range title", placeholder='Title')
 description = TextField(
-    required_message="Please supply a brief description of the product",
-    placeholder='Description', textarea=True)
+    placeholder='Description. Will default to title if left blank',
+    textarea=True)
 barcode = TextField(
     required_message="Please supply a barcode", placeholder='Barcode')
 department = forms.ChoiceField(choices=DEPARTMENTS)
