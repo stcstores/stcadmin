@@ -61,6 +61,7 @@ class NewSingleProductView(FormView):
             length=form.cleaned_data['length'],
             width=form.cleaned_data['width'],
             large_letter_compatible=large_letter_compatible)
+        self.product.set_stock_level(form.cleaned_data['stock_level'])
         self.product.set_handling_time(1)
         self.product.set_base_price(form.cleaned_data['price'])
 

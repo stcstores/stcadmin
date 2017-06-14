@@ -14,6 +14,7 @@ class NewSingleProductForm(NewProductForm):
     department = fields.department
     price = fields.price
     purchase_price = fields.purchase_price
+    stock_level = fields.stock_level
     vat_rate = fields.vat_rate
     supplier = fields.supplier
     supplier_SKU = fields.supplier_SKU

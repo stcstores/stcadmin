@@ -13,7 +13,7 @@ OPTIONS = [
     option.exclusions['tesco'] is False]
 
 PACKAGE_TYPES = [
-    (service.id, service.value)
+    (service.value, service.value)
     for service in CCAPI.get_option_values("33852")]
 
 DEPARTMENTS = [
@@ -30,9 +30,14 @@ SUPPLIERS.sort(key=lambda x: x[1])
 
 class NewProductFormField:
 
+    size = 50
+
     def __new__(
-            self, required_message=None, size=50, placeholder=None,
-            html_class='new_product_input', textarea=False, label=None):
+            self, required_message=None, size=None, placeholder=None,
+            html_class='new_product_input', textarea=False, label=None,
+            initial=None):
+        if size is None:
+            size = self.size
         if textarea is True:
             widget_class = forms.Textarea
         else:
@@ -52,7 +57,7 @@ class NewProductFormField:
             attrs['size'] = size
         return self.field_class(
             required=required, label=label, error_messages=error_messages,
-            widget=widget_class(attrs=attrs))
+            widget=widget_class(attrs=attrs), initial=initial)
 
 
 class TextField(NewProductFormField):
@@ -60,6 +65,8 @@ class TextField(NewProductFormField):
 
 
 class NumberField(NewProductFormField):
+
+    size = 5
     field_class = forms.IntegerField
 
 
@@ -76,6 +83,7 @@ price = TextField(
     placeholder='Price without shipping or VAT')
 purchase_price = TextField(
     required_message="Please supply a price", placeholder='Purchase Price')
+stock_level = NumberField(initial=0)
 vat_rate = forms.ChoiceField(choices=VAT_RATES)
 supplier = forms.ChoiceField(choices=SUPPLIERS)
 supplier_SKU = TextField(placeholder='Supplier SKU')
