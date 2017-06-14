@@ -35,16 +35,17 @@ class NewSingleProductView(FormView):
         self.create_range(form)
         self.create_product(form)
         self.create_options(form)
-        return super(NewSingleProductView, self).form_valid(form)
+        return new_product_success(self.request, self.range, self.product)
 
     def create_range(self, form):
         range_name = form.cleaned_data['title'].strip()
         range_id = CCAPI.create_range(range_name)
         self.range = CCAPI.get_range(range_id)
-        while self.range.id == 0:
+        while self.range.id is not None and self.range.id == 0:
             time.sleep(1)
             self.range = CCAPI.get_range(range_id)
         self.range = CCAPI.get_range(range_id)
+        self.range.id = range_id
 
     def create_product(self, form):
         name = form.cleaned_data['title'].strip()
@@ -105,3 +106,11 @@ def stock_manager(request):
 @user_passes_test(is_cloud_commerce_user)
 def sku_generator(request):
     return render(request, 'cloud_commerce/sku_generator.html')
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_cloud_commerce_user)
+def new_product_success(request, product_range, product):
+    return render(
+        request, 'cloud_commerce/new_product_success.html',
+        {'product_range': product_range, 'product': product})
