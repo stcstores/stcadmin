@@ -35,7 +35,7 @@ class NewProductFormField:
     def __new__(
             self, required_message=None, size=None, placeholder=None,
             html_class='new_product_input', textarea=False, label=None,
-            initial=None):
+            initial=None, help_text=None):
         if size is None:
             size = self.size
         if textarea is True:
@@ -57,7 +57,8 @@ class NewProductFormField:
             attrs['size'] = size
         return self.field_class(
             required=required, label=label, error_messages=error_messages,
-            widget=widget_class(attrs=attrs), initial=initial)
+            widget=widget_class(attrs=attrs), initial=initial,
+            help_text=help_text)
 
 
 class TextField(NewProductFormField):
@@ -84,7 +85,9 @@ price = TextField(
     label='Price (ex VAT)')
 purchase_price = TextField(
     required_message="Please supply a price", placeholder='Purchase Price')
-stock_level = NumberField(initial=0, label='Stock Level')
+stock_level = NumberField(
+    initial=0, label='Stock Level',
+    required_message='Please provide a stock level. This can be zero.')
 vat_rate = forms.ChoiceField(choices=VAT_RATES, label='VAT Rate')
 supplier = forms.ChoiceField(choices=SUPPLIERS)
 supplier_SKU = TextField(placeholder='Supplier SKU', label='Supplier SKU')

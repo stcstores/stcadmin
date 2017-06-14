@@ -8,7 +8,27 @@
         <table class="new_product">
             {% csrf_token %}
             {{ form.as_table }}
+            <tr><td colspan="2" style="text-align: center;"><input type="submit" value="Create Product" style="width: 80%;"/></td></tr>
         </table>
-        <input type="submit">
     </form>
+{% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function() {
+    $('.new_product input, .new_product select, .new_product textarea').each(function(){
+        var label = $('label[for="'+$(this).attr('id')+'"]');
+        var row = $(this).closest('tr');
+        if ($(this).prop('required')) {
+            label.text(label.text().replace(':', '*:'));
+            row.css('background', '#DDD');
+        } else if ($(this).prop('name').startsWith('opt_')) {
+            row.css('background', '#e2edff');
+        } else {
+            label.css('color', '#555');
+        }
+
+    });
+});
+</script>
 {% endblock %}

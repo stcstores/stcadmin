@@ -14,18 +14,18 @@ class NewSingleProductForm(NewProductForm):
     department = fields.department
     price = fields.price
     purchase_price = fields.purchase_price
-    stock_level = fields.stock_level
+    package_type = fields.package_type
     vat_rate = fields.vat_rate
+    stock_level = fields.stock_level
+    brand = fields.brand
+    manufacturer = fields.manufacturer
     supplier = fields.supplier
     supplier_SKU = fields.supplier_SKU
     weight = fields.weight
     length = fields.length
     height = fields.height
     width = fields.width
-    package_type = fields.package_type
     location = fields.location
-    brand = fields.brand
-    manufacturer = fields.manufacturer
 
     def __init__(self, *args, **kwargs):
         super(NewSingleProductForm, self).__init__(*args, **kwargs)
