@@ -41,7 +41,7 @@ class NewSingleProductView(FormView):
         range_name = form.cleaned_data['title'].strip()
         range_id = CCAPI.create_range(range_name)
         self.range = CCAPI.get_range(range_id)
-        while self.range.id is not None and self.range.id == 0:
+        while self.range.id == 0:
             time.sleep(1)
             self.range = CCAPI.get_range(range_id)
         self.range = CCAPI.get_range(range_id)
