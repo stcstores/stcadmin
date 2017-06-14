@@ -5,9 +5,9 @@
 {% block page_title %}CCP New Product Success{% endblock %}
 
 {% block content %}
-    <h3>{{ product_range.name }} created successfully</h3>
+    <h3>"{{ product_range.name }}" created successfully</h3>
     <p>Range SKU: {{ product_range.sku}}</p>
-    <button><a href="{% ccp_product_range_page product.product_range.id %}" target="_blank">Go to Product Range</a></button>
+    <a href="{% ccp_product_range_page product_range.id %}" target="_blank"><button>Go to Product Range</button></a>
     <p>Product SKU: {{ product.sku}}</p>
-    <button><a href="{% ccp_product_page range_id product.id %}" target="_blank">Go to Product</a></button>
+    <a href="{% ccp_product_page product_range.id product.id %}" target="_blank"><button>Go to Product</button></a>
 {% endblock %}
