@@ -71,6 +71,6 @@ def update_stock_level(request):
     old_stock_level = request_data['old_stock_level']
     CCAPI.update_product_stock_level(
         product_id, new_stock_level, old_stock_level)
-    product = CCAPI.get_variation_by_id(product_id)
+    product = CCAPI.get_product(product_id)
     stock_level = product.stock_level
     return HttpResponse(stock_level)

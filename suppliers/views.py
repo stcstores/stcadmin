@@ -52,7 +52,6 @@ def edit_supplier(request, supplier_id):
 def supplier_search(request):
     if request.method == 'POST':
         search_string = request.POST['search_string']
-        print(len(search_string))
         if len(search_string) > 0:
             search_words = search_string.split(' ')
             query = reduce(operator.and_, (

@@ -1,5 +1,6 @@
 {% extends "cloud_commerce/base.html" %}
 {% load staticfiles %}
+{% load cloud_commerce_extras %}
 
 {% block additional_head %}
 <script src="{% static 'scripts/stock_manager.js' %}"></script>
@@ -8,16 +9,42 @@
 {% block page_title %}CCP Stock Manager{% endblock %}
 
 {% block content %}
-    <label for="stock_search">Search</label>
-    <input type="text" id="stock_search" name="stock_search">
-    <button id="stock_search_button">Search</button>
-    <table id="stock_search_result"></table>
+    <form method="GET" action="">
+        <label for="stock_search">Search</label>
+        <input type="text" id="stock_search" name="stock_search" value="{{ search_text }}">
+        <input type="submit" id="stock_search_button" value="Search" />
+    </form>
+    <table id="stock_search_result">
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Stock</th>
+                <td></td>
+            </tr>
+        </thead>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.sku }}</td>
+                    <td><a href="{% ccp_product_page product.range_id product.id %}" target="_blank">{{ product.name }}</a></td>
+                    <td>{{ product.locations|join:", "}}</td>
+                    <td><input id="stock_{{ product.id }}" type="text" value="{{ product.stock_level }}" /></td>
+                    <td><button id="update_{{ product.id }}" class="stock_update_button">Update</button></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
 
 {% block script %}
     <script>
-        var search_url = "{% url 'cloud_commerce_api:product_search' 'search_text' %}";
-        var get_stock_url = "{% url 'cloud_commerce_api:get_stock_for_product' %}";
-        var update_stock_url = "{% url 'cloud_commerce_api:update_stock_level' %}"
+        update_stock_url = "{% url 'cloud_commerce_api:update_stock_level' %}";
+        product_details = {
+            {% for product in products %}
+                '{{ product.id }}': {'stock_level': {{ product.stock_level }}},
+            {% endfor %}
+        }
     </script>
 {% endblock %}
