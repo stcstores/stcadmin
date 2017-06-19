@@ -21,6 +21,8 @@ def index(request):
     return render(request, 'cloud_commerce/index.html')
 
 
+@login_required(login_url=settings.LOGIN_URL)
+@user_passes_test(is_cloud_commerce_user)
 def new_product(request):
     return render(request, 'cloud_commerce/new_product.html')
 
