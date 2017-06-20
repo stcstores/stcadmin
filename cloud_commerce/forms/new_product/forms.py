@@ -1,5 +1,6 @@
 from django import forms
 from . import fields
+from . import widgets
 
 
 class NewProductForm(forms.Form):
@@ -79,6 +80,47 @@ class NewVariationProductForm(NewProductForm):
     def create_field(self, field):
         self.fields[field.title] = field.field
         if field.variable:
-            self.fields['variable_' + field.title] = forms.BooleanField()
+            self.fields['variable_' + field.title] = forms.BooleanField(
+                required=False)
         if field.variation:
-            self.fields['variation_' + field.title] = forms.BooleanField()
+            self.fields['variation_' + field.title] = forms.BooleanField(
+                required=False)
+
+
+class VariationChoicesForm(forms.Form):
+
+    def set_options(self, options):
+        for field in self.fields:
+            if field not in options:
+                print('Removeing: {}'.format(field))
+                self.fields.pop(field)
+        for option in options:
+            if option not in self.fields:
+                print('Creating: {}'.format(option))
+                self.fields[option] = forms.CharField(
+                    required=False, initial=self.data.get(option, ''),
+                    widget=widgets.ListWidget())
+
+
+class TempVariationForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super(TempVariationForm, self).__init__(*args, **kwargs)
+        for option, field in fields.option_fields:
+            choices = [
+                ('{}_unused'.format(option), 'Unused'.format(option)),
+                ('{}_variable'.format(option), 'Variable'.format(option)),
+                ('{}_variation'.format(option), 'Variation'.format(option))]
+            self.fields['opt_' + option] = forms.ChoiceField(
+                label=option, choices=choices, widget=forms.RadioSelect,
+                initial='{}_unused'.format(option))
+
+    def is_valid(self):
+        valid = super().is_valid()
+        if valid:
+            selected_options = []
+            for name, value in self.cleaned_data.items():
+                if 'opt_' in name and 'variation' in value:
+                    selected_options.append(self.fields[name].label)
+            self.cleaned_data['selected_options'] = selected_options
+        return valid

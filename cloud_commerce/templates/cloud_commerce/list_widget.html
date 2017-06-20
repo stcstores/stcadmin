@@ -1,0 +1,21 @@
+<div id="div_{{ id }}">
+    <input {{ flat_attrs }} id="{{ id }}" name="{{ name }}" value="{{ value }}" />
+    <script type="text/javascript">
+        $( document ).ready(function() {
+            var div = $("#div_{{ id }}");
+        var input = $("#{{ id }}");
+            var values = input.val().split("{{ separator }}");
+            console.log(values);
+            for (var i=0; i<values.length; i++) {
+                if (values[i] !== "") {
+                div.append("<input value=" + values[i] + " />");
+                }
+            }
+        });
+    </script>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>

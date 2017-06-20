@@ -23,7 +23,7 @@ urlpatterns = [
 
     url(
         r'^new_variation_product$',
-        views.NewVariationProductView.as_view(), name='new_variation_product'),
+        views.VariationFormWizard.as_view(), name='new_variation_product'),
 
     url(
         r'^sku_generator$',

@@ -1,1 +1,2 @@
-from . new_product import NewSingleProductForm, NewVariationProductForm
+from . new_product import NewSingleProductForm, NewVariationProductForm, \
+    VariationChoicesForm, TempVariationForm

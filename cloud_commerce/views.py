@@ -4,7 +4,10 @@ from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from . forms import NewSingleProductForm, NewVariationProductForm
+from formtools.wizard.views import SessionWizardView
+
+from . forms import NewSingleProductForm, NewVariationProductForm, \
+    VariationChoicesForm, TempVariationForm
 
 from stcadmin import settings
 
@@ -139,3 +142,44 @@ def new_product_success(request, product_range, product):
     return render(
         request, 'cloud_commerce/new_product_success.html',
         {'product_range': product_range, 'product': product})
+
+
+class VariationFormWizard(SessionWizardView):
+
+    template_name = 'cloud_commerce/variation_wizard.html'
+    form_list = [TempVariationForm, VariationChoicesForm]
+
+    def post(self, *args, **kwargs):
+        go_to_step = self.request.POST.get('wizard_goto_step', None)
+        form = self.get_form(data=self.request.POST, files=self.request.FILES)
+
+        current_index = self.get_step_index(self.steps.current)
+        goto_index = self.get_step_index(go_to_step)
+
+        if current_index > goto_index:
+            if form.is_valid():
+                self.storage.set_step_data(
+                    self.steps.current,
+                    self.process_step(form))
+                self.storage.set_step_files(
+                    self.steps.current,
+                    self.process_step_files(form))
+        return super().post(*args, **kwargs)
+
+    def done(self, form_list, **kwargs):
+        return new_product_success(self.request, self.range, self.product)
+
+    def get_form(self, step=None, data=None, files=None):
+        form = super().get_form(step, data, files)
+        if step is None:
+            step = self.steps.current
+        if step == '1':
+            option_form = self.get_form(
+                step='0',
+                data=self.storage.get_step_data('0'),
+                files=self.storage.get_step_files('0'))
+            if option_form.is_valid():
+                form.set_options(option_form.cleaned_data['selected_options'])
+            else:
+                raise Exception('Invalid Option Form')
+        return form
