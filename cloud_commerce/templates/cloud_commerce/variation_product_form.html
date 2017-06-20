@@ -18,7 +18,7 @@
                 {% ifnotequal field.name|slice:"0:9" 'variable_' %}
                 {% ifnotequal field.name|slice:"0:4" 'opt_' %}
                     <tr>
-                        <td>{{ field.label }}</td>
+                        <td><label for="{{ field.name }}">{{ field.label }}</label></td>
                         <td>{{ field }}</td>
                         <td>{% for var_field in form %}{% ifequal var_field.name 'variable_'|add:field.name %}{{ var_field }}{% endifequal %}{% endfor %}</td>
                     </tr>
@@ -28,35 +28,18 @@
                 {% endifnotequal %}{% endifnotequal %}{% endifnotequal %}
             {% endfor %}
         </table>
-
-        <table class="new_product">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Variable</th>
-                    <th>Variation</th>
-                </tr>
-            </thead>
-        {% for option in form.options %}
-            <tr>
-                <td>{{ option }}</td>
-                <td>
-                    {% for field in form %}
-                        {% ifequal field.name 'opt_variable_'|add:option %}
-                            {{ field }}
-                        {% endifequal %}
-                    {% endfor %}
-                </td>
-                <td>
-                    {% for field in form %}
-                        {% ifequal field.name 'opt_variation_'|add:option %}
-                            {{ field }}
-                        {% endifequal %}
-                    {% endfor %}
-                </td>
-            </tr>
+        <table class="variation_options_table">
+        {% for field in form %}
+        {% ifequal field.name|slice:"0:4" 'opt_' %}
+        <tr>
+            <td>{{ field.label }}</td>
+            {% for choice in field %}
+                <td>{{ choice }}</td>
+            {% endfor %}
+        </tr>
+        {% endifequal %}
         {% endfor %}
-            <tr><td colspan="2" style="text-align: center;"><input type="submit" value="Create Product" style="width: 80%;"/></td></tr>
+        <tr><td colspan="4" style="text-align: center;"><input type="submit" value="Create Product" style="width: 80%;"/></td></tr>
         </table>
     </form>
 {% endblock %}

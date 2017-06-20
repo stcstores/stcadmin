@@ -67,10 +67,13 @@ class NewVariationProductForm(NewProductForm):
     def create_fields(self):
         [self.create_field(field) for field in self.setup_fields]
         for option, field in fields.option_fields:
-            self.fields['opt_variable_' + option] = forms.BooleanField(
-                required=False)
-            self.fields['opt_variation_' + option] = forms.BooleanField(
-                required=False)
+            choices = [
+                ('{}_unused'.format(option), 'Unused'.format(option)),
+                ('{}_variable'.format(option), 'Variable'.format(option)),
+                ('{}_variation'.format(option), 'Variation'.format(option))]
+            self.fields['opt_' + option] = forms.ChoiceField(
+                label=option, choices=choices, widget=forms.RadioSelect,
+                initial='{}_unused'.format(option))
         self.options = [option for option, field in fields.option_fields]
 
     def create_field(self, field):

@@ -6,3 +6,7 @@
 .new_product tr input:required, .new_product tr select {
     border: solid 1px black;
 }
+
+.variation_options_table {
+    background: #e2edff;
+}
