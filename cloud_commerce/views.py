@@ -29,7 +29,6 @@ def new_product(request):
 
 
 class NewProductView(FormView):
-    template_name = 'cloud_commerce/new_product_form.html'
     success_url = reverse_lazy('cloud_commerce:index')
 
     def create_range(self, range_name, options):
@@ -63,6 +62,7 @@ class NewProductView(FormView):
 
 
 class NewSingleProductView(LoginRequiredMixin, NewProductView):
+    template_name = 'cloud_commerce/single_product_form.html'
     form_class = NewSingleProductForm
 
     def form_valid(self, form):
@@ -104,6 +104,7 @@ class NewSingleProductView(LoginRequiredMixin, NewProductView):
 
 
 class NewVariationProductView(LoginRequiredMixin, NewProductView):
+    template_name = 'cloud_commerce/variation_product_form.html'
     form_class = NewVariationProductForm
 
     def form_valid(self, form):

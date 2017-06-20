@@ -112,3 +112,12 @@ class OptionField:
 
 
 option_fields = [(option, OptionField(option)) for option in OPTIONS]
+
+
+class VariationField:
+
+    def __init__(self, title, field, variable=False, variation=False):
+        self.title = title
+        self.field = field
+        self.variable = variable
+        self.variation = variation

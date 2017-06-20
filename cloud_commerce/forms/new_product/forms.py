@@ -34,4 +34,48 @@ class NewSingleProductForm(NewProductForm):
 
 
 class NewVariationProductForm(NewProductForm):
-    pass
+
+    setup_fields = [
+        fields.VariationField('title', fields.title),
+        fields.VariationField('description', fields.description),
+        fields.VariationField('barcode', fields.barcode, variable=True),
+        fields.VariationField('department', fields.department),
+        fields.VariationField('price', fields.price, variable=True),
+        fields.VariationField(
+            'purchase_price', fields.purchase_price, variable=True),
+        fields.VariationField(
+            'package_type', fields.package_type, variable=True),
+        fields.VariationField('vat_rate', fields.vat_rate, variable=True),
+        fields.VariationField(
+            'stock_level', fields.stock_level, variable=True),
+        fields.VariationField('brand', fields.brand),
+        fields.VariationField('manufacturer', fields.manufacturer),
+        fields.VariationField('supplier', fields.supplier),
+        fields.VariationField(
+            'supplier_SKU', fields.supplier_SKU, variable=True),
+        fields.VariationField('weight', fields.weight, variable=True),
+        fields.VariationField('length', fields.length, variable=True),
+        fields.VariationField('height', fields.height, variable=True),
+        fields.VariationField('width', fields.width, variable=True),
+        fields.VariationField('location', fields.location, variable=True),
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super(NewVariationProductForm, self).__init__(*args, **kwargs)
+        self.create_fields()
+
+    def create_fields(self):
+        [self.create_field(field) for field in self.setup_fields]
+        for option, field in fields.option_fields:
+            self.fields['opt_variable_' + option] = forms.BooleanField(
+                required=False)
+            self.fields['opt_variation_' + option] = forms.BooleanField(
+                required=False)
+        self.options = [option for option, field in fields.option_fields]
+
+    def create_field(self, field):
+        self.fields[field.title] = field.field
+        if field.variable:
+            self.fields['variable_' + field.title] = forms.BooleanField()
+        if field.variation:
+            self.fields['variation_' + field.title] = forms.BooleanField()

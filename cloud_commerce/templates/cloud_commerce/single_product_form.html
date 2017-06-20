@@ -1,0 +1,12 @@
+{% extends "cloud_commerce/new_product_form.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<form method="POST">
+    <table class="new_product">
+        {% csrf_token %}
+        {{ form.as_table }}
+        <tr><td colspan="2" style="text-align: center;"><input type="submit" value="Create Product" style="width: 80%;"/></td></tr>
+    </table>
+</form>
+{% endblock %}

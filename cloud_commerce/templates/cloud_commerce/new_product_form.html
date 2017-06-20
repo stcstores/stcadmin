@@ -3,15 +3,6 @@
 
 {% block page_title %}New CCP Product{% endblock %}
 
-{% block content %}
-    <form method="POST">
-        <table class="new_product">
-            {% csrf_token %}
-            {{ form.as_table }}
-            <tr><td colspan="2" style="text-align: center;"><input type="submit" value="Create Product" style="width: 80%;"/></td></tr>
-        </table>
-    </form>
-{% endblock %}
 
 {% block script %}
 <script>
