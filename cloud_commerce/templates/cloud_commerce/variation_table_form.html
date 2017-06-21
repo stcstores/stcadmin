@@ -1,0 +1,18 @@
+{% extends "cloud_commerce/variation_wizard.html" %}
+
+{% block table_class %}new_product_formDELETETHIS{% endblock %}
+
+{% block formset %}
+    <tr>
+        {% for field in wizard.form.forms.0 %}
+            <th>{{ field.label }}</th>
+        {% endfor %}
+    </tr>
+    {% for form in wizard.form.forms %}
+        <tr>
+            {% for field in form %}
+                <td>{{ field }}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+{% endblock %}

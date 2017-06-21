@@ -3,16 +3,18 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 
 from formtools.wizard.views import SessionWizardView
 
 from . forms import NewSingleProductForm, NewVariationProductForm, \
-    VariationChoicesForm, TempVariationForm
+    VariationChoicesForm, TempVariationForm, VariationFormSet
 
 from stcadmin import settings
 
 from ccapi import CCAPI
 import time
+import itertools
 
 
 def is_cloud_commerce_user(user):
@@ -146,8 +148,17 @@ def new_product_success(request, product_range, product):
 
 class VariationFormWizard(SessionWizardView):
 
-    template_name = 'cloud_commerce/variation_wizard.html'
-    form_list = [TempVariationForm, VariationChoicesForm]
+    form_list = [
+        TempVariationForm, VariationChoicesForm, VariationFormSet]
+
+    TEMPLATES = {
+        '0': 'cloud_commerce/variation_form_setup.html',
+        '1': 'cloud_commerce/variation_form_setup.html',
+        '2': 'cloud_commerce/variation_table_form.html'}
+
+    def get_template_names(self):
+        print(self.steps.current)
+        return [self.TEMPLATES[self.steps.current]]
 
     def post(self, *args, **kwargs):
         go_to_step = self.request.POST.get('wizard_goto_step', None)
@@ -167,19 +178,31 @@ class VariationFormWizard(SessionWizardView):
         return super().post(*args, **kwargs)
 
     def done(self, form_list, **kwargs):
-        return new_product_success(self.request, self.range, self.product)
+        return HttpResponse(
+            str(self.get_cleaned_data_for_step('3')))
 
     def get_form(self, step=None, data=None, files=None):
         form = super().get_form(step, data, files)
         if step is None:
             step = self.steps.current
         if step == '1':
-            option_form = self.get_form(
-                step='0',
-                data=self.storage.get_step_data('0'),
-                files=self.storage.get_step_files('0'))
-            if option_form.is_valid():
-                form.set_options(option_form.cleaned_data['selected_options'])
-            else:
-                raise Exception('Invalid Option Form')
+            previous_data = self.get_cleaned_data_for_step('0')
+            form.set_options(previous_data['selected_options'])
+        if step == '2':
+            if data is None:
+                previous_data = self.get_cleaned_data_for_step('1')
+                variation_values = []
+                for key in previous_data:
+                    variation_values.append([
+                        (key, value) for value in previous_data[key]])
+                variations = list(itertools.product(*variation_values))
+                variation_data = []
+                for variation in variations:
+                    variation_data.append(
+                        {option: value for option, value in variation})
+                form.initial = variation_data
+                option_settings = self.get_cleaned_data_for_step('0')
+                for var_form in form.forms:
+                    var_form.set_variation_fields(
+                        option_settings['selected_options'])
         return form

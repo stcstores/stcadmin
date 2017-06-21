@@ -12,15 +12,13 @@
 {% block content %}
 <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
 <form action="" method="post">{% csrf_token %}
-<table class="new_productDELETETHIS">
+<table class="{% block table_class %}{% endblock %}">
 {{ wizard.management_form }}
 {% if wizard.form.forms %}
     {{ wizard.form.management_form }}
-    {% for form in wizard.form.forms %}
-        {{ form }}
-    {% endfor %}
+    {% block formset %}{% endblock %}
 {% else %}
-    {{ wizard.form }}
+    {% block form %}{% endblock %}
 {% endif %}
 </table>
 {% if wizard.steps.prev %}

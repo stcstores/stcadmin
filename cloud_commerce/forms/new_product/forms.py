@@ -1,4 +1,8 @@
 from django import forms
+from django.forms import formset_factory
+
+import json
+
 from . import fields
 from . import widgets
 
@@ -92,20 +96,27 @@ class VariationChoicesForm(forms.Form):
     def set_options(self, options):
         for field in self.fields:
             if field not in options:
-                print('Removeing: {}'.format(field))
                 self.fields.pop(field)
         for option in options:
             if option not in self.fields:
-                print('Creating: {}'.format(option))
                 self.fields[option] = forms.CharField(
                     required=False, initial=self.data.get(option, ''),
                     widget=widgets.ListWidget())
+
+    def clean(self):
+        cleaned_data = super().clean()
+        for key, value in cleaned_data.items():
+            if len(value) > 0:
+                cleaned_data[key] = json.loads(value)
+            else:
+                cleaned_data[key] = []
+        return cleaned_data
 
 
 class TempVariationForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
-        super(TempVariationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for option, field in fields.option_fields:
             choices = [
                 ('{}_unused'.format(option), 'Unused'.format(option)),
@@ -115,12 +126,28 @@ class TempVariationForm(forms.Form):
                 label=option, choices=choices, widget=forms.RadioSelect,
                 initial='{}_unused'.format(option))
 
-    def is_valid(self):
-        valid = super().is_valid()
-        if valid:
-            selected_options = []
-            for name, value in self.cleaned_data.items():
-                if 'opt_' in name and 'variation' in value:
-                    selected_options.append(self.fields[name].label)
-            self.cleaned_data['selected_options'] = selected_options
-        return valid
+    def clean(self):
+        cleaned_data = super().clean()
+        selected_options = []
+        variable_options = []
+        for key, value in cleaned_data.items():
+            if 'opt_' in key:
+                if 'variation' in value:
+                    selected_options.append(self.fields[key].label)
+                elif 'variable' in value:
+                    variable_options.append(self.fields[key])
+        cleaned_data['selected_options'] = selected_options
+        return cleaned_data
+
+
+class VariationForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def set_variation_fields(self, variations):
+        for variation in variations:
+            self.fields[variation] = forms.CharField()
+
+
+VariationFormSet = formset_factory(VariationForm, extra=0)

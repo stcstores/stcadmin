@@ -1,2 +1,2 @@
 from . forms import NewSingleProductForm, NewVariationProductForm, \
-    VariationChoicesForm, TempVariationForm
+    VariationChoicesForm, TempVariationForm, VariationFormSet
