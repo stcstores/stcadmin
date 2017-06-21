@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 
 
-class ListWidget(forms.HiddenInput):
+class ListWidget(forms.TextInput):
 
     list_separator = ';'
 
@@ -15,6 +15,5 @@ class ListWidget(forms.HiddenInput):
             'cloud_commerce/list_widget.html',
             {
                 'id': attrs['id'], 'attrs': flat_attrs, 'value': value,
-                'name': name, 'separator': self.list_separator})
-        print(html)
+                'name': name})
         return mark_safe(html)
