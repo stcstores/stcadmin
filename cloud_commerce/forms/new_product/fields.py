@@ -1,6 +1,11 @@
+from inspect import isclass
+import json
+
 from django import forms
+from django.core.exceptions import ValidationError
 
 from stcadmin import settings
+from . import widgets
 
 from ccapi import CCAPI
 
@@ -15,30 +20,37 @@ class MetaFormFields(type):
             yield field
 
 
-class MetaFormField(type):
-
-    @property
-    def is_required(self):
-        if len(self.required_message) > 0:
-            return True
-        return False
-
-
-class FormField(metaclass=MetaFormField):
+class FormField(forms.Field):
 
     label = None
     name = None
     field = None
     variable = False
     variation = False
-    option = False
     help_text = None
     placeholder = None
     html_class = None
     size = 50
     initial = None
     required_message = ''
-    option = False
+
+    def __init__(self, *args, **kwargs):
+        if self.is_required:
+            kwargs['required'] = True
+            self.error_messages = {'required': self.required_message}
+        else:
+            kwargs['required'] = False
+        if isclass(self.widget):
+            self.widget = self.get_widget()
+        kwargs['label'] = self.label
+        kwargs['help_text'] = self.help_text
+        super().__init__(*args, **kwargs)
+
+    @property
+    def is_required(self):
+        if len(self.required_message) > 0:
+            return True
+        return False
 
     @classmethod
     def get_widget(cls):
@@ -49,78 +61,109 @@ class FormField(metaclass=MetaFormField):
             attrs['class'] = cls.html_class
         if cls.size is not None:
             attrs['size'] = cls.size
-        return cls.widget_class(attrs=attrs)
-
-    @classmethod
-    def field(cls):
-        error_messages = None
-        if cls.is_required:
-            error_messages = {'required': cls.required_message}
-        widget = cls.get_widget()
-        field = cls.form_class(
-            required=cls.is_required, label=cls.label,
-            error_messages=error_messages,
-            widget=widget, initial=cls.initial,
-            help_text=cls.help_text)
-        return field
+        return cls.widget(attrs=attrs)
 
 
-class ChoiceField(FormField):
+class ChoiceField(forms.ChoiceField):
+    variable = False
+    variation = False
 
-    form_class = forms.ChoiceField
-    widget_class = forms.Select
-
-    @classmethod
-    def get_widget(cls):
-        return cls.widget_class()
-
-    @classmethod
-    def field(self):
-        return self.form_class(
-            choices=self.get_choices(), label=self.label,
-            widget=self.get_widget())
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = self.get_choices()
+        kwargs['label'] = self.label
+        super().__init__(*args, **kwargs)
 
 
-class NumberField(FormField):
+class NumberField(FormField, forms.IntegerField):
 
-    form_class = forms.IntegerField
-    widget_class = forms.NumberInput
-
-
-class PriceField(FormField):
-    form_class = forms.FloatField
-    widget_class = forms.NumberInput
+    def __init__(self, *args, **kwargs):
+        kwargs['initial'] = 0
+        super().__init__(*args, **kwargs)
 
 
-class TextField(FormField):
-    form_class = forms.CharField
-    widget_class = forms.TextInput
+class PriceField(FormField, forms.FloatField):
+
+    def __init__(self, *args, **kwargs):
+        kwargs['initial'] = '0.00'
+        super().__init__(*args, **kwargs)
 
 
-class TextareaField(FormField):
-    form_class = forms.CharField
-    widget_class = forms.Textarea
+class TextField(FormField, forms.CharField):
+    pass
+
+
+class TextareaField(FormField, forms.CharField):
+    widget = forms.Textarea
 
 
 class OptionField(TextField):
 
-    option = True
+    required = False
     variable = True
     variation = True
+    size = 50
 
-    def __init__(self, option):
-        self.label = option
-        self.name = 'opt_{}'.format(option)
+    def __init__(self, *args, **kwargs):
+        if 'size' in kwargs:
+            self.size = kwargs.pop('size')
+        self.widget = forms.TextInput({'size': self.size})
+        kwargs['label'] = self.option
+        super().__init__(*args, **kwargs)
 
-    def select_field(self):
-        choices = [
-            ('{}_unused'.format(self.name), 'Unused'.format(self.name)),
-            ('{}_variable'.format(self.name), 'Variable'.format(self.name)),
-            ('{}_variation'.format(self.name), 'Variation'.format(self.name))]
-        field = forms.ChoiceField(
-            label=self.label, widget=forms.RadioSelect,
-            choices=choices, initial='{}_unused'.format(self.name))
-        return field
+
+class OptionSelectionField(forms.ChoiceField):
+
+    widget = forms.RadioSelect
+
+    def __init__(self, *args, **kwargs):
+        kwargs['label'] = self.option
+        kwargs['choices'] = self.get_choices()
+        kwargs['initial'] = kwargs['choices'][0][0]
+        super().__init__(*args, **kwargs)
+
+    def get_choices(self):
+        return [
+            ('unused'.format(self.name), 'Unused'),
+            ('variable'.format(self.name), 'Variable'),
+            ('variation'.format(self.name), 'Variation')]
+
+
+class ListField(forms.CharField):
+
+    widget = widgets.ListWidget
+    minimum = 0
+    maximum = 0
+    required = False
+
+    def validate(self, value):
+        super().validate(value)
+        try:
+            json_value = json.loads(value)
+        except ValueError:
+            raise ValidationError('Not valid JSON.')
+        if not isinstance(json_value, list):
+            raise ValidationError('Not valid JSON list.')
+        if self.minimum > 0 and len(json_value) < self.minimum:
+            raise ValidationError(
+                'At least {} value(s) required'.format(self.minimum))
+        if self.maximum > 0 and len(json_value) > self.maximum:
+            raise ValidationError(
+                'No more than {} values can be supplied'.format(self.maximum))
+
+    def clean(self, value):
+        value = super().clean(value)
+        return json.loads(value)
+
+
+class VariationOptionValueField(ListField):
+
+    initial = ''
+    minimum = 2
+
+    def __init__(self, *args, **kwargs):
+        kwargs['label'] = self.option
+        kwargs['initial'] = ''
+        super().__init__(*args, **kwargs)
 
 
 class Title(TextField):
@@ -131,6 +174,7 @@ class Title(TextField):
 
 
 class Description(TextareaField):
+    required = False
     label = 'Description'
     name = 'description'
     placeholder = 'Description. Will default to title if left blank'
@@ -160,7 +204,7 @@ class Price(PriceField):
     label = 'Price (ex VAT)'
     name = 'price'
     required_message = "Please supply a price"
-    placeholder = 'Price without shipping or VAT'
+    help_text = 'Price without shipping or VAT'
     variable = True
 
 
@@ -269,6 +313,23 @@ class Manufacturer(TextField):
     placeholder = 'Manufacturer'
 
 
+def option_field_factory(option):
+    return type('{}OptionField'.format(option), (OptionField, ), {
+        'option': option, 'name': 'opt_{}'.format(option), 'label': option})
+
+
+def option_selection_field_factory(option):
+    return type('{}SelectionField'.format(option), (OptionSelectionField, ), {
+        'option': option, 'name': 'opt_{}'.format(option), 'label': option})
+
+
+def variation_option_value_field_factory(option):
+    return type(
+        '{}VariationOptionValueField'.format(option),
+        (VariationOptionValueField, ),
+        {'option': option, 'name': 'opt_{}'.format(option), 'label': option})
+
+
 class FormFields(metaclass=MetaFormFields):
     fields = [
         Title,
@@ -291,10 +352,15 @@ class FormFields(metaclass=MetaFormFields):
         Manufacturer,
         ]
 
-    @staticmethod
-    def get_options():
-        return [
-            OptionField(option.option_name) for option in
-            CCAPI.get_product_options() if option.exclusions['tesco'] is False]
+    option_names = [
+        option.option_name for option in CCAPI.get_product_options()
+        if option.exclusions['tesco'] is False]
 
-    fields += get_options.__func__()
+    option_fields = [option_field_factory(option) for option in option_names]
+
+    select_option_fields = [
+        option_selection_field_factory(option) for option in option_names]
+
+    option_value_fields = [
+        variation_option_value_field_factory(option) for
+        option in option_names]

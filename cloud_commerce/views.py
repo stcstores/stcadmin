@@ -149,11 +149,11 @@ def new_product_success(request, product_range, product):
 class VariationFormWizard(SessionWizardView):
 
     form_list = [
-        TempVariationForm, VariationChoicesForm, VariationFormSet]
+        NewVariationProductForm, VariationChoicesForm, VariationFormSet]
 
     TEMPLATES = {
         '0': 'cloud_commerce/variation_form_setup.html',
-        '1': 'cloud_commerce/variation_form_setup.html',
+        '1': 'cloud_commerce/variation_option_value_form.html',
         '2': 'cloud_commerce/variation_table_form.html'}
 
     def get_template_names(self):
@@ -191,17 +191,9 @@ class VariationFormWizard(SessionWizardView):
         if step == '2':
             if data is None:
                 previous_data = self.get_cleaned_data_for_step('1')
-                variation_values = []
-                for key in previous_data:
-                    variation_values.append([
-                        (key, value) for value in previous_data[key]])
-                variations = list(itertools.product(*variation_values))
-                variation_data = []
-                for variation in variations:
-                    variation_data.append(
-                        {option: value for option, value in variation})
-                form.initial = variation_data
+                variation_data = previous_data['variations']
                 option_settings = self.get_cleaned_data_for_step('0')
+                form.initial = variation_data
                 for var_form in form.forms:
                     var_form.set_variation_fields(
                         option_settings['selected_options'])

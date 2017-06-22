@@ -1,6 +1,7 @@
 {% extends "home/base.html" %}
 {% load staticfiles %}
 {% block additional_head %}
+{{ block.super }}
 <link rel="stylesheet" href="{% static 'css/cloud_commerce.css' %}">
 {% endblock %}
 {% block page_title %}Cloud Commerce{% endblock %}
