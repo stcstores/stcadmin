@@ -31,7 +31,7 @@ class NewVariationProductForm(NewProductForm):
 
     def create_field(self, field):
         self.fields[field.name] = field()
-        if field.variable:
+        if field.variable is True and field.must_vary is False:
             self.fields['variable_' + field.name] = forms.BooleanField(
                 required=False)
         if field.variation:

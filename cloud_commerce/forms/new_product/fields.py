@@ -1,194 +1,35 @@
-from inspect import isclass
-import json
-
-from django import forms
-from django.core.exceptions import ValidationError
+from ccapi import CCAPI
 
 from stcadmin import settings
-from . import widgets
-
-from ccapi import CCAPI
+from . import fieldtypes
 
 
 CCAPI.create_session(settings.CC_LOGIN, settings.CC_PWD)
 
 
-class MetaFormFields(type):
-
-    def __iter__(self):
-        for field in self.fields:
-            yield field
-
-
-class FormField(forms.Field):
-
-    label = None
-    name = None
-    field = None
-    variable = False
-    variation = False
-    help_text = None
-    placeholder = None
-    html_class = None
-    size = 50
-    initial = None
-    required_message = ''
-
-    def __init__(self, *args, **kwargs):
-        if self.is_required:
-            kwargs['required'] = True
-            self.error_messages = {'required': self.required_message}
-        else:
-            kwargs['required'] = False
-        if isclass(self.widget):
-            self.widget = self.get_widget()
-        kwargs['label'] = self.label
-        kwargs['help_text'] = self.help_text
-        super().__init__(*args, **kwargs)
-
-    @property
-    def is_required(self):
-        if len(self.required_message) > 0:
-            return True
-        return False
-
-    @classmethod
-    def get_widget(cls):
-        attrs = {}
-        if cls.placeholder is not None:
-            attrs['placeholder'] = cls.placeholder
-        if cls.html_class is not None:
-            attrs['class'] = cls.html_class
-        if cls.size is not None:
-            attrs['size'] = cls.size
-        return cls.widget(attrs=attrs)
-
-
-class ChoiceField(forms.ChoiceField):
-    variable = False
-    variation = False
-
-    def __init__(self, *args, **kwargs):
-        kwargs['choices'] = self.get_choices()
-        kwargs['label'] = self.label
-        super().__init__(*args, **kwargs)
-
-
-class NumberField(FormField, forms.IntegerField):
-
-    def __init__(self, *args, **kwargs):
-        kwargs['initial'] = 0
-        super().__init__(*args, **kwargs)
-
-
-class PriceField(FormField, forms.FloatField):
-
-    def __init__(self, *args, **kwargs):
-        kwargs['initial'] = '0.00'
-        super().__init__(*args, **kwargs)
-
-
-class TextField(FormField, forms.CharField):
-    pass
-
-
-class TextareaField(FormField, forms.CharField):
-    widget = forms.Textarea
-
-
-class OptionField(TextField):
-
-    required = False
-    variable = True
-    variation = True
-    size = 50
-
-    def __init__(self, *args, **kwargs):
-        if 'size' in kwargs:
-            self.size = kwargs.pop('size')
-        self.widget = forms.TextInput({'size': self.size})
-        kwargs['label'] = self.option
-        super().__init__(*args, **kwargs)
-
-
-class OptionSelectionField(forms.ChoiceField):
-
-    widget = forms.RadioSelect
-
-    def __init__(self, *args, **kwargs):
-        kwargs['label'] = self.option
-        kwargs['choices'] = self.get_choices()
-        kwargs['initial'] = kwargs['choices'][0][0]
-        super().__init__(*args, **kwargs)
-
-    def get_choices(self):
-        return [
-            ('unused'.format(self.name), 'Unused'),
-            ('variable'.format(self.name), 'Variable'),
-            ('variation'.format(self.name), 'Variation')]
-
-
-class ListField(forms.CharField):
-
-    widget = widgets.ListWidget
-    minimum = 0
-    maximum = 0
-    required = False
-
-    def validate(self, value):
-        super().validate(value)
-        try:
-            json_value = json.loads(value)
-        except ValueError:
-            raise ValidationError('Not valid JSON.')
-        if not isinstance(json_value, list):
-            raise ValidationError('Not valid JSON list.')
-        if self.minimum > 0 and len(json_value) < self.minimum:
-            raise ValidationError(
-                'At least {} value(s) required'.format(self.minimum))
-        if self.maximum > 0 and len(json_value) > self.maximum:
-            raise ValidationError(
-                'No more than {} values can be supplied'.format(self.maximum))
-
-    def clean(self, value):
-        value = super().clean(value)
-        return json.loads(value)
-
-
-class VariationOptionValueField(ListField):
-
-    initial = ''
-    minimum = 2
-
-    def __init__(self, *args, **kwargs):
-        kwargs['label'] = self.option
-        kwargs['initial'] = ''
-        super().__init__(*args, **kwargs)
-
-
-class Title(TextField):
+class Title(fieldtypes.TextField):
     label = 'Title'
     name = 'title'
     required_message = "Please supply a range title"
     placeholder = 'Title'
 
 
-class Description(TextareaField):
+class Description(fieldtypes.TextareaField):
     required = False
     label = 'Description'
     name = 'description'
     placeholder = 'Description. Will default to title if left blank'
 
 
-class Barcode(TextField):
+class Barcode(fieldtypes.TextField):
     label = 'Barcode'
     name = 'barcode'
     required_message = "Please supply a barcode"
     placeholder = 'Barcode'
-    variable = True
+    must_vary = True
 
 
-class Department(ChoiceField):
+class Department(fieldtypes.ChoiceField):
     label = 'Department'
     name = 'department'
     placeholder = 'Description. Will default to title if left blank'
@@ -200,7 +41,7 @@ class Department(ChoiceField):
             CCAPI.get_option_values("34325")]
 
 
-class Price(PriceField):
+class Price(fieldtypes.PriceField):
     label = 'Price (ex VAT)'
     name = 'price'
     required_message = "Please supply a price"
@@ -208,7 +49,7 @@ class Price(PriceField):
     variable = True
 
 
-class PurchasePrice(PriceField):
+class PurchasePrice(fieldtypes.PriceField):
     label = 'Purchase Price'
     name = 'purchase_price'
     initial = 0,
@@ -216,7 +57,7 @@ class PurchasePrice(PriceField):
     variable = True
 
 
-class StockLevel(NumberField):
+class StockLevel(fieldtypes.NumberField):
     label = 'Stock Level'
     name = 'stock_level'
     initial = 0
@@ -224,7 +65,7 @@ class StockLevel(NumberField):
     variable = True
 
 
-class VATRate(ChoiceField):
+class VATRate(fieldtypes.ChoiceField):
     label = 'VAT Rate'
     name = 'vat_rate'
     variable = True
@@ -235,7 +76,7 @@ class VATRate(ChoiceField):
             (5, 'Normal Rate 20%'), (2, 'Reduced 5%'), (1, 'VAT Exempt')])
 
 
-class Supplier(ChoiceField):
+class Supplier(fieldtypes.ChoiceField):
     label = 'Supplier'
     name = 'supplier'
 
@@ -248,39 +89,39 @@ class Supplier(ChoiceField):
         return suppliers
 
 
-class SupplierSKU(TextField):
+class SupplierSKU(fieldtypes.TextField):
     label = 'Supplier SKU'
     name = 'supplier_SKU'
     placeholder = 'Supplier SKU'
     variable = True
 
 
-class Weight(NumberField):
+class Weight(fieldtypes.NumberField):
     label = 'Weight (Grams)'
     name = 'weight'
     required_message = "Please supply a weight"
     variable = True
 
 
-class Height(NumberField):
+class Height(fieldtypes.NumberField):
     label = 'Height (Milimeters)'
     name = 'height'
     variable = True
 
 
-class Width(NumberField):
+class Width(fieldtypes.NumberField):
     label = 'Width (Milimeters)'
     name = 'width'
     variable = True
 
 
-class Length(NumberField):
+class Length(fieldtypes.NumberField):
     label = 'Length (Milimeters)'
     name = 'length'
     variable = True
 
 
-class PackageType(ChoiceField):
+class PackageType(fieldtypes.ChoiceField):
     label = 'Package Type'
     name = 'package_type'
     variable = True
@@ -292,21 +133,21 @@ class PackageType(ChoiceField):
             for service in CCAPI.get_option_values("33852")]
 
 
-class Location(TextField):
+class Location(fieldtypes.TextField):
     label = 'Location'
     name = 'location'
     placeholder = 'Location'
     variable = True
 
 
-class Brand(TextField):
+class Brand(fieldtypes.TextField):
     label = 'Brand'
     name = 'brand'
     required_message = "Please supply a brand"
     placeholder = 'Brand'
 
 
-class Manufacturer(TextField):
+class Manufacturer(fieldtypes.TextField):
     label = 'Manufacturer'
     name = 'manufacturer'
     required_message = "Please supply a manufacturer",
@@ -314,20 +155,29 @@ class Manufacturer(TextField):
 
 
 def option_field_factory(option):
-    return type('{}OptionField'.format(option), (OptionField, ), {
-        'option': option, 'name': 'opt_{}'.format(option), 'label': option})
+    return type(
+        '{}OptionField'.format(option), (fieldtypes.OptionField, ),
+        {'option': option, 'name': 'opt_{}'.format(option), 'label': option})
 
 
 def option_selection_field_factory(option):
-    return type('{}SelectionField'.format(option), (OptionSelectionField, ), {
-        'option': option, 'name': 'opt_{}'.format(option), 'label': option})
+    return type(
+        '{}SelectionField'.format(option), (fieldtypes.OptionSelectionField, ),
+        {'option': option, 'name': 'opt_{}'.format(option), 'label': option})
 
 
 def variation_option_value_field_factory(option):
     return type(
         '{}VariationOptionValueField'.format(option),
-        (VariationOptionValueField, ),
+        (fieldtypes.VariationOptionValueField, ),
         {'option': option, 'name': 'opt_{}'.format(option), 'label': option})
+
+
+class MetaFormFields(type):
+
+    def __iter__(self):
+        for field in self.fields:
+            yield field
 
 
 class FormFields(metaclass=MetaFormFields):
@@ -335,11 +185,11 @@ class FormFields(metaclass=MetaFormFields):
         Title,
         Description,
         Barcode,
-        Department,
         Price,
         PurchasePrice,
         StockLevel,
         VATRate,
+        Department,
         Supplier,
         SupplierSKU,
         Weight,
