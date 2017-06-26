@@ -25,7 +25,9 @@ class NewVariationProductForm(NewProductForm):
         self.create_fields()
 
     def create_fields(self):
-        [self.create_field(field) for field in FormFields.fields]
+        for field in FormFields.fields:
+            if not field.must_vary:
+                self.create_field(field)
         for field in FormFields.select_option_fields:
             self.fields[field.name] = field()
 
@@ -42,13 +44,17 @@ class NewVariationProductForm(NewProductForm):
         cleaned_data = super().clean()
         selected_options = []
         variable_options = []
+        for field in FormFields.fields:
+            if field.variable and cleaned_data['variable_' + field.name]:
+                variable_options.append(field.name)
         for key, value in cleaned_data.items():
             if 'opt_' in key:
                 if value == 'variation':
-                    selected_options.append(self.fields[key].label)
+                    selected_options.append(self.fields[key].name)
                 elif value == 'variable':
-                    variable_options.append(self.fields[key].label)
+                    variable_options.append(self.fields[key].name)
         cleaned_data['selected_options'] = selected_options
+        cleaned_data['selected_variables'] = variable_options
         return cleaned_data
 
 
@@ -63,7 +69,7 @@ class VariationChoicesForm(forms.Form):
 
     def set_options(self, options):
         for field in FormFields.option_value_fields:
-            if field.label in options:
+            if field.name in options:
                 self.fields[field.name] = field()
 
     def clean(self):
@@ -86,12 +92,16 @@ class VariationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def set_variation_fields(self, variations):
-        print(variations)
+    def set_variation_fields(self, variations, variables):
         for field in FormFields.option_fields:
-            print(field.label)
-            if field.label in variations:
-                self.fields[field.name] = field(size=5)
+            if field.name in variations:
+                self.fields[field.name] = field(size=15)
+        for field in FormFields.variable_fields:
+            if field.name in variables or field.must_vary:
+                self.fields[field.name] = field()
+        for field in FormFields.option_fields:
+            if field.name in variables:
+                self.fields[field.name] = field(size=15)
 
 
 VariationFormSet = formset_factory(VariationForm, extra=0)

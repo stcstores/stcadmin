@@ -14,7 +14,6 @@ from stcadmin import settings
 
 from ccapi import CCAPI
 import time
-import itertools
 
 
 def is_cloud_commerce_user(user):
@@ -190,11 +189,12 @@ class VariationFormWizard(SessionWizardView):
             form.set_options(previous_data['selected_options'])
         if step == '2':
             if data is None:
-                previous_data = self.get_cleaned_data_for_step('1')
-                variation_data = previous_data['variations']
-                option_settings = self.get_cleaned_data_for_step('0')
-                form.initial = variation_data
+                variation_data = self.get_cleaned_data_for_step('1')
+                variations = variation_data['variations']
+                form.initial = variations
+                setup_data = self.get_cleaned_data_for_step('0')
                 for var_form in form.forms:
                     var_form.set_variation_fields(
-                        option_settings['selected_options'])
+                        setup_data['selected_options'],
+                        setup_data['selected_variables'])
         return form

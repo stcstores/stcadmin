@@ -202,6 +202,9 @@ class FormFields(metaclass=MetaFormFields):
         Manufacturer,
         ]
 
+    variable_fields = [
+        field for field in fields if field.variable or field.must_vary]
+
     option_names = [
         option.option_name for option in CCAPI.get_product_options()
         if option.exclusions['tesco'] is False]
