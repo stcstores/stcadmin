@@ -189,12 +189,25 @@ class VariationFormWizard(SessionWizardView):
             form.set_options(previous_data['selected_options'])
         if step == '2':
             if data is None:
-                variation_data = self.get_cleaned_data_for_step('1')
-                variations = variation_data['variations']
-                form.initial = variations
-                setup_data = self.get_cleaned_data_for_step('0')
+                selected_options = self.get_selected_options()
+                selected_variables = self.get_selected_variables()
+                form.initial = self.initial_for_variation_table_form()
                 for var_form in form.forms:
                     var_form.set_variation_fields(
-                        setup_data['selected_options'],
-                        setup_data['selected_variables'])
+                        selected_options, selected_variables)
         return form
+
+    def get_selected_options(self):
+        return self.get_cleaned_data_for_step('0')['selected_options']
+
+    def get_selected_variables(self):
+        return self.get_cleaned_data_for_step('0')['selected_variables']
+
+    def get_variations(self):
+        return self.get_cleaned_data_for_step('1')['variations']
+
+    def initial_for_variation_table_form(self):
+        selected_variables = self.get_selected_variables()
+        variations = self.get_variations()
+        return [
+            {**variation, **selected_variables} for variation in variations]

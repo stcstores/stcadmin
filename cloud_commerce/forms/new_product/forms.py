@@ -43,16 +43,16 @@ class NewVariationProductForm(NewProductForm):
     def clean(self):
         cleaned_data = super().clean()
         selected_options = []
-        variable_options = []
+        variable_options = {}
         for field in FormFields.fields:
             if field.variable and cleaned_data['variable_' + field.name]:
-                variable_options.append(field.name)
-        for key, value in cleaned_data.items():
-            if 'opt_' in key:
-                if value == 'variation':
-                    selected_options.append(self.fields[key].name)
-                elif value == 'variable':
-                    variable_options.append(self.fields[key].name)
+                variable_options[field.name] = cleaned_data[field.name]
+        for field in FormFields.option_fields:
+            variation_setting = cleaned_data[field.name]
+            if variation_setting == 'variation':
+                selected_options.append(field.name)
+            elif variation_setting == 'variable':
+                variable_options[field.name] = ''
         cleaned_data['selected_options'] = selected_options
         cleaned_data['selected_variables'] = variable_options
         return cleaned_data
