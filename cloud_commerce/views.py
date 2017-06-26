@@ -156,7 +156,6 @@ class VariationFormWizard(SessionWizardView):
         '2': 'cloud_commerce/variation_table_form.html'}
 
     def get_template_names(self):
-        print(self.steps.current)
         return [self.TEMPLATES[self.steps.current]]
 
     def post(self, *args, **kwargs):
@@ -169,11 +168,9 @@ class VariationFormWizard(SessionWizardView):
         if current_index > goto_index:
             if form.is_valid():
                 self.storage.set_step_data(
-                    self.steps.current,
-                    self.process_step(form))
+                    self.steps.current, self.process_step(form))
                 self.storage.set_step_files(
-                    self.steps.current,
-                    self.process_step_files(form))
+                    self.steps.current, self.process_step_files(form))
         return super().post(*args, **kwargs)
 
     def done(self, form_list, **kwargs):
@@ -185,8 +182,7 @@ class VariationFormWizard(SessionWizardView):
         if step is None:
             step = self.steps.current
         if step == '1':
-            previous_data = self.get_cleaned_data_for_step('0')
-            form.set_options(previous_data['selected_options'])
+            form.set_options(self.get_selected_options())
         if step == '2':
             if data is not None:
                 data = self.remove_unused_variations(data)
@@ -199,30 +195,33 @@ class VariationFormWizard(SessionWizardView):
         return form
 
     def remove_unused_variations(self, data):
+        forms = self.get_variation_values_from_variation_table_data(data)
+        existant_variations = self.get_variations()
+        fields_to_delete = []
+        for form_number, variations in forms.items():
+            if not self.variation_required(variations, existant_variations):
+                fields_to_delete += [
+                    item for item in data if item[2] == form_number]
+        return {key: value for key, value in data.items()
+                if key not in fields_to_delete}
+
+    def get_variation_values_from_variation_table_data(self, data):
         selected_options = self.get_selected_options()
         forms = {}
         for key, value in data.items():
             if key[0] == '2' and key[2].isdigit():
                 form_number = key.split('-')[1]
-                field = key.split('-')[2]
-                if field in selected_options:
-                    if form_number not in forms:
-                        forms[form_number] = {}
-                    forms[form_number][field] = value
-        print(forms)
-        existant_variations = self.get_variations()
-        fields_to_delete = []
-        for form_number, variations in forms.items():
-            for existing_variation in existant_variations:
-                shared_items = set(
-                    variations.items()) & set(existing_variation.items())
-                if len(shared_items) == len(variations):
-                    fields_to_delete += [
-                        item for item in data if item[2] == form_number]
-                    break
-        return {
-            key: value for key, value in data.items() if key not in
-            fields_to_delete}
+                forms[form_number] = {
+                    field: value for field in selected_options}
+        return forms
+
+    def variation_required(self, form_variations, existant_variations):
+        for existing_variation in existant_variations:
+            shared_items = set(
+                form_variations.items()) & set(existing_variation.items())
+            if len(shared_items) == len(form_variations):
+                return True
+        return False
 
     def get_selected_options(self):
         return self.get_cleaned_data_for_step('0')['selected_options']
