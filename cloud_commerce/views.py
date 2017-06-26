@@ -188,14 +188,41 @@ class VariationFormWizard(SessionWizardView):
             previous_data = self.get_cleaned_data_for_step('0')
             form.set_options(previous_data['selected_options'])
         if step == '2':
-            if data is None:
-                selected_options = self.get_selected_options()
-                selected_variables = self.get_selected_variables()
-                form.initial = self.initial_for_variation_table_form()
-                for var_form in form.forms:
-                    var_form.set_variation_fields(
-                        selected_options, selected_variables)
+            if data is not None:
+                data = self.remove_unused_variations(data)
+            selected_options = self.get_selected_options()
+            selected_variables = self.get_selected_variables()
+            form.initial = self.initial_for_variation_table_form()
+            for var_form in form.forms:
+                var_form.set_variation_fields(
+                    selected_options, selected_variables)
         return form
+
+    def remove_unused_variations(self, data):
+        selected_options = self.get_selected_options()
+        forms = {}
+        for key, value in data.items():
+            if key[0] == '2' and key[2].isdigit():
+                form_number = key.split('-')[1]
+                field = key.split('-')[2]
+                if field in selected_options:
+                    if form_number not in forms:
+                        forms[form_number] = {}
+                    forms[form_number][field] = value
+        print(forms)
+        existant_variations = self.get_variations()
+        fields_to_delete = []
+        for form_number, variations in forms.items():
+            for existing_variation in existant_variations:
+                shared_items = set(
+                    variations.items()) & set(existing_variation.items())
+                if len(shared_items) == len(variations):
+                    fields_to_delete += [
+                        item for item in data if item[2] == form_number]
+                    break
+        return {
+            key: value for key, value in data.items() if key not in
+            fields_to_delete}
 
     def get_selected_options(self):
         return self.get_cleaned_data_for_step('0')['selected_options']

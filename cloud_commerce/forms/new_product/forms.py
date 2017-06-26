@@ -93,15 +93,21 @@ class VariationForm(forms.Form):
         super().__init__(*args, **kwargs)
 
     def set_variation_fields(self, variations, variables):
-        for field in FormFields.option_fields:
-            if field.name in variations:
-                self.fields[field.name] = field(size=15)
-        for field in FormFields.variable_fields:
-            if field.name in variables or field.must_vary:
-                self.fields[field.name] = field()
-        for field in FormFields.option_fields:
-            if field.name in variables:
-                self.fields[field.name] = field(size=15)
+        self.variation_fields = [
+            field for field in FormFields.option_fields if field.name in
+            variations]
+        self.variable_fields = [
+            field for field in FormFields.variable_fields if field.name in
+            variables or field.must_vary]
+        self.variable_option_fields = [
+            field for field in FormFields.option_fields if field.name in
+            variables]
+        for field in self.variation_fields:
+            self.fields[field.name] = field()
+        for field in self.variable_fields:
+            self.fields[field.name] = field()
+        for field in self.variable_option_fields:
+            self.fields[field.name] = field()
 
 
 VariationFormSet = formset_factory(VariationForm, extra=0)
