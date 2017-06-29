@@ -28,4 +28,9 @@ urlpatterns = [
     url(
         r'^sku_generator$',
         views.sku_generator, name='sku_generator'),
+
+    url(
+        r'^product_range/(?P<range_id>[0-9]+)/$',
+        views.product_range, name='product_range'),
+
 ]

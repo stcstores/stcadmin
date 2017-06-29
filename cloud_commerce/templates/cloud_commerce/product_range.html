@@ -1,0 +1,32 @@
+{% extends "cloud_commerce/base.html" %}
+{% load staticfiles %}
+{% load cloud_commerce_extras %}
+
+{% block page_title %}CCP New Product Success{% endblock %}
+
+{% block content %}
+    <h2>{{ product_range.name }}</h2>
+    <p>SKU: {{ product_range.sku}}</p>
+    <p>ID: {{ product_range.id }}</p>
+    <a href="{% ccp_product_range_page product_range.id %}" target="_blank"><button>View Range on Cloud Commerce</button></a>
+    <div class="product_list">
+        <h3>Products</h3>
+        <table class="product_list">
+            <tr>
+                <th>SKU</th>
+                <th>Title</th>
+                <th>Barcode</th>
+                <th>Stock Level</th>
+                <th></th>
+            </tr>
+        {% for product in product_range.products %}
+        </tr>
+            <td>{{ product.sku}}</td>
+            <td>{{product.full_name}}</td>
+            <td>{{product.barcode}}</td>
+            <td>{{product.stock_level}}</td>
+            <td><a href="{% ccp_product_page product_range.id product.id %}" target="_blank"><button>View Product on Cloud Commerce</button></a></td>
+        {% endfor %}
+        </table>
+    </div>
+{% endblock %}
