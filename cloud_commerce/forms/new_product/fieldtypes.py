@@ -51,6 +51,9 @@ class FormField(forms.Field):
             attrs['size'] = cls.size
         return cls.widget(attrs=attrs)
 
+    def clean(self, value):
+        return str(super().clean(value)).strip()
+
 
 class ChoiceField(forms.ChoiceField):
     variable = False
@@ -78,7 +81,9 @@ class PriceField(FormField, forms.FloatField):
 
 
 class TextField(FormField, forms.CharField):
-    pass
+
+    def clean(self, value):
+        return super().clean(value).strip()
 
 
 class TextareaField(FormField, forms.CharField):
@@ -99,6 +104,9 @@ class OptionField(TextField):
         self.widget = forms.TextInput({'size': self.size})
         kwargs['label'] = self.option
         super().__init__(*args, **kwargs)
+
+    def clean(self, value):
+        return str(super().clean(value)).strip()
 
 
 class OptionSettingField(forms.MultiValueField):

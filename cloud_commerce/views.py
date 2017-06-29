@@ -37,6 +37,7 @@ class NewProductView(FormView):
 
     def create_range(self, range_name, options):
         range_id = CCAPI.create_range(range_name)
+        time.sleep(1)
         self.range = CCAPI.get_range(range_id)
         while self.range.id == 0:
             time.sleep(1)
@@ -73,12 +74,12 @@ class NewSingleProductView(LoginRequiredMixin, NewProductView):
         data = form.cleaned_data
         CCAPI.create_session(settings.CC_LOGIN, settings.CC_PWD)
         options = self.get_options(form)
-        self.create_range(data['title'].strip(), options.keys())
+        self.create_range(data['title'], options.keys())
         large_letter_compatible = options['Package Type'] == 'Large Letter'
         self.product = self.create_product(
-            name=data['title'].strip(),
-            barcode=data['barcode'].strip(),
-            description=data['description'].strip(),
+            name=data['title'],
+            barcode=data['barcode'],
+            description=data['description'],
             vat_rate_id=int(data['vat_rate']),
             weight=data['weight'],
             height=data['height'],
@@ -92,17 +93,17 @@ class NewSingleProductView(LoginRequiredMixin, NewProductView):
 
     def get_options(self, form):
         required_options = {
-            'Department': form.cleaned_data['department'].strip(),
-            'Brand': form.cleaned_data['brand'].strip(),
-            'Supplier SKU': form.cleaned_data['supplier_SKU'].strip(),
-            'Manufacturer': form.cleaned_data['manufacturer'].strip(),
-            'Supplier': form.cleaned_data['supplier'].strip(),
-            'Purchase Price': form.cleaned_data['purchase_price'].strip(),
+            'Department': form.cleaned_data['department'],
+            'Brand': form.cleaned_data['brand'],
+            'Supplier SKU': form.cleaned_data['supplier_SKU'],
+            'Manufacturer': form.cleaned_data['manufacturer'],
+            'Supplier': form.cleaned_data['supplier'],
+            'Purchase Price': form.cleaned_data['purchase_price'],
             'Package Type': form.cleaned_data['package_type']}
         optional_options = {
-            key.replace('opt_', ''): value.strip() for key, value in
+            key.replace('opt_', ''): value for key, value in
             form.cleaned_data.items() if key.startswith('opt_') and
-            len(value.strip()) > 0}
+            len(value) > 0}
         options = {**required_options, **optional_options}
         return options
 
