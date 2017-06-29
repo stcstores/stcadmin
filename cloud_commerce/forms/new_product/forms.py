@@ -29,7 +29,7 @@ class NewVariationProductForm(NewProductForm):
             if not field.must_vary:
                 self.create_field(field)
         for field in FormFields.select_option_fields:
-            self.fields[field.name] = field()
+            self.create_option_field(field)
 
     def create_field(self, field):
         self.fields[field.name] = field()
@@ -40,44 +40,28 @@ class NewVariationProductForm(NewProductForm):
             self.fields['variation_' + field.name] = forms.BooleanField(
                 required=False)
 
+    def create_option_field(self, field):
+        self.fields[field.name] = field()
+
     def clean(self):
         cleaned_data = super().clean()
         selected_options = []
         variable_options = {}
+        variation_values = []
         for field in FormFields.fields:
             if field.variable and cleaned_data['variable_' + field.name]:
                 variable_options[field.name] = cleaned_data[field.name]
         for field in FormFields.option_fields:
-            variation_setting = cleaned_data[field.name]
-            if variation_setting == 'variation':
+            use = cleaned_data[field.name][0]
+            value = cleaned_data[field.name][1]
+            if use == 'variation':
                 selected_options.append(field.name)
-            elif variation_setting == 'variable':
-                variable_options[field.name] = ''
+                variation_values.append(
+                    [(field.name, variation) for variation in value])
+            elif use == 'variable':
+                variable_options[field.name] = value
         cleaned_data['selected_options'] = selected_options
         cleaned_data['selected_variables'] = variable_options
-        return cleaned_data
-
-
-class TempVariationForm(NewVariationProductForm):
-
-    def create_fields(self):
-        for field in FormFields.select_option_fields:
-            self.fields[field.name] = field()
-
-
-class VariationChoicesForm(forms.Form):
-
-    def set_options(self, options):
-        for field in FormFields.option_value_fields:
-            if field.name in options:
-                self.fields[field.name] = field()
-
-    def clean(self):
-        cleaned_data = super().clean()
-        variation_values = []
-        for key in cleaned_data:
-            variation_values.append(
-                [(key, value) for value in cleaned_data[key]])
         variations = list(itertools.product(*variation_values))
         variation_data = []
         for variation in variations:

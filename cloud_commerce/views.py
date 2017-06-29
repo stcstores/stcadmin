@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from formtools.wizard.views import SessionWizardView
 
 from . forms import NewSingleProductForm, NewVariationProductForm, \
-    VariationChoicesForm, TempVariationForm, VariationFormSet
+    VariationFormSet
 
 from stcadmin import settings
 
@@ -148,12 +148,11 @@ def new_product_success(request, product_range, product):
 class VariationFormWizard(SessionWizardView):
 
     form_list = [
-        NewVariationProductForm, VariationChoicesForm, VariationFormSet]
+        NewVariationProductForm, VariationFormSet]
 
     TEMPLATES = {
         '0': 'cloud_commerce/variation_form_setup.html',
-        '1': 'cloud_commerce/variation_option_value_form.html',
-        '2': 'cloud_commerce/variation_table_form.html'}
+        '1': 'cloud_commerce/variation_table_form.html'}
 
     def get_template_names(self):
         return [self.TEMPLATES[self.steps.current]]
@@ -182,13 +181,12 @@ class VariationFormWizard(SessionWizardView):
         if step is None:
             step = self.steps.current
         if step == '1':
-            form.set_options(self.get_selected_options())
-        if step == '2':
             if data is not None:
                 data = self.remove_unused_variations(data)
             selected_options = self.get_selected_options()
             selected_variables = self.get_selected_variables()
             form.initial = self.initial_for_variation_table_form()
+            print(self.initial_for_variation_table_form())
             for var_form in form.forms:
                 var_form.set_variation_fields(
                     selected_options, selected_variables)
@@ -230,7 +228,7 @@ class VariationFormWizard(SessionWizardView):
         return self.get_cleaned_data_for_step('0')['selected_variables']
 
     def get_variations(self):
-        return self.get_cleaned_data_for_step('1')['variations']
+        return self.get_cleaned_data_for_step('0')['variations']
 
     def initial_for_variation_table_form(self):
         selected_variables = self.get_selected_variables()

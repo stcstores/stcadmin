@@ -154,25 +154,6 @@ class Manufacturer(fieldtypes.TextField):
     placeholder = 'Manufacturer'
 
 
-def option_field_factory(option):
-    return type(
-        '{}OptionField'.format(option), (fieldtypes.OptionField, ),
-        {'option': option, 'name': 'opt_{}'.format(option), 'label': option})
-
-
-def option_selection_field_factory(option):
-    return type(
-        '{}SelectionField'.format(option), (fieldtypes.OptionSelectionField, ),
-        {'option': option, 'name': 'opt_{}'.format(option), 'label': option})
-
-
-def variation_option_value_field_factory(option):
-    return type(
-        '{}VariationOptionValueField'.format(option),
-        (fieldtypes.VariationOptionValueField, ),
-        {'option': option, 'name': 'opt_{}'.format(option), 'label': option})
-
-
 class MetaFormFields(type):
 
     def __iter__(self):
@@ -209,11 +190,13 @@ class FormFields(metaclass=MetaFormFields):
         option.option_name for option in CCAPI.get_product_options()
         if option.exclusions['tesco'] is False]
 
-    option_fields = [option_field_factory(option) for option in option_names]
+    option_fields = [
+        fieldtypes.option_field_factory(option) for option in option_names]
 
     select_option_fields = [
-        option_selection_field_factory(option) for option in option_names]
+        fieldtypes.option_selection_field_factory(option) for
+        option in option_names]
 
     option_value_fields = [
-        variation_option_value_field_factory(option) for
+        fieldtypes.variation_option_value_field_factory(option) for
         option in option_names]

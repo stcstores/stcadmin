@@ -101,21 +101,41 @@ class OptionField(TextField):
         super().__init__(*args, **kwargs)
 
 
-class OptionSelectionField(forms.ChoiceField):
-
-    widget = forms.RadioSelect
+class OptionSettingField(forms.MultiValueField):
 
     def __init__(self, *args, **kwargs):
         kwargs['label'] = self.option
-        kwargs['choices'] = self.get_choices()
-        kwargs['initial'] = kwargs['choices'][0][0]
-        super().__init__(*args, **kwargs)
+        kwargs['initial'] = ('unused', [], '')
+        fields = (
+            forms.ChoiceField(
+                required=True,
+                choices=widgets.OptionSettingsFieldWidget.radio_choices),
+            ListField(minimum=0, required=False),
+            forms.CharField(required=False))
+        kwargs['widget'] = widgets.OptionSettingsFieldWidget(None)
+        super().__init__(
+            fields=fields, require_all_fields=False, *args, **kwargs)
 
-    def get_choices(self):
-        return [
-            ('unused'.format(self.name), 'Unused'),
-            ('variable'.format(self.name), 'Variable'),
-            ('variation'.format(self.name), 'Variation')]
+    def clean(self, value):
+        clean_data = []
+        for i, field in enumerate(self.fields):
+            field_value = value[i]
+            clean_data.append(field.clean(field_value))
+        out = self.compress(clean_data)
+        self.validate(out)
+        self.run_validators(out)
+        return out
+
+    def compress(self, data_list):
+        use = data_list[0]
+        if use == 'unused':
+            return (use, '')
+        if use == 'single':
+            return (use, data_list[2])
+        if use == 'variable':
+            return (use, data_list[2])
+        if use == 'variation':
+            return (use, data_list[1])
 
 
 class ListField(forms.CharField):
@@ -124,6 +144,16 @@ class ListField(forms.CharField):
     minimum = 0
     maximum = 0
     required = False
+
+    def __init__(self, *args, **kwargs):
+        if 'widget' in kwargs:
+            self.widget = kwargs.pop('widget')
+        if 'minimum' in kwargs:
+            self.minimum = kwargs.pop('minimum')
+        if 'maximum' in kwargs:
+            self.maximum = kwargs.pop('maximum')
+        self.required = kwargs['required']
+        super().__init__(*args, **kwargs)
 
     def validate(self, value):
         super().validate(value)
@@ -154,3 +184,24 @@ class VariationOptionValueField(ListField):
         kwargs['label'] = self.option
         kwargs['initial'] = ''
         super().__init__(*args, **kwargs)
+
+
+def option_field_factory(option):
+    return type(
+        '{}OptionField'.format(option),
+        (OptionField, ),
+        {'option': option, 'name': 'opt_{}'.format(option), 'label': option})
+
+
+def option_selection_field_factory(option):
+    return type(
+        '{}OptionSettingField'.format(option),
+        (OptionSettingField, ),
+        {'option': option, 'name': 'opt_{}'.format(option), 'label': option})
+
+
+def variation_option_value_field_factory(option):
+    return type(
+        '{}VariationOptionValueField'.format(option),
+        (VariationOptionValueField, ),
+        {'option': option, 'name': 'opt_{}'.format(option), 'label': option})

@@ -1,0 +1,41 @@
+<div class="option_settings_widget" id="div_{{ id }}">
+    <div class="options_settings_radio" id="radio_{{ id }}">
+        {{ widgets.0 }}
+    </div>
+    <div class="options_settings_list" id="list_{{ id }}">
+        {{ widgets.1 }}
+    </div>
+    <div class="options_settings_input" id="input_{{ id }}">
+        {{ widgets.2 }}
+    </div>
+</div>
+<script>
+    $( document ).ready(function() {
+        var radio_div = $("#radio_{{ id }}");
+        var radio_inputs = radio_div.find('input');
+        radio_inputs.change(function () {
+            var value = $(this).val();
+            console.log(value);
+            var list_div = $('#list_{{ id }}');
+            var input_div = $('#input_{{ id }}');
+            list_div.hide();
+            input_div.hide();
+            if (value === 'unused') {
+                list_div.hide();
+                input_div.hide();
+            } else if ((value === 'single') || (value === 'variable')) {
+                list_div.hide();
+                input_div.show();
+            } else if (value === 'variation') {
+                list_div.show();
+                input_div.hide();
+            }
+        });
+        radio_inputs.each(function () {
+            if ($(this).is(':checked')) {
+                console.log($(this).val());
+                $(this).change();
+            }
+        });
+    });
+</script>
