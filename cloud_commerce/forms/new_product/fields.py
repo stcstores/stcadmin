@@ -161,6 +161,12 @@ class MetaFormFields(type):
             yield field
 
 
+class DeleteVariation(fieldtypes.CheckboxField):
+
+    label = 'Delete'
+    html_class = 'delete_variation'
+
+
 class FormFields(metaclass=MetaFormFields):
     fields = [
         Title,
@@ -182,6 +188,8 @@ class FormFields(metaclass=MetaFormFields):
         Brand,
         Manufacturer,
         ]
+
+    delete_variation = DeleteVariation
 
     variable_fields = [
         field for field in fields if field.variable or field.must_vary]

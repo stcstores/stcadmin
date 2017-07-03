@@ -1,10 +1,9 @@
 {% extends "cloud_commerce/variation_wizard.html" %}
 
-{% block table_class %}new_product_formDELETETHIS{% endblock %}
+{% block table_class %}new_product_form{% endblock %}
 
 {% block form %}
 {{ form.non_field_errors }}
-<table class="new_product">
     {% csrf_token %}
     <thead>
         <tr>
@@ -27,7 +26,6 @@
             {% endif %}
         {% endifnotequal %}{% endifnotequal %}{% endifnotequal %}
     {% endfor %}
-</table>
 <table class="variation_options_table">
 {% for field in form %}
 {% ifequal field.name|slice:"0:4" 'opt_' %}

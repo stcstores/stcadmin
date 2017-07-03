@@ -10,3 +10,7 @@
 .variation_options_table {
     background: #e2edff;
 }
+
+.variation_table .variation_option:disabled{
+    color: black;
+}

@@ -44,7 +44,6 @@ class VariationFormWizard(SessionWizardView):
             selected_options = self.get_selected_options()
             selected_variables = self.get_selected_variables()
             form.initial = self.initial_for_variation_table_form()
-            print(self.initial_for_variation_table_form())
             for var_form in form.forms:
                 var_form.set_variation_fields(
                     selected_options, selected_variables)

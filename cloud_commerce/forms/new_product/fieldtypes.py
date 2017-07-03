@@ -19,6 +19,7 @@ class FormField(forms.Field):
     placeholder = None
     html_class = None
     size = 50
+    small_size = 15
     initial = None
     required_message = ''
 
@@ -28,10 +29,17 @@ class FormField(forms.Field):
             self.error_messages = {'required': self.required_message}
         else:
             kwargs['required'] = False
-        if isclass(self.widget):
-            self.widget = self.get_widget()
+        if 'small' in kwargs:
+            if kwargs['small'] is True:
+                self.size = self.small_size
+            kwargs.pop('small')
         kwargs['label'] = self.label
         kwargs['help_text'] = self.help_text
+        if 'html_class' in kwargs:
+            self.html_class = kwargs.pop('html_class')
+        if isclass(self.widget):
+            self.widget = self.get_widget()
+        self.kwargs = kwargs
         super().__init__(*args, **kwargs)
 
     @property
@@ -40,47 +48,56 @@ class FormField(forms.Field):
             return True
         return False
 
-    @classmethod
-    def get_widget(cls):
+    def get_widget(self):
         attrs = {}
-        if cls.placeholder is not None:
-            attrs['placeholder'] = cls.placeholder
-        if cls.html_class is not None:
-            attrs['class'] = cls.html_class
-        if cls.size is not None:
-            attrs['size'] = cls.size
-        return cls.widget(attrs=attrs)
+        if self.placeholder is not None:
+            attrs['placeholder'] = self.placeholder
+        if self.html_class is not None:
+            attrs['class'] = self.html_class
+        if self.size is not None:
+            attrs['size'] = self.size
+        if self.is_required:
+            attrs['required'] = 'true'
+        return self.widget(attrs=attrs)
 
     def clean(self, value):
         return str(super().clean(value)).strip()
 
 
-class ChoiceField(forms.ChoiceField):
+class ChoiceField(FormField, forms.ChoiceField):
     variable = False
     variation = False
     must_vary = False
+    size = None
+    small_size = None
 
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = self.get_choices()
         kwargs['label'] = self.label
-        super().__init__(*args, **kwargs)
+        kwargs = super().__init__(*args, **kwargs)
 
 
 class NumberField(FormField, forms.IntegerField):
 
-    def __init__(self, *args, **kwargs):
-        kwargs['initial'] = 0
-        super().__init__(*args, **kwargs)
+    size = None
+    small_size = None
 
 
 class PriceField(FormField, forms.FloatField):
 
-    def __init__(self, *args, **kwargs):
-        kwargs['initial'] = '0.00'
-        super().__init__(*args, **kwargs)
+    size = None
+    small_size = None
+
+
+class CheckboxField(FormField, forms.BooleanField):
+    pass
 
 
 class TextField(FormField, forms.CharField):
+
+    def __init__(self, *args, **kwargs):
+        FormField.__init__(self, *args, **kwargs)
+        forms.CharField.__init__(self, *args, **self.kwargs)
 
     def clean(self, value):
         return super().clean(value).strip()
@@ -99,9 +116,6 @@ class OptionField(TextField):
     size = 50
 
     def __init__(self, *args, **kwargs):
-        if 'size' in kwargs:
-            self.size = kwargs.pop('size')
-        self.widget = forms.TextInput({'size': self.size})
         kwargs['label'] = self.option
         super().__init__(*args, **kwargs)
 
@@ -146,7 +160,7 @@ class OptionSettingField(forms.MultiValueField):
             return (use, data_list[1])
 
 
-class ListField(forms.CharField):
+class ListField(FormField, forms.CharField):
 
     widget = widgets.ListWidget
     minimum = 0

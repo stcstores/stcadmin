@@ -87,11 +87,14 @@ class VariationForm(forms.Form):
             field for field in FormFields.option_fields if field.name in
             variables]
         for field in self.variation_fields:
-            self.fields[field.name] = field()
+            self.fields[field.name] = field(
+                small=True, disabled=True, html_class='variation_option')
         for field in self.variable_fields:
-            self.fields[field.name] = field()
+            self.fields[field.name] = field(small=True)
         for field in self.variable_option_fields:
-            self.fields[field.name] = field()
+            self.fields[field.name] = field(
+                small=True, html_class='variable_option')
+        self.fields['unused'] = FormFields.delete_variation()
 
 
 VariationFormSet = formset_factory(VariationForm, extra=0)

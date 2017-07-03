@@ -32,19 +32,57 @@
 {% block script %}
 <script>
 $(document).ready(function() {
-    $('.new_product input, .new_product select, .new_product textarea').each(function(){
-        var label = $('label[for="'+$(this).attr('id')+'"]');
-        var row = $(this).closest('tr');
-        if ($(this).prop('required')) {
-            label.text(label.text().replace(':', '*:'));
-            row.css('background', '#DDD');
-        } else if ($(this).prop('name').startsWith('0-opt_')) {
-            row.css('background', '#e2edff');
-        } else {
-            label.css('color', '#555');
-        }
+    function setup_new_product_table () {
+        $('.new_product_form input, .new_product_form select, .new_product_form textarea').each(function(){
+            console.log($(this));
+            var label = $('label[for="'+$(this).attr('id')+'"]');
+            var row = $(this).closest('tr');
+            if ($(this).prop('required')) {
+                label.text(label.text().replace(':', '*:'));
+                row.css('background', '#DDD');
+            } else if ($(this).prop('name').startsWith('0-opt_')) {
+                row.css('background', '#e2edff');
+            } else {
+                label.css('color', '#555');
+            }
+        });
+    }
 
+    function setup_variation_table() {
+        var column_count = $('th', $('.variation_table').find('tbody')).length;
+        $('.variation_table').find('td, th').css('background', '#FFF');
+        for (var i=1; i < column_count + 1; i++) {
+            var column = $(".variation_table tr > :nth-child(" + i + ")");
+            if (column.children().attr('required')) {
+                column.css('background', '#DDD');
+            }
+            if (column.find(".variable_option").length > 0){
+                column.css('background', '#e2edff');
+            }
+            if (column.find('.variation_option').length > 0) {
+                column.css('background', '#AAA');
+            }
+        }
+        $('.variation_table td').each(function() {
+            if ($(this).children().attr('disabled')) {
+                $(this).css('background', '#AAA');
+            }
+        });
+    }
+
+    $('.delete_variation').change(function() {
+        var row = $(this).closest('tr');
+        if ($(this).is(':checked')) {
+            row.find('input, select, textarea').not('.variation_option, :checkbox').attr('disabled', true);
+        } else {
+            row.find('input, select, textarea').not('.variation_option, :checkbox').attr('disabled', false);
+        }
+        setup_variation_table();
     });
+
+    setup_new_product_table();
+    setup_variation_table();
+    $('.delete_variation').change();
 
     $("form").keypress(function(e){
         var no_enter = true;
@@ -59,6 +97,11 @@ $(document).ready(function() {
                 return false;
             }
        }
+    });
+
+    $('form').submit(function() {
+        $('input, select, textarea').attr('disabled', false);
+        return true;
     });
 
     // Prevent the backspace key from navigating back.
