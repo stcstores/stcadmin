@@ -36,3 +36,14 @@ class NewProductView(FormView):
             if len(value) > 0:
                 product.set_option_value(option, value, create=True)
         return product
+
+    def set_bay(self, form):
+        department = form.cleaned_data['department']
+        bay_name = form.cleaned_data['location']
+        warehouses = CCAPI.get_warehouses()
+        warehouse = warehouses[department]
+        if bay_name in warehouse.bay_names:
+            bay_id = warehouse[bay_name].id
+        else:
+            bay_id = warehouse.add_bay(bay_name)
+        self.product.add_bay(bay_id)

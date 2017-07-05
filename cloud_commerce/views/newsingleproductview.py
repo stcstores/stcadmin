@@ -29,6 +29,8 @@ class NewSingleProductView(LoginRequiredMixin, NewProductView):
             stock_level=data['stock_level'],
             price=data['price'],
             options=options)
+        if len(form.cleaned_data['location']) > 0:
+            self.set_bay(form)
         return redirect('cloud_commerce:product_range', self.range.id)
 
     def get_options(self, form):
