@@ -14,3 +14,13 @@
 .variation_table .variation_option:disabled{
     color: black;
 }
+
+.error {
+    color: red;
+}
+
+.errorlist {
+    margin: 0.25em;
+    margin-left: 1em;
+    padding: 0;
+}

@@ -5,7 +5,17 @@
 <form method="POST">
     <table class="new_product">
         {% csrf_token %}
-        {{ form.as_table }}
+        {% for field in form %}
+        <tr>
+            <td>{{ field.label }}</td>
+            <td>{{ field }}</td>
+            {% if field.errors %}
+                <td class="error">{{ field.errors }}</td>
+            {% else %}
+                <td></td>
+            {% endif %}
+        </tr>
+        {% endfor %}
         <tr><td colspan="2" style="text-align: center;"><input type="submit" value="Create Product" style="width: 80%;"/></td></tr>
     </table>
 </form>

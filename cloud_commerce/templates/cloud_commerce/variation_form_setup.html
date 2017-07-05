@@ -10,6 +10,7 @@
             <th></th>
             <th></th>
             <th>Variable</th>
+            <th></th>
         </tr>
     </thead>
     {% for field in form %}
@@ -20,10 +21,13 @@
                 <td><label for="{{ field.name }}">{{ field.label }}</label></td>
                 <td>{{ field }}<br>{{ field.help_text }}</td>
                 <td>{% for var_field in form %}{% ifequal var_field.name 'variable_'|add:field.name %}{{ var_field }}{% endifequal %}{% endfor %}</td>
+                {% if field.errors %}
+                    <td class="error">{{ field.errors }}</td>
+                {% else %}
+                    <td></td>
+                {% endif %}
             </tr>
-            {% if field.errors %}
-                <tr><td colspan="2">{{ field.errors }}</td></tr>
-            {% endif %}
+
         {% endifnotequal %}{% endifnotequal %}{% endifnotequal %}
     {% endfor %}
 <table class="variation_options_table">
@@ -34,6 +38,11 @@
     {% for choice in field %}
         <td>{{ choice }}</td>
     {% endfor %}
+    {% if field.errors %}
+        <td class="error">{{ field.errors }}</td>
+    {% else %}
+        <td></td>
+    {% endif %}
 </tr>
 {% endifequal %}
 {% endfor %}

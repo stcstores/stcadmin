@@ -18,16 +18,16 @@ class VariationFormWizard(SessionWizardView):
     def post(self, *args, **kwargs):
         go_to_step = self.request.POST.get('wizard_goto_step', None)
         form = self.get_form(data=self.request.POST, files=self.request.FILES)
+        if form.is_valid():
+            current_index = self.get_step_index(self.steps.current)
+            goto_index = self.get_step_index(go_to_step)
 
-        current_index = self.get_step_index(self.steps.current)
-        goto_index = self.get_step_index(go_to_step)
-
-        if current_index > goto_index:
-            if form.is_valid():
-                self.storage.set_step_data(
-                    self.steps.current, self.process_step(form))
-                self.storage.set_step_files(
-                    self.steps.current, self.process_step_files(form))
+            if current_index > goto_index:
+                if form.is_valid():
+                    self.storage.set_step_data(
+                        self.steps.current, self.process_step(form))
+                    self.storage.set_step_files(
+                        self.steps.current, self.process_step_files(form))
         return super().post(*args, **kwargs)
 
     def done(self, form_list, **kwargs):

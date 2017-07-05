@@ -2,6 +2,7 @@ from ccapi import CCAPI
 
 from stcadmin import settings
 from . import fieldtypes
+from . fieldtypes import Validators
 
 
 CCAPI.create_session(settings.CC_LOGIN, settings.CC_PWD)
@@ -12,6 +13,7 @@ class Title(fieldtypes.TextField):
     name = 'title'
     required_message = "Please supply a range title"
     placeholder = 'Title'
+    validators = [Validators.alphanumeric]
 
 
 class Description(fieldtypes.TextareaField):
@@ -52,7 +54,6 @@ class Price(fieldtypes.PriceField):
 class PurchasePrice(fieldtypes.PriceField):
     label = 'Purchase Price'
     name = 'purchase_price'
-    initial = 0,
     required_message = 'Please provide a stock level. This can be zero.'
     variable = True
 

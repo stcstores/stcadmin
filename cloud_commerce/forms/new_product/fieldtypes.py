@@ -7,6 +7,18 @@ from django.core.exceptions import ValidationError
 from . import widgets
 
 
+class Validators:
+
+    @staticmethod
+    def alphanumeric(value):
+        if not str(value).replace(' ', '').isalnum():
+            raise ValidationError('Only alphanumeric characters are allowed.')
+
+    @staticmethod
+    def option_value(value):
+        Validators.alphanumeric(value)
+
+
 class FormField(forms.Field):
 
     label = None
@@ -22,6 +34,7 @@ class FormField(forms.Field):
     small_size = 15
     initial = None
     required_message = ''
+    validators = []
 
     def __init__(self, *args, **kwargs):
         if self.is_required:
@@ -35,6 +48,9 @@ class FormField(forms.Field):
             kwargs.pop('small')
         kwargs['label'] = self.label
         kwargs['help_text'] = self.help_text
+        kwargs['validators'] = self.validators
+        if self.initial is not None:
+            kwargs['initial'] = self.initial
         if 'html_class' in kwargs:
             self.html_class = kwargs.pop('html_class')
         if isclass(self.widget):
@@ -114,6 +130,7 @@ class OptionField(TextField):
     variation = True
     must_vary = False
     size = 50
+    validators = [Validators.option_value]
 
     def __init__(self, *args, **kwargs):
         kwargs['label'] = self.option
@@ -133,7 +150,8 @@ class OptionSettingField(forms.MultiValueField):
                 required=True,
                 choices=widgets.OptionSettingsFieldWidget.radio_choices),
             ListField(minimum=0, required=False),
-            forms.CharField(required=False))
+            forms.CharField(
+                required=False))
         kwargs['widget'] = widgets.OptionSettingsFieldWidget(None)
         super().__init__(
             fields=fields, require_all_fields=False, *args, **kwargs)
@@ -150,14 +168,20 @@ class OptionSettingField(forms.MultiValueField):
 
     def compress(self, data_list):
         use = data_list[0]
+        multi_value = data_list[1]
+        single_value = data_list[2]
         if use == 'unused':
             return (use, '')
         if use == 'single':
-            return (use, data_list[2])
+            Validators.option_value(single_value)
+            return (use, single_value)
         if use == 'variable':
-            return (use, data_list[2])
+            Validators.option_value(single_value)
+            return (use, single_value)
         if use == 'variation':
-            return (use, data_list[1])
+            for value in multi_value:
+                Validators.option_value(value)
+            return (use, multi_value)
 
 
 class ListField(FormField, forms.CharField):
