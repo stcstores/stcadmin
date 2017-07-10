@@ -11,7 +11,13 @@ class Validators:
 
     @staticmethod
     def alphanumeric(value):
-        if not str(value).replace(' ', '').isalnum():
+        valid = True
+        for char in str(value):
+            if char.isalnum() or char in (' ', '-', '/', '+'):
+                continue
+            valid = False
+            break
+        if valid is False:
             raise ValidationError('Only alphanumeric characters are allowed.')
 
     @staticmethod
