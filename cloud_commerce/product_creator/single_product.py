@@ -5,7 +5,7 @@ from . new_variation import NewVariation
 
 class SingleProduct(NewProduct):
 
-    def load_from_from_data(self, data):
+    def load_from_form(self, data):
         self.data = data
         self.name = data['title']
         self.barcode = data['barcode']

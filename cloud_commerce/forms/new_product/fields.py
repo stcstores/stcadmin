@@ -56,6 +56,7 @@ class PurchasePrice(fieldtypes.PriceField):
     name = 'purchase_price'
     required_message = 'Please provide a stock level. This can be zero.'
     variable = True
+    empty_value = 0.0
 
 
 class StockLevel(fieldtypes.NumberField):
@@ -64,6 +65,7 @@ class StockLevel(fieldtypes.NumberField):
     initial = 0
     required_message = 'Please provide a stock level. This can be zero.'
     variable = True
+    empty_value = 0
 
 
 class VATRate(fieldtypes.ChoiceField):
@@ -102,24 +104,28 @@ class Weight(fieldtypes.NumberField):
     name = 'weight'
     required_message = "Please supply a weight"
     variable = True
+    empty_value = 0
 
 
 class Height(fieldtypes.NumberField):
     label = 'Height (Milimeters)'
     name = 'height'
     variable = True
+    empty_value = 0
 
 
 class Width(fieldtypes.NumberField):
     label = 'Width (Milimeters)'
     name = 'width'
     variable = True
+    empty_value = 0
 
 
 class Length(fieldtypes.NumberField):
     label = 'Length (Milimeters)'
     name = 'length'
     variable = True
+    empty_value = 0
 
 
 class PackageType(fieldtypes.ChoiceField):

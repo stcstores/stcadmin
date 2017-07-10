@@ -98,6 +98,12 @@ class NumberField(FormField, forms.IntegerField):
     size = None
     small_size = None
 
+    def to_python(self, value):
+        value = super().to_python(value)
+        if value in self.empty_values:
+            return self.empty_value
+        return value
+
 
 class PriceField(FormField, forms.FloatField):
 

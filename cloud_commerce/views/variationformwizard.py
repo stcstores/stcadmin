@@ -1,6 +1,7 @@
 from formtools.wizard.views import SessionWizardView
-from django.http import HttpResponse
+from django.shortcuts import redirect
 from cloud_commerce . forms import NewVariationProductForm, VariationFormSet
+from cloud_commerce . product_creator import VariationProduct
 
 
 class VariationFormWizard(SessionWizardView):
@@ -31,8 +32,9 @@ class VariationFormWizard(SessionWizardView):
         return super().post(*args, **kwargs)
 
     def done(self, form_list, **kwargs):
-        return HttpResponse(
-            str(self.get_cleaned_data_for_step('2')))
+        new_product = VariationProduct(form_list)
+        return redirect(
+            'cloud_commerce:product_range', new_product.product_range.id)
 
     def get_form(self, step=None, data=None, files=None):
         form = super().get_form(step, data, files)
