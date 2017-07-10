@@ -11,7 +11,7 @@
     {% for form in wizard.form.forms %}
         <tr>
             {% for field in form %}
-                <td>{{ field }}</td>
+                <td>{{ field }}<p class="error">{{ field.errors }}</p></td>
             {% endfor %}
         </tr>
     {% endfor %}

@@ -19,6 +19,8 @@ class VariationProduct(NewProduct):
     def get_products(self):
         self.products = []
         for index, data in enumerate(self.variation_data):
+            if data['DELETE'] is True:
+                continue
             options = self.options[index]
             product = self.get_variation(data, options)
             self.products.append(product)
