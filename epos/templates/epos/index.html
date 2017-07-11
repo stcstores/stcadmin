@@ -16,6 +16,16 @@
     <div id="product_list" class="product_list">
 
     </div>
+    <div id="epos_footer">
+        <p id="order_total"></p>
+        <button id="complete_order">Complete</button>
+    </div>
 </div>
 
+{% endblock %}
+{% block script %}
+ <script>
+    search_url = '{% url 'epos:barcode_search' %}';
+    complete_url = '{% url 'epos:epos_order' %}';
+ </script>
 {% endblock %}

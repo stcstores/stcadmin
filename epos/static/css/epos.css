@@ -1,13 +1,13 @@
 #epos {
     background: #333;
     margin: 0 auto;
-    font-size: 0.9em;
+    font-size: 0.8em;
     border: 1px solid black;
     border-radius: 0.75em;
     text-align: center;
 }
 
-.search, #total {
+.search, #epos_footer, .product {
     display: inline-block;
     text-align: center;
     margin: 1em;
@@ -24,27 +24,15 @@
 }
 
 .product {
-    border: 1px solid black;
-    border-radius: 0.75em;
-    margin: 0.25em;
-    padding: 0.25em;
-    background: #ddd;
-    width: 90%;
+    padding: 1em;
+    text-align: left;
 }
 
 .product_list {
-
     width: 90%;
     margin: 0 center;
     padding: 1em;
     text-align: center;
-}
-
-.product {
-    padding: 1em;
-    margin: 1em;
-    width: 90%;
-    text-align: left;
 }
 
 .product p {
@@ -93,7 +81,7 @@
 
 .name {
     display: inline;
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 .base_price {
@@ -108,6 +96,14 @@
     font-size: 1.75em;
 }
 
-.overall_total {
+#order_total {
     font-size: 2em;
+    display: inline-block;
+    margin: 1em;
+}
+
+#complete_order {
+    font-size: 2em;
+    display: inline-block;
+    margin: 1em;
 }

@@ -1,5 +1,6 @@
 products = {
     '1235489' :{
+        'id': '1235489',
         'name': 'Test Item 1',
         'sku': 'JLK-KLE-EJL',
         'barcode': '123456789',
@@ -9,6 +10,7 @@ products = {
         'order_quantity': 1,
     },
     '987654321': {
+        'id': '987654321',
         'name': 'Test Item 2',
         'sku': 'JLK-SEJ-EL3',
         'barcode': '9876543211',
@@ -19,10 +21,17 @@ products = {
     }
 }
 
+products = {}
+barcode_queue = {}
 
 function change_order_quantity(product, quantity) {
     return function(event) {
-        product.order_quantity = quantity.val();
+        var new_quantity = quantity.val();
+        if (new_quantity > 0) {
+            product.order_quantity = new_quantity;
+        } else {
+            delete products[product.id];
+        }
         update_table();
     }
 }
@@ -38,8 +47,10 @@ function update_table() {
     var product_list = $('#product_list');
     product_list.html('');
     var total_price = 0;
+    var products_exist = false;
     $.each(products, function(id, product){
-        var product = products[id]
+        products_exist = true;
+        var id = product.id;
         product_list.append('<div class="product" id="product_' + id + '">');
         var product_div = $('#product_' + id);
         var price = product.base_price + (product.base_price * (product.vat_rate / 100));
@@ -71,12 +82,72 @@ function update_table() {
         }
 
     });
-    product_list.append('<div class="total" id="total">');
-    var total_div = $('#total');
-    total_div.append('<p class="overall_total">' + accounting.formatMoney(total_price, "£ ", 2));
+    $('#order_total').html(accounting.formatMoney(total_price, "£ ", 2));
+    if ((products_exist === true) && ($.active <= 1)) {
+        $('#complete_order').attr('disabled', false);
+    } else {
+        $('#complete_order').attr('disabled', true);
+    }
+    $('#barcode_search').val('');
     $('#barcode_search').focus();
 }
 
+$( document ).ajaxComplete(function() {
+    if ($.active === 1) {
+        $('.search, #epos_footer').css('background', '#ddd');
+        update_table();
+    }
+});
+
 $(document).ready(function() {
+    $('#barcode_search_button').click(function() {
+        var barcode = $('#barcode_search').val();
+        $('#barcode_search').val('');
+        var done = false;
+        $.each(products, function(id, product) {
+            if (product.barcode == barcode) {
+                product.order_quantity ++;
+                update_table();
+                done = true;
+            }
+        });
+        if (done === false){
+            if (barcode in barcode_queue) {
+                barcode_queue[barcode] += 1;
+            } else {
+                barcode_queue[barcode] = 1;
+                $('.search, #epos_footer').css('background', 'blue');
+                $('#complete_order').attr('disabled', true);
+                $.post(search_url, {'barcode': barcode}, function(data) {
+                    if (data === 'Not Found') {
+                        alert('No Product found with barcode: ' + barcode);
+                    } else {
+                        product = JSON.parse(data);
+                        product.order_quantity = barcode_queue[barcode];
+                        delete barcode_queue[barcode];
+                        products[product.id] = product;
+                    }
+                });
+            }
+            update_table();
+        }
+    });
+    $('#barcode_search').keypress(function (e) {
+        if (e.which == 13) {
+            $('#barcode_search_button').click();
+        }
+    });
+    $('#complete_order').click(function (){
+        $.ajax({
+            url: complete_url,
+            type: "POST",
+            data: JSON.stringify(products),
+            contentType: "application/json",
+            success: function (data) {
+                alert(data);
+                products = {};
+            }
+        });
+    });
     update_table();
 });
