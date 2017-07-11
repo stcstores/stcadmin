@@ -1,0 +1,113 @@
+#epos {
+    background: #333;
+    margin: 0 auto;
+    font-size: 0.9em;
+    border: 1px solid black;
+    border-radius: 0.75em;
+    text-align: center;
+}
+
+.search, #total {
+    display: inline-block;
+    text-align: center;
+    margin: 1em;
+    background: #ddd;
+    width: 90%;
+    border: 1px solid black;
+    border-radius: 0.75em;
+}
+
+.search input, .search button {
+    font-size: 1.5em;
+    padding: 0.25em;
+    margin: 1em;
+}
+
+.product {
+    border: 1px solid black;
+    border-radius: 0.75em;
+    margin: 0.25em;
+    padding: 0.25em;
+    background: #ddd;
+    width: 90%;
+}
+
+.product_list {
+
+    width: 90%;
+    margin: 0 center;
+    padding: 1em;
+    text-align: center;
+}
+
+.product {
+    padding: 1em;
+    margin: 1em;
+    width: 90%;
+    text-align: left;
+}
+
+.product p {
+    padding: 0;
+    margin: 0 auto;
+}
+
+.remove_product {
+    font-size: 1.5em;
+    margin: 0.25em;
+    padding: 0.25em;
+}
+
+.basic_info {
+    vertical-align: top;
+    padding: 0;
+    margin: 0 auto;
+    width: 50%;
+    display: inline-block;
+}
+
+.product_price {
+    vertical-align: top;
+    padding: 0;
+    margin: 0 auto;
+    width: 20%;
+    display: inline-block;
+}
+
+.quantity {
+    padding: 0;
+    margin: 0 auto;
+    width: 30%;
+    display: inline-block;
+    vertical-align: top;
+    height: 50%;
+}
+
+.order_quantity {
+    display: inline-block;
+    font-size: 2em;
+    font-weight: bold;
+    padding: 0.5em;
+    text-align: center;
+}
+
+.name {
+    display: inline;
+    font-size: 2em;
+}
+
+.base_price {
+    font-size: 0.75em;
+}
+
+.vat_rate {
+    font-size: 0.75em;
+}
+
+.total_price {
+    font-size: 1.75em;
+}
+
+.overall_total {
+    font-size: 2em;
+}

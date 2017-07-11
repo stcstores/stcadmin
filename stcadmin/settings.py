@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'user',
     'cloud_commerce',
     'cloud_commerce_api',
+    'epos',
 ]
 
 MIDDLEWARE = [

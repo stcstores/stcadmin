@@ -3,11 +3,10 @@
     <ul>
         <li><a href="{% url 'home:index' %}">Home</a></li>
         <li><a href="{% url 'reference:index' %}">Reference</a></li>
-        {% for group in request.user.groups.all %}{% if group.name == 'suppliers' %}<li><a href="{% url 'suppliers:supplier_search' %}">Suppliers</a></li>{% endif %}{% endfor %}
-        {% for group in request.user.groups.all %}{% if group.name == 'labelmaker' %}<li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>{% endif %}{% endfor %}
-        {% for group in request.user.groups.all %}{% if group.name == 'photos' %}<li><a href="{% url 'photos:index' %}">Photos</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'cloud_commerce' %}<li><a href="{% url 'cloud_commerce:index' %}">Cloud Commerce</a></li>{% endif %}{% endfor %}
-        {% for group in request.user.groups.all %}{% if group.name == 'linnworks' %}<li><a href="{% url 'linnworks:index' %}">Linnworks</a></li>{% endif %}{% endfor %}
+        {% for group in request.user.groups.all %}{% if group.name == 'epos' %}<li><a href="{% url 'epos:index' %}">EPOS</a></li>{% endif %}{% endfor %}
+        {% for group in request.user.groups.all %}{% if group.name == 'labelmaker' %}<li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>{% endif %}{% endfor %}
+        {% for group in request.user.groups.all %}{% if group.name == 'suppliers' %}<li><a href="{% url 'suppliers:supplier_search' %}">Suppliers</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'admin' %}<li><a href="/admin/">Admin</a></li>{% endif %}{% endfor %}
     </ul>
 </div>

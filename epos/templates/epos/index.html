@@ -1,0 +1,21 @@
+{% extends "epos/base.html" %}
+{% load staticfiles %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/epos.js' %}"></script>
+<script src="{% static 'scripts/accounting.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="epos">
+    <div class="search">
+        <input type="text" name="barcode_search" id="barcode_search">
+        <button id="barcode_search_button">Search</button>
+    </div>
+    <div id="product_list" class="product_list">
+
+    </div>
+</div>
+
+{% endblock %}
