@@ -102,7 +102,7 @@
     margin: 1em;
 }
 
-#complete_order {
+#complete_order, #cancel_order {
     font-size: 2em;
     display: inline-block;
     margin: 1em;

@@ -132,11 +132,13 @@ $(document).ready(function() {
             update_table();
         }
     });
+
     $('#barcode_search').keypress(function (e) {
         if (e.which == 13) {
             $('#barcode_search_button').click();
         }
     });
+
     $('#complete_order').click(function (){
         $.ajax({
             url: complete_url,
@@ -149,5 +151,10 @@ $(document).ready(function() {
             }
         });
     });
+
+    $('#cancel_order').click(function() {
+        location.reload();
+    });
+
     update_table();
 });
