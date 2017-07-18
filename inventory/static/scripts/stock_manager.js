@@ -6,6 +6,47 @@ $(document).ready(function() {
         button.click(update_stock_button(product_id));
     });
 
+    $('.show_hide_products').click(function() {
+        var range_id = $(this).attr('id').replace('show_hide_products_', '');
+        var table = $('#products_table_' + range_id);
+        toggle_table(table);
+    });
+
+    $('#show_hide_all').click(function() {
+        var tables = $('.products_table');
+        if (tables.first().css('display') === 'none') {
+            tables.each(function() {
+                show_table($(this));
+            });
+        } else {
+            tables.each(function() {
+                hide_table($(this));
+            });
+        }
+    });
+
+    function toggle_table(table) {
+        if (table.css('display') === 'none') {
+            show_table(table);
+        } else if (table.css('display') === 'block') {
+            hide_table(table);
+        }
+    }
+
+    function show_table(table) {
+        var range_id = table.attr('id').replace('products_table_', '');
+        var show_hide = $('#show_hide_products_' + range_id);
+        table.css('display', 'block');
+        show_hide.text('[[ hide ]]');
+    }
+
+    function hide_table(table) {
+        var range_id = table.attr('id').replace('products_table_', '');
+        var show_hide = $('#show_hide_products_' + range_id);
+        table.css('display', 'none');
+        show_hide.text('[[ show ]]');
+    }
+
     function change_stock_level(variation_id, stock_level) {
         $('#stock_' + variation_id).val(stock_level);
     }

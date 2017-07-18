@@ -1,0 +1,13 @@
+{% extends "inventory/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<h1>Inventory</h1>
+<div class="site_index">
+    <p>From here you can access:</p>
+    <ul class='app'>
+        <li><a href="{% url 'inventory:range_search' %}">Range Search</a></li>
+        <p>Find a product range in the inventory.</p>
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "home/base.html" %}
+{% load staticfiles %}
+{% block additional_head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/inventory.css' %}">
+{% endblock %}
+{% block page_title %}Inventory{% endblock %}
+{% block section_navigation %}
+{% include "inventory/section_navigation.html" %}
+{% endblock %}
+{% block content %}{% endblock %}

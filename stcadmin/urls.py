@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^epos/', include('epos.urls', namespace='epos')),
     url(r'^reference/', include('reference.urls', namespace='reference')),
     url(r'^linnworks/', include('linnworks.urls', namespace='linnworks')),
+    url(r'^inventory/', include('inventory.urls', namespace='inventory')),
     url(
         r'^cloud_commerce/',
         include('cloud_commerce.urls', namespace='cloud_commerce')),

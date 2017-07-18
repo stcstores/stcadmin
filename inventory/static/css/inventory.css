@@ -1,0 +1,17 @@
+.products_table {
+    display: none;
+}
+
+.products_box {
+    text-align: center;
+}
+
+.products_table {
+    text-align: left;
+}
+
+.show_hide_products {
+    color: blue;
+    font-size: 1em;
+    cursor: pointer;
+}

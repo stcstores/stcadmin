@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'cloud_commerce',
     'cloud_commerce_api',
     'epos',
+    'inventory',
 ]
 
 MIDDLEWARE = [
