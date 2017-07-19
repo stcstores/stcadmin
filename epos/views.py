@@ -9,9 +9,6 @@ from stcadmin import settings
 from ccapi import CCAPI
 
 
-CCAPI.create_session(settings.CC_LOGIN, settings.CC_PWD)
-
-
 def is_epos_user(user):
     return user.groups.filter(name__in=['epos'])
 

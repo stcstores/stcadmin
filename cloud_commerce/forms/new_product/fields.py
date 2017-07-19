@@ -5,9 +5,6 @@ from . import fieldtypes
 from . fieldtypes import Validators
 
 
-CCAPI.create_session(settings.CC_LOGIN, settings.CC_PWD)
-
-
 class Title(fieldtypes.TextField):
     label = 'Title'
     name = 'title'

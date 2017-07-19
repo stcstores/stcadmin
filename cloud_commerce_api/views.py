@@ -10,9 +10,6 @@ from cloud_commerce.views import is_cloud_commerce_user
 from ccapi import CCAPI
 
 
-CCAPI.create_session(settings.CC_LOGIN, settings.CC_PWD)
-
-
 @login_required(login_url=settings.LOGIN_URL)
 @user_passes_test(is_cloud_commerce_user)
 @csrf_exempt

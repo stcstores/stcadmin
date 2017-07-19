@@ -13,7 +13,6 @@ class NewSingleProductView(LoginRequiredMixin, NewProductView):
 
     def old_form_valid(self, form):
         data = form.cleaned_data
-        CCAPI.create_session(settings.CC_LOGIN, settings.CC_PWD)
         options = self.get_options(form)
         self.create_range(data['title'], options.keys())
         large_letter_compatible = options['Package Type'] == 'Large Letter'
