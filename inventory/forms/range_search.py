@@ -85,7 +85,7 @@ class OptionSelectWidget(forms.widgets.MultiWidget):
         return mark_safe(html)
 
 
-class AdvancedRangeSearchForm(forms.Form):
+class RangeSearchForm(forms.Form):
 
     search_type = forms.ChoiceField(
         required=True,

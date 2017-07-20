@@ -11,5 +11,8 @@ urlpatterns = [
     url(
         r'^product_range/(?P<range_id>[0-9]+)/$',
         views.product_range, name='product_range'),
+    url(
+        r'^location/(?P<range_id>[0-9]+)/',
+        views.LocationForm.as_view(), name='locations'),
 
 ]

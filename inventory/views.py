@@ -6,7 +6,7 @@ from stcadmin import settings
 
 from ccapi import CCAPI
 
-from . forms import AdvancedRangeSearchForm
+from . forms import RangeSearchForm, LocationsForm
 
 
 def is_inventory_user(user):
@@ -30,10 +30,15 @@ def product_range(request, range_id):
 
 class RangeSearch(FormView):
     template_name = 'inventory/range_search.html'
-    form_class = AdvancedRangeSearchForm
+    form_class = RangeSearchForm
 
     def form_valid(self, form):
         return render(
             self.request, 'inventory/range_search.html', {
                 'form': form,
                 'product_ranges': form.ranges})
+
+
+class LocationForm(FormView):
+    template_name = 'inventory/locations.html'
+    form_class = LocationsForm

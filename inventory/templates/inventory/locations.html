@@ -1,0 +1,21 @@
+{% extends "inventory/base.html" %}
+{% load staticfiles %}
+{% load cloud_commerce_extras %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+{% endblock %}
+
+{% block page_title %}CCP Stock Manager{% endblock %}
+
+{% block content %}
+<form action="">
+    <table>
+        {{ form.as_table }}
+    </table>
+</form>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
