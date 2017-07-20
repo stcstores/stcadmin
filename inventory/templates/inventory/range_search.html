@@ -10,17 +10,31 @@
 {% block page_title %}CCP Stock Manager{% endblock %}
 
 {% block content %}
-    <form method="GET" action="">
-        <label for="stock_search">Search</label>
-        <input type="text" id="stock_search" name="search_text" value="{{ search_text }}">
-        <input type="submit" id="stock_search_button" value="Search" />
+    <form method="POST" action="">{% csrf_token %}
+        <div class="error">{{ form.non_field_errors }}</div>
+
+        <table id="basic_search">
+            {% for field in form %}
+            <tr class="{% ifequal field.name|slice:"0:6" 'basic_' %}basic_search_row{% else %}{% ifequal field.name|slice:"0:9" 'advanced_' %}advanced_search_row{% endifequal %}{% endifequal %}">
+                <td>{{ field.label }}</td>
+                <td>{{ field }}</td>
+                <td><span class="tooltip" tooltiptitle="{{ field.label }}" tooltiptext="{{ field.help_text }}">?</span></td>
+                {% if field.errors %}
+                    <td class="error">{{ field.errors }}</td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+        <input type="submit" value="Search">
     </form>
     <table id="stock_search_result">
         <thead>
             <tr>
                 <th>SKU</th>
                 <th>Name</th>
-                <th><button id="show_hide_all">Show/Hide all</button></th>
+                <th colspan="2"><button id="show_hide_all">Show/Hide all</button></th>
             </tr>
         </thead>
             <tbody>
@@ -29,7 +43,6 @@
                     <td>{{ range.sku }}</td>
                     <td><a href="{% url 'inventory:product_range' range.id %}">{{ range.name }}</a></td>
                     <td class="products_box">
-                        <span id="show_hide_products_{{ range.id }}" class="show_hide_products">[[ show ]]</span>
                         <table id="products_table_{{ range.id }}" class="products_table">
                             {% for product in range.products %}
                                 <tr>
@@ -39,6 +52,7 @@
                                 </tr>
                             {% endfor %}
                         </table>
+                        <td><span id="show_hide_products_{{ range.id }}" class="show_hide_products">[[ show ]]</span></td>
 
                     </td>
                 </tr>
@@ -57,5 +71,19 @@
             {% endfor %}
             {% endfor %}
         }
+
+        $(document).ready(function() {
+            $('#{{ form.search_type.auto_id }}').change(function (){
+                var value = $(this).find(':checked').val();
+                if (value === 'basic') {
+                    $('.basic_search_row').attr('hidden', false);
+                    $('.advanced_search_row').attr('hidden', true);
+                } else if (value === 'advanced') {
+                    $('.basic_search_row').attr('hidden', true);
+                    $('.advanced_search_row').attr('hidden', false);
+                }
+            });
+            $('#{{ form.search_type.auto_id }}').change();
+        });
     </script>
 {% endblock %}

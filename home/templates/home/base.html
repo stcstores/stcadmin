@@ -8,6 +8,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     <script src="{% static 'scripts/jquery.cookie.js' %}"></script>
     <script src="{% static 'scripts/selection_table.js' %}"></script>
+    <script src="{% static 'scripts/jquery.qtip.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/jquery.qtip.min.css' %}">
     {% block additional_head %}{% endblock %}
     <title>STCAdmin - {% block page_title %}{% endblock %}</title>
 </head>
@@ -29,5 +31,23 @@
         {% block footer %}{% endblock %}
     </div>
     {% block script %}{% endblock %}
+    <script>
+        $(document).ready(function() {
+            $('.tooltip').each(function() {
+                var text = $(this).attr('tooltiptext');
+                var title = $(this).attr('tooltiptitle');
+                $(this).qtip({
+                    prerender: true,
+                    style: {
+                       classes: 'mytooltip',
+                   },
+                    content: {
+                        title: title,
+                        text: text
+                    },
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -176,3 +176,11 @@ th {
 .site_index p {
     text-indent: 1em;
 }
+
+.qtip-title, .qtip-content {
+    font-size: 1.5em;
+}
+
+.qtip-content li {
+    padding: 0.25em;
+}

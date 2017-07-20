@@ -7,7 +7,7 @@ app_name = 'inventory'
 
 urlpatterns = [
     url(r'^index$', views.index, name='index'),
-    url(r'^range_search$', views.range_search, name='range_search'),
+    url(r'^range_search$', views.RangeSearch.as_view(), name='range_search'),
     url(
         r'^product_range/(?P<range_id>[0-9]+)/$',
         views.product_range, name='product_range'),
