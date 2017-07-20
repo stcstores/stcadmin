@@ -1,2 +1,2 @@
 from . range_search import RangeSearchForm  # noqa
-from . locations import LocationsForm  # noqa
+from . locations import LocationsFormSet  # noqa

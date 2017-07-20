@@ -9,6 +9,7 @@
     <p>SKU: {{ product_range.sku}}</p>
     <p>ID: {{ product_range.id }}</p>
     <a href="{% ccp_product_range_page product_range.id %}" target="_blank"><button>View Range on Cloud Commerce</button></a>
+    <a href="{% url 'inventory:locations' product_range.id %}"><button>Locations</button></a>
     <div class="product_list">
         <h3>Products</h3>
         <table class="product_list">
