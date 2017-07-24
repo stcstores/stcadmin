@@ -184,3 +184,10 @@ th {
 .qtip-content li {
     padding: 0.25em;
 }
+
+.ui-autocomplete {
+		max-height: 400px;
+		overflow-y: auto;
+		/* prevent horizontal scrollbar */
+		overflow-x: hidden;
+	}

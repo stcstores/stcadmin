@@ -19,8 +19,8 @@
         </tr>
         {% for form in formset %}
         <tr>
-            <td>{{ form.product_name.value }}</td>
-            <td>{{ form.locations }}</td>
+            <td class="title_field">{{ form.product_name.value }}</td>
+            <td class="location_field">{{ form.locations }}</td>
         </tr>
         {% endfor %}
     </table>
@@ -28,4 +28,19 @@
 {% endblock %}
 
 {% block script %}
+<script>
+
+function set_autocomplete() {
+    var bays = [{% for bay in bays %}'{{ bay }}', {% endfor %}]
+    $('.location_field input').autocomplete({source: bays});
+}
+$(document).click(function() {
+    set_autocomplete();
+});
+$(document).keypress(function() {
+    set_autocomplete();
+});
+
+</script>
+
 {% endblock %}

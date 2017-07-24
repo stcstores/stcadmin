@@ -4,7 +4,7 @@ from django.views.generic.edit import FormView
 
 from stcadmin import settings
 
-from ccapi import CCAPI
+from ccapi import CCAPI, Warehouses
 import json
 
 from . forms import RangeSearchForm, LocationsFormSet
@@ -56,19 +56,27 @@ class LocationForm(FormView):
 
     def get(self, request, range_id):
         formset = self.form_class(initial=self.get_initial())
-        return render(request, self.template_name, {'formset': formset})
+        return render(
+            request, self.template_name,
+            {'formset': formset, 'bays': self.bays})
 
     def get_initial(self):
         range_id = self.kwargs['range_id']
         product_range = CCAPI.get_range(range_id)
-        products = product_range.products
-        for product in products:
+        self.products = product_range.products
+        for product in self.products:
             product.bays = CCAPI.get_bays_for_product(product.id)
         initial = [
             {
                 'product_id': product.id,
                 'product_name': product.full_name,
                 'locations': [bay.name for bay in product.bays],
-            } for product in products]
-        print(initial)
+            } for product in self.products]
+
+        warehouse_id = product.bays[0].warehouse_id
+        self.warehouse = [
+            warehouse for warehouse in Warehouses if
+            warehouse.id == warehouse_id][0]
+        self.bays = [bay.name for bay in self.warehouse.bays]
+        self.bays.sort()
         return initial
