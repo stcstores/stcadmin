@@ -5,16 +5,6 @@ from django.template.loader import render_to_string
 
 from ccapi import CCAPI, ProductOptions
 
-basic_search_matches = (
-    'SKU', 'Title', 'Barcode', 'Linnworks SKU', 'Linnworks Title', 'Supplier',
-    'Supplier SKU', 'All Product Options')
-basic_search_help_text = 'Matches:<ul>{}</ul>'.format(
-    ''.join(['<li>{}</li>'.format(text) for text in (basic_search_matches)]))
-
-advanced_search_matches = ('SKU', 'Title')
-advanced_search_help_text = 'Matches:<ul>{}</ul>'.format(
-    ''.join(['<li>{}</li>'.format(text) for text in (advanced_search_matches)]))
-
 
 class OptionSelectField(forms.MultiValueField):
 
@@ -87,10 +77,28 @@ class OptionSelectWidget(forms.widgets.MultiWidget):
 
 class RangeSearchForm(forms.Form):
 
+    search_type_help_text = (
+        'Select a Search Type<ul><li><b>Basic Search:'
+        '</b>A quick easy search which returns a limited number of items</li>'
+        '<li><b>Advanced Search:</b> More options for a refined search.'
+        'Will return all possible products.')
+
+    basic_search_matches = (
+        'SKU', 'Title', 'Barcode', 'Linnworks SKU', 'Linnworks Title',
+        'Supplier', 'Supplier SKU', 'All Product Options')
+    basic_search_help_text = 'Matches:<ul>{}</ul>'.format(
+        ''.join(['<li>{}</li>'.format(text) for text in (
+            basic_search_matches)]))
+
+    advanced_search_matches = ('SKU', 'Title')
+    advanced_search_help_text = 'Matches:<ul>{}</ul>'.format(
+        ''.join(['<li>{}</li>'.format(text) for text in (
+            advanced_search_matches)]))
+
     search_type = forms.ChoiceField(
         required=True,
         label='Search Type',
-        help_text='Select a Search Type<ul><li><b>Basic Search:</b>A quick easy search which returns a limited number of items</li><li><b>Advanced Search:</b> More options for a refined search. Will return all possible products.',
+        help_text=search_type_help_text,
         initial='basic',
         choices=[('basic', 'Basic Search'), ('advanced', 'Advanced Search')],
         widget=forms.RadioSelect())
