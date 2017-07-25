@@ -2,6 +2,8 @@ from . new_product import NewProduct
 from . new_range import NewRange
 from . new_variation import NewVariation
 
+from ccapi import CCAPI
+
 
 class VariationProduct(NewProduct):
 
@@ -45,9 +47,9 @@ class VariationProduct(NewProduct):
         bay_id = None
         bay_name = self.get_variable_value('location', data)
         if len(bay_name) > 0:
-            bay_id = self.get_bay_id(bay_name, self.department)
+            bay_id = CCAPI.get_bay_id(bay_name, self.department)
         else:
-            bay_id = self.get_bay_id(self.department, self.department)
+            bay_id = CCAPI.get_bay_id(self.department, self.department)
         product = NewVariation(
             product_range=self.product_range,
             barcode=barcode,

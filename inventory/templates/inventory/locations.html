@@ -12,23 +12,27 @@
 {% block content %}
 <form action="" method="POST">{% csrf_token %}
     {{ formset.management_form }}
+    {% if formset.errors %}{{ formset.errors }}{% endif %}
     <table>
         <tr>
             <td>Product</td>
             <td>Bays</td>
         </tr>
         {% for form in formset %}
+        <tr hidden><td>{{ form.product_id }}</td></tr>
         <tr>
             <td class="title_field">{{ form.product_name.value }}</td>
             <td class="location_field">{{ form.locations }}</td>
         </tr>
         {% endfor %}
     </table>
+    <input type="submit" value="Update Locations" />
 </form>
 {% endblock %}
 
 {% block script %}
 <script>
+
 
 function set_autocomplete() {
     var bays = [{% for bay in bays %}'{{ bay }}', {% endfor %}]

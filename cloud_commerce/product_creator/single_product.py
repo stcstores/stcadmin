@@ -2,6 +2,8 @@ from . new_product import NewProduct
 from . new_range import NewRange
 from . new_variation import NewVariation
 
+from ccapi import CCAPI
+
 
 class SingleProduct(NewProduct):
 
@@ -26,7 +28,8 @@ class SingleProduct(NewProduct):
         self.purchase_price = data['purchase_price']
         self.package_type = data['package_type']
         if len(data['location']) > 0:
-            self.bay_id = self.get_bay_id(data['location'], self.department)
+            self.bay_id = CCAPI.get_bay_id(
+                data['location'], self.department, create=True)
         else:
             self.bay_id = None
 
