@@ -62,6 +62,8 @@ $(document).ready(function() {
 
     function update_stock(product_id) {
         var stock_input = $('#stock_' + product_id);
+        var status = $('#status_' + product_id);
+        status.attr('src', loading_image);
         $.ajax({
             type: 'POST',
             url: update_stock_url,
@@ -74,6 +76,7 @@ $(document).ready(function() {
                 console.log(response);
                 product_details[product_id].stock_level = response;
                 $('#stock_' + product_id).val(response);
+                status.attr('src', complete_image);
             },
             contentType: "application/json",
             dataType: 'json'

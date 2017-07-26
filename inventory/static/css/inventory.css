@@ -19,3 +19,7 @@
     overflow: hidden;
     float: right;
 }
+
+.update_status {
+    width: 20px;
+}
