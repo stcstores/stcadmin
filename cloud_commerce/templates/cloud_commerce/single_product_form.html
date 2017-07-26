@@ -1,7 +1,9 @@
 {% extends "cloud_commerce/new_product_form.html" %}
 {% load staticfiles %}
+{% load stcadmin_extras %}
 
 {% block content %}
+
 <form method="POST">
     <table class="new_product">
         {% csrf_token %}
@@ -9,14 +11,18 @@
         <tr>
             <td>{{ field.label }}</td>
             <td>{{ field }}</td>
+            <td>{% tooltip_help_text field %}</td>
             {% if field.errors %}
                 <td class="error">{{ field.errors }}</td>
-            {% else %}
-                <td></td>
             {% endif %}
         </tr>
         {% endfor %}
         <tr><td colspan="2" style="text-align: center;"><input type="submit" value="Create Product" style="width: 80%;"/></td></tr>
     </table>
 </form>
+{% endblock %}
+
+{% block script %}
+{{ block.super }}
+{% include 'cloud_commerce/set_autocomplete.html' %}
 {% endblock %}

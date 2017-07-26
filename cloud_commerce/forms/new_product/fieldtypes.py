@@ -143,6 +143,9 @@ class OptionField(TextField):
     must_vary = False
     size = 50
     validators = [Validators.option_value]
+    help_text = (
+        'This option is only used to add information to the listing and must '
+        '<b>only</b> be filled out if it is applicable to the product')
 
     def __init__(self, *args, **kwargs):
         kwargs['label'] = self.option

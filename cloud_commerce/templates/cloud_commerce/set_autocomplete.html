@@ -1,0 +1,57 @@
+{% load cloud_commerce_extras %}
+
+<script>
+    $(document).ready(function() {
+        {% warehouse_bays as warehouses %}
+        var warehouses = {
+            {% for warehouse, bays in warehouses.items %}
+            '{{ warehouse }}': [
+                {% for bay in bays %}'{{ bay }}',{% endfor %}],
+            {% endfor %}}
+
+        {% product_options as options %}
+        var product_options = {
+            {% for option, values in options.items %}
+            '{{ option }}': [
+                {% for value in values %}'{{ value }}',{% endfor %}],
+            {% endfor %}}
+
+
+        {% if wizard.form.forms %}
+            {% for form in wizard.form.forms %}
+                {% for field in form %}
+                    {% ifequal field.name|slice:"0:4" 'opt_' %}
+                        $('#{{ field.auto_id }}').autocomplete({source: product_options['{{ field.label }}']});
+                    {% endifequal %}
+                {% endfor %}
+                {% if form.location %}
+                    if (warehouses.hasOwnProperty('{{ form.department }}')) {
+                        $('#{{ form.location.auto_id}}').autocomplete({source: warehouses['{{ form.department }}']});
+                    }
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            $('#{{ form.department.auto_id }}').change(function() {
+                var department = $(this).val();
+                $('#{{ form.location.auto_id}}').val('');
+                if (warehouses.hasOwnProperty(department)) {
+                    var bay_list = warehouses[department];
+                    $('#{{ form.location.auto_id}}').attr('disabled', false);
+                } else {
+                    var bay_list = [];
+                    $('#{{ form.location.auto_id}}').attr('disabled', true);
+                }
+                $('#{{ form.location.auto_id}}').autocomplete({source: bay_list});
+            });
+            $('#{{ form.department.auto_id }}').change();
+
+            $('#{{ form.brand.auto_id }}').autocomplete({source: product_options['Brand']});
+            $('#{{ form.manufacturer.auto_id }}').autocomplete({source: product_options['Manufacturer']});
+            {% for field in form %}
+                {% ifequal field.name|slice:"0:4" 'opt_' %}
+                    $('#{{ field.auto_id }}').autocomplete({source: product_options['{{ field.label }}']});
+                {% endifequal %}
+            {% endfor %}
+        {% endif %}
+    });
+</script>

@@ -1,6 +1,7 @@
 {% extends "inventory/base.html" %}
 {% load staticfiles %}
 {% load cloud_commerce_extras %}
+{% load stcadmin_extras %}
 
 {% block additional_head %}
 {{ block.super }}
@@ -18,7 +19,7 @@
             <tr class="{% ifequal field.name|slice:"0:6" 'basic_' %}basic_search_row{% else %}{% ifequal field.name|slice:"0:9" 'advanced_' %}advanced_search_row{% endifequal %}{% endifequal %}">
                 <td>{{ field.label }}</td>
                 <td>{{ field }}</td>
-                <td><span class="tooltip" tooltiptitle="{{ field.label }}" tooltiptext="{{ field.help_text }}">?</span></td>
+                <td>{% tooltip_help_text field %}</td>
                 {% if field.errors %}
                     <td class="error">{{ field.errors }}</td>
                 {% else %}

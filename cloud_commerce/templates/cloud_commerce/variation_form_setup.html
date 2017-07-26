@@ -1,4 +1,7 @@
 {% extends "cloud_commerce/variation_wizard.html" %}
+{% load staticfiles %}
+{% load cloud_commerce_extras %}
+{% load stcadmin_extras %}
 
 {% block table_class %}new_product_form{% endblock %}
 
@@ -9,7 +12,8 @@
         <tr>
             <th></th>
             <th></th>
-            <th>Variable</th>
+            <th>{% tooltip 'Variable' 'Select the checkbox for a field if a different value is required for each variation.<br>Otherwise the same value will be applied to every variation.' %}
+            <th></th>
             <th></th>
         </tr>
     </thead>
@@ -19,8 +23,9 @@
         {% ifnotequal field.name|slice:"0:4" 'opt_' %}
             <tr>
                 <td><label for="{{ field.name }}">{{ field.label }}</label></td>
-                <td>{{ field }}<br>{{ field.help_text }}</td>
+                <td>{{ field }}</td>
                 <td>{% for var_field in form %}{% ifequal var_field.name 'variable_'|add:field.name %}{{ var_field }}{% endifequal %}{% endfor %}</td>
+                <td>{% tooltip_help_text field %}</td>
                 {% if field.errors %}
                     <td class="error">{{ field.errors }}</td>
                 {% else %}
@@ -30,6 +35,9 @@
 
         {% endifnotequal %}{% endifnotequal %}{% endifnotequal %}
     {% endfor %}
+</table>
+
+<h3>Product Options&nbsp;{% tooltip 'Product Options' '<ul><li><b>Unused</b>:<br>Select if this option is not applicable to the product.</li><li><b>Single:</b><br>Select this to use the option for extra information in the listing if the value does <b>not</b> differ between variations.</li><li><b>Variable:<br></b>Select this to use the option for extra information in the listing if the value <b>does</b> differ between variations.</li><li><b>Variation:<br></b>Select this if the option is the way in which the variation product varies. At least one option must be set to <b>Variation</b> and at least two values must be supplied for each <b>Variation Option</b>.</li>' %}</h3>
 <table class="variation_options_table">
 {% for field in form %}
 {% ifequal field.name|slice:"0:4" 'opt_' %}

@@ -27,6 +27,10 @@ class SingleProduct(NewProduct):
         self.supplier = data['supplier']
         self.purchase_price = data['purchase_price']
         self.package_type = data['package_type']
+        if self.package_type in ('Heavy and Large', 'Courier'):
+            self.international_shipping = 'Express'
+        else:
+            self.international_shipping = 'Standard'
         if len(data['location']) > 0:
             self.bay_id = CCAPI.get_bay_id(
                 data['location'], self.department, create=True)
@@ -61,7 +65,8 @@ class SingleProduct(NewProduct):
             'Manufacturer': self.manufacturer,
             'Supplier': self.supplier,
             'Purchase Price': self.purchase_price,
-            'Package Type': self.package_type}
+            'Package Type': self.package_type,
+            'International Shipping': self.international_shipping}
         optional_options = {
             key.replace('opt_', ''): value for key, value in
             self.data.items() if key.startswith('opt_') and

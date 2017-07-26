@@ -34,7 +34,7 @@ class VariationFormWizard(SessionWizardView):
     def done(self, form_list, **kwargs):
         new_product = VariationProduct(form_list)
         return redirect(
-            'cloud_commerce:product_range', new_product.product_range.id)
+            'inventory:product_range', new_product.product_range.id)
 
     def get_form(self, step=None, data=None, files=None):
         form = super().get_form(step, data, files)
@@ -49,6 +49,7 @@ class VariationFormWizard(SessionWizardView):
             for var_form in form.forms:
                 var_form.set_variation_fields(
                     selected_options, selected_variables)
+                var_form.department = self.get_department()
         return form
 
     def remove_unused_variations(self, data):
@@ -88,6 +89,9 @@ class VariationFormWizard(SessionWizardView):
 
     def get_variations(self):
         return self.get_cleaned_data_for_step('0')['variations']
+
+    def get_department(self):
+        return self.get_cleaned_data_for_step('0')['department']
 
     def initial_for_variation_table_form(self):
         selected_variables = self.get_selected_variables()

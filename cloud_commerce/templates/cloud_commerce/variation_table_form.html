@@ -5,7 +5,7 @@
 {% block formset %}
     <tr>
         {% for field in wizard.form.forms.0 %}
-            <th>{{ field.label }}</th>
+            <th>{{ field.label }}&nbsp;{% tooltip_help_text field %}</th>
         {% endfor %}
     </tr>
     {% for form in wizard.form.forms %}

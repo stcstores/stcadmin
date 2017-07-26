@@ -179,6 +179,7 @@ th {
 
 .qtip-title, .qtip-content {
     font-size: 1.5em;
+    line-height: 1.25em;
 }
 
 .qtip-content li {
@@ -186,8 +187,13 @@ th {
 }
 
 .ui-autocomplete {
-		max-height: 400px;
-		overflow-y: auto;
-		/* prevent horizontal scrollbar */
-		overflow-x: hidden;
-	}
+	max-height: 400px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+}
+
+.tooltip_image {
+    margin: 0;
+    padding: 0;
+}

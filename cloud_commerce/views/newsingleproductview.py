@@ -1,13 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from . newproductview import NewProductView
+from django.views.generic.edit import FormView
 from cloud_commerce . forms import NewSingleProductForm
-from stcadmin import settings
-from ccapi import CCAPI
 from django.shortcuts import redirect
 from cloud_commerce.product_creator import SingleProduct
 
 
-class NewSingleProductView(LoginRequiredMixin, NewProductView):
+class NewSingleProductView(LoginRequiredMixin, FormView):
     template_name = 'cloud_commerce/single_product_form.html'
     form_class = NewSingleProductForm
 
@@ -36,4 +34,4 @@ class NewSingleProductView(LoginRequiredMixin, NewProductView):
     def form_valid(self, form):
         new_product = SingleProduct(form.cleaned_data)
         return redirect(
-            'cloud_commerce:product_range', new_product.product_range.id)
+            'inventory:product_range', new_product.product_range.id)
