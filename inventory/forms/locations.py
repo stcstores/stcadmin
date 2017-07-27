@@ -11,6 +11,7 @@ class LocationsForm(forms.Form):
         disabled=True,
         required=False,
         widget=forms.TextInput(attrs={'size': 200, 'class': 'product_title'}))
+    stock_level = forms.CharField(required=False)
     locations = ListInput(required=True)
 
 

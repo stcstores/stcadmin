@@ -15,13 +15,15 @@
     {% if formset.errors %}{{ formset.errors }}{% endif %}
     <table>
         <tr>
-            <td>Product</td>
-            <td>Bays</td>
+            <th>Product</th>
+            <th>Stock Level</th>
+            <th>Bays</th>
         </tr>
         {% for form in formset %}
         <tr hidden><td>{{ form.product_id }}</td></tr>
         <tr>
             <td class="title_field">{{ form.product_name.value }}</td>
+            <td class="stock_level_field">{{ form.stock_level.value }}</td>
             <td class="location_field">{{ form.locations }}</td>
         </tr>
         {% endfor %}

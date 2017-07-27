@@ -75,6 +75,7 @@ class LocationForm(FormView):
             {
                 'product_id': product.id,
                 'product_name': product.full_name,
+                'stock_level': product.stock_level,
                 'locations': [bay.name for bay in product.bays],
             } for product in self.products]
         if len(product.bays) > 0:
