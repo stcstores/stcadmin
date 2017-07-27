@@ -68,9 +68,10 @@ def print_statistics(request):
         if user_id not in users:
             users[user_id] = 0
         users[user_id] += 1
-    pack_count = {
-        user_list[str(user_id)].full_name: count for user_id, count in
-        users.items()}
+    pack_count = [
+        (user_list[str(user_id)].full_name, count) for user_id, count in
+        users.items()]
+    pack_count.sort(key=lambda x: x[1], reverse=True)
 
     return render(
         request, 'cloud_commerce/print_statistics.html',

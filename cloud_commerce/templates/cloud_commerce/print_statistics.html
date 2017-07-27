@@ -1,8 +1,8 @@
 <html>
     <body>
-        <div id="pack_count">
-            {% for name, count in pack_count.items %}
-                <p style="font-size: 2em;">{{ name }}: {{ count }}</p>
+        <div id="pack_count" style="text-align: center; width: 100%;">
+            {% for name, count in pack_count %}
+                <p style="font-size: 5em;">{{ name }}: {{ count }}</p>
             {% endfor %}
         </div>
     </body>
