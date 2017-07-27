@@ -33,4 +33,8 @@ urlpatterns = [
         r'^product_range/(?P<range_id>[0-9]+)/$',
         views.product_range, name='product_range'),
 
+    url(
+        r'^print_statistics$',
+        views.print_statistics, name='print_statistics'),
+
 ]

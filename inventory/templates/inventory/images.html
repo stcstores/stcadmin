@@ -1,0 +1,75 @@
+{% extends "inventory/base.html" %}
+{% load staticfiles %}
+{% load cloud_commerce_extras %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+{% endblock %}
+
+{% block page_title %}CCP Stock Manager{% endblock %}
+
+{% block content %}
+<form action="" method="POST">{% csrf_token %}
+    {{ formset.management_form }}
+    {% if formset.errors %}{{ formset.errors }}{% endif %}
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Stock Level</th>
+            <th>Bays</th>
+        </tr>
+        {% for form in formset %}
+        <tr hidden><td>{{ form.product_id }}</td></tr>
+        <tr>
+            <td class="title_field">{{ form.product_name.value }}</td>
+            <td class="stock_level_field">{{ form.stock_level.value }}</td>
+            <td class="location_field">{{ form.locations }}</td>
+            <td>
+                <div id="div_{{ form.images.auto_id }}" class="dropzone">
+                    <div class="dz-default dz-message"></div>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <input type="submit" value="Update Locations" />
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+
+
+function set_autocomplete() {
+    var bays = [{% for bay in bays %}'{{ bay }}', {% endfor %}]
+    $('.location_field input').autocomplete({source: bays});
+}
+$(document).click(function() {
+    set_autocomplete();
+});
+$(document).keypress(function() {
+    set_autocomplete();
+});
+
+$(document).ready(function () {
+    {% for form in formset %}
+    Dropzone.autoDiscover = false;
+    $("#div_{{ form.images.auto_id }}").dropzone({
+        url: "hn_SimpeFileUploader.ashx",
+        addRemoveLinks: true,
+        success: function (file, response) {
+            var imgName = response;
+            file.previewElement.classList.add("dz-success");
+            console.log("Successfully uploaded :" + imgName);
+        },
+        error: function (file, response) {
+            file.previewElement.classList.add("dz-error");
+        }
+    });
+    {% endfor %}
+});
+
+</script>
+
+{% endblock %}

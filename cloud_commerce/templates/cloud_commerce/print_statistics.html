@@ -1,0 +1,13 @@
+<html>
+    <body>
+        <div id="pack_count">
+            {% for name, count in pack_count.items %}
+                <p style="font-size: 2em;">{{ name }}: {{ count }}</p>
+            {% endfor %}
+        </div>
+    </body>
+</html>
+
+<script>
+    setTimeout("location.reload(true);", 3000 * 10);
+</script>

@@ -1,49 +1,17 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.generic.edit import FormView
-
-from stcadmin import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from ccapi import CCAPI, Warehouses
 from django.shortcuts import redirect
 
-from . forms import RangeSearchForm, LocationsFormSet
+from inventory. forms import ImagesFormSet
 
 
-def is_inventory_user(user):
-    return user.groups.filter(name__in=['inventory'])
+class ImageForm(LoginRequiredMixin, FormView):
 
-
-@login_required(login_url=settings.LOGIN_URL)
-@user_passes_test(is_inventory_user)
-def index(request):
-    return render(request, 'inventory/index.html')
-
-
-@login_required(login_url=settings.LOGIN_URL)
-@user_passes_test(is_inventory_user)
-def product_range(request, range_id):
-    product_range = CCAPI.get_range(range_id)
-    return render(
-        request, 'inventory/product_range.html',
-        {'product_range': product_range})
-
-
-class RangeSearch(FormView):
-    template_name = 'inventory/range_search.html'
-    form_class = RangeSearchForm
-
-    def form_valid(self, form):
-        return render(
-            self.request, 'inventory/range_search.html', {
-                'form': form,
-                'product_ranges': form.ranges})
-
-
-class LocationForm(FormView):
-
-    template_name = 'inventory/locations.html'
-    form_class = LocationsFormSet
+    template_name = 'inventory/images.html'
+    form_class = ImagesFormSet
 
     def post(self, request, range_id):
         if request.method == 'POST':
