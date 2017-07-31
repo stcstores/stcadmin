@@ -71,7 +71,7 @@ class PurchasePrice(fieldtypes.PriceField):
     variable = True
     empty_value = 0.0
     help_text = (
-        'Initial <b>Stock Level</b> of the product.'
+        'Price at which we purchase the product.'
         '<br>Cannot be blank but can be zero.')
 
 
@@ -84,7 +84,7 @@ class StockLevel(fieldtypes.NumberField):
     variable = True
     empty_value = 0
     help_text = (
-        'Price at which we purchase the product.'
+        'Initial <b>Stock Level</b> of the product.'
         '<br>Cannot be blank but can be zero.')
 
 
