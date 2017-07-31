@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'epos',
     'inventory',
     'list_input',
+    'print_audit',
 ]
 
 MIDDLEWARE = [

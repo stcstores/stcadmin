@@ -1,0 +1,11 @@
+{% extends "home/base.html" %}
+{% load staticfiles %}
+{% block additional_head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/print_audit.css' %}">
+{% endblock %}
+{% block page_title %}Print Audit{% endblock %}
+{% block section_navigation %}
+{% include "print_audit/section_navigation.html" %}
+{% endblock %}
+{% block content %}{% endblock %}

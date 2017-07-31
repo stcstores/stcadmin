@@ -8,6 +8,7 @@
         {% for group in request.user.groups.all %}{% if group.name == 'epos' %}<li><a href="{% url 'epos:index' %}">EPOS</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'labelmaker' %}<li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'suppliers' %}<li><a href="{% url 'suppliers:supplier_search' %}">Suppliers</a></li>{% endif %}{% endfor %}
+        {% for group in request.user.groups.all %}{% if group.name == 'print_audit' %}<li><a href="{% url 'print_audit:index' %}">Print Audit</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'admin' %}<li><a href="/admin/">Admin</a></li>{% endif %}{% endfor %}
     </ul>
 </div>

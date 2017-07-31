@@ -34,6 +34,9 @@ urlpatterns = [
     url(r'^linnworks/', include('linnworks.urls', namespace='linnworks')),
     url(r'^inventory/', include('inventory.urls', namespace='inventory')),
     url(
+        r'^print_audit/',
+        include('print_audit.urls', namespace='print_audit')),
+    url(
         r'^cloud_commerce/',
         include('cloud_commerce.urls', namespace='cloud_commerce')),
     url(
