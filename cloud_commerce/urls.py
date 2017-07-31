@@ -9,9 +9,6 @@ urlpatterns = [
     url(
         r'^index$', views.index,
         name='index'),
-    url(
-        r'^stock_manager$', views.stock_manager,
-        name='stock_manager'),
 
     url(
         r'^new_product$',
