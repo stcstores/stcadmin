@@ -1,13 +1,36 @@
+{% load staticfiles %}
 <html>
+    <head>
+        <link rel="stylesheet" href="{% static 'css/cloud_commerce.css' %}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    </head>
     <body>
-        <div id="pack_count" style="text-align: center; width: 100%;">
+        <div id="pack_count" class="pack_count">
             {% for name, count in pack_count %}
-                <p style="font-size: 5em;">{{ name }}: {{ count }}</p>
+                <p class="pack_count">{{ name }}: {{ count }}</p>
             {% endfor %}
         </div>
     </body>
 </html>
 
 <script>
+    $(document).ready(function() {
+        $(window).resize(function () {
+            var pack_count = $('#pack_count');
+            var height = $(window).height() - 50;
+
+            var line_count = {{ pack_count | length }};
+            var line_height = 20;
+            var font_size = (height - (line_height * (line_count * 2))) / line_count;
+            pack_count.css({
+              'font-size': font_size + 'px',
+              'line-height': line_height + 'px'
+          });
+            pack_count.css('height', height + 'px');
+        });
+        $(window).resize();
+    });
+
+
     setTimeout("location.reload(true);", 3000 * 10);
 </script>
