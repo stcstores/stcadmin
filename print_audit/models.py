@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.timezone import get_current_timezone, is_naive
+from django.utils.timezone import get_current_timezone, is_naive, now
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -89,7 +89,7 @@ class UserFeedback(models.Model):
     user = models.ForeignKey(CloudCommerceUser, on_delete=models.CASCADE)
     feedback_type = models.ForeignKey(
         Feedback, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(default=now)
     order_id = models.CharField(max_length=10, blank=True, null=True)
     note = models.TextField(blank=True, null=True)
 
