@@ -1,0 +1,90 @@
+{% extends "print_audit/base.html" %}
+{% load staticfiles %}
+{% load print_audit_extras %}
+
+{% block content %}
+
+<div class="feedback_list">
+    <table class="feedback_list">
+        <th>User</th>
+        <th>Feedback Type</th>
+        <th>Created</th>
+        <th>Order ID</th>
+        <th>Note</th>
+        {% for feedback in feedback_list %}
+        <tr>
+            <td>{{ feedback.user.full_name }}</td>
+            <td>
+                {{ feedback.feedback_type.name }}
+                <img src="{{ feedback.feedback_type.image.url}}" alt="{{ feedback.feedback_type.name }}" height="25">
+            </td>
+            <td>{{ feedback.timestamp }}</td>
+            <td>{% if feedback.order_id %}{{ feedback.order_id }}{% endif %}</td>
+            <td>{% if feedback.note %}{{ feedback.note }}{% endif %}</td>
+            <td><a href="{% url 'print_audit:update_feedback' feedback.id %}"><button>Edit</button></a></td>
+            <td><a href="{% url 'print_audit:delete_feedback' feedback.id %}"><button>Delete</button></a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+
+<form action="" method="POST" class="feedback_filters">{% csrf_token %}
+    <table>
+        {% if is_paginated %}
+        <tr>
+            <th>Showing:</th>
+            <td>{{ form.paginate_by }} of {{ page_obj.paginator.count }}</td>
+        </tr>
+        <tr>
+            <th colspan="2">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1"><button type="submit" value="1" name="page">&lt;&lt;&nbsp;First</button></a>
+                    <a href="?page=1"><button type="submit" value="{{ page_obj.previous_page_number }}" name="page">&lt;&nbsp;Previous</button></a>
+                {% endif %}
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                {% if page_obj.has_next %}
+                    <a href="?page=1"><button type="submit" value="{{ page_obj.next_page_number }}" name="page">Next&nbsp;&gt;&nbsp;</button></a>
+                    <a href="?page=1"><button type="submit" value="{{ page_obj.paginator.num_pages }}" name="page">Last&nbsp;&gt;&gt;</button></a>
+                {% endif %}
+            </th>
+        </tr>
+        {% endif %}
+        <tr>
+            <th><label for="{{ form.user.id }}">{{ form.user.label }}</label></th>
+            <td>{{ form.user }}</td>
+        </tr>
+        <tr>
+            <th><label for="{{ form.feedback.id }}">{{ form.feedback.label }}</label></th>
+            <td>{{ form.feedback }}</td>
+        </tr>
+        <tr>
+            <th><label for="{{ form.date_from.id }}">{{ form.date_from.label }}</label></th>
+            <td>{{ form.date_from }}</td>
+        </tr>
+        <tr>
+            <th><label for="{{ form.date_to.id }}">{{ form.date_to.label }}</label></th>
+            <td>{{ form.date_to }}</td>
+        </tr>
+        <tr>
+            <th colspan="2"><input type="submit" value="Search"></th>
+        </tr>
+        <tr>
+            <th colspan="2"><a href="#"><button>Clear</button></a></th>
+        </tr>
+    </table>
+</form>
+
+
+
+
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+    $(document).ready(function() {
+        $('.datepicker').datepicker();
+    });
+</script>
+
+{% endblock %}

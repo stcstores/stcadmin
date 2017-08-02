@@ -1,0 +1,42 @@
+{% extends "print_audit/base.html" %}
+{% load staticfiles %}
+{% load print_audit_extras %}
+
+{% block content %}
+
+<style>
+    .ghost {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+
+<h1>Print Audit</h1>
+
+<table>
+    <tr>
+        <th>User</th>
+        {% for feedback_type in feedback_types %}
+        <th colspan="2">
+            <a href="{% url 'print_audit:feedback_list' %}?feedback_id={{ feedback_type.pk }}">{{ feedback_type.name }}</a>
+        </th>
+        {% endfor %}
+    </tr>
+    {% for user in users %}
+    <tr>
+        <td><a href="{% url 'print_audit:feedback_list' %}?user_id={{ user.pk }}">{{ user }}</a></td>
+        {% for feedback_type in feedback_types %}
+            <td>
+                <a href="{% url 'print_audit:feedback_list' %}?feedback_id={{ feedback_type.pk }}&user_id={{ user.pk }}">
+                    <img src="{{ feedback_type.image.url }}" alt="{{ feedback_type.name }}" height="25">
+                </a>
+            </td>
+            <td>{% feedback_count user feedback_type %}</td>
+        {% endfor %}
+        <td><a href="{% url 'print_audit:create_feedback' user.id %}"><button>Add</button></a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+{% endblock %}
