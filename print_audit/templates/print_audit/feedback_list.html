@@ -31,11 +31,11 @@
 
 <form action="" method="POST" class="feedback_filters">{% csrf_token %}
     <table>
-        {% if is_paginated %}
         <tr>
             <th>Showing:</th>
             <td>{{ form.paginate_by }} of {{ page_obj.paginator.count }}</td>
         </tr>
+        {% if is_paginated %}
         <tr>
             <th colspan="2">
                 {% if page_obj.has_previous %}
