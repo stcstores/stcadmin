@@ -31,6 +31,14 @@ urlpatterns = [
         views.display_monitor, name='display_monitor'),
 
     url(
+        r'^pack_count_monitor$',
+        views.pack_count_monitor, name='pack_count_monitor'),
+
+    url(
+        r'^feedback_monitor$',
+        views.feedback_monitor, name='feedback_monitor'),
+
+    url(
         r'^feedback_list$',
         views.FeedbackList.as_view(), name='feedback_list'),
 

@@ -5,10 +5,16 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     </head>
     <body>
-        <div id="pack_count" class="pack_count">
-            {% for name, count in pack_count %}
-                <p class="pack_count">{{ name }}: {{ count }}</p>
-            {% endfor %}
+        <style>
+            .feedback_name {
+                font-size: 2em;
+            }
+        </style>
+        <div class="pack_count" id="pack_count">
+
+        </div>
+        <div class="feedback" id="feedback">
+
         </div>
 
 
@@ -17,8 +23,50 @@
                 $('.pack_count').css('font-size', '150px');
             });
 
+            function get_pack_count() {
+                $('#pack_count').html('');
+                $.get("{% url 'print_audit:pack_count_monitor' %}",
+                    function(data) {
+                        var data = $.parseJSON(data);
+                        for (var i=0; i<data.length; i++) {
+                            var name = data[i][0]
+                            var count = data[i][1]
+                            $('#pack_count').append('<p>' + name + ': ' + count + '</p>');
+                        }
+                    }
+                );
+            }
 
-            setTimeout("location.reload(true);", 3000 * 10);
+            function get_feedback() {
+                $('#feedback').html('');
+                $.get("{% url 'print_audit:feedback_monitor' %}",
+                    function(data) {
+                        var data = $.parseJSON(data);
+                        for (var i=0; i<data.length; i++) {
+                            var name = data[i]['name'];
+                            $('#feedback').append('<p id="feedback_' + i + '"><span class="feedback_name">' + name + ': </span></p>');
+                            $.each(data[i].feedback, function(index, feedback) {
+                                for (im=0; im<feedback.count; im++) {
+                                    $('#feedback_' + i).append('<img src="' + feedback.image_url + '" height="20">');
+                                }
+                            });
+                            $('#feedback_' + i).after('<hr>');
+                        }
+                    }
+                );
+            }
+
+            get_pack_count()
+            get_feedback();
+
+            setInterval(function(){
+                $("html, body").animate({ scrollTop: $(document).height() }, 50000);
+                setTimeout(function() {
+                    $('html, body').animate({scrollTop:0}, 1000);
+                }, 50000);
+                get_pack_count()
+                get_feedback();
+            }, 50000);
         </script>
     </body>
 </html>
