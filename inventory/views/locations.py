@@ -67,6 +67,8 @@ class LocationForm(LoginRequiredMixin, FormView):
     def update_bays(self, product, new_bay_names):
         warehouse_name = str(product.options['Department'].value)
         existing_bays = product.bays
+        if existing_bays is None:
+            existing_bays = []
         existing_bay_ids = [bay.id for bay in existing_bays]
         new_bay_ids = [
             CCAPI.get_bay_id(bay_name, warehouse_name, create=True) for
