@@ -31,7 +31,6 @@ urlpatterns = [
     url(r'^photos/', include('photos.urls', namespace='photos')),
     url(r'^epos/', include('epos.urls', namespace='epos')),
     url(r'^reference/', include('reference.urls', namespace='reference')),
-    url(r'^linnworks/', include('linnworks.urls', namespace='linnworks')),
     url(r'^inventory/', include('inventory.urls', namespace='inventory')),
     url(
         r'^print_audit/',

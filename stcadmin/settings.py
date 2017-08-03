@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'photos',
     'reference',
     'shopify',
-    'linnworks',
     'user',
     'cloud_commerce',
     'cloud_commerce_api',
