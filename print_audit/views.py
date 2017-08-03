@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.core.paginator import EmptyPage, Paginator
+from django.utils.timezone import now
 
 from stcadmin import settings
 from print_audit import models
@@ -136,21 +137,14 @@ class FeedbackList(ListView):
 @login_required(login_url=settings.LOGIN_URL)
 @user_passes_test(is_print_audit_user)
 def display_monitor(request):
-    user_list = CCAPI.get_users()
-    print_jobs = CCAPI.get_print_queue()
-    users = {}
-    orders = []
-    for job in print_jobs:
-        order_id = job.order_id
-        user_id = job.user_id
-        if order_id in orders or order_id == 0:
-            continue
-        if user_id not in users:
-            users[user_id] = 0
-        users[user_id] += 1
+    orders = models.CloudCommerceOrder.objects.filter(
+        date_created__year=now().year,
+        date_created__month=now().month,
+        date_created__day=now().day)
+    packers = models.CloudCommerceUser.objects.all()
     pack_count = [
-        (user_list[str(user_id)].full_name, count) for user_id, count in
-        users.items()]
+        (user.full_name(), orders.filter(user=user).count()) for user in packers]
+    pack_count = [count for count in pack_count if count[1] > 0]
     pack_count.sort(key=lambda x: x[1], reverse=True)
 
     return render(
