@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'home',
     'suppliers',
     'labelmaker',
-    'photos',
     'reference',
     'shopify',
     'user',

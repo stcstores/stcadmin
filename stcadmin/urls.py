@@ -28,7 +28,6 @@ urlpatterns = [
     url(r'^suppliers/', include('suppliers.urls', namespace='suppliers')),
     url(r'^labelmaker/', include(
         'labelmaker.urls', namespace='labelmaker')),
-    url(r'^photos/', include('photos.urls', namespace='photos')),
     url(r'^epos/', include('epos.urls', namespace='epos')),
     url(r'^reference/', include('reference.urls', namespace='reference')),
     url(r'^inventory/', include('inventory.urls', namespace='inventory')),
