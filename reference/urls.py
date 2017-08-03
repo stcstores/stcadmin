@@ -7,5 +7,4 @@ app_name = 'reference'
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^shopify_tags/$', views.shopify_tags, name='shopify_tags'),
 ]

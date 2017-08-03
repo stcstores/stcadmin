@@ -8,10 +8,6 @@
         <ul class='app'>
             <li><a href="{% url 'reference:index' %}">Reference</a></li>
             <p>Access reference material.</p>
-            <ul class='section'>
-                <li><a href="{% url 'reference:shopify_tags' %}">Shopify Tags</a></li>
-                <p>List of available tags for shopify.</p>
-            </ul>
             {% for group in request.user.groups.all %}{% if group.name == 'cloud_commerce' %}
                 <li><a href="{% url 'cloud_commerce:index' %}">Cloud Commerce</a></li>
                 <p>Tools for working with Cloud Commerce</p>

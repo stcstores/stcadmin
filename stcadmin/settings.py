@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'suppliers',
     'labelmaker',
     'reference',
-    'shopify',
     'user',
     'cloud_commerce',
     'cloud_commerce_api',
