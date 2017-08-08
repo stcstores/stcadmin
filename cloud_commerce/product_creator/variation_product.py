@@ -84,6 +84,12 @@ class VariationProduct(NewProduct):
                     self.range_options.append(key)
 
     def get_options_for_product(self, variation_data):
+        package_type = self.get_variable_value(
+            'package_type', variation_data)
+        if package_type in ('Heavy and Large', 'Courier'):
+            international_shipping = 'Express'
+        else:
+            international_shipping = 'Standard'
         required_options = {
             'Department': self.department,
             'Brand': self.brand,
@@ -91,10 +97,10 @@ class VariationProduct(NewProduct):
                 'supplier_SKU', variation_data),
             'Manufacturer': self.manufacturer,
             'Supplier': self.supplier,
-            'Package Type': self.get_variable_value(
-                'package_type', variation_data),
+            'Package Type': package_type,
             'Purchase Price': self.get_variable_value(
-                'purchase_price', variation_data)}
+                'purchase_price', variation_data),
+            'International Shipping': international_shipping}
         optional_options = {}
         for key, option_settings in self.setup_data.items():
             if key.startswith('opt_'):

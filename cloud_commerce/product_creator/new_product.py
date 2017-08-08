@@ -1,6 +1,3 @@
-from ccapi import CCAPI
-
-
 class NewProduct:
 
     def __init__(self, data):
