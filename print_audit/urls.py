@@ -42,4 +42,8 @@ urlpatterns = [
         r'^feedback_list$',
         views.FeedbackList.as_view(), name='feedback_list'),
 
+    url(
+        r'^charts$',
+        views.charts, name='charts'),
+
 ]
