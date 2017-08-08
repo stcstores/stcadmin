@@ -9,6 +9,8 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.paginator import EmptyPage, Paginator
 from django.utils.timezone import now
+from django.db.models import Count
+from django.db.models.functions import TruncDate
 
 from stcadmin import settings
 from print_audit import models
@@ -168,8 +170,22 @@ def feedback_monitor(request):
             user_data['feedback'].append({
                 'name': f.name, 'image_url': f.image.url, 'count': count})
         data.append(user_data)
+    data.sort(
+        key=lambda x: sum([f['count'] for f in x['feedback']]), reverse=True)
     return HttpResponse(json.dumps(data))
 
 
 def display_monitor(request):
     return render(request, 'print_audit/display_monitor.html')
+
+
+def charts(request):
+    orders = models.CloudCommerceOrder.objects.all().extra(
+        {'date': 'date(date_created)'}).values('date').annotate(
+            count=Count('id')).order_by('-date')
+    order_data = []
+    for o in orders:
+        order_data.append(
+            {'date': o['date'].replace('-', ', '), 'count': o['count']})
+
+    return render(request, 'print_audit/charts.html', {'orders': order_data})
