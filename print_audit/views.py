@@ -180,12 +180,9 @@ def display_monitor(request):
 
 
 def charts(request):
-    orders = models.CloudCommerceOrder.objects.all().extra(
-        {'date': 'date(date_created)'}).values('date').annotate(
-            count=Count('id')).order_by('-date')
-    order_data = []
-    for o in orders:
-        order_data.append(
-            {'date': o['date'].replace('-', ', '), 'count': o['count']})
+    orders = models.CloudCommerceOrder.objects.all().annotate(
+        date=TruncDate('date_created')).values('date').annotate(
+            count=Count('id')).order_by('date')
+    print(orders)
 
-    return render(request, 'print_audit/charts.html', {'orders': order_data})
+    return render(request, 'print_audit/charts.html', {'orders': orders})
