@@ -6,22 +6,47 @@
     </head>
     <body>
         <style>
-            .feedback_name {
+
+            #pack_count, #feedback {
+                display: inline-block;
+                clear: both;
+                content: "";
+                display: table;
+                width: 90%;
+            }
+
+            #pack_count {
+                font-size: 10em;
+                padding: 1em;
+                margin: 0 auto;
+                padding: 0;
+                word-wrap: break-word;
+            }
+
+            #pack_count p {
+                margin: 0;
+                padding: 0.25em;
+            }
+
+            #feedback{
+                margin: 0 auto;
                 font-size: 2em;
             }
+
         </style>
-        <div class="pack_count" id="pack_count">
+        <div>
+            <div class="pack_count" id="pack_count">
 
-        </div>
-        <div class="feedback" id="feedback">
+            </div>
+            <br>
+            <div class="feedback" id="feedback">
 
+            </div>
         </div>
 
 
         <script>
-            $(document).ready(function() {
-                $('.pack_count').css('font-size', '150px');
-            });
+            autoscroll = true;
 
             function get_pack_count() {
                 $('#pack_count').html('');
@@ -59,16 +84,19 @@
             get_pack_count()
             get_feedback();
 
-            setInterval(function(){
-                $("html, body").animate({ scrollTop: $(document).height() }, 50000);
-                setTimeout(function() {
-                    $('html, body').animate({scrollTop:0}, 50000);
+            if (autoscroll) {
+                setInterval(function(){
+                    $("html, body").animate({ scrollTop: $(document).height() }, 50000);
+                    setTimeout(function() {
+                        $('html, body').animate({scrollTop:0}, 50000);
+                    }, 10000);
                 }, 10000);
-            }, 10000);
-            setInterval(function(){
-                get_pack_count()
-                get_feedback();
-            }, 1000 * 60 * 10);
+                setInterval(function(){
+                    get_pack_count()
+                    get_feedback();
+                }, 1000 * 60 * 10);
+            }
+
         </script>
     </body>
 </html>
