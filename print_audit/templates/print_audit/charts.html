@@ -7,92 +7,17 @@
 
 
 {% block content %}
-<style>
-    .chart {
-        height: 60%;
-        width: 80%;
-    }
-</style>
-<div class="chart">
-    <canvas id="canvas"></canvas>
-</div>
-Bar: <input type="radio" name="chart_type" class="chart_type" value="bar" checked /><br>
-Line: <input type="radio" name="chart_type" class="chart_type" value="line">
+<div id="chart">
 
+</div>
 {% endblock %}
 
 {% block script %}
 <script>
-
-    var data = [
-        {
-            type: 'area',
-            dataPoints: [
-                {% for o in orders %}
-                {x: new Date({{ o.date|date:"Y, m, d" }}), y: {{ o.count }}},{% endfor %}
-            ],
-        }
-    ]
-
-    window.chartColors = {
-    	red: 'rgb(255, 0, 0)',
-    	orange: 'rgb(255, 159, 64)',
-    	yellow: 'rgb(255, 205, 86)',
-    	green: 'rgb(75, 192, 192)',
-    	blue: 'rgb(54, 162, 235)',
-    	purple: 'rgb(153, 102, 255)',
-    	grey: 'rgb(201, 203, 207)'
-    };
-    var color = Chart.helpers.color;
-    var barChartData = {
-        labels: [{% for o in orders %}'{{ o.date|date:"D d M Y" }}', {% endfor %},],
-        datasets: [{
-            label: 'Orders',
-            backgroundColor: color(window.chartColors.red).alpha(0.75).rgbString(),
-            borderColor: window.chartColors.red,
-            borderWidth: 1,
-            data:[{% for o in orders %}{{ o.count }}, {% endfor %}],
-        }]
-
-    };
-
-    $(document).ready(function() {
-        $(':radio[name="chart_type"]').change(function() {
-            chart_type = $(this).filter(':checked').val();
-            chart.destroy();
-            draw_chart();
-        });
-        chart_type = $(':radio[name="chart_type"]').filter(':checked').val();
-        draw_chart();
+$(document).ready(function() {
+    $.get('{% url 'print_audit:get_chart' %}', function(response) {
+        $('#chart').html(response);
     });
-
-
-
-    function draw_chart () {
-        var ctx = document.getElementById("canvas").getContext("2d");
-        chart = new Chart(ctx, {
-            type: chart_type,
-            data: barChartData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                title: {
-                    display: true,
-                    text: 'Orders'
-                },
-                scales: {
-                    yAxes: [{
-                        scaleLabel: {
-                        display: true,
-                        labelString: 'Number of Orders'
-                    }
-                }]
-            }
-        }
-        });
-
-    };
-
-    var colorNames = Object.keys(window.chartColors);
+});
 </script>
 {% endblock %}

@@ -10,11 +10,16 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.paginator import EmptyPage, Paginator
 from django.utils.timezone import now
 from django.db.models import Count
-from django.db.models.functions import TruncDate
+from django.db.models.functions import TruncDate, TruncHour
 
 from stcadmin import settings
 from print_audit import models
 from print_audit import forms
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import mpld3
 
 
 def is_print_audit_user(user):
@@ -179,10 +184,32 @@ def display_monitor(request):
     return render(request, 'print_audit/display_monitor.html')
 
 
-def charts(request):
+def get_chart_old(request):
     orders = models.CloudCommerceOrder.objects.all().annotate(
         date=TruncDate('date_created')).values('date').annotate(
-            count=Count('id')).order_by('date')
-    print(orders)
+            count=Count('pk')).order_by('date')
+    return make_chart(orders)
 
-    return render(request, 'print_audit/charts.html', {'orders': orders})
+
+def get_chart(request):
+    orders = models.CloudCommerceOrder.objects.all().annotate(
+        date=TruncDate('date_created')).values('date').annotate(
+            count=Count('pk')).order_by('date')
+    return make_chart(orders, 'barh')
+
+
+def make_chart(orders, chart_type='bar'):
+    x = [order['date'] for order in orders]
+    y = [order['count'] for order in orders]
+    getattr(plt, chart_type)(x, y)
+    plt.grid(True)
+    plt.style.use('ggplot')
+    plt.title('Orders for Date')
+    plt.xlabel('Date')
+    plt.ylabel('Order Count')
+    html = mpld3.fig_to_html(plt.gcf())
+    return HttpResponse(html)
+
+
+def charts(request):
+    return render(request, 'print_audit/charts.html')

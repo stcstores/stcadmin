@@ -46,4 +46,8 @@ urlpatterns = [
         r'^charts$',
         views.charts, name='charts'),
 
+    url(
+        r'^get_chart$',
+        views.get_chart, name='get_chart'),
+
 ]
