@@ -47,7 +47,7 @@ class VariationProduct(NewProduct):
         bay_id = None
         bay_name = self.get_variable_value('location', data)
         if len(bay_name) > 0:
-            bay_id = CCAPI.get_bay_id(bay_name, self.department)
+            bay_id = CCAPI.get_bay_id(bay_name, self.department, create=True)
         else:
             bay_id = CCAPI.get_bay_id(self.department, self.department)
         product = NewVariation(
