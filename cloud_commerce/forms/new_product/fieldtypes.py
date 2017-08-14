@@ -13,16 +13,38 @@ class Validators:
     def alphanumeric(value):
         valid = True
         for char in str(value):
-            if char.isalnum() or char in (' ', '-', '/', '+'):
+            if char.isalnum() or char == ' ':
                 continue
             valid = False
             break
         if valid is False:
             raise ValidationError('Only alphanumeric characters are allowed.')
 
-    @staticmethod
-    def option_value(value):
-        Validators.alphanumeric(value)
+    def limit_characters(characters):
+        def character_limit(value):
+            valid = True
+            for char in str(value):
+                if char.isalnum() or char in characters:
+                    continue
+                valid = False
+                break
+            if valid is False:
+                raise ValidationError(
+                    'Allowed characters are letters, numbers or {}.'.format(
+                        characters))
+        return character_limit
+
+    @classmethod
+    def option_value(cls, option_field):
+        characters = {
+            'opt_Size': ['+', '-', '.'],
+            'opt_Weight': ['.'],
+            'opt_Strength': ['+', '-', '.'],
+        }
+        print(option_field.name)
+        if option_field.name in characters:
+            return cls.limit_characters(characters[option_field.name])
+        return cls.alphanumeric
 
 
 class FormField(forms.Field):
@@ -142,13 +164,13 @@ class OptionField(TextField):
     variation = True
     must_vary = False
     size = 50
-    validators = [Validators.option_value]
     help_text = (
         'This option is only used to add information to the listing and must '
         '<b>only</b> be filled out if it is applicable to the product')
 
     def __init__(self, *args, **kwargs):
         kwargs['label'] = self.option
+        self.validators = [Validators.option_value(self)]
         super().__init__(*args, **kwargs)
 
     def clean(self, value):
@@ -188,14 +210,14 @@ class OptionSettingField(forms.MultiValueField):
         if use == 'unused':
             return (use, '')
         if use == 'single':
-            Validators.option_value(single_value)
+            Validators.option_value(self)(single_value)
             return (use, single_value)
         if use == 'variable':
-            Validators.option_value(single_value)
+            Validators.option_value(self)(single_value)
             return (use, single_value)
         if use == 'variation':
             for value in multi_value:
-                Validators.option_value(value)
+                Validators.option_value(self)(value)
             return (use, multi_value)
 
 
