@@ -24,7 +24,7 @@ class Validators:
         def character_limit(value):
             valid = True
             for char in str(value):
-                if char.isalnum() or char in characters:
+                if char == ' ' or char.isalnum() or char in characters:
                     continue
                 valid = False
                 break
