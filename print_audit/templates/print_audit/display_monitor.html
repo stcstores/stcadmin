@@ -34,7 +34,7 @@
             }
 
         </style>
-        
+
         <div>
             <div class="pack_count" id="pack_count">
 
@@ -84,10 +84,11 @@
 
             get_pack_count()
             get_feedback();
+            var page_height = $(document).height();
 
             if (autoscroll) {
                 setInterval(function(){
-                    $("html, body").animate({ scrollTop: $(document).height() }, 50000);
+                    $("html, body").animate({ scrollTop: page_height }, 50000);
                     setTimeout(function() {
                         $('html, body').animate({scrollTop:0}, 50000);
                     }, 10000);
@@ -95,6 +96,8 @@
                 setInterval(function(){
                     get_pack_count()
                     get_feedback();
+                    resize();
+                    page_height = $(document).height();
                 }, 1000 * 60 * 10);
             }
 
