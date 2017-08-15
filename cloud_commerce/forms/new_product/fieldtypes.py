@@ -37,7 +37,7 @@ class Validators:
     @classmethod
     def option_value(cls, option_field):
         characters = {
-            'opt_Size': ['+', '-', '.'],
+            'opt_Size': ['+', '-', '.', '/'],
             'opt_Weight': ['.'],
             'opt_Strength': ['+', '-', '.'],
         }
