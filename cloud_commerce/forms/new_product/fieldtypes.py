@@ -40,6 +40,7 @@ class Validators:
             'opt_Size': ['+', '-', '.', '/'],
             'opt_Weight': ['.'],
             'opt_Strength': ['+', '-', '.'],
+            'opt_Material': ['%', ','],
         }
         print(option_field.name)
         if option_field.name in characters:
