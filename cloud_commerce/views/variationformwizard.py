@@ -41,20 +41,25 @@ class VariationFormWizard(SessionWizardView):
         if step is None:
             step = self.steps.current
         if step == '1':
+            cleaned_data = self.get_cleaned_data_for_step('0')
+            selected_options = cleaned_data['selected_options']
+            variations = cleaned_data['variations']
             if data is not None:
-                data = self.remove_unused_variations(data)
-            selected_options = self.get_selected_options()
-            selected_variables = self.get_selected_variables()
-            form.initial = self.initial_for_variation_table_form()
+                data = self.remove_unused_variations(
+                    data, selected_options, variations)
+            selected_variables = cleaned_data['selected_variables']
+            form.initial = self.initial_for_variation_table_form(
+                    selected_variables, variations)
             for var_form in form.forms:
                 var_form.set_variation_fields(
                     selected_options, selected_variables)
-                var_form.department = self.get_department()
+                var_form.department = cleaned_data['department']
         return form
 
-    def remove_unused_variations(self, data):
-        forms = self.get_variation_values_from_variation_table_data(data)
-        existant_variations = self.get_variations()
+    def remove_unused_variations(
+            self, data, selected_options, existant_variations):
+        forms = self.get_variation_values_from_variation_table_data(
+                data, selected_options)
         fields_to_delete = []
         for form_number, variations in forms.items():
             if not self.variation_required(variations, existant_variations):
@@ -63,8 +68,8 @@ class VariationFormWizard(SessionWizardView):
         return {key: value for key, value in data.items()
                 if key not in fields_to_delete}
 
-    def get_variation_values_from_variation_table_data(self, data):
-        selected_options = self.get_selected_options()
+    def get_variation_values_from_variation_table_data(
+            self, data, selected_options):
         forms = {}
         for key, value in data.items():
             if key[0] == '2' and key[2].isdigit():
@@ -81,20 +86,6 @@ class VariationFormWizard(SessionWizardView):
                 return True
         return False
 
-    def get_selected_options(self):
-        return self.get_cleaned_data_for_step('0')['selected_options']
-
-    def get_selected_variables(self):
-        return self.get_cleaned_data_for_step('0')['selected_variables']
-
-    def get_variations(self):
-        return self.get_cleaned_data_for_step('0')['variations']
-
-    def get_department(self):
-        return self.get_cleaned_data_for_step('0')['department']
-
-    def initial_for_variation_table_form(self):
-        selected_variables = self.get_selected_variables()
-        variations = self.get_variations()
+    def initial_for_variation_table_form(self, selected_variables, variations):
         return [
             {**variation, **selected_variables} for variation in variations]

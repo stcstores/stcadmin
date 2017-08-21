@@ -42,7 +42,6 @@ class Validators:
             'opt_Strength': ['+', '-', '.'],
             'opt_Material': ['%', ','],
         }
-        print(option_field.name)
         if option_field.name in characters:
             return cls.limit_characters(characters[option_field.name])
         return cls.alphanumeric
