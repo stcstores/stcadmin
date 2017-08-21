@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.timezone import get_current_timezone, is_naive, now
+import pytz
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -73,7 +74,7 @@ class CloudCommerceOrder(models.Model):
 
     def localise_datetime(self, date_input):
         if is_naive(date_input):
-            tz = get_current_timezone()
+            tz = pytz.timezone('Europe/London')
             return date_input.replace(tzinfo=tz)
 
 
