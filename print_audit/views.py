@@ -35,11 +35,33 @@ def index(request):
 @login_required(login_url=settings.LOGIN_URL)
 @user_passes_test(is_print_audit_user)
 def user_feedback(request):
-    users = models.CloudCommerceUser.objects.all()
+    users = sorted(
+        models.CloudCommerceUser.objects.all(), key=lambda x: x.full_name())
     feedback_types = models.Feedback.objects.all()
+    orders = models.CloudCommerceOrder.objects.all()
+    feedback = models.UserFeedback.objects.all()
+    if request.method == 'GET':
+        form = forms.FeedbackDateFilterForm(initial={'dates': 'all'})
+    if request.method == 'POST':
+        form = forms.FeedbackDateFilterForm(request.POST)
+        if form.is_valid() and form.cleaned_data['date_from'] is not None:
+            orders = orders.filter(date_created__range=[
+                form.cleaned_data['date_from'], form.cleaned_data['date_to']])
+            feedback = feedback.filter(timestamp__range=[
+                form.cleaned_data['date_from'], form.cleaned_data['date_to']])
+    pack_counts = {
+        user.id: orders.filter(user=user).count() for user in users}
+    feedback_counts = {}
+    for user in users:
+        feedback_counts[user.id] = {}
+        for feedback_type in feedback_types:
+            feedback_counts[user.id][feedback_type.id] = feedback.filter(
+                user=user, feedback_type=feedback_type).count()
     return render(
         request, 'print_audit/user_feedback.html',
-        {'users': users, 'feedback_types': feedback_types})
+        {'users': users, 'feedback_types': feedback_types,
+         'feedback_counts': feedback_counts, 'pack_counts': pack_counts,
+         'form': form})
 
 
 class CreateUserFeedback(CreateView):
@@ -108,7 +130,6 @@ class FeedbackList(ListView):
         form = forms.FeedbackSearchForm(self.request.POST)
         if form.is_valid():
             self.user = form.cleaned_data.get('user') or None
-            print(self.user)
             self.feedback_type = form.cleaned_data.get('feedback') or None
             self.paginate_by = form.cleaned_data.get(
                 'paginate_by') or self.paginate_by
@@ -137,7 +158,6 @@ class FeedbackList(ListView):
         context['feedback_user'] = self.user
         context['feedback_type'] = self.feedback_type
         context['form'] = forms.FeedbackSearchForm(self.get_initial())
-        print(self.get_initial())
         return context
 
 

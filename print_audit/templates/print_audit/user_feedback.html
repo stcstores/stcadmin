@@ -11,7 +11,18 @@
     }
 </style>
 
-<h1>Print Audit</h1>
+<h1>User Feedback</h1>
+
+<form action="" method="POST">{% csrf_token %}
+    {{ form.errors }}
+    {% for choice in form.dates %}{{ choice }}<label for="{{ choice.id }}">{{ choice.label }}</label>{% endfor %}
+    {{ form.dates.errors }}
+    <div id="custom_date">
+        <label for="{{ form.date_from.label.id }}">{{ form.date_from.label }}</label>{{ form.date_from }}
+        <label for="{{ form.date_to.label.id }}">{{ form.date_to.label }}</label>{{ form.date_to }}
+    </div>
+    <input type="submit" value="Filter">
+</form>
 
 <table>
     <tr>
@@ -21,6 +32,7 @@
             <a href="{% url 'print_audit:feedback_list' %}?feedback_id={{ feedback_type.pk }}">{{ feedback_type.name }}</a>
         </th>
         {% endfor %}
+        <th colspan="2">Packages</th>
     </tr>
     {% for user in users %}
     <tr>
@@ -31,12 +43,37 @@
                     <img src="{{ feedback_type.image.url }}" alt="{{ feedback_type.name }}" height="25">
                 </a>
             </td>
-            <td>{% feedback_count user feedback_type %}</td>
+            <td>{% dict_key feedback_counts user.id feedback_type.id %}</td>
         {% endfor %}
+        <td><img src="{% static 'images/package.png' %}" alt="Package" height="25"></td>
+        <td>{% dict_key pack_counts user.id %}</td>
         <td><a href="{% url 'print_audit:create_feedback' user.id %}"><button>Add</button></a></td>
     </tr>
     {% endfor %}
 </table>
 
+
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+    $(document).ready(function() {
+        $('.datepicker').datepicker({
+      showOtherMonths: true,
+      selectOtherMonths: true,
+      dateFormat: 'yy-mm-dd'
+    });
+
+        $('input[name=dates]').change(function() {
+            if ($('input[name=dates]:checked').val() == 'custom') {
+                $('#custom_date').attr('hidden', false);
+            } else {
+                $('#custom_date').attr('hidden', true);
+            }
+        });
+
+        $('input[name=dates]').change();
+    });
+</script>
 
 {% endblock %}
