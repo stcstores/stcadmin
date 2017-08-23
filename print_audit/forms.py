@@ -86,8 +86,8 @@ class FeedbackDateFilterForm(forms.Form):
 
     def this_year(self):
         today = timezone.now()
-        date_from = datetime(year=today.year, month=1, day=1)
-        date_to = datetime(year=today.year + 1, month=1, day=1)
+        date_from = datetime.datetime(year=today.year, month=1, day=1)
+        date_to = datetime.datetime(year=today.year + 1, month=1, day=1)
         return (date_from, date_to)
 
     def clean(self):
