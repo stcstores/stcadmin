@@ -1,105 +1,113 @@
 {% load staticfiles %}
 <html>
     <head>
-        <link rel="stylesheet" href="{% static 'css/cloud_commerce.css' %}">
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     </head>
     <body>
         <style>
 
             #pack_count, #feedback {
-                display: inline-block;
                 clear: both;
-                content: "";
-                display: table;
-                width: 90%;
-            }
-
-            #pack_count {
-                font-size: 10em;
-                padding: 1em;
                 margin: 0 auto;
-                padding: 0;
-                word-wrap: break-word;
             }
 
-            #pack_count p {
-                margin: 0;
-                padding: 0.25em;
+            .feedback_name, .packer_name {
+                text-align: right;
+                padding-right: 0.25em;
             }
 
-            #feedback{
-                margin: 0 auto;
-                font-size: 2em;
+            .feedback_icons, .packer_count {
+                text-align: left;
+                padding-left: 0.25em;
+                font-size: 6em;
+            }
+
+            .feedback_name {
+                font-size: 3.5em;
+            }
+
+            .packer_name {
+                font-size: 6em;
             }
 
         </style>
 
+        <button class="toggle">Toggle</button>&nbsp;
+        <label for="auto_toggle">Auto Toggle</label><input type="checkbox" name="auto_toggle" class="auto_toggle" checked>
+
         <div>
-            <div class="pack_count" id="pack_count">
+            <table class="pack_count" id="pack_count">
 
-            </div>
-            <br>
-            <div class="feedback" id="feedback">
+            </table>
+            <table class="feedback" id="feedback">
 
-            </div>
+            </table>
         </div>
 
 
         <script>
-            autoscroll = true;
+            auto_toggle = true;
+            current = '';
 
             function get_pack_count() {
-                $('#pack_count').html('');
+                $('.pack_count').html('');
+                $('.feedback').html('');
                 $.get("{% url 'print_audit:pack_count_monitor' %}",
                     function(data) {
                         var data = $.parseJSON(data);
                         for (var i=0; i<data.length; i++) {
                             var name = data[i][0]
                             var count = data[i][1]
-                            $('#pack_count').append('<p>' + name + ': ' + count + '</p>');
+                            $('#pack_count').append('<tr><th class="packer_name">' + name + '</th><td class="packer_count">' + count + '</td></tr>');
                         }
+                        current = 'pack_count'
                     }
                 );
             }
 
             function get_feedback() {
-                $('#feedback').html('');
+                $('.pack_count').html('');
+                $('.feedback').html('');
                 $.get("{% url 'print_audit:feedback_monitor' %}",
                     function(data) {
                         var data = $.parseJSON(data);
                         for (var i=0; i<data.length; i++) {
                             var name = data[i]['name'];
-                            $('#feedback').append('<p id="feedback_' + i + '"><span class="feedback_name">' + name + ': </span></p>');
+                            $('#feedback').append('<tr id="feedback_' + i + '"><th class="feedback_name">' + name + ': </th><td class="feedback_icons">');
                             $.each(data[i].feedback, function(index, feedback) {
                                 for (im=0; im<feedback.count; im++) {
-                                    $('#feedback_' + i).append('<img src="' + feedback.image_url + '" height="20">');
+                                    $('#feedback_' + i).children('.feedback_icons').append('<img src="' + feedback.image_url + '" height="40">');
                                 }
                             });
-                            $('#feedback_' + i).after('<hr>');
                         }
+                        current = 'feedback'
                     }
                 );
             }
 
-            get_pack_count()
-            get_feedback();
-            var page_height = $(document).height();
-
-            if (autoscroll) {
-                setInterval(function(){
-                    $("html, body").animate({ scrollTop: page_height }, 50000);
-                    setTimeout(function() {
-                        $('html, body').animate({scrollTop:0}, 50000);
-                    }, 10000);
-                }, 10000);
-                setInterval(function(){
-                    get_pack_count()
+            function toggle() {
+                if (current == 'pack_count') {
                     get_feedback();
-                    resize();
-                    page_height = $(document).height();
-                }, 1000 * 60 * 10);
+                } else {
+                    get_pack_count();
+                }
             }
+
+            if (auto_toggle) {
+                setInterval(function(){
+                    if ($('.auto_toggle').is(':checked')) {
+                        toggle();
+                    }
+                }, 1000 * 30);
+            }
+
+            $(document).ready(function() {
+                get_pack_count();
+                $('.toggle').click(function() {
+                    toggle();
+                });
+            });
 
         </script>
     </body>
