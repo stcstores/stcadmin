@@ -30,4 +30,13 @@ urlpatterns = [
         r'^product_range/(?P<range_id>[0-9]+)/$',
         views.product_range, name='product_range'),
 
+    url(
+        r'^spring_manifest$',
+        views.SpringManifestView.as_view(), name='spring_manifest'),
+
+    url(
+        r'^spring_manifest_success$',
+        views.SpringManifestSuccessView.as_view(),
+        name='spring_manifest_success'),
+
 ]

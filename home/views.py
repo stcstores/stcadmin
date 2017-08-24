@@ -1,10 +1,19 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.shortcuts import redirect
-from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from stcadmin import settings
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from stcadmin import settings
+
+
+class UserLoginMixin(LoginRequiredMixin):
+    login_url = settings.LOGIN_URL
+
+
+class UserInGroupMixin(UserLoginMixin, UserPassesTestMixin):
+
+    def test_func(self):
+        return self.request.user.groups.filter(name__in=self.groups)
 
 
 @login_required(login_url=settings.LOGIN_URL)

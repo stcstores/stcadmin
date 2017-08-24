@@ -1,0 +1,25 @@
+{% extends "cloud_commerce/base.html" %}
+{% load staticfiles %}
+{% load cloud_commerce_extras %}
+
+{% block page_title %}Spring Manifest{% endblock %}
+
+{% block content %}
+
+<form action="" method="POST">{% csrf_token %}
+    <input type="submit" value="Submit Spring Manfiest">&nbsp;<img src="{% static 'images/loading.gif' %}" alt="working..." height="50" id="loading_image" hidden/>
+    <div class="error">{{ form.as_p }}</div>
+</form>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        $('form').submit(function() {
+            $('input[type=submit]').attr('disabled', true);
+            $('#loading_image').show();
+        });
+    });
+</script>
+{% endblock %}

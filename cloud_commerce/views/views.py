@@ -1,13 +1,17 @@
-from django.shortcuts import render
+from ccapi import CCAPI
 from django.contrib.auth.decorators import login_required, user_passes_test
-
+from django.shortcuts import render
 from stcadmin import settings
 
-from ccapi import CCAPI
+from home.views import UserInGroupMixin
 
 
 def is_cloud_commerce_user(user):
     return user.groups.filter(name__in=['cloud_commerce'])
+
+
+class CloudCommerceUserMixin(UserInGroupMixin):
+    groups = ['cloud_commerce']
 
 
 @login_required(login_url=settings.LOGIN_URL)
