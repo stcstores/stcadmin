@@ -1,14 +1,12 @@
-from django.shortcuts import render
-from django.views.generic.edit import FormView
-from django.contrib.auth.mixins import LoginRequiredMixin
-
 from ccapi import CCAPI, Warehouses
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from django.views.generic.edit import FormView
+from inventory.forms import LocationsFormSet
 
-from inventory. forms import LocationsFormSet
+from .views import InventoryUserMixin
 
 
-class LocationForm(LoginRequiredMixin, FormView):
+class LocationForm(InventoryUserMixin, FormView):
 
     template_name = 'inventory/locations.html'
     form_class = LocationsFormSet

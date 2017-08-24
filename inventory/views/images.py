@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic.edit import FormView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from .views import InventoryUserMixin
 
 from ccapi import CCAPI, Warehouses
 from django.shortcuts import redirect
@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from inventory. forms import ImagesFormSet
 
 
-class ImageForm(LoginRequiredMixin, FormView):
+class ImageForm(InventoryUserMixin, FormView):
 
     template_name = 'inventory/images.html'
     form_class = ImagesFormSet

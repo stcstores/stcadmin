@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.views.generic.edit import FormView
-from django.contrib.auth.mixins import LoginRequiredMixin
-
 from inventory.forms import RangeSearchForm
 
+from .views import InventoryUserMixin
 
-class RangeSearch(LoginRequiredMixin, FormView):
+
+class RangeSearch(InventoryUserMixin, FormView):
     template_name = 'inventory/range_search.html'
     form_class = RangeSearchForm
 
