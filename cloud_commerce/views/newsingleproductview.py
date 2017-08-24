@@ -1,11 +1,11 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from . views import CloudCommerceUserMixin
 from django.views.generic.edit import FormView
 from cloud_commerce . forms import NewSingleProductForm
 from django.shortcuts import redirect
 from cloud_commerce.product_creator import SingleProduct
 
 
-class NewSingleProductView(LoginRequiredMixin, FormView):
+class NewSingleProductView(CloudCommerceUserMixin, FormView):
     template_name = 'cloud_commerce/single_product_form.html'
     form_class = NewSingleProductForm
 

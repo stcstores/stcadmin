@@ -1,13 +1,14 @@
 import json
 
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.views.decorators.csrf import csrf_exempt
-
-from stcadmin import settings
-from cloud_commerce.views import is_cloud_commerce_user
-
 from ccapi import CCAPI
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from stcadmin import settings
+
+
+def is_cloud_commerce_user(user):
+    return user.groups.filter(name__in=['cloud_commerce'])
 
 
 @login_required(login_url=settings.LOGIN_URL)

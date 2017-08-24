@@ -7,12 +7,12 @@ app_name = 'cloud_commerce'
 
 urlpatterns = [
     url(
-        r'^index$', views.index,
+        r'^index$', views.Index.as_view(),
         name='index'),
 
     url(
         r'^new_product$',
-        views.new_product, name='new_product'),
+        views.NewProduct.as_view(), name='new_product'),
 
     url(
         r'^new_single_product$',
@@ -24,11 +24,7 @@ urlpatterns = [
 
     url(
         r'^sku_generator$',
-        views.sku_generator, name='sku_generator'),
-
-    url(
-        r'^product_range/(?P<range_id>[0-9]+)/$',
-        views.product_range, name='product_range'),
+        views.SKUGenerator.as_view(), name='sku_generator'),
 
     url(
         r'^spring_manifest$',

@@ -2,9 +2,10 @@ from formtools.wizard.views import SessionWizardView
 from django.shortcuts import redirect
 from cloud_commerce . forms import NewVariationProductForm, VariationFormSet
 from cloud_commerce . product_creator import VariationProduct
+from . views import CloudCommerceUserMixin
 
 
-class VariationFormWizard(SessionWizardView):
+class VariationFormWizard(CloudCommerceUserMixin, SessionWizardView):
 
     form_list = [
         NewVariationProductForm, VariationFormSet]
