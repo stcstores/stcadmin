@@ -3,7 +3,7 @@
 {% load print_audit_extras %}
 
 {% block content %}
-
+<h1>{{ request.get_full_path }}</h1>
 <div class="feedback_list">
     <table class="feedback_list">
         <th>User</th>
@@ -22,7 +22,11 @@
             <td>{% if feedback.order_id %}{{ feedback.order_id }}{% endif %}</td>
             <td>{% if feedback.note %}{{ feedback.note }}{% endif %}</td>
             <td><a href="{% url 'print_audit:update_feedback' feedback.id %}"><button>Edit</button></a></td>
-            <td><a href="{% url 'print_audit:delete_feedback' feedback.id %}"><button>Delete</button></a></td>
+            <td>
+                <form style="margin:0;padding:0;" method="POST" class="delete_button" action="{% url 'print_audit:delete_feedback' feedback.id %}">{% csrf_token %}
+                   <input type="submit" value="Delete">
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -84,6 +88,11 @@
 <script>
     $(document).ready(function() {
         $('.datepicker').datepicker();
+
+        $(".delete_button").submit(function() {
+            var c = confirm("Are you sure you want to delete this feedback?");
+            return c;
+        });
     });
 </script>
 

@@ -6,9 +6,11 @@ from print_audit import views
 app_name = 'print_audit'
 
 urlpatterns = [
-    url(r'^index$', views.index, name='index'),
+    url(r'^index$', views.Index.as_view(), name='index'),
 
-    url(r'^user_feedback$', views.user_feedback, name='user_feedback'),
+    url(
+        r'^user_feedback$',
+        views.UserFeedback.as_view(), name='user_feedback'),
 
     url(
         r'^create_feedback$',
@@ -23,20 +25,20 @@ urlpatterns = [
         views.UpdateUserFeedback.as_view(), name='update_feedback'),
 
     url(
-        r'^delete_feedback/(?P<feedback_id>[0-9]+)/$',
-        views.delete_user_feedback, name='delete_feedback'),
+        r'^delete_feedback/(?P<pk>[0-9]+)/$',
+        views.DeleteUserFeedback.as_view(), name='delete_feedback'),
 
     url(
         r'^display_monitor$',
-        views.display_monitor, name='display_monitor'),
+        views.DisplayMonitor.as_view(), name='display_monitor'),
 
     url(
         r'^pack_count_monitor$',
-        views.pack_count_monitor, name='pack_count_monitor'),
+        views.PackCountMonitor.as_view(), name='pack_count_monitor'),
 
     url(
         r'^feedback_monitor$',
-        views.feedback_monitor, name='feedback_monitor'),
+        views.FeedbackMonitor.as_view(), name='feedback_monitor'),
 
     url(
         r'^feedback_list$',
@@ -44,10 +46,10 @@ urlpatterns = [
 
     url(
         r'^charts$',
-        views.charts, name='charts'),
+        views.Charts.as_view(), name='charts'),
 
     url(
         r'^get_chart$',
-        views.get_chart, name='get_chart'),
+        views.GetChart.as_view(), name='get_chart'),
 
 ]
