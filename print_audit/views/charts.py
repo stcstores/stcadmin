@@ -15,7 +15,7 @@ import mpld3  # noqa
 
 class GetChart(PrintAuditUserMixin, View):
 
-    def get_chart(self, request):
+    def get(self, request):
         orders = models.CloudCommerceOrder.objects.all().annotate(
             date=TruncDate('date_created')).values('date').annotate(
                 count=Count('pk')).order_by('date')

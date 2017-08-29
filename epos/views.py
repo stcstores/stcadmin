@@ -1,29 +1,29 @@
 import json
 
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.views.decorators.csrf import csrf_exempt
-from stcadmin import settings
-
 from ccapi import CCAPI
+from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.base import TemplateView
+from home.views import UserInGroupMixin
 
 
-def is_epos_user(user):
-    return user.groups.filter(name__in=['epos'])
+class EPOSUserMixin(UserInGroupMixin):
+    groups = ['epos']
 
 
-@login_required(login_url=settings.LOGIN_URL)
-@user_passes_test(is_epos_user)
-def index(request):
-    return render(request, 'epos/index.html')
+class Index(EPOSUserMixin, TemplateView):
+    template_name = 'epos/index.html'
 
 
-@login_required(login_url=settings.LOGIN_URL)
-@user_passes_test(is_epos_user)
-@csrf_exempt
-def barcode_search(request):
-    if request.method == 'POST':
+class BarcodeSearch(EPOSUserMixin, View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def post(self, request):
         barcode = request.POST['barcode']
         search_result = CCAPI.search_products(barcode)
         if len(search_result) == 0:
@@ -44,11 +44,13 @@ def barcode_search(request):
         return HttpResponse(json.dumps(data))
 
 
-@login_required(login_url=settings.LOGIN_URL)
-@user_passes_test(is_epos_user)
-@csrf_exempt
-def epos_order(request):
-    if request.method == 'POST':
+class EPOSOrder(EPOSUserMixin, View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def post(self, request):
         products = json.loads(request.body)
         for product_id, product in products.items():
             old_stock_level = product['stock_level']

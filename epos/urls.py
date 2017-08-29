@@ -6,7 +6,9 @@ from epos import views
 app_name = 'epos'
 
 urlpatterns = [
-    url(r'^index$', views.index, name='index'),
-    url(r'^barcode_search$', views.barcode_search, name='barcode_search'),
-    url(r'^epos_order$', views.epos_order, name='epos_order'),
+    url(r'^index$', views.Index.as_view(), name='index'),
+    url(
+        r'^barcode_search$',
+        views.BarcodeSearch.as_view(), name='barcode_search'),
+    url(r'^epos_order$', views.EPOSOrder.as_view(), name='epos_order'),
     ]
