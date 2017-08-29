@@ -296,13 +296,17 @@ class SpringManifestView(
                 'Address line too long for order {}'.format(order.order_id))
             clean_address = ['', '', '']
         price = self.get_order_value(order)
+        if self.form.data['manifest_type'] == 'standard':
+            package_type = 'PAK'
+        else:
+            package_type = 'PAT'
         rows = []
         for product in order.products:
             data = {
                 'Version #': 3,
                 'Shipper ID': self.shipper_id,
                 'Package ID': order.order_id,
-                'Weight': order.predicted_order_weight,
+                'Weight': round(order.predicted_order_weight / 1000, 3),
                 'Ship From Attn': '',
                 'Ship From Name': '',
                 'Ship From Address 1': '',
@@ -327,7 +331,7 @@ class SpringManifestView(
                 'Shipment Reference2': '',
                 'Packaging Type': 105,
                 'Declared Value': price,
-                'Service Code': 'PAK',
+                'Service Code': package_type,
                 'Length': '',
                 'Width': '',
                 'Height': '',
@@ -336,8 +340,8 @@ class SpringManifestView(
                 'Line Item Description': product.product_name,
                 'Line Item  Quantity Unit': 'PCE',
                 'Unit Price': product.price,
-                'Item Weight': product.per_item_weight,
-                'Weight Unit': 'G',
+                'Item Weight': product.per_item_weight / 1000,
+                'Weight Unit': 'KG',
                 'Price': product.price * product.quantity,
                 'HS Code': '',
                 'Country Of Manufacture': 'CN',
