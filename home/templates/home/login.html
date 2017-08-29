@@ -14,21 +14,10 @@
             <h1>STC Admin</h1>
             {% for message in message %}<p class="message">{{ message }}</p>{% endfor %}
             {% for error in errors %}<p class="error">{{ error }}</p>{% endfor %}
-            <form action="{% url 'home:login_user' %}" method="POST">
-                {% csrf_token %}
-                <table class="login_form">
-                    <tr>
-                        <td><label for="username">Username:&nbsp;</label></td>
-                        <td><input type="text" name="username" autofocus ></td>
-                    </tr>
-                    <tr>
-                        <td><label for="password">Password:&nbsp;</label></td>
-                        <td><input type="password" name="password"></td>
-                    </tr>
-                    <tr>
-                        <td><input type="submit" value="Login"></td>
-                    </tr>
-                </table>
+            <form action="{% url 'home:login_user' %}" method="POST">{% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Login">
+                <input type="hidden" name="next" value="{{ next }}" />
             </form>
         </div>
     </div>

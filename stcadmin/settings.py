@@ -127,6 +127,8 @@ MEDIA_ROOT = os.path.join(os.path.abspath(
 
 LOGIN_URL = '/login/'
 
+LOGIN_REDIRECT_URL = 'home:index'
+
 
 from . local_settings import *
 
