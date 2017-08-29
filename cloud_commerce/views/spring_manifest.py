@@ -221,8 +221,13 @@ class SpringManifestView(
         self.form.add_error(field, message)
 
     def get_orders(self):
+        manifest_type = self.form.data['manifest_type']
+        if manifest_type == 'standard':
+            kwargs = {}
+        else:
+            kwargs = {}
         try:
-            orders = CCAPI.get_orders_for_dispatch()
+            orders = CCAPI.get_orders_for_dispatch(**kwargs)
         except Exception:
             self.form.add_error(None, 'Error retriving orders.')
         else:
@@ -242,13 +247,13 @@ class SpringManifestView(
 
     def get_delivery_address(self, order):
         try:
-            addresses = CCAPI.get_order_addresses(
+            address = CCAPI.get_order_addresses(
                 order.order_id, order.customer_id).delivery_address
         except Exception:
             self.add_error('Error getting addresses for order {}'.format(
                 order.order_id))
         else:
-            return addresses
+            return address
 
     def get_country_code(self, country_code):
         try:
@@ -263,8 +268,33 @@ class SpringManifestView(
             return state.upper()
         return state
 
+    def clean_address_line(self, address):
+        if len(address) <= 40:
+            return [address]
+        split_index = address[:40].rfind(' ')
+        return [address[:split_index], address[split_index + 1:]]
+
+    def clean_address(self, address):
+        original_address = address.address
+        stripped_address = [' '.join(a.split()) for a in original_address]
+        clean_address = []
+        for address_line in stripped_address:
+            clean_address += self.clean_address_line(address_line)
+        if len(clean_address) > 3 or any(
+                a for a in clean_address if len(a) > 40):
+            raise AddressError
+        while len(clean_address) < 3:
+            clean_address.append('')
+        return clean_address
+
     def get_rows_for_order(self, order):
         address = self.get_delivery_address(order)
+        try:
+            clean_address = self.clean_address(address)
+        except AddressError as e:
+            self.add_error(
+                'Address line too long for order {}'.format(order.order_id))
+            clean_address = ['', '', '']
         price = self.get_order_value(order)
         rows = []
         for product in order.products:
@@ -272,7 +302,7 @@ class SpringManifestView(
                 'Version #': 3,
                 'Shipper ID': self.shipper_id,
                 'Package ID': order.order_id,
-                'Weight': order.predicted_order_weight / 1000,
+                'Weight': order.predicted_order_weight,
                 'Ship From Attn': '',
                 'Ship From Name': '',
                 'Ship From Address 1': '',
@@ -283,9 +313,9 @@ class SpringManifestView(
                 'Ship From Country Code': '',
                 'Ship To Attn': address.delivery_name,
                 'Ship To Name': address.delivery_name,
-                'Ship To Address 1': address.address[0],
-                'Ship To Address 2': address.address[1],
-                'Ship To Address 3': '',
+                'Ship To Address 1': clean_address[0],
+                'Ship To Address 2': clean_address[1],
+                'Ship To Address 3': clean_address[2],
                 'Ship To City': address.town_city,
                 'Ship To State': self.get_state(address.county_region),
                 'Ship To Postal Code': address.post_code,
@@ -315,3 +345,7 @@ class SpringManifestView(
             }
             rows.append([data[key] for key in self.spreadsheet_header])
         return rows
+
+
+class AddressError(Exception):
+    pass
