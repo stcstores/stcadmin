@@ -12,36 +12,56 @@ from .views import PrintAuditUserMixin
 class UserFeedback(PrintAuditUserMixin, TemplateView):
     template_name = 'print_audit/user_feedback.html'
 
+    def get(self, *args, **kwargs):
+        self.form = forms.FeedbackDateFilterForm(initial={'dates': 'all'})
+        super().get(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        self.form = forms.FeedbackDateFilterForm(self.request.POST)
+        super.post(*args, **kwargs)
+
     def get_context_data(self):
-        users = sorted(
+        self.get_models()
+        self.date_filter()
+        self.get_pack_counts()
+        self.get_feedback_counts()
+        return {
+            'users': self.users, 'feedback_types': self.feedback_types,
+            'feedback_counts': self.feedback_counts,
+            'pack_counts': self.pack_counts, 'form': self.form}
+
+    def get_pack_counts(self):
+        self.pack_counts = {
+            user.id: self.orders.filter(user=user).count() for user
+            in self.users}
+
+    def get_feedback_counts(self):
+        feedback_counts = {}
+        for user in self.users:
+            feedback_counts[user.id] = {}
+            for feedback_type in self.feedback_types:
+                feedback_counts[user.id][
+                    feedback_type.id] = self.feedback.filter(
+                    user=user, feedback_type=feedback_type).count()
+
+    def get_models(self):
+        self.users = sorted(
             models.CloudCommerceUser.objects.all(),
             key=lambda x: x.full_name())
-        feedback_types = models.Feedback.objects.all()
-        orders = models.CloudCommerceOrder.objects.all()
-        feedback = models.UserFeedback.objects.all()
-        if self.request.method == 'GET':
-            form = forms.FeedbackDateFilterForm(initial={'dates': 'all'})
-        if self.request.method == 'POST':
-            form = forms.FeedbackDateFilterForm(self.request.POST)
-            if form.is_valid() and form.cleaned_data['date_from'] is not None:
-                orders = orders.filter(date_created__range=[
-                    form.cleaned_data['date_from'],
-                    form.cleaned_data['date_to']])
-                feedback = feedback.filter(timestamp__range=[
-                    form.cleaned_data['date_from'],
-                    form.cleaned_data['date_to']])
-        pack_counts = {
-            user.id: orders.filter(user=user).count() for user in users}
-        feedback_counts = {}
-        for user in users:
-            feedback_counts[user.id] = {}
-            for feedback_type in feedback_types:
-                feedback_counts[user.id][feedback_type.id] = feedback.filter(
-                    user=user, feedback_type=feedback_type).count()
-        return {
-            'users': users, 'feedback_types': feedback_types,
-            'feedback_counts': feedback_counts, 'pack_counts': pack_counts,
-            'form': form}
+        self.feedback_types = models.Feedback.objects.all()
+        self.orders = models.CloudCommerceOrder.objects.all()
+        self.feedback = models.UserFeedback.objects.all()
+
+    def date_filter(self):
+        if self.form.is_valid():
+            if self.form.cleaned_data['date_from'] is not None:
+                date_range = (
+                    self.form.cleaned_data['date_from'],
+                    self.form.cleaned_data['date_to'])
+                self.orders = self.orders.filter(
+                    date_created__range=date_range)
+                self.feedback = self.feedback.filter(
+                    timestamp__range=date_range)
 
 
 class CreateUserFeedback(PrintAuditUserMixin, CreateView):
