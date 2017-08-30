@@ -63,9 +63,23 @@ body {
     font-size: 0.75em;
     display: inline-block;
     text-align: right;
-    margin: 0 auto;
-    width: 20%;
+    margin-right: 50px;
+    width: 15%;
     vertical-align: top;
+    float: right;
+}
+
+.user_details p {
+    display: block;
+    margin: 0;
+    padding: 0;
+    text-align: right;
+}
+
+.user_details td {
+    vertical-align: center;
+    padding-left: 0.75em;
+    padding-right: 0.75em;
 }
 
 .section_navigation {

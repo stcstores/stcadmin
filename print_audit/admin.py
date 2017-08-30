@@ -4,7 +4,7 @@ from print_audit import models
 
 @admin.register(models.CloudCommerceUser)
 class CloudCommerceUserAdmin(admin.ModelAdmin):
-    fields = ['full_name', 'user_id', ]
+    fields = ['full_name', 'user_id', 'stcadmin_user']
     list_display = ('user_id', 'full_name')
     readonly_fields = ('full_name', )
 

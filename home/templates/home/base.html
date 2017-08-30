@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load cloud_commerce_extras %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,6 +25,7 @@
             {% include "home/main_navigation.html" %}
             <div class="user_details">
                 <p>Welcome <a href="{% url 'user:user' %}">{{ request.user.username|title }}</a></p>
+                <p>{% feedback_badges request.user %}</p>
                 <a href="{% url 'home:logout_user' %}">Logout</a>
             </div>
             {% block section_navigation %}

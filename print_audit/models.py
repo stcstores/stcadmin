@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.timezone import is_naive, now
 import pytz
+from django.contrib.auth.models import User
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -11,6 +12,8 @@ USERS = CCAPI.get_users()
 
 class CloudCommerceUser(models.Model):
     user_id = models.CharField(max_length=10, unique=True)
+    stcadmin_user = models.ForeignKey(
+        User, null=True, blank=True, on_delete=models.CASCADE)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
