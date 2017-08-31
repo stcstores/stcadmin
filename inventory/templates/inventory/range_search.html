@@ -40,7 +40,7 @@
         </thead>
             <tbody>
             {% for range in product_ranges %}
-                <tr>
+                <tr{% if range.end_of_line %} class="end_of_line"{% endif %}>
                     <td>{{ range.sku }}</td>
                     <td><a href="{% url 'inventory:product_range' range.id %}">{{ range.name }}</a></td>
                     <td class="products_box">

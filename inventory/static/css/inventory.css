@@ -23,3 +23,7 @@
 .update_status {
     width: 20px;
 }
+
+.end_of_line {
+    background: #ccc;
+}

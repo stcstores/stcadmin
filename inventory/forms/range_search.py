@@ -103,6 +103,12 @@ class RangeSearchForm(forms.Form):
         choices=[('basic', 'Basic Search'), ('advanced', 'Advanced Search')],
         widget=forms.RadioSelect())
 
+    hide_end_of_line = forms.BooleanField(
+        required=False,
+        label='Hide End of Line',
+        help_text='Hide End of Line Episodes',
+        initial=True)
+
     basic_search_text = forms.CharField(
         label='Basic Search',
         required=False,
@@ -115,6 +121,11 @@ class RangeSearchForm(forms.Form):
         help_text=advanced_search_help_text,
         widget=forms.TextInput(attrs={'class': 'advanced_search'}))
 
+    advanced_hide_out_of_stock = forms.BooleanField(
+        required=False,
+        label='Hide Out of Stock',
+        help_text='Hide ranges with no items in stock.')
+
     advanced_option = OptionSelectField(
         label="Product Option", required=False,
         help_text='Search for products with a particular \
@@ -123,11 +134,14 @@ class RangeSearchForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         if cleaned_data['search_type'] == 'basic':
-            return self.clean_basic_search(cleaned_data)
+            cleaned_data = self.clean_basic_search(cleaned_data)
         elif cleaned_data['search_type'] == 'advanced':
-            return self.clean_advanced_search(cleaned_data)
+            cleaned_data = self.clean_advanced_search(cleaned_data)
         else:
             raise ValidationError('No valid search type supplied.')
+        if cleaned_data['hide_end_of_line'] is True:
+            self.ranges = [r for r in self.ranges if not r.end_of_line]
+        self.ranges.sort(key=lambda x: x.name)
         return cleaned_data
 
     def clean_basic_search(self, data):
@@ -143,6 +157,7 @@ class RangeSearchForm(forms.Form):
                 'Advanced Search')
         kwargs = {
             'search_text': search_text,
+            'only_in_stock': data['advanced_hide_out_of_stock'],
             'option_matches_id': option_id,
         }
         self.ranges = CCAPI.get_ranges(**kwargs)
