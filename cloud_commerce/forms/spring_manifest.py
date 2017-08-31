@@ -3,7 +3,8 @@ from django import forms
 
 class SpringManifestForm(forms.Form):
 
-    MANIFEST_TYPES = (('standard', 'Standard'), ('tracked', 'Tracked'))
+    MANIFEST_TYPES = (
+        ('standard', 'Standard'), ('tracked', 'Tracked'), ('parcel', 'Parcel'))
 
     manifest_type = forms.ChoiceField(
         required=True,

@@ -174,7 +174,8 @@ class SpringManifestView(
             self.save_manifest(manifest)
 
     def ftp_manifest(self, manifest):
-        manifest_file = io.BytesIO(manifest.encode('utf8'))
+        manifest_string = manifest.getvalue().encode('utf8')
+        manifest_file = io.BytesIO(manifest_string)
         ftp = self.get_ftp()
         if ftp is not None:
             try:
@@ -184,15 +185,15 @@ class SpringManifestView(
                 return
             try:
                 ftp.storbinary(
-                    'STOR {}'.format(self.ftp_filename()), manifest_file)
+                    'STOR {}'.format(self.ftp_filename), manifest_file)
             except Exception:
-                self.add_error('Error saveing file to FTP Server')
+                self.add_error('Error saving file to FTP Server')
 
     def save_manifest(self, manifest):
-        filepath = os.path.join(self.save_path(), self.save_name())
+        filepath = os.path.join(self.save_path(), self.save_name)
         try:
             with open(filepath, 'w', encoding='utf8') as f:
-                f.write(manifest)
+                f.write(manifest.read())
         except Exception:
             self.add_error('Error saving local file')
 
@@ -211,11 +212,13 @@ class SpringManifestView(
         return ftp
 
     def get_manifest(self, orders):
-        manifest_rows = [self.write_header]
-        manifest_rows += self.get_spreadsheet_rows(orders)
-        manifest_string = '\n'.join(
-            [','.join([str(cell) for cell in row]) for row in manifest_rows])
-        return manifest_string
+        import csv
+        rows = self.get_spreadsheet_rows(orders)
+        output = io.StringIO()
+        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+        writer.writerow(self.write_header)
+        [writer.writerow(row) for row in rows]
+        return output
 
     def add_error(self, message, field=None):
         self.form.add_error(field, message)
@@ -223,9 +226,17 @@ class SpringManifestView(
     def get_orders(self):
         manifest_type = self.form.data['manifest_type']
         if manifest_type == 'standard':
+            self.package_code = 'PAK'
+            kwargs = {}
+        elif manifest_type == 'tracked':
+            self.package_code = 'PAT'
+            kwargs = {}
+        elif manifest_type == 'parcel':
+            self.package_code = 'PAR'
             kwargs = {}
         else:
-            kwargs = {}
+            self.form.add_orders('Invalid Manifest Type')
+            return []
         try:
             orders = CCAPI.get_orders_for_dispatch(**kwargs)
         except Exception:
@@ -296,10 +307,6 @@ class SpringManifestView(
                 'Address line too long for order {}'.format(order.order_id))
             clean_address = ['', '', '']
         price = self.get_order_value(order)
-        if self.form.data['manifest_type'] == 'standard':
-            package_type = 'PAK'
-        else:
-            package_type = 'PAT'
         rows = []
         for product in order.products:
             data = {
@@ -331,7 +338,7 @@ class SpringManifestView(
                 'Shipment Reference2': '',
                 'Packaging Type': 105,
                 'Declared Value': price,
-                'Service Code': package_type,
+                'Service Code': self.package_code,
                 'Length': '',
                 'Width': '',
                 'Height': '',
@@ -345,7 +352,7 @@ class SpringManifestView(
                 'Price': product.price * product.quantity,
                 'HS Code': '',
                 'Country Of Manufacture': 'CN',
-                'Currency Code': 'GB',
+                'Currency Code': 'GBP',
             }
             rows.append([data[key] for key in self.spreadsheet_header])
         return rows
