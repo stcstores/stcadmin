@@ -1,6 +1,7 @@
-{% extends "cloud_commerce/base.html" %}
+{% extends "inventory/base.html" %}
 {% load staticfiles %}
 {% load cloud_commerce_extras %}
+{% load stcadmin_extras %}
 
 {% block page_title %}CCP New Product Success{% endblock %}
 
@@ -11,6 +12,23 @@
     <p><a href="{% ccp_product_range_page product_range.id %}" target="_blank"><button>View Range on Cloud Commerce</button></a></p>
     <p><a href="{% url 'inventory:locations' product_range.id %}"><button>Locations</button></a></p>
     <p><a href="{% url 'inventory:images' product_range.id %}"><button>Images</button></a></p>
+    <form action="" method="POST">{% csrf_token %}
+        <table>
+            <table>
+                {% for field in form %}
+                <tr>
+                    <td>{{ field.label }}</td>
+                    <td>{{ field }}</td>
+                    <td>{% tooltip_help_text field %}</td>
+                    {% if field.errors %}
+                        <td class="error">{{ field.errors }}</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </table>
+        </table>
+        <input type="submit" value="Update">
+    </form>
     <div class="product_list">
         <h3>Products</h3>
         <table class="product_list">
@@ -24,7 +42,7 @@
         {% for product in product_range.products %}
         </tr>
             <td>{{ product.sku}}</td>
-            <td>{{product.full_name}}</td>
+            <td><a href="{% url 'inventory:product' product.id %}">{{product.full_name}}</a></td>
             <td>{{product.barcode}}</td>
             <td>{{product.stock_level}}</td>
             <td><a href="{% ccp_product_page product_range.id product.id %}" target="_blank"><button>View Product on Cloud Commerce</button></a></td>

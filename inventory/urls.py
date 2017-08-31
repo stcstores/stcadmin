@@ -17,4 +17,7 @@ urlpatterns = [
     url(
         r'^images/(?P<range_id>[0-9]+)/',
         views.ImageForm.as_view(), name='images'),
+    url(
+        r'^product/(?P<product_id>[0-9]+)/$',
+        views.Product.as_view(), name='product'),
 ]

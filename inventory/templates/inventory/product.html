@@ -1,0 +1,34 @@
+{% extends "inventory/base.html" %}
+{% load staticfiles %}
+{% load cloud_commerce_extras %}
+{% load stcadmin_extras %}
+
+{% block page_title %}CCP Product{% endblock %}
+
+{% block content %}
+    <h2>{{ product.name }}</h2>
+    <p>SKU: {{ product.sku}}</p>
+    <p>ID: {{ product.id }}</p>
+    <p><a href="{% url 'inventory:product_range' product.range_id %}"><button>Go To Range</button></a></p>
+    <p><a href="{% ccp_product_page product.range_id product.id %}" target="_blank"><button>View Product on Cloud Commerce</button></a></p>
+    <table>
+        {% for option in product.options %}
+            <tr><th>{{ option.option_name }}</th><td>{{ option.value }}</td></tr>
+        {% endfor %}
+    </table>
+    <form action="" method="POST">{% csrf_token %}
+        <table>
+            {% for field in form %}
+            <tr>
+                <td>{{ field.label }}</td>
+                <td>{{ field }}</td>
+                <td>{% tooltip_help_text field %}</td>
+                {% if field.errors %}
+                    <td class="error">{{ field.errors }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+        <input type="submit" value="Update">
+    </form>
+{% endblock %}
