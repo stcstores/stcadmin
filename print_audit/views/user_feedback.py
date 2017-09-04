@@ -14,7 +14,7 @@ class UserFeedback(PrintAuditUserMixin, TemplateView):
 
     def get(self, *args, **kwargs):
         self.form = forms.FeedbackDateFilterForm(initial={'dates': 'all'})
-        super().get(*args, **kwargs)
+        return super().get(*args, **kwargs)
 
     def post(self, *args, **kwargs):
         self.form = forms.FeedbackDateFilterForm(self.request.POST)
@@ -36,11 +36,11 @@ class UserFeedback(PrintAuditUserMixin, TemplateView):
             in self.users}
 
     def get_feedback_counts(self):
-        feedback_counts = {}
+        self.feedback_counts = {}
         for user in self.users:
-            feedback_counts[user.id] = {}
+            self.feedback_counts[user.id] = {}
             for feedback_type in self.feedback_types:
-                feedback_counts[user.id][
+                self.feedback_counts[user.id][
                     feedback_type.id] = self.feedback.filter(
                     user=user, feedback_type=feedback_type).count()
 
