@@ -35,7 +35,7 @@ class SingleProduct(NewProduct):
             self.bay_id = CCAPI.get_bay_id(
                 data['location'], self.department, create=True)
         else:
-            self.bay_id = None
+            self.bay_id = CCAPI.get_bay_id(self.department, self.department)
 
     def create_range(self):
         return NewRange(self.name, self.range_options).create()
