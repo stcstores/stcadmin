@@ -18,7 +18,7 @@ class UserFeedback(PrintAuditUserMixin, TemplateView):
 
     def post(self, *args, **kwargs):
         self.form = forms.FeedbackDateFilterForm(self.request.POST)
-        super.post(*args, **kwargs)
+        return super().get(*args, **kwargs)
 
     def get_context_data(self):
         self.get_models()
