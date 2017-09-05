@@ -59,14 +59,20 @@ body {
     background-position: center;
 }
 
+.header_feedback {
+    font-size: 1.25em;
+    display: inline-block;
+    text-align: left;
+    width: 15%;
+    vertical-align: top;
+}
+
 .user_details {
     font-size: 0.75em;
     display: inline-block;
     text-align: right;
-    margin-right: 50px;
     width: 15%;
     vertical-align: top;
-    float: right;
 }
 
 .user_details p {

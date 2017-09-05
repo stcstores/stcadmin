@@ -9,6 +9,10 @@ from print_audit import forms, models
 from .views import PrintAuditUserMixin
 
 
+class FeedbackQuickview(TemplateView):
+    template_name = 'print_audit/feedback_quickview.html'
+
+
 class UserFeedback(PrintAuditUserMixin, TemplateView):
     template_name = 'print_audit/user_feedback.html'
 

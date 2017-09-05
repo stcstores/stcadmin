@@ -52,4 +52,8 @@ urlpatterns = [
         r'^get_chart$',
         views.GetChart.as_view(), name='get_chart'),
 
+    url(
+        r'^feedback_quickview$',
+        views.FeedbackQuickview.as_view(), name='feedback_quickview'),
+
 ]

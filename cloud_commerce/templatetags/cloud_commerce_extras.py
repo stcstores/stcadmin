@@ -1,9 +1,7 @@
-from django import template
-
 from ccapi import URLs
-
+from django import template
 from django.utils.safestring import mark_safe
-
+from django.utils.timezone import now
 
 register = template.Library()
 SUBDOMAIN = 'seatontradingcompany'
@@ -49,7 +47,7 @@ def feedback_badges(user):
     html = ['<table>']
     for feedback_type in feedback_types:
         count = models.UserFeedback.objects.filter(
-            user=user.pk,
+            user=user.pk, timestamp__month=now().month,
             feedback_type=feedback_type).count()
         html.append('<td><img src="{}" alt="{}" height="15">'.format(
             feedback_type.image.url, feedback_type.name))
