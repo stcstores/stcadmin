@@ -182,6 +182,8 @@ th {
 
 .site_index {
     line-height: 0;
+    display: inline-block;
+    width: 70%;
 }
 
 .site_index .app li {
@@ -216,4 +218,10 @@ th {
 .tooltip_image {
     margin: 0;
     padding: 0;
+}
+
+.homepage_feedback {
+    width: 25%;
+    display: inline-block;
+    vertical-align: top;
 }
