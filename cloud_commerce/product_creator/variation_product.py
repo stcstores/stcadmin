@@ -35,7 +35,7 @@ class VariationProduct(NewProduct):
 
     def get_variation(self, data, options):
         barcode = data['barcode']
-        vat_rate_id = self.get_variable_value('vat_rate', data)
+        vat_rate = int(self.get_variable_value('vat_rate', data))
         weight = self.get_variable_value('weight', data)
         height = self.get_variable_value('height', data)
         length = self.get_variable_value('length', data)
@@ -54,7 +54,7 @@ class VariationProduct(NewProduct):
             product_range=self.product_range,
             barcode=barcode,
             description=self.description,
-            vat_rate_id=vat_rate_id,
+            vat_rate=vat_rate,
             weight=weight,
             height=height,
             length=length,

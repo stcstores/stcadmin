@@ -12,7 +12,7 @@ class SingleProduct(NewProduct):
         self.name = data['title']
         self.barcode = data['barcode']
         self.description = data['description']
-        self.vat_rate_id = int(data['vat_rate'])
+        self.vat_rate = int(data['vat_rate'])
         self.weight = data['weight']
         self.height = data['height']
         self.length = data['length']
@@ -45,7 +45,7 @@ class SingleProduct(NewProduct):
             product_range=self.product_range,
             barcode=self.barcode,
             description=self.description,
-            vat_rate_id=self.vat_rate_id,
+            vat_rate=self.vat_rate,
             weight=self.weight,
             height=self.height,
             length=self.length,

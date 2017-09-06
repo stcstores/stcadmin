@@ -29,7 +29,7 @@
 <input type="submit" value="{% trans "submit" %}"/>
 </form>
 {% endblock %}
-{% block script %}
+{% block script %}{{ block.super }}
 <script>
 $(document).ready(function() {
     function setup_new_product_table () {

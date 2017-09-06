@@ -1,7 +1,12 @@
 {% extends "cloud_commerce/variation_wizard.html" %}
+{% load staticfiles %}
 {% load stcadmin_extras %}
 
 {% block table_class %}variation_table{% endblock %}
+
+{% block additional_head %}{{ block.super }}
+<script src="{% static 'scripts/price_field.js' %}"></script>
+{% endblock %}
 
 {% block formset %}
     <tr>
@@ -16,4 +21,26 @@
             {% endfor %}
         </tr>
     {% endfor %}
+{% endblock %}
+
+{% block script %}{{ block.super}}
+<script>
+    $(document).ready(function() {
+        {% for form in wizard.form.forms %}
+            price_field_{{ forloop.counter }} =  new PriceField($('#{{ form.price.auto_id }}'));
+
+            $('#{{ form.vat_rate.auto_id }}').change(function () {
+                var value = $(this).val();
+                if (value === '') {
+                    var vat_rate = false;
+                } else {
+                    var vat_rate = parseInt(value);
+                }
+                price_field_{{ forloop.counter }}.set_vat_rate(vat_rate);
+            });
+
+            $('#{{ form.vat_rate.auto_id }}').change();
+        {% endfor %}
+    });
+</script>
 {% endblock %}

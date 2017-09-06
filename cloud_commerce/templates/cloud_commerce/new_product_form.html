@@ -3,6 +3,9 @@
 
 {% block page_title %}New CCP Product{% endblock %}
 
+{% block additional_head %}{{ block.super }}
+<script src="{% static 'scripts/price_field.js' %}"></script>
+{% endblock %}
 
 {% block script %}
 <script>
@@ -35,6 +38,20 @@ $(document).ready(function() {
             }
        }
     });
+
+    var price_field = new PriceField($('#{{ form.price.auto_id }}'));
+
+    $('#{{ form.vat_rate.auto_id }}').change(function () {
+        var value = $(this).val();
+        if (value === '') {
+            var vat_rate = false;
+        } else {
+            var vat_rate = parseInt(value);
+        }
+        price_field.set_vat_rate(vat_rate);
+    });
+
+    $('#{{ form.vat_rate.auto_id }}').change();
 
     // Prevent the backspace key from navigating back.
     $(document).unbind('keydown').bind('keydown', function (event) {

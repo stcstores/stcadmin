@@ -3,6 +3,10 @@
 {% load cloud_commerce_extras %}
 {% load stcadmin_extras %}
 
+{% block additional_head %}{{ block.super }}
+<script src="{% static 'scripts/price_field.js' %}"></script>
+{% endblock %}
+
 {% block table_class %}new_product_form{% endblock %}
 
 {% block form %}
@@ -12,7 +16,7 @@
         <tr>
             <th></th>
             <th></th>
-            <th>{% tooltip 'Variable' 'Select the checkbox for a field if a different value is required for each variation.<br>Otherwise the same value will be applied to every variation.' %}
+            <th>{% tooltip 'Variable' 'Select the checkbox for a field if a different value is required for each variation.<br>Otherwise the same value will be applied to every variation.' %}</th>
             <th></th>
             <th></th>
         </tr>
@@ -54,4 +58,24 @@
 </tr>
 {% endifequal %}
 {% endfor %}
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+    $(document).ready(function() {
+        var price_field = new PriceField($('#{{ form.price.auto_id }}'));
+
+        $('#{{ form.vat_rate.auto_id }}').change(function () {
+            var value = $(this).val();
+            if (value === '') {
+                var vat_rate = false;
+            } else {
+                var vat_rate = parseInt(value);
+            }
+            price_field.set_vat_rate(vat_rate);
+        });
+
+        $('#{{ form.vat_rate.auto_id }}').change();
+    });
+</script>
 {% endblock %}

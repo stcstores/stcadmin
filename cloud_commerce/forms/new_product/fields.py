@@ -52,7 +52,7 @@ class Department(fieldtypes.ChoiceField):
 
 
 class Price(fieldtypes.PriceField):
-    label = 'Price (ex VAT)'
+    label = 'Price'
     name = 'price'
     required_message = (
         'Please provide a <b>Price</b>. This cannot be blank but can be zero.')
@@ -93,11 +93,15 @@ class VATRate(fieldtypes.ChoiceField):
     name = 'vat_rate'
     variable = True
     help_text = 'The VAT rate that is applicable to the product.'
+    required_message = (
+        'Please specify the appropriate <b>VAT Rate</b> for the '
+        'product.')
 
     @staticmethod
     def get_choices():
         return ([
-            (5, 'Normal Rate 20%'), (2, 'Reduced 5%'), (1, 'VAT Exempt')])
+            ('', ''), (20, 'Normal Rate 20%'), (5, 'Reduced 5%'),
+            (0, 'VAT Exempt')])
 
 
 class Supplier(fieldtypes.ChoiceField):
@@ -239,10 +243,10 @@ class FormFields(metaclass=MetaFormFields):
         Title,
         Description,
         Barcode,
+        VATRate,
         Price,
         PurchasePrice,
         StockLevel,
-        VATRate,
         Department,
         Location,
         Supplier,
