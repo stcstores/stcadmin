@@ -57,8 +57,7 @@ class CloudCommerceOrder(models.Model):
             user = CloudCommerceUser.objects.get(
                 user_id=str(print_log.user_id))
         except ObjectDoesNotExist:
-            user = CloudCommerceUser.objects.create(
-                user_id=str(print_log.user_id))
+            return
         cls.objects.create(
             order_id=str(print_log.order_id),
             user=user,
