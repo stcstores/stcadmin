@@ -26,20 +26,36 @@
 {% block script %}{{ block.super}}
 <script>
     $(document).ready(function() {
+
+        function get_vat_rate(vat_select) {
+            var value = vat_select.val();
+            if (value === '') {
+                var vat_rate = false;
+            } else {
+                var vat_rate = parseInt(value);
+            }
+            return vat_rate
+        }
+
         {% for form in wizard.form.forms %}
-            price_field_{{ forloop.counter }} =  new PriceField($('#{{ form.price.auto_id }}'));
+            {% if form.vat_rate %}
+                var vat_rate_select_{{ forloop.counter }} = $('#{{ form.vat_rate.auto_id }}');
 
-            $('#{{ form.vat_rate.auto_id }}').change(function () {
-                var value = $(this).val();
-                if (value === '') {
-                    var vat_rate = false;
-                } else {
-                    var vat_rate = parseInt(value);
-                }
-                price_field_{{ forloop.counter }}.set_vat_rate(vat_rate);
-            });
+                price_field_{{ forloop.counter }} = new PriceField(
+                    $('#{{ form.price.auto_id }}'),
+                    get_vat_rate(vat_rate_select_{{ forloop.counter }})
+                );
 
-            $('#{{ form.vat_rate.auto_id }}').change();
+                vat_rate_select_{{ forloop.counter }}.change(function () {
+                    price_field_{{ forloop.counter }}.set_vat_rate(get_vat_rate(vat_rate_select_{{ forloop.counter }}));
+                });
+
+            {% else %}
+                price_field_{{ forloop.counter }} = new PriceField(
+                    $('#{{ form.price.auto_id }}'), {{ wizard.form.vat_rate }}
+                );
+                price_field_{{ forloop.counter }}.show_rate();
+            {% endif %}
         {% endfor %}
     });
 </script>

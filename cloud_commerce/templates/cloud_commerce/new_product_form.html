@@ -39,19 +39,26 @@ $(document).ready(function() {
        }
     });
 
-    var price_field = new PriceField($('#{{ form.price.auto_id }}'));
-
-    $('#{{ form.vat_rate.auto_id }}').change(function () {
-        var value = $(this).val();
+    function get_vat_rate(vat_select) {
+        var value = vat_select.val();
         if (value === '') {
             var vat_rate = false;
         } else {
             var vat_rate = parseInt(value);
         }
-        price_field.set_vat_rate(vat_rate);
-    });
+        return vat_rate
+    }
 
-    $('#{{ form.vat_rate.auto_id }}').change();
+    var vat_rate_select = $('#{{ form.vat_rate.auto_id }}');
+
+    var price_field = new PriceField(
+        $('#{{ form.price.auto_id }}'),
+        get_vat_rate(vat_rate_select)
+    );
+    
+    vat_rate_select.change(function () {
+        price_field.set_vat_rate(get_vat_rate(vat_rate_select));
+    });
 
     // Prevent the backspace key from navigating back.
     $(document).unbind('keydown').bind('keydown', function (event) {

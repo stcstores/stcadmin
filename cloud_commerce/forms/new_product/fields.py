@@ -57,8 +57,8 @@ class Price(fieldtypes.PriceField):
     required_message = (
         'Please provide a <b>Price</b>. This cannot be blank but can be zero.')
     help_text = (
-        'Price <b>without</b> <b>shipping</b> or <b>VAT</b>.'
-        '<br>Cannot be blank but can be zero.')
+        'Price <b>without shipping</b>.'
+        '<br>Ex VAT cannot be blank but can be zero.')
     variable = True
 
 

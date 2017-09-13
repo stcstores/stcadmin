@@ -49,6 +49,7 @@ class VariationFormWizard(CloudCommerceUserMixin, SessionWizardView):
                 data = self.remove_unused_variations(
                     data, selected_options, variations)
             selected_variables = cleaned_data['selected_variables']
+            form.vat_rate = int(cleaned_data['vat_rate'])
             form.initial = self.initial_for_variation_table_form(
                     selected_variables, variations)
             for var_form in form.forms:
