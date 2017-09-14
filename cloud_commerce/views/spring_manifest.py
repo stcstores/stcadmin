@@ -1,7 +1,9 @@
+import csv
 import ftplib
 import io
 import os
 
+import pycountry
 from ccapi import CCAPI
 from cloud_commerce.forms import SpringManifestForm
 from django.core.urlresolvers import reverse_lazy
@@ -9,7 +11,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from stcadmin import settings
 
-from . views import CloudCommerceUserMixin
+from .views import CloudCommerceUserMixin
 
 
 class SpringManifestSuccessView(CloudCommerceUserMixin, TemplateView):
@@ -59,8 +61,13 @@ class SpringManifestView(
         '7': 'IT',
         '25': 'AU',
         '55': 'CA',
+        '112': 'HU',
         '118': 'IE',
+        '120': 'IS',
+        '134': 'LV',
+        '141': 'LU',
         '153': 'MX',
+        '176': 'NO',
         '247': 'US',
     }
 
@@ -190,7 +197,7 @@ class SpringManifestView(
                 self.add_error('Error saving file to FTP Server')
 
     def save_manifest(self, manifest):
-        filepath = os.path.join(self.save_path(), self.save_name)
+        filepath = os.path.join(self.save_path, self.save_name)
         try:
             with open(filepath, 'w', encoding='utf8') as f:
                 f.write(manifest.read())
@@ -212,7 +219,6 @@ class SpringManifestView(
         return ftp
 
     def get_manifest(self, orders):
-        import csv
         rows = self.get_spreadsheet_rows(orders)
         output = io.StringIO()
         writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
@@ -266,11 +272,14 @@ class SpringManifestView(
         else:
             return address
 
-    def get_country_code(self, country_code):
-        try:
+    def get_country_code(self, country_code, address):
+        if country_code in self.country_codes:
             return self.country_codes[country_code]
-        except KeyError:
-            self.add_error('Missing Country Code: {}'.format(country_code))
+        else:
+            try:
+                return pycountry.countries.get(name=address.country).alpha_2
+            except KeyError:
+                self.add_error('Missing Country Code: {}'.format(country_code))
 
     def get_state(self, state):
         if state.strip().lower() in self.state_codes:
@@ -310,7 +319,7 @@ class SpringManifestView(
         rows = []
         for product in order.products:
             data = {
-                'Version #': 3,
+                'Version #': '3.0',
                 'Shipper ID': self.shipper_id,
                 'Package ID': order.order_id,
                 'Weight': round(order.predicted_order_weight / 1000, 3),
@@ -331,7 +340,7 @@ class SpringManifestView(
                 'Ship To State': self.get_state(address.county_region),
                 'Ship To Postal Code': address.post_code,
                 'Ship To Country Code': self.get_country_code(
-                    order.country_code),
+                    order.delivery_country_code, address),
                 'Recipient Phone Nbr': self.get_phone_number(address.tel_no),
                 'Recipient Email': '',
                 'Shipment Reference1': '',
