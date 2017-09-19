@@ -1,0 +1,36 @@
+{% extends "inventory/range_settings.html" %}
+{% load staticfiles %}
+{% load cloud_commerce_extras %}
+{% load stcadmin_extras %}
+
+{% block additional_head %}{{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+{% include 'home/froala_head.html' %}
+{% endblock %}
+
+{% block page_title %}CCP Stock Manager{% endblock %}
+
+{% block content %}{{ block.super }}
+<form action="" method="POST">{% csrf_token %}
+    <table>
+        {% for field in form %}
+        <tr>
+            <td>{{ field.label }}</td>
+            <td>{{ field }}</td>
+            <td>{% tooltip_help_text field %}</td>
+            {% if field.errors %}
+                <td class="error">{{ field.errors }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        <tr><td colspan="3"><input type="submit" value="Update"></td></tr>
+    </table>
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+
+</script>
+
+{% endblock %}

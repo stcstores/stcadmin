@@ -11,6 +11,11 @@ class LocationForm(InventoryUserMixin, FormView):
     template_name = 'inventory/locations.html'
     form_class = LocationsFormSet
 
+    def dispatch(self, *args, **kwargs):
+        self.range_id = self.kwargs.get('range_id')
+        self.product_range = CCAPI.get_range(self.range_id)
+        return super().dispatch(*args, **kwargs)
+
     def post(self, request, range_id):
         if request.method == 'POST':
             formset = self.form_class(request.POST, request.FILES)
@@ -19,18 +24,20 @@ class LocationForm(InventoryUserMixin, FormView):
                 return redirect('inventory:product_range', range_id)
         else:
             formset = self.form_class(initial=self.get_initial())
-        return render(request, self.template_name, {'formset': formset})
+        return render(
+            request, self.template_name, {
+                'formset': formset, 'product_range': self.product_range})
 
     def get(self, request, range_id):
         formset = self.form_class(initial=self.get_initial())
         return render(
             request, self.template_name,
-            {'formset': formset, 'bays': self.bays})
+            {
+                'formset': formset, 'bays': self.bays,
+                'product_range': self.product_range})
 
     def get_initial(self):
-        range_id = self.kwargs['range_id']
-        product_range = CCAPI.get_range(range_id)
-        self.products = product_range.products
+        self.products = self.product_range.products
         for product in self.products:
             product_bays = CCAPI.get_bays_for_product(product.id)
             if product_bays is None:

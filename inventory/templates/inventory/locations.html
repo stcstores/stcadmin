@@ -1,4 +1,4 @@
-{% extends "inventory/base.html" %}
+{% extends "inventory/range_settings.html" %}
 {% load staticfiles %}
 {% load cloud_commerce_extras %}
 
@@ -9,7 +9,7 @@
 
 {% block page_title %}CCP Stock Manager{% endblock %}
 
-{% block content %}
+{% block content %}{{ block.super }}
 <form action="" method="POST">{% csrf_token %}
     {{ formset.management_form }}
     {% if formset.errors %}{{ formset.errors }}{% endif %}

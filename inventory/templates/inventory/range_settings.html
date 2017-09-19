@@ -1,0 +1,6 @@
+{% extends "inventory/base.html" %}
+
+{% block content %}
+<a href="{% url 'inventory:product_range' product_range.id %}"><button>Back to Range</button></a>
+<h2>{{ product_range.name }}</h2>
+{% endblock %}

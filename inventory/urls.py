@@ -20,4 +20,7 @@ urlpatterns = [
     url(
         r'^product/(?P<product_id>[0-9]+)/$',
         views.Product.as_view(), name='product'),
+    url(
+        r'^description_editor/(?P<range_id>[0-9]+)/$',
+        views.DescriptionEditor.as_view(), name='description_editor'),
 ]
