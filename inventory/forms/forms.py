@@ -1,4 +1,5 @@
 from django import forms
+from cloud_commerce.forms.new_product.fields import Title
 
 
 class ProductRangeForm(forms.Form):
@@ -6,6 +7,7 @@ class ProductRangeForm(forms.Form):
 
 
 class DescriptionForm(forms.Form):
+    title = Title()
     description = forms.CharField(
         widget=forms.Textarea(attrs={'class': 'froala'}))
 

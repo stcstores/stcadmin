@@ -88,12 +88,21 @@ class DescriptionEditor(InventoryUserMixin, FormView):
     def get_initial(self):
         initial = super().get_initial()
         first_product = CCAPI.get_product(self.product_range.products[0].id)
+        initial['title'] = self.product_range.name
         initial['description'] = first_product.description
         return initial
 
     def form_valid(self, form):
         self.product_range.set_description(
             form.cleaned_data['description'], update_channels=True)
+        name = form.cleaned_data['title']
+        self.product_range.set_name(name)
+        product_ids = [p.id for p in self.product_range.products]
+        CCAPI.set_product_name(name, product_ids)
+        CCAPI.update_product_on_sales_channel(
+            range_id=self.product_range.id, product_ids=product_ids,
+            request_type='name', value_1=name,
+            channels=self.product_range.get_sales_channel_ids())
         return super().form_valid(form)
 
     def get_success_url(self):
