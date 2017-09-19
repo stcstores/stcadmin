@@ -92,7 +92,8 @@ class DescriptionEditor(InventoryUserMixin, FormView):
         return initial
 
     def form_valid(self, form):
-        self.product_range.set_description(form.cleaned_data['description'])
+        self.product_range.set_description(
+            form.cleaned_data['description'], update_channels=True)
         return super().form_valid(form)
 
     def get_success_url(self):
