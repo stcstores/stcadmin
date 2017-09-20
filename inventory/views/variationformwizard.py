@@ -1,18 +1,19 @@
-from formtools.wizard.views import SessionWizardView
 from django.shortcuts import redirect
-from cloud_commerce . forms import NewVariationProductForm, VariationFormSet
-from cloud_commerce . product_creator import VariationProduct
-from . views import CloudCommerceUserMixin
+from formtools.wizard.views import SessionWizardView
+from inventory.forms import NewVariationProductForm, VariationFormSet
+from inventory.product_creator import VariationProduct
+
+from .views import InventoryUserMixin
 
 
-class VariationFormWizard(CloudCommerceUserMixin, SessionWizardView):
+class VariationFormWizard(InventoryUserMixin, SessionWizardView):
 
     form_list = [
         NewVariationProductForm, VariationFormSet]
 
     TEMPLATES = {
-        '0': 'cloud_commerce/variation_form_setup.html',
-        '1': 'cloud_commerce/variation_table_form.html'}
+        '0': 'inventory/variation_form_setup.html',
+        '1': 'inventory/variation_table_form.html'}
 
     def get_template_names(self):
         return [self.TEMPLATES[self.steps.current]]

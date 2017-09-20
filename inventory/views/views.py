@@ -14,6 +14,14 @@ class Index(InventoryUserMixin, TemplateView):
     template_name = 'inventory/index.html'
 
 
+class NewProduct(InventoryUserMixin, TemplateView):
+    template_name = 'inventory/new_product.html'
+
+
+class SKUGenerator(InventoryUserMixin, TemplateView):
+    template_name = 'inventory/sku_generator.html'
+
+
 class Product(InventoryUserMixin, FormView):
     template_name = 'inventory/product.html'
     form_class = forms.ProductForm

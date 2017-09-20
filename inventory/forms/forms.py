@@ -1,5 +1,5 @@
 from django import forms
-from cloud_commerce.forms.new_product.fields import Title, Description
+from .new_product.fields import Title, Description
 
 
 class ProductRangeForm(forms.Form):

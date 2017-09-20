@@ -171,6 +171,12 @@ th {
     color: red;
 }
 
+.errorlist {
+    margin: 0.25em;
+    margin-left: 1em;
+    padding: 0;
+}
+
 .message {
     color: green;
 }

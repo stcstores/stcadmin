@@ -1,12 +1,13 @@
-from . views import CloudCommerceUserMixin
-from django.views.generic.edit import FormView
-from cloud_commerce . forms import NewSingleProductForm
 from django.shortcuts import redirect
-from cloud_commerce.product_creator import SingleProduct
+from django.views.generic.edit import FormView
+from inventory.forms import NewSingleProductForm
+from inventory.product_creator import SingleProduct
+
+from .views import InventoryUserMixin
 
 
-class NewSingleProductView(CloudCommerceUserMixin, FormView):
-    template_name = 'cloud_commerce/single_product_form.html'
+class NewSingleProductView(InventoryUserMixin, FormView):
+    template_name = 'inventory/single_product_form.html'
     form_class = NewSingleProductForm
 
     def old_form_valid(self, form):
@@ -29,7 +30,7 @@ class NewSingleProductView(CloudCommerceUserMixin, FormView):
             options=options)
         if len(form.cleaned_data['location']) > 0:
             self.set_bay(form)
-        return redirect('cloud_commerce:product_range', self.range.id)
+        return redirect('inventory:product_range', self.range.id)
 
     def form_valid(self, form):
         new_product = SingleProduct(form.cleaned_data)

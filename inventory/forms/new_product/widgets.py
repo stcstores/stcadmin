@@ -11,7 +11,7 @@ class ListWidget(forms.TextInput):
     def render(self, name, value, attrs):
         flat_attrs = flatatt(attrs)
         html = render_to_string(
-            'cloud_commerce/list_widget.html',
+            'inventory/list_widget.html',
             {
                 'id': attrs['id'], 'attrs': flat_attrs, 'value': value,
                 'name': name})
@@ -25,7 +25,7 @@ class HorizontalRadioRenderer(forms.RadioSelect.renderer):
 
 class OptionSettingsFieldWidget(forms.MultiWidget):
 
-    template_name = 'cloud_commerce/options_settings_widget.html'
+    template_name = 'inventory/options_settings_widget.html'
 
     radio_choices = [
         ('unused', 'Unused'),
@@ -67,6 +67,6 @@ class OptionSettingsFieldWidget(forms.MultiWidget):
                 widget_name, values[i], widget_attrs)
             widgets.append(rendered_widget)
         html = render_to_string(
-            'cloud_commerce/options_settings_widget.html',
+            'inventory/options_settings_widget.html',
             {'widgets': widgets, 'name': name, 'id': id_})
         return mark_safe(html)

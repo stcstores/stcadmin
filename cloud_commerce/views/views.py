@@ -8,11 +8,3 @@ class CloudCommerceUserMixin(UserInGroupMixin):
 
 class Index(CloudCommerceUserMixin, TemplateView):
     template_name = 'cloud_commerce/index.html'
-
-
-class NewProduct(CloudCommerceUserMixin, TemplateView):
-    template_name = 'cloud_commerce/new_product.html'
-
-
-class SKUGenerator(CloudCommerceUserMixin, TemplateView):
-    template_name = 'cloud_commerce/sku_generator.html'

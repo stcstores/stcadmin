@@ -1,4 +1,4 @@
-{% extends "cloud_commerce/new_product_form.html" %}
+{% extends "inventory/new_product_form.html" %}
 {% load staticfiles %}
 {% load stcadmin_extras %}
 
@@ -24,5 +24,5 @@
 
 {% block script %}
 {{ block.super }}
-{% include 'cloud_commerce/set_autocomplete.html' %}
+{% include 'inventory/set_autocomplete.html' %}
 {% endblock %}

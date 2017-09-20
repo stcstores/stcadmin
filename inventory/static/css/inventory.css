@@ -27,3 +27,20 @@
 .end_of_line {
     background: #ccc;
 }
+
+.new_product tr input, .new_product tr select, .new_product tr textarea {
+    border-radius: 3px;
+    padding: 0.25em;
+}
+
+.new_product tr input:required, .new_product tr select {
+    border: solid 1px black;
+}
+
+.variation_options_table {
+    background: #e2edff;
+}
+
+.variation_table .variation_option:disabled{
+    color: black;
+}
