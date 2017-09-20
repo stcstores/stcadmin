@@ -15,7 +15,7 @@ class Index(InventoryUserMixin, TemplateView):
 
 
 class NewProduct(InventoryUserMixin, TemplateView):
-    template_name = 'inventory/new_product.html'
+    template_name = 'inventory/new_product/new_product.html'
 
 
 class SKUGenerator(InventoryUserMixin, TemplateView):

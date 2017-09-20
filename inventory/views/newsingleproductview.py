@@ -7,7 +7,7 @@ from .views import InventoryUserMixin
 
 
 class NewSingleProductView(InventoryUserMixin, FormView):
-    template_name = 'inventory/single_product_form.html'
+    template_name = 'inventory/new_product/single_product_form.html'
     form_class = NewSingleProductForm
 
     def old_form_valid(self, form):

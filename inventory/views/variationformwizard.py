@@ -12,8 +12,8 @@ class VariationFormWizard(InventoryUserMixin, SessionWizardView):
         NewVariationProductForm, VariationFormSet]
 
     TEMPLATES = {
-        '0': 'inventory/variation_form_setup.html',
-        '1': 'inventory/variation_table_form.html'}
+        '0': 'inventory/new_product/variation_form_setup.html',
+        '1': 'inventory/new_product/variation_table_form.html'}
 
     def get_template_names(self):
         return [self.TEMPLATES[self.steps.current]]

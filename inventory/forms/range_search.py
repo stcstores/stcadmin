@@ -41,7 +41,7 @@ class OptionSelectField(forms.MultiValueField):
 
 class OptionSelectWidget(forms.widgets.MultiWidget):
 
-    template_name = 'inventory/option_select_widget.html'
+    template_name = 'inventory/widgets/option_select_widget.html'
 
     def __init__(self, attrs):
         _widgets = [
