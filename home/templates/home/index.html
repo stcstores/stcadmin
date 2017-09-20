@@ -8,13 +8,15 @@
         <ul class='app'>
             <li><a href="{% url 'reference:index' %}">Reference</a></li>
             <p>Access reference material.</p>
-            {% for group in request.user.groups.all %}{% if group.name == 'cloud_commerce' %}
-                <li><a href="{% url 'cloud_commerce:index' %}">Cloud Commerce</a></li>
-                <p>Tools for working with Cloud Commerce</p>
+            {% for group in request.user.groups.all %}{% if group.name == 'inventory' %}
+                <li><a href="{% url 'inventory:index' %}">Inventory</a></li>
+                <p>Tools for working with Cloud Commerce Inventory</p>
                 <ul class="section">
-                    <li><a href="{% url 'cloud_commerce:new_product' %}">Manifest</a></li>
-                    <p>Create a new <a href="{% url 'cloud_commerce:new_single_product' %}">single</a> or <a href="{% url 'cloud_commerce:new_variation_product' %}">variation</a> product.</p>
-                    <li><a href="{% url 'cloud_commerce:sku_generator' %}">SKU Generator</a></li>
+                    <li><a href="{% url 'inventory:range_search' %}">Range Search</a></li>
+                    <p>Find products in the Inventory</p>
+                    <li><a href="{% url 'inventory:new_product' %}">New Product</a></li>
+                    <p>Create a new <a href="{% url 'inventory:new_single_product' %}">single</a> or <a href="{% url 'inventory:new_variation_product' %}">variation</a> product.</p>
+                    <li><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>
                     <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
                 </ul>
             {% endif %}{% endfor %}
@@ -29,6 +31,10 @@
             {% for group in request.user.groups.all %}{% if group.name == 'labelmaker' %}
                 <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
                 <p>Make printable product labels.</p>
+            {% endif %}{% endfor %}
+            {% for group in request.user.groups.all %}{% if group.name == 'spring' %}
+                <li><a href="{% url 'spring_manifest:spring_manifest' %}">Spring</a></li>
+                <p>Send Spring manifest</p>
             {% endif %}{% endfor %}
             {% for group in request.user.groups.all %}{% if group.name == 'admin' %}
                 <li><a href="/admin/">Admin</a></li>

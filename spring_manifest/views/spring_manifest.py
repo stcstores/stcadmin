@@ -5,25 +5,25 @@ import os
 
 import pycountry
 from ccapi import CCAPI
-from cloud_commerce.forms import SpringManifestForm
+from spring_manifest.forms import SpringManifestForm
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from stcadmin import settings
 
-from .views import CloudCommerceUserMixin
+from .views import SpringUserMixin
 
 
-class SpringManifestSuccessView(CloudCommerceUserMixin, TemplateView):
-    template_name = 'cloud_commerce/spring_manifest_success.html'
+class SpringManifestSuccessView(SpringUserMixin, TemplateView):
+    template_name = 'spring_manifest/spring_manifest_success.html'
 
 
 class SpringManifestView(
-        CloudCommerceUserMixin, settings.SpringManifestSettings, FormView):
+        SpringUserMixin, settings.SpringManifestSettings, FormView):
     login_url = settings.LOGIN_URL
-    template_name = 'cloud_commerce/spring_manifest.html'
+    template_name = 'spring_manifest/spring_manifest.html'
     form_class = SpringManifestForm
-    success_url = reverse_lazy('cloud_commerce:spring_manifest_success')
+    success_url = reverse_lazy('spring_manifest:spring_manifest_success')
 
     spreadsheet_header = [
         "Version #", "Shipper ID", "Package ID", "Weight", "Ship From Attn",

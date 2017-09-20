@@ -1,9 +1,9 @@
 from django.conf.urls import include, url  # noqa
 from django.contrib import admin  # noqa
 
-from cloud_commerce import views
+from spring_manifest import views
 
-app_name = 'cloud_commerce'
+app_name = 'spring_manifest'
 
 urlpatterns = [
     url(

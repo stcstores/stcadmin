@@ -1,4 +1,4 @@
-{% extends "cloud_commerce/base.html" %}
+{% extends "spring_manifest/base.html" %}
 {% load staticfiles %}
 
 {% block content %}
@@ -6,7 +6,7 @@
 <div class="site_index">
     <p>From here you can access:</p>
     <ul class='app'>
-        <li><a href="{% url 'cloud_commerce:spring_manifest' %}">Spring Manifest</a></li>
+        <li><a href="{% url 'spring_manifest:spring_manifest' %}">Spring Manifest</a></li>
         <p>Send current manifest to Spring</p>
     </ul>
 </div>

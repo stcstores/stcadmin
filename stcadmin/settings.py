@@ -39,12 +39,12 @@ INSTALLED_APPS = [
     'labelmaker',
     'reference',
     'user',
-    'cloud_commerce',
     'cloud_commerce_api',
     'epos',
     'inventory',
     'list_input',
     'print_audit',
+    'spring_manifest',
 ]
 
 MIDDLEWARE = [

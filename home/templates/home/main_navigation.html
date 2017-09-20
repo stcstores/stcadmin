@@ -3,12 +3,12 @@
     <ul>
         <li><a href="{% url 'home:index' %}">Home</a></li>
         <li><a href="{% url 'reference:index' %}">Reference</a></li>
-        {% for group in request.user.groups.all %}{% if group.name == 'cloud_commerce' %}<li><a href="{% url 'cloud_commerce:index' %}">Cloud Commerce</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'inventory' %}<li><a href="{% url 'inventory:index' %}">Inventory</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'epos' %}<li><a href="{% url 'epos:index' %}">EPOS</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'labelmaker' %}<li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'suppliers' %}<li><a href="{% url 'suppliers:supplier_search' %}">Suppliers</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'print_audit' %}<li><a href="{% url 'print_audit:index' %}">Print Audit</a></li>{% endif %}{% endfor %}
+        {% for group in request.user.groups.all %}{% if group.name == 'spring' %}<li><a href="{% url 'spring_manifest:spring_manifest' %}">Spring</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'admin' %}<li><a href="/admin/">Admin</a></li>{% endif %}{% endfor %}
     </ul>
 </div>
