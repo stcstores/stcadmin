@@ -75,7 +75,7 @@ class OptionSelectWidget(forms.widgets.MultiWidget):
         return mark_safe(html)
 
 
-class RangeSearchForm(forms.Form):
+class ProductSearchForm(forms.Form):
 
     search_type_help_text = (
         'Select a Search Type<ul><li><b>Basic Search:'

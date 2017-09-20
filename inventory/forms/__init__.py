@@ -1,4 +1,4 @@
-from . range_search import RangeSearchForm  # noqa
+from . product_search import ProductSearchForm  # noqa
 from . locations import LocationsFormSet  # noqa
 from . images import ImagesFormSet  # noqa
 from . forms import *  # noqa
