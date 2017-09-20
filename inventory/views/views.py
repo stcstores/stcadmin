@@ -84,9 +84,9 @@ class ProductRange(InventoryUserMixin, FormView):
         return context_data
 
 
-class DescriptionEditor(InventoryUserMixin, FormView):
+class Descriptions(InventoryUserMixin, FormView):
     form_class = forms.DescriptionForm
-    template_name = 'inventory/description_editor.html'
+    template_name = 'inventory/descriptions.html'
 
     def dispatch(self, *args, **kwargs):
         self.range_id = self.kwargs.get('range_id')

@@ -45,7 +45,7 @@
                     <td>{{ range.sku }}</td>
                     <td><a href="{% url 'inventory:product_range' range.id %}">{{ range.name }}</a></td>
                     <td>
-                        <a title="Descriptions" href="{% url 'inventory:description_editor' range.id %}" target="_blank"><button>D</button></a>
+                        <a title="Descriptions" href="{% url 'inventory:descriptions' range.id %}" target="_blank"><button>D</button></a>
                         <a title="Locations" href="{% url 'inventory:locations' range.id %}" target="_blank"><button>L</button></a>
                         <a title="Images" href="{% url 'inventory:images' range.id %}" target="_blank"><button>I</button></a>
                         <a title="View on Cloud Commerce" href="{% ccp_product_range_page range.id %}" target="_blank"><button>C</button></a>
