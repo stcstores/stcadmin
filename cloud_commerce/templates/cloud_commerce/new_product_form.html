@@ -5,6 +5,7 @@
 
 {% block additional_head %}{{ block.super }}
 <script src="{% static 'scripts/price_field.js' %}"></script>
+{% include 'home/froala_head.html' %}
 {% endblock %}
 
 {% block script %}
@@ -55,7 +56,7 @@ $(document).ready(function() {
         $('#{{ form.price.auto_id }}'),
         get_vat_rate(vat_rate_select)
     );
-    
+
     vat_rate_select.change(function () {
         price_field.set_vat_rate(get_vat_rate(vat_rate_select));
     });

@@ -107,7 +107,7 @@ class DescriptionEditor(InventoryUserMixin, FormView):
 
     def get_success_url(self):
         return reverse_lazy(
-            'inventory:product_range', kwargs={'range_id': self.range_id})
+            'inventory:description_editor', kwargs={'range_id': self.range_id})
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)

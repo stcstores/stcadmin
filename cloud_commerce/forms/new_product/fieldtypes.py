@@ -20,6 +20,11 @@ class Validators:
         if valid is False:
             raise ValidationError('Only alphanumeric characters are allowed.')
 
+    @staticmethod
+    def numeric(value):
+        if not value.isdigit():
+            raise ValidationError('Not a valid barcode.')
+
     def limit_characters(characters):
         def character_limit(value):
             valid = True
@@ -63,6 +68,7 @@ class FormField(forms.Field):
     initial = None
     required_message = ''
     validators = []
+    disallowed_characters = []
 
     def __init__(self, *args, **kwargs):
         if self.is_required:
@@ -105,6 +111,11 @@ class FormField(forms.Field):
         return self.widget(attrs=attrs)
 
     def clean(self, value):
+        if any((c in value for c in self.disallowed_characters)):
+            raise ValidationError(
+                "The following characters are not allowed in "
+                "this field: {}".format(
+                    ', '.join(self.disallowed_characters)))
         return str(super().clean(value)).strip()
 
 

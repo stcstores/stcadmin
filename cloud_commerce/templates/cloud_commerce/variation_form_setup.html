@@ -4,6 +4,7 @@
 {% load stcadmin_extras %}
 
 {% block additional_head %}{{ block.super }}
+{% include 'home/froala_head.html' %}
 <script src="{% static 'scripts/price_field.js' %}"></script>
 {% endblock %}
 

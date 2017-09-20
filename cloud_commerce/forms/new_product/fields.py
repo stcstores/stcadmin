@@ -1,7 +1,9 @@
+import re
+
 from ccapi import CCAPI
 
 from . import fieldtypes
-from . fieldtypes import Validators
+from .fieldtypes import Validators
 
 
 class Title(fieldtypes.TextField):
@@ -17,12 +19,19 @@ class Description(fieldtypes.TextareaField):
     required = False
     label = 'Description'
     name = 'description'
+    html_class = 'froala'
     placeholder = 'Description. Will default to title if left blank'
+    disallowed_characters = ['~']
     help_text = (
-        'A description of the product. This will be used for '
-        'internal reference and as the basis of the description in the '
-        'listings.<br>If left blank the description will duplicate '
-        'the title.')
+        'The Description for the listings.<br>'
+        'This can be changed on a channel by channel basis if necessary<br>'
+        'If left blank the description will duplicate the title.')
+
+    def clean(self, value):
+        value = super().clean(value)
+        value = value.replace('&nbsp;', ' ')  # Remove Non breaking spaces
+        value = re.sub(' +', ' ', value)  # Remove multiple space characters
+        return value
 
 
 class Barcode(fieldtypes.TextField):
@@ -30,6 +39,7 @@ class Barcode(fieldtypes.TextField):
     name = 'barcode'
     required_message = "Please supply a barcode."
     placeholder = 'Barcode'
+    validators = [Validators.numeric]
     must_vary = True
     help_text = "A unique barcode for the product."
 
@@ -241,7 +251,6 @@ class DeleteVariation(fieldtypes.CheckboxField):
 class FormFields(metaclass=MetaFormFields):
     fields = [
         Title,
-        Description,
         Barcode,
         VATRate,
         Price,
@@ -258,6 +267,7 @@ class FormFields(metaclass=MetaFormFields):
         PackageType,
         Brand,
         Manufacturer,
+        Description,
         ]
 
     delete_variation = DeleteVariation
