@@ -73,7 +73,6 @@ $(document).ready(function() {
                 'old_stock_level': product_details[product_id].stock_level,
             }),
             success: function(response) {
-                console.log(response);
                 product_details[product_id].stock_level = response;
                 $('#stock_' + product_id).val(response);
                 status.attr('src', complete_image);

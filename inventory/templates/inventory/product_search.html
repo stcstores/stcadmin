@@ -70,10 +70,10 @@
     </table>
 {% endblock %}
 
-{% block script %}
+{% block script %}{{ block.super }}
     <script>
         loading_image = "{% static 'images/loading.gif' %}"
-        complete_image = "{% static 'images/complete.png' %}"
+        complete_image = "{% static 'images/complete.jpg' %}"
         update_stock_url = "{% url 'inventory:update_stock_level' %}";
         product_details = {
             {% for range in product_ranges %}
