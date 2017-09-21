@@ -1,7 +1,10 @@
 from . views import *  # noqa
-from . api import *  # noaq
-from . locations import LocationForm  # noqa
+from . api import *  # noqa
+from . descriptions import Descriptions  # noqa
 from . images import ImageForm  # noqa
-from . productsearch import ProductSearch  # noqa
+from . locations import LocationForm  # noqa
 from . newsingleproductview import NewSingleProductView  # noqa
+from . product import Product  # noqa
+from . productrange import ProductRange  # noqa
+from . productsearch import ProductSearch  # noqa
 from . variationformwizard import VariationFormWizard  # noqa
