@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'labelmaker',
     'reference',
     'user',
-    'cloud_commerce_api',
     'epos',
     'inventory',
     'list_input',

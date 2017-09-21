@@ -35,9 +35,6 @@ urlpatterns = [
         r'^print_audit/',
         include('print_audit.urls', namespace='print_audit')),
     url(
-        r'^cloud_commerce_api/',
-        include('cloud_commerce_api.urls', namespace='cloud_commerce_api')),
-    url(
         r'^spring_manifest/',
         include('spring_manifest.urls', namespace='spring_manifest')),
     url(r'^', include('home.urls', namespace='home')),

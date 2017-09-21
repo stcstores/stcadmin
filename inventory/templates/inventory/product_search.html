@@ -74,7 +74,7 @@
     <script>
         loading_image = "{% static 'images/loading.gif' %}"
         complete_image = "{% static 'images/complete.png' %}"
-        update_stock_url = "{% url 'cloud_commerce_api:update_stock_level' %}";
+        update_stock_url = "{% url 'inventory:update_stock_level' %}";
         product_details = {
             {% for range in product_ranges %}
             {% for product in range.products %}

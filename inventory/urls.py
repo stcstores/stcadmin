@@ -5,7 +5,7 @@ from inventory import views
 
 app_name = 'inventory'
 
-urlpatterns = [
+inventory_urlpatterns = [
     url(r'^index$', views.Index.as_view(), name='index'),
     url(
         r'^product_search$',
@@ -26,6 +26,12 @@ urlpatterns = [
         r'^descriptions/(?P<range_id>[0-9]+)/$',
         views.Descriptions.as_view(), name='descriptions'),
     url(
+        r'^sku_generator$',
+        views.SKUGenerator.as_view(), name='sku_generator'),
+]
+
+new_product_urlpatterns = [
+    url(
         r'^new_product$',
         views.NewProduct.as_view(), name='new_product'),
     url(
@@ -34,7 +40,22 @@ urlpatterns = [
     url(
         r'^new_variation_product$',
         views.VariationFormWizard.as_view(), name='new_variation_product'),
-    url(
-        r'^sku_generator$',
-        views.SKUGenerator.as_view(), name='sku_generator'),
+
 ]
+
+api_urlpatterns = [
+    url(
+        r'^get_stock_for_products$',
+        views.GetStockForProduct.as_view(), name='get_stock_for_product'),
+    url(
+        r'^get_new_sku$',
+        views.GetNewSKU.as_view(), name='get_new_sku'),
+    url(
+        r'^get_new_range_sku$',
+        views.GetNewRangeSKU.as_view(), name='get_new_range_sku'),
+    url(
+        r'^update_stock_level$',
+        views.UpdateStockLevel.as_view(), name='update_stock_level'),
+]
+
+urlpatterns = inventory_urlpatterns + new_product_urlpatterns + api_urlpatterns
