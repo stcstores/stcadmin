@@ -6,6 +6,12 @@ from django.template.loader import render_to_string
 from ccapi import CCAPI, ProductOptions
 
 
+class HorizontalRadioRenderer(forms.RadioSelect.renderer):
+
+    def render(self):
+        return mark_safe(u'\n'.join([u'%s\n' % w for w in self]))
+
+
 class OptionSelectField(forms.MultiValueField):
 
     selectable_options = (
@@ -76,6 +82,16 @@ class OptionSelectWidget(forms.widgets.MultiWidget):
 
 
 class ProductSearchForm(forms.Form):
+    EXCLUDE = 'exclude'
+    INCLUDE = 'include'
+    EXCLUSIVE = 'exclusive'
+    END_OF_LINE_CHOICES = (
+        (EXCLUDE, 'Exclude'), (INCLUDE, 'Include'), (EXCLUSIVE, 'Exclusive'))
+
+    BASIC = 'basic'
+    ADVANCED = 'advanced'
+
+    SEARCH_TYPE_CHOICES = ((BASIC, 'Basic'), (ADVANCED, 'Advanced'))
 
     search_type_help_text = (
         'Select a Search Type<ul><li><b>Basic Search:'
@@ -99,15 +115,17 @@ class ProductSearchForm(forms.Form):
         required=True,
         label='Search Type',
         help_text=search_type_help_text,
-        initial='basic',
-        choices=[('basic', 'Basic Search'), ('advanced', 'Advanced Search')],
+        initial=BASIC,
+        choices=SEARCH_TYPE_CHOICES,
         widget=forms.RadioSelect())
 
-    hide_end_of_line = forms.BooleanField(
+    end_of_line = forms.ChoiceField(
+        widget=forms.RadioSelect(renderer=HorizontalRadioRenderer),
+        choices=END_OF_LINE_CHOICES,
         required=False,
         label='Hide End of Line',
         help_text='Hide End of Line Episodes',
-        initial=True)
+        initial=EXCLUDE)
 
     basic_search_text = forms.CharField(
         label='Basic Search',
@@ -133,16 +151,21 @@ class ProductSearchForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        if cleaned_data['search_type'] == 'basic':
+        if cleaned_data['search_type'] == self.BASIC:
             cleaned_data = self.clean_basic_search(cleaned_data)
-        elif cleaned_data['search_type'] == 'advanced':
+        elif cleaned_data['search_type'] == self.ADVANCED:
             cleaned_data = self.clean_advanced_search(cleaned_data)
         else:
             raise ValidationError('No valid search type supplied.')
-        if cleaned_data['hide_end_of_line'] is True:
-            self.ranges = [r for r in self.ranges if not r.end_of_line]
+        self.filter_end_of_line(cleaned_data)
         self.ranges.sort(key=lambda x: x.name)
         return cleaned_data
+
+    def filter_end_of_line(self, cleaned_data):
+        if cleaned_data['end_of_line'] == self.EXCLUDE:
+            self.ranges = [r for r in self.ranges if not r.end_of_line]
+        elif cleaned_data['end_of_line'] == self.EXCLUSIVE:
+            self.ranges = [r for r in self.ranges if r.end_of_line]
 
     def clean_basic_search(self, data):
         self.ranges = self.get_ranges(data['basic_search_text'])
