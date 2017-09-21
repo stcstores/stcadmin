@@ -1,8 +1,10 @@
-from . new_product import NewProduct
-from . new_range import NewRange
-from . new_variation import NewVariation
+from datetime import datetime
 
 from ccapi import CCAPI
+
+from .new_product import NewProduct
+from .new_range import NewRange
+from .new_variation import NewVariation
 
 
 class VariationProduct(NewProduct):
@@ -91,6 +93,7 @@ class VariationProduct(NewProduct):
         else:
             international_shipping = 'Standard'
         required_options = {
+            'Date Created': datetime.today().strftime('%Y-%m-%d'),
             'Department': self.department,
             'Brand': self.brand,
             'Supplier SKU': self.get_variable_value(

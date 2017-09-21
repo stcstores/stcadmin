@@ -1,8 +1,10 @@
-from . new_product import NewProduct
-from . new_range import NewRange
-from . new_variation import NewVariation
+from datetime import datetime
 
 from ccapi import CCAPI
+
+from .new_product import NewProduct
+from .new_range import NewRange
+from .new_variation import NewVariation
 
 
 class SingleProduct(NewProduct):
@@ -59,6 +61,7 @@ class SingleProduct(NewProduct):
 
     def get_options(self):
         required_options = {
+            'Date Created': datetime.today().strftime('%Y-%m-%d'),
             'Department': self.department,
             'Brand': self.brand,
             'Supplier SKU': self.supplier_SKU,
