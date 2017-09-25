@@ -6,7 +6,7 @@ from inventory.forms import LocationsFormSet
 from .views import InventoryUserMixin
 
 
-class LocationForm(InventoryUserMixin, FormView):
+class LocationFormView(InventoryUserMixin, FormView):
 
     template_name = 'inventory/locations.html'
     form_class = LocationsFormSet

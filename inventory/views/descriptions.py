@@ -6,7 +6,7 @@ from inventory import forms
 from .views import InventoryUserMixin
 
 
-class Descriptions(InventoryUserMixin, FormView):
+class DescriptionsView(InventoryUserMixin, FormView):
     form_class = forms.DescriptionForm
     template_name = 'inventory/descriptions.html'
 

@@ -6,7 +6,7 @@ from inventory import forms
 from .views import InventoryUserMixin
 
 
-class ProductRange(InventoryUserMixin, FormView):
+class ProductRangeView(InventoryUserMixin, FormView):
     template_name = 'inventory/product_range.html'
     form_class = forms.ProductRangeForm
 

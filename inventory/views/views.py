@@ -6,13 +6,13 @@ class InventoryUserMixin(UserInGroupMixin):
     groups = ['inventory']
 
 
-class Index(InventoryUserMixin, TemplateView):
+class IndexView(InventoryUserMixin, TemplateView):
     template_name = 'inventory/index.html'
 
 
-class NewProduct(InventoryUserMixin, TemplateView):
+class NewProductView(InventoryUserMixin, TemplateView):
     template_name = 'inventory/new_product/new_product.html'
 
 
-class SKUGenerator(InventoryUserMixin, TemplateView):
+class SKUGeneratorView(InventoryUserMixin, TemplateView):
     template_name = 'inventory/sku_generator.html'

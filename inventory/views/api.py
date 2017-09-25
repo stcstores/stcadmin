@@ -9,7 +9,7 @@ from .views import InventoryUserMixin
 from django.views import View
 
 
-class GetNewSKU(InventoryUserMixin, View):
+class GetNewSKUView(InventoryUserMixin, View):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
@@ -17,7 +17,7 @@ class GetNewSKU(InventoryUserMixin, View):
         return HttpResponse(sku)
 
 
-class GetNewRangeSKU(InventoryUserMixin, View):
+class GetNewRangeSKUView(InventoryUserMixin, View):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
@@ -25,7 +25,7 @@ class GetNewRangeSKU(InventoryUserMixin, View):
         return HttpResponse(sku)
 
 
-class GetStockForProduct(InventoryUserMixin, View):
+class GetStockForProductView(InventoryUserMixin, View):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
@@ -41,7 +41,7 @@ class GetStockForProduct(InventoryUserMixin, View):
         return HttpResponse(json.dumps(stock_data))
 
 
-class UpdateStockLevel(InventoryUserMixin, View):
+class UpdateStockLevelView(InventoryUserMixin, View):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request):

@@ -5,7 +5,7 @@ from inventory.forms import ProductSearchForm
 from .views import InventoryUserMixin
 
 
-class ProductSearch(InventoryUserMixin, FormView):
+class ProductSearchView(InventoryUserMixin, FormView):
     template_name = 'inventory/product_search.html'
     form_class = ProductSearchForm
 

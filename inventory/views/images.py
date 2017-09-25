@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from inventory. forms import ImagesFormSet
 
 
-class ImageForm(InventoryUserMixin, FormView):
+class ImageFormView(InventoryUserMixin, FormView):
 
     template_name = 'inventory/images.html'
     form_class = ImagesFormSet

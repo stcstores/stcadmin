@@ -7,7 +7,7 @@ from inventory.forms.new_product import fields
 from .views import InventoryUserMixin
 
 
-class Product(InventoryUserMixin, FormView):
+class ProductView(InventoryUserMixin, FormView):
     template_name = 'inventory/product.html'
     form_class = forms.ProductForm
 

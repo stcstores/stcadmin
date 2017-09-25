@@ -6,7 +6,7 @@ from inventory.product_creator import VariationProduct
 from .views import InventoryUserMixin
 
 
-class VariationFormWizard(InventoryUserMixin, SessionWizardView):
+class VariationFormWizardView(InventoryUserMixin, SessionWizardView):
 
     form_list = [
         NewVariationProductForm, VariationFormSet]
