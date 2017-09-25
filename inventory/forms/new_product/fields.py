@@ -11,7 +11,7 @@ class Title(fieldtypes.TextField):
     name = 'title'
     required_message = "Please supply a range title"
     placeholder = 'Title'
-    validators = [Validators.alphanumeric]
+    validators = [Validators.limit_characters('%')]
     help_text = 'The title for the <b>Product</b>.'
 
 
