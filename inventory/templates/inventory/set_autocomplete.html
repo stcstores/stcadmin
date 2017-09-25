@@ -31,22 +31,35 @@
                 {% endif %}
             {% endfor %}
         {% else %}
-            $('#{{ form.department.auto_id }}').change(function() {
-                var department = $(this).val();
-                $('#{{ form.location.auto_id}}').val('');
+            {% if form.department %}
+                $('#{{ form.department.auto_id }}').change(function() {
+                    var department = $(this).val();
+                    $('#{{ form.location.auto_id}}').val('');
+                    if (warehouses.hasOwnProperty(department)) {
+                        var bay_list = warehouses[department];
+                        $('#{{ form.location.auto_id}}').attr('disabled', false);
+                    } else {
+                        var bay_list = [];
+                        $('#{{ form.location.auto_id}}').attr('disabled', true);
+                    }
+                    $('#{{ form.location.auto_id}}').autocomplete({source: bay_list});
+                });
+                $('#{{ form.department.auto_id }}').change();
+            {% else %}
+                var department = '{{ product.options.Department.value }}';
                 if (warehouses.hasOwnProperty(department)) {
                     var bay_list = warehouses[department];
-                    $('#{{ form.location.auto_id}}').attr('disabled', false);
                 } else {
                     var bay_list = [];
-                    $('#{{ form.location.auto_id}}').attr('disabled', true);
                 }
                 $('#{{ form.location.auto_id}}').autocomplete({source: bay_list});
-            });
-            $('#{{ form.department.auto_id }}').change();
-
-            $('#{{ form.brand.auto_id }}').autocomplete({source: product_options['Brand']});
-            $('#{{ form.manufacturer.auto_id }}').autocomplete({source: product_options['Manufacturer']});
+            {% endif %}
+            {% if form.brand %}
+                $('#{{ form.brand.auto_id }}').autocomplete({source: product_options['Brand']});
+            {% endif %}
+            {% if form.manufacturer %}
+                $('#{{ form.manufacturer.auto_id }}').autocomplete({source: product_options['Manufacturer']});
+            {% endif %}
             {% for field in form %}
                 {% ifequal field.name|slice:"0:4" 'opt_' %}
                     $('#{{ field.auto_id }}').autocomplete({source: product_options['{{ field.label }}']});

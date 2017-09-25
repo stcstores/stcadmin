@@ -5,22 +5,22 @@
 
 {% block page_title %}CCP Product{% endblock %}
 
+{% block additional_head %}{{ block.super }}
+<script src="{% static 'scripts/price_field.js' %}"></script>
+{% endblock %}
+
 {% block content %}
     <h2>{{ product.name }}</h2>
     <p>SKU: {{ product.sku}}</p>
     <p>ID: {{ product.id }}</p>
-    <p><a href="{% url 'inventory:product_range' product.range_id %}"><button>Go To Range</button></a></p>
+    <p><a href="{% url 'inventory:product_range' product.range_id %}"><button>Back To Range</button></a></p>
     <p><a href="{% ccp_product_page product.range_id product.id %}" target="_blank"><button>View Product on Cloud Commerce</button></a></p>
-    <table>
-        {% for option in product.options %}
-            <tr><th>{{ option.option_name }}</th><td>{{ option.value }}</td></tr>
-        {% endfor %}
-    </table>
+    <p>Stock Level: {{ product.stock_level }}</p>
     <form action="" method="POST">{% csrf_token %}
         <table>
             {% for field in form %}
             <tr>
-                <td>{{ field.label }}</td>
+                <th>{{ field.label }}</th>
                 <td>{{ field }}</td>
                 <td>{% tooltip_help_text field %}</td>
                 {% if field.errors %}
@@ -31,4 +31,34 @@
         </table>
         <input type="submit" value="Update">
     </form>
+{% endblock %}
+
+{% block script %}{{ block.super }}
+
+{% include 'inventory/set_autocomplete.html' %}
+
+<script>
+    $(document).ready(function() {
+        function get_vat_rate(vat_select) {
+            var value = vat_select.val();
+            if (value === '') {
+                var vat_rate = false;
+            } else {
+                var vat_rate = parseInt(value);
+            }
+            return vat_rate
+        }
+
+        var vat_rate_select = $('#{{ form.vat_rate.auto_id }}');
+
+        var price_field = new PriceField(
+            $('#{{ form.price.auto_id }}'),
+            get_vat_rate(vat_rate_select)
+        );
+
+        vat_rate_select.change(function () {
+            price_field.set_vat_rate(get_vat_rate(vat_rate_select));
+        });
+    });
+</script>
 {% endblock %}

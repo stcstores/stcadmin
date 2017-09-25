@@ -1,7 +1,5 @@
 class NewVariation:
 
-    vat_rate_ids = {20: 5, 5: 2, 0: 1}
-
     def __init__(
             self, product_range, name=None, barcode=None, description=None,
             vat_rate=None, weight='', height='', length='',
@@ -11,7 +9,7 @@ class NewVariation:
         self.name = name
         self.barcode = barcode
         self.description = description
-        self.vat_rate_id = self.vat_rate_ids[vat_rate]
+        self.vat_rate_id = vat_rate
         self.weight = weight
         self.height = height
         self.length = length
