@@ -1,6 +1,8 @@
 {% load inventory_extras %}
 
 <script>
+    $.extend($.ui.autocomplete.prototype.options, { delay: 0, minLength: 0 });
+
     $(document).ready(function() {
         {% warehouse_bays as warehouses %}
         var warehouses = {
