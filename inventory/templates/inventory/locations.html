@@ -17,6 +17,7 @@
         <tr>
             <th>Product</th>
             <th>Stock Level</th>
+            <th>Warehouse</th>
             <th>Bays</th>
         </tr>
         {% for form in formset %}
@@ -24,27 +25,48 @@
         <tr>
             <td class="title_field">{{ form.product_name.value }}</td>
             <td class="stock_level_field">{{ form.stock_level.value }}</td>
+            <td class="warehouse_field">{{ form.warehouse }}</td>
             <td class="location_field">{{ form.locations }}</td>
         </tr>
         {% endfor %}
     </table>
     <input type="submit" value="Update Locations" />
 </form>
+
 {% endblock %}
 
 {% block script %}
 <script>
+$.extend($.ui.autocomplete.prototype.options, { delay: 0, minLength: 0 });
 
+var warehouses = {
+    {% for warehouse, bays in formset.warehouses.items %}
+    '{{ warehouse }}': [
+        {% for bay in bays %}'{{ bay }}',{% endfor %}],
+    {% endfor %}}
 
 function set_autocomplete() {
-    var bays = [{% for bay in bays %}'{{ bay }}', {% endfor %}]
-    $('.location_field input').autocomplete({source: bays});
+    {% for form in formset %}
+        var warehouse_id = $('#{{ form.warehouse.auto_id }}').val();
+        var bays = warehouses[warehouse_id];
+        $('#{{ form.locations.auto_id }}').closest('td').find('input').autocomplete({source: bays});
+    {% endfor %}
 }
+
 $(document).click(function() {
     set_autocomplete();
 });
 $(document).keypress(function() {
     set_autocomplete();
+});
+
+$(document).ready(function() {
+    {% for form in formset %}
+        $('#{{ form.warehouse.auto_id }}').change(function() {
+            $('#{{ form.locations.auto_id }}').closest('td').find('button').click();
+            set_autocomplete();
+        });
+    {% endfor %}
 });
 
 </script>
