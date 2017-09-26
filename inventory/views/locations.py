@@ -1,5 +1,5 @@
 from ccapi import CCAPI, Warehouses
-from django.shortcuts import redirect, render
+from django.core.urlresolvers import reverse_lazy
 from django.views.generic.edit import FormView
 from inventory.forms import LocationsFormSet
 
@@ -16,25 +16,15 @@ class LocationFormView(InventoryUserMixin, FormView):
         self.product_range = CCAPI.get_range(self.range_id)
         return super().dispatch(*args, **kwargs)
 
-    def post(self, request, range_id):
-        if request.method == 'POST':
-            formset = self.form_class(request.POST, request.FILES)
-            if formset.is_valid():
-                self.is_valid(formset)
-                return redirect('inventory:product_range', range_id)
-        else:
-            formset = self.form_class(initial=self.get_initial())
-        return render(
-            request, self.template_name, {
-                'formset': formset, 'product_range': self.product_range})
+    def get_success_url(self):
+        return reverse_lazy(
+            'inventory:locations', kwargs={'range_id': self.range_id})
 
-    def get(self, request, range_id):
-        formset = self.form_class(initial=self.get_initial())
-        return render(
-            request, self.template_name,
-            {
-                'formset': formset, 'bays': self.bays,
-                'product_range': self.product_range})
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['formset'] = context.pop('form')
+        context['product_range'] = self.product_range
+        return context
 
     def get_initial(self):
         self.products = self.product_range.products
@@ -62,12 +52,13 @@ class LocationFormView(InventoryUserMixin, FormView):
             self.bays = []
         return initial
 
-    def is_valid(self, forms):
+    def form_valid(self, forms):
         for form in forms:
             data = form.cleaned_data
             product = CCAPI.get_product(data['product_id'])
             new_bay_names = [location for location in data['locations']]
             self.update_bays(product, new_bay_names)
+        return super().form_valid(form)
 
     def update_bays(self, product, new_bay_names):
         warehouse_name = str(product.options['Department'].value)
