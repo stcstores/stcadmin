@@ -111,11 +111,12 @@ class FormField(forms.Field):
         return self.widget(attrs=attrs)
 
     def clean(self, value):
-        if any((c in value for c in self.disallowed_characters)):
-            raise ValidationError(
-                "The following characters are not allowed in "
-                "this field: {}".format(
-                    ', '.join(self.disallowed_characters)))
+        if value is not None:
+            if any((c in value for c in self.disallowed_characters)):
+                raise ValidationError(
+                    "The following characters are not allowed in "
+                    "this field: {}".format(
+                        ', '.join(self.disallowed_characters)))
         return str(super().clean(value)).strip()
 
 
