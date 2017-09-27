@@ -1,6 +1,8 @@
+import json
 import re
 
 from ccapi import CCAPI
+from list_input import ListInput
 
 from . import fieldtypes
 from .fieldtypes import Validators
@@ -259,6 +261,39 @@ class DeleteVariation(fieldtypes.CheckboxField):
     help_text = (
         'Select this option for variations that do not exist or we will not '
         'stock.')
+
+
+class ListOption(fieldtypes.FormField, ListInput):
+
+    separator = '|'
+    disallowed_characters = [separator]
+
+    def prepare_value(self, value):
+        if value is None:
+            return json.dumps([])
+        if value[0] == '[':
+            return value
+        return json.dumps(value.split(self.separator))
+
+    def clean(self, value):
+        if value is None:
+            return []
+        value = json.loads(value)
+        return self.separator.join(value)
+
+
+class AmazonBulletPoints(ListOption):
+    label = 'Amazon Bullet Points'
+    html_class = 'amazon_bullet_points'
+    help_text = 'Create upto five bullet points for Amazon listings.'
+    maximum = 5
+
+
+class AmazonSearchTerms(ListOption):
+    label = 'Amazon Search Terms'
+    html_class = 'amazon_search_terms'
+    help_text = 'Create upto five search terms for Amazon listings.'
+    maximum = 5
 
 
 class FormFields(metaclass=MetaFormFields):

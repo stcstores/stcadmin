@@ -12,6 +12,8 @@ class ProductRangeForm(forms.Form):
 class DescriptionForm(forms.Form):
     title = Title()
     description = Description()
+    amazon_bullets = fields.AmazonBulletPoints()
+    search_terms = fields.AmazonSearchTerms()
 
 
 class ProductForm(forms.Form):

@@ -20,6 +20,20 @@ class DescriptionsView(InventoryUserMixin, FormView):
         first_product = CCAPI.get_product(self.product_range.products[0].id)
         initial['title'] = self.product_range.name
         initial['description'] = first_product.description
+        try:
+            initial['amazon_bullets'] = first_product.options[
+                'Amazon Bullets'].value.value
+        except KeyError:
+            pass
+        except AttributeError:
+            pass
+        try:
+            initial['search_terms'] = first_product.options[
+                'Amazon Search Terms'].value.value
+        except KeyError:
+            pass
+        except AttributeError:
+            pass
         return initial
 
     def form_valid(self, form):
@@ -33,6 +47,15 @@ class DescriptionsView(InventoryUserMixin, FormView):
             range_id=self.product_range.id, product_ids=product_ids,
             request_type='name', value_1=name,
             channels=self.product_range.get_sales_channel_ids())
+        self.product_range.add_product_option('Amazon Bullets')
+        self.product_range.add_product_option('Amazon Search Terms')
+        for product in self.product_range.products:
+            product.set_option_value(
+                'Amazon Bullets', form.cleaned_data['amazon_bullets'],
+                create=True)
+            product.set_option_value(
+                'Amazon Search Terms', form.cleaned_data['search_terms'],
+                create=True)
         return super().form_valid(form)
 
     def get_success_url(self):

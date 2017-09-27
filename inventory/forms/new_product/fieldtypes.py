@@ -1,8 +1,8 @@
-import json
 from inspect import isclass
 
 from django import forms
 from django.core.exceptions import ValidationError
+from list_input import ListInput
 
 from . import widgets
 
@@ -198,7 +198,7 @@ class OptionSettingField(forms.MultiValueField):
             forms.ChoiceField(
                 required=True,
                 choices=widgets.OptionSettingsFieldWidget.radio_choices),
-            ListField(minimum=0, required=False),
+            ListInput(minimum=0, required=False),
             forms.CharField(
                 required=False))
         kwargs['widget'] = widgets.OptionSettingsFieldWidget(None)
@@ -233,44 +233,7 @@ class OptionSettingField(forms.MultiValueField):
             return (use, multi_value)
 
 
-class ListField(FormField, forms.CharField):
-
-    widget = widgets.ListWidget
-    minimum = 0
-    maximum = 0
-    required = False
-
-    def __init__(self, *args, **kwargs):
-        if 'widget' in kwargs:
-            self.widget = kwargs.pop('widget')
-        if 'minimum' in kwargs:
-            self.minimum = kwargs.pop('minimum')
-        if 'maximum' in kwargs:
-            self.maximum = kwargs.pop('maximum')
-        self.required = kwargs['required']
-        super().__init__(*args, **kwargs)
-
-    def validate(self, value):
-        super().validate(value)
-        try:
-            json_value = json.loads(value)
-        except ValueError:
-            raise ValidationError('Not valid JSON.')
-        if not isinstance(json_value, list):
-            raise ValidationError('Not valid JSON list.')
-        if self.minimum > 0 and len(json_value) < self.minimum:
-            raise ValidationError(
-                'At least {} value(s) required'.format(self.minimum))
-        if self.maximum > 0 and len(json_value) > self.maximum:
-            raise ValidationError(
-                'No more than {} values can be supplied'.format(self.maximum))
-
-    def clean(self, value):
-        value = super().clean(value)
-        return json.loads(value)
-
-
-class VariationOptionValueField(ListField):
+class VariationOptionValueField(ListInput):
 
     initial = ''
     minimum = 2
