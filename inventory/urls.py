@@ -17,6 +17,9 @@ inventory_urlpatterns = [
         r'^locations/(?P<range_id>[0-9]+)/',
         views.LocationFormView.as_view(), name='locations'),
     url(
+        r'^variations/(?P<range_id>[0-9]+)/',
+        views.VariationsFormView.as_view(), name='variations'),
+    url(
         r'^images/(?P<range_id>[0-9]+)/',
         views.ImageFormView.as_view(), name='images'),
     url(

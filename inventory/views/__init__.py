@@ -8,3 +8,4 @@ from . product import ProductView  # noqa
 from . productrange import ProductRangeView  # noqa
 from . productsearch import ProductSearchView  # noqa
 from . variationformwizard import VariationFormWizardView  # noqa
+from . variationsformview import VariationsFormView  # noqa

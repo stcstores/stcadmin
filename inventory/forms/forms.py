@@ -31,7 +31,8 @@ class ProductForm(forms.Form):
     ignore_options = [
         'Department', 'Brand', 'Manufacturer', 'WooCategory1', 'WooCategory2',
         'WooCategory3', 'International Shipping', 'Package Type', 'Supplier',
-        'Purchase Price', 'Date Created', 'Location', 'Supplier SKU']
+        'Purchase Price', 'Date Created', 'Location', 'Supplier SKU',
+        'Amazon Bullets', 'Amazon Search Terms']
 
     def __init__(self, *args, **kwargs):
         self.product = kwargs.pop('product')

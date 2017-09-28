@@ -1,0 +1,92 @@
+{% extends "inventory/range_settings.html" %}
+{% load staticfiles %}
+{% load inventory_extras %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/price_field.js' %}"></script>
+{% endblock %}
+
+{% block page_title %}CCP Stock Manager{% endblock %}
+
+{% block content %}{{ block.super }}
+
+<form action="" method="POST">{% csrf_token %}
+    {{ formset.management_form }}
+
+    <table>
+        <tr>
+            <th></th>
+            {% for field in formset.forms.0.visible_fields %}
+                <th>{{ field.label }}</th>
+            {% endfor %}
+        </tr>
+        {% for form in formset %}
+        <tr>
+            <th>{{ form.product.full_name }}</th>
+        {% for field in form.visible_fields %}
+            <td class="test">
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="error">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+            </td>
+        {% endfor %}
+        {% for field in form.hidden_fields %}
+        {{ field }}
+        {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    <input type="submit" value="Update Variations" />
+</form>
+
+{% endblock %}
+
+{% block script %}
+<script>
+$.extend($.ui.autocomplete.prototype.options, { delay: 0, minLength: 0 });
+
+var options = {
+    {% for option, values in options.items %}
+    '{{ option }}': [
+        {% for value in values %}'{{ value }}',{% endfor %}],
+    {% endfor %}}
+
+$(document).ready(function() {
+    function get_vat_rate(vat_select) {
+        var value = vat_select.val();
+        if (value === '') {
+            var vat_rate = false;
+        } else {
+            var vat_rate = parseInt(value);
+        }
+        return vat_rate
+    }
+
+    {% for form in formset %}
+    var vat_rate_select = $('#{{ form.vat_rate.auto_id }}');
+
+    var price_field = new PriceField(
+        $('#{{ form.price.auto_id }}'),
+        get_vat_rate(vat_rate_select)
+    );
+
+    vat_rate_select.change(function () {
+        price_field.set_vat_rate(get_vat_rate(vat_rate_select));
+    });
+
+    {% for field in form %}
+        {% if field.label in options %}
+            $('#{{ field.auto_id }}').autocomplete({source: options['{{ field.label }}']})
+        {% endif %}
+    {% endfor %}
+
+    {% endfor %}
+});
+
+$.extend($.ui.autocomplete.prototype.options, { delay: 0, minLength: 0 });
+
+</script>
+
+{% endblock %}
