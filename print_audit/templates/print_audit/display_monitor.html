@@ -31,6 +31,19 @@
                 font-size: 6em;
             }
 
+            .score {
+                font-size: 3em;
+                font-family: monospace;
+            }
+
+            .positive {
+                color: green;
+            }
+
+            .negative {
+                color: red;
+            }
+
         </style>
 
         <button class="toggle">Toggle</button>&nbsp;
@@ -74,13 +87,22 @@
                         var data = $.parseJSON(data);
                         for (var i=0; i<data.length; i++) {
                             var name = data[i]['name'];
-                            $('#feedback').append('<tr id="feedback_' + i + '"><th class="feedback_name">' + name + ': </th><td class="feedback_icons">');
+                            var score = data[i]['score'];
+                            $('#feedback').append('<tr id="feedback_' + i + '"><th class="feedback_name">' + name + ': </th><th class="score">' + score + '</th><td class="feedback_icons">');
                             $.each(data[i].feedback, function(index, feedback) {
                                 for (im=0; im<feedback.count; im++) {
                                     $('#feedback_' + i).children('.feedback_icons').append('<img src="' + feedback.image_url + '" height="40">');
                                 }
                             });
                         }
+                        $('.score').each(function() {
+                            var score = parseInt($(this).text());
+                            if (score > 0){
+                                $(this).addClass('positive');
+                            } else if (score < 0) {
+                                $(this).addClass('negative');
+                            }
+                        });
                         current = 'feedback'
                     }
                 );

@@ -83,6 +83,7 @@ class CloudCommerceOrder(models.Model):
 class Feedback(models.Model):
     name = models.CharField(max_length=20)
     image = models.ImageField()
+    score = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name

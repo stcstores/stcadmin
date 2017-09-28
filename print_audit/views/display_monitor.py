@@ -31,7 +31,7 @@ class PackCountMonitor(View):
 class FeedbackMonitor(View):
 
     def get(self, request):
-        feedback_types = models.Feedback.objects.all()
+        feedback_types = models.Feedback.objects.order_by('score')
         users = models.CloudCommerceUser.objects.all()
         data = []
         for user in users:
@@ -47,9 +47,10 @@ class FeedbackMonitor(View):
             for f in feedback_types:
                 count = counts[f.pk]
                 user_data['feedback'].append({
-                    'name': f.name, 'image_url': f.image.url, 'count': count})
+                    'name': f.name, 'image_url': f.image.url, 'count': count,
+                    'score': f.score})
+            user_data['score'] = sum(
+                [d['score'] * d['count'] for d in user_data['feedback']])
             data.append(user_data)
-        data.sort(
-            key=lambda x: sum([f['count'] for f in x['feedback']]),
-            reverse=True)
+        data.sort(key=lambda x: x['score'], reverse=True)
         return HttpResponse(json.dumps(data))
