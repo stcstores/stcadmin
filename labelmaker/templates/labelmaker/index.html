@@ -26,7 +26,7 @@
                 if (selected_size_chart === "none") {
                     window.location = "{% url 'labelmaker:label_form' %}"
                 } else if (selected_size_chart === "add") {
-
+                    window.location = "{% url 'labelmaker:create_size_chart_form' %}"
                 } else {
                     window.location = size_chart_urls[selected_size_chart]
                 }
