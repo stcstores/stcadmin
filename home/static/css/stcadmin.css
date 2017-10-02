@@ -231,3 +231,15 @@ th {
     display: inline-block;
     vertical-align: top;
 }
+
+.score {
+    font-family: monospace;
+}
+
+.positive {
+    color: green;
+}
+
+.negative {
+    color: red;
+}

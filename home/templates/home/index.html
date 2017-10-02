@@ -55,24 +55,7 @@
 
 {% block script %}{{ block.super }}
 <script>
-    function get_feedback() {
-        $('.feedback').html('');
-        $.get("{% url 'print_audit:feedback_monitor' %}",
-            function(data) {
-                var data = $.parseJSON(data);
-                for (var i=0; i<data.length; i++) {
-                    var name = data[i]['name'];
-                    $('#feedback').append('<tr id="feedback_' + i + '"><th class="feedback_name">' + name + ': </th><td class="feedback_icons">');
-                    $.each(data[i].feedback, function(index, feedback) {
-                        for (im=0; im<feedback.count; im++) {
-                            $('#feedback_' + i).children('.feedback_icons').append('<img src="' + feedback.image_url + '" height="40">');
-                        }
-                    });
-                }
-                current = 'feedback'
-            }
-        );
-    }
+    {% include 'print_audit/get_feedback.html' %}
 
     $(document).ready(function() {get_feedback();});
 </script>
