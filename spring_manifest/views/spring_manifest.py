@@ -7,15 +7,10 @@ import pycountry
 from ccapi import CCAPI
 from spring_manifest.forms import SpringManifestForm
 from django.core.urlresolvers import reverse_lazy
-from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from stcadmin import settings
 
 from .views import SpringUserMixin
-
-
-class SpringManifestSuccessView(SpringUserMixin, TemplateView):
-    template_name = 'spring_manifest/spring_manifest_success.html'
 
 
 class SpringManifestView(
