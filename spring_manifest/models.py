@@ -8,6 +8,9 @@ class DestinationZone(models.Model):
     class Meta:
         ordering = ('name', )
 
+    def safe_name(self):
+        return self.name.lower().replace(' ', '_')
+
     def __str__(self):
         return str(self.name)
 

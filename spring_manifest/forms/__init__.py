@@ -1,1 +1,1 @@
-from . spring_manifest import SpringManifestForm, CloudCommerceCountryIDFormSet  # NOQA
+from . forms import SpringManifestForm, CloudCommerceCountryIDFormSet  # NOQA

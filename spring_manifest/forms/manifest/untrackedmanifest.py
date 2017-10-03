@@ -1,7 +1,11 @@
-from . springmanifest import SpringManifest
+from spring_manifest import models
+
+from .springmanifest import SpringManifest
 
 
 class UnTrackedManifest(SpringManifest):
+
+    name = 'UnTracked'
 
     spreadsheet_header = [
         'CustomerNumber', 'Customer Reference 1', 'Customer Reference 2',
@@ -17,33 +21,52 @@ class UnTrackedManifest(SpringManifest):
         'Destination code*', 'Format code', 'Weightbreak from',
         'Weightbreak to', 'Nr items*', 'Weight (kg)*']
 
-    def __init__(self, form, orders):
-        self.form = form
-        self.orders = orders
-        self.manifest()
+    def __init__(self, *args, **kwargs):
+        self.zones = models.DestinationZone.objects.all()
+        self.zone_orders = {zone: [] for zone in self.zones}
+        super().__init__(*args, **kwargs)
 
-    def get_rows_for_order(self, order):
-        rows = []
-        for product in order.products:
-            data = {
-                'CustomerNumber': self.shipper_id,
-                'Customer Reference 1': '',
-                'Customer Reference 2': '',
-                'PO Number': '',
-                'Quote Reference': '',
-                'Count items': '',
-                'Pre-franked': '',
-                'Product Code': '',
-                'Nr satchels': '',
-                'Nr bags': '',
-                'Nr boxes': '',
-                'Nr pallets': '',
-                'Destination code': '',
-                'Format code': '',
-                'Weightbreak from': '',
-                'Weightbreak to': '',
-                'Nr items': '',
-                'Weight': '',
-            }
-            rows.append([data[key] for key in self.spreadsheet_header])
-        return rows
+    def get_orders(self):
+        return self.request_orders(courier_rule_id=9723)
+
+    def file_manifest(self):
+        self.save_manifest(self.manifest)
+
+    def get_spreadsheet_rows(self, orders):
+        for order in orders:
+            address = self.get_delivery_address(order)
+            country = self.get_country(order.delivery_country_code, address)
+            if country is None:
+                continue
+            self.zone_orders[country.zone].append(order)
+        return [
+            self.get_row_for_zone(zone, orders) for zone, orders in
+            self.zone_orders.items() if len(orders) > 0]
+
+    def get_row_for_zone(self, zone, orders):
+        products = []
+        for order in orders:
+            products += order.products
+        weight = sum([product.per_item_weight for product in products]) / 1000
+        data = {
+            'CustomerNumber': self.shipper_id,
+            'Customer Reference 1': 'STC_STORES_{}_{}'.format(
+                zone.code, self.get_date_string()),
+            'Customer Reference 2': '',
+            'PO Number': '',
+            'Quote Reference': '',
+            'Count items': 'N',
+            'Pre-franked': 'N',
+            'Product Code': '1MI',
+            'Nr satchels': '',
+            'Nr bags': '',
+            'Nr boxes': '',
+            'Nr pallets': '',
+            'Destination code': zone.code,
+            'Format code': '',
+            'Weightbreak from': '',
+            'Weightbreak to': '',
+            'Nr items': str(len(orders)),
+            'Weight': str(weight),
+        }
+        return [data[key] for key in self.spreadsheet_header]

@@ -1,9 +1,8 @@
 from django import forms
-
-from .manifest import TrackedManifest
-
 from django.forms import modelformset_factory
 from spring_manifest import models
+
+from .manifest import TrackedManifest, UnTrackedManifest
 
 
 class SpringManifestForm(forms.Form):
@@ -16,7 +15,7 @@ class SpringManifestForm(forms.Form):
                 self.add_error('', error)
 
     def get_manifests(self):
-        return [TrackedManifest()]
+        return [TrackedManifest(), UnTrackedManifest()]
 
 
 CloudCommerceCountryIDFormSet = modelformset_factory(

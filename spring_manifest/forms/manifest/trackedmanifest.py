@@ -1,5 +1,4 @@
 import io
-import os
 
 from spring_manifest import models
 
@@ -9,6 +8,8 @@ from .springmanifest import SpringManifest
 
 
 class TrackedManifest(SpringManifest):
+
+    name = 'Tracked'
 
     spreadsheet_header = [
         "Version #", "Shipper ID", "Package ID", "Weight", "Ship From Attn",
@@ -37,6 +38,11 @@ class TrackedManifest(SpringManifest):
         "Line Item Quantity", "Line Item Code", "Line Item Description",
         "Line Item  Quantity Unit", "Unit Price", "Weight", "Weight Unit",
         "Price", "HS Code", "Country Of Manufacture", "Currency Code"]
+
+    @property
+    def ftp_filename(self):
+        return 'STCManifest_{}_{}.csv'.format(
+            self.name, self.get_date_string())
 
     def get_orders(self):
         self.tracked_orders = self.get_tracked_orders()
@@ -69,13 +75,11 @@ class TrackedManifest(SpringManifest):
             except Exception:
                 self.add_error('Error saving file to FTP Server')
 
-    def save_manifest(self, manifest):
-        filepath = os.path.join(self.save_path, self.save_name)
-        try:
-            with open(filepath, 'w', encoding='utf8') as f:
-                f.write(manifest.read())
-        except Exception:
-            self.add_error('Error saving local file')
+    def get_spreadsheet_rows(self, orders):
+        rows = []
+        for order in orders:
+            rows += self.get_rows_for_order(order)
+        return rows
 
     def add_missing_country(self, delivery_country_code, address):
         iso_code = get_iso_country_code(delivery_country_code, address)
@@ -84,6 +88,12 @@ class TrackedManifest(SpringManifest):
         if iso_code is not None:
             country.iso_code = iso_code
         country.save()
+
+    def get_country_code(self, order, address):
+        country = self.get_country(order.delivery_country_code, address)
+        if country is None:
+            return 'ERROR'
+        return country.iso_code
 
     def get_rows_for_order(self, order):
         address = self.get_delivery_address(order)
@@ -122,7 +132,7 @@ class TrackedManifest(SpringManifest):
             data['Ship To State'] = get_state(address.county_region)
             data['Ship To Postal Code'] = address.post_code
             data['Ship To Country Code'] = self.get_country_code(
-                order.delivery_country_code, address)
+                order, address)
             data['Recipient Phone Nbr'] = self.get_phone_number(address.tel_no)
             data['Recipient Email'] = ''
             data['Shipment Reference1'] = ''

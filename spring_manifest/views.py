@@ -1,11 +1,10 @@
+from django.core.urlresolvers import reverse_lazy
+from django.db.models import Q
+from django.shortcuts import redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from home.views import UserInGroupMixin
-from spring_manifest import forms
-from spring_manifest import models
-from django.db.models import Q
-from django.core.urlresolvers import reverse_lazy
-from django.shortcuts import redirect
+from spring_manifest import forms, models
 from spring_manifest.forms import SpringManifestForm
 
 

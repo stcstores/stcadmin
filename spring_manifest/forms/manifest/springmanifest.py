@@ -1,7 +1,10 @@
 import csv
+import datetime
 import ftplib
 import io
+import os
 
+import xlsxwriter
 from ccapi import CCAPI
 from django.core.exceptions import ValidationError
 from spring_manifest import models
@@ -18,31 +21,35 @@ class SpringManifest(settings.SpringManifestSettings):
         self.orders = self.get_orders()
         self.manifest = self.get_manifest(self.orders)
 
+    @property
+    def save_name(self):
+        return 'SpringManifest_{}_{}.xlsx'.format(
+            self.name, self.get_date_string())
+
     def is_valid(self):
         if len(self.errors) > 0:
             return False
         if len(self.missing_countrys) > 0:
             return False
 
-    def file_manifest(self):
-        raise NotImplementedError
+    def get_date_string(self):
+        return datetime.datetime.now().strftime('%Y-%m-%d')
 
-    def get_country(self, order):
+    def file_manifest(self):
         raise NotImplementedError
 
     def get_orders(self):
         raise NotImplementedError
 
-    def get_rows_for_order(self, order):
-        raise NotImplementedError
-
-    def get_country_code(self, delivery_country_code, address):
+    def get_country(self, delivery_country_code, address):
         try:
-            return models.CloudCommerceCountryID.objects.get(
-                cc_id=delivery_country_code).iso_code
+            country = models.CloudCommerceCountryID.objects.get(
+                cc_id=delivery_country_code)
         except Exception:
             self.add_missing_country(delivery_country_code, address)
-            return 'ERROR'
+        if country.iso_code != '' and country.zone is not None:
+            return country
+        return None
 
     def request_orders(self, **kwargs):
         try:
@@ -67,22 +74,27 @@ class SpringManifest(settings.SpringManifestSettings):
         return ftp
 
     def get_manifest(self, orders):
-        print(orders)
-        rows = self.get_spreadsheet_rows(orders)
+        self.rows = self.get_spreadsheet_rows(orders)
         output = io.StringIO()
         writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
         writer.writerow(self.write_header)
-        [writer.writerow(row) for row in rows]
+        [writer.writerow(row) for row in self.rows]
         return output
+
+    def save_manifest(self, manifest):
+        filepath = os.path.join(self.save_path, self.save_name)
+        workbook = xlsxwriter.Workbook(filepath)
+        worksheet = workbook.add_worksheet()
+        for row_number, row in enumerate([self.write_header] + self.rows):
+            for col_number, cell in enumerate(row):
+                worksheet.write(row_number, col_number, cell)
+        workbook.close()
 
     def add_error(self, message, field=None):
         self.errors.append(ValidationError(message))
 
     def get_spreadsheet_rows(self, orders):
-        rows = []
-        for order in orders:
-            rows += self.get_rows_for_order(order)
-        return rows
+        raise NotImplementedError
 
     def get_order_value(self, order):
         price = 0
