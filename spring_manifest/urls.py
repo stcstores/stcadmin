@@ -10,6 +10,9 @@ urlpatterns = [
         r'^index$', views.Index.as_view(),
         name='index'),
     url(
+        r'^country_errors$', views.CountryErrors.as_view(),
+        name='country_errors'),
+    url(
         r'^spring_manifest$',
         views.SpringManifestView.as_view(), name='spring_manifest'),
     url(

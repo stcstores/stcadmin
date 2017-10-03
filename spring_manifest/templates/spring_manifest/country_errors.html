@@ -1,0 +1,48 @@
+{% extends "spring_manifest/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<p>
+    Please enusre the following information is present for every country:
+    <ul>
+        <li>
+            <h3>ISO Code</h3>
+            <p>The <b>Two</b> Letter <a href="www.nationsonline.org/oneworld/country_code_list.htm">ISO 3166-1 ALPHA-2 code</a> e.g. 'GB', <b>not</b> 'GBR'</p>
+        </li>
+        <li>
+            <h3>Destination Zone</h3>
+            <p>The Spring destination zone for the country. Please <a href="{{ MEDIA_URL }}/files/spring_destination_zones.csv">download</a> the list of desination zones.</p>
+        </li>
+    </ul>
+</p>
+<form action="" method="POST">{% csrf_token %}
+    {{ form.management_form }}
+    <table id="country_error_form">
+        <tr>{% for field in form.0.visible_fields %}<th>{{ field.label }}</th>{% endfor %}</tr>
+        {% for country_form in form %}
+            <tr>{% for field in country_form.visible_fields %}<td>{{ field }}</td>{% endfor %}</tr>
+        {% endfor %}
+    </table>
+    {% for country_form in form %}{% for field in country_form.hidden_fields %}{{ field }}{% endfor %}{% endfor %}
+    <input type="submit" value="Save">
+</form>
+
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+    $(document).ready(function() {
+        $('#country_error_form').find('input, select').attr('required', true);
+        $('#country_error_form').find('input, select').change(function() {
+            $('#country_error_form').find('input, select').each(function() {
+                if (($(this).val() === '') | ($(this).val() === '---------')) {
+                    $(this).css('background', 'red');
+                } else {
+                    $(this).css('background', 'white');
+                }
+            })
+        });
+        $('#country_error_form').find('input, select').change();
+    });
+</script>
+{% endblock %}
