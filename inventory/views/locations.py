@@ -1,4 +1,5 @@
 from ccapi import CCAPI, Warehouses
+from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.edit import FormView
 from inventory.forms import LocationsFormSet
@@ -39,4 +40,6 @@ class LocationFormView(InventoryUserMixin, FormView):
     def form_valid(self, forms):
         for form in forms:
             form.save()
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Locations Updated')
         return super().form_valid(form)
