@@ -108,6 +108,7 @@ class SpringManifest(settings.SpringManifestSettings):
         except Exception:
             self.add_error('Error loggin into FTP Server')
             return None
+        ftp.set_pasv(False)
         return ftp
 
     def get_manifest(self, orders):
