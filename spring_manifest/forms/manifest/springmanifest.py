@@ -1,7 +1,6 @@
 import csv
 import datetime
 import ftplib
-import io
 import os
 
 import xlsxwriter
@@ -11,6 +10,7 @@ from spring_manifest import models
 from stcadmin import settings
 
 from .errors import AddressError
+from .locationcodes import get_iso_country_code
 
 
 class SpringManifest(settings.SpringManifestSettings):
@@ -18,13 +18,34 @@ class SpringManifest(settings.SpringManifestSettings):
 
     def __init__(self):
         self.errors = []
+        self.manifested_orders = []
+        self.previously_manifested = models.ManifestedOrder.order_ids()
         self.orders = self.get_orders()
         self.manifest = self.get_manifest(self.orders)
 
     @property
     def save_name(self):
-        return 'SpringManifest_{}_{}.xlsx'.format(
+        return 'SpringManifest_{}_{}'.format(
             self.name, self.get_date_string())
+
+    def save_xlsx(self):
+        filename = '{}.xlsx'.format(self.save_name)
+        filepath = os.path.join(self.save_path, filename)
+        workbook = xlsxwriter.Workbook(filepath)
+        worksheet = workbook.add_worksheet()
+        for row_number, row in enumerate(self.get_file_rows()):
+            for col_number, cell in enumerate(row):
+                worksheet.write(row_number, col_number, cell)
+        workbook.close()
+        return filename
+
+    def save_csv(self):
+        filename = '{}.csv'.format(self.save_name)
+        filepath = os.path.join(self.save_path, filename)
+        with open(filepath, 'w', encoding='utf8') as save_file:
+            writer = csv.writer(save_file, lineterminator='\n')
+            writer.writerows(self.get_file_rows())
+        return filename
 
     def is_valid(self):
         if len(self.errors) > 0:
@@ -41,15 +62,29 @@ class SpringManifest(settings.SpringManifestSettings):
     def get_orders(self):
         raise NotImplementedError
 
-    def get_country(self, delivery_country_code, address):
+    def get_country(self, order, address):
         try:
             country = models.CloudCommerceCountryID.objects.get(
-                cc_id=delivery_country_code)
-        except Exception:
-            self.add_missing_country(delivery_country_code, address)
-        if country.iso_code != '' and country.zone is not None:
-            return country
-        return None
+                cc_id=order.delivery_country_code)
+        except models.CloudCommerceCountryID.DoesNotExist:
+            self.add_missing_country(order, address)
+            return None
+        if not country.valid_spring_destination:
+            self.add_error(
+                'Destination Country invalid for order {}'.format(
+                    order.order_id))
+            return None
+        if country.iso_code == '' or country.zone is None:
+            return None
+        return country
+
+    def add_missing_country(self, order, address):
+        iso_code = get_iso_country_code(order.delivery_country_code, address)
+        country = models.CloudCommerceCountryID(
+            cc_id=order.delivery_country_code, name=address.country)
+        if iso_code is not None:
+            country.iso_code = iso_code
+        country.save()
 
     def request_orders(self, **kwargs):
         try:
@@ -57,7 +92,9 @@ class SpringManifest(settings.SpringManifestSettings):
         except Exception:
             raise ValidationError('Error retriving orders.')
         else:
-            return orders
+            return [
+                o for o in orders if str(o.order_id) not in
+                self.previously_manifested]
 
     def get_ftp(self):
         ftp = ftplib.FTP()
@@ -75,20 +112,9 @@ class SpringManifest(settings.SpringManifestSettings):
 
     def get_manifest(self, orders):
         self.rows = self.get_spreadsheet_rows(orders)
-        output = io.StringIO()
-        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
-        writer.writerow(self.write_header)
-        [writer.writerow(row) for row in self.rows]
-        return output
 
-    def save_manifest(self, manifest):
-        filepath = os.path.join(self.save_path, self.save_name)
-        workbook = xlsxwriter.Workbook(filepath)
-        worksheet = workbook.add_worksheet()
-        for row_number, row in enumerate([self.write_header] + self.rows):
-            for col_number, cell in enumerate(row):
-                worksheet.write(row_number, col_number, cell)
-        workbook.close()
+    def get_file_rows(self):
+        return [self.write_header] + self.rows
 
     def add_error(self, message, field=None):
         self.errors.append(ValidationError(message))
@@ -138,3 +164,7 @@ class SpringManifest(settings.SpringManifestSettings):
         while len(clean_address) < 3:
             clean_address.append('')
         return clean_address
+
+    def save_orders(self):
+        for manifested_order in self.manifested_orders:
+            manifested_order.save()

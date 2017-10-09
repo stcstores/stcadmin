@@ -11,7 +11,7 @@
         </li>
         <li>
             <h3>Destination Zone</h3>
-            <p>The Spring destination zone for the country. Please <a href="{{ MEDIA_URL }}/files/spring_destination_zones.csv">download</a> the list of desination zones.</p>
+            <p>The Spring destination zone for the country. Please refer to the <a href="{% url 'spring_manifest:destination_zones' %}" target="_blank">destination zones list</a>.</p>
         </li>
     </ul>
 </p>
@@ -39,6 +39,14 @@
                     $(this).css('background', 'red');
                 } else {
                     $(this).css('background', 'white');
+                }
+                if ($(this).is(':checkbox')) {
+                    if ($(this).is(':checked')) {
+                        $(this).closest('tr').find('input, select').attr('required', true);
+                    } else {
+                        $(this).closest('tr').find('input, select').attr('required', false);
+                        $(this).closest('tr').find('input, select').css('background', 'white');
+                    }
                 }
             })
         });

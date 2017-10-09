@@ -243,3 +243,37 @@ th {
 .negative {
     color: red;
 }
+.messages {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.messages li {
+    width: 100%;
+    list-style: none;
+    text-align: center;
+    padding: 0.25em 0 0.25em 0;
+}
+
+.messages li.debug {
+    background: yellow;
+}
+
+.messages li.info {
+    background: #eee;
+}
+
+.messages li.success {
+    background: #090;
+    font-weight: bold;
+}
+
+.messages li.warning {
+    background: orange;
+}
+
+.messages li.error {
+    background: red;
+    font-weight: bold;
+}

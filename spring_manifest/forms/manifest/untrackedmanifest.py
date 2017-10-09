@@ -22,6 +22,7 @@ class UnTrackedManifest(SpringManifest):
         'Weightbreak to', 'Nr items*', 'Weight (kg)*']
 
     def __init__(self, *args, **kwargs):
+        self.download = None
         self.zones = models.DestinationZone.objects.all()
         self.zone_orders = {zone: [] for zone in self.zones}
         super().__init__(*args, **kwargs)
@@ -29,16 +30,26 @@ class UnTrackedManifest(SpringManifest):
     def get_orders(self):
         return self.request_orders(courier_rule_id=9723)
 
+    def save_manifest(self, manifest):
+        return self.save_xlsx()
+
     def file_manifest(self):
-        self.save_manifest(self.manifest)
+        if len(self.rows) > 0:
+            download_filename = self.save_manifest(self.manifest)
+            self.download = self.url_path(download_filename)
+            self.save_orders()
 
     def get_spreadsheet_rows(self, orders):
         for order in orders:
             address = self.get_delivery_address(order)
-            country = self.get_country(order.delivery_country_code, address)
+            country = self.get_country(order, address)
             if country is None:
                 continue
             self.zone_orders[country.zone].append(order)
+            manifested_order = models.ManifestedOrder(
+                order_id=order.order_id, country=country,
+                service_code='PAK')
+            self.manifested_orders.append(manifested_order)
         return [
             self.get_row_for_zone(zone, orders) for zone, orders in
             self.zone_orders.items() if len(orders) > 0]

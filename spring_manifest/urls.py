@@ -1,6 +1,5 @@
 from django.conf.urls import include, url  # noqa
 from django.contrib import admin  # noqa
-
 from spring_manifest import views
 
 app_name = 'spring_manifest'
@@ -19,4 +18,7 @@ urlpatterns = [
         r'^spring_manifest_success$',
         views.SpringManifestSuccessView.as_view(),
         name='spring_manifest_success'),
+    url(
+        r'^destination_zones$', views.DestinationZones.as_view(),
+        name='destination_zones'),
 ]
