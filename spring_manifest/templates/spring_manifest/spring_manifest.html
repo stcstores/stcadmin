@@ -8,7 +8,6 @@
 <form action="" method="POST">{% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Submit Spring Manfiest">&nbsp;<img src="{% static 'images/loading.gif' %}" alt="working..." height="50" id="loading_image" hidden/>
-    <div class="error">{{ form.errors }}</div>
 </form>
 
 {% endblock %}
