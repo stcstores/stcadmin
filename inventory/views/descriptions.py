@@ -1,4 +1,5 @@
 from ccapi import CCAPI
+from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.edit import FormView
 from inventory import forms
@@ -56,6 +57,8 @@ class DescriptionsView(InventoryUserMixin, FormView):
             product.set_option_value(
                 'Amazon Search Terms', form.cleaned_data['search_terms'],
                 create=True)
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Locations Updated')
         return super().form_valid(form)
 
     def get_success_url(self):
