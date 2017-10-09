@@ -71,8 +71,8 @@ class SpringManifest(settings.SpringManifestSettings):
             return None
         if not country.valid_spring_destination:
             self.add_error(
-                'Destination Country invalid for order {}'.format(
-                    order.order_id))
+                'Destination Country {} invalid for order {}'.format(
+                    address.country, order.order_id))
             return None
         if country.iso_code == '' or country.zone is None:
             return None
