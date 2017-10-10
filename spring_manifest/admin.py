@@ -6,8 +6,10 @@ from spring_manifest import models
 @admin.register(models.DestinationZone)
 class DestinationZoneAdmin(admin.ModelAdmin):
 
-    fields = ['name', 'code']
-    list_display = ['name', 'code']
+    fields = ['name', 'code', 'format_code']
+    list_display = ['name', 'code', 'format_code']
+    list_display_links = ('name', )
+    list_editable = ('code', 'format_code')
 
     def __repr__(self):
         return str(self.name)

@@ -74,7 +74,7 @@ class UnTrackedManifest(SpringManifest):
             'Nr boxes': '1',
             'Nr pallets': '1',
             'Destination code': zone.code,
-            'Format code': '',
+            'Format code': zone.format_code or '',
             'Weightbreak from': '',
             'Weightbreak to': '',
             'Nr items': str(len(orders)),
