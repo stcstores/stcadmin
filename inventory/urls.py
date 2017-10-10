@@ -59,6 +59,12 @@ api_urlpatterns = [
     url(
         r'^update_stock_level$',
         views.UpdateStockLevelView.as_view(), name='update_stock_level'),
+    url(
+        r'^set_image_order$',
+        views.SetImageOrderView.as_view(), name='set_image_order'),
+    url(
+        r'^delete_image$',
+        views.DeleteImage.as_view(), name='delete_image'),
 ]
 
 urlpatterns = inventory_urlpatterns + new_product_urlpatterns + api_urlpatterns

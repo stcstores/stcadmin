@@ -10,64 +10,105 @@
 {% block page_title %}CCP Stock Manager{% endblock %}
 
 {% block content %}
-<form action="" method="POST">{% csrf_token %}
-    {{ formset.management_form }}
-    {% if formset.errors %}{{ formset.errors }}{% endif %}
-    <table>
-        <tr>
-            <th>Product</th>
-            <th>Stock Level</th>
-            <th>Bays</th>
+<style>
+    .image_table {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .delete_image {
+        font-weight: bold;
+        color: red;
+        font-size: 1.1em;
+    }
+</style>
+
+
+<table class="image_table">
+    {% for product in products %}
+        <tr id="row_{{ product.id }}">
+            <td class="product_id" hidden>{{ product.id }}</td>
+            <td>{{ product.full_name }}</td>
+            <td class="selected"><input type="checkbox"></td>
+            {% for image in product.images %}
+                <td class="product_image">
+                    <img src="{{ image.url }}" alt="{{ image.id }}" height="100">
+                    <p class="image_id">{{ image.id }}</p>
+                    <p>
+                        <button class="move_image_left">&lt;</button>
+                        <button class="delete_image">&times;</button>
+                        <button class="move_image_right">&gt;</button>
+                    </p>
+                </td>
+            {% endfor %}
         </tr>
-        {% for form in formset %}
-        <tr hidden><td>{{ form.product_id }}</td></tr>
-        <tr>
-            <td class="title_field">{{ form.product_name.value }}</td>
-            <td class="stock_level_field">{{ form.stock_level.value }}</td>
-            <td class="location_field">{{ form.locations }}</td>
-            <td>
-                <div id="div_{{ form.images.auto_id }}" class="dropzone">
-                    <div class="dz-default dz-message"></div>
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    <input type="submit" value="Update Locations" />
-</form>
+    {% endfor %}
+</table>
+
 {% endblock %}
 
-{% block script %}
+{% block script %}{{ block.super }}
 <script>
 
-
-function set_autocomplete() {
-    var bays = [{% for bay in bays %}'{{ bay }}', {% endfor %}]
-    $('.location_field input').autocomplete({source: bays});
+function get_image_order(product_id) {
+    var row = $('#row_' + product_id);
+    var image_order = [];
+    row.find('.product_image').each(function() {
+        image_order.push($(this).find('.image_id').text());
+    });
+    return image_order
 }
-$(document).click(function() {
-    set_autocomplete();
-});
-$(document).keypress(function() {
-    set_autocomplete();
-});
 
-$(document).ready(function () {
-    {% for form in formset %}
-    Dropzone.autoDiscover = false;
-    $("#div_{{ form.images.auto_id }}").dropzone({
-        url: "hn_SimpeFileUploader.ashx",
-        addRemoveLinks: true,
-        success: function (file, response) {
-            var imgName = response;
-            file.previewElement.classList.add("dz-success");
-            console.log("Successfully uploaded :" + imgName);
-        },
-        error: function (file, response) {
-            file.previewElement.classList.add("dz-error");
+function update_image_order(product_id) {
+    var url = '{% url "inventory:set_image_order" %}';
+    var image_order = get_image_order(product_id);
+    var data = {'product_id': product_id, 'image_order': image_order};
+    $.post({
+        url: url,
+        data: JSON.stringify(data),
+        success: function() {
+            console.log(image_order);
         }
     });
-    {% endfor %}
+}
+
+function delete_image(image_id) {
+    var url = '{% url "inventory:delete_image" %}';
+    var data = {'image_id': image_id};
+    $.post({
+        url: url,
+        data: JSON.stringify(data),
+        success: function() {
+            console.log('Deleted: ' + image_id);
+        }
+    });
+}
+
+$(document).ready(function() {
+    $('.move_image_left').click(function() {
+        var image = $(this).closest('td');
+        var product_id = image.closest('tr').find('.product_id').text();
+        if (image.index() > 3) {
+             image.insertBefore(image.prev());
+        }
+        update_image_order(product_id);
+    });
+
+    $('.move_image_right').click(function() {
+        var image = $(this).closest('td');
+        var product_id = image.closest('tr').find('.product_id').text();
+        if (!(image.is(':last-child'))) {
+             image.insertAfter(image.next());
+        }
+        update_image_order(product_id);
+    });
+
+    $('.delete_image').click(function() {
+        var image = $(this).closest('td');
+        var image_id = image.find('.image_id').text();
+        delete_image(image_id);
+        image.remove();
+    });
 });
 
 </script>

@@ -54,3 +54,28 @@ class UpdateStockLevelView(InventoryUserMixin, View):
         product = CCAPI.get_product(product_id)
         stock_level = product.stock_level
         return HttpResponse(stock_level)
+
+
+class SetImageOrderView(InventoryUserMixin, View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request):
+        try:
+            data = json.loads(self.request.body)
+            response = CCAPI.set_image_order(
+                product_id=data['product_id'], image_ids=data['image_order'])
+            response.raise_for_status()
+        except Exception:
+            return HttpResponse(status=500)
+        return HttpResponse('ok')
+
+
+class DeleteImage(InventoryUserMixin, View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request):
+        try:
+            data = json.loads(self.request.body)
+            CCAPI.delete_image(data['image_id'])
+        except Exception:
+            return HttpResponse(status=500)
+        return HttpResponse('ok')
