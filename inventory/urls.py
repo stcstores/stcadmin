@@ -6,7 +6,6 @@ from inventory import views
 app_name = 'inventory'
 
 inventory_urlpatterns = [
-    url(r'^index$', views.IndexView.as_view(), name='index'),
     url(
         r'^product_search$',
         views.ProductSearchView.as_view(), name='product_search'),

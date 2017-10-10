@@ -9,7 +9,7 @@
             <li><a href="{% url 'reference:index' %}">Reference</a></li>
             <p>Access reference material.</p>
             {% for group in request.user.groups.all %}{% if group.name == 'inventory' %}
-                <li><a href="{% url 'inventory:index' %}">Inventory</a></li>
+                <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
                 <p>Tools for working with Cloud Commerce Inventory</p>
                 <ul class="section">
                     <li><a href="{% url 'inventory:product_search' %}">Product Search</a></li>
