@@ -60,19 +60,19 @@ class UnTrackedManifest(SpringManifest):
             products += order.products
         weight = sum([product.per_item_weight for product in products]) / 1000
         data = {
-            'CustomerNumber': self.shipper_id,
+            'CustomerNumber': self.customer_number,
             'Customer Reference 1': 'STC_STORES_{}_{}'.format(
-                zone.code, self.get_date_string()),
+                self.get_date_string(), zone.code),
             'Customer Reference 2': '',
             'PO Number': '',
             'Quote Reference': '',
             'Count items': 'N',
             'Pre-franked': 'N',
             'Product Code': '1MI',
-            'Nr satchels': '',
-            'Nr bags': '',
-            'Nr boxes': '',
-            'Nr pallets': '',
+            'Nr satchels': '1',
+            'Nr bags': '1',
+            'Nr boxes': '1',
+            'Nr pallets': '1',
             'Destination code': zone.code,
             'Format code': '',
             'Weightbreak from': '',
