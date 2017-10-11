@@ -1,7 +1,5 @@
 from ccapi import URLs
 from django import template
-from django.utils.safestring import mark_safe
-from django.utils.timezone import now
 
 register = template.Library()
 SUBDOMAIN = 'seatontradingcompany'
@@ -33,24 +31,3 @@ def product_options(option=None):
         return {x.option_name: x.values for x in ProductOptions}
     else:
         return ProductOptions[option].options
-
-
-@register.simple_tag
-def feedback_badges(user):
-    from print_audit import models
-    try:
-        user = models.CloudCommerceUser.objects.filter(
-            stcadmin_user=user)[0]
-    except Exception as e:
-        return ''
-    feedback_types = models.Feedback.objects.all()
-    html = ['<table>']
-    for feedback_type in feedback_types:
-        count = models.UserFeedback.objects.filter(
-            user=user.pk, timestamp__month=now().month,
-            feedback_type=feedback_type).count()
-        html.append('<td><img src="{}" alt="{}" height="15">'.format(
-            feedback_type.image.url, feedback_type.name))
-        html.append('&nbsp;{}</td>'.format(count))
-    html.append('</table>')
-    return mark_safe('\n'.join(html))

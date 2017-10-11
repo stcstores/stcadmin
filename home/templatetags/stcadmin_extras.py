@@ -1,6 +1,7 @@
 from django import template
 from django.template.loader import render_to_string
-from django.utils.safestring import SafeString
+from django.utils.safestring import SafeString, mark_safe
+from django.utils.timezone import now
 from stcadmin import settings
 
 register = template.Library()
@@ -23,3 +24,24 @@ def tooltip_help_text(field):
 @register.simple_tag
 def scayt_customer_id():
     return settings.SCAYT_CUSTOMER_ID
+
+
+@register.simple_tag
+def feedback_badges(user):
+    from print_audit import models
+    try:
+        user = models.CloudCommerceUser.objects.filter(
+            stcadmin_user=user)[0]
+    except Exception as e:
+        return ''
+    feedback_types = models.Feedback.objects.all().order_by('-score')
+    html = ['<table>']
+    for feedback_type in feedback_types:
+        count = models.UserFeedback.objects.filter(
+            user=user.pk, timestamp__month=now().month,
+            feedback_type=feedback_type).count()
+        html.append('<td><img src="{}" alt="{}" height="15">'.format(
+            feedback_type.image.url, feedback_type.name))
+        html.append('&nbsp;{}</td>'.format(count))
+    html.append('</table>')
+    return mark_safe('\n'.join(html))
