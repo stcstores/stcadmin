@@ -1,41 +1,11 @@
 {% load staticfiles %}
 <html>
     <head>
-
+        <link rel="stylesheet" href="{% static 'css/stcadmin.css' %}">
+        <title>STC Admin Feedback</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     </head>
     <body>
-        <style>
-
-            #pack_count, #feedback {
-                clear: both;
-                margin: 0 auto;
-            }
-
-            .feedback_name, .packer_name {
-                text-align: right;
-                padding-right: 0.25em;
-            }
-
-            .feedback_icons, .packer_count {
-                text-align: left;
-                padding-left: 0.25em;
-                font-size: 6em;
-            }
-
-            .feedback_name {
-                font-size: 3.5em;
-            }
-
-            .packer_name {
-                font-size: 6em;
-            }
-
-            .score {
-                font-family: monospace;
-            }
-
-        </style>
 
         <button class="toggle">Toggle</button>&nbsp;
         <label for="auto_toggle">Auto Toggle</label><input type="checkbox" name="auto_toggle" class="auto_toggle" checked>

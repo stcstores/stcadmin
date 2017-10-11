@@ -277,3 +277,43 @@ th {
     background: red;
     font-weight: bold;
 }
+
+#pack_count, #feedback {
+    clear: both;
+    margin: 0 auto;
+    border: none;
+    text-align: center;
+    padding: 0.25em;
+}
+
+.feedback td, .feedback th, .pack_count td, .pack_count th {
+    border: none;
+    border-collapse: collapse;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
+}
+
+.feedback_name, .packer_name {
+    text-align: right;
+    padding-right: 0.25em;
+}
+
+.feedback_icons, .packer_count {
+    text-align: left;
+    padding-left: 0.25em;
+    font-size: 5em;
+}
+
+.feedback_name {
+    font-size: 3.5em;
+}
+
+.packer_name {
+    font-size: 6em;
+}
+
+.score {
+    font-family: monospace;
+    font-size: 3.5em;
+}
