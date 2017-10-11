@@ -1,4 +1,4 @@
-{% extends "inventory/base.html" %}
+{% extends "inventory/range_settings.html" %}
 {% load staticfiles %}
 {% load inventory_extras %}
 
@@ -7,9 +7,9 @@
 <script src="{% static 'scripts/stock_manager.js' %}"></script>
 {% endblock %}
 
-{% block page_title %}CCP Stock Manager{% endblock %}
+{% block page_title %}Product Images{% endblock %}
 
-{% block content %}
+{% block content %}{{ block.super }}
 <style>
     .image_table {
         text-align: center;
