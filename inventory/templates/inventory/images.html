@@ -45,7 +45,8 @@
             {% for image in product.images %}
                 <td class="product_image">
                     <img src="{{ image.url }}" alt="{{ image.id }}" height="100">
-                    <p class="image_id">{{ image.id }}</p>
+                    <br>
+                    <a class="image_id" href="{{ image.url }}" target="_blank">{{ image.id }}</a>
                     <p>
                         <button class="move_image_left">&lt;</button>
                         <button class="delete_image">&times;</button>
