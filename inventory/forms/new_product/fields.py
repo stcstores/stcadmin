@@ -300,9 +300,9 @@ class FormFields(metaclass=MetaFormFields):
     fields = [
         Title,
         Barcode,
+        PurchasePrice,
         VATRate,
         Price,
-        PurchasePrice,
         StockLevel,
         Department,
         Location,
