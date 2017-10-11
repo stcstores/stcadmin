@@ -71,6 +71,7 @@ class SetImageOrderView(InventoryUserMixin, View):
 
 
 class DeleteImage(InventoryUserMixin, View):
+
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
         try:

@@ -1,12 +1,15 @@
 from ccapi import CCAPI
-from django.views.generic.base import TemplateView
-
+import json
+from django.views.generic.edit import FormView
+from inventory.forms import ImagesForm
 from .views import InventoryUserMixin
+from django.core.urlresolvers import reverse_lazy
 
 
-class ImageFormView(InventoryUserMixin, TemplateView):
+class ImageFormView(InventoryUserMixin, FormView):
 
     template_name = 'inventory/images.html'
+    form_class = ImagesForm
 
     def dispatch(self, *args, **kwargs):
         self.range_id = self.kwargs.get('range_id')
@@ -20,4 +23,30 @@ class ImageFormView(InventoryUserMixin, TemplateView):
         context = super().get_context_data(*args, **kwargs)
         context['product_range'] = self.product_range
         context['products'] = self.products
+        options = {
+            o.option_name: {} for o in self.product_range.options if
+            o.is_web_shop_select}
+        for product in self.products:
+            for o in product.options:
+                if o.option_name in options:
+                    value = o.value.value
+                    if value in options[o.option_name]:
+                        options[o.option_name][value].append(product.id)
+                    else:
+                        options[o.option_name][value] = [product.id]
+        context['options'] = options
         return context
+
+    def get_success_url(self):
+        return reverse_lazy(
+            'inventory:images', kwargs={'range_id': self.range_id})
+
+    def form_valid(self, form):
+        product_ids = json.loads(form.cleaned_data['product_ids'])
+        files = self.request.FILES.getlist('images')
+        for image in files:
+            image_file = image
+            r = CCAPI.upload_image(
+                product_ids=product_ids, image_file=image_file)
+            r.raise_for_status()
+        return super().form_valid(form)
