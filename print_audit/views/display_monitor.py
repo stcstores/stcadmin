@@ -47,4 +47,7 @@ class FeedbackMonitor(View):
             user_data['score'] = feedback.score()
             data.append(user_data)
         data.sort(key=lambda x: x['score'], reverse=True)
-        return HttpResponse(json.dumps(data))
+        response = {
+            'total': models.UserFeedback.this_month.all().score(),
+            'data': data}
+        return HttpResponse(json.dumps(response))

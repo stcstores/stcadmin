@@ -91,8 +91,7 @@ class Feedback(models.Model):
 class ScoredQuerySet(models.QuerySet):
 
     def score(self):
-        agg = self.aggregate(Sum('feedback_type__score'))
-        return max(agg.values())
+        return sum(o.feedback_type.score for o in self.all())
 
 
 class UserFeedbackManager(models.Manager):

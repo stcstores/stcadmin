@@ -2,8 +2,10 @@ function get_feedback() {
     $('.pack_count').html('');
     $('.feedback').html('');
     $.get("{% url 'print_audit:feedback_monitor' %}",
-        function(data) {
-            var data = $.parseJSON(data);
+        function(response) {
+            var response_data = $.parseJSON(response);
+            var data = response_data['data'];
+            var total = response_data['total'];
             for (var i=0; i<data.length; i++) {
                 var name = data[i]['name'];
                 var score = data[i]['score'];
@@ -14,6 +16,8 @@ function get_feedback() {
                     }
                 });
             }
+            $('#feedback').append('<tr><td>&nbsp;</td><td>&nbsp;</td></tr>');
+            $('#feedback').append('<tr><td class="feedback_name">Total: </td><td class="score">' + total + '</td></tr>');
             $('.score').each(function() {
                 var score = parseInt($(this).text());
                 if (score > 0){
