@@ -283,14 +283,18 @@ class ListOption(fieldtypes.FormField, ListInput):
 
 
 class AmazonBulletPoints(ListOption):
+
     label = 'Amazon Bullet Points'
+    name = 'amazon_bullet_points'
     html_class = 'amazon_bullet_points'
     help_text = 'Create upto five bullet points for Amazon listings.'
     maximum = 5
 
 
 class AmazonSearchTerms(ListOption):
+
     label = 'Amazon Search Terms'
+    name = 'amazon_search_terms'
     html_class = 'amazon_search_terms'
     help_text = 'Create upto five search terms for Amazon listings.'
     maximum = 5
@@ -316,6 +320,8 @@ class FormFields(metaclass=MetaFormFields):
         Brand,
         Manufacturer,
         Description,
+        AmazonBulletPoints,
+        AmazonSearchTerms,
         ]
 
     delete_variation = DeleteVariation

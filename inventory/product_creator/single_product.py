@@ -28,6 +28,8 @@ class SingleProduct(NewProduct):
         self.manufacturer = data['manufacturer']
         self.supplier = data['supplier']
         self.purchase_price = data['purchase_price']
+        self.amazon_bullets = data['amazon_bullet_points']
+        self.amazon_search_terms = data['amazon_search_terms']
         self.package_type = data['package_type']
         if self.package_type in ('Heavy and Large', 'Courier'):
             self.international_shipping = 'Express'
@@ -74,5 +76,9 @@ class SingleProduct(NewProduct):
             key.replace('opt_', ''): value for key, value in
             self.data.items() if key.startswith('opt_') and
             len(value) > 0}
+        if len(self.amazon_bullets) > 1:
+            optional_options['Amazon Bullets'] = self.amazon_bullets
+        if len(self.amazon_search_terms) > 1:
+            optional_options['Amazon Search Terms'] = self.amazon_search_terms
         self.options = {**required_options, **optional_options}
         self.range_options = self.options.keys()

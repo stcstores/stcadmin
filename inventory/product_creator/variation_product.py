@@ -19,6 +19,8 @@ class VariationProduct(NewProduct):
         self.supplier = self.setup_data['supplier']
         self.brand = self.setup_data['brand']
         self.manufacturer = self.setup_data['manufacturer']
+        self.amazon_bullets = self.setup_data['amazon_bullet_points']
+        self.amazon_search_terms = self.setup_data['amazon_search_terms']
 
     def get_products(self):
         self.products = []
@@ -116,5 +118,9 @@ class VariationProduct(NewProduct):
                     value = variation_data[key]
                 if len(value) > 0:
                     optional_options[key.replace('opt_', '')] = value
+        if len(self.amazon_bullets) > 1:
+            optional_options['Amazon Bullets'] = self.amazon_bullets
+        if len(self.amazon_search_terms) > 1:
+            optional_options['Amazon Search Terms'] = self.amazon_search_terms
         options = {**required_options, **optional_options}
         return options
