@@ -28,7 +28,7 @@ class UnTrackedManifest(SpringManifest):
         super().__init__(*args, **kwargs)
 
     def get_orders(self):
-        return self.request_orders(courier_rule_id=9723)
+        return self.request_orders(courier_rule_id=11747)
 
     def save_manifest(self, manifest):
         return self.save_xlsx()

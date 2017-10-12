@@ -87,6 +87,8 @@ class SpringManifest(settings.SpringManifestSettings):
         country.save()
 
     def request_orders(self, **kwargs):
+        kwargs['order_type'] = 1
+        kwargs['number_of_days'] = 4
         try:
             orders = CCAPI.get_orders_for_dispatch(**kwargs)
         except Exception:

@@ -26,7 +26,10 @@ class SpringManifestForm(forms.Form):
                 self.download = self.manifests['untracked'].download
 
     def get_manifests(self):
-        return {'tracked': TrackedManifest(), 'untracked': UnTrackedManifest()}
+        return {
+            # 'tracked': TrackedManifest(),
+            'untracked': UnTrackedManifest()
+            }
 
 
 CloudCommerceCountryIDFormSet = modelformset_factory(
