@@ -1,11 +1,10 @@
-from django.db import models
-from django.utils.timezone import is_naive, now
 import pytz
-from django.contrib.auth.models import User
-
-from django.core.exceptions import ObjectDoesNotExist
-
 from ccapi import CCAPI
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
+from django.db.models import Sum
+from django.utils.timezone import is_naive, now
 
 USERS = CCAPI.get_users()
 
@@ -89,13 +88,34 @@ class Feedback(models.Model):
         return self.name
 
 
+class ScoredQuerySet(models.QuerySet):
+
+    def score(self):
+        agg = self.aggregate(Sum('feedback_type__score'))
+        return max(agg.values())
+
+
+class UserFeedbackManager(models.Manager):
+
+    def get_queryset(self):
+        return ScoredQuerySet(self.model)
+
+
+class UserFeedbackMonthlyManager(UserFeedbackManager):
+
+    def get_queryset(self):
+        return ScoredQuerySet(self.model).filter(timestamp__month=now().month)
+
+
 class UserFeedback(models.Model):
     user = models.ForeignKey(CloudCommerceUser, on_delete=models.CASCADE)
-    feedback_type = models.ForeignKey(
-        Feedback, on_delete=models.CASCADE)
+    feedback_type = models.ForeignKey(Feedback, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default=now)
     order_id = models.CharField(max_length=10, blank=True, null=True)
     note = models.TextField(blank=True, null=True)
+
+    objects = UserFeedbackManager()
+    this_month = UserFeedbackMonthlyManager()
 
     def __str__(self):
         return '{} for {}'.format(

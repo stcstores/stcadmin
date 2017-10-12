@@ -35,22 +35,16 @@ class FeedbackMonitor(View):
         users = models.CloudCommerceUser.objects.all()
         data = []
         for user in users:
-            counts = {}
-            for f in feedback_types:
-                count = models.UserFeedback.objects.filter(
-                    user=user, feedback_type=f,
-                    timestamp__month=now().month).count()
-                counts[f.pk] = count
-            if max(set(counts.values())) == 0:
+            feedback = models.UserFeedback.this_month.filter(user=user)
+            if feedback.count() == 0:
                 continue
             user_data = {'name': user.full_name(), 'feedback': []}
             for f in feedback_types:
-                count = counts[f.pk]
+                count = feedback.filter(feedback_type=f).count()
                 user_data['feedback'].append({
-                    'name': f.name, 'image_url': f.image.url, 'count': count,
-                    'score': f.score})
-            user_data['score'] = sum(
-                [d['score'] * d['count'] for d in user_data['feedback']])
+                    'name': f.name, 'image_url': f.image.url,
+                    'count': count, 'score': f.score})
+            user_data['score'] = feedback.score()
             data.append(user_data)
         data.sort(key=lambda x: x['score'], reverse=True)
         return HttpResponse(json.dumps(data))
