@@ -31,7 +31,10 @@ class VariationForm(forms.Form):
             self.product.vat_rate_id)
         initial['price'] = self.product.base_price
         for option in self.product.options:
-            initial['opt_' + option.option_name] = option.value.value
+            if option.value is not None:
+                initial['opt_' + option.option_name] = option.value.value
+            else:
+                initial['opt_' + option.option_name] = ''
         initial['product_id'] = self.product.id
         return initial
 
