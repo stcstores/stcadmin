@@ -93,10 +93,16 @@ class SpringManifest(settings.SpringManifestSettings):
             orders = CCAPI.get_orders_for_dispatch(**kwargs)
         except Exception:
             raise ValidationError('Error retriving orders.')
-        else:
-            return [
-                o for o in orders if str(o.order_id) not in
-                self.previously_manifested]
+        manifest_orders = []
+        for order in orders:
+            try:
+                db_order = models.SpringOrder.objects.get(
+                    order_id=order.order_id)
+            except models.SpringOrder.DoesNotExist:
+                db_order = models.SpringOrder.create_from_order(order)
+            if db_order.manifest is None:
+                manifest_orders.append(order)
+        return manifest_orders
 
     def get_ftp(self):
         ftp = ftplib.FTP()

@@ -1,6 +1,7 @@
+import pytz
 from django.db import models
 from django.db.models import Q
-from django.utils.timezone import now
+from django.utils.timezone import is_naive, now
 
 
 class DestinationZone(models.Model):
@@ -47,12 +48,36 @@ class CloudCommerceCountryID(models.Model):
         return str(self.name)
 
 
-class ManifestedOrder(models.Model):
+class SpringManifest(models.Model):
 
-    order_id = models.CharField(max_length=10)
-    service_code = models.CharField(max_length=3)
-    country = models.ForeignKey(CloudCommerceCountryID)
-    manifest_time = models.DateTimeField(default=now)
+    time_manifested = models.DateTimeField(default=now)
+
+
+class SpringOrder(models.Model):
+
+    order_id = models.CharField(max_length=10, unique=True)
+    customer_name = models.CharField(max_length=100)
+    date_recieved = models.DateTimeField()
+    dispatch_date = models.DateTimeField()
+    manifest = models.ForeignKey(SpringManifest, blank=True, null=True)
+
+    @classmethod
+    def create_from_order(cls, order):
+        return cls._base_manager.create(
+            order_id=str(order.order_id),
+            customer_name=order.delivery_name,
+            date_recieved=order.date_recieved,
+            dispatch_date=order.dispatch_date)
+
+    def save(self, *args, **kwargs):
+        self.date_recieved = self.localise_datetime(self.date_recieved)
+        self.dispatch_date = self.localise_datetime(self.dispatch_date)
+        super().save(*args, **kwargs)
+
+    def localise_datetime(self, date_input):
+        if is_naive(date_input):
+            tz = pytz.timezone('Europe/London')
+            return date_input.replace(tzinfo=tz)
 
     @classmethod
     def order_ids(cls):

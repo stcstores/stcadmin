@@ -27,12 +27,15 @@ class CloudCommerceCountryIDAdmin(admin.ModelAdmin):
         return str(self.name)
 
 
-@admin.register(models.ManifestedOrder)
-class ManifestedOrderAdmin(admin.ModelAdmin):
-    fields = ('order_id', 'service_code', 'country', 'manifest_time')
-    list_display = ('order_id', 'service_code', 'country', 'manifest_time')
+@admin.register(models.SpringOrder)
+class SpringOrderAdmin(admin.ModelAdmin):
+    fields = (
+        'order_id', 'customer_name', 'date_recieved', 'dispatch_date',
+        'manifest')
+    list_display = (
+        'order_id', 'customer_name', 'date_recieved', 'dispatch_date',
+        'manifest')
     list_display_links = ('order_id',)
-    list_editable = ('service_code', 'country')
 
     def __repr__(self):
         return str(self.order_id)
