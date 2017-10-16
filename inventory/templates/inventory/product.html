@@ -16,6 +16,8 @@
     <p><a href="{% url 'inventory:product_range' product.range_id %}"><button>Back To Range</button></a></p>
     <p><a href="{% ccp_product_page product.range_id product.id %}" target="_blank"><button>View Product on Cloud Commerce</button></a></p>
     <p>Stock Level: {{ product.stock_level }}</p>
+    {% if linnworks_sku %}<p>Linnworks SKU: {{ linnworks_sku }}</p>{% endif %}
+    {% if linnworks_title %}<p>Linnworks Title: {{ linnworks_title }}</p>{% endif %}
     <form action="" method="POST">{% csrf_token %}
         <table>
             {% for field in form %}

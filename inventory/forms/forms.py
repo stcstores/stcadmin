@@ -32,7 +32,7 @@ class ProductForm(forms.Form):
         'Department', 'Brand', 'Manufacturer', 'WooCategory1', 'WooCategory2',
         'WooCategory3', 'International Shipping', 'Package Type', 'Supplier',
         'Purchase Price', 'Date Created', 'Location', 'Supplier SKU',
-        'Amazon Bullets', 'Amazon Search Terms']
+        'Amazon Bullets', 'Amazon Search Terms', 'Linn SKU', 'Linn Title']
 
     def __init__(self, *args, **kwargs):
         self.product = kwargs.pop('product')
