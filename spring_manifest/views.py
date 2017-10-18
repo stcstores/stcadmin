@@ -7,6 +7,8 @@ from django.views.generic.edit import FormView
 from home.views import UserInGroupMixin
 from spring_manifest import forms, models
 from spring_manifest.forms import SpringManifestForm
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.shortcuts import get_object_or_404
 
 
 class SpringUserMixin(UserInGroupMixin):
@@ -87,3 +89,52 @@ class CountryErrors(SpringUserMixin, FormView):
 
 class DestinationZones(SpringUserMixin, TemplateView):
     template_name = 'spring_manifest/destination_zones.html'
+
+
+class UpdateOrderView(SpringUserMixin, UpdateView):
+    model = models.SpringOrder
+    fields = (
+        'country', 'product_count', 'package_count', 'manifest', 'service')
+    template_name = 'spring_manifest/update_order.html'
+
+    def get_success_url(self):
+        return reverse_lazy(
+            'spring_manifest:update_order',
+            kwargs={'order_pk': self.object.id})
+
+    def get_object(self):
+        return get_object_or_404(self.model, id=self.kwargs.get('order_pk'))
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data()
+        context['order'] = self.object
+        return context
+
+
+class ManifestListView(SpringUserMixin, TemplateView):
+    template_name = 'spring_manifest/manifest_list.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        models.update_spring_orders()
+        context['current_manifests'] = models.SpringManifest.unfiled.all()
+        context['previous_manifests'] = models.SpringManifest.filed.all()
+        context['unmanifested_orders'] = models.SpringOrder.unmanifested.all()
+        return context
+
+
+class ManifestView(SpringUserMixin, TemplateView):
+    template_name = 'spring_manifest/manifest.html'
+
+    def dispatch(self, *args, **kwargs):
+        self.manifest_id = self.kwargs['manifest_id']
+        return super().dispatch(*args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        manifest = get_object_or_404(
+            models.SpringManifest, id=self.manifest_id)
+        orders = manifest.springorder_set.all().order_by('dispatch_date')
+        context['manifest'] = manifest
+        context['orders'] = orders
+        return context

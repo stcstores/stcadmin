@@ -1,0 +1,55 @@
+{% extends "spring_manifest/base.html" %}
+{% load staticfiles %}
+
+{% block page_title %}Spring Manifest: {{ manifest }}{% endblock %}
+
+{% block content %}
+
+<style>
+    .date {
+        font-family: monospace;
+        font-weight: bold;
+    }
+</style>
+
+<h3>{{ manifest }}</h3>
+<table>
+    <tr>
+        <th>Manifest</th>
+        <th>Created</th>
+        <th>Orders</th>
+    </tr>
+    <tr>
+        <th>{{ manifest }}</th>
+        <td>{{ manifest.time_created }}</td>
+        <td>{{ manifest.springorder_set.count }}</td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <th>Order ID</th>
+        <th>Customer Name</th>
+        <th>Time Recieved</th>
+        <th>Time Dispatched</th>
+        <th>Country</th>
+        <th>Zone</th>
+        <th>Products</th>
+        <th>Packages</th>
+        <th>Service</th>
+    </tr>
+    {% for order in orders %}
+        <tr>
+            <th><a href="{% url 'spring_manifest:update_order' order.id %}">{{ order }}</a></th>
+            <td>{{ order.customer_name }}</td>
+            <td class="date">{{ order.date_recieved|date:'D jS N h:iA' }}</td>
+            <td class="date">{{ order.dispatch_date|date:'D jS N h:iA' }}</td>
+            <td>{{ order.country }}</td>
+            <td>{{ order.country.zone }}</td>
+            <td>{{ order.product_count }}</td>
+            <td>{{ order.package_count }}</td>
+            <td>{{ order.service }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

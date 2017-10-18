@@ -1,0 +1,28 @@
+{% extends "spring_manifest/base.html" %}
+{% load staticfiles %}
+
+{% block page_title %}Spring Order{% endblock %}
+
+{% block content %}
+<p>Order ID: {{ order.order_id }}</p>
+<p>Customer Name: {{ order.customer_name }}</p>
+<p>Recieved at: {{ order.date_recieved }}</p>
+<p>Dispatched at: {{ order.dispatch_date }}</p>
+
+<form action="" method="POST">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit Spring Manfiest">&nbsp;<img src="{% static 'images/loading.gif' %}" alt="working..." height="50" id="loading_image" hidden/>
+</form>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        $('form').submit(function() {
+            $('input[type=submit]').attr('disabled', true);
+            $('#loading_image').show();
+        });
+    });
+</script>
+{% endblock %}
