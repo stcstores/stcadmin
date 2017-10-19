@@ -58,7 +58,7 @@ class DescriptionsView(InventoryUserMixin, FormView):
                 'Amazon Search Terms', form.cleaned_data['search_terms'],
                 create=True)
         messages.add_message(
-            self.request, messages.SUCCESS, 'Locations Updated')
+            self.request, messages.SUCCESS, 'Description Updated')
         return super().form_valid(form)
 
     def get_success_url(self):
