@@ -29,8 +29,9 @@ class CloudCommerceCountryIDAdmin(admin.ModelAdmin):
 
 @admin.register(models.SpringManifest)
 class SpringManifestAdmin(admin.ModelAdmin):
-    fields = ('manifest_type', 'time_filed')
-    list_display = ('id', 'manifest_type', 'time_created', 'time_filed')
+    fields = ('manifest_type', 'time_filed', 'manifest_file')
+    list_display = (
+        'id', 'manifest_type', 'time_created', 'time_filed', 'manifest_file')
     list_display_links = ('id', )
     list_editable = ('manifest_type', )
 

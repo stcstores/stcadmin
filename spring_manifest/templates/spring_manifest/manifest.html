@@ -5,23 +5,24 @@
 
 {% block content %}
 
-<style>
-    .date {
-        font-family: monospace;
-        font-weight: bold;
-    }
-</style>
-
 <h3>{{ manifest }}</h3>
+{% if manifest.manifest_file %}
+    <a href="{{ manifest.manifest_file.url }}"><button>Download Manifest File</button></a>
+{% else %}
+    <a href="{% url 'spring_manifest:file_manifest' manifest.id %}"><button>File Manifest</button></a>
+{% endif %}
+
 <table>
     <tr>
         <th>Manifest</th>
         <th>Created</th>
+        {% if manifest.time_filed %}<th>Filed</th>{% endif %}
         <th>Orders</th>
     </tr>
     <tr>
         <th>{{ manifest }}</th>
-        <td>{{ manifest.time_created }}</td>
+        <td class="date">{{ manifest.time_created|date:'D jS N h:iA' }}</td>
+        {% if manifest.time_filed %}<td class="date">{{ manifest.time_filed|date:'D jS N h:iA' }}</td>{% endif %}
         <td>{{ manifest.springorder_set.count }}</td>
     </tr>
 </table>
@@ -39,7 +40,7 @@
     </tr>
     {% for order in orders %}
         <tr>
-            <th><a href="{% url 'spring_manifest:update_order' order.id %}">{{ order }}</a></th>
+            <th>{% if manifest.time_filed %}{{ order }}{% else %}<a href="{% url 'spring_manifest:update_order' order.id %}">{{ order }}</a>{% endif %}</th>
             <td>{{ order.customer_name }}</td>
             <td class="date">{{ order.date_recieved|date:'D jS N h:iA' }}</td>
             <td class="date">{{ order.dispatch_date|date:'D jS N h:iA' }}</td>

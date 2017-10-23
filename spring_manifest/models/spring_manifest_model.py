@@ -16,6 +16,9 @@ class UnFiledManager(models.Manager):
 
 class SpringManifest(models.Model):
 
+    class Meta:
+        ordering = ['-time_filed', '-time_created']
+
     TRACKED = 'T'
     UNTRACKED = 'U'
     MANIFEST_TYPE_CHOICES = ((TRACKED, 'Tracked'), (UNTRACKED, 'Untracked'))
@@ -24,6 +27,8 @@ class SpringManifest(models.Model):
         max_length=1, choices=MANIFEST_TYPE_CHOICES)
     time_created = models.DateTimeField(default=now)
     time_filed = models.DateTimeField(blank=True, null=True)
+    manifest_file = models.FileField(
+        upload_to='manifests', blank=True, null=True)
 
     objects = models.Manager()
     filed = FiledManager()
@@ -34,8 +39,9 @@ class SpringManifest(models.Model):
         if self.time_filed is None:
             time = 'Unfiled'
         else:
-            time = str(self.time_filed)
-        return '{}_{}_{}'.format(self.id, manifest_type, time)
+            time = self.time_filed.strftime('%Y-%m-%d')
+        return '{}_{}_{}'.format(
+            self.id, manifest_type, time)
 
     def file_manifest(self):
         self.time_filed = now()

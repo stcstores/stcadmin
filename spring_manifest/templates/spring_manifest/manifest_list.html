@@ -23,8 +23,8 @@
     <tr>
         <th><a href="{% url 'spring_manifest:update_order' order.id %}">{{ order }}</a></th>
         <td>{{ order.customer_name }}</td>
-        <td>{{ order.date_recieved }}</td>
-        <td>{{ order.dispatch_date }}</td>
+        <td class="date">{{ order.date_recieved|date:'D jS N h:iA' }}</td>
+        <td class="date">{{ order.dispatch_date|date:'D jS N h:iA' }}</td>
         <td>{{ order.country }}</td>
         <td>{{ order.country.zone }}</td>
         <td>{{ order.product_count }}</td>
@@ -47,9 +47,9 @@
     {% for manifest in current_manifests %}
         <tr>
             <th><a href="{% url 'spring_manifest:manifest' manifest.id %}">{{ manifest }}</a></th>
-            <td>{{ manifest.time_created }}</td>
+            <td class="date">{{ manifest.time_created|date:'D jS N h:iA' }}</td>
             <td>{{ manifest.springorder_set.count }}</td>
-            {% if manifest.time_filed %}<td>{{ manifest.time_filed }}</td>{% endif %}
+            {% if manifest.time_filed %}<td class="date">{{ manifest.time_filed|date:'D jS N h:iA' }}</td>{% endif %}
         </tr>
     {% endfor %}
 </table>
@@ -66,10 +66,10 @@
     </tr>
     {% for manifest in previous_manifests %}
         <tr>
-            <th>{{ manifest }}</th>
-            <td>{{ manifest.time_created }}</td>
+            <th><a href="{% url 'spring_manifest:manifest' manifest.id %}">{{ manifest }}</a></th>
+            <td class="date">{{ manifest.time_created|date:'D jS N h:iA' }}</td>
             <td>{{ manifest.springorder_set.count }}</td>
-            <td>{{ manifest.time_filed }}</td>
+            <td class="date">{{ manifest.time_filed|date:'D jS N h:iA' }}</td>
         </tr>
     {% endfor %}
 </table>

@@ -38,7 +38,7 @@
                 <p>Make printable product labels.</p>
             {% endif %}{% endfor %}
             {% for group in request.user.groups.all %}{% if group.name == 'spring' %}
-                <li><a href="{% url 'spring_manifest:spring_manifest' %}">Spring</a></li>
+                <li><a href="{% url 'spring_manifest:manifest_list' %}">Spring</a></li>
                 <p>Send Spring manifest</p>
             {% endif %}{% endfor %}
             {% for group in request.user.groups.all %}{% if group.name == 'admin' %}

@@ -6,12 +6,12 @@
 {% block content %}
 <p>Order ID: {{ order.order_id }}</p>
 <p>Customer Name: {{ order.customer_name }}</p>
-<p>Recieved at: {{ order.date_recieved }}</p>
-<p>Dispatched at: {{ order.dispatch_date }}</p>
+<p>Recieved at: <span class="date">{{ order.date_recieved|date:'D jS N h:iA' }}</span></p>
+<p>Dispatched at: <span class="date">{{ order.dispatch_date|date:'D jS N h:iA' }}</p></span>
 
 <form action="" method="POST">{% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Submit Spring Manfiest">&nbsp;<img src="{% static 'images/loading.gif' %}" alt="working..." height="50" id="loading_image" hidden/>
+    <input type="submit" value="Update">&nbsp;<img src="{% static 'images/loading.gif' %}" alt="working..." height="50" id="loading_image" hidden/>
 </form>
 
 {% endblock %}

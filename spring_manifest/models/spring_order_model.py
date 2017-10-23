@@ -4,6 +4,7 @@ from django.utils.timezone import is_naive
 
 from .spring_manifest_model import SpringManifest
 from .cloud_commerce_country_id import CloudCommerceCountryID
+from ccapi import CCAPI
 
 
 class SpringOrderManager(models.Manager):
@@ -27,7 +28,8 @@ class SpringOrderManager(models.Manager):
 class UnManifestedManager(SpringOrderManager):
 
     def get_queryset(self):
-        return super().get_queryset().filter(manifest__isnull=True)
+        return super().get_queryset().filter(
+            manifest__isnull=True, canceled=False)
 
 
 class ManifestedManager(SpringOrderManager):
@@ -46,7 +48,14 @@ class FiledManager(ManifestedManager):
 class UnFiledManager(ManifestedManager):
 
     def get_queryset(self):
-        return super().get_queryset().filter(manifest__time_filed__isnull=True)
+        return super().get_queryset().filter(
+            manifest__time_filed__isnull=True, canceled=False)
+
+
+class CanceledOrdersManager(SpringOrderManager):
+
+    def get_queryset(self):
+        return super().get_queryset.filter(canceled=True)
 
 
 class SpringOrder(models.Model):
@@ -66,12 +75,14 @@ class SpringOrder(models.Model):
     package_count = models.PositiveIntegerField(default=1)
     manifest = models.ForeignKey(SpringManifest, blank=True, null=True)
     service = models.CharField(max_length=3, choices=SERVICE_CHOICES)
+    canceled = models.BooleanField(default=False)
 
     objects = SpringOrderManager()
     manifested = ManifestedManager()
     unmanifested = UnManifestedManager()
     filed = FiledManager()
     unfiled = UnFiledManager()
+    canceled_orders = CanceledOrdersManager()
 
     def __str__(self):
         return self.order_id
@@ -81,6 +92,8 @@ class SpringOrder(models.Model):
             self.date_recieved = self.localise_datetime(self.date_recieved)
         if is_naive(self.dispatch_date):
             self.dispatch_date = self.localise_datetime(self.dispatch_date)
+        if self.canceled:
+            self.manifest = None
         super().save(*args, **kwargs)
 
     def localise_datetime(self, date_input):
@@ -91,3 +104,7 @@ class SpringOrder(models.Model):
     def add_to_manifest(self, manifest):
         self.manifest = manifest
         self.save()
+
+    def get_order_data(self):
+        return CCAPI.get_orders_for_dispatch(
+            order_type=1, number_of_days=30, id_list=[self.order_id])[0]

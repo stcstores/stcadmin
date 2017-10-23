@@ -18,6 +18,9 @@ urlpatterns = [
         r'^manifest/(?P<manifest_id>[0-9]+)/$',
         views.ManifestView.as_view(), name='manifest'),
     url(
+        r'^file_manifest/(?P<manifest_id>[0-9]+)/$',
+        views.FileManifest.as_view(), name='file_manifest'),
+    url(
         r'^update_order/(?P<order_pk>[0-9]+)/$',
         views.UpdateOrderView.as_view(), name='update_order'),
     url(
