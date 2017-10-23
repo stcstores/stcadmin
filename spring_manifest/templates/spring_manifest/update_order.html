@@ -8,21 +8,24 @@
 <p>Customer Name: {{ order.customer_name }}</p>
 <p>Recieved at: <span class="date">{{ order.date_recieved|date:'D jS N h:iA' }}</span></p>
 <p>Dispatched at: <span class="date">{{ order.dispatch_date|date:'D jS N h:iA' }}</p></span>
-
+{% if order.canceled %}<p class="error">CANCELED</p>{% endif %}
+{% if order.manifest.time_filed %}
+<p class="error">FILED</p>
+{% else %}
 <form action="" method="POST">{% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Update">&nbsp;<img src="{% static 'images/loading.gif' %}" alt="working..." height="50" id="loading_image" hidden/>
+    {% if order.manifest %}
+        <input type="submit" value="Delay Order" name="delay" />
+    {% elif not order.canceled %}
+        <input type="submit" value="Re-Add Order" name="undelay" />
+    {% endif %}
+    {% if order.canceled %}
+        <input type="submit" value="Un-Cancel Order" name="uncancel" />
+    {% else %}
+        <input type="submit" value="Cancel Order" name="cancel" />
+    {% endif %}
+    <input type="submit" value="Update Order" name="update" />
 </form>
+{% endif %}
 
-{% endblock %}
-
-{% block script %}
-<script>
-    $(document).ready(function() {
-        $('form').submit(function() {
-            $('input[type=submit]').attr('disabled', true);
-            $('#loading_image').show();
-        });
-    });
-</script>
 {% endblock %}
