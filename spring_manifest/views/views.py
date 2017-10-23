@@ -1,12 +1,9 @@
-from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
-from django.shortcuts import get_object_or_404, redirect
-from django.utils.safestring import mark_safe
+from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import UpdateView, FormView
+from django.views.generic.edit import UpdateView
 from home.views import UserInGroupMixin
 from spring_manifest import models
-from spring_manifest.forms import SpringManifestForm
 
 
 class SpringUserMixin(UserInGroupMixin):
@@ -68,4 +65,14 @@ class ManifestView(SpringUserMixin, TemplateView):
         orders = manifest.springorder_set.all().order_by('dispatch_date')
         context['manifest'] = manifest
         context['orders'] = orders
+        return context
+
+
+class CanceledOrdersView(SpringUserMixin, TemplateView):
+    template_name = 'spring_manifest/canceled_orders.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['unmanifested_orders'] = models.SpringOrder.unmanifested.all()
+        context['canceled_orders'] = models.SpringOrder.canceled_orders.all()
         return context

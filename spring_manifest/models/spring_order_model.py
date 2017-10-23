@@ -55,7 +55,7 @@ class UnFiledManager(ManifestedManager):
 class CanceledOrdersManager(SpringOrderManager):
 
     def get_queryset(self):
-        return super().get_queryset.filter(canceled=True)
+        return super().get_queryset().filter(canceled=True)
 
 
 class SpringOrder(models.Model):
