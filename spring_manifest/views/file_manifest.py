@@ -31,9 +31,9 @@ class FileManifestView(SpringUserMixin, RedirectView):
         manifest = self.get_manifest()
         if manifest is not None:
             if manifest.manifest_type == manifest.UNTRACKED:
-                FileUntrackedManifest(manifest)
+                FileUntrackedManifest(self.request, manifest)
             elif manifest.manifest_type == manifest.UNTRACKED:
-                FileTrackedManifest(manifest)
+                FileTrackedManifest(self.request, manifest)
             else:
                 raise Exception(
                     'Unknown manifest type {} for manifest {}'.format(
@@ -48,9 +48,11 @@ class FileManifestView(SpringUserMixin, RedirectView):
 
 class FileManifest:
 
-    def __init__(self, manifest):
+    def __init__(self, request, manifest):
+        self.request = request
         rows = self.get_manifest_rows(manifest)
         self.save_manifest_file(manifest, rows)
+        self.add_messages(manifest)
 
     def file_manifest(self, manifest):
         raise NotImplementedError
@@ -130,6 +132,15 @@ class FileUntrackedManifest(FileManifest):
     def get_date_string(self):
         return datetime.datetime.now().strftime('%Y-%m-%d')
 
+    def add_messages(self, manifest):
+        orders = manifest.springorder_set.all()
+        package_count = sum(o.package_count for o in orders)
+        order_count = len(orders)
+        messages.add_message(
+            self.request, messages.SUCCESS,
+            'Manifest file created with {} packages for {} orders'.format(
+                package_count, order_count))
+
 
 class FileTrackedManifest(FileManifest):
     # TODO everything
@@ -143,3 +154,24 @@ class FileTrackedManifest(FileManifest):
         output.close()
         manifest.file_manifest()
         manifest.manifest_file.save(str(manifest) + '.csv', File(output))
+
+    def add_messages(self, manifest):
+        orders = manifest.springorder_set.all()
+        package_count = sum(o.package_count for o in orders)
+        order_count = len(orders)
+        messages.add_message(
+            self.request, messages.SUCCESS,
+            'Manifest filed with {} packages for {} orders'.format(
+                package_count, order_count))
+        services = {}
+        for order in orders:
+            if order.service not in services:
+                services[order.service] = []
+            services[order.service].append(order)
+        for service, s_orders in services.items():
+            package_count = sum(o.package_count for o in s_orders)
+            order_count = len(s_orders)
+            messages.add_message(
+                self.request, messages.SUCCESS,
+                '{} packages for {} orders with service code {}'.format(
+                    package_count, order_count, service))
