@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='springmanifest',
             name='manifest_type',
-            field=models.CharField(choices=[('T', 'Tracked'), ('U', 'Untracked')], default='PAK', max_length=1),
+            field=models.CharField(choices=[('T', 'Tracked'), ('U', 'Untracked')], default='U', max_length=1),
             preserve_default=False,
         ),
         migrations.AddField(
@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='springorder',
             name='service',
-            field=models.CharField(choices=[('Parcel', 'PAR'), ('Packet', 'PAK'), ('PAT', 'Tracked')], default='U', max_length=3),
+            field=models.CharField(choices=[('Parcel', 'PAR'), ('Packet', 'PAK'), ('PAT', 'Tracked')], default='PAK', max_length=3),
             preserve_default=False,
         ),
     ]
