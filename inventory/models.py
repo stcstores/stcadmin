@@ -21,4 +21,4 @@ class STCAdminImage(models.Model):
             os.remove(self.image.path)
         if not os.listdir(range_dir):
             os.rmdir(range_dir)
-        super().delete(*args, **kwargs)
+        super(models.Model).delete(*args, **kwargs)

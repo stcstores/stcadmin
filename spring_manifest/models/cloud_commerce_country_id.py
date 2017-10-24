@@ -18,7 +18,8 @@ class CloudCommerceCountryID(models.Model):
     cc_id = models.IntegerField()
     iso_code = models.CharField(
         max_length=3, blank=True, null=True, verbose_name='ISO Code')
-    zone = models.ForeignKey(DestinationZone, blank=True, null=True)
+    zone = models.ForeignKey(
+        DestinationZone, blank=True, null=True, on_delete=models.CASCADE)
     valid_spring_destination = models.BooleanField(
         default=True, verbose_name='Valid Spring Destination')
 

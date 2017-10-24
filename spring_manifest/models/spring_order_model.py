@@ -70,10 +70,12 @@ class SpringOrder(models.Model):
     customer_name = models.CharField(max_length=100)
     date_recieved = models.DateTimeField()
     dispatch_date = models.DateTimeField()
-    country = models.ForeignKey(CloudCommerceCountryID)
+    country = models.ForeignKey(
+        CloudCommerceCountryID, on_delete=models.CASCADE)
     product_count = models.PositiveIntegerField()
     package_count = models.PositiveIntegerField(default=1)
-    manifest = models.ForeignKey(SpringManifest, blank=True, null=True)
+    manifest = models.ForeignKey(
+        SpringManifest, blank=True, null=True, on_delete=models.CASCADE)
     service = models.CharField(max_length=3, choices=SERVICE_CHOICES)
     canceled = models.BooleanField(default=False)
 

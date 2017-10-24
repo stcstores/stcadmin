@@ -3,7 +3,6 @@ from ccapi import CCAPI
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
-from django.db.models import Sum
 from django.utils.timezone import is_naive, now
 
 USERS = CCAPI.get_users()
@@ -15,7 +14,7 @@ class CloudCommerceUser(models.Model):
         User, null=True, blank=True, on_delete=models.CASCADE)
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(models.Model).__init__(*args, **kwargs)
         try:
             self.cc_user = USERS[self.user_id]
         except IndexError:

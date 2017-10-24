@@ -16,7 +16,7 @@ class SupplierAdmin(admin.ModelAdmin):
 
 
 class StockItem(models.Model):
-    supplier = models.ForeignKey(Supplier)
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     product_code = models.CharField(max_length=200, unique=True)
     supplier_title = models.CharField(max_length=200)
     box_quantity = models.PositiveSmallIntegerField(blank=True, null=True)
@@ -32,6 +32,7 @@ class StockItemAdmin(admin.ModelAdmin):
     list_display = (
         'product_code', 'supplier_title', 'box_quantity', 'linnworks_title',
         'linnworks_sku', 'supplier',)
+
 
 admin.site.register(Supplier, SupplierAdmin)
 admin.site.register(StockItem, StockItemAdmin)
