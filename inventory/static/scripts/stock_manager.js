@@ -77,6 +77,10 @@ $(document).ready(function() {
                 $('#stock_' + product_id).val(response);
                 status.attr('src', complete_image);
             },
+            error: function() {
+                api_error();
+                status.attr('src', error_image);
+            },
             contentType: "application/json",
             dataType: 'json'
         });
