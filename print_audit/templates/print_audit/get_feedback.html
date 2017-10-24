@@ -12,7 +12,7 @@ function get_feedback() {
                 $('#feedback').append('<tr id="feedback_' + i + '"><th class="feedback_name">' + name + ': </th><th class="score">' + score + '</th><td class="feedback_icons">');
                 $.each(data[i].feedback, function(index, feedback) {
                     for (im=0; im<feedback.count; im++) {
-                        $('#feedback_' + i).children('.feedback_icons').append('<img src="' + feedback.image_url + '" height="40">');
+                        $('#feedback_' + i).children('.feedback_icons').append('<img src="' + feedback.image_url + '" height="35">');
                     }
                 });
             }

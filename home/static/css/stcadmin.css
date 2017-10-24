@@ -232,10 +232,6 @@ th {
     vertical-align: top;
 }
 
-.score {
-    font-family: monospace;
-}
-
 .positive {
     color: green;
 }
@@ -306,7 +302,7 @@ th {
 }
 
 .feedback_name {
-    font-size: 3.5em;
+    font-size: 3.25em;
 }
 
 .packer_name {
@@ -315,7 +311,7 @@ th {
 
 .score {
     font-family: monospace;
-    font-size: 3.5em;
+    font-size: 3.25em;
 }
 
 .date {
