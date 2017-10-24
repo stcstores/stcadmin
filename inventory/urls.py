@@ -30,6 +30,9 @@ inventory_urlpatterns = [
     url(
         r'^sku_generator$',
         views.SKUGeneratorView.as_view(), name='sku_generator'),
+    url(
+        r'^delete_stcadmin_image/(?P<image_id>[0-9]+)/$',
+        views.DeleteSTCAdminImage.as_view(), name='delete_stcadmin_image'),
 ]
 
 new_product_urlpatterns = [

@@ -2,8 +2,22 @@ from ccapi import CCAPI
 import json
 from django.views.generic.edit import FormView
 from inventory.forms import ImagesForm
+from inventory.models import STCAdminImage
 from .views import InventoryUserMixin
 from django.core.urlresolvers import reverse_lazy
+from django.views.generic.base import RedirectView
+from django.shortcuts import get_object_or_404
+
+
+class DeleteSTCAdminImage(InventoryUserMixin, RedirectView):
+
+    def get_redirect_url(self, image_id):
+        stcadmin_image = get_object_or_404(
+            STCAdminImage, pk=image_id)
+        range_id = stcadmin_image.range_id
+        stcadmin_image.delete()
+        return reverse_lazy(
+                'inventory:images', kwargs={'range_id': range_id})
 
 
 class ImageFormView(InventoryUserMixin, FormView):
@@ -35,6 +49,8 @@ class ImageFormView(InventoryUserMixin, FormView):
                     else:
                         options[o.option_name][value] = [product.id]
         context['options'] = options
+        context['stcadmin_images'] = STCAdminImage.objects.filter(
+            range_id=self.range_id)
         return context
 
     def get_success_url(self):
@@ -43,10 +59,13 @@ class ImageFormView(InventoryUserMixin, FormView):
 
     def form_valid(self, form):
         product_ids = json.loads(form.cleaned_data['product_ids'])
-        files = self.request.FILES.getlist('images')
-        for image in files:
+        cc_files = self.request.FILES.getlist('cloud_commerce_images')
+        stcadmin_images = self.request.FILES.getlist('stcadmin_images')
+        for image in cc_files:
             image_file = image
             r = CCAPI.upload_image(
                 product_ids=product_ids, image_file=image_file)
             r.raise_for_status()
+        for image in stcadmin_images:
+            STCAdminImage(range_id=self.range_id, image=image).save()
         return super().form_valid(form)

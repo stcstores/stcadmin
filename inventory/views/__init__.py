@@ -1,7 +1,7 @@
 from . views import *  # noqa
 from . api import *  # noqa
 from . descriptions import DescriptionsView  # noqa
-from . images import ImageFormView  # noqa
+from . images import ImageFormView, DeleteSTCAdminImage  # noqa
 from . locations import LocationFormView  # noqa
 from . newsingleproductview import NewSingleProductView  # noqa
 from . product import ProductView  # noqa
