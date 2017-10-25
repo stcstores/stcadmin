@@ -190,13 +190,14 @@ class OptionField(TextField):
 
 
 class OptionSettingField(forms.MultiValueField):
+    required = False
 
     def __init__(self, *args, **kwargs):
         kwargs['label'] = self.option
         kwargs['initial'] = ('unused', [], '')
         fields = (
             forms.ChoiceField(
-                required=True,
+                required=False,
                 choices=widgets.OptionSettingsFieldWidget.radio_choices),
             ListInput(minimum=0, required=False),
             forms.CharField(

@@ -11,7 +11,7 @@
 
 {% block content %}
 <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
-<form action="" method="post">{% csrf_token %}
+<form action="" method="POST">{% csrf_token %}
 <table class="{% block table_class %}{% endblock %}">
 {{ wizard.management_form }}
 {% if wizard.form.forms %}
@@ -25,7 +25,7 @@
 <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
 <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
 {% endif %}
-<input type="submit" value="{% trans "submit" %}"/>
+<button type="submit">Continue</button>
 </form>
 {% endblock %}
 {% block script %}{{ block.super }}
@@ -100,12 +100,6 @@ $(document).ready(function() {
                 return false;
             }
        }
-    });
-
-    $('form').submit(function() {
-
-
-        return true;
     });
 
     // Prevent the backspace key from navigating back.

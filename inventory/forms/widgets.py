@@ -1,6 +1,4 @@
 from django import forms
-from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
 from list_input import ListWidget
 
 
@@ -11,6 +9,7 @@ class HorizontalRadio(forms.RadioSelect):
 class OptionSettingsFieldWidget(forms.MultiWidget):
 
     template_name = 'inventory/widgets/options_settings_widget.html'
+    required = False
 
     radio_choices = [
         ('unused', 'Unused'),
@@ -23,6 +22,7 @@ class OptionSettingsFieldWidget(forms.MultiWidget):
             HorizontalRadio(choices=self.radio_choices),
             ListWidget(),
             forms.TextInput()]
+        self.required = False
         super().__init__(widgets, attrs)
 
     def decompress(self, value):
@@ -37,36 +37,3 @@ class OptionSettingsFieldWidget(forms.MultiWidget):
             if use == 'variation':
                 return [use, li, '']
         return [None, None, None]
-
-    """
-    def get_context(self, name, value, attrs):
-        context = super().get_context(name, value, attrs)
-        context['ids'] = [widget.attrs['id'] for widget in self.widgets]
-        print(context['ids'])
-        return context
-
-    def render(self, name, value, attrs=None):
-        print('lisfdhijolfsdijofdsjiohfd')
-
-    def format_output(self, rendered_widgets):
-        print('iofdesijl')
-        return ''.join(rendered_widgets)
-    def render(self, name, value, attrs=None):
-        values = self.decompress(value)
-        final_attrs = self.build_attrs(attrs)
-        final_attrs['required'] = False
-        id_ = final_attrs.get('id')
-        widgets = []
-        for i, widget in enumerate(self.widgets):
-            widget_attrs = dict(final_attrs, id='%s_%s' % (id_, i))
-            widget_name = name + '_%s' % i
-            rendered_widget = widget.render(
-                widget_name, values[i], widget_attrs)
-            widgets.append(rendered_widget)
-        html = render_to_string(
-            'inventory/widgets/options_settings_widget.html',
-            {'widgets': widgets, 'name': name, 'id': id_})
-        return mark_safe(html)
-
-
-"""

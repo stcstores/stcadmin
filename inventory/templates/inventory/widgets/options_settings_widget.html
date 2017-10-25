@@ -9,6 +9,8 @@
             var value = $(this).val();
             var list_div = $('#{{ widget.subwidgets.1.name }}');
             var input_div = $('#{{ widget.subwidgets.2.name }}');
+            input_div.find('input').prop('required', 'false');
+            input_div.find('input').removeAttr('required');
             list_div.hide();
             input_div.hide();
             if (value === 'unused') {
