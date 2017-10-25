@@ -4,7 +4,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from list_input import ListInput
 
-from . import widgets
+from inventory.forms import widgets
 
 
 class Validators:

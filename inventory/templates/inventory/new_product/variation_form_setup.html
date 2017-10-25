@@ -48,7 +48,7 @@
 {% ifequal field.name|slice:"0:4" 'opt_' %}
 <tr>
     <td>{{ field.label }}</td>
-    {% for choice in field %}
+    {% for choice in field.subwidgets %}
         <td>{{ choice }}</td>
     {% endfor %}
     {% if field.errors %}

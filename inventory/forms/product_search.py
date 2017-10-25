@@ -2,14 +2,9 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
+from .widgets import HorizontalRadio
 
 from ccapi import CCAPI, ProductOptions
-
-
-class HorizontalRadioRenderer(forms.RadioSelect.renderer):
-
-    def render(self):
-        return mark_safe(u'\n'.join([u'%s\n' % w for w in self]))
 
 
 class OptionSelectField(forms.MultiValueField):
@@ -120,7 +115,7 @@ class ProductSearchForm(forms.Form):
         widget=forms.RadioSelect())
 
     end_of_line = forms.ChoiceField(
-        widget=forms.RadioSelect(renderer=HorizontalRadioRenderer),
+        widget=HorizontalRadio(),
         choices=END_OF_LINE_CHOICES,
         required=False,
         label='Hide End of Line',

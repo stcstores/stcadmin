@@ -4,9 +4,8 @@ from django.utils.safestring import mark_safe
 from list_input import ListWidget
 
 
-class HorizontalRadioRenderer(forms.RadioSelect.renderer):
-    def render(self):
-        return mark_safe(u'\n'.join([u'%s\n' % w for w in self]))
+class HorizontalRadio(forms.RadioSelect):
+    template_name = 'inventory/widgets/horizontal_radio.html'
 
 
 class OptionSettingsFieldWidget(forms.MultiWidget):
@@ -20,12 +19,11 @@ class OptionSettingsFieldWidget(forms.MultiWidget):
         ('variation', 'Variation')]
 
     def __init__(self, attrs):
-        _widgets = [
-            forms.RadioSelect(
-                choices=self.radio_choices, renderer=HorizontalRadioRenderer),
+        widgets = [
+            HorizontalRadio(choices=self.radio_choices),
             ListWidget(),
             forms.TextInput()]
-        super().__init__(_widgets, attrs)
+        super().__init__(widgets, attrs)
 
     def decompress(self, value):
         if value:
@@ -40,6 +38,19 @@ class OptionSettingsFieldWidget(forms.MultiWidget):
                 return [use, li, '']
         return [None, None, None]
 
+    """
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        context['ids'] = [widget.attrs['id'] for widget in self.widgets]
+        print(context['ids'])
+        return context
+
+    def render(self, name, value, attrs=None):
+        print('lisfdhijolfsdijofdsjiohfd')
+
+    def format_output(self, rendered_widgets):
+        print('iofdesijl')
+        return ''.join(rendered_widgets)
     def render(self, name, value, attrs=None):
         values = self.decompress(value)
         final_attrs = self.build_attrs(attrs)
@@ -56,3 +67,6 @@ class OptionSettingsFieldWidget(forms.MultiWidget):
             'inventory/widgets/options_settings_widget.html',
             {'widgets': widgets, 'name': name, 'id': id_})
         return mark_safe(html)
+
+
+"""
