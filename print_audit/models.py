@@ -14,7 +14,7 @@ class CloudCommerceUser(models.Model):
         User, null=True, blank=True, on_delete=models.CASCADE)
 
     def __init__(self, *args, **kwargs):
-        super(models.Model).__init__(*args, **kwargs)
+        super(CloudCommerceUser, self).__init__(*args, **kwargs)
         try:
             self.cc_user = USERS[self.user_id]
         except IndexError:
@@ -70,7 +70,7 @@ class CloudCommerceOrder(models.Model):
         self.date_created = self.localise_datetime(self.date_created)
         if self.date_completed:
             self.date_completed = self.localise_datetime(self.date_completed)
-        super().save(*args, **kwargs)
+        super(CloudCommerceOrder, self).save(*args, **kwargs)
 
     def localise_datetime(self, date_input):
         if is_naive(date_input):
