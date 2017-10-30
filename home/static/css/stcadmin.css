@@ -272,6 +272,7 @@ th {
 .messages li.error {
     background: red;
     font-weight: bold;
+    color: black;
 }
 
 #pack_count, #feedback {

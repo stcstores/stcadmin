@@ -31,3 +31,6 @@ class CloudCommerceCountryID(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+    def is_valid_destination(self):
+        return all((self.iso_code, self.zone, self.valid_spring_destination))

@@ -49,10 +49,13 @@ class FileManifestView(SpringUserMixin, RedirectView):
 class FileManifest:
 
     def __init__(self, request, manifest):
+        self.valid = True
         self.request = request
         rows = self.get_manifest_rows(manifest)
-        self.save_manifest_file(manifest, rows)
-        self.add_messages(manifest)
+        if self.valid:
+            self.save_manifest_file(manifest, rows)
+        if self.valid:
+            self.add_success_messages(manifest)
 
     def file_manifest(self, manifest):
         raise NotImplementedError
@@ -67,12 +70,19 @@ class FileManifest:
         weight_kg = weight_grams / 1000
         return weight_kg
 
+    def add_error(self, message):
+        self.valid = False
+        messages.add_message(self.request, messages.ERROR, message)
+
 
 class FileUntrackedManifest(FileManifest):
 
     def get_manifest_rows(self, manifest):
         zones = {}
         for order in manifest.springorder_set.all():
+            if not order.country.is_valid_destination():
+                self.add_error(self.invalid_country_message(order))
+                return None
             zone = order.country.zone
             if zone not in zones:
                 zones[zone] = []
@@ -81,6 +91,10 @@ class FileUntrackedManifest(FileManifest):
             self.get_row_for_zone(zones, zone, orders) for zone, orders in
             zones.items()]
         return rows
+
+    def invalid_country_message(self, order):
+        return 'Order {}: Country {} info invalid.'.format(
+            order, order.country)
 
     @staticmethod
     def save_manifest_file(manifest, rows):
@@ -98,6 +112,7 @@ class FileUntrackedManifest(FileManifest):
 
     def get_row_for_zone(self, zones, zone, orders):
         customer_number = settings.SpringManifestSettings.customer_number
+        customer_reference = 'STC_STORES_{}'.format(self.get_date_string())
         products = []
         weight = 0
         item_count = 0
@@ -108,8 +123,7 @@ class FileUntrackedManifest(FileManifest):
             item_count += order.package_count
         data = OrderedDict([
             ('CustomerNumber*', customer_number),
-            ('Customer Reference 1', 'STC_STORES_{}_{}'.format(
-                self.get_date_string(), zone.code)),
+            ('Customer Reference 1', customer_reference),
             ('Customer Reference 2', ''),
             ('PO Number', ''),
             ('Quote Reference', ''),
@@ -125,14 +139,14 @@ class FileUntrackedManifest(FileManifest):
             ('Weightbreak from', ''),
             ('Weightbreak to', ''),
             ('Nr items*', str(item_count)),
-            ('Weight (kg)*', str(weight)),
+            ('Weight (kg)*', str(round(weight, 2))),
         ])
         return data
 
     def get_date_string(self):
         return datetime.datetime.now().strftime('%Y-%m-%d')
 
-    def add_messages(self, manifest):
+    def add_success_messages(self, manifest):
         orders = manifest.springorder_set.all()
         package_count = sum(o.package_count for o in orders)
         order_count = len(orders)
