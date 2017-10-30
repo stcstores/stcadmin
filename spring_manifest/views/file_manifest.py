@@ -63,13 +63,6 @@ class FileManifest:
     def save_manifest_file(self, manifest, rows):
         raise NotImplementedError
 
-    def get_order_weight(self, order):
-        weight_grams = sum([
-            product.per_item_weight * product.quantity for product in
-            order.products])
-        weight_kg = weight_grams / 1000
-        return weight_kg
-
     def add_error(self, message):
         self.valid = False
         messages.add_message(self.request, messages.ERROR, message)
@@ -114,13 +107,12 @@ class FileUntrackedManifest(FileManifest):
         customer_number = settings.SpringManifestSettings.customer_number
         customer_reference = 'STC_STORES_{}'.format(self.get_date_string())
         products = []
-        weight = 0
         item_count = 0
+        weight = 0
         for order in orders:
             cc_order = order.get_order_data()
             products += cc_order.products
-            weight += self.get_order_weight(cc_order)
-            item_count += order.package_count
+            weight += round(order.predicted_order_weight / 1000, 2)
         data = OrderedDict([
             ('CustomerNumber*', customer_number),
             ('Customer Reference 1', customer_reference),
