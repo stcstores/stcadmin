@@ -90,18 +90,17 @@ class SpringOrder(models.Model):
         return self.order_id
 
     def save(self, *args, **kwargs):
-        if is_naive(self.date_recieved):
-            self.date_recieved = self.localise_datetime(self.date_recieved)
-        if is_naive(self.dispatch_date):
-            self.dispatch_date = self.localise_datetime(self.dispatch_date)
+        self.date_recieved = self.localise_datetime(self.date_recieved)
+        self.dispatch_date = self.localise_datetime(self.dispatch_date)
         if self.canceled:
             self.manifest = None
         super().save(*args, **kwargs)
 
     def localise_datetime(self, date_input):
-        if is_naive(date_input):
+        if date_input is not None and is_naive(date_input):
             tz = pytz.timezone('Europe/London')
-            return date_input.replace(tzinfo=tz)
+            date_input = date_input.replace(tzinfo=tz)
+        return date_input
 
     def add_to_manifest(self, manifest):
         self.manifest = manifest

@@ -73,9 +73,10 @@ class CloudCommerceOrder(models.Model):
         super(CloudCommerceOrder, self).save(*args, **kwargs)
 
     def localise_datetime(self, date_input):
-        if is_naive(date_input):
+        if date_input is not None and is_naive(date_input):
             tz = pytz.timezone('Europe/London')
-            return date_input.replace(tzinfo=tz)
+            date_input = date_input.replace(tzinfo=tz)
+        return date_input
 
 
 class Feedback(models.Model):
