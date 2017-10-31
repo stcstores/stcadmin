@@ -54,7 +54,7 @@ class FileUntrackedManifest(FileManifest):
         for order in orders:
             cc_order = order.get_order_data()
             products += cc_order.products
-            weight += round(cc_order.predicted_order_weight / 1000, 2)
+            weight += self.get_order_weight(cc_order)
         data = OrderedDict([
             ('CustomerNumber*', customer_number),
             ('Customer Reference 1', customer_reference),
@@ -79,6 +79,13 @@ class FileUntrackedManifest(FileManifest):
 
     def get_date_string(self):
         return datetime.datetime.now().strftime('%Y-%m-%d')
+
+    def get_order_weight(self, order):
+        weight_grams = sum([
+            product.per_item_weight * product.quantity for product in
+            order.products])
+        weight_kg = weight_grams / 1000
+        return weight_kg
 
     def add_success_messages(self, manifest):
         orders = manifest.springorder_set.all()
