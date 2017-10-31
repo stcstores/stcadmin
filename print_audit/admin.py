@@ -15,9 +15,11 @@ class CloudCommerceUserAdmin(admin.ModelAdmin):
 @admin.register(models.CloudCommerceOrder)
 class CloudCommerceOrderAdmin(admin.ModelAdmin):
     list_display = (
-        'order_id', 'user_id', 'date_created', 'date_completed', 'attempts',
+        'order_id', 'user', 'date_created', 'date_completed', 'attempts',
         'customer_id')
     date_hierarchy = 'date_created'
+    list_filter = ('user', 'date_created')
+    list_editable = ('user', )
 
 
 @admin.register(models.Feedback)
