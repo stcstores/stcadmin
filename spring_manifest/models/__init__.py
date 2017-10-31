@@ -7,8 +7,8 @@ from ccapi import CCAPI
 
 COURIER_RULES = {
     SpringOrder.PARCEL: (SpringManifest.TRACKED, None),
-    SpringOrder.TRACKED: (SpringManifest.TRACKED, None),
-    SpringOrder.PACKET: (SpringManifest.UNTRACKED, 11747),
+    SpringOrder.TRACKED: (SpringManifest.TRACKED, 11747),
+    SpringOrder.PACKET: (SpringManifest.UNTRACKED, None),
 }
 
 
