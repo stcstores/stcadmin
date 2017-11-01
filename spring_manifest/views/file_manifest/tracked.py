@@ -33,7 +33,8 @@ class FileTrackedManifest(FileManifest):
         writer.writerows(rows)
         manifest.file_manifest()
         manifest.manifest_file.save(
-            str(manifest) + '.csv', ContentFile(output.getvalue().encode('utf8')))
+            str(manifest) + '.csv',
+            ContentFile(output.getvalue().encode('utf8')))
         output.close()
 
     def add_success_messages(self, manifest):
@@ -69,7 +70,7 @@ class FileTrackedManifest(FileManifest):
                 ('Version #', '3.0'),
                 ('Shipper ID', shipper_id),
                 ('Package ID', order.order_id),
-                ('Weight', round(cc_order.predicted_order_weight / 1000, 3)),
+                ('Weight', round(self.get_order_weight(cc_order), 3)),
                 ('Ship From Attn', ''),
                 ('Ship From Name', ''),
                 ('Ship From Address 1', ''),
@@ -102,7 +103,7 @@ class FileTrackedManifest(FileManifest):
                 ('Line Item Description', product.product_name),
                 ('Line Item  Quantity Unit', 'PCE'),
                 ('Unit Price', product.price),
-                ('Item Weight', product.per_item_weight / 1000),
+                ('Item Weight', self.get_product_weight(product)),
                 ('Weight Unit', 'KG'),
                 ('Price', product.price * product.quantity),
                 ('HS Code', ''),
@@ -110,6 +111,11 @@ class FileTrackedManifest(FileManifest):
                 ('Currency Code', 'GBP')])
             rows.append(data)
         return rows
+
+    def get_product_weight(self, product):
+        weight_g = product.per_item_weight * product.quantity
+        weight_kg = weight_g / 1000
+        return round(weight_kg, 3)
 
     def get_phone_number(self, phone_number):
         if len(phone_number) < 5:

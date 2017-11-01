@@ -80,13 +80,6 @@ class FileUntrackedManifest(FileManifest):
     def get_date_string(self):
         return datetime.datetime.now().strftime('%Y-%m-%d')
 
-    def get_order_weight(self, order):
-        weight_grams = sum([
-            product.per_item_weight * product.quantity for product in
-            order.products])
-        weight_kg = weight_grams / 1000
-        return weight_kg
-
     def add_success_messages(self, manifest):
         orders = manifest.springorder_set.all()
         package_count = sum(o.package_count for o in orders)

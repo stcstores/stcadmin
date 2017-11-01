@@ -21,3 +21,10 @@ class FileManifest:
     def add_error(self, message):
         self.valid = False
         messages.add_message(self.request, messages.ERROR, message)
+
+    def get_order_weight(self, order):
+        weight_grams = sum([
+            product.per_item_weight * product.quantity for product in
+            order.products])
+        weight_kg = weight_grams / 1000
+        return weight_kg
