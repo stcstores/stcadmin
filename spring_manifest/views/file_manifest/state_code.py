@@ -21,6 +21,7 @@ class StateCode:
         'guam': 'GU',
         'hawaii': 'HI',
         'iowa': 'IA',
+        'indiana': 'IN',
         'idaho': 'ID',
         'illinois': 'IN',
         'kansas': 'KS',
@@ -88,7 +89,7 @@ class StateCode:
 
     def __new__(cls, state_name):
         if not state_name:
-            return 'default'
+            return ''
         if state_name.strip().lower() in cls.STATE_CODES:
             return cls.STATE_CODES[state_name.strip().lower()]
         if len(state_name) < 4:
