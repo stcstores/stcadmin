@@ -22,6 +22,9 @@ inventory_urlpatterns = [
         r'^images/(?P<range_id>[0-9]+)/',
         views.ImageFormView.as_view(), name='images'),
     url(
+        r'^price_calculator/(?P<range_id>[0-9]+)/',
+        views.RangePriceCalculatorView.as_view(), name='price_calculator'),
+    url(
         r'^product/(?P<product_id>[0-9]+)/$',
         views.ProductView.as_view(), name='product'),
     url(

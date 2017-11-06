@@ -4,6 +4,7 @@ from . descriptions import DescriptionsView  # noqa
 from . images import ImageFormView, DeleteSTCAdminImage  # noqa
 from . locations import LocationFormView  # noqa
 from . newsingleproductview import NewSingleProductView  # noqa
+from . pricecaluclatorview import RangePriceCalculatorView  # NOQA
 from . product import ProductView  # noqa
 from . productrange import ProductRangeView  # noqa
 from . productsearch import ProductSearchView  # noqa
