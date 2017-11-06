@@ -2,14 +2,9 @@ from . cloud_commerce_country_id import CloudCommerceCountryID  # NOQA
 from . destination_zone_model import DestinationZone  # NOQA
 from . spring_manifest_model import SpringManifest  # NOQA
 from . spring_order_model import SpringOrder  # NOQA
+from stcadmin.settings import SPRING_COURIER_RULES  # NOQA
 
 from ccapi import CCAPI
-
-COURIER_RULES = {
-    SpringOrder.PARCEL: (SpringManifest.TRACKED, None),
-    SpringOrder.TRACKED: (SpringManifest.TRACKED, 11747),
-    SpringOrder.PACKET: (SpringManifest.UNTRACKED, None),
-}
 
 
 def get_manifest(manifest_type):
@@ -29,7 +24,7 @@ def get_orders(courier_rule_id):
 
 
 def update_spring_orders():
-    for service, manifest in COURIER_RULES.items():
+    for service, manifest in SPRING_COURIER_RULES.items():
         manifest_type, rule_id = manifest
         if rule_id is None:
             continue
