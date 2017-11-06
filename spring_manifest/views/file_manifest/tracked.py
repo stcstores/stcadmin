@@ -9,6 +9,7 @@ from stcadmin import settings
 
 from .file_manifest import FileManifest
 from .state_code import StateCode
+from unidecode import unidecode
 
 
 class FileTrackedManifest(FileManifest):
@@ -19,22 +20,23 @@ class FileTrackedManifest(FileManifest):
             try:
                 rows += self.get_rows_for_order(order)
             except Exception as e:
-                self.add_error('Problem with order {}.'.format(order.order_id))
-                print(e)
-                raise e
+                self.add_error('Problem with order {}.\n{}'.format(
+                    order.order_id, e))
                 return
         return rows
 
     def save_manifest_file(self, manifest, rows):
         output = io.StringIO(newline='')
         writer = csv.DictWriter(
-            output, rows[0].keys(), delimiter=',', lineterminator='\n')
+            output, rows[0].keys(), delimiter=',', lineterminator='\r\n')
         writer.writeheader()
         writer.writerows(rows)
         manifest.file_manifest()
+        manifest_string = unidecode(
+            output.getvalue()).encode('utf-8', 'replace')
         manifest.manifest_file.save(
             str(manifest) + '.csv',
-            ContentFile(output.getvalue().encode('utf8')))
+            ContentFile(manifest_string))
         output.close()
 
     def add_success_messages(self, manifest):
@@ -63,6 +65,10 @@ class FileTrackedManifest(FileManifest):
         shipper_id = settings.SpringManifestSettings.shipper_id
         address = self.get_order_address(cc_order)
         country = order.country
+        if not country.is_valid_destination():
+            self.add_error(
+                'Invalid destination country {} for order {}.'.format(
+                    country.name, order.order_id))
         price = self.get_order_value(cc_order)
         rows = []
         for product in cc_order.products:
@@ -85,8 +91,9 @@ class FileTrackedManifest(FileManifest):
                 ('Ship To Address 2', address.clean_address[1]),
                 ('Ship To Address 3', address.clean_address[2]),
                 ('Ship To City', address.town_city),
-                ('Ship To State', StateCode(address.county_region)),
-                ('Ship To Postal Code', address.post_code),
+                ('Ship To State', StateCode(
+                    address.county_region) or order.country.iso_code),
+                ('Ship To Postal Code', address.post_code or ' '),
                 ('Ship To Country Code', country.iso_code),
                 ('Recipient Phone Nbr', self.get_phone_number(address.tel_no)),
                 ('Recipient Email', ''),
@@ -150,9 +157,6 @@ class FileTrackedManifest(FileManifest):
                 a for a in clean_address if len(a) > 40):
             self.add_error(
                 'Address too long for order {}'.format(order.order_id))
-            for line in clean_address:
-                print(line)
-                print(len(line))
             return ['', '', '']
         while len(clean_address) < 3:
             clean_address.append('')

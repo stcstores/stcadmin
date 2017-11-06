@@ -88,10 +88,6 @@ class StateCode:
     }
 
     def __new__(cls, state_name):
-        if not state_name:
-            return ''
-        if state_name.strip().lower() in cls.STATE_CODES:
+        if state_name and state_name.strip().lower() in cls.STATE_CODES:
             return cls.STATE_CODES[state_name.strip().lower()]
-        if len(state_name) < 4:
-            return state_name.upper()
-        return state_name
+        return None

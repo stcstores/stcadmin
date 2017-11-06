@@ -22,6 +22,7 @@ class CloudCommerceCountryIDAdmin(admin.ModelAdmin):
         'cc_id', 'name', 'iso_code', 'zone', 'valid_spring_destination')
     list_display_links = ('cc_id', )
     list_editable = ('name', 'iso_code', 'zone', 'valid_spring_destination')
+    search_fields = ('name', )
 
     def __repr__(self):
         return str(self.name)
@@ -50,6 +51,8 @@ class SpringOrderAdmin(admin.ModelAdmin):
     list_display_links = ('__str__', )
     list_editable = ('product_count', 'package_count', 'canceled')
     list_filter = ('date_recieved', 'dispatch_date', 'service', 'manifest')
+    search_fields = (
+        'order_id', 'customer_name', 'date_recieved', 'dispatch_date')
 
     def __repr__(self):
         return str(self.order_id)
