@@ -17,6 +17,7 @@
     <table>
         <tr>
             <th></th>
+            <th>SKU</th>
             {% for field in formset.forms.0.visible_fields %}
                 <th>{{ field.label }}</th>
             {% endfor %}
@@ -24,6 +25,7 @@
         {% for form in formset %}
         <tr>
             <th>{{ form.product.full_name }}</th>
+            <th>{{ form.product.sku}}</th>
         {% for field in form.visible_fields %}
             <td class="test">
                 {{ field }}
