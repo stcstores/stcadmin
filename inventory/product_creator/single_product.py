@@ -31,6 +31,7 @@ class SingleProduct(NewProduct):
         self.amazon_bullets = data['amazon_bullet_points']
         self.amazon_search_terms = data['amazon_search_terms']
         self.package_type = data['package_type']
+        self.gender = data['gender']
         if self.package_type in ('Heavy and Large', 'Courier'):
             self.international_shipping = 'Express'
         else:
@@ -72,6 +73,8 @@ class SingleProduct(NewProduct):
             'Purchase Price': self.purchase_price,
             'Package Type': self.package_type,
             'International Shipping': self.international_shipping}
+        if self.gender:
+            required_options['Gender'] = self.gender
         optional_options = {
             key.replace('opt_', ''): value for key, value in
             self.data.items() if key.startswith('opt_') and

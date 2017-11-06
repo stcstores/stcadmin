@@ -247,6 +247,32 @@ class Manufacturer(fieldtypes.TextField):
         'listings.')
 
 
+class Gender(fieldtypes.ChoiceField):
+    label = 'Gender'
+    name = 'gender'
+    placeholder = 'Gender'
+    variable = True
+    help_text = 'Gender for which the product is intended.'
+    MENS = 'mens'
+    WOMENS = 'womens'
+    BOYS = 'boys'
+    GIRLS = 'girls'
+    BABY_BOYS = 'baby-boys'
+    BABY_GIRLS = 'baby-girls'
+    UNISEX_BABY = 'unisex-baby'
+
+    def get_choices(self):
+        return (
+            (None, ''),
+            (self.MENS, 'Mens'),
+            (self.WOMENS, 'Womens'),
+            (self.BOYS, 'Boys'),
+            (self.GIRLS, 'Girls'),
+            (self.BABY_BOYS, 'Baby Boys'),
+            (self.BABY_GIRLS, 'Baby Girls'),
+            (self.UNISEX_BABY, 'Unisex Baby'))
+
+
 class MetaFormFields(type):
 
     def __iter__(self):
@@ -320,6 +346,7 @@ class FormFields(metaclass=MetaFormFields):
         Brand,
         Manufacturer,
         Description,
+        Gender,
         AmazonBulletPoints,
         AmazonSearchTerms,
         ]

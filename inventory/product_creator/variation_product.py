@@ -106,6 +106,9 @@ class VariationProduct(NewProduct):
             'Purchase Price': self.get_variable_value(
                 'purchase_price', variation_data),
             'International Shipping': international_shipping}
+        gender = self.get_variable_value('gender', variation_data)
+        if gender:
+            required_options['Gender'] = gender
         optional_options = {}
         for key, option_settings in self.setup_data.items():
             if key.startswith('opt_'):
