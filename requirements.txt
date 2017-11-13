@@ -16,3 +16,4 @@ jinja2==2.9.6
 mpld3==0.3
 pycountry==17.5.14
 XlsxWriter==1.0.0
+Unidecode==0.4.21
