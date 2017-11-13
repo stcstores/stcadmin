@@ -23,6 +23,7 @@ class FileManifestView(SpringUserMixin, RedirectView):
         return manifest
 
     def process_manifest(self):
+        models.update_spring_orders()
         manifest = self.get_manifest()
         if manifest is not None:
             if manifest.manifest_type == manifest.UNTRACKED:
