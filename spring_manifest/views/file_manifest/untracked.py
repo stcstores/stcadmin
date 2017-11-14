@@ -31,6 +31,9 @@ class FileUntrackedManifest(FileManifest):
         return 'Order {}: Country {} info invalid.'.format(
             order, order.country)
 
+    def send_file(self, manifest):
+        pass
+
     @staticmethod
     def save_manifest_file(manifest, rows):
         output = io.BytesIO()

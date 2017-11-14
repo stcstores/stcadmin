@@ -1,4 +1,6 @@
+import os
 import csv
+import ftplib
 import io
 from collections import OrderedDict
 
@@ -6,13 +8,17 @@ from ccapi import CCAPI
 from django.contrib import messages
 from django.core.files.base import ContentFile
 from stcadmin import settings
+from unidecode import unidecode
 
 from .file_manifest import FileManifest
 from .state_code import StateCode
-from unidecode import unidecode
 
 
 class FileTrackedManifest(FileManifest):
+
+    def send_file(self, manifest):
+        if self.valid:
+            self.ftp_manifest(manifest)
 
     def get_manifest_rows(self, manifest):
         rows = []
@@ -36,7 +42,7 @@ class FileTrackedManifest(FileManifest):
             output.getvalue()).encode('utf-8', 'replace')
         manifest.manifest_file.save(
             str(manifest) + '.csv',
-            ContentFile(manifest_string))
+            ContentFile(manifest_string), save=True)
         output.close()
 
     def add_success_messages(self, manifest):
@@ -59,6 +65,10 @@ class FileTrackedManifest(FileManifest):
                 self.request, messages.SUCCESS,
                 '{} packages for {} orders with service code {}'.format(
                     package_count, order_count, service))
+        messages.add_message(
+            self.request, messages.SUCCESS,
+            'Manifest file uploaded to {}.'.format(
+                settings.SpringManifestSettings.ftp_host))
 
     def get_rows_for_order(self, order):
         cc_order = order.get_order_data()
@@ -173,3 +183,42 @@ class FileTrackedManifest(FileManifest):
         for product in order.products:
             price += float(product.price) * product.quantity
         return price
+
+    def get_ftp(self):
+        ftp = ftplib.FTP()
+        try:
+            ftp.connect(
+                settings.SpringManifestSettings.ftp_host,
+                settings.SpringManifestSettings.ftp_port)
+        except Exception:
+            self.add_error('Error connecting to FTP Server')
+            return None
+        try:
+            ftp.login(
+                settings.SpringManifestSettings.ftp_user,
+                settings.SpringManifestSettings.ftp_pw)
+        except Exception:
+            self.add_error('Error loggin into FTP Server')
+            return None
+        ftp.set_pasv(False)
+        return ftp
+
+    def ftp_manifest(self, manifest):
+        ftp = self.get_ftp()
+        if not self.valid:
+            return
+        try:
+            ftp.cwd(settings.SpringManifestSettings.ftp_dir)
+        except Exception as e:
+            self.add_error('Error getting FTP Directory')
+            return
+        try:
+            manifest.manifest_file.open()
+            ftp.storbinary(
+                'STOR {}'.format(
+                    os.path.basename(manifest.manifest_file.name)),
+                manifest.manifest_file)
+            manifest.manifest_file.close()
+        except Exception as e:
+            raise e
+            self.add_error('Error saving file to FTP Server')

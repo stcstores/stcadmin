@@ -6,11 +6,18 @@ class FileManifest:
     def __init__(self, request, manifest):
         self.valid = True
         self.request = request
-        rows = self.get_manifest_rows(manifest)
+        self.manifest = manifest
+        rows = self.get_manifest_rows(self.manifest)
         if self.valid:
-            self.save_manifest_file(manifest, rows)
+            self.save_manifest_file(self.manifest, rows)
         if self.valid:
-            self.add_success_messages(manifest)
+            self.send_file(manifest)
+        if self.valid:
+            self.add_success_messages(self.manifest)
+        else:
+            self.manifest.time_filed = None
+            self.manifest.manifest_file = None
+            self.manifest.save()
 
     def file_manifest(self, manifest):
         raise NotImplementedError
@@ -28,3 +35,6 @@ class FileManifest:
             order.products])
         weight_kg = weight_grams / 1000
         return weight_kg
+
+    def send_file(self, manifest):
+        raise NotImplementedError
