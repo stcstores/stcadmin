@@ -5,6 +5,7 @@ from ccapi import CCAPI
 from .new_product import NewProduct
 from .new_range import NewRange
 from .new_variation import NewVariation
+from inventory.models import get_barcode
 
 
 class SingleProduct(NewProduct):
@@ -12,7 +13,7 @@ class SingleProduct(NewProduct):
     def load_from_form(self, data):
         self.data = data
         self.name = data['title']
-        self.barcode = data['barcode']
+        self.barcode = data['barcode'] or get_barcode()
         self.description = data['description']
         self.vat_rate = int(data['vat_rate'])
         self.weight = data['weight']

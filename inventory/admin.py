@@ -13,3 +13,14 @@ class STCAdminImageAdmin(admin.ModelAdmin):
 
     def __repr__(self):
         return str(self.name)
+
+
+@admin.register(models.Barcode)
+class BarcodeAdmin(admin.ModelAdmin):
+    fields = ('barcode', 'used')
+    list_display = ('barcode', 'used')
+    search_fields = ('barcode', )
+    list_filter = ('used', )
+
+    def __repr__(self):
+        return str(self.barcode)

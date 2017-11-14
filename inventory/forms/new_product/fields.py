@@ -39,11 +39,12 @@ class Description(fieldtypes.TextareaField):
 class Barcode(fieldtypes.TextField):
     label = 'Barcode'
     name = 'barcode'
-    required_message = "Please supply a barcode."
     placeholder = 'Barcode'
     validators = [Validators.numeric]
     must_vary = True
-    help_text = "A unique barcode for the product."
+    help_text = (
+        "A unique barcode for the product.<br>"
+        "If left blank one will be provided from stock.")
 
 
 class Department(fieldtypes.ChoiceField):

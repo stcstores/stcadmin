@@ -5,6 +5,7 @@ from ccapi import CCAPI
 from .new_product import NewProduct
 from .new_range import NewRange
 from .new_variation import NewVariation
+from inventory.models import get_barcode
 
 
 class VariationProduct(NewProduct):
@@ -38,7 +39,7 @@ class VariationProduct(NewProduct):
         return self.setup_data[key]
 
     def get_variation(self, data, options):
-        barcode = data['barcode']
+        barcode = data['barcode'] or get_barcode()
         vat_rate = int(self.get_variable_value('vat_rate', data))
         weight = self.get_variable_value('weight', data)
         height = self.get_variable_value('height', data)

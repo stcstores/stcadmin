@@ -22,3 +22,19 @@ class STCAdminImage(models.Model):
         if not os.listdir(range_dir):
             os.rmdir(range_dir)
         super(STCAdminImage, self).delete(*args, **kwargs)
+
+
+class Barcode(models.Model):
+    barcode = models.CharField(max_length=13, unique=True)
+    used = models.BooleanField(default=False)
+
+    def mark_used(self):
+        self.used = True
+        self.save()
+
+
+def get_barcode():
+    barcode = Barcode.objects.filter(used=False).all()[0]
+    barcode.used = True
+    barcode.save()
+    return barcode.barcode
