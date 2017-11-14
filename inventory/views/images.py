@@ -4,7 +4,7 @@ from django.views.generic.edit import FormView
 from inventory.forms import ImagesForm
 from inventory.models import STCAdminImage
 from .views import InventoryUserMixin
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView
 from django.shortcuts import get_object_or_404
 
