@@ -57,7 +57,7 @@ class OptionSelectWidget(forms.widgets.MultiWidget):
             return value
         return [None, None]
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         values = self.decompress(value)
         final_attrs = self.build_attrs(attrs)
         final_attrs['required'] = False
