@@ -58,6 +58,7 @@ class FileUntrackedManifest(FileManifest):
             cc_order = order.get_order_data()
             products += cc_order.products
             weight += self.get_order_weight(cc_order)
+            item_count += order.package_count
         data = OrderedDict([
             ('CustomerNumber*', customer_number),
             ('Customer Reference 1', customer_reference),
