@@ -12,3 +12,7 @@ class NewProductView(InventoryUserMixin, TemplateView):
 
 class SKUGeneratorView(InventoryUserMixin, TemplateView):
     template_name = 'inventory/sku_generator.html'
+
+
+class PriceCalculator(InventoryUserMixin, TemplateView):
+    template_name = 'inventory/price_calculator.html'

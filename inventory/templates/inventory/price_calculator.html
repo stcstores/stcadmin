@@ -1,0 +1,120 @@
+{% extends "inventory/base.html" %}
+{% load staticfiles %}
+{% load inventory_extras %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/price_calculator.js' %}"></script>
+{% endblock %}
+
+{% block page_title %}Product Price Calculator{% endblock %}
+
+{% block content %}{{ block.super }}
+    <style>
+        .price_negative {
+            color: red;
+        }
+        .price_zero, .price_positive {
+            color: black;
+        }
+    </style>
+
+    <table class="price_calculator">
+        <tr>
+            <th>Purchase Price</th>
+            <th>Price</th>
+            <th>VAT</th>
+            <th>Postage Method</th>
+            <th>Ex VAT Price</th>
+            <th>Postage</th>
+            <th>Channel Fee</th>
+            <th>Profit</th>
+            <th>Profit Percentage</th>
+        </tr>
+        <tr class="price_calculator_product">
+            <td><input id="purchase_price" type="number" step="0.01" value="5"></td>
+            <td><input id="sale_price" type="number" step="0.01" value="15.50"></td>
+            <td>
+                <select name="vat_rate" id="vat_rate">
+                    <option value="20" selected>20%</option>
+                    <option value="0">VAT Free</option>
+                </select>
+            </td>
+            <td>
+                <select name="postage_method" id="postage_method">
+                    <option value="2.15" selected>Packet</option>
+                    <option value="0.63">Large Letter</option>
+                    <option value="3.12">Heavy and Large</option>
+                    <option value="7.56">Courier</option>
+                </select>
+            </td>
+            <td id="ex_vat_price"></td>
+            <td id="postage"></td>
+            <td id="channel_fee"></td>
+            <td id="profit"></td>
+            <td id="profit_percentage"></td>
+        </tr>
+    </table>
+
+{% endblock %}
+
+{% block script %}
+<script>
+
+    $(document).ready(function() {
+        var ex_vat_price = 5;
+        var vat_rate = $('#vat_rate').val();
+        var purchase_price = $('#purchase_price').val();
+        var postage_price = $('#postage_method').val();
+        var data = {
+            'sale_price': ex_vat_price,
+            'postage_price': postage_price,
+            'purchase_price': purchase_price,
+            'vat_rate': vat_rate,
+            'channel_fee_percentage': 15,
+        }
+        calculator = new PriceCalculator(data)
+        calculator.change = function() {
+            $('#vat').html(format_price(calculator.get_vat()));
+            $('#ex_vat_price').html(format_price(calculator.get_ex_vat()));
+            $('#postage').html(format_price(calculator.get_postage_price()));
+            $('#purchase_price').html(format_price(calculator.get_purchase_price()));
+            $('#channel_fee').html(format_price(calculator.get_channel_fee()));
+            var profit = calculator.get_profit();
+            $('#profit').html(format_price(profit));
+            if (profit > 0) {
+                $('#profit').css('color', 'black');
+            } else {
+                $('#profit').css('color', 'red');
+            }
+            var profit_percentage = parseInt(calculator.get_profit_percentage());
+            $('#profit_percentage').html(profit_percentage + '%');
+            if (profit_percentage > 20) {
+                $('#profit_percentage').css('color', 'green');
+            } else if (profit_percentage < 10) {
+                $('#profit_percentage').css('color', 'red');
+            } else {
+                $('#profit_percentage').css('color', 'orange');
+            }
+        };
+
+        $('#sale_price').change(function() {
+            calculator.set_sale_price($(this).val());
+        });
+
+        $('#vat_rate').change(function() {
+            calculator.set_vat_rate($(this).val());
+        });
+
+        $('#purchase_price').change(function() {
+            calculator.set_purchase_price($(this).val());
+        });
+
+        $('#postage_method').change(function() {
+            calculator.set_postage_price($(this).val());
+        });
+
+        $('#sale_price').change();
+    });
+</script>
+{% endblock %}
