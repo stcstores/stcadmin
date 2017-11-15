@@ -1,2 +1,0 @@
-class AddressError(Exception):
-    pass
