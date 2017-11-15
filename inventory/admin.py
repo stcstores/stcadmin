@@ -24,3 +24,33 @@ class BarcodeAdmin(admin.ModelAdmin):
 
     def __repr__(self):
         return str(self.barcode)
+
+
+@admin.register(models.DestinationCountry)
+class DestinationCountryAdmin(admin.ModelAdmin):
+    fields = ('name', )
+    list_display = ('name', )
+    search_fields = ('name', )
+
+
+@admin.register(models.PackageType)
+class PackageTypeAdmin(admin.ModelAdmin):
+    fields = ('name', )
+    list_display = ('name', )
+    search_fields = ('name', )
+
+
+@admin.register(models.ShippingPrice)
+class ShippingPriceAdmin(admin.ModelAdmin):
+    fields = (
+        'country', 'package_type', 'min_wieght', 'max_wieght',
+        'item_price', 'kilo_price')
+    list_display = (
+        '__str__', 'country', 'min_wieght', 'max_wieght',
+        'item_price', 'kilo_price')
+    list_display_links = ('__str__', )
+    list_editable = (
+        'country', 'min_wieght', 'max_wieght',
+        'item_price', 'kilo_price')
+    list_filter = ('package_type', )
+    search_fields = ('country', )
