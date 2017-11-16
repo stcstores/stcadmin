@@ -106,12 +106,14 @@ function format_price(price) {
     return span;
 }
 
-function get_postage_price(calculator, country, package_type, weight){
+function get_postage_price(calculator, country, package_type, weight, price){
     var data = {
         'country': country,
         'package_type': package_type,
         'weight': weight,
+        'price': price,
     }
+    console.log(data);
     $.post(
         get_postage_price_url,
         data,

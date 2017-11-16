@@ -83,11 +83,11 @@
     get_postage_price_url = "{% url 'inventory:get_shipping_price' %}";
 
     $(document).ready(function() {
-        
+
         var ex_vat_price = 5;
         var vat_rate = $('#vat_rate').val();
         var purchase_price = $('#purchase_price').val();
-        var postage_price = $('#shiping_method').val();
+        var postage_price = 5;
         var data = {
             'sale_price': ex_vat_price,
             'postage_price': postage_price,
@@ -120,12 +120,10 @@
             }
         };
 
-        $('#sale_price').change(function() {
-            calculator.set_sale_price($(this).val());
-        });
+        calculator.set_sale_price($(this).val());
 
         $('#vat_rate').change(function() {
-            calculator.set_vat_rate($(this).val());
+            calculator.set_vat_rate($('#sale_price').val());
         });
 
         $('#purchase_price').change(function() {
@@ -136,19 +134,22 @@
             calculator.set_postage_price($(this).val());
         });
 
-        $('#sale_price').change();
-
         function update_postage_price(calculator) {
             var country = $('#country').val();
             var weight = $('#weight').val();
             var package_type = $('#shipping_method').val();
-            get_postage_price(calculator, country, package_type, weight);
+            var price = calculator.sale_price;
+            get_postage_price(calculator, country, package_type, weight, price);
         };
 
         $('#country').change(function() {update_postage_price(calculator)});
         $('#weight').change(function() {update_postage_price(calculator)});
         $('#shipping_method').change(function() {update_postage_price(calculator)});
-        $('#country').change();
+        $('#sale_price').change(function() {
+            calculator.set_sale_price($(this).val());
+            update_postage_price(calculator);
+        });
+        $('#sale_price').change();
     });
 </script>
 {% endblock %}

@@ -91,12 +91,12 @@ class GetShippingPriceView(InventoryUserMixin, View):
             country_name = request.POST['country']
             package_type_name = request.POST['package_type']
             weight = int(request.POST['weight'])
-            price_obj = models.ShippingPrice.objects.get_price(
-                country_name, package_type_name, weight)
-            price = price_obj.calculate(weight)
+            price = int(request.POST['price'])
+            postage_price = models.ShippingPrice.objects.get_price(
+                country_name, package_type_name, weight, price)
             return HttpResponse(json.dumps({
-                'price': price,
-                'price_name': price_obj.name,
+                'price': postage_price.calculate(weight),
+                'price_name': postage_price.name,
             }))
         except Exception as e:
             raise e
