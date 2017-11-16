@@ -19,6 +19,10 @@
         }
     </style>
 
+    <select name="country" id="select_country">
+
+    </select>
+
     <table class="price_calculator">
         <tr>
             <th>Product Name</th>
@@ -61,7 +65,49 @@
         'Courier': 7.56,
     }
 
+    {% shipping_price_data %}
+
+    for (var i=0; i<countries.length; i++) {
+        $('#select_country').append($('<option>', {
+            value: countries[i],
+            text: countries[i]
+        }));
+    }
+
+    function get_postage_price(country, weight, package_type) {
+        var country_prices = shipping_prices[country];
+        var shipping_price;
+        if (country_prices.length === 1) {
+            shipping_price = country_prices[0];
+        } else {
+            for (var i=0; i<country_prices.length;i++) {
+                var package_type_prices = []
+                if ($.inArray(package_type, country_prices[i]['package_type']) !== -1) {
+                    package_type_prices.push(shipping_price = country_prices[i]);
+                }
+            }
+            if (package_type_prices.length === 1) {
+                shipping_price = country_prices[0];
+            } else {
+                for (var i=0; i<package_type_prices.length;i++) {
+                    if ()
+                }
+            }
+        }
+        return calculate_price(shipping_price, weight);
+    }
+
+    function calculate_price(shipping_price, weight) {
+        var price = shipping_price['item_price'];
+        if (shipping_price['kilo_price'] != null) {
+            var pence_per_gram = shipping_price['kilo_price'] / 1000;
+            price += pence_per_gram * weight;
+        }
+        return parseFloat(price / 100).toFixed(2);
+    }
+
     $(document).ready(function() {
+        var country = $('#select_country').val();
         var calcs = {};
         {% for product in product_range.products %}
         var ex_vat_price = {{ product.base_price }};
@@ -72,7 +118,9 @@
             {% endfor %}
         }
         var purchase_price = options['Purchase Price'];
-        var postage_price = postage_prices[options['Package Type']];
+        var package_type = options['Package Type'];
+        var weight = {{ product.weight }};
+        var postage_price = get_postage_price(country, weight, package_type);
         var data = {
             'sale_price': ex_vat_price,
             'postage_price': postage_price,
@@ -112,6 +160,15 @@
         $('#{{ product.id }}_sale_price').val(initial_price);
         $('#{{ product.id }}_sale_price').change();
         {% endfor %}
+        $('#select_country').change(function() {
+            {% for product in product_range.products %}
+            var country = $(this).val();
+            var package_type = options['Package Type'];
+            var weight = {{ product.weight }};
+            var postage_price = get_postage_price(country, weight, package_type);
+            calcs['{{ product.id}}'].set_postage_price(postage_price);
+            {% endfor %}
+        });
     });
 </script>
 {% endblock %}
