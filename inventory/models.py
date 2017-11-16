@@ -82,6 +82,7 @@ class ShippingPriceManager(models.Manager):
 
 
 class ShippingPrice(models.Model):
+    name = models.CharField(max_length=50, unique=True)
     country = models.ForeignKey(
         DestinationCountry, on_delete=models.CASCADE)
     package_type = models.ManyToManyField(PackageType)
@@ -93,16 +94,7 @@ class ShippingPrice(models.Model):
     objects = ShippingPriceManager()
 
     def __str__(self):
-        package_types = '-'.join([str(x) for x in self.package_type.all()])
-        weight = ''
-        if self.min_weight is not None:
-            weight += '> {}'.format(self.min_weight)
-        if self.max_weight is not None:
-            weight += '< {}'.format(self.max_weight)
-        string = '{} {}'.format(self.country, package_types)
-        if weight:
-            string = '{} {}'.format(string, weight)
-        return string
+        return self.name
 
     def calculate(self, weight):
         return self.item_price + self.calculate_kilos(weight)
@@ -111,3 +103,6 @@ class ShippingPrice(models.Model):
         if self.kilo_price is None:
             return 0
         return int((self.kilo_price / 1000) * weight)
+
+    def package_type_string(self):
+        return ', '.join([x.name for x in self.package_type.all()])

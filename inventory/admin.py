@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from inventory import models
 
 
@@ -43,14 +42,14 @@ class PackageTypeAdmin(admin.ModelAdmin):
 @admin.register(models.ShippingPrice)
 class ShippingPriceAdmin(admin.ModelAdmin):
     fields = (
-        'country', 'package_type', 'min_weight', 'max_weight',
+        'name' 'country', 'package_type', 'min_weight', 'max_weight',
         'item_price', 'kilo_price')
     list_display = (
-        '__str__', 'country', 'min_weight', 'max_weight',
-        'item_price', 'kilo_price')
+        '__str__', 'name', 'package_type_string', 'country', 'min_weight',
+        'max_weight', 'item_price', 'kilo_price')
     list_display_links = ('__str__', )
     list_editable = (
-        'country', 'min_weight', 'max_weight',
+        'name', 'country', 'min_weight', 'max_weight',
         'item_price', 'kilo_price')
     list_filter = ('package_type', )
     search_fields = ('country', )
