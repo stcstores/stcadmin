@@ -105,3 +105,20 @@ function format_price(price) {
     span.html(price_string);
     return span;
 }
+
+function get_postage_price(calculator, country, package_type, weight){
+    var data = {
+        'country': country,
+        'package_type': package_type,
+        'weight': weight,
+    }
+    $.post(
+        get_postage_price_url,
+        data,
+        function(response) {
+            data = $.parseJSON(response);
+            console.log(data['price_name']);
+            calculator.set_postage_price(parseInt(data['price']) / 100);
+        }
+    );
+}

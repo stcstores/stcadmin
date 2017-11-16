@@ -1,5 +1,6 @@
 from ccapi import CCAPI
 from django.views.generic.base import TemplateView
+from inventory import models
 
 from .views import InventoryUserMixin
 
@@ -14,4 +15,5 @@ class RangePriceCalculatorView(InventoryUserMixin, TemplateView):
         product_range.products = [
             CCAPI.get_product(p.id) for p in product_range.products]
         context_data['product_range'] = product_range
+        context_data['countries'] = models.DestinationCountry.objects.all()
         return context_data

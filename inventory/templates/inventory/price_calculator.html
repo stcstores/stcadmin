@@ -80,22 +80,10 @@
 {% block script %}
 <script>
 
+    get_postage_price_url = "{% url 'inventory:get_shipping_price' %}";
+
     $(document).ready(function() {
-        function get_postage_price(calculator, country, package_type, weight){
-            var data = {
-                'country': country,
-                'package_type': package_type,
-                'weight': weight,
-            }
-            console.log(data);
-            $.post(
-                "{% url 'inventory:get_shipping_price' %}",
-                data,
-                function(response) {
-                    calculator.set_postage_price(parseInt(response) / 100);
-                }
-            );
-        }
+        
         var ex_vat_price = 5;
         var vat_rate = $('#vat_rate').val();
         var purchase_price = $('#purchase_price').val();
