@@ -51,5 +51,5 @@ class ShippingPriceAdmin(admin.ModelAdmin):
     list_editable = (
         'name', 'country', 'min_weight', 'max_weight',
         'item_price', 'kilo_price')
-    list_filter = ('package_type', )
-    search_fields = ('country', )
+    list_filter = ('package_type', 'country')
+    search_fields = ('name', )
