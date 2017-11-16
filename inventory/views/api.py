@@ -2,11 +2,12 @@ import json
 
 from ccapi import CCAPI
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
+from inventory import models
 
 from .views import InventoryUserMixin
-from django.views import View
 
 
 class GetNewSKUView(InventoryUserMixin, View):
@@ -80,3 +81,19 @@ class DeleteImage(InventoryUserMixin, View):
         except Exception:
             return HttpResponse(status=500)
         return HttpResponse('ok')
+
+
+class GetShippingPriceView(InventoryUserMixin, View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request):
+        try:
+            country_name = request.POST['country']
+            package_type_name = request.POST['package_type']
+            weight = int(request.POST['weight'])
+            price = models.ShippingPrice.objects.get_calculated_price(
+                country_name, package_type_name, weight)
+            return HttpResponse(price)
+        except Exception as e:
+            raise e
+            return HttpResponse(status=500)

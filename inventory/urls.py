@@ -74,6 +74,9 @@ api_urlpatterns = [
     url(
         r'^delete_image$',
         views.DeleteImage.as_view(), name='delete_image'),
+    url(
+        r'^get_shipping_price$',
+        views.GetShippingPriceView.as_view(), name='get_shipping_price'),
 ]
 
 urlpatterns = inventory_urlpatterns + new_product_urlpatterns + api_urlpatterns

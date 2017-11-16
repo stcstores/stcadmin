@@ -17,21 +17,37 @@
         .price_zero, .price_positive {
             color: black;
         }
+        #profit, #profit_percentage {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
     </style>
 
     <table class="price_calculator">
         <tr>
+            <th>Country</th>
+            <th>Shipping Method</th>
+            <th>Weight</th>
             <th>Purchase Price</th>
             <th>Price</th>
             <th>VAT</th>
-            <th>Postage Method</th>
-            <th>Ex VAT Price</th>
-            <th>Postage</th>
-            <th>Channel Fee</th>
-            <th>Profit</th>
-            <th>Profit Percentage</th>
         </tr>
         <tr class="price_calculator_product">
+            <td>
+                <select name="country" id="country">
+                    {% for country in countries %}
+                        <option value="{{ country }}">{{ country }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select name="shipping_method" id="shipping_method">
+                    {% for package_type in package_types %}
+                        <option value="{{ package_type }}">{{ package_type }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td><input id="weight" type="number" step="1" value="50"></td>
             <td><input id="purchase_price" type="number" step="0.01" value="5"></td>
             <td><input id="sale_price" type="number" step="0.01" value="15.50"></td>
             <td>
@@ -40,14 +56,17 @@
                     <option value="0">VAT Free</option>
                 </select>
             </td>
-            <td>
-                <select name="postage_method" id="postage_method">
-                    <option value="2.15" selected>Packet</option>
-                    <option value="0.63">Large Letter</option>
-                    <option value="3.12">Heavy and Large</option>
-                    <option value="7.56">Courier</option>
-                </select>
-            </td>
+        </tr>
+    </table>
+    <table class="price_calculator">
+        <tr>
+            <th>Ex VAT Price</th>
+            <th>Postage</th>
+            <th>Channel Fee</th>
+            <th>Profit</th>
+            <th>Profit Percentage</th>
+        </tr>
+        <tr>
             <td id="ex_vat_price"></td>
             <td id="postage"></td>
             <td id="channel_fee"></td>
@@ -62,10 +81,25 @@
 <script>
 
     $(document).ready(function() {
+        function get_postage_price(calculator, country, package_type, weight){
+            var data = {
+                'country': country,
+                'package_type': package_type,
+                'weight': weight,
+            }
+            console.log(data);
+            $.post(
+                "{% url 'inventory:get_shipping_price' %}",
+                data,
+                function(response) {
+                    calculator.set_postage_price(parseInt(response) / 100);
+                }
+            );
+        }
         var ex_vat_price = 5;
         var vat_rate = $('#vat_rate').val();
         var purchase_price = $('#purchase_price').val();
-        var postage_price = $('#postage_method').val();
+        var postage_price = $('#shiping_method').val();
         var data = {
             'sale_price': ex_vat_price,
             'postage_price': postage_price,
@@ -115,6 +149,18 @@
         });
 
         $('#sale_price').change();
+
+        function update_postage_price(calculator) {
+            var country = $('#country').val();
+            var weight = $('#weight').val();
+            var package_type = $('#shipping_method').val();
+            get_postage_price(calculator, country, package_type, weight);
+        };
+
+        $('#country').change(function() {update_postage_price(calculator)});
+        $('#weight').change(function() {update_postage_price(calculator)});
+        $('#shipping_method').change(function() {update_postage_price(calculator)});
+        $('#country').change();
     });
 </script>
 {% endblock %}

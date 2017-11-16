@@ -46,8 +46,8 @@ def shipping_price_data():
             shipping_prices[price.country.name] = []
         shipping_prices[price.country.name].append({
             'package_type': [p.name for p in price.package_type.all()],
-            'min_weight': price.min_wieght,
-            'max_weight': price.max_wieght,
+            'min_weight': price.min_weight,
+            'max_weight': price.max_weight,
             'item_price': price.item_price,
             'kilo_price': price.kilo_price,
         })

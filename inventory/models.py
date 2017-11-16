@@ -59,15 +59,23 @@ class ShippingPriceManager(models.Manager):
 
     def get_price_for_product(self, country_name, product):
         package_type_name = str(product.options['Package Type'].value)
+        weight = product.weight
+        return self.get_price(country_name, package_type_name, weight)
+
+    def get_price(self, country_name, package_type_name, weight):
         country = DestinationCountry.objects.get(name__icontains=country_name)
         package_type = PackageType.objects.get(
             name__icontains=package_type_name)
         shipping_prices = self.get_queryset().filter(
             Q(country=country),
             Q(package_type=package_type),
-            Q(min_wieght__isnull=True) | Q(min_wieght__lte=product.weight),
-            Q(min_wieght__isnull=True) | Q(max_wieght__gte=product.weight))
+            Q(min_weight__isnull=True) | Q(min_weight__lte=weight),
+            Q(min_weight__isnull=True) | Q(max_weight__gte=weight))
         return self.get(pk=shipping_prices.all()[0].id)
+
+    def get_calculated_price(self, country_name, package_type_name, weight):
+        return self.get_price(
+            country_name, package_type_name, weight).calculate(weight)
 
     def calculate_price_for_product(self, country_name, product):
         return self.get_price_for_product.calculate()
@@ -77,8 +85,8 @@ class ShippingPrice(models.Model):
     country = models.ForeignKey(
         DestinationCountry, on_delete=models.CASCADE)
     package_type = models.ManyToManyField(PackageType)
-    min_wieght = models.PositiveIntegerField(null=True, blank=True)
-    max_wieght = models.PositiveIntegerField(null=True, blank=True)
+    min_weight = models.PositiveIntegerField(null=True, blank=True)
+    max_weight = models.PositiveIntegerField(null=True, blank=True)
     item_price = models.PositiveIntegerField()
     kilo_price = models.PositiveIntegerField(null=True, blank=True)
 
@@ -87,10 +95,10 @@ class ShippingPrice(models.Model):
     def __str__(self):
         package_types = '-'.join([str(x) for x in self.package_type.all()])
         weight = ''
-        if self.min_wieght is not None:
-            weight += '> {}'.format(self.min_wieght)
-        if self.max_wieght is not None:
-            weight += '< {}'.format(self.max_wieght)
+        if self.min_weight is not None:
+            weight += '> {}'.format(self.min_weight)
+        if self.max_weight is not None:
+            weight += '< {}'.format(self.max_weight)
         string = '{} {}'.format(self.country, package_types)
         if weight:
             string = '{} {}'.format(string, weight)

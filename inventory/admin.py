@@ -43,14 +43,14 @@ class PackageTypeAdmin(admin.ModelAdmin):
 @admin.register(models.ShippingPrice)
 class ShippingPriceAdmin(admin.ModelAdmin):
     fields = (
-        'country', 'package_type', 'min_wieght', 'max_wieght',
+        'country', 'package_type', 'min_weight', 'max_weight',
         'item_price', 'kilo_price')
     list_display = (
-        '__str__', 'country', 'min_wieght', 'max_wieght',
+        '__str__', 'country', 'min_weight', 'max_weight',
         'item_price', 'kilo_price')
     list_display_links = ('__str__', )
     list_editable = (
-        'country', 'min_wieght', 'max_wieght',
+        'country', 'min_weight', 'max_weight',
         'item_price', 'kilo_price')
     list_filter = ('package_type', )
     search_fields = ('country', )
