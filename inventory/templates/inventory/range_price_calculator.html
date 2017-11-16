@@ -114,9 +114,6 @@
                 $('#{{ product.id }}_profit_percentage').css('color', 'orange');
             }
         };
-        $('#{{ product.id }}_sale_price').change(function() {
-            calcs['{{ product.id}}'].set_sale_price($(this).val());
-        });
         var initial_price = parseFloat(ex_vat_price + calcs['{{ product.id}}'].get_vat() + postage_price).toFixed(2);
 
         $('#{{ product.id }}_sale_price').val(initial_price);
@@ -126,11 +123,18 @@
             {% for product in product_range.products %}
             var country = $(this).val();
             var package_type = options['Package Type'];
+            var price = calcs['{{ product.id}}'].sale_price;
             get_postage_price(
-                calcs['{{ product.id}}'], country, package_type, {{ product.weight }});
+                calcs['{{ product.id}}'], country, package_type, {{ product.weight }}, price);
             {% endfor %}
         });
-        $('#country').change();
+        {% for product in product_range.products %}
+        calcs['{{ product.id}}'].set_sale_price($('#{{ product.id }}_sale_price').val());
+        $('#{{ product.id }}_sale_price').change(function() {
+            calcs['{{ product.id}}'].set_sale_price($(this).val());
+            $('#country').change();
+        });
+        {% endfor %}
     });
 </script>
 {% endblock %}
