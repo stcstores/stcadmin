@@ -18,20 +18,22 @@ def get_manifest(manifest_type):
     return manifest
 
 
-def get_orders(courier_rule_id):
+def get_orders(courier_rule_id, number_of_days=1):
     return CCAPI.get_orders_for_dispatch(
-        order_type=1, number_of_days=1, courier_rule_id=courier_rule_id)
+        order_type=1, number_of_days=number_of_days,
+        courier_rule_id=courier_rule_id)
 
 
-def update_spring_orders():
+def update_spring_orders(number_of_days=1):
     for service, manifest in SPRING_COURIER_RULES.items():
-        manifest_type, rule_id = manifest
-        if rule_id is None:
+        manifest_type, rule_ids = manifest
+        if not (rule_ids):
             continue
         manifest = get_manifest(manifest_type)
-        orders = get_orders(rule_id)
-        for order in orders:
-            order_id = str(order.order_id)
-            if not SpringOrder.objects.filter(order_id=order_id).exists():
-                SpringOrder.objects.create_from_order(
-                    order, service=service, manifest=manifest)
+        for rule_id in rule_ids:
+            orders = get_orders(rule_id, number_of_days=number_of_days)
+            for order in orders:
+                order_id = str(order.order_id)
+                if not SpringOrder.objects.filter(order_id=order_id).exists():
+                    SpringOrder.objects.create_from_order(
+                        order, service=service, manifest=manifest)
