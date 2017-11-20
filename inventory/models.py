@@ -76,7 +76,6 @@ class ShippingPriceManager(models.Manager):
             Q(min_price__isnull=True) | Q(min_price__lte=price))
         shipping_prices = shipping_prices.filter(
             Q(max_price__isnull=True) | Q(max_price__gte=price))
-        print(shipping_prices.all())
         return self.get(pk=shipping_prices.all()[0].id)
 
     def get_calculated_price(
