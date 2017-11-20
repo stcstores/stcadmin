@@ -5,7 +5,6 @@ from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from inventory import models
 
 from .views import InventoryUserMixin
 
@@ -81,25 +80,3 @@ class DeleteImage(InventoryUserMixin, View):
         except Exception:
             return HttpResponse(status=500)
         return HttpResponse('ok')
-
-
-class GetShippingPriceView(InventoryUserMixin, View):
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request):
-        try:
-            country_name = request.POST['country']
-            package_type_name = request.POST['package_type']
-            weight = int(request.POST['weight'])
-            price = int(request.POST['price'])
-            postage_price = models.ShippingPrice.objects.get_price(
-                country_name, package_type_name, weight, price)
-            vat_rates = list(postage_price.vat_rates.values())
-            return HttpResponse(json.dumps({
-                'price': postage_price.calculate(weight),
-                'price_name': postage_price.name,
-                'vat_rates': vat_rates,
-            }))
-        except Exception as e:
-            raise e
-            return HttpResponse(status=500)

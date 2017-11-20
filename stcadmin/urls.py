@@ -32,6 +32,9 @@ urlpatterns = [
     url(r'^reference/', include('reference.urls', namespace='reference')),
     url(r'^inventory/', include('inventory.urls', namespace='inventory')),
     url(
+        r'^price_calculator/',
+        include('price_calculator.urls', namespace='price_calculator')),
+    url(
         r'^print_audit/',
         include('print_audit.urls', namespace='print_audit')),
     url(

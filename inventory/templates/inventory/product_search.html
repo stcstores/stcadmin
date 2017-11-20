@@ -49,7 +49,7 @@
                         <a title="Descriptions" href="{% url 'inventory:descriptions' range.id %}" target="_blank"><button>D</button></a>
                         <a title="Locations" href="{% url 'inventory:locations' range.id %}" target="_blank"><button>L</button></a>
                         <a title="Images" href="{% url 'inventory:images' range.id %}" target="_blank"><button>I</button></a>
-                        <a title="Price Calulator" href="{% url 'inventory:range_price_calculator' range.id %}" target="_blank"><button>P</button></a>
+                        <a title="Price Calulator" href="{% url 'price_calculator:range_price_calculator' range.id %}" target="_blank"><button>P</button></a>
                         <a title="View on Cloud Commerce" href="{% ccp_product_range_page range.id %}" target="_blank"><button>C</button></a>
                     </td>
                     <td class="products_box">

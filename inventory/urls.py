@@ -22,13 +22,6 @@ inventory_urlpatterns = [
         r'^images/(?P<range_id>[0-9]+)/',
         views.ImageFormView.as_view(), name='images'),
     url(
-        r'^price_calculator/$',
-        views.PriceCalculator.as_view(), name='price_calculator'),
-    url(
-        r'^price_calculator/(?P<range_id>[0-9]+)/',
-        views.RangePriceCalculatorView.as_view(),
-        name='range_price_calculator'),
-    url(
         r'^product/(?P<product_id>[0-9]+)/$',
         views.ProductView.as_view(), name='product'),
     url(
@@ -74,9 +67,6 @@ api_urlpatterns = [
     url(
         r'^delete_image$',
         views.DeleteImage.as_view(), name='delete_image'),
-    url(
-        r'^get_shipping_price$',
-        views.GetShippingPriceView.as_view(), name='get_shipping_price'),
 ]
 
 urlpatterns = inventory_urlpatterns + new_product_urlpatterns + api_urlpatterns
