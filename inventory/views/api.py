@@ -94,9 +94,11 @@ class GetShippingPriceView(InventoryUserMixin, View):
             price = int(request.POST['price'])
             postage_price = models.ShippingPrice.objects.get_price(
                 country_name, package_type_name, weight, price)
+            vat_rates = list(postage_price.vat_rates.values())
             return HttpResponse(json.dumps({
                 'price': postage_price.calculate(weight),
                 'price_name': postage_price.name,
+                'vat_rates': vat_rates,
             }))
         except Exception as e:
             raise e

@@ -88,17 +88,27 @@ class ShippingPriceManager(models.Manager):
             country_name, price, product).calculate()
 
 
+class VATRate(models.Model):
+    name = models.CharField(max_length=50)
+    cc_id = models.PositiveSmallIntegerField()
+    percentage = models.PositiveSmallIntegerField()
+
+    def __str__(self):
+        return self.name
+
+
 class ShippingPrice(models.Model):
     name = models.CharField(max_length=50, unique=True)
     country = models.ForeignKey(
         DestinationCountry, on_delete=models.CASCADE)
     package_type = models.ManyToManyField(PackageType)
-    min_weight = models.PositiveIntegerField(null=True, blank=True)
-    max_weight = models.PositiveIntegerField(null=True, blank=True)
-    min_price = models.PositiveIntegerField(null=True, blank=True)
-    max_price = models.PositiveIntegerField(null=True, blank=True)
-    item_price = models.PositiveIntegerField()
-    kilo_price = models.PositiveIntegerField(null=True, blank=True)
+    min_weight = models.PositiveSmallIntegerField(null=True, blank=True)
+    max_weight = models.PositiveSmallIntegerField(null=True, blank=True)
+    min_price = models.PositiveSmallIntegerField(null=True, blank=True)
+    max_price = models.PositiveSmallIntegerField(null=True, blank=True)
+    item_price = models.PositiveSmallIntegerField()
+    kilo_price = models.PositiveSmallIntegerField(null=True, blank=True)
+    vat_rates = models.ManyToManyField(VATRate, null=True, blank=True)
 
     objects = ShippingPriceManager()
 
