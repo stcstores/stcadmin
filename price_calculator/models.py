@@ -3,14 +3,14 @@ from django.db.models import Q
 
 
 class DestinationCountry(models.Model):
-    name = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name
 
 
 class PackageType(models.Model):
-    name = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name
