@@ -28,7 +28,6 @@ class GetShippingPriceView(InventoryUserMixin, View):
                 'vat_rates': vat_rates,
             }))
         except Exception as e:
-            raise e
             return HttpResponse(status=500)
 
 
