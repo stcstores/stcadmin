@@ -1,10 +1,10 @@
 import pytz
+from ccapi import CCAPI
 from django.db import models
 from django.utils.timezone import is_naive
 
-from .spring_manifest_model import SpringManifest
 from .cloud_commerce_country_id import CloudCommerceCountryID
-from ccapi import CCAPI
+from .spring_manifest_model import SpringManifest
 
 
 class SpringOrderManager(models.Manager):
@@ -60,11 +60,18 @@ class CanceledOrdersManager(SpringOrderManager):
 
 class SpringOrder(models.Model):
 
-    PARCEL = 'PAR'
     PACKET = 'PAK'
+    PARCEL = 'PAR'
     TRACKED = 'PAT'
     SERVICE_CHOICES = (
         (PARCEL, 'Parcel'), (PACKET, 'Packet'), (TRACKED, 'Tracked'))
+
+    MANIFEST_SELECTION = {
+        PACKET: SpringManifest.UNTRACKED,
+        PARCEL: SpringManifest.TRACKED,
+        TRACKED:  SpringManifest.TRACKED,
+    }
+
 
     order_id = models.CharField(max_length=10, unique=True)
     customer_name = models.CharField(max_length=100)

@@ -18,6 +18,15 @@ def get_manifest(manifest_type):
     return manifest
 
 
+def get_manifest_by_service(service):
+    manifest_type = SpringOrder.MANIFEST_SELECTION[service]
+    return get_manifest(manifest_type)
+
+
+def get_manifest_for_order(order):
+    return get_manifest_by_service(order.service)
+
+
 def get_orders(courier_rule_id, number_of_days=1):
     return CCAPI.get_orders_for_dispatch(
         order_type=1, number_of_days=number_of_days,
