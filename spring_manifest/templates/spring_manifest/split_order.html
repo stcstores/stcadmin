@@ -1,0 +1,136 @@
+{% extends "spring_manifest/base.html" %}
+{% load staticfiles %}
+
+{% block page_title %}Spring Order{% endblock %}
+
+{% block content %}
+
+{% with children_formset.instance as order %}
+{% with order.get_order_data as cc_order %}
+<h2>{{ order }} - {{ order.customer_name }}</h2>
+
+<table>
+    <tr>
+        <th>SKU</th>
+        <th>Product</th>
+        <th>Ordered</th>
+        <th>In Order</th>
+        <th>Discrepency</th>
+    </tr>
+{% for product in cc_order.products %}
+    <tr>
+        <td>{{ product.sku }}</td>
+        <td>{{ product.product_full_name }}</td>
+        <th id="{{ product.product_id }}_ordered">{{ product.quantity}}</th>
+        <th id="{{ product.product_id }}_in_order"></th>
+        <th id="{{ product.product_id }}_discrepency"></th>
+    </tr>
+{% endfor %}
+</table>
+<form action="" method="POST">{% csrf_token %}
+    {{ children_formset.management_form }}
+    {{ children_formset.non_form_errors }}
+
+
+{% for child_form in children_formset.forms %}
+    <div hidden>{{ child_form }}</div>
+
+    {% if child_form.nested %}
+        {{ child_form.nested.management_form }}
+        {{ child_form.nested.non_form_errors }}
+        <h3>{{ child_form.instance }}</h3>
+        <table class="spring_package">
+            <tr>
+                <th>SKU</th>
+                <th>Name</th>
+                <th>Quantity</th>
+            </tr>
+        {% for nested_form in child_form.nested.forms %}
+        {% with nested_form.instance as item %}
+        {% with item.get_item as cc_item %}
+            <tr class="spring_item">
+                <td>{{ cc_item.sku }}</td>
+                <td>{{ cc_item.full_name }}</td>
+                <td>{{ nested_form.quantity }}</td>
+                <td hidden>{{ nested_form.item_id }}</td>
+                {% for field in nested_form.hidden_fields %}
+                    <td hidden>{{ field }}</td>
+                {% endfor %}
+            </tr>
+        {% endwith %}
+        {% endwith %}
+        {% endfor %}
+    </table>
+    {% endif %}
+
+{% endfor %}
+    <input type="submit" value="Add Package" name="add_package" />
+    <input type="submit" value="Update">
+</form>
+{% endwith %}
+{% endwith %}
+
+{% endblock %}
+
+{% block script %}{{ block.super }}
+
+<script>
+    $(document).ready(function() {
+        function get_ordered_quantity(item_id) {
+            return parseInt($('#' + item_id + '_ordered').text());
+        }
+
+        function get_current_quantity(item_id) {
+            var quantity = 0;
+            $('.spring_item').each(function() {
+                if (get_item_id_for_row($(this)) == item_id) {
+                    quantity += parseInt(get_quantity_for_row($(this)));
+                }
+            });
+            return quantity;
+        }
+
+        function get_item_id_for_row(row) {
+            var row_inputs = row.find('input');
+            var item_id_input = row_inputs.eq(1);
+            return item_id_input.val();
+        }
+
+        function get_quantity_for_row(row) {
+            var quantity = row.find('input').eq(0).val();
+            return quantity;
+        }
+
+        $('.spring_item input[type=number]').change(function() {
+            var row = $(this).closest('tr');
+            var item_id = get_item_id_for_row(row);
+            var current_quantity = get_current_quantity(item_id);
+            update_current_quantity(item_id, current_quantity)
+        });
+
+        function update_current_quantity(item_id, current_quantity) {
+            var order_quantity = get_ordered_quantity(item_id);
+            $('#' + item_id + '_in_order').text(current_quantity);
+            var discrepency = current_quantity - order_quantity;
+            var discrepency_text;
+            if (discrepency > 0) {
+                discrepency_text = '+' + discrepency;
+            } else {
+                discrepency_text = discrepency;
+            }
+
+            $('#' + item_id + '_discrepency').text(discrepency_text);
+            if (discrepency != 0) {
+                $('#' + item_id + '_discrepency').css('color', 'red');
+            } else {
+                $('#' + item_id + '_discrepency').css('color', 'black');
+            }
+        }
+
+        $('input[type=number]').change();
+
+    });
+
+</script>
+
+{% endblock %}

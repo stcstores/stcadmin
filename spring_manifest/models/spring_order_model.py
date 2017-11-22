@@ -9,20 +9,13 @@ from .spring_manifest_model import SpringManifest
 
 class SpringOrderManager(models.Manager):
 
-    def create_from_order(self, order, service=None, manifest=None):
-        return self.create(
-            order_id=str(order.order_id),
-            customer_name=order.delivery_name,
-            date_recieved=order.date_recieved,
-            dispatch_date=order.dispatch_date,
-            country=CloudCommerceCountryID._base_manager.get(
-                cc_id=order.delivery_country_code),
-            product_count=len(order.products),
-            manifest=manifest,
-            service=service)
-
     def order_ids(self):
         return set(o.order_id for o in self.get_queryset().all())
+
+    def items(self):
+        from .spring_item_model import SpringItem
+        return SpringItem._base_manager.filter(
+            package__order__in=self.get_queryset())
 
 
 class UnManifestedManager(SpringOrderManager):
@@ -72,15 +65,12 @@ class SpringOrder(models.Model):
         TRACKED:  SpringManifest.TRACKED,
     }
 
-
     order_id = models.CharField(max_length=10, unique=True)
     customer_name = models.CharField(max_length=100)
     date_recieved = models.DateTimeField()
     dispatch_date = models.DateTimeField()
     country = models.ForeignKey(
         CloudCommerceCountryID, on_delete=models.CASCADE)
-    product_count = models.PositiveIntegerField()
-    package_count = models.PositiveIntegerField(default=1)
     manifest = models.ForeignKey(
         SpringManifest, blank=True, null=True, on_delete=models.CASCADE)
     service = models.CharField(max_length=3, choices=SERVICE_CHOICES)
@@ -116,3 +106,35 @@ class SpringOrder(models.Model):
     def get_order_data(self):
         return CCAPI.get_orders_for_dispatch(
             order_type=1, number_of_days=30, id_list=[self.order_id])[0]
+
+    def items(self):
+        from .spring_item_model import SpringItem
+        return SpringItem._base_manager.filter(package__order=self)
+
+    def get_cc_item_dict(self):
+        order = self.get_order_data()
+        return [(int(p.product_id), p.quantity) for p in order.products]
+
+    def get_item_dict(self):
+        return [(int(p.item_id), p.quantity) for p in self.items().all()]
+
+    def check_items(self):
+        return self.get_item_dict() == self.get_cc_item_dict()
+
+    def clear_packages(self):
+        self.springpackage_set.all().delete()
+
+    def update_packages(self, package_data):
+        from .spring_package_model import SpringPackage
+        from .spring_item_model import SpringItem
+        self.clear_packages()
+        for package_number, package in enumerate(package_data):
+            package_obj = SpringPackage(
+                order=self, package_number=package_number)
+            package_obj.save()
+            for item_data in package:
+                item_id, quantity = item_data
+                item = SpringItem(
+                    package=package_obj, item_id=item_id,
+                    quantity=quantity)
+                item.save()

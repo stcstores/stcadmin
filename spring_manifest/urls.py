@@ -22,6 +22,10 @@ urlpatterns = [
         views.ManifestListView.as_view(),
         name='manifest_list'),
     url(
+        r'^split_order$',
+        views.SplitOrderView.as_view(),
+        name='split_order'),
+    url(
         r'^canceled_orders$',
         views.CanceledOrdersView.as_view(),
         name='canceled_orders'),

@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from spring_manifest import models
 
 
@@ -42,17 +41,27 @@ class SpringManifestAdmin(admin.ModelAdmin):
 class SpringOrderAdmin(admin.ModelAdmin):
     fields = (
         'id', 'order_id', 'customer_name', 'date_recieved', 'dispatch_date',
-        'country', 'product_count', 'package_count', 'manifest', 'service',
-        'canceled')
+        'country', 'manifest', 'service', 'canceled')
     list_display = (
         '__str__', 'order_id', 'customer_name', 'date_recieved',
-        'dispatch_date', 'country', 'product_count', 'package_count',
-        'manifest', 'service', 'canceled')
+        'dispatch_date', 'country', 'manifest', 'service', 'canceled')
     list_display_links = ('__str__', )
-    list_editable = ('product_count', 'package_count', 'canceled')
+    list_editable = ('canceled', )
     list_filter = ('date_recieved', 'dispatch_date', 'service', 'manifest')
     search_fields = (
         'order_id', 'customer_name', 'date_recieved', 'dispatch_date')
 
     def __repr__(self):
         return str(self.order_id)
+
+
+@admin.register(models.SpringPackage)
+class SpringPackageAdmin(admin.ModelAdmin):
+    fields = ('package_number', 'order')
+    list_display = ('__str__', 'package_number', 'order')
+
+
+@admin.register(models.SpringItem)
+class SpringItemAdmin(admin.ModelAdmin):
+    fields = ('package', 'item_id', 'quantity')
+    list_display = ('__str__', 'package', 'item_id', 'quantity')

@@ -26,6 +26,26 @@
     {% endif %}
     <input type="submit" value="Update Order" name="update" />
 </form>
+{% for package in order.springpackage_set.all %}
+<table>
+    <tr>
+        <th>{{ package }}</th>
+        <th>SKU</th>
+        <th>Item</th>
+        <th>Quantity</th>
+    </tr>
+    {% for item in package.springitem_set.all %}
+    {% with item.get_item as cc_item %}
+    <tr>
+        <td>{{ item }}</td>
+        <td>{{ cc_item.sku }}</td>
+        <td>{{ cc_item.full_name }}</td>
+        <td>{{ item.quantity }}</td>
+    </tr>
+    {% endwith %}
+    {% endfor %}
+</table>
+{% endfor %}
 {% endif %}
 
 {% endblock %}

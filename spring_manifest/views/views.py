@@ -1,10 +1,10 @@
+from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from home.views import UserInGroupMixin
-from spring_manifest import models
-from spring_manifest import forms
+from spring_manifest import forms, models
 
 
 class SpringUserMixin(UserInGroupMixin):
@@ -30,8 +30,8 @@ class UpdateOrderView(SpringUserMixin, FormView):
     def get_success_url(self):
         if self.manifest_id is not None:
             return reverse_lazy(
-                'spring_manifest:manifest',
-                kwargs={'manifest_id': self.manifest_id})
+                'spring_manifest:update_order',
+                kwargs={'order_pk': self.kwargs['order_pk']})
         return reverse_lazy('spring_manifest:manifest_list')
 
     def get_object(self):
@@ -50,6 +50,8 @@ class UpdateOrderView(SpringUserMixin, FormView):
 
     def form_valid(self, form):
         form.save()
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Order Updated.')
         return super().form_valid(form)
 
 
@@ -90,3 +92,30 @@ class CanceledOrdersView(SpringUserMixin, TemplateView):
         context['canceled_orders'] = models.SpringOrder.canceled_orders.filter(
             manifest__isnull=True, canceled=True)
         return context
+
+
+class SplitOrderView(SpringUserMixin, FormView):
+    form_class = forms.PackageFormset
+    template_name = 'spring_manifest/split_order.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        self.order = models.SpringOrder.objects.all()[0]
+        kwargs['instance'] = self.order
+        return kwargs
+
+    def get_success_url(self):
+        return reverse_lazy('spring_manifest:split_order')
+
+    def form_valid(self, form):
+        form.save()
+        form.clear_empty_packages()
+        if 'add_package' in self.request.POST:
+            form.add_package()
+        return super().form_valid(form)
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        context_data['order'] = self.order
+        context_data['children_formset'] = context_data.pop('form')
+        return context_data

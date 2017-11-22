@@ -34,8 +34,8 @@
         <th>Time Dispatched</th>
         <th>Country</th>
         <th>Zone</th>
-        <th>Products</th>
         <th>Packages</th>
+        <th>Products</th>
         <th>Service</th>
     </tr>
     {% for order in orders %}
@@ -46,8 +46,8 @@
             <td class="date">{{ order.dispatch_date|date:'D jS N h:iA' }}</td>
             <td>{{ order.country }}</td>
             <td>{{ order.country.zone }}</td>
-            <td>{{ order.product_count }}</td>
-            <td>{{ order.package_count }}</td>
+            <td>{{ order.springpackage_set.count }}</td>
+            <td>{{ order.items.count }}</td>
             <td>{{ order.service }}</td>
         </tr>
     {% endfor %}
