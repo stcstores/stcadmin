@@ -28,11 +28,19 @@ class UpdateOrderView(SpringUserMixin, FormView):
         return form_kwargs
 
     def get_success_url(self):
-        if self.manifest_id is not None:
+        if 'split' in self.form.data:
             return reverse_lazy(
-                'spring_manifest:update_order',
-                kwargs={'order_pk': self.kwargs['order_pk']})
-        return reverse_lazy('spring_manifest:manifest_list')
+                'spring_manifest:split_order',
+                kwargs={'order_pk': self.object.id})
+        if 'return' in self.form.data:
+            if self.object.manifest:
+                return reverse_lazy(
+                    'spring_manifest:manifest',
+                    kwargs={'manifest_id': self.object.manifest_id})
+            return reverse_lazy('spring_manifest:canceled_orders')
+        return reverse_lazy(
+            'spring_manifest:update_order',
+            kwargs={'order_pk': self.object.id})
 
     def get_object(self):
         order = get_object_or_404(
@@ -49,9 +57,11 @@ class UpdateOrderView(SpringUserMixin, FormView):
         return context
 
     def form_valid(self, form):
+        self.form = form
         form.save()
-        messages.add_message(
-            self.request, messages.SUCCESS, 'Order Updated.')
+        if form.changed_data:
+            messages.add_message(
+                self.request, messages.SUCCESS, 'Order Updated.')
         return super().form_valid(form)
 
 
@@ -100,18 +110,28 @@ class SplitOrderView(SpringUserMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        self.order = models.SpringOrder.objects.all()[0]
+        self.order = get_object_or_404(
+            models.SpringOrder, id=self.kwargs.get('order_pk'))
         kwargs['instance'] = self.order
         return kwargs
 
     def get_success_url(self):
-        return reverse_lazy('spring_manifest:split_order')
+        if 'return_to_order' in self.form.data:
+            return reverse_lazy(
+                'spring_manifest:update_order',
+                kwargs={'order_pk': self.order.id})
+        return reverse_lazy(
+            'spring_manifest:split_order', kwargs={'order_pk': self.order.id})
 
     def form_valid(self, form):
+        self.form = form
         form.save()
         form.clear_empty_packages()
         if 'add_package' in self.request.POST:
             form.add_package()
+        if not self.order.check_items():
+            messages.add_message(
+                self.request, messages.WARNING, 'Item Quantity Discrepency.')
         return super().form_valid(form)
 
     def get_context_data(self, *args, **kwargs):

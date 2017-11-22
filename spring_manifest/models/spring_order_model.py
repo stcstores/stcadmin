@@ -1,6 +1,7 @@
 import pytz
 from ccapi import CCAPI
 from django.db import models
+from django.db.models import Sum
 from django.utils.timezone import is_naive
 
 from .cloud_commerce_country_id import CloudCommerceCountryID
@@ -113,16 +114,26 @@ class SpringOrder(models.Model):
 
     def get_cc_item_dict(self):
         order = self.get_order_data()
-        return [(int(p.product_id), p.quantity) for p in order.products]
+        return {int(p.product_id): p.quantity for p in order.products}
 
     def get_item_dict(self):
-        return [(int(p.item_id), p.quantity) for p in self.items().all()]
+        quantities = {}
+        for package in self.springpackage_set.all():
+            for item in package.springitem_set.all():
+                if item.item_id not in quantities:
+                    quantities[item.item_id] = 0
+                quantities[item.item_id] += item.quantity
+        return quantities
 
     def check_items(self):
+        print(self.get_item_dict())
+        print(self.get_cc_item_dict())
         return self.get_item_dict() == self.get_cc_item_dict()
 
-    def clear_packages(self):
-        self.springpackage_set.all().delete()
+    def item_quantity(self):
+        from .spring_item_model import SpringItem
+        return SpringItem.objects.filter(package__order=self).aggregate(
+            Sum('quantity'))['quantity__sum']
 
     def update_packages(self, package_data):
         from .spring_package_model import SpringPackage

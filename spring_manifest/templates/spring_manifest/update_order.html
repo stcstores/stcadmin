@@ -24,7 +24,9 @@
     {% else %}
         <input type="submit" value="Cancel Order" name="cancel" />
     {% endif %}
+    <input type="submit" value="Split Order" name="split" />
     <input type="submit" value="Update Order" name="update" />
+    <input type="submit" value="Return to Manifest" name="return" />
 </form>
 {% for package in order.springpackage_set.all %}
 <table>

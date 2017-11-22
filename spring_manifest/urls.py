@@ -22,7 +22,7 @@ urlpatterns = [
         views.ManifestListView.as_view(),
         name='manifest_list'),
     url(
-        r'^split_order$',
+        r'^split_order/(?P<order_pk>[0-9]+)/$',
         views.SplitOrderView.as_view(),
         name='split_order'),
     url(

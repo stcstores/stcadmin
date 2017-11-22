@@ -36,6 +36,7 @@
         <th>Zone</th>
         <th>Packages</th>
         <th>Products</th>
+        <th>Items</th>
         <th>Service</th>
     </tr>
     {% for order in orders %}
@@ -48,6 +49,7 @@
             <td>{{ order.country.zone }}</td>
             <td>{{ order.springpackage_set.count }}</td>
             <td>{{ order.items.count }}</td>
+            <td>{{ order.item_quantity }}</td>
             <td>{{ order.service }}</td>
         </tr>
     {% endfor %}
