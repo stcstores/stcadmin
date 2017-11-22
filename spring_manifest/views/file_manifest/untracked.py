@@ -51,14 +51,12 @@ class FileUntrackedManifest(FileManifest):
     def get_row_for_zone(self, zones, zone, orders):
         customer_number = settings.SpringManifestSettings.customer_number
         customer_reference = 'STC_STORES_{}'.format(self.get_date_string())
-        products = []
         item_count = 0
         weight = 0
         for order in orders:
             cc_order = order.get_order_data()
-            products += cc_order.products
             weight += self.get_order_weight(cc_order)
-            item_count += order.package_count
+            item_count += order.springpackage_set.count()
         data = OrderedDict([
             ('CustomerNumber*', customer_number),
             ('Customer Reference 1', customer_reference),
@@ -86,7 +84,7 @@ class FileUntrackedManifest(FileManifest):
 
     def add_success_messages(self, manifest):
         orders = manifest.springorder_set.all()
-        package_count = sum(o.package_count for o in orders)
+        package_count = sum(o.springpackage_set.count() for o in orders)
         order_count = len(orders)
         messages.add_message(
             self.request, messages.SUCCESS,

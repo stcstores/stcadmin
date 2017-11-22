@@ -1,7 +1,7 @@
-import os
 import csv
 import ftplib
 import io
+import os
 from collections import OrderedDict
 
 from ccapi import CCAPI
@@ -47,7 +47,7 @@ class FileTrackedManifest(FileManifest):
 
     def add_success_messages(self, manifest):
         orders = manifest.springorder_set.all()
-        package_count = sum(o.package_count for o in orders)
+        package_count = sum(o.springpackage_set.count() for o in orders)
         order_count = len(orders)
         messages.add_message(
             self.request, messages.SUCCESS,
@@ -59,7 +59,7 @@ class FileTrackedManifest(FileManifest):
                 services[order.service] = []
             services[order.service].append(order)
         for service, s_orders in services.items():
-            package_count = sum(o.package_count for o in s_orders)
+            package_count = sum(o.springpackage_set.count() for o in s_orders)
             order_count = len(s_orders)
             messages.add_message(
                 self.request, messages.SUCCESS,
@@ -81,52 +81,57 @@ class FileTrackedManifest(FileManifest):
                     country.name, order.order_id))
         price = self.get_order_value(cc_order)
         rows = []
-        for product in cc_order.products:
-            data = OrderedDict([
-                ('Version #', '3.0'),
-                ('Shipper ID', shipper_id),
-                ('Package ID', order.order_id),
-                ('Weight', round(self.get_order_weight(cc_order), 3)),
-                ('Ship From Attn', ''),
-                ('Ship From Name', ''),
-                ('Ship From Address 1', ''),
-                ('Ship From Address 2', ''),
-                ('Ship From City', ''),
-                ('Ship From State', ''),
-                ('Ship From Zip5', ''),
-                ('Ship From Country Code', ''),
-                ('Ship To Attn', address.delivery_name),
-                ('Ship To Name', address.delivery_name),
-                ('Ship To Address 1', address.clean_address[0]),
-                ('Ship To Address 2', address.clean_address[1]),
-                ('Ship To Address 3', address.clean_address[2]),
-                ('Ship To City', address.town_city),
-                ('Ship To State', StateCode(
-                    address.county_region) or order.country.iso_code),
-                ('Ship To Postal Code', address.post_code or ' '),
-                ('Ship To Country Code', country.iso_code),
-                ('Recipient Phone Nbr', self.get_phone_number(address.tel_no)),
-                ('Recipient Email', ''),
-                ('Shipment Reference1', ''),
-                ('Shipment Reference2', ''),
-                ('Packaging Type', 105),
-                ('Declared Value', price),
-                ('Service Code', str(order.service)),
-                ('Length', ''),
-                ('Width', ''),
-                ('Height', ''),
-                ('Line Item Quantity', product.quantity),
-                ('Line Item Code', product.sku),
-                ('Line Item Description', product.product_name),
-                ('Line Item  Quantity Unit', 'PCE'),
-                ('Unit Price', product.price),
-                ('Item Weight', self.get_product_weight(product)),
-                ('Weight Unit', 'KG'),
-                ('Price', product.price * product.quantity),
-                ('HS Code', ''),
-                ('Country Of Manufacture', 'CN'),
-                ('Currency Code', 'GBP')])
-            rows.append(data)
+        packages = order.springpackage_set.all()
+        for package in packages:
+            items = [i for i in package.springitem_set.all() if i.quantity > 0]
+            for item in items:
+                product = self.get_order_product(item, cc_order)
+                data = OrderedDict([
+                    ('Version #', '3.0'),
+                    ('Shipper ID', shipper_id),
+                    ('Package ID', str(package)),
+                    ('Weight', round(self.get_order_weight(cc_order), 3)),
+                    ('Ship From Attn', ''),
+                    ('Ship From Name', ''),
+                    ('Ship From Address 1', ''),
+                    ('Ship From Address 2', ''),
+                    ('Ship From City', ''),
+                    ('Ship From State', ''),
+                    ('Ship From Zip5', ''),
+                    ('Ship From Country Code', ''),
+                    ('Ship To Attn', address.delivery_name),
+                    ('Ship To Name', address.delivery_name),
+                    ('Ship To Address 1', address.clean_address[0]),
+                    ('Ship To Address 2', address.clean_address[1]),
+                    ('Ship To Address 3', address.clean_address[2]),
+                    ('Ship To City', address.town_city),
+                    ('Ship To State', StateCode(
+                        address.county_region) or order.country.iso_code),
+                    ('Ship To Postal Code', address.post_code or ' '),
+                    ('Ship To Country Code', country.iso_code),
+                    ('Recipient Phone Nbr', self.get_phone_number(
+                        address.tel_no)),
+                    ('Recipient Email', ''),
+                    ('Shipment Reference1', ''),
+                    ('Shipment Reference2', ''),
+                    ('Packaging Type', 105),
+                    ('Declared Value', price),
+                    ('Service Code', str(order.service)),
+                    ('Length', ''),
+                    ('Width', ''),
+                    ('Height', ''),
+                    ('Line Item Quantity', item.quantity),
+                    ('Line Item Code', product.sku),
+                    ('Line Item Description', product.product_name),
+                    ('Line Item  Quantity Unit', 'PCE'),
+                    ('Unit Price', product.price),
+                    ('Item Weight', self.get_product_weight(product)),
+                    ('Weight Unit', 'KG'),
+                    ('Price', product.price * item.quantity),
+                    ('HS Code', ''),
+                    ('Country Of Manufacture', 'CN'),
+                    ('Currency Code', 'GBP')])
+                rows.append(data)
         return rows
 
     def get_product_weight(self, product):
@@ -222,3 +227,10 @@ class FileTrackedManifest(FileManifest):
         except Exception as e:
             raise e
             self.add_error('Error saving file to FTP Server')
+
+    def get_order_product(self, item, cc_order):
+        for product in cc_order.products:
+            if int(product.product_id) == item.item_id:
+                return product
+        self.add_error('Product {} not found for order {}'.format(
+            item.sku, cc_order.order_id))

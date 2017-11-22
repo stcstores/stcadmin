@@ -126,8 +126,6 @@ class SpringOrder(models.Model):
         return quantities
 
     def check_items(self):
-        print(self.get_item_dict())
-        print(self.get_cc_item_dict())
         return self.get_item_dict() == self.get_cc_item_dict()
 
     def item_quantity(self):
