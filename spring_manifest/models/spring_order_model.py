@@ -57,13 +57,16 @@ class SpringOrder(models.Model):
     PACKET = 'PAK'
     PARCEL = 'PAR'
     TRACKED = 'PAT'
+    SIGNED = 'PAP'
     SERVICE_CHOICES = (
-        (PARCEL, 'Parcel'), (PACKET, 'Packet'), (TRACKED, 'Tracked'))
+        (PARCEL, 'Parcel'), (PACKET, 'Packet'), (TRACKED, 'Tracked'),
+        (SIGNED, 'Signed'))
 
     MANIFEST_SELECTION = {
         PACKET: SpringManifest.UNTRACKED,
         PARCEL: SpringManifest.TRACKED,
-        TRACKED:  SpringManifest.TRACKED,
+        TRACKED: SpringManifest.TRACKED,
+        SIGNED: SpringManifest.TRACKED,
     }
 
     order_id = models.CharField(max_length=10, unique=True)
