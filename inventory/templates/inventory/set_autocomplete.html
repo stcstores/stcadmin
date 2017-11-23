@@ -1,9 +1,8 @@
 {% load inventory_extras %}
 
 <script>
-    $.extend($.ui.autocomplete.prototype.options, { delay: 0, minLength: 0 });
-
     $(document).ready(function() {
+        var awesomplete_defaults = {'minChars': 3};
         {% warehouse_bays as warehouses %}
         var warehouses = {
             {% for warehouse, bays in warehouses.items %}
@@ -23,12 +22,14 @@
             {% for form in wizard.form.forms %}
                 {% for field in form %}
                     {% ifequal field.name|slice:"0:4" 'opt_' %}
-                        $('#{{ field.auto_id }}').autocomplete({source: product_options['{{ field.label }}']});
+                        var {{ field.auto_id }}_auto_input = new Awesomplete($('#{{ field.auto_id }}')[0], {minChars: 1});
+                        {{ field.auto_id }}_auto_input.list = product_options['{{ field.label }}'];
                     {% endifequal %}
                 {% endfor %}
                 {% if form.location %}
                     if (warehouses.hasOwnProperty('{{ form.department }}')) {
-                        $('#{{ form.location.auto_id}}').autocomplete({source: warehouses['{{ form.department }}']});
+                        var {{ form.location.auto_id }}_auto_input = new Awesomplete($('#{{ form.location.auto_id }}')[0], {minChars: 1});
+                        {{ form.location.auto_id }}_auto_input.list = warehouses['{{ form.department }}'];
                     }
                 {% endif %}
             {% endfor %}
@@ -44,7 +45,8 @@
                         var bay_list = [];
                         $('#{{ form.location.auto_id}}').attr('disabled', true);
                     }
-                    $('#{{ form.location.auto_id}}').autocomplete({source: bay_list});
+                    var {{ form.location.auto_id }}_auto_input = new Awesomplete($('#{{ form.location.auto_id }}')[0], {minChars: 1});
+                    {{ form.location.auto_id }}_auto_input.list = bay_list;
                 });
                 $('#{{ form.department.auto_id }}').change();
             {% else %}
@@ -54,17 +56,21 @@
                 } else {
                     var bay_list = [];
                 }
-                $('#{{ form.location.auto_id}}').autocomplete({source: bay_list});
+                var {{ form.location.auto_id }}_auto_input = new Awesomplete($('#{{ form.location.auto_id }}')[0], {minChars: 1});
+                {{ form.location.auto_id }}_auto_input.list = bay_list;
             {% endif %}
             {% if form.brand %}
-                $('#{{ form.brand.auto_id }}').autocomplete({source: product_options['Brand']});
+                var {{ form.brand.auto_id }}_auto_input = new Awesomplete($('#{{ form.brand.auto_id }}')[0], {minChars: 1});
+                {{ form.brand.auto_id }}_auto_input.list = product_options['Brand'];
             {% endif %}
             {% if form.manufacturer %}
-                $('#{{ form.manufacturer.auto_id }}').autocomplete({source: product_options['Manufacturer']});
+                var {{ form.manufacturer.auto_id }}_auto_input = new Awesomplete($('#{{ form.manufacturer.auto_id }}')[0], {minChars: 1});
+                {{ form.manufacturer.auto_id }}_auto_input.list = product_options['Manufacturer'];
             {% endif %}
             {% for field in form %}
                 {% ifequal field.name|slice:"0:4" 'opt_' %}
-                    $('#{{ field.auto_id }}').autocomplete({source: product_options['{{ field.label }}']});
+                    var {{ field.auto_id }}_auto_input = new Awesomplete($('#{{ field.auto_id }}')[0], {minChars: 1});
+                    {{ field.auto_id }}_auto_input.list = product_options['{{ field.label }}'];
                 {% endifequal %}
             {% endfor %}
         {% endif %}
