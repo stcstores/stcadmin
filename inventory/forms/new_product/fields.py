@@ -123,6 +123,8 @@ class VATRate(fieldtypes.ChoiceField):
 
     @classmethod
     def get_VAT_percentage(cls, VAT_ID):
+        if VAT_ID == 0:
+            return 0
         return {v: k for k, v in cls.VAT_RATE_IDS.items()}[int(VAT_ID)]
 
     def clean(self, value):

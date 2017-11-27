@@ -3,7 +3,6 @@ from django import forms
 from stcadmin.forms import KwargFormSet
 
 from .new_product import fields
-from .new_product.fields import FormFields
 
 
 class VariationForm(forms.Form):
@@ -19,7 +18,7 @@ class VariationForm(forms.Form):
         self.option_names = [
             option.option_name for option in self.product.options]
         self.variation_fields = [
-            field for field in FormFields.option_fields if
+            field for field in fields.FormFields.option_fields if
             field.name.replace('opt_', '') in self.option_names]
         for field in self.variation_fields:
             self.fields[field.name] = field(small=True)

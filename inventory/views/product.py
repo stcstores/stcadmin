@@ -1,4 +1,5 @@
-from ccapi import CCAPI
+from ccapi import CCAPI, Warehouses
+from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.edit import FormView
 from inventory import forms
@@ -17,6 +18,7 @@ class ProductView(InventoryUserMixin, FormView):
         self.product_range = CCAPI.get_range(self.product.range_id)
         self.option_names = [
             option.option_name for option in self.product_range.options]
+        self.product.bays = CCAPI.get_bays_for_product(self.product.id) or []
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
@@ -37,6 +39,7 @@ class ProductView(InventoryUserMixin, FormView):
         initial['vat_rate'] = fields.VATRate.get_VAT_percentage(
             self.product.vat_rate_id)
         initial['price'] = self.product.base_price
+        initial['locations'] = [bay.name for bay in self.product.bays]
         initial['weight'] = self.product.weight
         initial['height'] = self.product.height_mm
         initial['length'] = self.product.length_mm
@@ -67,6 +70,21 @@ class ProductView(InventoryUserMixin, FormView):
             value = data['opt_' + option_field]
             if len(value) > 0:
                 self.product.set_option_value(option_field, value, create=True)
+        new_bay_names = form.cleaned_data['locations']
+        existing_bays = self.product.bays
+        existing_bay_ids = [b.id for b in existing_bays]
+        department = self.get_option_value('Department').value
+        new_bay_ids = [
+            CCAPI.get_bay_id(bay_name, department, create=True) for
+            bay_name in new_bay_names]
+        for new_bay_id in new_bay_ids:
+            if new_bay_id not in existing_bay_ids:
+                self.product.add_bay(new_bay_id)
+        for existing_bay_id in existing_bay_ids:
+            if existing_bay_id not in new_bay_ids:
+                self.product.remove_bay(existing_bay_id)
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Product Updated')
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -81,4 +99,7 @@ class ProductView(InventoryUserMixin, FormView):
                 'Linn Title')
         if 'Linn SKU' in self.option_names:
             context_data['linnworks_sku'] = self.get_option_value('Linn SKU')
+        department = self.get_option_value('Department').value
+        context_data['warehouse_bays'] = [
+            bay.name for bay in Warehouses[department]]
         return context_data

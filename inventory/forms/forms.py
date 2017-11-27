@@ -1,8 +1,9 @@
 from django import forms
-from .new_product.fields import Title, Description
+from list_input import ListInput
 
-from .new_product. fieldtypes import option_field_factory
 from .new_product import fields
+from .new_product.fields import Description, Title
+from .new_product.fieldtypes import option_field_factory
 
 
 class ProductRangeForm(forms.Form):
@@ -20,6 +21,7 @@ class ProductForm(forms.Form):
 
     vat_rate = fields.VATRate()
     price = fields.Price()
+    locations = ListInput(required=True)
     weight = fields.Weight()
     height = fields.Height()
     length = fields.Length()

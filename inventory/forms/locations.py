@@ -61,6 +61,11 @@ class LocationsForm(forms.Form):
             if existing_bay_id not in new_bay_ids:
                 self.product.remove_bay(existing_bay_id)
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['bays'] = [bay.name for bay in self.product.bays]
+        return context
+
 
 class LocationsFormSet(KwargFormSet):
     form = LocationsForm

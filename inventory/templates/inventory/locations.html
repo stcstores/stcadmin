@@ -37,8 +37,6 @@
 
 {% block script %}
 <script>
-$.extend($.ui.autocomplete.prototype.options, { delay: 0, minLength: 0 });
-
 var warehouses = {
     {% for warehouse, bays in formset.warehouses.items %}
     '{{ warehouse }}': [
@@ -49,16 +47,11 @@ function set_autocomplete() {
     {% for form in formset %}
         var warehouse_id = $('#{{ form.warehouse.auto_id }}').val();
         var bays = warehouses[warehouse_id];
-        $('#{{ form.locations.auto_id }}').closest('td').find('input').autocomplete({source: bays});
+        $('#{{ form.locations.auto_id }}').closest('td').find('input').each(function(input) {
+            new Awesomplete($(this)[0], {minChars: 1, list: bays});
+        });
     {% endfor %}
 }
-
-$(document).click(function() {
-    set_autocomplete();
-});
-$(document).keypress(function() {
-    set_autocomplete();
-});
 
 $(document).ready(function() {
     {% for form in formset %}
@@ -67,6 +60,33 @@ $(document).ready(function() {
             set_autocomplete();
         });
     {% endfor %}
+
+    var observer = new MutationObserver(function(mutations) {
+    	mutations.forEach(function(mutation) {
+            $.each(mutation.addedNodes, function() {
+                console.log($(this));
+                if ($(this).hasClass("list_input")) {
+                    var warehouse_id = $(this).closest("tr").find('.warehouse_field').find('select').val();
+                    var bays = warehouses[warehouse_id];
+                    new Awesomplete($(this).find('input')[0], {minChars: 1, list: bays});
+                }
+            });
+    	});
+    });
+
+    var observerConfig = {
+    	attributes: true,
+    	childList: true,
+    	characterData: true,
+        subtree: true,
+    };
+
+    {% for form in formset %}
+    targetNode = $('#{{ form.locations.auto_id }}').closest('td')[0];
+    observer.observe(targetNode, observerConfig);
+    {% endfor %}
+
+    set_autocomplete();
 });
 
 </script>

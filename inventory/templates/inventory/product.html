@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
-    <h2>{{ product.name }}</h2>
+    <h2>{{ product.full_name }}</h2>
     <p>SKU: {{ product.sku}}</p>
     <p>ID: {{ product.id }}</p>
     <p><a href="{% url 'inventory:product_range' product.range_id %}"><button>Back To Range</button></a></p>
@@ -40,6 +40,9 @@
 {% include 'inventory/set_autocomplete.html' %}
 
 <script>
+
+    var bays = [{% for bay in warehouse_bays %}'{{ bay }}', {% endfor %}]
+
     $(document).ready(function() {
         function get_vat_rate(vat_select) {
             var value = vat_select.val();
@@ -61,6 +64,27 @@
         vat_rate_select.change(function () {
             price_field.set_vat_rate(get_vat_rate(vat_rate_select));
         });
+
+        var observer = new MutationObserver(function(mutations) {
+        	mutations.forEach(function(mutation) {
+                $.each(mutation.addedNodes, function() {
+                    if ($(this).hasClass("list_input")) {
+                        new Awesomplete($(this).find('input')[0], {minChars: 1, list: bays});
+                    }
+                });
+        	});
+        });
+
+        var observerConfig = {
+        	attributes: true,
+        	childList: true,
+        	characterData: true,
+            subtree: true,
+        };
+
+        targetNode = $('#{{ form.locations.auto_id }}').closest('td')[0];
+        observer.observe(targetNode, observerConfig);
+
     });
 </script>
 {% endblock %}
