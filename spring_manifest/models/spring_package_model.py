@@ -7,6 +7,7 @@ class SpringPackage(models.Model):
 
     class Meta:
         unique_together = ('package_number', 'order', )
+        ordering = ('package_number', )
 
     package_number = models.PositiveIntegerField(default=1)
     order = models.ForeignKey(SpringOrder, on_delete=models.CASCADE)
