@@ -3,8 +3,9 @@ from django.urls import reverse
 
 
 class SizeChart(models.Model):
+
     class Meta:
-        ordering = ('name',)
+        ordering = ('name', )
 
     name = models.CharField(max_length=200)
 
@@ -17,8 +18,9 @@ class SizeChart(models.Model):
 
 
 class SizeChartSize(models.Model):
+
     class Meta:
-        ordering = ('sort',)
+        ordering = ('sort', )
 
     size_chart = models.ForeignKey('SizeChart', on_delete=models.CASCADE)
     sort = models.PositiveSmallIntegerField(default=0)
@@ -30,7 +32,7 @@ class SizeChartSize(models.Model):
     au_size = models.CharField(max_length=200, verbose_name='AUS Size')
 
     def __str__(self):
-        return self.supplier.name + ' - UK ' + self.uk_size
+        return '{} - UK {}'.format(self.supplier.name, self.uk_size)
 
     def get_absolute_url(self):
         return reverse(
@@ -38,6 +40,6 @@ class SizeChartSize(models.Model):
             args=[str(self.supplier.id)])
 
     def get_sizes(self):
-        return [
-            ['UK', self.uk_size], ['EUR', self.eu_size], ['USA', self.us_size],
-            ['AUS', self.au_size]]
+        return (
+            ('UK', self.uk_size), ('EUR', self.eu_size), ('USA', self.us_size),
+            ('AUS', self.au_size))
