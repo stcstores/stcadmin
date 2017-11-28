@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib import admin
 from django.urls import reverse
 
 
@@ -42,17 +41,3 @@ class SizeChartSize(models.Model):
         return [
             ['UK', self.uk_size], ['EUR', self.eu_size], ['USA', self.us_size],
             ['AUS', self.au_size]]
-
-
-class SizeChartAdmin(admin.ModelAdmin):
-    fields = ['name']
-
-
-class SizeChartSizeAdmin(admin.ModelAdmin):
-    fields = [
-        'size_chart', 'name', 'uk_size', 'eu_size', 'us_size', 'au_size',
-        'sort']
-    list_display = fields
-
-admin.site.register(SizeChart, SizeChartAdmin)
-admin.site.register(SizeChartSize, SizeChartSizeAdmin)
