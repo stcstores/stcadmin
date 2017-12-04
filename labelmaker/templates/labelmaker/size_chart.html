@@ -1,0 +1,89 @@
+{% extends "labelmaker/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<button id="add_row">Add Size</button>
+<form class="size_chart_form" method="POST" id="size_form">{% csrf_token %}
+    {{ formset.management_form }}
+    <label for="size_chart_name">Supplier: </label>
+    <input type="text" name="size_chart_name" value="{{ formset.instance.name }}" size="50" required>
+    <table id="sizes">
+        <thead>
+            <tr>
+                {% for field in formset.0.visible_fields %}<th>{{ field.label }}</th>{% endfor %}
+                <th></th><th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form in formset %}
+                <tr class="size">
+                    {% for field in form.visible_fields %}<td>{{ field }}</td>{% endfor %}
+                    <td><input type="button" value="&uarr;" class="order_button up"></td>
+                    <td><input type="button" value="&darr;" class="order_button down"></td>
+                    {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <input type="submit" value="Save">
+</form>
+{% endblock %}
+{% block script %}{{ block.super }}
+<script>
+
+function cloneMore(selector, type) {
+    var newElement = $(selector).clone(false);
+    var total = $('#id_' + type + '-TOTAL_FORMS').val();
+    newElement.find(':input').not('.order_button').each(function() {
+        var name = $(this).attr('name').replace('-' + (total-1) + '-','-' + total + '-');
+        var id = 'id_' + name;
+        $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+    });
+    newElement.find('label').each(function() {
+        var newFor = $(this).attr('for').replace('-' + (total-1) + '-','-' + total + '-');
+        $(this).attr('for', newFor);
+    });
+    total++;
+    $('#id_' + type + '-TOTAL_FORMS').val(total);
+    $(selector).after(newElement);
+}
+
+function order_button_display() {
+    $('.order_button').attr('hidden', false);
+    $('.up:first').attr('hidden', true);
+    $('.down:last').attr('hidden', true);
+}
+
+function set_order_buttons() {
+    $('.order_button').click(function() {
+        $('.order_button').off('click');
+        var row = $(this).parents(".size:first");
+        if ($(this).is('.up')) {
+            row.insertBefore(row.prev('tr.size'));
+        } else if ($(this).is('.down')) {
+            row.insertAfter(row.next());
+        }
+        order_button_display();
+        set_order_buttons()
+    });
+}
+
+$(document).ready(function() {
+    $('#add_row').click(function() {
+        cloneMore('#sizes tr:last', 'sizechartsize_set');
+        order_button_display();
+        set_order_buttons();
+    });
+    order_button_display();
+    set_order_buttons();
+
+    $('#size_form').submit(function() {
+        $('tr.size').each(function() {
+            var order_input = $(this).find('.size_order');
+            order_input.val($(this).index() + 1);
+        });
+    });
+});
+
+</script>
+{% endblock %}

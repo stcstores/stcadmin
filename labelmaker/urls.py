@@ -1,39 +1,31 @@
-from django.conf.urls import include, url
-from django.contrib import admin
-
+from django.conf.urls import url
 from labelmaker import views
 
 app_name = 'labelmaker'
 
 urlpatterns = [
     url(
-        r'^create_size_chart$', views.EditSizeChart.as_view(),
-        name='create_size_chart'),
-    url(
-        r'^edit_size_chart/(?P<size_chart_id>[0-9]+)/$',
-        views.EditSizeChart.as_view(), name='edit_size_chart'),
-    url(
-        r'^create_size_chart_form$', views.create_size_chart_form,
+        r'^create_size_chart$', views.CreateSizeChart.as_view(),
         name='create_size_chart_form'),
-    url(r'^size_charts', views.size_charts, name='size_charts'),
-    url(
-        r'^edit_size_chart_form/(?P<size_chart_id>[0-9]+)/$',
-        views.edit_size_chart_form, name='edit_size_chart_form'),
+    url(r'^size_charts', views.SizeCharts.as_view(), name='size_charts'),
     url(
         r'^label_form/(?P<size_chart_id>[0-9]+)/$',
-        views.label_form_size_chart, name='label_form'),
+        views.LabelFormSizeChart.as_view(), name='label_form'),
     url(
-        r'^label_form/$', views.label_form_no_size_chart,
+        r'^label_form/$', views.LabelFormNoSizeChart.as_view(),
         name='label_form'),
     url(
         r'^generate_pdf_no_size_chart/',
-        views.generate_pdf_no_size_chart, name='generate_pdf_no_size_chart'),
+        views.LabelPDF.as_view(), name='generate_pdf_no_size_chart'),
     url(
         r'^generate_pdf_for_size_chart/(?P<size_chart_id>[0-9]+)/$',
-        views.generate_pdf_for_size_chart, name='generate_pdf_for_size_chart'),
+        views.LabelPDF.as_view(), name='generate_pdf_for_size_chart'),
     url(
         r'^delete_size_chart/(?P<size_chart_id>[0-9]+)/$',
-        views.delete_size_chart, name='delete_size_chart'),
-    url(r'^test$', views.test_pdf, name='test_pdf'),
-    url(r'^$', views.index, name='index'),
+        views.DeleteSizeChart.as_view(), name='delete_size_chart'),
+    url(r'^test$', views.TestPDFLabel.as_view(), name='test_pdf'),
+    url(
+        r'^size_chart_form/(?P<pk>[0-9]+)/$',
+        views.SizeChartForm.as_view(), name='size_chart_form'),
+    url(r'^$', views.Index.as_view(), name='index'),
 ]
