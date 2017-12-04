@@ -20,6 +20,7 @@
     <a href="{% url 'inventory:locations' product_range.id %}"><button>Locations</button></a>
     <a href="{% url 'inventory:images' product_range.id %}"><button>Images</button></a>
     <a href="{% url 'price_calculator:range_price_calculator' product_range.id %}"><button>Price Calculator</button></a>
+    <a href="{% url 'inventory:print_barcodes' product_range.id %}"><button>Print Barcodes</button></a>
     <form action="" method="POST">{% csrf_token %}
         <table>
             {% for field in form %}

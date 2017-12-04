@@ -1,11 +1,12 @@
-from . views import *  # noqa
-from . api import *  # noqa
-from . descriptions import DescriptionsView  # noqa
-from . images import ImageFormView, DeleteSTCAdminImage  # noqa
-from . locations import LocationFormView  # noqa
-from . newsingleproductview import NewSingleProductView  # noqa
-from . product import ProductView  # noqa
-from . productrange import ProductRangeView  # noqa
-from . productsearch import ProductSearchView  # noqa
-from . variationformwizard import VariationFormWizardView  # noqa
-from . variationsformview import VariationsFormView  # noqa
+from . views import *  # NOQA
+from . api import *  # NOQA
+from . descriptions import DescriptionsView  # NOQA
+from . images import ImageFormView, DeleteSTCAdminImage  # NOQA
+from . locations import LocationFormView  # NOQA
+from . newsingleproductview import NewSingleProductView  # NOQA
+from . product import ProductView  # NOQA
+from . productrange import ProductRangeView  # NOQA
+from . productsearch import ProductSearchView  # NOQA
+from . variationformwizard import VariationFormWizardView  # NOQA
+from . variationsformview import VariationsFormView  # NOQA
+from . print_barcodes import PrintBarcodeLabels  # NOQA

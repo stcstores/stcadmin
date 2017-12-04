@@ -1,0 +1,37 @@
+{% extends "inventory/range_settings.html" %}
+{% load staticfiles %}
+{% load inventory_extras %}
+
+{% block content %}
+<style>
+    tbody tr:nth-child(even) {
+        background: #CCC
+    }
+    tbody tr:nth-child(odd) {
+        background: #FFF
+    }
+</style>
+<input type="number" id="update_selected_quantity" min="0" step="1" value="0">
+<input type="button" value="Update Selected" id="update_selected_button">
+<table>
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Barcode</th>
+            <th>Quantity</th>
+            <th><input type="button" id="toggle_selected" class="toggle_selected" value="Toggle"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in product_range.products %}
+        <tr>
+            <td>{{ product.full_name }}</td>
+            <td><input type="text" value="{{ product.barcode }}"></td>
+            <td><input type="number" class="quantity" id="{{ product.id }}_quantity" min="0" step="1" value="{{ product.stock_level }}"></td>
+            <td><input type="checkbox" class="product_selected" id="{{ product.id }}_selected" selected></td>
+            <td>{{ product.option_text }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,6 +1,5 @@
 from django.conf.urls import include, url  # noqa
 from django.contrib import admin  # noqa
-
 from inventory import views
 
 app_name = 'inventory'
@@ -33,6 +32,9 @@ inventory_urlpatterns = [
     url(
         r'^delete_stcadmin_image/(?P<image_id>[0-9]+)/$',
         views.DeleteSTCAdminImage.as_view(), name='delete_stcadmin_image'),
+    url(
+        r'^print_barcodes/(?P<range_id>[0-9]+)/$',
+        views.PrintBarcodeLabels.as_view(), name='print_barcodes'),
 ]
 
 new_product_urlpatterns = [
