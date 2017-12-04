@@ -16,11 +16,16 @@ class DestinationZoneAdmin(admin.ModelAdmin):
 
 @admin.register(models.CloudCommerceCountryID)
 class CloudCommerceCountryIDAdmin(admin.ModelAdmin):
-    fields = ('cc_id', 'name', 'iso_code', 'zone', 'valid_spring_destination')
+    fields = (
+        'cc_id', 'name', 'iso_code', 'zone', 'currency_code',
+        'valid_spring_destination')
     list_display = (
-        'cc_id', 'name', 'iso_code', 'zone', 'valid_spring_destination')
+        'cc_id', 'name', 'iso_code', 'zone', 'currency_code',
+        'valid_spring_destination')
     list_display_links = ('cc_id', )
-    list_editable = ('name', 'iso_code', 'zone', 'valid_spring_destination')
+    list_editable = (
+        'name', 'iso_code', 'zone', 'currency_code',
+        'valid_spring_destination')
     search_fields = ('name', )
 
     def __repr__(self):

@@ -130,7 +130,7 @@ class FileTrackedManifest(FileManifest):
                     ('Price', product.price * item.quantity),
                     ('HS Code', ''),
                     ('Country Of Manufacture', 'CN'),
-                    ('Currency Code', 'GBP')])
+                    ('Currency Code', country.currency_code or 'GBP')])
                 rows.append(data)
         return rows
 

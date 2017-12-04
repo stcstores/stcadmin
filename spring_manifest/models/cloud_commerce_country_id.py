@@ -22,6 +22,7 @@ class CloudCommerceCountryID(models.Model):
         DestinationZone, blank=True, null=True, on_delete=models.CASCADE)
     valid_spring_destination = models.BooleanField(
         default=True, verbose_name='Valid Spring Destination')
+    currency_code = models.CharField(max_length=4, blank=True, null=True)
 
     objects = models.Manager()
     incomplete = IncompleteCountryManager()
