@@ -120,13 +120,14 @@ var LabelSelectionTable = function(parent, data, form) {
     self.tbody = $('<tbody></tbody>');
     self.table.append(self.thead);
     self.table.append(self.tbody);
-    self.thead.append('<tr><th>Size</th><th>Colour</th><th>Quantity</th><tr>');
+    self.thead.append('<tr><th>Size</th><th>Colour</th><th>Quantity</th><th></th><tr>');
+    self.toggle_selected = $('<button>Toggle</button>');
 
     $.each(self.sizes, function(index, size) {
         var size_reference = size[0];
         var size_name = size[1];
         $.each(self.colours, function(index, colour) {
-            self.tbody.append('<tr><td class="hidden">' + size_reference + '</td><td>' + size_name + '</td><td>' + colour + '</td><td><input type="number" value="0" /></td></tr>');
+            self.tbody.append('<tr><td class="hidden">' + size_reference + '</td><td>' + size_name + '</td><td>' + colour + '</td><td><input type="number" value="0" /></td><td><input type="checkbox" /></tr>');
         });
     });
     parent.append(self.table);
@@ -149,4 +150,25 @@ var LabelSelectionTable = function(parent, data, form) {
         form.submit();
     });
     parent.append(generate_labels_button);
+    self.update_selected_input = $('<input>', {'type': 'number', 'name': 'update_selected', 'value': '0', 'min': '0', 'step': '1'});
+    self.update_selected_button = $('<button>Update Selected</button>');
+    self.update_selected_input.insertBefore(self.table);
+    self.update_selected_button.insertBefore(self.table);
+    self.update_selected_button.click(function() {
+        self.table.find('tr').each(function() {
+            var checkbox = $(this).find(':checkbox');
+            var quantity = $(this).find(':input[type="number"]');
+            if (checkbox.is(':checked')) {
+                quantity.val(self.update_selected_input.val());
+            }
+        });
+    });
+    self.thead.find('th:last').append(self.toggle_selected);
+    self.toggle_selected.click(function() {
+        if (self.table.find(':checkbox:first').is(':checked')) {
+            self.table.find(':checkbox').prop('checked', false);
+        } else {
+            self.table.find(':checkbox').prop('checked', true);
+        }
+    });
 };

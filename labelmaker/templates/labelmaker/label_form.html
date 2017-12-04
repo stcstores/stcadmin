@@ -21,6 +21,7 @@
         <br>
         {% endif %}
         <button id="create_table_button">Create Table</button>
+        <br><br>
         <div id="selection_table"></div>
         <form action="{% if size_chart %}{% url 'labelmaker:generate_pdf_for_size_chart' size_chart_id=size_chart.id %}{% else %}{% url 'labelmaker:generate_pdf_no_size_chart' %}{% endif %}" method="POST" id="label_selection_form" class="hidden">
             {% csrf_token %}
