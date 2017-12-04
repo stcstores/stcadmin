@@ -61,7 +61,7 @@ class FileUntrackedManifest(FileManifest):
             ('CustomerNumber*', customer_number),
             ('Customer Reference 1', customer_reference),
             ('Customer Reference 2', ''),
-            ('PO Number', ''),
+            ('Special Requirements', ''),
             ('Quote Reference', ''),
             ('Count items*', 'N'),
             ('Pre-franked*', 'N'),
