@@ -27,6 +27,7 @@ class CloudCommerceCountryIDAdmin(admin.ModelAdmin):
         'name', 'iso_code', 'zone', 'currency_code',
         'valid_spring_destination')
     search_fields = ('name', )
+    list_filter = ('zone', )
 
     def __repr__(self):
         return str(self.name)
