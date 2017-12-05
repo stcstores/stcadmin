@@ -3,11 +3,10 @@ from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import RedirectView
 from spring_manifest import models
-
-from . tracked import FileTrackedManifest
-from . untracked import FileUntrackedManifest
-
 from spring_manifest.views import SpringUserMixin
+
+from .tracked import FileTrackedManifest
+from .untracked import FileUntrackedManifest
 
 
 class FileManifestView(SpringUserMixin, RedirectView):
@@ -27,9 +26,9 @@ class FileManifestView(SpringUserMixin, RedirectView):
         manifest = self.get_manifest()
         if manifest is not None:
             if manifest.manifest_type == manifest.UNTRACKED:
-                FileUntrackedManifest(self.request, manifest)
+                FileUntrackedManifest(manifest, request=self.request)
             elif manifest.manifest_type == manifest.TRACKED:
-                FileTrackedManifest(self.request, manifest)
+                FileTrackedManifest(manifest, request=self.request)
             else:
                 raise Exception(
                     'Unknown manifest type {} for manifest {}'.format(

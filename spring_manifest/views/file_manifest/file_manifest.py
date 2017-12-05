@@ -3,7 +3,7 @@ from django.contrib import messages
 
 class FileManifest:
 
-    def __init__(self, request, manifest):
+    def __init__(self, manifest, request=None):
         self.valid = True
         self.request = request
         self.manifest = manifest
@@ -13,7 +13,8 @@ class FileManifest:
         if self.valid:
             self.send_file(manifest)
         if self.valid:
-            self.add_success_messages(self.manifest)
+            if self.request:
+                self.add_success_messages(self.manifest)
         else:
             self.manifest.time_filed = None
             self.manifest.manifest_file = None
@@ -27,7 +28,9 @@ class FileManifest:
 
     def add_error(self, message):
         self.valid = False
-        messages.add_message(self.request, messages.ERROR, message)
+        if self.request:
+            messages.add_message(self.request, messages.ERROR, message)
+        print(message)
 
     def get_order_weight(self, order):
         weight_grams = sum([
