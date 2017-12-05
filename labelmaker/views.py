@@ -1,9 +1,9 @@
 import json
 
 import labeler
-from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import DeleteView, FormView
