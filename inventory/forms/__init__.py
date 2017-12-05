@@ -1,6 +1,7 @@
-from . product_search import ProductSearchForm  # noqa
-from . locations import LocationsFormSet  # noqa
-from . images import ImagesForm  # noqa
-from . forms import *  # noqa
-from . new_product import *  # noqa
-from . variationform import VariationsFormSet  # noqa
+from . product_search import ProductSearchForm  # NOQA
+from . locations import LocationsFormSet  # NOQA
+from . images import ImagesForm  # NOQA
+from . forms import *  # NOQA
+from . new_product import *  # NOQA
+from . variationform import VariationsFormSet  # NOQA
+from . product_form import ProductForm  # NOQA
