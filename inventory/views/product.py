@@ -1,6 +1,6 @@
 from ccapi import CCAPI, Warehouses
 from django.contrib import messages
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 from inventory import forms
 from inventory.forms.new_product import fields
