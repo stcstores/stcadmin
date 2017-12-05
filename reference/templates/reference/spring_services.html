@@ -1,0 +1,157 @@
+{% extends "reference/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<style>
+    table, td, th {
+        border-collapse: collapse;
+        border: 1px black solid;
+    }
+    th {
+        background: #ddd;
+    }
+</style>
+<table>
+    <tr>
+        <th>Service</th>
+        <th>Name</th>
+        <th>Manifest</th>
+    </tr>
+    <tr>
+        <th>PAK</th>
+        <td>Packet</td>
+        <td>Untracked</td>
+    </tr>
+    <tr>
+        <th>PAT</th>
+        <td>Tracked</td>
+        <td>Tracked</td>
+    </tr>
+    <tr>
+        <th>PAR</th>
+        <td>Parcel</td>
+        <td>Tracked</td>
+    </tr>
+    <tr>
+        <th>PAP</th>
+        <td>Parcel</td>
+        <td>Tracked</td>
+    </tr>
+</table>
+<br>
+<table>
+    <tr>
+        <th>Country</th>
+        <th>&lt;1kg</th>
+        <th>&gt;1kg &lt;2kg</th>
+        <th>&lt;2kg &gt;&pound;40</th>
+        <th>&gt;2kg</th>
+    </tr>
+    <tr>
+        <th>France</th>
+        <td>PAK</td>
+        <td>PAK</td>
+        <td>PAT</td>
+        <td>PAR</td>
+    </tr>
+    <tr>
+        <th>Germany</th>
+        <td>PAK</td>
+        <td>PAR</td>
+        <td>PAT</td>
+        <td>PAR</td>
+    </tr>
+    <tr>
+        <th>Spain</th>
+        <td>PAT</td>
+        <td>PAR</td>
+        <td>PAT</td>
+        <td>PAR</td>
+    </tr>
+    <tr>
+        <th>Italy</th>
+        <td>PAP</td>
+        <td>PAR</td>
+        <td>PAT</td>
+        <td>PAR</td>
+    </tr>
+    <tr>
+        <th>Greece</th>
+        <td>PAP</td>
+        <td>PAP</td>
+        <td>PAT</td>
+        <td>PAR</td>
+    </tr>
+    <tr>
+        <th>Finland</th>
+        <td>PAP</td>
+        <td>PAP</td>
+        <td>PAP</td>
+        <td>PAR</td>
+    </tr>
+    <tr>
+        <th>Belgium</th>
+        <td>PAK</td>
+        <td>PAR</td>
+        <td>PAT</td>
+        <td>PAR</td>
+    </tr>
+    <tr>
+        <th>USA</th>
+        <td>PAP</td>
+        <td>PAP</td>
+        <td>PAT</td>
+        <td>PAR</td>
+    </tr>
+    <tr>
+        <th>Canada</th>
+        <td>PAP</td>
+        <td>PAP</td>
+        <td>PAT</td>
+        <td>PAR</td>
+    </tr>
+    <tr>
+        <th>Mexico</th>
+        <td>PAP</td>
+        <td>PAP</td>
+        <td>PAT</td>
+        <td>PAR</td>
+    </tr>
+    <tr>
+        <th>Australia</th>
+        <td>PAP</td>
+        <td>PAR</td>
+        <td>PAT</td>
+        <td>PAR</td>
+    </tr>
+    <tr>
+        <th>Other</th>
+        <td>PAK</td>
+        <td>PAK</td>
+        <td>PAT</td>
+        <td>PAR</td>
+    </tr>
+</table>
+
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+    $(document).ready(function() {
+        $('td, th').each(function() {
+            if ($(this).text() == 'PAK') {
+                $(this).css('background', '#69ff91');
+            }
+            if ($(this).text() == 'PAT') {
+                $(this).css('background', '#7d69ff');
+            }
+            if ($(this).text() == 'PAR') {
+                $(this).css('background', '#ffbe69');
+            }
+            if ($(this).text() == 'PAP') {
+                $(this).css('background', '#ff7369');
+            }
+        });
+    });
+</script>
+{% endblock %}
