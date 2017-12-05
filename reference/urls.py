@@ -1,10 +1,8 @@
-from django.conf.urls import include, url
-from django.contrib import admin
-
+from django.conf.urls import url
 from reference import views
 
 app_name = 'reference'
 
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
+    url(r'^$', views.Index.as_view(), name='index'),
 ]
