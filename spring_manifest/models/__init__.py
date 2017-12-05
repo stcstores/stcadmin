@@ -5,6 +5,7 @@ from . spring_order_model import SpringOrder  # NOQA
 from . spring_package_model import SpringPackage  # NOQA
 from . spring_item_model import SpringItem  # NOQA
 from stcadmin.settings import SPRING_COURIER_RULES  # NOQA
+from django.db import transaction
 
 from ccapi import CCAPI
 
@@ -52,6 +53,7 @@ def create_order(cc_order, service):
             quantity=product.quantity)
 
 
+@transaction.atomic
 def update_spring_orders(number_of_days=1):
     for service, rule_ids in SPRING_COURIER_RULES.items():
         if not (rule_ids):
