@@ -35,6 +35,9 @@ inventory_urlpatterns = [
     url(
         r'^print_barcodes/(?P<range_id>[0-9]+)/$',
         views.PrintBarcodeLabels.as_view(), name='print_barcodes'),
+    url(
+        r'^barcode_pdf$',
+        views.BarcodePDF.as_view(), name='barcode_pdf'),
 ]
 
 new_product_urlpatterns = [

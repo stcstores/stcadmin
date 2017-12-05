@@ -1,4 +1,9 @@
+import json
+
+import labeler
 from ccapi import CCAPI
+from django.http import HttpResponse
+from django.views import View
 from django.views.generic.base import TemplateView
 
 from .views import InventoryUserMixin
@@ -16,3 +21,27 @@ class PrintBarcodeLabels(InventoryUserMixin, TemplateView):
                 '{} - '.format(product.name), '')
         context['product_range'] = product_range
         return context
+
+
+class BarcodePDF(InventoryUserMixin, View):
+
+    def post(self, *args, **kwargs):
+        data = self.get_label_data()
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'filename="labels.pdf"'
+        label_format = labeler.BarcodeLabelFormat
+        sheet = labeler.STW046025PO(label_format=label_format)
+        canvas = sheet.generate_PDF_from_data(data)
+        canvas._filename = response
+        canvas.save()
+        return response
+
+    def get_label_data(self):
+        json_data = self.request.POST.get('data')
+        data = json.loads(json_data)
+        barcode_data = []
+        for product in data:
+            for i in range(int(product['quantity'])):
+                barcode_data.append(
+                    (product['barcode'], product['option_text']))
+        return barcode_data
