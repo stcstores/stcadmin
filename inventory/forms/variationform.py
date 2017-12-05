@@ -10,6 +10,7 @@ class VariationForm(forms.Form):
     product_id = forms.CharField(widget=forms.HiddenInput)
     vat_rate = fields.VATRate()
     price = fields.Price()
+    weight = fields.Weight()
 
     def __init__(self, *args, **kwargs):
         self.product = kwargs.pop('product')
@@ -29,6 +30,7 @@ class VariationForm(forms.Form):
         initial['vat_rate'] = fields.VATRate.get_VAT_percentage(
             self.product.vat_rate_id)
         initial['price'] = self.product.base_price
+        initial['weight'] = self.product.weight
         for option in self.product.options:
             if option.value is not None:
                 initial['opt_' + option.option_name] = option.value.value
@@ -42,6 +44,7 @@ class VariationForm(forms.Form):
         product = CCAPI.get_product(data['product_id'])
         product.set_vat_rate(data['vat_rate'])
         product.set_base_price(data['price'])
+        product.set_product_scope(weight=data['weight'])
         for option_field in self.variation_fields:
             value = data[option_field.name]
             if len(value) > 0:

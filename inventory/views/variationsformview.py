@@ -1,4 +1,5 @@
 from ccapi import CCAPI
+from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.edit import FormView
 from inventory.forms import VariationsFormSet
@@ -40,4 +41,6 @@ class VariationsFormView(InventoryUserMixin, FormView):
     def form_valid(self, forms):
         for form in forms:
             form.save()
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Variations Updated')
         return super().form_valid(form)
