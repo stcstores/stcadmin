@@ -1,5 +1,7 @@
 class PriceCalculator {
     constructor(data) {
+        this.exchange_rate = 1;
+        this.currency_code = 'GBP';
         this.sale_price = this.to_pence(data.sale_price);
         this.postage_price = this.to_pence(data.postage_price);
         this.purchase_price = this.to_pence(data.purchase_price);
@@ -11,14 +13,32 @@ class PriceCalculator {
         this.calculate_channel_fee();
         this.calculate_profit();
         this.calculate_profit_percentage();
+        this.foreign_sale_price = this.sale_price / this.exchange_rate;
         this.change();
+    }
+    to_pence(price) {
+        return parseInt(price * 100);
+    }
+    to_pounds(pence) {
+        return parseFloat(pence / 100).toFixed(2);
     }
     set_sale_price(sale_price_pounds) {
         this.sale_price = this.to_pence(sale_price_pounds);
         this.recalculate();
     }
+    set_exchange_rate(exchange_rate) {
+        this.exchange_rate = exchange_rate;
+        this.recalculate();
+    }
+    set_foriegn_sale_price(foreign_sale_price_pounds) {
+        this.foriegn_sale_price = this.to_pence(foreign_sale_price_pounds);
+        this.set_sale_price(this.foriegn_sale_price * this.exchange_rate);
+    }
     get_sale_price() {
         return this.to_pounds(this.sale_price_pence);
+    }
+    get_foriegn_sale_price() {
+        return this.to_pounds(this.foreign_sale_price);
     }
     set_postage_price(postage_price_pounds) {
         this.postage_price = this.to_pence(postage_price_pounds);
@@ -76,12 +96,6 @@ class PriceCalculator {
     calculate_profit_percentage() {
         this.profit_percentage = parseFloat((this.profit / this.sale_price) * 100).toFixed(2);
     }
-    to_pence(price) {
-        return parseInt(price * 100);
-    }
-    to_pounds(pence) {
-        return parseFloat(pence / 100).toFixed(2);
-    }
     change() {
         console.log(this.profit);
     }
@@ -122,6 +136,9 @@ function get_postage_price(calculator, country, package_type, weight, price){
             console.log(data['price_name']);
             update_vat_rates(data['vat_rates'], calculator);
             calculator.set_postage_price(parseInt(data['price']) / 100);
+            calculator.set_exchange_rate(parseFloat(data['exchange_rate']));
+            calculator.currency_code = data['currency_code'];
+            calculator.change();
         },
     ).error(function() {alert('No valid shipping service found.');});
 }

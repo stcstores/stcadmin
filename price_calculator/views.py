@@ -1,13 +1,14 @@
 import json
 
+from ccapi import CCAPI
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.base import TemplateView
 from inventory.views.views import InventoryUserMixin
 from price_calculator import models
-from ccapi import CCAPI
-from django.views.generic.base import TemplateView
 
 
 class GetShippingPriceView(InventoryUserMixin, View):
@@ -15,20 +16,31 @@ class GetShippingPriceView(InventoryUserMixin, View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
         try:
-            country_name = request.POST['country']
-            package_type_name = request.POST['package_type']
-            weight = int(request.POST['weight'])
-            price = int(request.POST['price'])
-            postage_price = models.ShippingPrice.objects.get_price(
-                country_name, package_type_name, weight, price)
-            vat_rates = list(postage_price.vat_rates.values())
-            return HttpResponse(json.dumps({
-                'price': postage_price.calculate(weight),
-                'price_name': postage_price.name,
-                'vat_rates': vat_rates,
-            }))
+            shipping_price_details = self.get_shipping_price_details()
+            json_data = json.dumps(shipping_price_details)
         except Exception as e:
             return HttpResponse(status=500)
+        return HttpResponse(json_data)
+
+    def get_shipping_price_details(self):
+        country_name = self.request.POST['country']
+        package_type_name = self.request.POST['package_type']
+        weight = int(self.request.POST['weight'])
+        price = int(self.request.POST['price'])
+        country = get_object_or_404(
+            models.DestinationCountry, name=country_name)
+        exchange_rate = country.current_rate()
+        postage_price = models.ShippingPrice.objects.get_price(
+            country_name, package_type_name, weight, price)
+        vat_rates = list(postage_price.vat_rates.values())
+        data = {
+            'price': postage_price.calculate(weight),
+            'price_name': postage_price.name,
+            'vat_rates': vat_rates,
+            'exchange_rate': exchange_rate,
+            'currency_code': str(country.currency_code)
+        }
+        return data
 
 
 class RangePriceCalculatorView(InventoryUserMixin, TemplateView):

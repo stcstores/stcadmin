@@ -1,9 +1,17 @@
 from django.db import models
 from django.db.models import Q
+from forex_python.converter import CurrencyRates
 
 
 class DestinationCountry(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    currency_code = models.CharField(max_length=4, default='GBP')
+
+    def current_rate(self):
+        if self.currency_code == 'GBP':
+            return 1
+        c = CurrencyRates()
+        return c.get_rate(str(self.currency_code), 'GBP')
 
     def __str__(self):
         return self.name

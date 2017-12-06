@@ -4,8 +4,9 @@ from price_calculator import models
 
 @admin.register(models.DestinationCountry)
 class DestinationCountryAdmin(admin.ModelAdmin):
-    fields = ('name', )
-    list_display = ('name', )
+    fields = ('name', 'currency_code')
+    list_display = ('name', 'currency_code')
+    list_editable = ('currency_code', )
     search_fields = ('name', )
 
 
