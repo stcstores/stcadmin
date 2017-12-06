@@ -51,12 +51,13 @@ class FileUntrackedManifest(FileManifest):
     def get_row_for_zone(self, zones, zone, orders):
         customer_number = settings.SpringManifestSettings.customer_number
         customer_reference = 'STC_STORES_{}'.format(self.get_date_string())
-        item_count = 0
+        package_count = 0
         weight = 0
         for order in orders:
             cc_order = order.get_order_data()
             weight += self.get_order_weight(cc_order)
-            item_count += order.springpackage_set.count()
+            package_count += order.springpackage_set.count()
+            weight += 0.025 * package_count
         data = OrderedDict([
             ('CustomerNumber*', customer_number),
             ('Customer Reference 1', customer_reference),
@@ -74,7 +75,7 @@ class FileUntrackedManifest(FileManifest):
             ('Format code', zone.format_code or ''),
             ('Weightbreak from', ''),
             ('Weightbreak to', ''),
-            ('Nr items*', str(item_count)),
+            ('Nr items*', str(package_count)),
             ('Weight (kg)*', str(round(weight, 2))),
         ])
         return data
