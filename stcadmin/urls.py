@@ -13,36 +13,36 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import include, url
-from django.contrib import admin
+from user import views as user_views
+
 from django.conf import settings
 from django.conf.urls.static import static
-from user import views as user_views
+from django.contrib import admin
+from django.urls import include, path
 
 admin.site.site_header = 'STC Stores Administration'
 
 app_name = 'stcadmin'
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^user/', include('user.urls', namespace='user')),
-    url(r'^suppliers/', include('suppliers.urls', namespace='suppliers')),
-    url(r'^labelmaker/', include(
-        'labelmaker.urls', namespace='labelmaker')),
-    url(r'^epos/', include('epos.urls', namespace='epos')),
-    url(r'^reference/', include('reference.urls', namespace='reference')),
-    url(r'^inventory/', include('inventory.urls', namespace='inventory')),
-    url(
-        r'^price_calculator/',
+    path('admin/', admin.site.urls),
+    path('user/', include('user.urls', namespace='user')),
+    path('suppliers/', include('suppliers.urls', namespace='suppliers')),
+    path('labelmaker/', include('labelmaker.urls', namespace='labelmaker')),
+    path('epos/', include('epos.urls', namespace='epos')),
+    path('reference/', include('reference.urls', namespace='reference')),
+    path('inventory/', include('inventory.urls', namespace='inventory')),
+    path(
+        'price_calculator/',
         include('price_calculator.urls', namespace='price_calculator')),
-    url(
-        r'^print_audit/',
+    path(
+        'print_audit/',
         include('print_audit.urls', namespace='print_audit')),
-    url(
-        r'^spring_manifest/',
+    path(
+        'spring_manifest/',
         include('spring_manifest.urls', namespace='spring_manifest')),
-    url(r'^', include('home.urls', namespace='home')),
-    url(
-        r'^password_change_done/', user_views.change_password_done,
+    path('', include('home.urls', namespace='home')),
+    path(
+        'password_change_done/', user_views.change_password_done,
         name='password_change_done')
 ]
 

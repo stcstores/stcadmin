@@ -1,32 +1,31 @@
-from django.conf.urls import include, url  # noqa
-from django.contrib import admin  # noqa
+from django.urls import path
 from spring_manifest import views
 
 app_name = 'spring_manifest'
 
 urlpatterns = [
-    url(
-        r'^index$', views.Index.as_view(),
+    path(
+        '', views.Index.as_view(),
         name='index'),
-    url(
-        r'^manifest/(?P<manifest_id>[0-9]+)/$',
+    path(
+        'manifest/<int:manifest_id>/',
         views.ManifestView.as_view(), name='manifest'),
-    url(
-        r'^file_manifest/(?P<manifest_id>[0-9]+)/$',
+    path(
+        'file_manifest/<int:manifest_id>/',
         views.FileManifestView.as_view(), name='file_manifest'),
-    url(
-        r'^update_order/(?P<order_pk>[0-9]+)/$',
+    path(
+        'update_order/<int:order_pk>/',
         views.UpdateOrderView.as_view(), name='update_order'),
-    url(
-        r'^manifest_list$',
+    path(
+        'manifest_list/',
         views.ManifestListView.as_view(),
         name='manifest_list'),
-    url(
-        r'^split_order/(?P<order_pk>[0-9]+)/$',
+    path(
+        'split_order/<int:order_pk>/',
         views.SplitOrderView.as_view(),
         name='split_order'),
-    url(
-        r'^canceled_orders$',
+    path(
+        'canceled_orders/',
         views.CanceledOrdersView.as_view(),
         name='canceled_orders'),
 ]
