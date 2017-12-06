@@ -30,6 +30,7 @@
             <th>Weight</th>
             <th>Purchase Price</th>
             <th>Price</th>
+            <th id="currency_code"></th>
             <th>VAT Rate</th>
         </tr>
         <tr class="price_calculator_product">
@@ -50,6 +51,7 @@
             <td><input id="weight" type="number" step="1" value="50"></td>
             <td><input id="purchase_price" type="number" step="0.01" value="5"></td>
             <td><input id="sale_price" type="number" step="0.01" value="15.50"></td>
+            <td><input id="foriegn_sale_price" type="number" step="0.01"></td>
             <td>
                 <select name="vat_rate" id="vat_rate">
                 </select>
@@ -119,6 +121,15 @@
             } else {
                 $('#profit_percentage').css('color', 'orange');
             }
+            if (calculator.currency_code == 'GBP') {
+                $('#currency_code').attr('hidden', true);
+                $('#foriegn_sale_price').closest('td').attr('hidden', true);
+            } else {
+                $('#currency_code').text('Price (' + calculator.currency_code + ')');
+                $('#foriegn_sale_price').val(calculator.get_foriegn_sale_price());
+                $('#currency_code').attr('hidden', false);
+                $('#foriegn_sale_price').closest('td').attr('hidden', false);
+            }
         };
 
         calculator.set_sale_price($(this).val());
@@ -145,6 +156,13 @@
         $('#sale_price').change(function() {
             calculator.set_sale_price($(this).val());
             update_postage_price(calculator);
+        });
+        $('#foriegn_sale_price').change(function() {
+            var foreign_price = $(this).val();
+            var exchange_rate = calculator.exchange_rate;
+            var sale_price = parseFloat(foreign_price * exchange_rate).toFixed(2);
+            $('#sale_price').val(sale_price);
+            $('#sale_price').change();
         });
         $('#sale_price').change();
     });
