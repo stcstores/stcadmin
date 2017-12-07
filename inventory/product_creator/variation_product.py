@@ -1,11 +1,11 @@
 from datetime import datetime
 
 from ccapi import CCAPI
+from inventory.models import get_barcode
 
 from .new_product import NewProduct
 from .new_range import NewRange
 from .new_variation import NewVariation
-from inventory.models import get_barcode
 
 
 class VariationProduct(NewProduct):
@@ -79,7 +79,7 @@ class VariationProduct(NewProduct):
     def get_options(self):
         self.options = [
             self.get_options_for_product(data) for data in self.variation_data]
-        self.range_options = []
+        self.range_options = ['Incomplete']
         self.drop_down_options = [
             key.replace('opt_', '') for key, value in self.setup_data.items()
             if key.startswith('opt_') and value[0] == 'variation']

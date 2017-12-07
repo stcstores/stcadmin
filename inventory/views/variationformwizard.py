@@ -1,7 +1,9 @@
+import threading
+
 from django.shortcuts import redirect
 from formtools.wizard.views import SessionWizardView
 from inventory.forms import NewVariationProductForm, VariationFormSet
-from inventory.product_creator import VariationProduct
+from inventory.product_creator import VariationProduct, create_variations
 
 from .views import InventoryUserMixin
 
@@ -35,6 +37,11 @@ class VariationFormWizardView(InventoryUserMixin, SessionWizardView):
 
     def done(self, form_list, **kwargs):
         new_product = VariationProduct(form_list)
+        t = threading.Thread(
+            target=create_variations,
+            args=[new_product])
+        t.setDaemon(True)
+        t.start()
         return redirect(
             'inventory:product_range', new_product.product_range.id)
 

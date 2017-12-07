@@ -1,7 +1,9 @@
+import threading
+
 from django.shortcuts import redirect
 from django.views.generic.edit import FormView
 from inventory.forms import NewSingleProductForm
-from inventory.product_creator import SingleProduct
+from inventory.product_creator import SingleProduct, create_variations
 
 from .views import InventoryUserMixin
 
@@ -12,5 +14,8 @@ class NewSingleProductView(InventoryUserMixin, FormView):
 
     def form_valid(self, form):
         new_product = SingleProduct(form.cleaned_data)
+        t = threading.Thread(target=create_variations, args=[new_product])
+        t.setDaemon(True)
+        t.start()
         return redirect(
             'inventory:product_range', new_product.product_range.id)

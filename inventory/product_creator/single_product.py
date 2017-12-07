@@ -1,11 +1,11 @@
 from datetime import datetime
 
 from ccapi import CCAPI
+from inventory.models import get_barcode
 
 from .new_product import NewProduct
 from .new_range import NewRange
 from .new_variation import NewVariation
-from inventory.models import get_barcode
 
 
 class SingleProduct(NewProduct):
@@ -85,4 +85,4 @@ class SingleProduct(NewProduct):
         if len(self.amazon_search_terms) > 1:
             optional_options['Amazon Search Terms'] = self.amazon_search_terms
         self.options = {**required_options, **optional_options}
-        self.range_options = self.options.keys()
+        self.range_options = list(self.options.keys()) + ['Incomplete']
