@@ -4,38 +4,37 @@ from suppliers import views
 app_name = 'suppliers'
 urlpatterns = [
     path(
-        'supplier_search/', views.supplier_search,
+        'supplier_search/', views.SupplierSearch.as_view(),
         name='supplier_search'),
     path(
-        'supplier/<int:supplier_id>/', views.supplier,
+        'supplier/<int:pk>/', views.SupplierView.as_view(),
         name='supplier'),
     path(
-        'supplier/<int:supplier_id>/add_item/',
-        views.add_item_to_supplier, name='add_item'),
-    path('add_item/', views.add_item, name='add_item'),
-    path('create_item/', views.create_item, name='create_item'),
-    path('add_supplier/', views.add_supplier, name='add_supplier'),
+        'supplier/<int:supplier_pk>/add_item/',
+        views.CreateItem.as_view(), name='add_item_to_supplier'),
+    path('add_item/', views.CreateItem.as_view(), name='add_item'),
     path(
-        'api/create_supplier/', views.create_supplier,
-        name='create_supplier'),
+        'add_item/',
+        views.CreateItem.as_view(), name='add_item'),
+    path('add_supplier/', views.CreateSupplier.as_view(), name='add_supplier'),
     path(
-        'delete_item/<int:item_id>/', views.delete_item,
+        'delete_item/<int:item_id>/', views.DeleteItem.as_view(),
         name='delete_item'),
     path(
-        'delete_supplier/<int:supplier_id>/', views.delete_supplier,
+        'delete_supplier/<int:supplier_id>/', views.DeleteSupplier.as_view(),
         name='delete_supplier'),
     path(
-        'api/get_item/<int:item_id>/', views.api_get_item,
+        'edit_supplier/<int:supplier_id>/', views.UpdateSupplier.as_view(),
+        name='edit_supplier'),
+    path('api/export/', views.ApiExport.as_view(), name='api_export'),
+    path(
+        'api/get_item/<int:item_id>/', views.GetItemAJAX.as_view(),
         name='api_get_item'),
     path(
-        'api/update_item/<int:item_id>/', views.api_update_item,
+        'api/update_item/<int:item_id>/', views.UpdateItemAJAX.as_view(),
         name='api_update_item'),
     path(
-        'api/delete_item/<int:item_id>/', views.api_delete_item,
+        'api/delete_item/<int:item_id>/', views.DeleteItemAJAX.as_view(),
         name='api_delete_item'),
-    path(
-        'edit_supplier/<int:supplier_id>/', views.edit_supplier,
-        name='edit_supplier'),
-    path('api/export/', views.ApiExport.as_view, name='api_export'),
-    path('', views.index, name='index'),
+    path('', views.Index.as_view(), name='index'),
 ]

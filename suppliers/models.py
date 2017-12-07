@@ -1,11 +1,16 @@
-from django.db import models
 from django.contrib import admin
+from django.db import models
+from django.urls import reverse
 
 
 class Supplier(models.Model):
     name = models.CharField(max_length=200, unique=True)
     email = models.CharField(max_length=200, null=True, blank=True)
     phone = models.CharField(max_length=200, null=True, blank=True)
+
+    def get_absolute_url(self):
+        return reverse(
+            'suppliers:supplier', kwargs={'pk': str(self.id)})
 
     def __str__(self):
         return self.name

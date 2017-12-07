@@ -2,41 +2,9 @@
 
 {% block content %}
 
-<form action="{% url 'suppliers:create_item' %}" method="POST" id="add_item_form">
-    {% csrf_token %}
+<form action="" method="POST" id="add_item_form">{% csrf_token %}
     <table>
-        <tr>
-            <td><label for="supplier">Supplier</label></td>
-            <td>
-                <select name="supplier">
-                    {% for s in suppliers %}<option value="{{s.id}}"{% if s.id == supplier.id %} selected="selected"{% endif %}>{{s.name}}</option>{% endfor %}
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td><label for="product_code">Product Code</label></td>
-            <td><input id="product_code_input" type="text" name="product_code" size="50" required autofocus>&nbsp;Required</td>
-        </tr>
-        <tr>
-            <td><label for="item_title">Item Title</label></td>
-            <td><input id="item_title_input" type="text" name="item_title" size="50" required>&nbsp;Required</td>
-        </tr>
-        <tr>
-            <td><label for="box_quantity">Box Quantity</label></td>
-            <td><input id="box_quantity_input" type="number" name="box_quantity" ></td>
-        </tr>
-        <tr>
-            <td><label for="linnworks_title">Linnworks Title</label></td>
-            <td><input id="linnworks_title_input" type="text" name="linnworks_title" size="50"></td>
-        </tr>
-        <tr>
-            <td><label for="linnworks_sku">Linnworks SKU</label></td>
-            <td><input id="linnworks_sku_input" type="text" name="linnworks_sku" size="50"></td>
-        </tr>
-        <tr>
-            <td><label for="notes">Notes</label></td>
-            <td><input id="notes_input" type="text" name="notes" size="50"></td>
-        </tr>
+        {{ form.as_table }}
         <tr>
             <td><input type="submit" value="Create Item"></td>
             <td></td>
