@@ -10,28 +10,6 @@ class NewSingleProductView(InventoryUserMixin, FormView):
     template_name = 'inventory/new_product/single_product_form.html'
     form_class = NewSingleProductForm
 
-    def old_form_valid(self, form):
-        data = form.cleaned_data
-        options = self.get_options(form)
-        self.create_range(data['title'], options.keys())
-        large_letter_compatible = options['Package Type'] == 'Large Letter'
-        self.product = self.create_product(
-            name=data['title'],
-            barcode=data['barcode'],
-            description=data['description'],
-            vat_rate_id=int(data['vat_rate']),
-            weight=data['weight'],
-            height=data['height'],
-            length=data['length'],
-            width=data['width'],
-            large_letter_compatible=large_letter_compatible,
-            stock_level=data['stock_level'],
-            price=data['price'],
-            options=options)
-        if len(form.cleaned_data['location']) > 0:
-            self.set_bay(form)
-        return redirect('inventory:product_range', self.range.id)
-
     def form_valid(self, form):
         new_product = SingleProduct(form.cleaned_data)
         return redirect(
