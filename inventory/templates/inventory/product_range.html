@@ -17,9 +17,9 @@
     <p>Department: {{ product_range.products.0.options.Department.value }}</p>
     {% if 'Incomplete' in  product_range.options.option_names %}
     <h2 class="error">INCOMPLETE</h2>
-    <p class="error">
+    <p>
         Creation of this product has not completed.
-        If it was recently created please allow some time for this to complete.
+        If it was created in the last hour please allow some time for this to complete then <a href="">refresh</a> this page.
         If it was created some time ago an error may have occurred, in this
         case the product should be deleted and re-created.
     </p>

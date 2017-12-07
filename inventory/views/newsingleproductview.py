@@ -1,5 +1,6 @@
 import threading
 
+from django.contrib import messages
 from django.shortcuts import redirect
 from django.views.generic.edit import FormView
 from inventory.forms import NewSingleProductForm
@@ -17,5 +18,9 @@ class NewSingleProductView(InventoryUserMixin, FormView):
         t = threading.Thread(target=create_variations, args=[new_product])
         t.setDaemon(True)
         t.start()
+        messages.add_message(
+            self.request, messages.SUCCESS,
+            ("Your product has been submitted but may take some time to"
+             "complete. Please check back later."))
         return redirect(
             'inventory:product_range', new_product.product_range.id)
