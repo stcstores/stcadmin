@@ -7,7 +7,7 @@ from django.db import models
 def get_product_image_upload_to(instance, original_filename):
     extension = original_filename.split('.')[-1]
     filename = '{}.{}'.format(uuid.uuid4(), extension)
-    return os.path.join('product_images', instance.range_id, filename)
+    return os.path.join('product_images', str(instance.range_id), filename)
 
 
 class STCAdminImage(models.Model):
