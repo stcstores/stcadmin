@@ -25,7 +25,7 @@ class NewVariation:
     def create(self):
         if self.name is None:
             self.name = self.product_range.name
-        if self.description:
+        if self.description is None or self.description == '':
             self.description = self.name
 
         product = self.product_range.add_product(
