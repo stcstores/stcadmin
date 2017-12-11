@@ -1,0 +1,42 @@
+{% extends "reference/base.html" %}
+{% load staticfiles %}
+{% block page_title %}STC Admin{% endblock %}
+{% block content %}
+<style>
+    .instructions {
+        padding: 1em;
+    }
+
+    .background_example {
+        padding: 0.25em;
+        border:1px solid black;
+        font-weight: bold;
+    }
+
+    .fields li {
+        margin: 3em;
+    }
+
+    .fields h3 {
+        font-size: 1.25em;
+        text-decoration: underline;
+    }
+
+    .fields h4 {
+        margin: 0;
+        font-size: 1.25em;
+    }
+
+    .fields p {
+        margin: 0;
+    }
+
+    .field_notes li {
+        margin: 0;
+        padding: 0.25em;
+    }
+</style>
+<div class="instructions">
+    {% include "reference/product_creation_text.html" %}
+</div>
+{% endblock content %}
