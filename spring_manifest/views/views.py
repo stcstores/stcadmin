@@ -1,7 +1,10 @@
 from django.contrib import messages
-from django.urls import reverse_lazy
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.views.generic.base import TemplateView
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView
 from home.views import UserInGroupMixin
 from spring_manifest import forms, models
@@ -139,3 +142,17 @@ class SplitOrderView(SpringUserMixin, FormView):
         context_data['order'] = self.order
         context_data['children_formset'] = context_data.pop('form')
         return context_data
+
+
+class OrderExists(SpringUserMixin, View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        order_id = self.request.POST.get('order_id')
+        try:
+            order = models.SpringOrder.objects.get(order_id=order_id)
+        except models.SpringOrder.DoesNotExist:
+            return HttpResponse('0')
+        else:
+            return HttpResponse(reverse_lazy(
+                'spring_manifest:update_order', kwargs={'order_pk': order.pk}))

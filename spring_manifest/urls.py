@@ -28,4 +28,5 @@ urlpatterns = [
         'canceled_orders/',
         views.CanceledOrdersView.as_view(),
         name='canceled_orders'),
+    path('order_exists/', views.OrderExists.as_view(), name='order_exists'),
 ]

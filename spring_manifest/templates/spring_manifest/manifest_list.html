@@ -5,6 +5,10 @@
 
 {% block content %}
 
+<label for="order_id">Go to Order: </label>
+<input type="text" name="order_id" id="go_to_order_input">
+<button id="go_to_order">Go</button>
+<br><br>
 {% if unmanifested_orders %}
 <h3>Orders Not on Manifests</h3>
 <table>
@@ -74,4 +78,24 @@
     {% endfor %}
 </table>
 {% endif %}
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+    go_to_order_url = "{% url 'spring_manifest:order_exists' %}";
+    $(document).ready(function() {
+        $('#go_to_order').click(function() {
+            $.post(
+                go_to_order_url,
+                {'order_id': $('#go_to_order_input').val().trim()},
+                function(response) {
+                if (response == '0') {
+                    alert('Order not found.')
+                } else {
+                    window.location.href = response;
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
