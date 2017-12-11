@@ -1,11 +1,12 @@
 from django.contrib import messages
 from forex_python.converter import CurrencyRates
+from spring_manifest import models
 
 
 class FileManifest:
 
     def __init__(self, manifest, request=None):
-        self.currency_converter = CurrencyRates()
+        self.currency_rates = self.get_currency_rates()
         self.valid = True
         self.request = request
         self.manifest = manifest
@@ -21,6 +22,15 @@ class FileManifest:
             self.manifest.time_filed = None
             self.manifest.manifest_file = None
             self.manifest.save()
+
+    def get_currency_rates(self):
+        currency_converter = CurrencyRates()
+        currency_codes = list(set([
+            c.currency_code for c in
+            models.CloudCommerceCountryID.objects.all() if c.currency_code
+            is not None and c.currency_code != 'GBP']))
+        return {
+            c: currency_converter.get_rate(c, 'GBP') for c in currency_codes}
 
     def file_manifest(self, manifest):
         raise NotImplementedError
@@ -44,10 +54,9 @@ class FileManifest:
     def convert_to_GBP(self, currency, amount):
         if currency is None or currency == 'GBP':
             return round(amount, 2)
-        converted_amount = self.currency_converter.convert(
-            currency, 'GBP', amount)
+        rate = self.currency_rates[currency]
+        converted_amount = amount * rate
         return round(converted_amount, 2)
-
 
     def send_file(self, manifest):
         raise NotImplementedError
