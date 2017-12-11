@@ -20,7 +20,7 @@ class NewSingleProductView(InventoryUserMixin, FormView):
         t.start()
         messages.add_message(
             self.request, messages.SUCCESS,
-            ("Your product has been submitted but may take some time to"
+            ("Your product has been submitted but may take some time to "
              "complete. Please check back later."))
         return redirect(
             'inventory:product_range', new_product.product_range.id)
