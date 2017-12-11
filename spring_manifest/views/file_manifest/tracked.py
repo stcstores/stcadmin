@@ -79,13 +79,15 @@ class FileTrackedManifest(FileManifest):
             self.add_error(
                 'Invalid destination country {} for order {}.'.format(
                     country.name, order.order_id))
-        price = self.get_order_value(cc_order)
+        price = self.get_order_value(cc_order, country.currency_code)
         rows = []
         packages = order.springpackage_set.all()
         for package in packages:
             items = [i for i in package.springitem_set.all() if i.quantity > 0]
             for item in items:
                 product = self.get_order_product(item, cc_order)
+                product_price = self.convert_to_GBP(
+                    country.currency_code, product.price)
                 data = OrderedDict([
                     ('Version #', '3.0'),
                     ('Shipper ID', shipper_id),
@@ -124,13 +126,13 @@ class FileTrackedManifest(FileManifest):
                     ('Line Item Code', product.sku),
                     ('Line Item Description', product.product_name),
                     ('Line Item  Quantity Unit', 'PCE'),
-                    ('Unit Price', product.price),
+                    ('Unit Price', product_price),
                     ('Item Weight', self.get_product_weight(product)),
                     ('Weight Unit', 'KG'),
-                    ('Price', product.price * item.quantity),
+                    ('Price', product_price * item.quantity),
                     ('HS Code', ''),
                     ('Country Of Manufacture', 'CN'),
-                    ('Currency Code', country.currency_code or 'GBP')])
+                    ('Currency Code', 'GBP')])
                 rows.append(data)
         return rows
 
@@ -183,11 +185,13 @@ class FileTrackedManifest(FileManifest):
         split_index = address[:40].rfind(' ')
         return [address[:split_index], address[split_index + 1:]]
 
-    def get_order_value(self, order):
+    def get_order_value(self, order, currency_code=None):
         price = 0
         for product in order.products:
             price += float(product.price) * product.quantity
-        return price
+        if currency_code is None:
+            return price
+        return self.convert_to_GBP(currency_code, price)
 
     def get_ftp(self):
         ftp = ftplib.FTP()

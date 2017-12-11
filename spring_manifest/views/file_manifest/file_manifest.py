@@ -1,9 +1,11 @@
 from django.contrib import messages
+from forex_python.converter import CurrencyRates
 
 
 class FileManifest:
 
     def __init__(self, manifest, request=None):
+        self.currency_converter = CurrencyRates()
         self.valid = True
         self.request = request
         self.manifest = manifest
@@ -38,6 +40,14 @@ class FileManifest:
             order.products])
         weight_kg = weight_grams / 1000
         return weight_kg
+
+    def convert_to_GBP(self, currency, amount):
+        if currency is None or currency == 'GBP':
+            return round(amount, 2)
+        converted_amount = self.currency_converter.convert(
+            currency, 'GBP', amount)
+        return round(converted_amount, 2)
+
 
     def send_file(self, manifest):
         raise NotImplementedError
