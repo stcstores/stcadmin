@@ -133,7 +133,7 @@ function get_postage_price(calculator, country, package_type, weight, price){
         data,
         function(response) {
             data = $.parseJSON(response);
-            console.log(data['price_name']);
+            console.log(data);
             update_vat_rates(data['vat_rates'], calculator);
             calculator.set_postage_price(parseInt(data['price']) / 100);
             calculator.set_exchange_rate(parseFloat(data['exchange_rate']));
