@@ -112,6 +112,7 @@ The weight of the product in **Grams**.
 
 * Enter the correct weight to the nearest gram.
 * Accuracy is important as we are charged postage based on this number.
+* If the item is likely to require extra packaging such as cardboard estimate how much weight this will add and add that to the weight.
 
 Dimensions (Height, Width and Length)
 _____________________________________
