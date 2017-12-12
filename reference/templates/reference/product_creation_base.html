@@ -1,88 +1,68 @@
 {% extends "reference/base.html" %}
 {% load staticfiles %}
+{% load markup_tags %}
 {% block page_title %}STC Admin{% endblock %}
 {% block content %}
+
 <style>
-    .instructions {
-        padding: 1em;
-        width: 70%;
-    }
-
-    .index {
+    .contents {
+        width: 40%;
         float: right;
-        width: 30%;
     }
 
-    .background_example {
-        padding: 0.25em;
-        border:1px solid black;
-        font-weight: bold;
+    .section {
+        max-width: 80%;
+        display: block;
+        margin: 1em;
     }
 
-    .instructions li {
-        margin: 3em;
-        margin: 0;
-        padding: 0.25em;
-        font-size: 1.25em;
+    .rst li {
+        font-size: 110%;
     }
 
-    .instructions h2 {
-        font-size: 1.75em;
-        margin-top: 2em;
-        text-decoration: underline;
+    .rst h1 {
+        font-size: 2em;
+        margin: 0.67em 0;
     }
 
-    .instructions h3 {
-        margin: 0;
-        font-size: 1.5em;
-        margin-top: 2em;
+    .rst h1, .rst h2, .rst h3, .rst h4, .rst h5, .rst h6, {
+      font-family: 700 2.6656rem/1.1em "Open Sans", arial, sans-serif;
+      line-height: 1.1;
+      color: inherit;
     }
 
-    .instructions h4 {
-        font-size: 1.25em;
-        margin: 0.25em;
+    .rst  {
+      background: #eee;
+      color: #333333;
+      padding: 1em;
+      border-radius: 2em;
     }
 
-    .instructions p {
-        margin: 0;
+    .rst .document a {
+      color:  #0975c6;
+      text-decoration: none;
     }
+    .rst .document a:hover {
+      color:#279cf5;
+    }
+    .rst .document p {
+      line-height: 1.5;
+      margin: 0 0 22px;
+    }
+    .rst .document a:hover {
+      text-decoration: underline;
+    }
+    .rst .document pre {
+      margin-bottom: 30.8px;
+    }
+    .rst .document img {
+      margin: 22px auto;
+    }
+
+
 </style>
-<ul class="index">
-    <li><a href="#start">Beginning</a></li>
-    <li><a href="#new_product_form">The New Product Form</a></li>
-    <li>
-        <a href="#fields">Fields</a>
-        <ul>
-            <li><a href="#title">Title</a></li>
-            <li><a href="#barcode">Barcode</a></li>
-            <li><a href="#purchase_price">Purchase Price</a></li>
-            <li><a href="#vat_rate">VAT Rate</a></li>
-            <li><a href="#price">Price</a></li>
-            <li><a href="#stock_level">Stock Level</a></li>
-            <li><a href="#supplier">Supplier</a></li>
-            <li><a href="#supplier_sku">Supplier SKU</a></li>
-            <li><a href="#weight">Weight</a></li>
-            <li><a href="#dimensions">Dimensions</a></li>
-            <li><a href="#package_type">Package Type</a></li>
-            <li><a href="#brand">Brand</a></li>
-            <li><a href="#manufacturer">Manufacturer</a></li>
-            <li><a href="#description">Description</a></li>
-            <li><a href="#gender">Gender</a></li>
-            <li><a href="#amazon_bullet_points">Amazon Bullet Points</a></li>
-            <li><a href="#amazon_search_terms">Amazon Search Terms</a></li>
-        </ul>
-    </li>
-    <li>
-        <a href="#variation_listings">Variation Listings</a>
-        <ul>
-            <li><a href="#variation_product_form">New Variation Product Form</a></li>
-            <li><a href="#variation_product_options">Variation Product Options</a></li>
-            <li><a href="#variation_table">The Variation Table</a></li>
-        </ul>
-    </li>
-    <li><a href="#incomplete_products">Incomplete Products</a></li>
-</ul>
-<div class="instructions">
-    {% include "reference/product_creation_text.html" %}
+
+<div class="rst">
+    {% include "reference/product_creation.rst" %}
 </div>
 {% endblock content %}

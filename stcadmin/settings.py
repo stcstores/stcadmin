@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 from datetime import datetime, timedelta
 
+from ccapi import CCAPI
+
+from .local_settings import *
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -45,6 +49,7 @@ INSTALLED_APPS = [
     'print_audit',
     'spring_manifest',
     'price_calculator',
+    'django_markup',
 ]
 
 MIDDLEWARE = [
@@ -130,10 +135,8 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = 'home:index'
 
 
-from . local_settings import *
 
 
-from ccapi import CCAPI
 
 
 CCAPI.credentials(CC_LOGIN, CC_PWD)
