@@ -19,7 +19,7 @@ The New Product Form
 The new product form is where you put information about your product. This is
 the only step when creating single products, however variation products work
 slightly differently and also require the `Variation Table <#variation_table>`_
-to be filled in. For more information set `Variation Listings <#variation_listings>`_.
+to be filled in. For more information see `Variation Listings <#variation_listings>`_.
 
 The new product form is colour coded:
 
@@ -40,7 +40,7 @@ The name of the **Product Range** to be created.
 **Note:** All products are part of a **Product Range** even if they do not include variatons.
 
 * The title should *not* contain key words. This includes colours, sizes etc.
-* This title is for internal reference and will not necessarily be used for listings on eBay or Amazon. It will, however, be used on our website.
+* This title is for internal reference and will not necessarily be used for listings on eBay. It will, however, be used on our website.
 * It must make sense gramatically and not include dashes.
 * It must use proper **title case**. (The first letter of every word should be capital except for connective words such as "and" or "the" unless they are the first word of the title.)
 
@@ -49,7 +49,7 @@ _______
 The barcode that will be used when listing the item.
 
 * Must be unique within our inventory.
-* If left blank an new barcode will be applied from our stock.
+* If left blank a new barcode will be applied from our stock.
 * If the product has a barcode from the manufacturer this should be used.
 * If the product has variations with the same barcode they should **not** be used.
 * When listing variations do **not** mix our barcodes with manufacturer barcodes. If manufacturer barcodes are not available for all variations our own should be used.
@@ -61,7 +61,6 @@ The price for which this product was purchased.
 * This should always reflect the currrent price at which we can restock the item.
 * It should be updated if the supplier's prices change.
 
-
 VAT Rate
 ________
 The applicable rate of VAT for this product in the UK.
@@ -69,7 +68,6 @@ The applicable rate of VAT for this product in the UK.
 * Most products require 20% VAT.
 * Books and children's clothing and shoes require 0% VAT.
 * The selected VAT Rate will affect the **Price** field and so must be set first.
-
 
 Price
 _____
@@ -79,7 +77,6 @@ The base price of the product.
 * Two fields are provided allowing you to enter the price either with or without VAT. Use the appropriate field and the other will update.
 * This should **NOT** include **Shipping**.
 * This is for internal reference and will **Not** be used for listings
-
 
 Stock Level
 ___________
@@ -133,7 +130,7 @@ The shipping method that will be used in the UK.
 * Used to select the appropriate shipping service for the product both in the UK and internationally.
 * This must be selected correctly as we will be billed for postage based on this.
 * Based on size and weight when the item is packed. Items requiering cardboard will be effected. If in doubt contact the packing department.
-* See `Package Types <some_url>`_ for information about which package type to select.
+* See `Package Types <{% url 'reference:package_types' %}>`_ for information about which package type to select.
 
 Brand
 _____
@@ -155,11 +152,10 @@ ___________
 Full description to be used in listings.
 
 * This is **required** for any item that will be listed online. It can be left blank and added to a product later if necessary.
-* Must **not** start with the title of the product. Doing so only makes sense on eBay as the description appears under the title on other channels and will be added automatically there.
+* Must **not** start with the title of the product. It will be added automatically on ebay.
 * Must **not** include information about **price** or **postage**.
 * Do **not** use abrieviations such as "L" for length as this cannot be translated for foreign listings.
 * Sentences must end with full stops.
-* Size charts can should created using tables.
 * Proper use of capitalisation is required.
 * The description can **contain** bullet points to hightlight key information but **MUST NOT** consist only of bullet ponts.
 
@@ -174,16 +170,18 @@ Amazon Bullet Points
 ____________________
 The bullet points that will appear at the top of the Amazon listing.
 
+* These are far more prominent than the main description. This makes it crucial that these are included.
 * Each bullet point should be about one sentence long.
 * Can repeat key information from the main description.
 * All rules for descriptions also apply to bullet ponts.
 
 Amazon Search Terms
 ___________________
-Words and phrases that people might use to find the product.
+Key words and phrases that people might use to find the product.
 
+* A list of keywords and key phrases used by Amazon to match a listing to customer's searches.
 * Can include alternate words and spelling.
-* Search terms must be put here, **not** in the listing title.
+* Search terms must be put here, **not** in the product title.
 
 
 Single Product Options
@@ -256,11 +254,12 @@ The typed value will be applied to every variation.
 
 If the information is **not** the same for every variation
 select **Variable**. This will add this field to the table on the next page.
-As with other fields a default value can be added here.
+As with other fields a default value can be added here. There are few products
+for which this is applicable. See below for an example of when it might be.
 
 To clarify the above here are some examples:
 
-* For a red T-Shirt that comes in a range of sizes you would select **Variarble** for the **Size** option and list the sizes. Then select **Single** for the **Colour** option and type "Red". This would allow the customer to select their size and see that all the sizes come in one colour.
+* For a red T-Shirt that comes in a range of sizes you would select **Variation** for the **Size** option and list the sizes. Then select **Single** for the **Colour** option and type "Red". This would allow the customer to select their size and see that all the sizes come in one colour.
 * For a product that comes in a range of sizes and colours you would select **Vatiation** for both **Size** and **Colour** and list the appropriate options in the applicable fields.
 * For a named door plaque for which each name has a particular coloured background you would select **Variation** for **Name** and list the names, then select **Variable** for **Colour**. This would allow you to put the appropriate colour next to each name in the variation table on the next page.
 

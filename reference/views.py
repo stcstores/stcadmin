@@ -22,3 +22,7 @@ class ReStructuredTextView(TemplateView):
 
 class ProductCreation(LoginRequiredMixin, ReStructuredTextView):
     rst_file = 'reference/product_creation.rst'
+
+
+class PackageTypes(LoginRequiredMixin, ReStructuredTextView):
+    rst_file = 'reference/package_types.rst'

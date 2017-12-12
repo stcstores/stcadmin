@@ -4,6 +4,7 @@ from reference import views
 app_name = 'reference'
 
 urlpatterns = [
+    path('package_types/', views.PackageTypes.as_view(), name='package_types'),
     path(
         'product_creation', views.ProductCreation.as_view(),
         name='product_creation'),
