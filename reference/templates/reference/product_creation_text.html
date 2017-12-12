@@ -14,6 +14,7 @@
     <a href="{% url 'inventory:new_single_product' %}" target="_blank">
         <button>Single Product</button></a>
 </p>
+<h2 id="new_product_form">The New Product Form</h2>
 <p>
     The product creation form is colour coded.
     <ul style="line-height: 2.25em;">
@@ -42,281 +43,256 @@
     </ul>
 </p>
 
-<h2>Fields</h2>
+<h2 id="fields">Fields</h2>
 <p>The following is a list of fields that appear in the new product forms.</p>
 <p>This can be used as a checklist when creating products.</p>
-<ul class="fields">
-    <li>
-        <h3>Title</h3>
-        <h4>The name of the <b>Product Range</b> to be created.</h4>
-        <p><b>Note: </b>Both single and variation items are always part of a <b>Product Range</b>.</p>
-        <ul class="field_notes">
-            <li>
-                <p>This should <b>not</b> contain <b>key words</b>.</p>
-                <p>This includes colours, sizes etc.</p>
-                <p>
-                    This title is used internally and will not necessarily be
-                    what appears in listings on eBay or Amazon, however it will
-                    be used on our website.
-                </p>
-            </li>
-            <li>Proper use of capitalisation is required.</li>
-            <li>The title should be unique within our inventory.</li>
-            <li>It must describe be concise.</li>
-            <li>
-                It must be clear what the item is.
-                This is cruical for pickers and packers.
-                The title is not just for your reference.
-            </li>
-        </ul>
-    </li>
-    <li>
-        <h3>Barcode</h3>
-        <h4>The barcode that will be used when listing the item.</h4>
-        <ul class="field_notes">
-            <li>Must be unique within our inventory.</li>
-            <li>If left blank an new barcode will be applied from our stock.</li>
-            <li>If the product has a barcode from the manufacturer this
-                should be used.</li>
-            <li>If the product has variations with the same barcode they
-                should <b>not</b> be used.</li>
-            <li>When listing variations do <b>not</b> mix our barcodes with
-                manufacturer barcodes. If manufacturer barcodes are not
-                available for all variations our own should be used.</li>
-        </ul>
-    </li>
-    <li>
-        <h3>Purchase Price</h3>
-        <h4>The price for which this product was purchased.</h4>
-        <ul class="field_notes">
-            <li>
-                <p>
-                    This should always reflect the currrent price at which we
-                    can restock the item.
-                </p>
-                <p>It should be updated if the supplier's prices change.</p>
-            </li>
-        </ul>
-    </li>
-    <li>
-        <h3>VAT Rate</h3>
-        <h4>The applicable rate of VAT for this product in the UK.</h4>
-        <ul class="field_notes">
-            <li>Most products require 20% VAT.</li>
-            <li>Books and children's clothing and shoes require 0% VAT.</li>
-            <li>The selected VAT Rate will affect the <b>Price</b> field
-                and so must be set first.</li>
-        </ul>
-    </li>
-    <li>
-        <h3>Price</h3>
-        <h4>The base price of the product.</h4>
-        <ul class="field_notes">
-            <li>The price depends on the selected <b>VAT Rate</b>.
-                This must always be set first.</li>
-            <li>Two fields are provided allowing you to enter the price either
-            with or without VAT. Use the appropriate field and the other will
-            update.</li>
-            <li>This should <b>NOT</b> include <b>Shipping</b>.</li>
-            <li>This is for internal reference and will <b>Not</b> be
-                used for listings</li>
-        </ul>
-    </li>
-    <li>
-        <h3>Stock Level</h3>
-        <h4>The initial stock level of the product.</h4>
-    </li>
-    <li>
-        <h3>Department</h3>
-        <h4>The department to which the product belongs.</h4>
-    </li>
-    <li>
-        <h3>Location</h3>
-        <h4>The location where the product will be stocked.</h4>
-        <ul class="field_notes">
-            <li>If your department does not use <b>Locations</b> this
-                can be left blank.
-            </li>
-        </ul>
-    </li>
-    <li>
-        <h3>Supplier</h3>
-        <h4>The supplier from which the item is purchased.</h4>
-        <ul class="field_notes">
-            <li>Select the supplier from the list.</li>
-            <li>
-                If the supplier is new or does not appear in the list it must
-                be added before you create your product. Contact Luke or Jake
-                to add a supllier to the list.
-            </li>
-        </ul>
-    </li>
-    <li>
-        <h3>Supplier SKU</h3>
-        <h4>The supplier's SKU for the product.</h4>
-        <ul class="field_notes">
-            <li>This is sometimes refered to as a <b>Product Code</b>.</li>
-            <li>This can be left blank if none exists.</li>
-        </ul>
-    </li>
-    <li>
-        <h3>Weight</h3>
-        <h4>The weight of the product in <b>Grams</b>.</h4>
-        <ul class="field_notes">
-            <li>Enter the correct weight to the nearest gram.</li>
-            <li>Accuracy is important as we are charged postage
-                based on this number.
-            </li>
-        </ul>
-    </li>
-    <li>
-        <h3>Height, Width and Length</h3>
-        <h4>Dimensions of the product in Milimeters.</h4>
-        <ul class="field_notes">
-            <li>Can be left blank if unavilable (if you do not have the
-                product to hand to measure for example) but should be added
-                later when possible.
-            </li>
-            <li>Enter the largest dimension in Length.</li>
-            <li>Enter the second largest dimenstion in Weight.</li>
-            <li>Enter the smallest dimension in Height.</li>
-            <li>
-                This is used to select the appropriate shipping service and
-                will not appear in the listing.
-            </li>
-        </ul>
-    </li>
-    <li>
-        <h3>Package Type</h3>
-        <h4>The shipping method that will be used in the UK.</h4>
-        <ul class="field_notes">
-            <li>
-                Used to select the appropriate shipping service for the
-                product both in the UK and internationally.
-            </li>
-            <li>
-                This must be selected correctly as we will be billed for
-                postage based on this.
-            </li>
-            <li>
-                Based on size and weight when the item is packed. Items
-                requiering cardboard will be effected. If in doubt contact
-                the packing department.
-            </li>
-            <li>
-                See <a href="" target="_blank">Package Types</a> for
-                information about which package type to select.
-            </li>
-        </ul>
-    </li>
-    <li>
-        <h3>Brand</h3>
-        <h4>The brand of the product.</h4>
-        <ul class="field_notes">
-            <li>A brand must be supplied.</li>
-            <li>
-                If there is no available brand for
-                the product a placeholder such as &quot;Unbranded&quot; can
-                be used.
-            </li>
-        </ul>
-    </li>
-    <li>
-        <h3>Manufacturer</h3>
-        <h4>The manufacturer of the product.</h4>
-        <ul class="field_notes">
-            <li>A manufacturer must be supplied.</li>
-            <li>If the manufacturer is unknown use the name of the supplier.</li>
-        </ul>
-    </li>
-    <li>
-        <h3>Description</h3>
-        <h4>Full description to be used in listings.</h4>
-        <ul class="field_notes">
-            <li>
-                This is <b>required</b> for any item that will be listed online.
-                It can be left blank and added to a product later if necessary.
-            </li>
-            <li>
-                Must <b>not</b> start with the title of the product. Doing so only
-                makes sense on eBay as the description appears under the title
-                on other channels and will be added automatically there.
-            </li>
-            <li>Must <b>not</b> include information about <b>price</b> or
-                <b>postage</b>.
-            </li>
-            <li>
-                Do <b>not</b> use abrieviations such as &quot;L&quot; for
-                length as this cannot be translated for foreign listings.
-            </li>
-            <li>Sentences must end with full stops.</li>
-            <li>Size charts can should created using tables.</li>
-            <li>Proper use of capitalisation is required.</li>
-            <li>
-                The description can <b>contain</b> bullet points to hightlight
-                key information but <b>MUST NOT</b> consist only of bullet ponts.
-            </li>
-        </ul>
-    </li>
-    <li>
-        <h3>Gender</h3>
-        <h4>Gender for which the product is intended.</h4>
-        <ul class="field_notes">
-            <li>This is required only for clothing items being listed on Amazon.</li>
-        </ul>
-    </li>
 
+<h3 id="title">Title</h3>
+<h4>The name of the <b>Product Range</b> to be created.</h4>
+<p><b>Note: </b>Both single and variation items are always part of a <b>Product Range</b>.</p>
+<ul>
     <li>
-        <h3>Amazon Bullet Points</h3>
-        <h4>The bullet points that will appear at the top of the Amazon listing.</h4>
-        <ul class="field_notes">
-            <li>Each bullet point should be about one sentence long.</li>
-            <li>Can repeat key information from the main description.</li>
-            <li>All rules for descriptions also apply to bullet ponts.</li>
-        </ul>
+        This should <b>not</b> contain <b>key words</b>. This includes
+        colours, sizes etc. This title is used internally and will not
+        necessarily be what appears in listings on eBay or Amazon,
+        however it will be used on our website.
+    </li>
+    <li>Proper use of capitalisation is required.</li>
+    <li>The title should be unique within our inventory.</li>
+    <li>It must describe be concise.</li>
+    <li>
+        It must be clear what the item is.
+        This is cruical for pickers and packers.
+        The title is not just for your reference.
+    </li>
+</ul>
+
+<h3 id="barcode">Barcode</h3>
+<h4>The barcode that will be used when listing the item.</h4>
+<ul>
+    <li>Must be unique within our inventory.</li>
+    <li>If left blank an new barcode will be applied from our stock.</li>
+    <li>If the product has a barcode from the manufacturer this
+        should be used.</li>
+    <li>If the product has variations with the same barcode they
+        should <b>not</b> be used.</li>
+    <li>When listing variations do <b>not</b> mix our barcodes with
+        manufacturer barcodes. If manufacturer barcodes are not
+        available for all variations our own should be used.</li>
+</ul>
+
+<h3 id="purchase_price">Purchase Price</h3>
+<h4>The price for which this product was purchased.</h4>
+<ul>
+    <li>
+        This should always reflect the currrent price at which we can restock the item.
+    </li>
+    <li>It should be updated if the supplier's prices change.</li>
+</ul>
+
+<h3 id="vat_rate">VAT Rate</h3>
+<h4>The applicable rate of VAT for this product in the UK.</h4>
+<ul>
+    <li>Most products require 20% VAT.</li>
+    <li>Books and children's clothing and shoes require 0% VAT.</li>
+    <li>The selected VAT Rate will affect the <b>Price</b> field
+        and so must be set first.</li>
+</ul>
+
+<h3 id="price">Price</h3>
+<h4>The base price of the product.</h4>
+<ul>
+    <li>The price depends on the selected <b>VAT Rate</b>.
+        This must always be set first.</li>
+    <li>Two fields are provided allowing you to enter the price either
+    with or without VAT. Use the appropriate field and the other will
+    update.</li>
+    <li>This should <b>NOT</b> include <b>Shipping</b>.</li>
+    <li>This is for internal reference and will <b>Not</b> be
+        used for listings</li>
+</ul>
+
+<h3 id="stock_level">Stock Level</h3>
+<h4>The initial stock level of the product.</h4>
+<h3>Department</h3>
+<h4>The department to which the product belongs.</h4>
+<h3>Location</h3>
+<h4>The location where the product will be stocked.</h4>
+<ul>
+    <li>If your department does not use <b>Locations</b> this
+        can be left blank.
+    </li>
+</ul>
+
+<h3 id="supplier">Supplier</h3>
+<h4>The supplier from which the item is purchased.</h4>
+<ul>
+    <li>Select the supplier from the list.</li>
+    <li>
+        If the supplier is new or does not appear in the list it must
+        be added before you create your product. Contact Luke or Jake
+        to add a supllier to the list.
+    </li>
+</ul>
+
+<h3 id="supplier_sku">Supplier SKU</h3>
+<h4>The supplier's SKU for the product.</h4>
+<ul>
+    <li>This is sometimes refered to as a <b>Product Code</b>.</li>
+    <li>This can be left blank if none exists.</li>
+</ul>
+
+<h3 id="weight">Weight</h3>
+<h4>The weight of the product in <b>Grams</b>.</h4>
+<ul>
+    <li>Enter the correct weight to the nearest gram.</li>
+    <li>Accuracy is important as we are charged postage
+        based on this number.
+    </li>
+</ul>
+
+<h3 id="dimensions">Dimensions (Height, Width and Length)</h3>
+<h4>Dimensions of the product in Milimeters.</h4>
+<ul>
+    <li>Can be left blank if unavilable (if you do not have the
+        product to hand to measure for example) but should be added
+        later when possible.
+    </li>
+    <li>Enter the largest dimension in Length.</li>
+    <li>Enter the second largest dimenstion in Weight.</li>
+    <li>Enter the smallest dimension in Height.</li>
+    <li>
+        This is used to select the appropriate shipping service and
+        will not appear in the listing.
+    </li>
+</ul>
+
+<h3 id="package_type">Package Type</h3>
+<h4>The shipping method that will be used in the UK.</h4>
+<ul>
+    <li>
+        Used to select the appropriate shipping service for the
+        product both in the UK and internationally.
     </li>
     <li>
-        <h3>Amazon Search Terms</h3>
-        <h4>Words and phrases that people might use to find the product.</h4>
-        <ul class="field_notes">
-            <li>Can include alternate words and spelling.</li>
-            <li>Search terms must be put here, <b>not</b> in the listing title.</li>
-        </ul>
+        This must be selected correctly as we will be billed for
+        postage based on this.
     </li>
     <li>
-        <h3 id="single_product_options">Product options</h3>
-        <h4>Other product information used for listings.</h4>
-        <p>
-            Product options work differently for single items and variation
-            products. This information is for single items. For variations
-            please refer to <a href="#variation_product_options" target="_blank">variation product options</a>.
-        </p>
-        <ul class="field_notes">
-            <li>Fill in any fields you feel apply to the product.</li>
-            <li>Any fields that do not seem applicable or relevent should be left blank.</li>
-            <li>Colour should be filled in for all products as this is required by Amazon.</li>
-        </ul>
+        Based on size and weight when the item is packed. Items
+        requiering cardboard will be effected. If in doubt contact
+        the packing department.
     </li>
+    <li>
+        See <a href="" target="_blank">Package Types</a> for
+        information about which package type to select.
+    </li>
+</ul>
+
+<h3 id="brand">Brand</h3>
+<h4>The brand of the product.</h4>
+<ul>
+    <li>A brand must be supplied.</li>
+    <li>
+        If there is no available brand for
+        the product a placeholder such as &quot;Unbranded&quot; can
+        be used.
+    </li>
+</ul>
+
+<h3 id="manufacturer">Manufacturer</h3>
+<h4>The manufacturer of the product.</h4>
+<ul>
+    <li>A manufacturer must be supplied.</li>
+    <li>If the manufacturer is unknown use the name of the supplier.</li>
+</ul>
+
+<h3 id="description">Description</h3>
+<h4>Full description to be used in listings.</h4>
+<ul>
+    <li>
+        This is <b>required</b> for any item that will be listed online.
+        It can be left blank and added to a product later if necessary.
+    </li>
+    <li>
+        Must <b>not</b> start with the title of the product. Doing so only
+        makes sense on eBay as the description appears under the title
+        on other channels and will be added automatically there.
+    </li>
+    <li>Must <b>not</b> include information about <b>price</b> or
+        <b>postage</b>.
+    </li>
+    <li>
+        Do <b>not</b> use abrieviations such as &quot;L&quot; for
+        length as this cannot be translated for foreign listings.
+    </li>
+    <li>Sentences must end with full stops.</li>
+    <li>Size charts can should created using tables.</li>
+    <li>Proper use of capitalisation is required.</li>
+    <li>
+        The description can <b>contain</b> bullet points to hightlight
+        key information but <b>MUST NOT</b> consist only of bullet ponts.
+    </li>
+</ul>
+
+<h3 id="gender">Gender</h3>
+<h4>Gender for which the product is intended.</h4>
+<ul>
+    <li>This is required only for clothing items being listed on Amazon.</li>
+</ul>
+
+<h3 id="amazon_bullet_points">Amazon Bullet Points</h3>
+<h4>The bullet points that will appear at the top of the Amazon listing.</h4>
+<ul>
+    <li>Each bullet point should be about one sentence long.</li>
+    <li>Can repeat key information from the main description.</li>
+    <li>All rules for descriptions also apply to bullet ponts.</li>
+</ul>
+
+<h3 id="amazon_search_terms">Amazon Search Terms</h3>
+<h4>Words and phrases that people might use to find the product.</h4>
+<ul>
+    <li>Can include alternate words and spelling.</li>
+    <li>Search terms must be put here, <b>not</b> in the listing title.</li>
+</ul>
+
+<h3 id="single_product_options">Product options</h3>
+<h4>Other product information used for listings.</h4>
+<p>
+    Product options work differently for single items and variation
+    products. This information is for single items. For variations
+    please refer to <a href="#variation_product_options" target="_blank">variation product options</a>.
+</p>
+<ul>
+    <li>Fill in any fields you feel apply to the product.</li>
+    <li>Any fields that do not seem applicable or relevent should be left blank.</li>
+    <li>Colour should be filled in for all products as this is required by Amazon.</li>
 </ul>
 <h2 id="variation_listings">Listing Variations</h2>
 <p>
     While a single form is required to create a single item, creating a product
-    with variations is a two step process.
+    with variations is a two step process. The first step is
+    the <a href="#variation_product_form">new variation product form</a>,
+    which is very similar to the new single product variation form. This is
+    followed by the <a href="#variation_table">variation table</a>.
 </p>
+<h3 id="variation_product_form">New Variation Product Form</h3>
 <p>
     The variation product form is very similar to the single product form.
-    The <b>Barcode</b> field does not appear here. You will be able to add barcodes later.
-    All the above information about fields still applies and can still be used as a checklist.
-    You will notice that when listing variation products that checkboxes appear to the right of some fields.
-    If there are any fields for which the required information is not the same for <b>every</b> variation
-    the box next to it should be checked. If the field is optional it can be left blank,
-    however anything you do enter will be provided as a default for all variations.
-    If the information in this field will be the same for most of your variations
-    you can enter it here to save typing later.
-    If the field is not optional something must be entered. This can be the correct
-    information for one or some of your variations or a placeholder.
-    For <b>Price</b>, <b>Purchase Price</b> and <b>Weight</b> zero is a viable placeholder
-    but another value must be entered for all variations on the next page.
+    The <b>Barcode</b> field does not appear here. You will be able to add
+    barcodes later. All the above information about fields still applies and
+    can still be used as a checklist. You will notice that when listing
+    variation products that checkboxes appear to the right of some fields.
+    If there are any fields for which the required information is not the same
+    for <b>every</b> variation the box next to it should be checked. If the
+    field is optional it can be left blank, however anything you do enter will
+    be provided as a default for all variations. If the information in this
+    field will be the same for most of your variations you can enter it here
+    to save typing later. If the field is not optional something must be
+    entered. This can be the correct information for one or some of your
+    variations or a placeholder. For <b>Price</b>, <b>Purchase Price</b> and
+    <b>Weight</b> zero is a viable placeholder but another value must be
+    entered for all variations on the next page.
 </p>
 <p>
     When the form is complete you will be presented with a table containing
@@ -328,11 +304,93 @@
     barcode can be used if available, otherwise it can be left blank to use
     new barcodes from our stock.
 </p>
+
 <h3 id="variation_product_options">Variation Product Options</h3>
-<h2>Incomplete Products</h2>
 <p>
     At the bottom of the new variation product form you will see the same list
     of <b>Product Options</b> as on the new single product form. Instead of a
-    text box you will see the options &quot;Unused&quot;, &quot;Single&quot;,
-    &quot;Variable&quot; and &quot;Variation&quot;.
+    text box you will see the options <b>Unused</b>, <b>Single</b>,
+    <b>Variable</b> and <b>Variation</b>.
+</p>
+<p>If the field is not applicable to the product leave <b>Unused</b> selected.</p>
+<p>
+    <b>Variation</b> should be selected for the options that most closely
+    relates the the way in which the variation product varies. For instance
+    shoes might use <b>Colour</b> and <b>Size</b>. This will be the name next to
+    the drop down box(es) in listings. All existant values for each selected
+    option must be listed in the boxes provided. This will be used to create
+    the variation table on the next page. The <b>TAB</b> key can be used after
+    typing a variation to enter the next box.
+</p>
+<p>
+    Relevent product options can be used in the same way they are used for
+    single items, to add information to the listing, if they are not variation
+    options.
+</p>
+<p>
+    If the information is the same for every variation select <b>Single</b>.
+    The typed value will be applied to every variation.
+</p>
+<p>
+    If the information is <b>not</b> the same for every variation
+    select <b>Variable</b>. This will add this field to the table on the next page.
+    As with other fields a default value can be added here.
+</p>
+<p>To clarify the above here are some examples:</p>
+<ul>
+    <li>
+        For a red T-Shirt that comes in a range of sizes you would select <b>Variarble</b>
+        for the <b>Size</b> option and list the sizes. Then select <b>Single</b> for
+        the <b>Colour</b> option and type &quot;Red&quot;.
+        This would allow the customer to select their size and see that all the
+        sizes come in one colour.
+    </li>
+    <li>
+        For a product that comes in a range of sizes and colours you would
+        select <b>Vatiation</b> for both <b>Size</b> and <b>Colour</b> and
+        list the appropriate options in the applicable fields.
+    </li>
+    <li>
+        For a named door plaque for which each name has a particular colourred
+        background you would select <b>Variation</b> for <b>Name</b> and list
+        the names, then select <b>Variable</b> for <b>Colour</b>. This would
+        allow you to put the appropriate colour next to each name in the
+        variation table on the next page.
+    </li>
+</ul>
+<h3 id="variation_table">The Variation Table</h3>
+<p>
+    When the new variation product form is complete you will see the <b>variation table</b>.
+    This will list every possible variation for your product by combining all
+    the values from <b>Product Option</b> fields marked as <b>Variation</b>.
+    For each variation you will have a <b>Barcode</b> field as well as any
+    other field for which you checked the variable check box and any <b>Product Option</b>
+    that was marked as <b>Variable</b>.
+</p>
+<p>
+    You will also have a <b>Delete</b> checkbox.
+    This should be checked for any variation that does not exist or that we will
+    not be stocking. If there are any variations that we do not stock but are
+    likely to in the future do not delete them. It is far easier to create them
+    now and leave them out of stock than to add them later.
+</p>
+<p>
+    All the fields in the <b>Variation Table</b> should be filled out in the
+    same way they would in the new single product form or the new variation
+    product form.
+</p>
+
+<h2 id="incomplete_products">Incomplete Products</h2>
+<p>
+    When the <b>Variation Table</b> has been submitted your new Product Range
+    will be created and you will be taken to it's page in the inventory.
+    However it will likey not yet be complete as variations are created in
+    the background. This will happen even for single products. If you refresh
+    the page you will see variations appearing. When all the variations have appeared
+    and the page no longer says <b>INCOMPLETE</b> your product will have been
+    successfully created. It is possible an error, in this case the product will
+    remain <b>INCOMPLETE</b>. Please allow some time for it to complete before
+    acting on this. Products with more variations will take longer to create
+    and Cloud Commerce does not always operate at it's full capacity. If you are
+    sure that an error has occured the product must be deleted and recreated.
 </p>
