@@ -1,5 +1,4 @@
-{% load markup_tags %}
-{% filter apply_markup:"restructuredtext" %}
+
 
 .. contents:: Table of Contents
 
@@ -298,5 +297,3 @@ remain **INCOMPLETE**. Please allow some time for it to complete before
 acting on this. Products with more variations will take longer to create
 and Cloud Commerce does not always operate at it's full capacity. If you are
 sure that an error has occured the product must be deleted and recreated.
-
-{% endfilter %}

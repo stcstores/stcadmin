@@ -10,5 +10,15 @@ class SpringServices(LoginRequiredMixin, TemplateView):
     template_name = 'reference/spring_services.html'
 
 
-class ProductCreation(LoginRequiredMixin, TemplateView):
-    template_name = 'reference/product_creation_base.html'
+class ReStructuredTextView(TemplateView):
+    rst_file = None
+    template_name = 'reference/rst_base.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['rst_file'] = self.rst_file
+        return context
+
+
+class ProductCreation(LoginRequiredMixin, ReStructuredTextView):
+    rst_file = 'reference/product_creation.rst'
