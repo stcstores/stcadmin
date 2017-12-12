@@ -23,12 +23,20 @@ class SpringManifest(models.Model):
     UNTRACKED = 'U'
     MANIFEST_TYPE_CHOICES = ((TRACKED, 'Tracked'), (UNTRACKED, 'Untracked'))
 
+    UNFILED = 'unfiled'
+    IN_PROGRESS = 'in_progress'
+    FILED = 'filed'
+    STATUS_CHOICES = (
+        (UNFILED, 'Unfiled'), (IN_PROGRESS, 'In Progress'), (FILED, 'Filed'))
+
     manifest_type = models.CharField(
         max_length=1, choices=MANIFEST_TYPE_CHOICES)
     time_created = models.DateTimeField(default=now)
     time_filed = models.DateTimeField(blank=True, null=True)
     manifest_file = models.FileField(
         upload_to='manifests', blank=True, null=True)
+    status = models.CharField(
+        max_length=10, choices=STATUS_CHOICES, default=UNFILED)
 
     objects = models.Manager()
     filed = FiledManager()
