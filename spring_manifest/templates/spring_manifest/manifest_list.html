@@ -46,14 +46,14 @@
         <th>Manifest</th>
         <th>Created</th>
         <th>Orders</th>
-        {% if manifest.time_filed %}<th>Time Manifested</th>{% endif %}
+        <th>Status</th>
     </tr>
     {% for manifest in current_manifests %}
         <tr>
             <th><a href="{% url 'spring_manifest:manifest' manifest.id %}">{{ manifest }}</a></th>
             <td class="date">{{ manifest.time_created|date:'D jS N h:iA' }}</td>
             <td>{{ manifest.springorder_set.count }}</td>
-            {% if manifest.time_filed %}<td class="date">{{ manifest.time_filed|date:'D jS N h:iA' }}</td>{% endif %}
+            <td>{{ manifest.get_status_display }}</td>
         </tr>
     {% endfor %}
 </table>
@@ -67,6 +67,7 @@
         <th>Created</th>
         <th>Orders</th>
         <th>Manifested</th>
+        <th>Status</th>
     </tr>
     {% for manifest in previous_manifests %}
         <tr>
@@ -74,6 +75,7 @@
             <td class="date">{{ manifest.time_created|date:'D jS N h:iA' }}</td>
             <td>{{ manifest.springorder_set.count }}</td>
             <td class="date">{{ manifest.time_filed|date:'D jS N h:iA' }}</td>
+            <td>{{ manifest.get_status_display }}</td>
         </tr>
     {% endfor %}
 </table>

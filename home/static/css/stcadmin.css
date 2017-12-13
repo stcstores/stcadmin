@@ -177,6 +177,10 @@ th {
     padding: 0;
 }
 
+.success {
+    color: green;
+}
+
 .message {
     color: green;
 }
@@ -263,6 +267,7 @@ th {
 .messages li.success {
     background: #090;
     font-weight: bold;
+    color: black;
 }
 
 .messages li.warning {

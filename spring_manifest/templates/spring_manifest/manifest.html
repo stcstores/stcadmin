@@ -6,23 +6,36 @@
 {% block content %}
 
 <h3>{{ manifest }}</h3>
-{% if manifest.manifest_file %}
+{% if manifest.manifest_file and manifest.status == manifest.FILED %}
+    <h3 class="success">Manifest Filed</h3>
     <a href="{{ manifest.manifest_file.url }}"><button>Download Manifest File</button></a>
-{% else %}
+{% elif manifest.status == manifest.UNFILED %}
     <a href="{% url 'spring_manifest:file_manifest' manifest.id %}"><button>File Manifest</button></a>
+{% elif manifest.status == manifest.FAILED %}
+    <h3 class="error">Error Creating Manifest</h3>
+    <a href="{% url 'spring_manifest:file_manifest' manifest.id %}"><button>Retry File Manifest</button></a>
+{% elif manifest.status == manifest.IN_PROGRESS %}
+    <h3>IN PROGRESS</h3>
+    <p>This manifest is currently being processed.</p>
 {% endif %}
+
+<ul>
+{% for error in manifest.get_error_list %}
+<li class="error">{{ error }}</li>
+{% endfor %}
+</ul>
 
 <table>
     <tr>
         <th>Manifest</th>
         <th>Created</th>
-        {% if manifest.time_filed %}<th>Filed</th>{% endif %}
+        {% if manifest.status == manifest.FILED and manifest.time_filed %}<th>Filed</th>{% endif %}
         <th>Orders</th>
     </tr>
     <tr>
         <th>{{ manifest }}</th>
         <td class="date">{{ manifest.time_created|date:'D jS N h:iA' }}</td>
-        {% if manifest.time_filed %}<td class="date">{{ manifest.time_filed|date:'D jS N h:iA' }}</td>{% endif %}
+        {% if manifest.status == manifest.FILED and manifest.time_filed %}<td class="date">{{ manifest.time_filed|date:'D jS N h:iA' }}</td>{% endif %}
         <td>{{ manifest.springorder_set.count }}</td>
     </tr>
 </table>
