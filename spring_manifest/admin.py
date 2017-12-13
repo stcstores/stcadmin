@@ -35,12 +35,13 @@ class CloudCommerceCountryIDAdmin(admin.ModelAdmin):
 
 @admin.register(models.SpringManifest)
 class SpringManifestAdmin(admin.ModelAdmin):
-    fields = ('manifest_type', 'time_filed', 'manifest_file')
+    fields = (
+        'manifest_type', 'time_filed', 'manifest_file', 'status', 'errors')
     list_display = (
         'id', '__str__', 'manifest_type', 'time_created', 'time_filed',
-        'manifest_file')
+        'manifest_file', 'status')
     list_display_links = ('__str__', )
-    list_editable = ('manifest_type', )
+    list_editable = ('manifest_type', 'status')
 
 
 @admin.register(models.SpringOrder)
