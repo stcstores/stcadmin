@@ -85,10 +85,11 @@ class ManifestView(SpringUserMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        models.update_spring_orders()
         manifest_id = self.kwargs['manifest_id']
         manifest = get_object_or_404(
             models.SpringManifest, id=manifest_id)
+        if manifest.status == manifest.UNFILED:
+            models.update_spring_orders()
         orders = manifest.springorder_set.all().order_by('dispatch_date')
         context['manifest'] = manifest
         context['orders'] = orders
