@@ -1,3 +1,5 @@
+import threading
+
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -7,6 +9,17 @@ from spring_manifest.views import SpringUserMixin
 
 from .tracked import FileTrackedManifest
 from .untracked import FileUntrackedManifest
+
+
+def file_manifest(manifest):
+    if manifest.manifest_type == manifest.UNTRACKED:
+        FileUntrackedManifest(manifest)
+    elif manifest.manifest_type == manifest.TRACKED:
+        FileTrackedManifest(manifest)
+    else:
+        raise Exception(
+            'Unknown manifest type {} for manifest {}'.format(
+                manifest.manifest_type, manifest.id))
 
 
 class FileManifestView(SpringUserMixin, RedirectView):
@@ -24,15 +37,12 @@ class FileManifestView(SpringUserMixin, RedirectView):
     def process_manifest(self):
         models.update_spring_orders()
         manifest = self.get_manifest()
-        if manifest is not None:
-            if manifest.manifest_type == manifest.UNTRACKED:
-                FileUntrackedManifest(manifest)
-            elif manifest.manifest_type == manifest.TRACKED:
-                FileTrackedManifest(manifest)
-            else:
-                raise Exception(
-                    'Unknown manifest type {} for manifest {}'.format(
-                        manifest.manifest_type, manifest.id))
+        manifest.status = manifest.IN_PROGRESS
+        manifest.errors = ''
+        manifest.save()
+        t = threading.Thread(target=file_manifest, args=[manifest])
+        t.setDaemon(True)
+        t.start()
 
     def get_redirect_url(self, *args, **kwargs):
         self.process_manifest()

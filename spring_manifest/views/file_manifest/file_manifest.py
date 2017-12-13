@@ -7,9 +7,9 @@ class FileManifest:
     def __init__(self, manifest):
         self.currency_rates = self.get_currency_rates()
         self.manifest = manifest
-        manifest.status = manifest.IN_PROGRESS
-        manifest.errors = ''
-        manifest.save()
+        self.manifest.status = manifest.IN_PROGRESS
+        self.manifest.errors = ''
+        self.manifest.save()
         rows = self.get_manifest_rows(self.manifest)
         if self.valid():
             self.save_manifest_file(self.manifest, rows)
