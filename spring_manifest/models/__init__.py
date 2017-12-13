@@ -12,9 +12,11 @@ from ccapi import CCAPI
 
 def get_manifest(manifest_type):
     try:
-        manifest = SpringManifest.unfiled.get(manifest_type=manifest_type)
+        manifest = SpringManifest.unfiled.get(
+            status=SpringManifest.UNFILED, manifest_type=manifest_type)
     except SpringManifest.DoesNotExist:
-        manifest = SpringManifest(manifest_type=manifest_type)
+        manifest = SpringManifest(
+            manifest_type=manifest_type, status=SpringManifest.UNFILED)
         manifest.save()
     except SpringManifest.MultipleObjectsReturned as e:
         raise e

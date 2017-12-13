@@ -1,26 +1,27 @@
-from django.contrib import messages
 from forex_python.converter import CurrencyRates
 from spring_manifest import models
 
 
 class FileManifest:
 
-    def __init__(self, manifest, request=None):
+    def __init__(self, manifest):
         self.currency_rates = self.get_currency_rates()
-        self.valid = True
-        self.request = request
         self.manifest = manifest
+        manifest.status = manifest.IN_PROGRESS
+        manifest.errors = ''
+        manifest.save()
         rows = self.get_manifest_rows(self.manifest)
-        if self.valid:
+        if self.valid():
             self.save_manifest_file(self.manifest, rows)
-        if self.valid:
+        if self.valid():
             self.send_file(manifest)
-        if self.valid:
-            if self.request:
-                self.add_success_messages(self.manifest)
+        if self.valid():
+            self.manifest.status = self.manifest.FILED
+            self.manifest.save()
         else:
             self.manifest.time_filed = None
             self.manifest.manifest_file = None
+            self.manifest.status = self.manifest.FAILED
             self.manifest.save()
 
     def get_currency_rates(self):
@@ -39,10 +40,9 @@ class FileManifest:
         raise NotImplementedError
 
     def add_error(self, message):
-        self.valid = False
-        if self.request:
-            messages.add_message(self.request, messages.ERROR, message)
-        print(message)
+        self.manifest.status = self.manifest.FAILED
+        self.manifest.errors += '{}\n'.format(message)
+        self.manifest.save()
 
     def get_order_weight(self, order):
         weight_grams = sum([
@@ -60,3 +60,8 @@ class FileManifest:
 
     def send_file(self, manifest):
         raise NotImplementedError
+
+    def valid(self):
+        return (
+            self.manifest.status != self.manifest.FAILED and
+            not self.manifest.errors)

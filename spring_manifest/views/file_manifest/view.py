@@ -1,6 +1,6 @@
 from django.contrib import messages
-from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView
 from spring_manifest import models
 from spring_manifest.views import SpringUserMixin
@@ -15,7 +15,7 @@ class FileManifestView(SpringUserMixin, RedirectView):
         manifest_id = self.kwargs['manifest_id']
         manifest = get_object_or_404(
             models.SpringManifest, pk=manifest_id)
-        if manifest.manifest_file:
+        if manifest.status != manifest.FAILED and manifest.manifest_file:
             messages.add_message(
                 self.request, messages.ERROR, 'Manifest already filed.')
             return None
@@ -26,9 +26,9 @@ class FileManifestView(SpringUserMixin, RedirectView):
         manifest = self.get_manifest()
         if manifest is not None:
             if manifest.manifest_type == manifest.UNTRACKED:
-                FileUntrackedManifest(manifest, request=self.request)
+                FileUntrackedManifest(manifest)
             elif manifest.manifest_type == manifest.TRACKED:
-                FileTrackedManifest(manifest, request=self.request)
+                FileTrackedManifest(manifest)
             else:
                 raise Exception(
                     'Unknown manifest type {} for manifest {}'.format(
