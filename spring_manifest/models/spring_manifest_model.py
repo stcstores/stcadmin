@@ -5,13 +5,13 @@ from django.utils.timezone import now
 class FiledManager(models.Manager):
 
     def get_queryset(self):
-        return super().get_queryset().filter(time_filed__isnull=False)
+        return super().get_queryset().filter(status=self.model.FILED)
 
 
 class UnFiledManager(models.Manager):
 
     def get_queryset(self):
-        return super().get_queryset().filter(time_filed__isnull=True)
+        return super().get_queryset().exclude(status=self.model.FILED)
 
 
 class SpringManifest(models.Model):
@@ -26,8 +26,10 @@ class SpringManifest(models.Model):
     UNFILED = 'unfiled'
     IN_PROGRESS = 'in_progress'
     FILED = 'filed'
+    FAILED = 'failed'
     STATUS_CHOICES = (
-        (UNFILED, 'Unfiled'), (IN_PROGRESS, 'In Progress'), (FILED, 'Filed'))
+        (UNFILED, 'Unfiled'), (IN_PROGRESS, 'In Progress'), (FILED, 'Filed'),
+        (FAILED, 'Failed'))
 
     manifest_type = models.CharField(
         max_length=1, choices=MANIFEST_TYPE_CHOICES)
@@ -36,7 +38,8 @@ class SpringManifest(models.Model):
     manifest_file = models.FileField(
         upload_to='manifests', blank=True, null=True)
     status = models.CharField(
-        max_length=10, choices=STATUS_CHOICES, default=UNFILED)
+        max_length=20, choices=STATUS_CHOICES, default=FILED)
+    errors = models.TextField(blank=True, null=True)
 
     objects = models.Manager()
     filed = FiledManager()
@@ -48,9 +51,12 @@ class SpringManifest(models.Model):
             time = 'Unfiled'
         else:
             time = self.time_filed.strftime('%Y-%m-%d')
-        return '{}_{}_{}'.format(
-            self.id, manifest_type, time)
+        return '{}_{}_{}'.format(self.id, manifest_type, time)
 
     def file_manifest(self):
         self.time_filed = now()
         self.save()
+
+    def get_error_list(self):
+        if self.errors:
+            return self.errors.split('\n')
