@@ -69,3 +69,15 @@
 </table>
 
 {% endblock %}
+
+{% block script %}{{ block.super }}
+{% if manifest.status == manifest.IN_PROGRESS %}
+<script>
+    $(document).ready(function() {
+        setTimeout(function(){
+           window.location.reload(1);
+       }, 15000);
+    });
+</script>
+{% endif %}
+{% endblock %}
