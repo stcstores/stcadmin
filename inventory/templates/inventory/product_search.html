@@ -43,7 +43,11 @@
             {% for range in product_ranges %}
                 <tr{% if range.end_of_line %} class="end_of_line"{% endif %}>
                     <td>{{ range.sku }}</td>
-                    <td><a href="{% url 'inventory:product_range' range.id %}">{{ range.name }}</a></td>
+                    <td><a href="{% url 'inventory:product_range' range.id %}">{{ range.name }}</a> </td>
+                    {% if 'Incomplete' in range.options.option_names %}
+                        <td class="error">INCOMPLETE</td>
+                        <td></td><td></td>
+                    {% else %}
                     <td>
                         <a title="Variations" href="{% url 'inventory:variations' range.id %}" target="_blank"><button>V</button></a>
                         <a title="Descriptions" href="{% url 'inventory:descriptions' range.id %}" target="_blank"><button>D</button></a>
@@ -67,6 +71,7 @@
                         <td><span id="show_hide_products_{{ range.id }}" class="show_hide_products">[[ show ]]</span></td>
 
                     </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </tbody>
