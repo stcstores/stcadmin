@@ -37,7 +37,7 @@ Title
 ______
 The name of the **Product Range** to be created.
 
-**Note:** All products are part of a **Product Range** even if they do not include variatons.
+.. note:: All products are part of a **Product Range** even if they do not include variatons.
 
 * The title should *not* contain key words. This includes colours, sizes etc.
 * This title is for internal reference and will not necessarily be used for listings on eBay. It will, however, be used on our website.

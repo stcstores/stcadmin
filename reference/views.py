@@ -26,3 +26,7 @@ class ProductCreation(LoginRequiredMixin, ReStructuredTextView):
 
 class PackageTypes(LoginRequiredMixin, ReStructuredTextView):
     rst_file = 'reference/package_types.rst'
+
+
+class InventoryReference(LoginRequiredMixin, ReStructuredTextView):
+    rst_file = 'reference/inventory_reference.rst'
