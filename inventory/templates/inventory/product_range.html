@@ -16,13 +16,28 @@
     <p>ID: {{ product_range.id }}</p>
     <p>Department: {{ product_range.products.0.options.Department.value }}</p>
     {% if 'Incomplete' in  product_range.options.option_names %}
-    <h2 class="error">INCOMPLETE</h2>
-    <p>
-        Creation of this product has not completed.
-        If it was created in the last hour please allow some time for this to complete then <a href="">refresh</a> this page.
-        If it was created some time ago an error may have occurred, in this
-        case the product should be deleted and re-created.
-    </p>
+    <div class="message_box error">
+        <h2>INCOMPLETE</h2>
+        <p>
+            Creation of this product has not yet completed and is likely still
+            in progress.
+        </p>
+        <p>
+            Please allow some time for this to complete then <a href="">refresh</a> this page.
+            If the item is complete this message will not appear.
+        </p>
+        <p>
+            If it was created some time ago (an hour or more) and you can still
+            see this message an error may have occurred, in this case the
+            product should be deleted and re-created.
+        </p>
+        <p>
+            While this message is present <span style="font-weight: bold;">DO NOT</span>
+            make any changes to the product in STCAdmin
+            <span style="font-weight: bold;">OR</span> Cloud Commerce.
+        </p>
+    </div>
+
     {% else %}
     <a href="{% ccp_product_range_page product_range.id %}" target="_blank"><button>View Range on Cloud Commerce</button></a>
     <a href="{% url 'inventory:variations' product_range.id %}"><button>Variations</button></a>
@@ -83,5 +98,12 @@
                 '{{ product.id }}': {'stock_level': {{ product.stock_level }}},
             {% endfor %}
         }
+
+        {% if 'Incomplete' in  product_range.options.option_names %}
+        $(document).ready(function() {
+            $('.content input').prop('disabled', true);
+            $('.content button').prop('disabled', true);
+        });
+        {% endif %}
     </script>
 {% endblock %}

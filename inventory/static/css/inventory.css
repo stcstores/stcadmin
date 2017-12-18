@@ -44,3 +44,12 @@
 .variation_table .variation_option:disabled{
     color: black;
 }
+
+.message_box {
+    max-width: 800px;
+    background: #ccc;
+    margin: 1em;
+    padding: 1em;
+    border-radius: 1em;
+    border: 3px #222 solid;
+}
