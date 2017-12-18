@@ -6,7 +6,7 @@ Restart=on-failure
 User=stcstores
 WorkingDirectory=/home/stcstores/sites/SITENAME/source
 ExecStart=/home/stcstores/sites/SITENAME/virtualenv/bin/gunicorn \
-    --timeout=300 --bind unix:/tmp/SITENAME.socket \
+    --timeout=300 --workers=5 --bind unix:/tmp/SITENAME.socket \
     stcadmin.wsgi:application
 
 [Install]
