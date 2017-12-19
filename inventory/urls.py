@@ -35,8 +35,8 @@ inventory_urlpatterns = [
         'print_barcodes/<int:range_id>/',
         views.PrintBarcodeLabels.as_view(), name='print_barcodes'),
     path(
-        'barcode_pdf/',
-        views.BarcodePDF.as_view(), name='barcode_pdf'),
+        'barcode_pdf/', views.BarcodePDF.as_view(), name='barcode_pdf'),
+    path('stock_check/', views.StockCheck.as_view(), name='stock_check'),
 ]
 
 new_product_urlpatterns = [

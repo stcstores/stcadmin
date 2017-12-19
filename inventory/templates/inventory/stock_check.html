@@ -1,0 +1,64 @@
+{% extends "inventory/base.html" %}
+{% load staticfiles %}
+{% load inventory_extras %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+{% endblock %}
+
+{% block page_title %}Stock Check{% endblock %}
+
+{% block content %}{{ block.super }}
+    <form action="">
+        <label for="search_term">Search: </label>
+        <input type="text" name="search_term" value="{{ search_term }}" id="search_term">
+        <input type="submit" value="Search">
+    </form>
+    {% if products %}
+    <table>
+        <tr>
+            <th>SKU</th>
+            <th>Title</th>
+            <th></th>
+            <th>Locations</th>
+            <th colspan="3">Stock Level</th>
+            <th>Allocated</th>
+            <th>Printed</th>
+            <th>Unprinted</th>
+        </tr>
+    {% for product in products %}
+        <tr>
+            <td>{{ product.sku }}</td>
+            <td>{{ product.full_name }}</td>
+            <td><a href="{% url 'inventory:product_range' product.range_id %}" target="_blank">[Range]</a></td>
+            <td>{{ product.bays|join:"<br>" }}</td>
+            <td><input type="text" id="stock_{{ product.id }}" value="{{ product.stock_level }}" size="4"></td>
+            <td><button id="update_{{ product.id }}" class="stock_update_button">Update Stock Level</button></td>
+            <td><img src="" class="update_status" id="status_{{ product.id }}"></td>
+            <td>{{ product.allocated }}</td>
+            <td>{{ product.printed }}</td>
+            <td>{{ product.unprinted }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+    loading_image = "{% static 'images/loading.gif' %}"
+    complete_image = "{% static 'images/complete.jpg' %}"
+    error_image = "{% static 'images/error.jpg' %}"
+    update_stock_url = "{% url 'inventory:update_stock_level' %}";
+    product_details = {
+        {% for product in products %}
+            '{{ product.id }}': {'stock_level': {{ product.stock_level }}},
+        {% endfor %}
+    }
+
+    $(document).ready(function() {
+        $('#search_term').focus();
+    });
+</script>
+{% endblock %}
