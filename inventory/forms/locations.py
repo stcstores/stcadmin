@@ -69,5 +69,9 @@ class LocationsForm(forms.Form):
 
 class LocationsFormSet(KwargFormSet):
     form = LocationsForm
-    warehouses = {
-        w.id: sorted([b.name for b in w.bays]) for w in CCAPI.get_warehouses()}
+
+    def __init__(self, *args, **kwargs):
+        self.warehouses = {
+            w.id: sorted([b.name for b in w.bays]) for w in
+            CCAPI.get_warehouses()}
+        super().__init__(*args, **kwargs)

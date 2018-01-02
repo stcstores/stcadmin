@@ -1,4 +1,4 @@
-from ccapi import URLs
+from ccapi import CCAPI, URLs
 from django import template
 
 register = template.Library()
@@ -17,11 +17,11 @@ def ccp_product_page(range_id, product_id):
 
 @register.simple_tag
 def warehouse_bays(warehouse=None):
-    from ccapi import Warehouses
+    warehouses = CCAPI.get_warehouses()
     if warehouse is None:
-        return {x.name: x.bays for x in Warehouses}
+        return {x.name: x.bays for x in warehouses}
     else:
-        return Warehouses[warehouse].bays
+        return warehouses[warehouse].bays
 
 
 @register.simple_tag

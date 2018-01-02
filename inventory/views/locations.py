@@ -1,4 +1,4 @@
-from ccapi import CCAPI, Warehouses
+from ccapi import CCAPI
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
@@ -34,7 +34,7 @@ class LocationFormView(InventoryUserMixin, FormView):
         context = super().get_context_data(*args, **kwargs)
         context['formset'] = context.pop('form')
         context['product_range'] = self.product_range
-        context['warehouses'] = Warehouses
+        context['warehouses'] = self.warehouses
         return context
 
     def form_valid(self, forms):

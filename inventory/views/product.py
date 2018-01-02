@@ -1,4 +1,4 @@
-from ccapi import CCAPI, Warehouses
+from ccapi import CCAPI
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
@@ -101,5 +101,5 @@ class ProductView(InventoryUserMixin, FormView):
             context_data['linnworks_sku'] = self.get_option_value('Linn SKU')
         department = self.get_option_value('Department').value
         context_data['warehouse_bays'] = [
-            bay.name for bay in Warehouses[department]]
+            bay.name for bay in CCAPI.get_warehouses[department]]
         return context_data
