@@ -1,4 +1,4 @@
-from . stock_check import Warehouse, Bay, Product  # NOQA
+from . stock_check import Warehouse, Bay, Product, ProductBay  # NOQA
 from ccapi import CCAPI
 
 
@@ -12,7 +12,7 @@ def get_cc_product_by_sku(sku):
 
 def update_products(inventory_table):
     print('Updating Products...')
-    skus = inventory_table.get_column('VAR_SKU')
+    skus = [sku for sku in inventory_table.get_column('VAR_SKU') if sku]
     db_skus = [p.sku for p in Product.objects.all()]
     new_skus = [sku for sku in skus if sku not in db_skus]
     old_skus = [sku for sku in db_skus if sku not in skus]
@@ -53,10 +53,12 @@ def update_product_bays(inventory_table):
         product_bays = product.bays.all()
         for bay in product_bays:
             if bay not in bays:
-                product.bays.remove(bay)
+                ProductBay._base_manager.filter(
+                    product=product, bay=bay).delete()
         for bay in bays:
             if bay not in product_bays:
-                product.bays.add(bay)
+                ProductBay._base_manager.get_or_create(
+                    product=product, bay=bay)
 
 
 def update_locations():

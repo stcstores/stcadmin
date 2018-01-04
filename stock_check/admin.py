@@ -23,7 +23,7 @@ class BayAdmin(admin.ModelAdmin):
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
-    fields = ('range_id', 'product_id', 'sku', 'bays')
+    fields = ('range_id', 'product_id', 'sku')
     list_display = ('__str__', 'range_id', 'product_id', 'sku', 'bay_names')
     list_display_links = ('__str__', )
     list_editable = ('range_id', 'product_id', 'sku')

@@ -12,4 +12,7 @@ urlpatterns = [
         'warehouse/<int:warehouse_id>/',
         views.Warehouse.as_view(), name='warehouse'),
     path('bay/<int:bay_id>/', views.Bay.as_view(), name='bay'),
+    path(
+        'update_stock_check_level/',
+        views.UpdateStockCheckLevel.as_view(), name='update_stock_check_level')
 ]

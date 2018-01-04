@@ -1,5 +1,11 @@
+import json
+
 from ccapi import CCAPI
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 from home.views import UserInGroupMixin
 from stock_check import models
@@ -39,7 +45,7 @@ class OpenOrderCheck(StockCheckUserMixin, TemplateView):
 
 
 class ProductSearch(OpenOrderCheck):
-    template_name = 'stock_check/stock_check.html'
+    template_name = 'stock_check/product_search.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -49,10 +55,10 @@ class ProductSearch(OpenOrderCheck):
             context['search_term'] = search_term
             context['products'] = []
             for result in CCAPI.search_products(search_term):
-                product = CCAPI.get_product(result.variation_id)
-                db_product = models.Product.objects.get(product_id=product.id)
-                product.bays = db_product.bays.all()
-                self.get_open_orders_for_product(product)
+                cc_product = CCAPI.get_product(result.variation_id)
+                product = models.Product.objects.get(product_id=cc_product.id)
+                self.get_open_orders_for_product(cc_product)
+                product.cc_product = cc_product
                 context['products'].append(product)
         return context
 
@@ -90,9 +96,22 @@ class Bay(OpenOrderCheck):
         products = context['bay'].product_set.all()
         context['products'] = []
         for product in products:
-            cc_product = models.get_cc_product_by_sku(product.sku)
-            cc_product.bays = product.bays.all()
-            context['products'].append(cc_product)
-        for product in context['products']:
-            self.get_open_orders_for_product(product)
+            product.cc_product = models.get_cc_product_by_sku(product.sku)
+            self.get_open_orders_for_product(product.cc_product)
+            context['products'].append(product)
         return context
+
+
+class UpdateStockCheckLevel(StockCheckUserMixin, View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request):
+        request_data = json.loads(self.request.body)
+        product_id = int(request_data['product_id'])
+        bay_id = int(request_data['bay_id'])
+        level = int(request_data['level']) if request_data['level'] else None
+        product_bay = get_object_or_404(
+            models.ProductBay, product__id=product_id, bay__id=bay_id)
+        product_bay.stock_level = level
+        product_bay.save()
+        return HttpResponse('{"status": "ok"}')

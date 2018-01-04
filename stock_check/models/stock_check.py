@@ -49,10 +49,18 @@ class Product(models.Model):
         verbose_name='Product ID', primary_key=False, unique=True,
         db_index=True, null=True, blank=True)
     sku = models.CharField(max_length=50, db_index=True, unique=True)
-    bays = models.ManyToManyField(Bay)
+    bays = models.ManyToManyField(Bay, through='ProductBay')
 
     def bay_names(self):
         return ', '.join([str(bay) for bay in self.bays.all()])
 
     def __str__(self):
         return self.sku
+
+
+class ProductBay(models.Model):
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    bay = models.ForeignKey(Bay, on_delete=models.CASCADE)
+    stock_level = models.PositiveIntegerField(
+        blank=True, null=True, default=None)

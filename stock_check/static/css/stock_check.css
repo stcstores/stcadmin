@@ -1,3 +1,11 @@
 .product_bay {
     margin: 0.1em;
 }
+
+.stock_check_product_list .title {
+    max-width: 500px;
+}
+
+.update_status {
+    width: 20px;
+}

@@ -1,0 +1,14 @@
+{% load staticfiles %}
+<script>
+    loading_image = "{% static 'images/loading.gif' %}"
+    complete_image = "{% static 'images/complete.jpg' %}"
+    error_image = "{% static 'images/error.jpg' %}"
+    update_stock_url = "{% url 'inventory:update_stock_level' %}";
+    product_details = {
+        {% for product in products %}
+            '{{ product.cc_product.id }}': {'stock_level': {{ product.cc_product.stock_level }}},
+        {% endfor %}
+    }
+    update_stock_check_url = "{% url 'stock_check:update_stock_check_level' %}";
+</script>
+<script src="{% static 'scripts/stock_check.js' %}"></script>
