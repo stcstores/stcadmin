@@ -60,6 +60,7 @@ class ProductSearch(OpenOrderCheck):
                 self.get_open_orders_for_product(cc_product)
                 product.cc_product = cc_product
                 context['products'].append(product)
+            context['products'].sort(key=lambda x: x.cc_product.full_name)
         return context
 
 
@@ -99,6 +100,7 @@ class Bay(OpenOrderCheck):
             product.cc_product = models.get_cc_product_by_sku(product.sku)
             self.get_open_orders_for_product(product.cc_product)
             context['products'].append(product)
+        context['products'].sort(key=lambda x: x.cc_product.full_name)
         return context
 
 
