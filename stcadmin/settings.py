@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'spring_manifest',
     'price_calculator',
     'django_markup',
+    'stock_check',
 ]
 
 MIDDLEWARE = [

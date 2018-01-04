@@ -23,8 +23,6 @@
                     <p>Create a new <a href="{% url 'inventory:new_single_product' %}">single</a> or <a href="{% url 'inventory:new_variation_product' %}">variation</a> product.</p>
                     <li><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>
                     <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
-                    <li><a href="{% url 'inventory:stock_check' %}">Stock Check</a></li>
-                    <p>Check stock levels for products, including stock allocated to orders.</p>
                 </ul>
             {% endif %}{% endfor %}
             {% for group in request.user.groups.all %}{% if group.name == 'epos' %}

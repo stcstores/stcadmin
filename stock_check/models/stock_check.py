@@ -12,6 +12,9 @@ class DuplicateBayManager(models.Manager):
 
 class Warehouse(models.Model):
 
+    class Meta:
+        ordering = ('name', )
+
     warehouse_id = models.PositiveIntegerField(
         verbose_name='Warehouse ID', primary_key=False, unique=True,
         db_index=True)
@@ -22,6 +25,9 @@ class Warehouse(models.Model):
 
 
 class Bay(models.Model):
+
+    class Meta:
+        ordering = ('name', )
 
     bay_id = models.PositiveIntegerField(
         verbose_name='Bay ID', primary_key=False, unique=True, db_index=True)

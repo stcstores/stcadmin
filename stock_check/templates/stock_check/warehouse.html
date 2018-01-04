@@ -1,6 +1,5 @@
-{% extends "inventory/base.html" %}
+{% extends "stock_check/base.html" %}
 {% load staticfiles %}
-{% load inventory_extras %}
 
 {% block page_title %}Warehouses{% endblock %}
 
@@ -19,7 +18,7 @@
 <input type="text" name="bay_filter" id="bay_filter">
 <ul class="bay_list">
 {% for bay in bays %}
-    <li><a href="{% url 'inventory:bay' bay.id %}">{{ bay.name }}</a></li>
+    <li><a href="{% url 'stock_check:bay' bay.id %}">{{ bay.name }}</a></li>
 {% endfor %}
 </ul>
 {% endblock %}

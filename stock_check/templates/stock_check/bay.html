@@ -1,6 +1,5 @@
-{% extends "inventory/base.html" %}
+{% extends "stock_check/base.html" %}
 {% load staticfiles %}
-{% load inventory_extras %}
 
 {% block additional_head %}
 {{ block.super }}
@@ -10,12 +9,6 @@
 {% block page_title %}Warehouses{% endblock %}
 
 {% block content %}{{ block.super }}
-
-<style>
-    .product_bay {
-        margin: 0.1em;
-    }
-</style>
 
 <h1>{{ bay }}</h1>
 <table>

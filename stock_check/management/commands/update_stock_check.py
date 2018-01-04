@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from inventory import models
+from stock_check import models
 from tabler import Tabler
 
 
