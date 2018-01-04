@@ -1,0 +1,14 @@
+{% extends "inventory/base.html" %}
+{% load staticfiles %}
+{% load inventory_extras %}
+
+{% block page_title %}Warehouses{% endblock %}
+
+{% block content %}{{ block.super }}
+
+<ul>
+{% for warehouse in warehouses %}
+    <li><a href="{% url 'inventory:warehouse' warehouse.id %}">{{ warehouse.name }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

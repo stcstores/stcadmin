@@ -1,6 +1,8 @@
 from ccapi import CCAPI
+from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
 from home.views import UserInGroupMixin
+from inventory import models
 
 
 class InventoryUserMixin(UserInGroupMixin):
@@ -56,3 +58,44 @@ class StockCheck(InventoryUserMixin, TemplateView):
             else:
                 product.unprinted += order_product.quantity
         product.allocated = product.printed + product.unprinted
+
+
+class Warehouses(InventoryUserMixin, TemplateView):
+    template_name = 'inventory/warehouses.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['warehouses'] = models.Warehouse.objects.all()
+        return context
+
+
+class Warehouse(InventoryUserMixin, TemplateView):
+    template_name = 'inventory/warehouse.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        warehouse_id = self.kwargs.get('warehouse_id')
+        context['warehouse'] = get_object_or_404(
+            models.Warehouse, id=warehouse_id)
+        context['bays'] = models.Bay.objects.filter(
+            warehouse=context['warehouse'])
+        return context
+
+
+class Bay(StockCheck):
+    template_name = 'inventory/bay.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        self.get_order_data()
+        bay_id = self.kwargs.get('bay_id')
+        context['bay'] = get_object_or_404(models.Bay, id=bay_id)
+        products = context['bay'].product_set.all()
+        context['products'] = []
+        for product in products:
+            cc_product = models.get_cc_product_by_sku(product.sku)
+            cc_product.bays = product.bays.all()
+            context['products'].append(cc_product)
+        for product in context['products']:
+            self.get_open_orders_for_product(product)
+        return context
