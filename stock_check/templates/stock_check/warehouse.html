@@ -15,10 +15,30 @@
 
 <h1>{{ warehouse.name }}</h1>
 <label for="bay_filter">Filter: </label>
-<input type="text" name="bay_filter" id="bay_filter">
+<input type="text" name="bay_filter" id="bay_filter"><button id="clear_filter">Clear</button>
 <ul class="bay_list">
 {% for bay in bays %}
-    <li><a href="{% url 'stock_check:bay' bay.id %}">{{ bay.name }}</a></li>
+    <li class="bay"><a href="{% url 'stock_check:bay' bay.id %}">{{ bay.name }}</a></li>
 {% endfor %}
 </ul>
+{% endblock %}
+{% block script %}
+    <script>
+        $(document).ready(function() {
+            $('#bay_filter').keyup(function() {
+                var filter_text = $(this).val().toLowerCase();
+                $('li.bay').each(function () {
+                    if ($(this).text().toLowerCase().includes(filter_text)) {
+                        $(this).attr('hidden', false);
+                    } else {
+                        $(this).attr('hidden', true);
+                    }
+                });
+            });
+            $('#clear_filter').click(function() {
+                $('li.bay').attr('hidden', false);
+                $('#bay_filter').val('');
+            });
+        })
+    </script>
 {% endblock %}
