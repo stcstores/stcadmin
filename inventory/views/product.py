@@ -93,6 +93,7 @@ class ProductView(InventoryUserMixin, FormView):
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
+        warehouses = CCAPI.get_warehouses()
         context_data['product'] = self.product
         if 'Linn Title' in self.option_names:
             context_data['linnworks_title'] = self.get_option_value(
@@ -101,5 +102,5 @@ class ProductView(InventoryUserMixin, FormView):
             context_data['linnworks_sku'] = self.get_option_value('Linn SKU')
         department = self.get_option_value('Department').value
         context_data['warehouse_bays'] = [
-            bay.name for bay in CCAPI.get_warehouses[department]]
+            bay.name for bay in warehouses[department]]
         return context_data
