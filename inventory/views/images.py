@@ -1,12 +1,14 @@
-from ccapi import CCAPI
 import json
+
+from ccapi import CCAPI
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormView
 from inventory.forms import ImagesForm
 from inventory.models import STCAdminImage
+
 from .views import InventoryUserMixin
-from django.urls import reverse_lazy
-from django.views.generic.base import RedirectView
-from django.shortcuts import get_object_or_404
 
 
 class DeleteSTCAdminImage(InventoryUserMixin, RedirectView):
@@ -41,7 +43,7 @@ class ImageFormView(InventoryUserMixin, FormView):
             o.option_name: {} for o in self.product_range.options if
             o.is_web_shop_select}
         for product in self.products:
-            for o in product.options:
+            for o in [x for x in product.options if x.value]:
                 if o.option_name in options:
                     value = o.value.value
                     if value in options[o.option_name]:
