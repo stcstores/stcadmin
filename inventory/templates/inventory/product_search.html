@@ -61,10 +61,11 @@
                             {% for product in range.products %}
                                 <tr>
                                     <td>{{ product.sku }}</td>
-                                    <td>{{ product.full_name }}</td>
+                                    <td><a href="{% url 'inventory:product' product.id %}">{{ product.full_name }}</a></td>
                                     <td><input id="stock_{{ product.id }}" type="text" value="{{ product.stock_level }}" size="4" /></td>
                                     <td><button id="update_{{ product.id }}" class="stock_update_button">Update Stock Level</button></td>
                                     <td><img id="status_{{ product.id }}" class="update_status" src=""></td>
+                                    <td><a href="{% ccp_product_page range.id product.id %}" target="_blank"><button>C</button></a></td>
                                 </tr>
                             {% endfor %}
                         </table>
