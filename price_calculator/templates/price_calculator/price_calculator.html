@@ -99,7 +99,7 @@
         }
         calculator = new PriceCalculator(data)
         calculator.change = function() {
-            $('#vat').html(format_price(calculator.get_vat()));
+            $('#vat').val(format_price(calculator.get_vat()));
             $('#ex_vat_price').html(format_price(calculator.get_ex_vat()));
             $('#postage').html(format_price(calculator.get_postage_price()));
             $('#purchase_price').html(format_price(calculator.get_purchase_price()));
