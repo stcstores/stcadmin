@@ -54,7 +54,11 @@ class FileUntrackedManifest(FileManifest):
         package_count = 0
         weight = 0
         for order in orders:
-            cc_order = order.get_order_data()
+            try:
+                cc_order = order.get_order_data()
+            except Exception:
+                self.add_error(
+                    'Error downloading order {}.'.format(order.order_id))
             weight += self.get_order_weight(cc_order)
             order_package_count = order.springpackage_set.count()
             package_count += order_package_count

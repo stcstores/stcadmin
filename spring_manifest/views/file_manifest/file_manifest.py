@@ -10,11 +10,17 @@ class FileManifest:
         self.manifest.status = manifest.IN_PROGRESS
         self.manifest.errors = ''
         self.manifest.save()
+        try:
+            self.process_manifest()
+        except Exception:
+            self.add_error('An error occured.')
+
+    def process_manifest(self):
         rows = self.get_manifest_rows(self.manifest)
         if self.valid():
             self.save_manifest_file(self.manifest, rows)
         if self.valid():
-            self.send_file(manifest)
+            self.send_file(self.manifest)
         if self.valid():
             self.manifest.status = self.manifest.FILED
             self.manifest.save()
