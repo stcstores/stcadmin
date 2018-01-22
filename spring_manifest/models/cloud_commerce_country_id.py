@@ -19,7 +19,7 @@ class CloudCommerceCountryID(models.Model):
     iso_code = models.CharField(
         max_length=3, blank=True, null=True, verbose_name='ISO Code')
     zone = models.ForeignKey(
-        DestinationZone, blank=True, null=True, on_delete=models.CASCADE)
+        DestinationZone, blank=True, null=True, on_delete=models.SET_NULL)
     valid_spring_destination = models.BooleanField(
         default=True, verbose_name='Valid Spring Destination')
     currency_code = models.CharField(max_length=4, blank=True, null=True)
