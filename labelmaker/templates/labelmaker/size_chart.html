@@ -16,8 +16,10 @@
         </thead>
         <tbody>
             {% for form in formset %}
+                <div class="error">{{ form.non_field_errors }}</div>
                 <tr class="size">
-                    {% for field in form.visible_fields %}<td>{{ field }}</td>{% endfor %}
+                    {% for field in form.visible_fields %}
+                    <td>{{ field }}{{ field.errors }}</td>{% endfor %}
                     <td><input type="button" value="&uarr;" class="order_button up"></td>
                     <td><input type="button" value="&darr;" class="order_button down"></td>
                     {% for field in form.hidden_fields %}{{ field }}{% endfor %}
