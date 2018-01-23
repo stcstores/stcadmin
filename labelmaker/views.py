@@ -52,8 +52,7 @@ class SizeChartForm(FormView):
 
     def get_success_url(self):
         return reverse_lazy(
-            'labelmaker:size_chart_form',
-            kwargs={'size_chart_id': self.size_chart_id})
+            'labelmaker:size_charts')
 
 
 class CreateSizeChart(LabelmakerUserMixin, View):
