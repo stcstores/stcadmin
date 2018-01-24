@@ -31,7 +31,7 @@ class Bay(models.Model):
 
     bay_id = models.PositiveIntegerField(
         verbose_name='Bay ID', primary_key=False, unique=True, db_index=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
 
     objects = models.Manager()

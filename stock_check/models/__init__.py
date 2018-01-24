@@ -17,7 +17,10 @@ def update_products(inventory_table):
     new_skus = [sku for sku in skus if sku not in db_skus]
     old_skus = [sku for sku in db_skus if sku not in skus]
     for sku in old_skus:
-        Product.objects.get(sku__in=old_skus).delete()
+        try:
+            Product.objects.get(sku__in=old_skus).delete()
+        except Product.MultipleObjectsReturned:
+            raise Exception('Multiple products found with SKU {}.'.format(sku))
     print('Deleted {} products.'.format(len(old_skus)))
     new_products = []
     for sku in new_skus:
