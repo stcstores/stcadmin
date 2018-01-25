@@ -1,0 +1,85 @@
+{% extends "profit_loss/base.html" %}
+{% load staticfiles %}
+{% load profit_loss_extras %}
+{% load inventory_extras %}
+
+{% block page_title %}Profit Loss Orders{% endblock %}
+
+{% block content %}
+<form action="" method="GET">
+    <label for="date_from">From Date</label>
+    <input type="text" class="datepicker" name="date_from" value="{{ date_from}}">
+    <br>
+    <br>
+    <label for="date_to">To Date</label>
+    <input type="text" class="datepicker" name="date_to" value="{{ date_to }}">
+    <br>
+    <input type="submit" value="Filter">
+</form>
+<form action="{% url 'profit_loss:export_orders' %}" method="POST">{% csrf_token %}
+    <input type="text" name="date_from" value="{{ date_from }}" hidden>
+    <input type="text" name="date_to" value="{{ date_to }}" hidden>
+    <input type="submit" value="Export Orders">
+</form>
+{% if is_paginated %}
+    <table>
+    <tr>
+        <th colspan="2">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&date_from={{ date_from }}&date_to={{ date_to }}"><button>&lt;&lt;&nbsp;First</button></a>
+                <a href="?page={{ page_obj.previous_page_number }}&date_from={{ date_from }}&date_to={{ date_to }}"><button>&lt;&nbsp;Previous</button></a>
+            {% endif %}
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&date_from={{ date_from }}&date_to={{ date_to }}"><button>Next&nbsp;&gt;&nbsp;</button></a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&date_from={{ date_from }}&date_to={{ date_to }}"><button>Last&nbsp;&gt;&gt;</button></a>
+            {% endif %}
+        </th>
+    </tr>
+</table>
+{% endif %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Department</th>
+            <th>Destination Country</th>
+            <th>Time Recieved</th>
+            <th>Time Dispatched</th>
+            <th>Price</th>
+            <th>Profit</th>
+            <th>Profit %</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td><a href="{% url 'profit_loss:order' order.id %}">{{ order.order_id }}</a></td>
+            <td>{{ order.department }}</td>
+            <td>{{ order.country.name }}</td>
+            <td class="date">{{ order.date_recieved|date:'D jS N h:iA' }}</td>
+            <td class="date">{{ order.dispatch_date|date:'D jS N h:iA' }}</td>
+            <td>{% format_price order.price %}</td>
+            <td>{% format_price order.profit %}</td>
+            <td>{% if order.profit_percentage %}{{ order.profit_percentage }}%{% endif %}</td>
+            <td><a href="{% ccp_order_page order.order_id order.customer_id %}" target="_blank"><button>C</button></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+    $(document).ready(function() {
+        $('.datepicker').datepicker({
+          showOtherMonths: true,
+          selectOtherMonths: true,
+          dateFormat: 'yy-mm-dd'
+        });
+    });
+</script>
+
+{% endblock %}

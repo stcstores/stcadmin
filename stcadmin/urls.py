@@ -41,6 +41,9 @@ urlpatterns = [
     path(
         'spring_manifest/',
         include('spring_manifest.urls', namespace='spring_manifest')),
+    path(
+        'profit_loss/',
+        include('profit_loss.urls', namespace='profit_loss')),
     path('', include('home.urls', namespace='home')),
     path(
         'password_change_done/', user_views.change_password_done,

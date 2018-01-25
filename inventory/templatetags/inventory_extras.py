@@ -31,3 +31,8 @@ def product_options(option=None):
         return {x.option_name: x.values for x in ProductOptions}
     else:
         return ProductOptions[option].options
+
+
+@register.simple_tag
+def ccp_order_page(order_id, customer_id):
+    return URLs.order_url(SUBDOMAIN, order_id, customer_id)

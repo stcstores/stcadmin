@@ -1,4 +1,4 @@
-Django==2.0
+Django==2.0.1
 django-markup==1.2
 django-jchart==0.4.2
 docutils==0.14
@@ -10,6 +10,7 @@ reportlab==3.4.0
 git+https://github.com/axevalley/labeler.git@v1.1
 git+https://github.com/stcstores/ccapi.git
 git+https://github.com/axevalley/list_input.git
+git+https://github.com/stcstores/order_profit.git
 psycopg2==2.7.3.2
 gunicorn==19.7.1
 django-formtools==2.1
