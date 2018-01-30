@@ -1,4 +1,3 @@
-from . views import *  # noqa
-from . display_monitor import *  # noqa
-from . user_feedback import *  # noqa
-from . charts import *  # noqa
+from . views import *  # NOQA
+from . display_monitor import *  # NOQA
+from . user_feedback import *  # NOQA

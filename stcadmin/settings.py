@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'price_calculator',
     'django_markup',
     'stock_check',
+    'jchart',
 ]
 
 MIDDLEWARE = [

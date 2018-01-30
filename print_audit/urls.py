@@ -1,4 +1,5 @@
 from django.urls import path
+
 from print_audit import views
 
 app_name = 'print_audit'
@@ -31,7 +32,6 @@ urlpatterns = [
         'feedback_list/',
         views.FeedbackList.as_view(), name='feedback_list'),
     path('charts/', views.Charts.as_view(), name='charts'),
-    path('get_chart', views.GetChart.as_view(), name='get_chart'),
     path(
         'feedback_quickview/',
         views.FeedbackQuickview.as_view(), name='feedback_quickview'),

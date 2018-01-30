@@ -5,19 +5,18 @@
 <script src="{% static 'scripts/Chart.bundle.min.js' %}"></script>
 {% endblock %}
 
-
 {% block content %}
-<div id="chart">
+<style>
+    .chart {
+        width: 80%;
+    }
+</style>
 
+<div class="chart" id="orders_by_week_chart">
+    {{ orders_by_week_chart.as_html }}
 </div>
-{% endblock %}
-
-{% block script %}
-<script>
-$(document).ready(function() {
-    $.get('{% url 'print_audit:get_chart' %}', function(response) {
-        $('#chart').html(response);
-    });
-});
-</script>
+<br>
+<div class="chart" id="orders_by_week_chart">
+    {{ orders_by_day_chart.as_html }}
+</div>
 {% endblock %}
