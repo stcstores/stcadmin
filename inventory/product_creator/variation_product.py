@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from ccapi import CCAPI
-
 from inventory.models import get_barcode
 
 from .new_product import NewProduct
