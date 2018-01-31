@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from ccapi import CCAPI
+
 from inventory.models import get_barcode
 
 from .new_product import NewProduct
@@ -33,15 +34,11 @@ class SingleProduct(NewProduct):
         self.amazon_search_terms = data['amazon_search_terms']
         self.package_type = data['package_type']
         self.gender = data['gender']
+        self.bay_name = data['location']
         if self.package_type in ('Heavy and Large', 'Courier'):
             self.international_shipping = 'Express'
         else:
             self.international_shipping = 'Standard'
-        if len(data['location']) > 0:
-            self.bay_id = CCAPI.get_bay_id(
-                data['location'], self.department, create=True)
-        else:
-            self.bay_id = CCAPI.get_bay_id(self.department, self.department)
 
     def create_range(self):
         return NewRange(self.name, self.range_options).create()
@@ -59,7 +56,8 @@ class SingleProduct(NewProduct):
             large_letter_compatible=self.large_letter_compatible,
             stock_level=self.stock_level,
             price=self.price,
-            bay_id=self.bay_id,
+            bay_name=self.bay_name,
+            department=self.department,
             options=self.options)
         return [product]
 

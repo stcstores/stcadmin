@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from ccapi import CCAPI
+
 from inventory.models import get_barcode
 
 from .new_product import NewProduct
@@ -49,12 +50,7 @@ class VariationProduct(NewProduct):
         price = self.get_variable_value('price', data)
         package_type = self.get_variable_value('package_type', data)
         large_letter_compatible = package_type == 'Large Letter'
-        bay_id = None
         bay_name = self.get_variable_value('location', data)
-        if len(bay_name) > 0:
-            bay_id = CCAPI.get_bay_id(bay_name, self.department, create=True)
-        else:
-            bay_id = CCAPI.get_bay_id(self.department, self.department)
         product = NewVariation(
             product_range=self.product_range,
             barcode=barcode,
@@ -67,7 +63,8 @@ class VariationProduct(NewProduct):
             large_letter_compatible=large_letter_compatible,
             stock_level=stock_level,
             price=price,
-            bay_id=bay_id,
+            bay_name=bay_name,
+            department=self.department,
             options=options)
         return product
 

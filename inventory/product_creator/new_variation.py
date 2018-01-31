@@ -1,10 +1,13 @@
+from ccapi import CCAPI
+
+
 class NewVariation:
 
     def __init__(
             self, product_range, name=None, barcode=None, description=None,
             vat_rate=None, weight='', height='', length='',
             width='', large_letter_compatible=False, stock_level=None,
-            price=None, bay_id=None, options={}):
+            price=None, bay_name=None, department=None, options={}):
         self.product_range = product_range
         self.name = name
         self.barcode = barcode
@@ -19,7 +22,8 @@ class NewVariation:
         self.large_letter_compatible = large_letter_compatible
         self.stock_level = stock_level
         self.price = price
-        self.bay_id = bay_id
+        self.bay_name = bay_name
+        self.department = department
         self.options = options
 
     def create(self):
@@ -27,6 +31,12 @@ class NewVariation:
             self.name = self.product_range.name
         if self.description is None or self.description == '':
             self.description = self.name
+
+        if len(self.bay_name) > 0:
+            self.bay_id = CCAPI.get_bay_id(
+                self.bay_name, self.department, create=True)
+        else:
+            self.bay_id = CCAPI.get_bay_id(self.department, self.department)
 
         product = self.product_range.add_product(
             self.name, self.barcode, description=self.description,
