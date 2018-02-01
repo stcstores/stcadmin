@@ -63,10 +63,6 @@
 
     get_postage_price_url = "{% url 'price_calculator:get_shipping_price' %}";
 
-    vat_rates = {
-        '5': 20,
-    }
-
     postage_prices = {
         'Large Letter': 0.63,
         'Packet': 2.15,
@@ -82,9 +78,7 @@
         }
         $(vat_rates).each(function() {
             {% for product in product_range.products %}
-            if (this.cc_id == {{ product.vat_rate_id }}) {
-                calcs['{{ product.id }}'].set_vat_rate(this.percentage);
-            }
+            calcs['{{ product.id }}'].set_vat_rate({{ product.vat_rate }});
             {% endfor %}
         });
     }

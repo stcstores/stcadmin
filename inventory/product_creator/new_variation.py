@@ -12,7 +12,7 @@ class NewVariation:
         self.name = name
         self.barcode = barcode
         self.description = description
-        self.vat_rate_id = vat_rate
+        self.vat_rate = vat_rate
         self.weight = weight
         self.height = height
         self.length = length
@@ -40,7 +40,7 @@ class NewVariation:
 
         product = self.product_range.add_product(
             self.name, self.barcode, description=self.description,
-            vat_rate_id=self.vat_rate_id)
+            vat_rate=self.vat_rate)
         product.set_stock_level(self.stock_level)
         product.set_product_scope(
             weight=self.weight, height=self.height, length=self.length,

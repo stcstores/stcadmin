@@ -2,6 +2,7 @@ import json
 import re
 
 from ccapi import CCAPI
+
 from list_input import ListInput
 
 from . import fieldtypes
@@ -102,7 +103,6 @@ class StockLevel(fieldtypes.NumberField):
 
 
 class VATRate(fieldtypes.ChoiceField):
-    VAT_RATE_IDS = {20: 5, 5: 2, 0: 1}
     label = 'VAT Rate'
     name = 'vat_rate'
     variable = True
@@ -116,20 +116,6 @@ class VATRate(fieldtypes.ChoiceField):
         return ([
             ('', ''), (20, 'Normal Rate 20%'), (5, 'Reduced 5%'),
             (0, 'VAT Exempt')])
-
-    @classmethod
-    def get_VAT_rate_ID(cls, vat_percentage):
-        return cls.VAT_RATE_IDS[int(vat_percentage)]
-
-    @classmethod
-    def get_VAT_percentage(cls, VAT_ID):
-        if VAT_ID == 0:
-            return 0
-        return {v: k for k, v in cls.VAT_RATE_IDS.items()}[int(VAT_ID)]
-
-    def clean(self, value):
-        value = super().clean(value)
-        return self.get_VAT_rate_ID(value)
 
 
 class Supplier(fieldtypes.ChoiceField):

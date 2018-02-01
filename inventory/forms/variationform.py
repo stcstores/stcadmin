@@ -1,5 +1,6 @@
 from ccapi import CCAPI
 from django import forms
+
 from stcadmin.forms import KwargFormSet
 
 from .new_product import fields
@@ -27,8 +28,7 @@ class VariationForm(forms.Form):
 
     def get_initial(self):
         initial = {}
-        initial['vat_rate'] = fields.VATRate.get_VAT_percentage(
-            self.product.vat_rate_id)
+        initial['vat_rate'] = self.product.vat_rate
         initial['price'] = self.product.base_price
         initial['weight'] = self.product.weight
         for option in self.product.options:

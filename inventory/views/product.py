@@ -2,8 +2,8 @@ from ccapi import CCAPI
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
+
 from inventory import forms
-from inventory.forms.new_product import fields
 
 from .views import InventoryUserMixin
 
@@ -36,8 +36,7 @@ class ProductView(InventoryUserMixin, FormView):
 
     def get_initial(self):
         initial = super().get_initial()
-        initial['vat_rate'] = fields.VATRate.get_VAT_percentage(
-            self.product.vat_rate_id)
+        initial['vat_rate'] = self.product.vat_rate
         initial['price'] = self.product.base_price
         initial['locations'] = [bay.name for bay in self.product.bays]
         initial['weight'] = self.product.weight

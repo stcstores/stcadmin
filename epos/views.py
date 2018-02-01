@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
+
 from home.views import UserInGroupMixin
 
 
@@ -31,17 +32,13 @@ class BarcodeSearch(EPOSUserMixin, View):
         product = search_result[0]
         product_id = str(search_result[0].variation_id)
         product = CCAPI.get_product(product_id)
-        if product.vat_rate == 'Vat Exempt':
-            vat_rate = 0
-        else:
-            vat_rate = int(product.vat_rate.replace('%', ''))
         data = {
             'id': product.id,
             'name': product.full_name,
             'sku': product.sku,
             'barcode': product.barcode,
             'base_price': float(product.base_price),
-            'vat_rate': vat_rate,
+            'vat_rate': product.vat_rate,
             'stock_level': product.stock_level,
             'order_quantity': 1,
         }
