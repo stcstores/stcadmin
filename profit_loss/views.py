@@ -106,6 +106,8 @@ class ExportOrders(View):
         return orders.all()
 
     def format_price(self, price):
+        if price is None:
+            return '-'
         return '£{price:.2f}'.format(price=float(price / 100))
 
     def get_filename(self):

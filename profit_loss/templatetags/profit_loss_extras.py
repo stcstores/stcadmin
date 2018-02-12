@@ -6,6 +6,9 @@ register = template.Library()
 
 @register.simple_tag
 def format_price(price):
+    string = '<span class={html_class}>&pound;{price:.2f}</span>'
+    if price is None:
+        return mark_safe('<span class="negative">&mdash;</span>')
     if price < 0:
         html_class = 'negative'
     else:
