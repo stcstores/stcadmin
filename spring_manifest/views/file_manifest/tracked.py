@@ -7,8 +7,9 @@ from collections import OrderedDict
 from ccapi import CCAPI
 from django.contrib import messages
 from django.core.files.base import ContentFile
-from stcadmin import settings
 from unidecode import unidecode
+
+from stcadmin import settings
 
 from .file_manifest import FileManifest
 from .state_code import StateCode
@@ -139,7 +140,7 @@ class FileTrackedManifest(FileManifest):
     def get_product_weight(self, product):
         weight_g = product.per_item_weight * product.quantity
         weight_kg = weight_g / 1000
-        return round(weight_kg, 3)
+        return round(weight_kg, 1)
 
     def get_phone_number(self, phone_number):
         if len(phone_number) < 5:
