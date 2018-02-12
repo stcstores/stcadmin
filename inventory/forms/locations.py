@@ -1,5 +1,6 @@
 from ccapi import CCAPI
 from django import forms
+
 from list_input import ListInput
 from stcadmin.forms import KwargFormSet
 
@@ -59,7 +60,8 @@ class LocationsForm(forms.Form):
             self.cleaned_data['warehouse'])
         new_bay_names = self.cleaned_data['locations']
         new_bay_ids = [
-            CCAPI.get_bay_id(bay_name, warehouse_name, create=True) for
+            self.warehouses.get_bay(
+                warehouse_name, bay_name, create=True).id for
             bay_name in new_bay_names]
         for new_bay_id in new_bay_ids:
             if new_bay_id not in existing_bay_ids:
