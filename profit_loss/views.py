@@ -43,6 +43,7 @@ class Orders(ProfitLossUserMixin, ListView):
             year, month, day = self.request.GET['date_to'].split('-')
             self.end_date = localise_datetime(datetime.datetime(
                 year=int(year), month=int(month), day=int(day)))
+            self.end_date += datetime.timedelta(days=1)
         return super().get(*args, **kwargs)
 
     def get_queryset(self):
