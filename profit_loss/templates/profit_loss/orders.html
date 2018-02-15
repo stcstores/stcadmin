@@ -6,8 +6,12 @@
 {% block page_title %}Profit Loss Orders{% endblock %}
 
 {% block content %}
-<form action="" method="GET">
+<form action="" method="GET" id="filter_form">
     <table>
+        <tr>
+            <th><label for="order_id">Order ID</label></th>
+            <td><input type="text" name="order_id" value="{{ order_id }}"></td>
+        </tr>
         <tr>
             <th><label for="date_from">From Date</label></th>
             <td><input type="text" class="datepicker" name="date_from" value="{{ date_from}}"></td>
@@ -17,12 +21,23 @@
             <td><input type="text" class="datepicker" name="date_to" value="{{ date_to }}"></td>
         </tr>
         <tr>
+            <th><label for="country">Country</label></th>
+            <td>
+                <select name="country" id="country">
+                    <option value=""></option>
+                    {% for a_country in countries %}
+                    <option value="{{ a_country }}" {% ifequal a_country country %}selected{% endifequal %}>{{ a_country }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <tr>
             <th><label for="department">Department</label></th>
             <td>
                 <select name="department" id="department">
                     <option value=""></option>
                     {% for dep in departments %}
-                    <option value="{{ dep }}" {% if dep == department %}selected{% endif %}>{{ dep }}</option>
+                    <option value="{{ dep }}" {% ifequal dep department %}selected{% endifequal %}>{{ dep }}</option>
                     {% endfor %}
                 </select>
             </td>
@@ -31,6 +46,7 @@
             <th colspan="2"><input type="submit" value="Filter"></th>
         </tr>
     </table>
+    <input type="number" name="page" value="1" hidden>
 </form>
 <form action="{% url 'profit_loss:export_orders' %}" method="POST">{% csrf_token %}
     <input type="text" name="date_from" value="{{ date_from }}" hidden>
@@ -42,13 +58,13 @@
     <tr>
         <th colspan="2">
             {% if page_obj.has_previous %}
-                <a href="?page=1&date_from={{ date_from }}&date_to={{ date_to }}"><button>&lt;&lt;&nbsp;First</button></a>
-                <a href="?page={{ page_obj.previous_page_number }}&date_from={{ date_from }}&date_to={{ date_to }}"><button>&lt;&nbsp;Previous</button></a>
+                <button id="first_page">&lt;&lt;&nbsp;First</button>
+                <button id="previous_page">&lt;&nbsp;Previous</button>
             {% endif %}
             Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}&date_from={{ date_from }}&date_to={{ date_to }}"><button>Next&nbsp;&gt;&nbsp;</button></a>
-                <a href="?page={{ page_obj.paginator.num_pages }}&date_from={{ date_from }}&date_to={{ date_to }}"><button>Last&nbsp;&gt;&gt;</button></a>
+                <button id="next_page">Next&nbsp;&gt;&nbsp;</button>
+                <button id="last_page">Last&nbsp;&gt;&gt;</button>
             {% endif %}
         </th>
     </tr>
@@ -89,12 +105,38 @@
 
 {% block script %}{{ block.super }}
 <script>
+    function go_to_page(page_number) {
+        $('#filter_form').find('input[name="page"]').val(page_number);
+        $('#filter_form').find('input[type="submit"]').click();
+    }
+
     $(document).ready(function() {
         $('.datepicker').datepicker({
           showOtherMonths: true,
           selectOtherMonths: true,
           dateFormat: 'yy-mm-dd'
         });
+        {% if page_obj.has_previous %}
+        $('#first_page').click(function() {
+            got_to_page(1);
+        });
+
+        $('#previous_page').click(function() {
+            go_to_page({{ page_obj.previous_page_number }});
+        });
+        {% endif %}
+        {% if page_obj.has_next %}
+        $('#next_page').click(function() {
+            go_to_page({{ page_obj.next_page_number }});
+        });
+
+        $('#last_page').click(function() {
+            go_to_page({{ page_obj.paginator.num_pages }});
+        });
+        {% endif %}
+
+        $('#filter_form input').change(function() {$('#filter_form').find('input[name="page"]').val(1);})
+        $('#filter_form select').change(function() {$('#filter_form').find('input[name="page"]').val(1);})
     });
 </script>
 

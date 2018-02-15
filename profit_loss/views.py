@@ -12,6 +12,7 @@ from django.views.generic.list import ListView
 
 from home.views import UserInGroupMixin
 from profit_loss import models
+from spring_manifest.models import CloudCommerceCountryID
 
 
 def localise_datetime(date_input):
@@ -34,6 +35,8 @@ class Orders(ProfitLossUserMixin, ListView):
     start_date = None
     end_date = None
     department = None
+    country = None
+    order_id = None
 
     def get(self, *args, **kwargs):
         if self.request.GET.get('date_from'):
@@ -47,16 +50,25 @@ class Orders(ProfitLossUserMixin, ListView):
             self.end_date += datetime.timedelta(days=1)
         if self.request.GET.get('department'):
             self.department = self.request.GET.get('department')
+        if self.request.GET.get('country'):
+            self.country = self.request.GET.get('country')
+        order_id = self.request.GET.get('order_id')
+        if order_id and order_id.isdigit():
+            self.order_id = int(order_id)
         return super().get(*args, **kwargs)
 
     def get_queryset(self):
         orders = self.model.objects
+        if self.order_id is not None:
+            return orders.filter(order_id=self.order_id)
         if self.start_date is not None:
             orders = orders.filter(date_recieved__gte=self.start_date)
         if self.end_date is not None:
             orders = orders.filter(date_recieved__lte=self.end_date)
         if self.department is not None:
             orders = orders.filter(department=self.department)
+        if self.country is not None:
+            orders = orders.filter(country__name=self.country)
         return orders.all()
 
     def get_context_data(self, *args, **kwargs):
@@ -64,9 +76,15 @@ class Orders(ProfitLossUserMixin, ListView):
         context['date_from'] = self.request.GET.get('date_from', '')
         context['date_to'] = self.request.GET.get('date_to', '')
         context['department'] = self.request.GET.get('department')
+        context['country'] = self.request.GET.get('country')
         context['departments'] = [
             v[0] for v in self.model.objects.order_by().values_list(
                 'department').distinct()]
+        context['countries'] = [
+            v[0] for v in
+            CloudCommerceCountryID.objects.order_by().values_list(
+                'name').distinct()]
+        context['order_id'] = self.request.GET.get('order_id') or ''
         return context
 
 
