@@ -33,6 +33,7 @@ class Orders(ProfitLossUserMixin, ListView):
     context_object_name = 'orders'
     start_date = None
     end_date = None
+    department = None
 
     def get(self, *args, **kwargs):
         if self.request.GET.get('date_from'):
@@ -44,6 +45,8 @@ class Orders(ProfitLossUserMixin, ListView):
             self.end_date = localise_datetime(datetime.datetime(
                 year=int(year), month=int(month), day=int(day)))
             self.end_date += datetime.timedelta(days=1)
+        if self.request.GET.get('department'):
+            self.department = self.request.GET.get('department')
         return super().get(*args, **kwargs)
 
     def get_queryset(self):
@@ -52,12 +55,18 @@ class Orders(ProfitLossUserMixin, ListView):
             orders = orders.filter(date_recieved__gte=self.start_date)
         if self.end_date is not None:
             orders = orders.filter(date_recieved__lte=self.end_date)
+        if self.department is not None:
+            orders = orders.filter(department=self.department)
         return orders.all()
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data()
         context['date_from'] = self.request.GET.get('date_from', '')
         context['date_to'] = self.request.GET.get('date_to', '')
+        context['department'] = self.request.GET.get('department')
+        context['departments'] = [
+            v[0] for v in self.model.objects.order_by().values_list(
+                'department').distinct()]
         return context
 
 
