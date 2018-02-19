@@ -1,5 +1,5 @@
 import pytz
-from django.db import models
+from django.db import models, transaction
 from django.utils.timezone import is_naive
 from order_profit import OrderProfit
 
@@ -66,14 +66,28 @@ class Order(models.Model):
         return str(self.order_id)
 
 
+class Product(models.Model):
+
+    sku = models.CharField(max_length=20)
+    range_id = models.IntegerField()
+    product_id = models.IntegerField()
+    name = models.TextField()
+    quantity = models.IntegerField()
+    order = models.ForeignKey(Order, models.CASCADE)
+
+    def __repr__(self):
+        return '{} - {} x {}'.format(self.sku, self.name, self.quantity)
+
+
 class UpdateOrderProfit(OrderProfit):
 
     number_of_days = 4
 
+    @transaction.atomic
     def __init__(self):
         super().__init__()
-        new_orders = [
-            Order(
+        for o in self.orders:
+            order = Order(
                 order_id=o.order_id, customer_id=o.customer_id,
                 department=o.department, weight=o.weight, vat_rate=o.vat_rate,
                 country=CloudCommerceCountryID._base_manager.get(
@@ -83,8 +97,12 @@ class UpdateOrderProfit(OrderProfit):
                 date_recieved=Order.localise_datetime(o.date_recieved),
                 dispatch_date=Order.localise_datetime(o.dispatch_date),
                 shipping_service=o.courier)
-            for o in self.orders]
-        Order._base_manager.bulk_create(new_orders)
+            order.save()
+            for p in o.products:
+                product = Product(
+                    sku=p.sku, range_id=p.range_id, product_id=p.product_id,
+                    name=p.name, quantity=p.quantity, order=order)
+                product.save()
 
     def filter_orders(self, orders):
         orders = super().filter_orders(orders)

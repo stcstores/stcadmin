@@ -95,6 +95,7 @@ class Order(ProfitLossUserMixin, TemplateView):
         context = super().get_context_data(*args, **kwargs)
         order_id = self.kwargs.get('order_id')
         context['order'] = get_object_or_404(models.Order, id=order_id)
+        context['products'] = context['order'].product_set.all()
         return context
 
 

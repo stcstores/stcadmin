@@ -79,6 +79,7 @@
             <th>Destination Country</th>
             <th>Time Recieved</th>
             <th>Time Dispatched</th>
+            <th>Items</th>
             <th>Price</th>
             <th>Profit</th>
             <th>Profit %</th>
@@ -92,6 +93,7 @@
             <td>{{ order.country.name }}</td>
             <td class="date">{{ order.date_recieved|date:'D jS N h:iA' }}</td>
             <td class="date">{{ order.dispatch_date|date:'D jS N h:iA' }}</td>
+            <td>{{ order.item_count }}</td>
             <td>{% format_price order.price %}</td>
             <td>{% format_price order.profit %}</td>
             <td>{% if order.profit_percentage %}{{ order.profit_percentage }}%{% else %}<span class="negative">&mdash;</span>{% endif %}</td>
@@ -118,7 +120,7 @@
         });
         {% if page_obj.has_previous %}
         $('#first_page').click(function() {
-            got_to_page(1);
+            go_to_page(1);
         });
 
         $('#previous_page').click(function() {

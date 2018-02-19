@@ -25,4 +25,22 @@
     <tr><th>Profit</th><td>{% format_price order.profit %}</td></tr>
     <tr><th>Profit Percentage</th><td>{% if order.profit_percentage %}{{ order.profit_percentage }}%{% endif %}</td></tr>
 </table>
+
+<h3>Products</h3>
+<table>
+    <tr>
+        <th>SKU</th>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th></th>
+    </tr>
+    {% for product in products %}
+    <tr>
+        <td>{{ product.sku }}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.quantity }}</td>
+        <td><a target="_blank" href="{% ccp_product_page product.range_id product.product_id %}">View on Cloud Commerce</a></td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}

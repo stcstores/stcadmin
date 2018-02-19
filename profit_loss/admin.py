@@ -20,3 +20,10 @@ class OrderAdmin(admin.ModelAdmin):
 
     def __repr__(self):
         return str(self.order_id)
+
+
+@admin.register(models.Product)
+class ProductAdmin(admin.ModelAdmin):
+    fields = ('sku', 'name', 'range_id', 'product_id', 'quantity', 'order')
+    list_display = (
+        'id', 'sku', 'name', 'range_id', 'product_id', 'quantity', 'order')
