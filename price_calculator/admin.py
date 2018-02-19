@@ -1,12 +1,13 @@
 from django.contrib import admin
+
 from price_calculator import models
 
 
 @admin.register(models.DestinationCountry)
 class DestinationCountryAdmin(admin.ModelAdmin):
-    fields = ('name', 'currency_code')
-    list_display = ('name', 'currency_code')
-    list_editable = ('currency_code', )
+    fields = ('name', 'currency_code', 'min_channel_fee')
+    list_display = ('name', 'currency_code', 'min_channel_fee')
+    list_editable = ('currency_code', 'min_channel_fee')
     search_fields = ('name', )
 
 

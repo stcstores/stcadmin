@@ -5,6 +5,7 @@ class PriceCalculator {
         this.sale_price = this.to_pence(data.sale_price);
         this.postage_price = this.to_pence(data.postage_price);
         this.purchase_price = this.to_pence(data.purchase_price);
+        this.min_channel_fee = data.min_channel_fee
         this.vat_rate = data.vat_rate;
         this.channel_fee_percentage = data.channel_fee_percentage;
     }
@@ -88,7 +89,13 @@ class PriceCalculator {
         this.vat = parseInt(this.sale_price - this.ex_vat);
     }
     calculate_channel_fee() {
-        this.channel_fee = parseInt(this.sale_price * (this.channel_fee_percentage / 100));
+        var fee = parseInt(this.sale_price * (this.channel_fee_percentage / 100));
+        if (fee < this.min_channel_fee) {
+            this.channel_fee = this.min_channel_fee;
+        } else {
+            this.channel_fee = fee;
+        }
+
     }
     calculate_profit() {
         this.profit = this.sale_price - this.vat - this.postage_price - this.channel_fee - this.purchase_price;
@@ -138,6 +145,8 @@ function get_postage_price(calculator, country, package_type, weight, price){
             calculator.set_postage_price(parseInt(data['price']) / 100);
             calculator.set_exchange_rate(parseFloat(data['exchange_rate']));
             calculator.currency_code = data['currency_code'];
+            calculator.min_channel_fee = parseInt(data['min_channel_fee']);
+            calculator.recalculate();
             calculator.change();
         },
     ).error(function() {alert('No valid shipping service found.');});

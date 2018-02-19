@@ -6,6 +6,7 @@ from forex_python.converter import CurrencyRates
 class DestinationCountry(models.Model):
     name = models.CharField(max_length=50, unique=True)
     currency_code = models.CharField(max_length=4, default='GBP')
+    min_channel_fee = models.IntegerField(null=True, blank=True)
 
     def current_rate(self):
         if self.currency_code == 'GBP':

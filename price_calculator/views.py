@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
+
 from inventory.views.views import InventoryUserMixin
 from price_calculator import models
 
@@ -33,12 +34,17 @@ class GetShippingPriceView(InventoryUserMixin, View):
         postage_price = models.ShippingPrice.objects.get_price(
             country_name, package_type_name, weight, price)
         vat_rates = list(postage_price.vat_rates.values())
+        if country.min_channel_fee is None:
+            min_channel_fee = 0
+        else:
+            min_channel_fee = int(country.min_channel_fee * exchange_rate)
         data = {
             'price': postage_price.calculate(weight),
             'price_name': postage_price.name,
             'vat_rates': vat_rates,
             'exchange_rate': exchange_rate,
-            'currency_code': str(country.currency_code)
+            'currency_code': str(country.currency_code),
+            'min_channel_fee': min_channel_fee,
         }
         return data
 
