@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
+from tabler import CSV, Table
+
 from stock_check import models
-from tabler import Tabler
 
 
 class Command(BaseCommand):
@@ -12,5 +13,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         inventory_table_path = options.get('inventory_file_path')
         print(inventory_table_path)
-        inventory_table = Tabler(inventory_table_path)
+        inventory_table = Table(inventory_table_path, table_type=CSV())
         models.update_stock_check(inventory_table)
