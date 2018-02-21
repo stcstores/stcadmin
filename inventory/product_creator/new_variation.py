@@ -53,4 +53,10 @@ class NewVariation:
         for option, value in self.options.items():
             if len(value) > 0:
                 product.set_option_value(option, value, create=True)
+        factories = CCAPI.get_factories()
+        factory = factories.names[self.options['Supplier']]
+        CCAPI.update_product_factory_link(
+            product_id=product.id, factory_id=factory.id,
+            supplier_sku=self.options['Supplier SKU'],
+            price=self.options['Purchase Price'])
         return product
