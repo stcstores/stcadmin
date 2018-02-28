@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from inventory import models
 
 
@@ -23,3 +24,18 @@ class BarcodeAdmin(admin.ModelAdmin):
 
     def __repr__(self):
         return str(self.barcode)
+
+
+@admin.register(models.Warehouse)
+class WarehouseAdmin(admin.ModelAdmin):
+    fields = ('warehouse_id', 'name')
+    list_display = ('warehouse_id', 'name')
+    search_fields = ('name', )
+
+
+@admin.register(models.Bay)
+class BayAdmin(admin.ModelAdmin):
+    fields = ('bay_id', 'name', 'warehouse')
+    list_display = ('bay_id', '__str__', 'name', 'warehouse')
+    search_fields = ('name', '__str__')
+    list_filter = ('warehouse', )
