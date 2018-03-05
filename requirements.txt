@@ -11,6 +11,7 @@ git+https://github.com/axevalley/labeler.git@v1.1
 git+https://github.com/stcstores/ccapi.git
 git+https://github.com/axevalley/list_input.git
 git+https://github.com/stcstores/order_profit.git
+git+https://github.com/stcstores/cc_products.git
 psycopg2==2.7.3.2
 gunicorn==19.7.1
 django-formtools==2.1

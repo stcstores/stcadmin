@@ -1,7 +1,9 @@
-from ccapi import CCAPI
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
+
+import cc_products
+from inventory import models
 from inventory.forms import LocationsFormSet
 
 from .views import InventoryUserMixin
@@ -14,16 +16,13 @@ class LocationFormView(InventoryUserMixin, FormView):
 
     def dispatch(self, *args, **kwargs):
         self.range_id = self.kwargs.get('range_id')
-        self.product_range = CCAPI.get_range(self.range_id)
-        self.warehouses = CCAPI.get_warehouses()
+        self.product_range = cc_products.get_range(self.range_id)
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         product_ids = [p.id for p in self.product_range.products]
-        kwargs['form_kwargs'] = [
-            {'product_id': p, 'warehouses': self.warehouses}
-            for p in product_ids]
+        kwargs['form_kwargs'] = [{'product_id': p} for p in product_ids]
         return kwargs
 
     def get_success_url(self):
@@ -34,7 +33,7 @@ class LocationFormView(InventoryUserMixin, FormView):
         context = super().get_context_data(*args, **kwargs)
         context['formset'] = context.pop('form')
         context['product_range'] = self.product_range
-        context['warehouses'] = self.warehouses
+        context['warehouses'] = models.Warehouse.objects.all()
         return context
 
     def form_valid(self, forms):

@@ -37,5 +37,5 @@ class WarehouseAdmin(admin.ModelAdmin):
 class BayAdmin(admin.ModelAdmin):
     fields = ('bay_id', 'name', 'warehouse')
     list_display = ('bay_id', '__str__', 'name', 'warehouse')
-    search_fields = ('name', '__str__')
+    search_fields = ('name', )
     list_filter = ('warehouse', )

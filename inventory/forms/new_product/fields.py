@@ -3,6 +3,7 @@ import re
 
 from ccapi import CCAPI
 
+from inventory import models
 from list_input import ListInput
 
 from . import fieldtypes
@@ -205,7 +206,7 @@ class PackageType(fieldtypes.ChoiceField):
         return [('', '')] + package_types
 
 
-class Location(fieldtypes.TextField):
+class Location(fieldtypes.LocationField):
     label = 'Location'
     name = 'location'
     placeholder = 'Location'
@@ -215,6 +216,10 @@ class Location(fieldtypes.TextField):
         '<br>This should be left blank if the product does not have a '
         'specific <b>Bay</b>.<br>If additional bays are required they '
         'must be added after the product has been created.')
+
+    @staticmethod
+    def get_choices():
+        return [(bay.id, bay) for bay in models.Bay.objects.all()]
 
 
 class Brand(fieldtypes.TextField):

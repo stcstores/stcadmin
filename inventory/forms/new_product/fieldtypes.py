@@ -2,9 +2,9 @@ from inspect import isclass
 
 from django import forms
 from django.core.exceptions import ValidationError
-from list_input import ListInput
 
 from inventory.forms import widgets
+from list_input import ListInput
 
 
 class Validators:
@@ -126,6 +126,20 @@ class ChoiceField(FormField, forms.ChoiceField):
     must_vary = False
     size = None
     small_size = None
+
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = self.get_choices()
+        kwargs['label'] = self.label
+        kwargs = super().__init__(*args, **kwargs)
+
+
+class LocationField(FormField, forms.MultipleChoiceField):
+    variable = True
+    variation = True
+    must_vary = False
+    size = None
+    small_size = None
+    html_class = 'selectize'
 
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = self.get_choices()
