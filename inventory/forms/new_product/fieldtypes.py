@@ -2,7 +2,6 @@ from inspect import isclass
 
 from django import forms
 from django.core.exceptions import ValidationError
-
 from inventory.forms import widgets
 from list_input import ListInput
 
@@ -117,7 +116,7 @@ class FormField(forms.Field):
                     "The following characters are not allowed in "
                     "this field: {}".format(
                         ', '.join(self.disallowed_characters)))
-        return str(super().clean(value)).strip()
+        return super().clean(value)
 
 
 class ChoiceField(FormField, forms.ChoiceField):
@@ -133,18 +132,54 @@ class ChoiceField(FormField, forms.ChoiceField):
         kwargs = super().__init__(*args, **kwargs)
 
 
-class LocationField(FormField, forms.MultipleChoiceField):
-    variable = True
-    variation = True
-    must_vary = False
-    size = None
-    small_size = None
-    html_class = 'selectize'
+class SelectizeField(FormField, forms.MultipleChoiceField):
 
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = self.get_choices()
         kwargs['label'] = self.label
         kwargs = super().__init__(*args, **kwargs)
+
+    def get_widget(self):
+        attrs = {}
+        if self.placeholder is not None:
+            attrs['placeholder'] = self.placeholder
+        if self.html_class is not None:
+            attrs['class'] = self.html_class
+        if self.size is not None:
+            attrs['size'] = self.size
+        if self.is_required:
+            attrs['required'] = 'true'
+        return widgets.SelectizeWidget(
+            attrs=attrs, selectize_options=self.selectize_options)
+
+    def to_python(self, *args, **kwargs):
+        value = super().to_python(*args, **kwargs)
+        if isinstance(value, str):
+            return value.split(',')
+        return value
+
+
+class SingleSelectize(FormField, forms.ChoiceField):
+
+    selectize_options = {'maxItems': 1}
+
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = self.get_choices()
+        kwargs['label'] = self.label
+        kwargs = super().__init__(*args, **kwargs)
+
+    def get_widget(self):
+        attrs = {}
+        if self.placeholder is not None:
+            attrs['placeholder'] = self.placeholder
+        if self.html_class is not None:
+            attrs['class'] = self.html_class
+        if self.size is not None:
+            attrs['size'] = self.size
+        if self.is_required:
+            attrs['required'] = 'true'
+        return widgets.SingleSelectizeWidget(
+            attrs=attrs, selectize_options=self.selectize_options)
 
 
 class NumberField(FormField, forms.IntegerField):

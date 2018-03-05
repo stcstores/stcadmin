@@ -1,9 +1,18 @@
 from django.db import models
 
 
+class UsedWarehouseManager(models.Manager):
+
+    def get_queryset(self):
+        return super().get_queryset().exclude(warehouse_id=5610)
+
+
 class Warehouse(models.Model):
     warehouse_id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
+
+    objects = models.Manager()
+    used_warehouses = UsedWarehouseManager()
 
     def __str__(self):
         return self.name

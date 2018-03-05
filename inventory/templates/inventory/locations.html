@@ -57,13 +57,8 @@ var default_bays = {
     {% for warehouse in warehouses %}'{{ warehouse.id}}': '{{ warehouse.default_bay.id }}',{% endfor %}}
 
 $(document).ready(function() {
-    $('.selectize').selectize({
-        delimiter: ',',
-        persist: false,
-        maxItems: null,
-    });
 
-    $('.selectize').change(function() {
+    $('.location_field').change(function() {
         var warehouse = $(this).closest('tr').find('.warehouse+field select').val();
         if (warehouse !== ''){
             if ($(this).val() == '') {
@@ -73,8 +68,11 @@ $(document).ready(function() {
     });
 
     $('.warehouse_field').find('select').change(function() {
+        if ($(this).value !== '') {
+            $(this).find('option[value=""]').remove();
+        }
         var bays = warehouses[$(this).val()];
-        var bay_input = $(this).closest('tr').find('.selectize');
+        var bay_input = $(this).closest('tr').find('.location_field').find('select');
         var selectize = bay_input[0].selectize;
         var value = bay_input.val()
         selectize.clear();
@@ -86,9 +84,7 @@ $(document).ready(function() {
     $('.warehouse_field select').each(function() {
         if ($(this).val() !== '') {
             $(this).change();
-            console.log();
         }
-        //$(this).find('option[value=""]').attr('disabled', true);
         $(this).attr('required', true)
     });
 });

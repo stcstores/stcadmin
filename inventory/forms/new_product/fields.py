@@ -2,7 +2,6 @@ import json
 import re
 
 from ccapi import CCAPI
-
 from inventory import models
 from list_input import ListInput
 
@@ -119,9 +118,10 @@ class VATRate(fieldtypes.ChoiceField):
             (0, 'VAT Exempt')])
 
 
-class Supplier(fieldtypes.ChoiceField):
+class Supplier(fieldtypes.SingleSelectize):
     label = 'Supplier'
     name = 'supplier'
+    html_class = 'selectize'
     required_message = (
         'A <b>Supplier</b> must be provided. If the supplier does appear in '
         'the list it must be added to Cloud Commerce before the product can be'
@@ -133,9 +133,8 @@ class Supplier(fieldtypes.ChoiceField):
 
     @staticmethod
     def get_choices():
-        suppliers = [
-            (supplier.value, supplier.value) for supplier in
-            CCAPI.get_option_values("35131")]
+        factories = CCAPI.get_factories()
+        suppliers = [(f.name, f.name) for f in factories]
         suppliers.sort(key=lambda x: x[1])
         return [('', '')] + suppliers
 
@@ -185,7 +184,7 @@ class Length(fieldtypes.NumberField):
         'The <b>Length</b> of the item when packed in <b>Milimeters</b>.')
 
 
-class PackageType(fieldtypes.ChoiceField):
+class PackageType(fieldtypes.SingleSelectize):
     label = 'Package Type'
     name = 'package_type'
     variable = True
@@ -197,6 +196,7 @@ class PackageType(fieldtypes.ChoiceField):
         'or the <b>International Shippping Method</b> differs, please change '
         'the <b>International Shipping</b> option after the product has been '
         'created.')
+    selectize_options = {'maxItems': 1}
 
     @staticmethod
     def get_choices():
@@ -206,20 +206,49 @@ class PackageType(fieldtypes.ChoiceField):
         return [('', '')] + package_types
 
 
-class Location(fieldtypes.LocationField):
+class Location(fieldtypes.SelectizeField):
+
     label = 'Location'
     name = 'location'
     placeholder = 'Location'
     variable = True
+    html_class = 'location_field'
+    size = 300
     help_text = (
         'The name of the <b>Bay</b> in which the product will be located.'
         '<br>This should be left blank if the product does not have a '
         'specific <b>Bay</b>.<br>If additional bays are required they '
         'must be added after the product has been created.')
+    selectize_options = {
+        'delimiter': ',',
+        'persist': False,
+        'maxItems': None,
+        'sortField': 'text',
+    }
 
-    @staticmethod
-    def get_choices():
-        return [(bay.id, bay) for bay in models.Bay.objects.all()]
+    def __init__(self, department=None):
+        self.department = department
+        super().__init__()
+
+    def get_choices(self):
+        if self.department is None:
+            warehouses = models.Warehouse.used_warehouses.all()
+            options = []
+            for warehouse in warehouses:
+                options.append(
+                    [warehouse.name, [
+                        [bay.id, bay] for bay in warehouse.bay_set.all()]])
+            return options
+        else:
+            try:
+                warehouse = models.Warehouse.objects.get(name=self.department)
+            except models.Warehouse.DoesNotExist:
+                return [('', '')]
+            else:
+                return [(bay.id, bay.name) for bay in warehouse.bay_set.all()]
+
+    def to_python(self, *args, **kwargs):
+        return [int(x) for x in super().to_python(*args, **kwargs)]
 
 
 class Brand(fieldtypes.TextField):
