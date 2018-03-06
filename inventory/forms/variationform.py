@@ -1,14 +1,13 @@
 from django import forms
 from stcadmin.forms import KwargFormSet
 
-from .new_product import fields
+from .new_product import fields, fieldtypes
 
 
 class VariationForm(forms.Form):
 
     product_id = forms.CharField(widget=forms.HiddenInput)
-    vat_rate = fields.VATRate()
-    price = fields.Price()
+    price = fieldtypes.VATPriceField()
     weight = fields.Weight()
 
     def __init__(self, *args, **kwargs):
@@ -25,7 +24,7 @@ class VariationForm(forms.Form):
     def get_initial(self):
         initial = {}
         initial['vat_rate'] = self.product.vat_rate
-        initial['price'] = self.product.price
+        initial['price'] = (self.product.vat_rate, self.product.price, '')
         initial['weight'] = self.product.weight
         for option_name in self.option_names:
             value = self.product.options[option_name]
@@ -38,9 +37,8 @@ class VariationForm(forms.Form):
 
     def save(self):
         data = self.cleaned_data
-        print(data)
-        self.product.vat_rate = data['vat_rate']
-        self.product.price = data['price']
+        self.product.vat_rate = data['price']['vat_rate']
+        self.product.price = data['price']['ex_vat']
         self.product.weight = data['weight']
         for field in self.variation_fields:
             value = data[field.name]

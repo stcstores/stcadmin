@@ -218,6 +218,28 @@ class TextareaField(FormField, forms.CharField):
     widget = forms.Textarea
 
 
+class VATPriceField(forms.MultiValueField):
+    required = True
+
+    def __init__(self, *args, **kwargs):
+        kwargs['label'] = 'Price'
+        fields = (
+            forms.ChoiceField(
+                required=True,
+                choices=widgets.VATPriceWidget.vat_choices()),
+            forms.DecimalField(),
+            forms.DecimalField())
+        kwargs['widget'] = widgets.VATPriceWidget()
+        super().__init__(
+            fields=fields, require_all_fields=False, *args, **kwargs)
+
+    def compress(self, data_list):
+        vat_rate, ex_vat_price, with_vat_price = data_list
+        return {
+            'vat_rate': vat_rate, 'ex_vat': ex_vat_price,
+            'with_vat_price': with_vat_price}
+
+
 class OptionField(TextField):
 
     required = False
