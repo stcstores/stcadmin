@@ -1,4 +1,4 @@
-from ccapi import CCAPI
+import cc_products
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
@@ -14,7 +14,7 @@ class VariationsFormView(InventoryUserMixin, FormView):
 
     def dispatch(self, *args, **kwargs):
         self.range_id = self.kwargs.get('range_id')
-        self.product_range = CCAPI.get_range(self.range_id)
+        self.product_range = cc_products.get_range(self.range_id)
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
@@ -32,10 +32,6 @@ class VariationsFormView(InventoryUserMixin, FormView):
         formset = context.pop('form')
         context['formset'] = formset
         context['product_range'] = self.product_range
-        options = CCAPI.get_product_options()
-        context['options'] = {
-            o.option_name: [v.value for v in o.values] for o in options
-            if o.option_name in formset.forms[0].option_names}
         return context
 
     def form_valid(self, forms):

@@ -49,12 +49,6 @@
 <script>
 $.extend($.ui.autocomplete.prototype.options, { delay: 0, minLength: 0 });
 
-var options = {
-    {% for option, values in options.items %}
-    '{{ option }}': [
-        {% for value in values %}'{{ value }}',{% endfor %}],
-    {% endfor %}}
-
 $(document).ready(function() {
     function get_vat_rate(vat_select) {
         var value = vat_select.val();
@@ -77,12 +71,6 @@ $(document).ready(function() {
     vat_rate_select.change(function () {
         price_field.set_vat_rate(get_vat_rate(vat_rate_select));
     });
-
-    {% for field in form %}
-        {% if field.label in options %}
-            $('#{{ field.auto_id }}').autocomplete({source: options['{{ field.label }}']})
-        {% endif %}
-    {% endfor %}
 
     {% endfor %}
 });

@@ -1,6 +1,4 @@
-from ccapi import CCAPI
 from django import forms
-
 from stcadmin.forms import KwargFormSet
 
 from .new_product import fields
@@ -15,10 +13,8 @@ class VariationForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.product = kwargs.pop('product')
-        self.product = CCAPI.get_product(self.product.id)
         super().__init__(*args, **kwargs)
-        self.option_names = [
-            option.option_name for option in self.product.options]
+        self.option_names = list(self.product.options.names.keys())
         self.variation_fields = [
             field for field in fields.FormFields.option_fields if
             field.name.replace('opt_', '') in self.option_names]
@@ -29,27 +25,26 @@ class VariationForm(forms.Form):
     def get_initial(self):
         initial = {}
         initial['vat_rate'] = self.product.vat_rate
-        initial['price'] = self.product.base_price
+        initial['price'] = self.product.price
         initial['weight'] = self.product.weight
-        for option in self.product.options:
-            if option.value is not None:
-                initial['opt_' + option.option_name] = option.value.value
+        for option_name in self.option_names:
+            value = self.product.options[option_name]
+            if value is not None:
+                initial['opt_' + option_name] = value
             else:
-                initial['opt_' + option.option_name] = ''
+                initial['opt_' + option_name] = ''
         initial['product_id'] = self.product.id
         return initial
 
     def save(self):
         data = self.cleaned_data
-        product = CCAPI.get_product(data['product_id'])
-        product.set_vat_rate(data['vat_rate'])
-        product.set_base_price(data['price'])
-        product.set_product_scope(weight=data['weight'])
-        for option_field in self.variation_fields:
-            value = data[option_field.name]
-            if len(value) > 0:
-                product.set_option_value(
-                    option_field.label, value, create=True)
+        print(data)
+        self.product.vat_rate = data['vat_rate']
+        self.product.price = data['price']
+        self.product.weight = data['weight']
+        for field in self.variation_fields:
+            value = data[field.name]
+            self.product.options[field.name.replace('opt_', '')] = value
 
 
 class VariationsFormSet(KwargFormSet):
