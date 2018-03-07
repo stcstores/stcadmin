@@ -62,7 +62,7 @@ class FileUntrackedManifest(FileManifest):
             weight += self.get_order_weight(cc_order)
             order_package_count = order.springpackage_set.count()
             package_count += order_package_count
-            weight += 0.025 * order_package_count
+            weight += 0 * order_package_count
         data = OrderedDict([
             ('CustomerNumber*', customer_number),
             ('Customer Reference 1', customer_reference),
