@@ -13,12 +13,12 @@ class SelectizeWidget(forms.SelectMultiple):
     template_name = 'inventory/widgets/selectize.html'
 
     def __init__(self, *args, **kwargs):
-        self.selectize_options = kwargs.pop('selectize_options') or {}
-        super().__init__()
+        self.selectize_options = kwargs.pop('selectize_options')
+        super().__init__(*args, **kwargs)
 
     def get_context(self, *args, **kwargs):
         context = super().get_context(*args, **kwargs)
-        context['selectize_options'] = mark_safe(json.dumps(
+        context['widget']['selectize_options'] = mark_safe(json.dumps(
             self.selectize_options))
         return context
 
@@ -27,12 +27,13 @@ class SingleSelectizeWidget(forms.Select):
     template_name = 'inventory/widgets/selectize.html'
 
     def __init__(self, *args, **kwargs):
-        self.selectize_options = kwargs.pop('selectize_options') or {}
-        super().__init__()
+        self.selectize_options = kwargs.pop('selectize_options', {})
+        self.selectize_options['maxItems'] = 1
+        super().__init__(*args, **kwargs)
 
     def get_context(self, *args, **kwargs):
         context = super().get_context(*args, **kwargs)
-        context['selectize_options'] = mark_safe(json.dumps(
+        context['widget']['selectize_options'] = mark_safe(json.dumps(
             self.selectize_options))
         return context
 
@@ -66,6 +67,37 @@ class VATPriceWidget(forms.MultiWidget):
             return value
         else:
             return ['', '', '']
+
+
+class DepartmentBayWidget(forms.MultiWidget):
+
+    template_name = 'inventory/widgets/department_bay.html'
+    required = False
+    is_required = False
+
+    def __init__(self, attrs={}, choices=[], selectize_options=[]):
+        attrs['size'] = 150
+        bay_attrs = attrs.copy()
+        widgets = [
+            SingleSelectizeWidget(
+                attrs=attrs, choices=choices[0],
+                selectize_options=selectize_options[0]),
+            SelectizeWidget(
+                attrs=bay_attrs, choices=choices[1],
+                selectize_options=selectize_options[1])]
+        widgets[1].is_required = False
+        super().__init__(widgets, attrs)
+
+    def decompress(self, value):
+        if value:
+            return value
+        else:
+            return ['', '', '']
+
+    def get_context(self, *args, **kwargs):
+        context = super().get_context(*args, **kwargs)
+        context['widget']['subwidgets'][1]['attrs']['required'] = False
+        return context
 
 
 class OptionSettingsFieldWidget(forms.MultiWidget):

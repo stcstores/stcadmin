@@ -2,7 +2,9 @@ import json
 import re
 
 from ccapi import CCAPI
+from django import forms
 from inventory import models
+from inventory.forms import widgets
 from list_input import ListInput
 
 from . import fieldtypes
@@ -48,7 +50,7 @@ class Barcode(fieldtypes.TextField):
         "If left blank one will be provided from stock.")
 
 
-class Department(fieldtypes.ChoiceField):
+class Department(fieldtypes.SingleSelectize):
     label = 'Department'
     name = 'department'
     required_message = "A <b>Department</b> must be selected."
@@ -59,8 +61,8 @@ class Department(fieldtypes.ChoiceField):
     @staticmethod
     def get_choices():
         departments = [
-            (dept.value, dept.value) for dept in
-            CCAPI.get_option_values("34325")]
+            (w.warehouse_id, w.name) for w in
+            models.Warehouse.used_warehouses.all()]
         departments.sort(key=lambda x: x[1])
         return [('', '')] + departments
 
@@ -74,6 +76,12 @@ class Price(fieldtypes.PriceField):
         'Price <b>without shipping</b>.'
         '<br>Ex VAT cannot be blank but can be zero.')
     variable = True
+
+
+class VATPrice(fieldtypes.VATPriceField):
+    label = 'Price'
+    name = 'vat_price'
+    required = True
 
 
 class PurchasePrice(fieldtypes.PriceField):
@@ -214,6 +222,7 @@ class Location(fieldtypes.SelectizeField):
     variable = True
     html_class = 'location_field'
     size = 300
+    required = False
     help_text = (
         'The name of the <b>Bay</b> in which the product will be located.'
         '<br>This should be left blank if the product does not have a '
@@ -224,6 +233,7 @@ class Location(fieldtypes.SelectizeField):
         'persist': False,
         'maxItems': None,
         'sortField': 'text',
+        'allowEmptyOption': True,
     }
 
     def __init__(self, department=None):
@@ -233,7 +243,7 @@ class Location(fieldtypes.SelectizeField):
     def get_choices(self):
         if self.department is None:
             warehouses = models.Warehouse.used_warehouses.all()
-            options = []
+            options = [['', '']]
             for warehouse in warehouses:
                 options.append(
                     [warehouse.name, [
@@ -249,6 +259,22 @@ class Location(fieldtypes.SelectizeField):
 
     def to_python(self, *args, **kwargs):
         return [int(x) for x in super().to_python(*args, **kwargs)]
+
+
+class DepartmentBayField(forms.MultiValueField):
+
+    def __init__(self, *args, **kwargs):
+        kwargs['label'] = 'Department'
+        fields = (Department(), Location())
+        choices = [field.get_choices() for field in fields]
+        selectize_options = [field.selectize_options for field in fields]
+        kwargs['widget'] = widgets.DepartmentBayWidget(
+            choices=choices, selectize_options=selectize_options)
+        super().__init__(
+            fields=fields, require_all_fields=False, *args, **kwargs)
+
+    def compress(self, value):
+        return {'department': value[0], 'bay': value[1]}
 
 
 class Brand(fieldtypes.TextField):

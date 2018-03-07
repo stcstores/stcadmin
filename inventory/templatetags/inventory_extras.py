@@ -1,5 +1,9 @@
-from ccapi import CCAPI, URLs
+import json
+
+from ccapi import URLs
 from django import template
+from django.utils.safestring import mark_safe
+from inventory import models
 
 register = template.Library()
 SUBDOMAIN = 'seatontradingcompany'
@@ -16,12 +20,13 @@ def ccp_product_page(range_id, product_id):
 
 
 @register.simple_tag
-def warehouse_bays(warehouse=None):
-    warehouses = CCAPI.get_warehouses()
-    if warehouse is None:
-        return {x.name: x.bays for x in warehouses}
-    else:
-        return warehouses[warehouse].bays
+def warehouses():
+    warehouses = models.Warehouse.used_warehouses.all()
+    data = {}
+    for w in warehouses:
+        data[w.warehouse_id] = [
+            {'value': b.bay_id, 'text': b.name} for b in w.bay_set.all()]
+    return mark_safe(json.dumps(data))
 
 
 @register.simple_tag

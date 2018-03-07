@@ -134,6 +134,8 @@ class ChoiceField(FormField, forms.ChoiceField):
 
 class SelectizeField(FormField, forms.MultipleChoiceField):
 
+    selectize_options = {}
+
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = self.get_choices()
         kwargs['label'] = self.label
@@ -147,8 +149,6 @@ class SelectizeField(FormField, forms.MultipleChoiceField):
             attrs['class'] = self.html_class
         if self.size is not None:
             attrs['size'] = self.size
-        if self.is_required:
-            attrs['required'] = 'true'
         return widgets.SelectizeWidget(
             attrs=attrs, selectize_options=self.selectize_options)
 
@@ -176,8 +176,6 @@ class SingleSelectize(FormField, forms.ChoiceField):
             attrs['class'] = self.html_class
         if self.size is not None:
             attrs['size'] = self.size
-        if self.is_required:
-            attrs['required'] = 'true'
         return widgets.SingleSelectizeWidget(
             attrs=attrs, selectize_options=self.selectize_options)
 
@@ -227,11 +225,11 @@ class VATPriceField(forms.MultiValueField):
             forms.ChoiceField(
                 required=True,
                 choices=widgets.VATPriceWidget.vat_choices()),
-            forms.DecimalField(),
-            forms.DecimalField())
+            forms.DecimalField(required=True),
+            forms.DecimalField(required=True))
         kwargs['widget'] = widgets.VATPriceWidget()
         super().__init__(
-            fields=fields, require_all_fields=False, *args, **kwargs)
+            fields=fields, require_all_fields=True, *args, **kwargs)
 
     def compress(self, data_list):
         vat_rate, ex_vat_price, with_vat_price = data_list
