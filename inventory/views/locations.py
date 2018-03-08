@@ -52,9 +52,3 @@ class LocationFormView(InventoryUserMixin, TemplateView):
         context['department_form'] = self.department_form
         context['bay_formset'] = self.bay_formset
         return context
-
-    def form_valid(self, forms):
-        for form in forms:
-            form.save()
-
-        return super().form_valid(form)
