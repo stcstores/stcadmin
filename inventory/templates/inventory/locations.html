@@ -13,28 +13,26 @@
 
 {% block content %}{{ block.super }}
 
-<style>
-    .selectize {
-        min-width: 250px;
-    }
-</style>
-
 <form action="" method="POST">{% csrf_token %}
-    {{ formset.management_form }}
-    {% if formset.errors %}{{ formset.errors }}{% endif %}
+    {{ bay_formset.management_form }}
     <table>
+        {% for field in department_form %}
+        <tr>
+            <th><label for="{{ field.name }}">{{ field.label}}</label></th>
+            <td colspan="2">{{ field }}</td>
+        </tr>
+        {% endfor %}
         <tr>
             <th>Product</th>
             <th>Stock Level</th>
-            <th>Warehouse</th>
             <th>Bays</th>
         </tr>
-        {% for form in formset %}
+        {% for form in bay_formset %}
+        {% if form.errors %}{{ form.errors }}{% endif %}
         <tr hidden><td>{{ form.product_id }}</td></tr>
         <tr>
             <td class="title_field">{{ form.product_name.value }}</td>
             <td class="stock_level_field">{{ form.stock_level.value }}</td>
-            <td class="warehouse_field">{{ form.warehouse }}</td>
             <td class="location_field">{{ form.locations }}</td>
         </tr>
         {% endfor %}
@@ -47,46 +45,49 @@
 {% block script %}
 <script>
 
-var warehouses = {
-    {% for warehouse in warehouses %}
-    '{{ warehouse.id }}': [
-        {% for bay in warehouse.bay_set.all %}{text: '{{bay.name}}', value: '{{bay.id}}'},{% endfor %}],
-    {% endfor %}}
+function get_bays() {
+    return $('.location_field').find('select');
+}
 
-var default_bays = {
-    {% for warehouse in warehouses %}'{{ warehouse.id}}': '{{ warehouse.default_bay.id }}',{% endfor %}}
+function disable_bays() {
+    get_bays().each(function() {
+        $(this)[0].selectize.disable();
+    });
+}
+
+function enable_bays() {
+    get_bays().each(function() {
+        $(this)[0].selectize.enable();
+    });
+}
 
 $(document).ready(function() {
 
-    $('.location_field').change(function() {
-        var warehouse = $(this).closest('tr').find('.warehouse+field select').val();
-        if (warehouse !== ''){
-            if ($(this).val() == '') {
-                $(this).val(default_bays[warehouse]);
-            }
+    var warehouses = {% warehouses %};
+
+    var department = $('select[name="department"]').change(function(){
+        var value = $(this)[0].selectize.getValue();
+        if (value == '') {
+            disable_bays();
+            return
         }
+        enable_bays();
+        set_department(value);
     });
 
-    $('.warehouse_field').find('select').change(function() {
-        if ($(this).value !== '') {
-            $(this).find('option[value=""]').remove();
-        }
-        var bays = warehouses[$(this).val()];
-        var bay_input = $(this).closest('tr').find('.location_field').find('select');
-        var selectize = bay_input[0].selectize;
-        var value = bay_input.val()
-        selectize.clear();
-        selectize.clearOptions();
-        selectize.addOption(bays);
-        selectize.setValue(value);
-    });
+    function set_department(department_id) {
+        var options = warehouses[department_id];
+        get_bays().each(function() {
+            var selectize = $(this)[0].selectize;
+            var value = selectize.getValue();
+            selectize.clear();
+            selectize.clearOptions();
+            selectize.addOption(options);
+            selectize.setValue(value);
+        });
+    }
 
-    $('.warehouse_field select').each(function() {
-        if ($(this).val() !== '') {
-            $(this).change();
-        }
-        $(this).attr('required', true)
-    });
+    var department = $('select[name="department"]').change();
 });
 
 </script>

@@ -1,8 +1,37 @@
 import cc_products
 from django import forms
 from inventory import models
-from inventory.forms.new_product.fields import Location
+from inventory.forms.new_product.fields import Department, Location
 from stcadmin.forms import KwargFormSet
+
+
+class DepartmentForm(forms.Form):
+    department = Department()
+
+    def __init__(self, *args, **kwargs):
+        self.product_range = kwargs.pop('product_range')
+        super().__init__(*args, **kwargs)
+        self.initial.update(self.get_initial())
+
+    def get_initial(self):
+        initial = {}
+        try:
+            department = self.product_range.department
+        except cc_products.exceptions.DepartmentError:
+            department = None
+        if department is None:
+            department_id = None
+        else:
+            try:
+                department_id = models.Warehouse.used_warehouses.get(
+                    name=department).warehouse_id
+            except models.DoesNotExist:
+                department_id = None
+        initial['department'] = department_id
+        return initial
+
+    def save(self):
+        self.product_range.department = self.cleaned_data['department']
 
 
 class LocationsForm(forms.Form):
@@ -13,33 +42,21 @@ class LocationsForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={'size': 200, 'class': 'product_title'}))
     stock_level = forms.CharField(required=False)
-    warehouse = forms.ChoiceField(choices=[])
     locations = Location()
 
     def __init__(self, *args, **kwargs):
-        self.product_id = kwargs.pop('product_id')
-        self.product = cc_products.get_product(self.product_id)
+        self.product = kwargs.pop('product')
         super().__init__(*args, **kwargs)
-        warehouse_choices = [('', '')] + [
-            (w.id, w.name) for w in models.Warehouse.objects.all()]
-        self.fields['warehouse'] = forms.ChoiceField(
-            choices=warehouse_choices, required=True)
         self.initial.update(self.get_initial())
 
     def get_initial(self):
         initial = {}
-        initial['product_id'] = self.product_id
+        initial['product_id'] = self.product.id
         initial['product_name'] = self.product.full_name
         initial['stock_level'] = self.product.stock_level
         initial['locations'] = [
             bay.id for bay in models.Bay.objects.filter(
                 bay_id__in=self.product.bays)]
-        warehouse = self.get_warehouse_for_bays(
-            initial['locations'])
-        if warehouse is None:
-            initial['warehouse'] = None
-        else:
-            initial['warehouse'] = warehouse.id
         return initial
 
     def get_warehouse_for_bays(self, bay_ids):
@@ -51,8 +68,18 @@ class LocationsForm(forms.Form):
             return bays[0].warehouse
         return None
 
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data.pop('product_name')
+        cleaned_data.pop('stock_level')
+        bays = self.cleaned_data['locations']
+        if len(bays) == 0:
+            bays = [self.warehouse.default_bay.bay_id]
+        cleaned_data['bays'] = bays
+        return cleaned_data
+
     def save(self):
-        self.product.bays = self.cleaned_data['locations']
+        self.product.bays = self.cleaned_data['bays']
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)

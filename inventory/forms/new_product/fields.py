@@ -66,6 +66,15 @@ class Department(fieldtypes.SingleSelectize):
         departments.sort(key=lambda x: x[1])
         return [('', '')] + departments
 
+    def clean(self, value):
+        value = super().clean(value)
+        try:
+            department = models.Warehouse.used_warehouses.get(
+                warehouse_id=int(value)).name
+        except models.DoesNotExist:
+            raise forms.ValidationError('Deparment not recognised')
+        return department
+
 
 class Price(fieldtypes.PriceField):
     label = 'Price'
@@ -258,6 +267,21 @@ class Location(fieldtypes.SelectizeField):
 
     def to_python(self, *args, **kwargs):
         return [int(x) for x in super().to_python(*args, **kwargs)]
+
+    def clean(self, value):
+        value = super().clean(value)
+        bays = []
+        for bay_id in value:
+            try:
+                bays.append(models.Bay.objects.get(bay_id=bay_id))
+            except models.DoesNotExist:
+                raise forms.ValidationError('Bay not recognised')
+        bays = [b for b in bays if not b.default]
+        if len(set([bay.warehouse for bay in bays])) > 1:
+            raise forms.ValidationError(
+                'Bays from multiple warehouses selected.')
+        value = [b.id for b in bays]
+        return value
 
 
 class DepartmentBayField(forms.MultiValueField):

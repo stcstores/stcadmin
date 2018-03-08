@@ -7,7 +7,7 @@ class KwargFormSet(BaseFormSet):
     can_delete = False
 
     def __init__(self, *args, **kwargs):
-        self.form_kwargs = kwargs.get('form_kwargs', None)
+        self.form_kwargs = kwargs['form_kwargs']
         self.min_num = len(self.form_kwargs)
         self.max_num = self.min_num
         self.absolute_max = self.max_num
