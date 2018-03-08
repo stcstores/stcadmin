@@ -1,8 +1,16 @@
-{% extends "inventory/new_product/new_product_form.html" %}
+{% extends "inventory/base.html" %}
 {% load staticfiles %}
 {% load stcadmin_extras %}
 
 {% block content %}
+
+{% block additional_head %}{{ block.super }}
+<link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
+<script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+<script src="{% static 'scripts/new_product.js' %}"></script>
+<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
+{% include 'home/froala_head.html' %}
+{% endblock %}
 
 <form method="POST">
     <table class="new_product">
@@ -17,12 +25,11 @@
             {% endif %}
         </tr>
         {% endfor %}
-        <tr><td colspan="2" style="text-align: center;"><input type="submit" value="Create Product" style="width: 80%;"/></td></tr>
+        <tr>
+            <td colspan="2" style="text-align: center;">
+                <input type="submit" value="Create Product" style="width: 80%;"/>
+            </td>
+        </tr>
     </table>
 </form>
-{% endblock %}
-
-{% block script %}
-{{ block.super }}
-{% include 'inventory/set_autocomplete.html' %}
 {% endblock %}

@@ -137,7 +137,8 @@ class SelectizeField(FormField, forms.MultipleChoiceField):
     selectize_options = {}
 
     def __init__(self, *args, **kwargs):
-        kwargs['choices'] = self.get_choices()
+        self.choices = self.get_choices()
+        kwargs['choices'] = self.choices
         kwargs['label'] = self.label
         kwargs = super().__init__(*args, **kwargs)
 
@@ -150,7 +151,8 @@ class SelectizeField(FormField, forms.MultipleChoiceField):
         if self.size is not None:
             attrs['size'] = self.size
         return widgets.SelectizeWidget(
-            attrs=attrs, selectize_options=self.selectize_options)
+            attrs=attrs, selectize_options=self.selectize_options,
+            choices=self.choices)
 
     def to_python(self, *args, **kwargs):
         value = super().to_python(*args, **kwargs)

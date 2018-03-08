@@ -1,9 +1,10 @@
+import itertools
+
 from django import forms
 from django.forms import formset_factory
 
-import itertools
-
-from . fields import FormFields
+from . import fields
+from .fields import FormFields
 
 
 class NewProductForm(forms.Form):
@@ -12,10 +13,27 @@ class NewProductForm(forms.Form):
 
 class NewSingleProductForm(NewProductForm):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in FormFields.fields + FormFields.option_fields:
-            self.fields[field.name] = field()
+    title = fields.Title()
+    barcode = fields.Barcode()
+    purchase_price = fields.PurchasePrice()
+    price = fields.VATPrice()
+    stock_level = fields.StockLevel()
+    # department = fields.Department()
+    # location = fields.Location()
+    department = fields.DepartmentBayField()
+    supplier = fields.Supplier()
+    supplier_sku = fields.SupplierSKU()
+    weight = fields.Weight()
+    height = fields.Height()
+    width = fields.Width()
+    length = fields.Length()
+    package_type = fields.PackageType()
+    brand = fields.Brand()
+    manufacturer = fields.Manufacturer()
+    description = fields.Description()
+    gender = fields.Gender()
+    amazon_bullet_points = fields.AmazonBulletPoints()
+    amazon_search_terms = fields.AmazonSearchTerms()
 
 
 class NewVariationProductForm(NewProductForm):

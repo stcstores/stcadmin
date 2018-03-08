@@ -233,7 +233,6 @@ class Location(fieldtypes.SelectizeField):
         'persist': False,
         'maxItems': None,
         'sortField': 'text',
-        'allowEmptyOption': True,
     }
 
     def __init__(self, department=None):
