@@ -4,6 +4,12 @@
 
 {% block page_title %}CCP Stock Manager{% endblock %}
 
+{% block additional_head %}{{ block.super }}
+<link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
+<script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
+{% endblock %}
+
 {% block content %}{{ block.super }}
 
 <form action="" method="POST">{% csrf_token %}

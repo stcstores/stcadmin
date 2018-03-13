@@ -6,8 +6,7 @@ from .new_product.fieldtypes import option_field_factory
 
 class ProductForm(forms.Form):
 
-    vat_rate = fields.VATRate()
-    price = fields.Price()
+    price = fields.VATPrice()
     locations = fields.Location()
     weight = fields.Weight()
     height = fields.Height()
