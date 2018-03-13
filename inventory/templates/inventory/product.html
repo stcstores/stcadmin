@@ -6,15 +6,16 @@
 {% block page_title %}CCP Product{% endblock %}
 
 {% block additional_head %}{{ block.super }}
-<script src="{% static 'scripts/price_field.js' %}"></script>
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
 {% endblock %}
 
 {% block content %}
     <h2>{{ product.full_name }}</h2>
     <p>SKU: {{ product.sku}}</p>
     <p>ID: {{ product.id }}</p>
+    <p>Department: {{ product.department }}</p>
     <p><a href="{% url 'inventory:product_range' product.range_id %}"><button>Back To Range</button></a></p>
     <p><a href="{% ccp_product_page product.range_id product.id %}" target="_blank"><button>View Product on Cloud Commerce</button></a></p>
     <p>Stock Level: {{ product.stock_level }}</p>
@@ -35,35 +36,4 @@
         </table>
         <input type="submit" value="Update">
     </form>
-{% endblock %}
-
-{% block script %}{{ block.super }}
-
-<script>
-
-    $(document).ready(function() {
-
-        function get_vat_rate(vat_select) {
-            var value = vat_select.val();
-            if (value === '') {
-                var vat_rate = false;
-            } else {
-                var vat_rate = parseInt(value);
-            }
-            return vat_rate
-        }
-
-        var vat_rate_select = $('#{{ form.vat_rate.auto_id }}');
-
-        var price_field = new PriceField(
-            $('#{{ form.price.auto_id }}'),
-            get_vat_rate(vat_rate_select)
-        );
-
-        vat_rate_select.change(function () {
-            price_field.set_vat_rate(get_vat_rate(vat_rate_select));
-        });
-
-    });
-</script>
 {% endblock %}

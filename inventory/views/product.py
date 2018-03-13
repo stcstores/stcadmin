@@ -1,8 +1,8 @@
 import cc_products
-from ccapi import CCAPI
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
+
 from inventory import forms, models
 
 from .views import InventoryUserMixin
@@ -26,23 +26,6 @@ class ProductView(InventoryUserMixin, FormView):
         kwargs['product_range'] = self.product_range
         kwargs['option_names'] = self.option_names
         return kwargs
-
-    def get_initial(self):
-        initial = super().get_initial()
-        initial['vat_rate'] = self.product.vat_rate
-        initial['price'] = self.product.price
-        initial['locations'] = self.product.bays
-        initial['weight'] = self.product.weight
-        initial['height'] = self.product.height
-        initial['length'] = self.product.length
-        initial['width'] = self.product.width
-        initial['purchase_price'] = self.product.purchase_price
-        initial['package_type'] = self.product.package_type
-        initial['supplier'] = self.product.supplier.factory_name
-        initial['supplier_sku'] = self.product.supplier_sku
-        for option in self.option_names:
-            initial['opt_' + option] = self.product.options[option]
-        return initial
 
     def form_valid(self, form):
         form.save()

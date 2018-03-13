@@ -34,22 +34,38 @@ class ProductForm(forms.Form):
             department=self.product.department)
         for option in self.option_names:
             self.fields['opt_' + option] = option_field_factory(option)()
+        self.initial = self.get_initial()
+
+    def get_initial(self):
+        initial = {}
+        initial['price'] = (self.product.vat_rate, self.product.price, '')
+        initial['locations'] = self.product.bays
+        initial['weight'] = self.product.weight
+        initial['height'] = self.product.height
+        initial['length'] = self.product.length
+        initial['width'] = self.product.width
+        initial['purchase_price'] = self.product.purchase_price
+        initial['package_type'] = self.product.package_type
+        initial['supplier'] = self.product.supplier.factory_name
+        initial['supplier_sku'] = self.product.supplier_sku
+        for option in self.option_names:
+            initial['opt_' + option] = self.product.options[option]
+        return initial
 
     def save(self, *args, **kwargs):
-        product = self.product
-        cleaned_data = self.cleaned_data
-        product.vat_rate = cleaned_data['vat_rate']
-        product.price = cleaned_data['price']
-        product.bays = cleaned_data['locations']
-        product.weight = cleaned_data['weight']
-        product.height = cleaned_data['height']
-        product.length = cleaned_data['length']
-        product.width = cleaned_data['width']
-        product.package_type = cleaned_data['package_type']
-        product.purchase_price = cleaned_data['purchase_price']
-        product.supplier = cleaned_data['supplier']
-        product.supplier_sku = cleaned_data['supplier_sku']
-        options = [key[4:] for key in cleaned_data.keys() if key[4:] == 'opt_']
+        data = self.cleaned_data
+        self.product.vat_rate = data['price']['vat_rate']
+        self.product.price = data['price']['ex_vat']
+        self.product.bays = data['locations']
+        self.product.weight = data['weight']
+        self.product.height = data['height']
+        self.product.length = data['length']
+        self.product.width = data['width']
+        self.product.package_type = data['package_type']
+        self.product.purchase_price = data['purchase_price']
+        self.product.supplier = data['supplier']
+        self.product.supplier_sku = data['supplier_sku']
+        options = [key[4:] for key in data.keys() if key[4:] == 'opt_']
         for option in options:
-            value = cleaned_data[option]
-            product.options[option] = value
+            value = data[option]
+            self.product.options[option] = value
