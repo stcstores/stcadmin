@@ -1,5 +1,7 @@
 from django import forms
 
+from inventory import models
+
 from .new_product import fields
 from .new_product.fieldtypes import option_field_factory
 
@@ -7,7 +9,7 @@ from .new_product.fieldtypes import option_field_factory
 class ProductForm(forms.Form):
 
     price = fields.VATPrice()
-    locations = fields.Location()
+    locations = fields.DepartmentBayField(lock_department=True)
     weight = fields.Weight()
     height = fields.Height()
     length = fields.Length()
@@ -30,16 +32,16 @@ class ProductForm(forms.Form):
         self.option_names = [
             o for o in option_names if o not in self.ignore_options]
         super().__init__(*args, **kwargs)
-        self.fields['locations'] = fields.Location(
-            department=self.product.department)
         for option in self.option_names:
             self.fields['opt_' + option] = option_field_factory(option)()
         self.initial = self.get_initial()
 
     def get_initial(self):
         initial = {}
+        department = models.Warehouse.used_warehouses.get(
+            name=self.product.department).id
         initial['price'] = (self.product.vat_rate, self.product.price, '')
-        initial['locations'] = self.product.bays
+        initial['locations'] = (department, self.product.bays)
         initial['weight'] = self.product.weight
         initial['height'] = self.product.height
         initial['length'] = self.product.length
@@ -56,7 +58,7 @@ class ProductForm(forms.Form):
         data = self.cleaned_data
         self.product.vat_rate = data['price']['vat_rate']
         self.product.price = data['price']['ex_vat']
-        self.product.bays = data['locations']
+        self.product.bays = data['locations']['bay']
         self.product.weight = data['weight']
         self.product.height = data['height']
         self.product.length = data['length']

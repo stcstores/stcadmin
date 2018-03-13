@@ -3,9 +3,10 @@ import re
 
 from ccapi import CCAPI
 from django import forms
+from list_input import ListInput
+
 from inventory import models
 from inventory.forms import widgets
-from list_input import ListInput
 
 from . import fieldtypes
 from .fieldtypes import Validators
@@ -287,17 +288,29 @@ class Location(fieldtypes.SelectizeField):
 class DepartmentBayField(forms.MultiValueField):
 
     def __init__(self, *args, **kwargs):
-        kwargs['label'] = 'Department'
+        kwargs['label'] = 'Location'
+        self.lock_department = kwargs.pop('lock_department', False)
         fields = (Department(), Location())
         choices = [field.get_choices() for field in fields]
         selectize_options = [field.selectize_options for field in fields]
+        if self.lock_department:
+            selectize_options[0]['readOnly'] = True
         kwargs['widget'] = widgets.DepartmentBayWidget(
-            choices=choices, selectize_options=selectize_options)
+            choices=choices, selectize_options=selectize_options,
+            lock_department=self.lock_department)
         super().__init__(
             fields=fields, require_all_fields=False, *args, **kwargs)
 
     def compress(self, value):
         return {'department': value[0], 'bay': value[1]}
+
+    def clean(self, value):
+        value = super().clean(value)
+        if len(value['bay']) == 0:
+            department = models.Warehouse.used_warehouses.get(
+                name=value['department'])
+            value['bay'] = [department.default_bay.id]
+        return value
 
 
 class Brand(fieldtypes.TextField):

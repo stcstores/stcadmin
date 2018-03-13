@@ -75,12 +75,19 @@ class DepartmentBayWidget(forms.MultiWidget):
     required = False
     is_required = False
 
-    def __init__(self, attrs={}, choices=[], selectize_options=[]):
-        attrs['size'] = 150
-        bay_attrs = attrs.copy()
+    def __init__(
+            self, attrs=None, choices=[], selectize_options=[],
+            lock_department=False):
+        self.lock_department = lock_department
+        if attrs is None:
+            department_attrs = {}
+            bay_attrs = {}
+        else:
+            department_attrs = attrs.copy()
+            bay_attrs = attrs.copy()
         widgets = [
             SingleSelectizeWidget(
-                attrs=attrs, choices=choices[0],
+                attrs=department_attrs, choices=choices[0],
                 selectize_options=selectize_options[0]),
             SelectizeWidget(
                 attrs=bay_attrs, choices=choices[1],
@@ -92,11 +99,12 @@ class DepartmentBayWidget(forms.MultiWidget):
         if value:
             return value
         else:
-            return ['', '', '']
+            return ['', '']
 
     def get_context(self, *args, **kwargs):
         context = super().get_context(*args, **kwargs)
         context['widget']['subwidgets'][1]['attrs']['required'] = False
+        context['widget']['lock_department'] = self.lock_department
         return context
 
 

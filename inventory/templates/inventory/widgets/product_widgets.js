@@ -39,7 +39,7 @@ function vat_price_widget(vat_input, ex_vat_input, with_vat_input) {
     vat_input.change();
 }
 
-function department_bay(department, bay) {
+function department_bay(department, bay, lock_department) {
     var warehouses = {% warehouses %};
     var bay_options = bay[0].selectize.options;
 
@@ -65,5 +65,12 @@ function department_bay(department, bay) {
 
     $(document).ready(function() {
         department.change();
+        var value = department.val();
+        var name = department.attr('name');
+        if (lock_department) {
+            department[0].selectize.destroy();
+            department.replaceWith('<input value="' + value + '" name="' + name + '" hidden/>');
+            department.remove();
+        }
     });
 }
