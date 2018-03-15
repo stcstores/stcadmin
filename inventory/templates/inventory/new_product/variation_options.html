@@ -1,0 +1,57 @@
+{% extends "inventory/base.html" %}
+{% load staticfiles %}
+{% load stcadmin_extras %}
+
+{% block additional_head %}{{ block.super }}
+<link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
+<script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+<script src="{% static 'scripts/new_product.js' %}"></script>
+<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
+<script src="{% static 'scripts/new_product.js' %}"></script>
+{% include 'home/froala_head.html' %}
+{% endblock %}
+
+{% block content %}
+
+<p>Title: {{ product_data.basic.title }}</p>
+<p>Supplier SKU: {{ product_data.basic.supplier_sku }}</p>
+<p>
+    Description: <div>{{ product_data.basic.description | safe }}</div>
+</p>
+
+<h3>Select Variations</h3>
+
+{% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<form method="POST">{% csrf_token %}
+    <table class="new_product">
+        {% for field in form %}
+        <tr>
+            <td>{{ field.label }}</td>
+            <td>{{ field }}</td>
+            <td>{% tooltip_help_text field %}</td>
+            {% if field.errors %}
+                <td class="error">{{ field.errors }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        <td colspan="2" style="text-align: center;">
+            <button name="back">Back</button><button name="continue">Continue</button>
+        </td>
+    </table>
+</form>
+
+{% endblock %}

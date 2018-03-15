@@ -1,4 +1,5 @@
 from django.urls import path
+
 from inventory import views
 
 app_name = 'inventory'
@@ -41,15 +42,15 @@ inventory_urlpatterns = [
 new_product_urlpatterns = [
     path(
         'new_product/',
-        views.NewProductView.as_view(), name='new_product'),
+        views.NewProductBasicView.as_view(), name='new_product'),
     path(
-        'new_single_product/',
-        views.NewSingleProductView.as_view(), name='new_single_product'),
+        'new_product/variation_options/',
+        views.VariationOptionsView.as_view(), name='variation_options'),
     path(
-        'new_variation_product/',
-        views.VariationFormWizardView.as_view(), name='new_variation_product'),
-
-]
+        'new_product/variations/',
+        views.NewProductVariationsView.as_view(),
+        name='new_product_variations')
+    ]
 
 api_urlpatterns = [
     path(

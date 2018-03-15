@@ -8,10 +8,7 @@ Creating Productcs on STCAdmin
 
 To begin creating a product navigate to http://stcadmin.stcstores.co.uk and go to the
 `Inventory <{% url 'inventory:product_search' %}>`_ section and select
-`New Product <{% url 'inventory:new_product' %}>`_. If your product has
-variations select
-`Variation Product <{% url 'inventory:new_variation_product' %}>`_
-otherwise choose `Single Product <{% url 'inventory:new_single_product' %}>`_.
+`New Product <{% url 'inventory:new_product' %}>`_.
 
 The New Product Form
 ====================

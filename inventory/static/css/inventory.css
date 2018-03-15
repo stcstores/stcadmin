@@ -58,3 +58,7 @@
     max-width: 800px;
     padding: 1em;
 }
+
+.selectize-input {
+    min-width: 300px;
+}

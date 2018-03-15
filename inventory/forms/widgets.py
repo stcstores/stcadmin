@@ -64,7 +64,7 @@ class VATPriceWidget(forms.MultiWidget):
 
     def decompress(self, value):
         if value:
-            return value
+            return [value['vat_rate'], value['ex_vat'], '']
         else:
             return ['', '', '']
 
@@ -97,9 +97,9 @@ class DepartmentBayWidget(forms.MultiWidget):
 
     def decompress(self, value):
         if value:
-            return value
+            return [value['department'], value['bays']]
         else:
-            return ['', '']
+            return ['', []]
 
     def get_context(self, *args, **kwargs):
         context = super().get_context(*args, **kwargs)

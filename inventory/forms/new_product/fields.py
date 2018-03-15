@@ -302,15 +302,40 @@ class DepartmentBayField(forms.MultiValueField):
             fields=fields, require_all_fields=False, *args, **kwargs)
 
     def compress(self, value):
-        return {'department': value[0], 'bay': value[1]}
+        return {'department': value[0], 'bays': value[1]}
 
     def clean(self, value):
         value = super().clean(value)
-        if len(value['bay']) == 0:
-            department = models.Warehouse.used_warehouses.get(
-                name=value['department'])
-            value['bay'] = [department.default_bay.id]
+        warehouse = models.Warehouse.used_warehouses.get(
+            name=value['department'])
+        if len(value['bays']) == 0:
+            value['department'] = warehouse.warehouse_id
+            value['bays'] = [warehouse.default_bay.id]
         return value
+
+
+class SelectOptions(fieldtypes.SelectizeField):
+
+    def __init__(self, option_name, choices, *args, **kwargs):
+        self.label = option_name
+        self.choices = choices
+        self.selectize_options['create'] = True
+        self.validators = [fieldtypes.Validators.option_value(self.label)]
+        super().__init__(*args, **kwargs)
+
+    def get_choices(self):
+        return self.choices
+
+    def validate(self, values):
+        for value in values:
+            forms.Field.validate(self, value)
+
+    def clean(self, values):
+        values = self.to_python(values)
+        for value in values:
+            self.validate(value)
+            self.run_validators(value)
+        return values
 
 
 class Brand(fieldtypes.TextField):
@@ -380,7 +405,7 @@ class ListOption(fieldtypes.FormField, ListInput):
     disallowed_characters = [separator]
 
     def prepare_value(self, value):
-        if value is None:
+        if value is None or value == '':
             return json.dumps([])
         if value[0] == '[':
             return value

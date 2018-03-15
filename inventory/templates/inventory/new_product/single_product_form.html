@@ -2,8 +2,6 @@
 {% load staticfiles %}
 {% load stcadmin_extras %}
 
-{% block content %}
-
 {% block additional_head %}{{ block.super }}
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
@@ -11,6 +9,8 @@
 <script>{% include 'inventory/widgets/product_widgets.js' %}</script>
 {% include 'home/froala_head.html' %}
 {% endblock %}
+
+{% block content %}
 
 <form method="POST">
     <table class="new_product">
@@ -26,8 +26,9 @@
         </tr>
         {% endfor %}
         <tr>
-            <td colspan="2" style="text-align: center;">
-                <input type="submit" value="Create Product" style="width: 80%;"/>
+            <td colspan="2">
+                <input type="submit" name="variations" value="Add Variations"/>
+                <input type="submit" name="single" value="Continue Single Product"/>
             </td>
         </tr>
     </table>

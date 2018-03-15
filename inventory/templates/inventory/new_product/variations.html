@@ -1,0 +1,106 @@
+{% extends "inventory/base.html" %}
+{% load staticfiles %}
+{% load stcadmin_extras %}
+
+{% block additional_head %}{{ block.super }}
+<link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
+<script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+<script src="{% static 'scripts/new_product.js' %}"></script>
+<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
+<script src="{% static 'scripts/new_product.js' %}"></script>
+{% include 'home/froala_head.html' %}
+
+<style>
+    input, .selectize-input {
+        min-width: 100px;
+        max-width: 100px;
+    }
+
+    .field_cell {
+
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<p>Title: {{ product_data.basic.title }}</p>
+<p>Supplier SKU: {{ product_data.basic.supplier_sku }}</p>
+<p>
+    Description: <div>{{ product_data.basic.description | safe }}</div>
+</p>
+
+<table>
+    <tr>
+        <th></th>
+        <th>Show/Hide</th>
+    </tr>
+    {% for field in formset.0.visible_fields %}
+    <tr>
+        <td>{{ field.label }}</td>
+        <td>
+            <input type="radio" name="hide_{{ field.name }}" value="show">
+            <input type="radio" name="hide_{{ field.name }}" value="hide" checked>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<form method="POST">{% csrf_token %}
+    <table>
+        <tr>
+            {% for variation_field in formset.0.variation_options %}
+            <th>{{ variation_field }}</th>
+            {% endfor %}
+            {% for field in formset.0.visible_fields %}
+            <th class="field_cell {{ field.name }}">{{ field.label }}</th>
+            {% endfor %}
+        </tr>
+        {% for form in formset %}
+        <tr>
+            {% for name, value in form.variation_options.items %}
+            <td>{{ value }}</td>
+            {% endfor %}
+            {% for field in form.visible_fields %}
+            <td class="field_cell {{ field.name }}">{{ field }}</td>
+            {% endfor %}
+            {% for field in form.hidden_fields %}{{ field}}{% endfor %}
+        {% endfor %}
+        </tr>
+    </table>
+</form>
+
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+    $(document).ready(function() {
+        $('input[type=radio]').change(function() {
+            var name = $(this).attr('name');
+            var target = $('.' + name.replace('hide_', ''));
+            if ($(this).val() == 'show') {
+                target.prop('hidden', false);
+            } else {
+                target.prop('hidden', true);
+            }
+        });
+
+        $('input[type=radio]').change();
+    });
+</script>
+{% endblock %}

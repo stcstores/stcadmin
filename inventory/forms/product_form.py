@@ -41,7 +41,8 @@ class ProductForm(forms.Form):
         department = models.Warehouse.used_warehouses.get(
             name=self.product.department).id
         initial['price'] = (self.product.vat_rate, self.product.price, '')
-        initial['locations'] = (department, self.product.bays)
+        initial['locations'] = {
+            'department': department, 'bays': self.product.bays}
         initial['weight'] = self.product.weight
         initial['height'] = self.product.height
         initial['length'] = self.product.length

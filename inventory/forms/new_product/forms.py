@@ -1,9 +1,12 @@
 import itertools
 
+from ccapi import CCAPI
 from django import forms
 from django.forms import formset_factory
 
-from . import fields
+from stcadmin.forms import KwargFormSet
+
+from . import fields, fieldtypes
 from .fields import FormFields
 
 
@@ -11,15 +14,13 @@ class NewProductForm(forms.Form):
     field_size = 50
 
 
-class NewSingleProductForm(NewProductForm):
+class NewProductBasicForm(NewProductForm):
 
     title = fields.Title()
     barcode = fields.Barcode()
     purchase_price = fields.PurchasePrice()
     price = fields.VATPrice()
     stock_level = fields.StockLevel()
-    # department = fields.Department()
-    # location = fields.Location()
     department = fields.DepartmentBayField()
     supplier = fields.Supplier()
     supplier_sku = fields.SupplierSKU()
@@ -35,6 +36,81 @@ class NewSingleProductForm(NewProductForm):
     amazon_bullet_points = fields.AmazonBulletPoints()
     amazon_search_terms = fields.AmazonSearchTerms()
 
+
+class VariationOptionsForm(NewProductForm):
+
+    def __init__(self, *args, **kwargs):
+        self.option_data = kwargs.pop(
+            'option_data', CCAPI.get_product_options())
+        self.options = self.get_options()
+        super().__init__(*args, **kwargs)
+        self.get_fields()
+
+    def get_fields(self):
+        for option_name, values in self.options:
+            choices = [
+                (v, v) for v in self.get_choice_values(option_name, values)]
+            self.fields[option_name] = fields.SelectOptions(
+                option_name, choices)
+
+    def get_choice_values(self, option_name, values):
+        if option_name in self.initial:
+            new_values = [
+                v for v in self.initial[option_name] if v not in values]
+            values += new_values
+        return values
+
+    def get_options(self):
+        return [
+            (option.option_name, [value.value for value in option]) for option
+            in self.option_data if option.exclusions['tesco'] is False]
+
+
+class VariationForm(VariationOptionsForm):
+    barcode = fields.Barcode()
+    purchase_price = fields.PurchasePrice()
+    price = fields.VATPrice()
+    stock_level = fields.StockLevel()
+    department = fields.DepartmentBayField()
+    supplier = fields.Supplier()
+    supplier_sku = fields.SupplierSKU()
+    weight = fields.Weight()
+    height = fields.Height()
+    width = fields.Width()
+    length = fields.Length()
+    package_type = fields.PackageType()
+    brand = fields.Brand()
+    manufacturer = fields.Manufacturer()
+    gender = fields.Gender()
+
+    def __init__(self, *args, **kwargs):
+        self.variation_options = kwargs.pop('variation_options')
+        super().__init__(*args, **kwargs)
+        self.order_fields(list(self.variation_options.keys()))
+
+    def get_fields(self):
+        for option_name, value in self.variation_options.items():
+            self.fields[option_name] = forms.CharField(
+                max_length=255, initial=value, widget=forms.HiddenInput())
+        for option_name, values in self.options:
+            if option_name not in self.variation_options:
+                choices = [(v, v) for v in self.get_choice_values(
+                    option_name, values)]
+                self.fields[option_name] = fieldtypes.SingleSelectize(
+                    choices=choices)
+
+    def get_choice_values(self, option_name, values):
+        if option_name in self.initial:
+            if self.initial[option_name] not in values:
+                values.append(self.initial[option_name])
+        return values
+
+
+class VariationFormSet(KwargFormSet):
+    form = VariationForm
+
+
+"""
 
 class NewVariationProductForm(NewProductForm):
 
@@ -116,3 +192,4 @@ class VariationForm(forms.Form):
 
 
 VariationFormSet = formset_factory(VariationForm, extra=0, can_delete=True)
+"""

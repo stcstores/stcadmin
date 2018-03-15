@@ -2,8 +2,9 @@ from inspect import isclass
 
 from django import forms
 from django.core.exceptions import ValidationError
-from inventory.forms import widgets
 from list_input import ListInput
+
+from inventory.forms import widgets
 
 
 class Validators:
@@ -39,15 +40,15 @@ class Validators:
         return character_limit
 
     @classmethod
-    def option_value(cls, option_field):
+    def option_value(cls, option_name):
         characters = {
-            'opt_Size': ['+', '-', '.', '/', "'", '"'],
-            'opt_Weight': ['.'],
-            'opt_Strength': ['+', '-', '.'],
-            'opt_Material': ['%', ','],
+            'Size': ['+', '-', '.', '/', "'", '"'],
+            'Weight': ['.'],
+            'Strength': ['+', '-', '.'],
+            'Material': ['%', ','],
         }
-        if option_field.name in characters:
-            return cls.limit_characters(characters[option_field.name])
+        if option_name in characters:
+            return cls.limit_characters(characters[option_name])
         return cls.alphanumeric
 
 
@@ -166,7 +167,8 @@ class SingleSelectize(FormField, forms.ChoiceField):
     selectize_options = {'maxItems': 1}
 
     def __init__(self, *args, **kwargs):
-        kwargs['choices'] = self.get_choices()
+        if 'choices' not in kwargs:
+            kwargs['choices'] = self.get_choices()
         kwargs['label'] = self.label
         kwargs = super().__init__(*args, **kwargs)
 
@@ -227,8 +229,8 @@ class VATPriceField(forms.MultiValueField):
             forms.ChoiceField(
                 required=True,
                 choices=widgets.VATPriceWidget.vat_choices()),
-            forms.DecimalField(required=True),
-            forms.DecimalField(required=True))
+            forms.FloatField(required=True),
+            forms.FloatField(required=True))
         kwargs['widget'] = widgets.VATPriceWidget()
         super().__init__(
             fields=fields, require_all_fields=True, *args, **kwargs)
