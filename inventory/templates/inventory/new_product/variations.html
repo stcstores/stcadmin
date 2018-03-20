@@ -11,9 +11,9 @@
 {% include 'home/froala_head.html' %}
 
 <style>
-    input, .selectize-input {
-        min-width: 100px;
-        max-width: 100px;
+    .new_product input, .new_product .selectize-input {
+        /*min-width: 100px;
+        max-width: 100px;*/
     }
 
     .field_cell {
@@ -33,15 +33,14 @@
 <table>
     <tr>
         <th></th>
-        <th>Show/Hide</th>
+        <th>Show</th>
+        <th>Hide</th>
     </tr>
     {% for field in formset.0.visible_fields %}
     <tr>
         <td>{{ field.label }}</td>
-        <td>
-            <input type="radio" name="hide_{{ field.name }}" value="show">
-            <input type="radio" name="hide_{{ field.name }}" value="hide" checked>
-        </td>
+        <td><input type="radio" name="hide_{{ field.name }}" value="show"></td>
+        <td><input type="radio" name="hide_{{ field.name }}" value="hide" checked></td>
     </tr>
     {% endfor %}
 </table>
@@ -62,7 +61,7 @@
 {% endif %}
 
 <form method="POST">{% csrf_token %}
-    <table>
+    <table class="new_product">
         <tr>
             {% for variation_field in formset.0.variation_options %}
             <th>{{ variation_field }}</th>
@@ -100,7 +99,7 @@
             }
         });
 
-        $('input[type=radio]').change();
+        $('input[type=radio]:checked').change();
     });
 </script>
 {% endblock %}

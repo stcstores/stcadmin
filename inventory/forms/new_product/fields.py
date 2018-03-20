@@ -231,7 +231,6 @@ class Location(fieldtypes.SelectizeField):
     placeholder = 'Location'
     variable = True
     html_class = 'location_field'
-    size = 300
     required = False
     help_text = (
         'The name of the <b>Bay</b> in which the product will be located.'

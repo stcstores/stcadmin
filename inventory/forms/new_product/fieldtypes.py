@@ -63,8 +63,8 @@ class FormField(forms.Field):
     help_text = None
     placeholder = None
     html_class = None
-    size = 50
-    small_size = 15
+    size = None
+    small_size = None
     initial = None
     required_message = ''
     validators = []
@@ -164,7 +164,7 @@ class SelectizeField(FormField, forms.MultipleChoiceField):
 
 class SingleSelectize(FormField, forms.ChoiceField):
 
-    selectize_options = {'maxItems': 1}
+    selectize_options = {'maxItems': 1, "dropdownParent": "body"}
 
     def __init__(self, *args, **kwargs):
         if 'choices' not in kwargs:
