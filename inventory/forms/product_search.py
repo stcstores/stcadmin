@@ -1,36 +1,25 @@
+from ccapi import CCAPI
 from django import forms
 from django.core.exceptions import ValidationError
-from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
-from .widgets import HorizontalRadio
+from django.utils.safestring import mark_safe
 
-from ccapi import CCAPI, ProductOptions
+from .widgets import HorizontalRadio
 
 
 class OptionSelectField(forms.MultiValueField):
 
-    selectable_options = (
-        'WooCategory1', 'WooCategory2', 'WooCategory3', 'Manufacturer',
-        'Brand', 'Supplier', 'Discontinued', 'Package Type',
-        'International Shipping')
-    option_choices = [('', '')]
-    option_value_choices = [('', '')]
-    option_matches = {}
-    for option in ProductOptions:
-        if option.option_name in selectable_options:
-            option_choices.append((option.id, option.option_name))
-            option_matches[option.id] = []
-            for value in option.values:
-                option_value_choices.append((value.id, value.value))
-                option_matches[option.id].append(value.id)
-    option_choices.sort(key=lambda x: x[1])
-    option_value_choices.sort(key=lambda x: x[1])
-
     def __init__(self, *args, **kwargs):
+        self.option_choices = kwargs.pop('option_choices')
+        self.option_value_choices = kwargs.pop('option_value_choices')
+        self.option_matches = kwargs.pop('option_matches')
         fields = (
             forms.ChoiceField(choices=self.option_choices),
             forms.ChoiceField(choices=self.option_value_choices))
-        kwargs['widget'] = OptionSelectWidget(None)
+        kwargs['widget'] = OptionSelectWidget(
+            None, option_choices=self.option_choices,
+            option_value_choices=self.option_value_choices,
+            option_matches=self.option_matches)
         super().__init__(
             fields=fields, require_all_fields=False, *args, **kwargs)
 
@@ -44,13 +33,16 @@ class OptionSelectWidget(forms.widgets.MultiWidget):
 
     template_name = 'inventory/widgets/option_select_widget.html'
 
-    def __init__(self, attrs):
+    def __init__(self, *args, **kwargs):
+        self.option_choices = kwargs.pop('option_choices')
+        self.option_value_choices = kwargs.pop('option_value_choices')
+        self.option_matches = kwargs.pop('option_matches')
         _widgets = [
             forms.Select(
-                choices=OptionSelectField.option_choices),
+                choices=self.option_choices),
             forms.Select(
-                choices=OptionSelectField.option_value_choices)]
-        super().__init__(_widgets, attrs)
+                choices=self.option_value_choices)]
+        super().__init__(_widgets, *args, **kwargs)
 
     def decompress(self, value):
         if value is not None and '' not in value:
@@ -72,7 +64,7 @@ class OptionSelectWidget(forms.widgets.MultiWidget):
         html = render_to_string(
             self.template_name, {
                 'widgets': widgets, 'name': name, 'id': id_,
-                'option_matches': OptionSelectField.option_matches})
+                'option_matches': self.option_matches})
         return mark_safe(html)
 
 
@@ -139,10 +131,33 @@ class ProductSearchForm(forms.Form):
         label='Hide Out of Stock',
         help_text='Hide ranges with no items in stock.')
 
-    advanced_option = OptionSelectField(
-        label="Product Option", required=False,
-        help_text='Search for products with a particular \
-            <b>Product Option</b>')
+    selectable_options = (
+        'WooCategory1', 'WooCategory2', 'WooCategory3', 'Manufacturer',
+        'Brand', 'Supplier', 'Discontinued', 'Package Type',
+        'International Shipping')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        option_data = CCAPI.get_product_options()
+        option_choices = [('', '')]
+        option_value_choices = [('', '')]
+        option_matches = {}
+        for option in option_data:
+            if option.option_name in self.selectable_options:
+                option_choices.append((option.id, option.option_name))
+                option_matches[option.id] = []
+                for value in option.values:
+                    option_value_choices.append((value.id, value.value))
+                    option_matches[option.id].append(value.id)
+        option_choices.sort(key=lambda x: x[1])
+        option_value_choices.sort(key=lambda x: x[1])
+        self.fields['advanced_option'] = OptionSelectField(
+            label="Product Option", required=False,
+            help_text='Search for products with a particular \
+                <b>Product Option</b>',
+            option_choices=option_choices,
+            option_value_choices=option_value_choices,
+            option_matches=option_matches)
 
     def clean(self):
         cleaned_data = super().clean()

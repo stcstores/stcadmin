@@ -8,17 +8,6 @@ from .new_product.fieldtypes import option_field_factory
 
 class ProductForm(forms.Form):
 
-    price = fields.VATPrice()
-    locations = fields.DepartmentBayField(lock_department=True)
-    weight = fields.Weight()
-    height = fields.Height()
-    length = fields.Length()
-    width = fields.Width()
-    package_type = fields.PackageType()
-    purchase_price = fields.PurchasePrice()
-    supplier = fields.Supplier()
-    supplier_sku = fields.SupplierSKU()
-
     ignore_options = [
         'Department', 'Brand', 'Manufacturer', 'WooCategory1', 'WooCategory2',
         'WooCategory3', 'International Shipping', 'Package Type', 'Supplier',
@@ -32,6 +21,17 @@ class ProductForm(forms.Form):
         self.option_names = [
             o for o in option_names if o not in self.ignore_options]
         super().__init__(*args, **kwargs)
+        self.fields['price'] = fields.VATPrice()
+        self.fields['locations'] = fields.DepartmentBayField(
+            lock_department=True)
+        self.fields['weight'] = fields.Weight()
+        self.fields['height'] = fields.Height()
+        self.fields['length'] = fields.Length()
+        self.fields['width'] = fields.Width()
+        self.fields['package_type'] = fields.PackageType()
+        self.fields['purchase_price'] = fields.PurchasePrice()
+        self.fields['supplier'] = fields.Supplier()
+        self.fields['supplier_sku'] = fields.SupplierSKU()
         for option in self.option_names:
             self.fields['opt_' + option] = option_field_factory(option)()
         self.initial = self.get_initial()
