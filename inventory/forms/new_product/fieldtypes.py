@@ -128,7 +128,8 @@ class ChoiceField(FormField, forms.ChoiceField):
     small_size = None
 
     def __init__(self, *args, **kwargs):
-        kwargs['choices'] = self.get_choices()
+        if 'choices' not in kwargs:
+            kwargs['choices'] = self.get_choices()
         kwargs['label'] = self.label
         kwargs = super().__init__(*args, **kwargs)
 
@@ -138,8 +139,11 @@ class SelectizeField(FormField, forms.MultipleChoiceField):
     selectize_options = {}
 
     def __init__(self, *args, **kwargs):
-        self.choices = self.get_choices()
-        kwargs['choices'] = self.choices
+        if 'choices' in kwargs:
+            self.choices = kwargs['choices']
+        else:
+            self.choices = self.get_choices()
+            kwargs['choices'] = self.choices
         kwargs['label'] = self.label
         kwargs = super().__init__(*args, **kwargs)
 
@@ -167,8 +171,11 @@ class SingleSelectize(FormField, forms.ChoiceField):
     selectize_options = {'maxItems': 1, "dropdownParent": "body"}
 
     def __init__(self, *args, **kwargs):
-        if 'choices' not in kwargs:
-            kwargs['choices'] = self.get_choices()
+        if 'choices' in kwargs:
+            self.choices = kwargs['choices']
+        else:
+            self.choices = self.get_choices()
+            kwargs['choices'] = self.choices
         kwargs['label'] = self.label
         kwargs = super().__init__(*args, **kwargs)
 

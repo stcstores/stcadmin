@@ -1,9 +1,7 @@
 import itertools
 
-from ccapi import CCAPI
 from django.shortcuts import redirect
 from django.views.generic.edit import FormView
-
 from inventory import forms
 
 from .views import InventoryUserMixin
@@ -30,7 +28,7 @@ class NewProductBasicView(NewProductView):
         if 'variations' in self.request.POST:
             return redirect('inventory:variation_options')
         else:
-            return redirect('page three')
+            return redirect('single_product_options')
 
 
 class VariationOptionsView(NewProductView):
@@ -79,10 +77,8 @@ class NewProductVariationsView(NewProductView):
 
     def get_form_kwargs(self, *args, **kwargs):
         kwargs = super().get_form_kwargs(*args, **kwargs)
-        option_data = CCAPI.get_product_options()
         kwargs['form_kwargs'] = [{
             'variation_options': v,
-            'option_data': option_data
             } for v in self.get_variation_combinations(
                 self.get_variation_options())]
         return kwargs
@@ -96,3 +92,13 @@ class NewProductVariationsView(NewProductView):
         context = super().get_context_data(*args, **kwargs)
         context['formset'] = context.pop('form')
         return context
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        self.request.session[
+            'new_product_data']['variation_data'] = form.cleaned_data
+        self.request.session.modified = True
+        if 'back' in self.request.POST:
+            return redirect('inventory:variation_options')
+        else:
+            return redirect('inventory:new_product_variations')

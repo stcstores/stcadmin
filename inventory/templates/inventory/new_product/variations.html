@@ -58,6 +58,7 @@
 {% endif %}
 
 <form method="POST">{% csrf_token %}
+    {{ formset.management_form }}
     <table class="new_product">
         <tr>
             {% for variation_field in formset.0.variation_options %}
@@ -70,7 +71,7 @@
         {% for form in formset %}
         <tr>
             {% for name, value in form.variation_options.items %}
-            <span style="font-weight: bold;"><td>{{ value }}</td></span>
+            <th>{{ value }}</th>
             {% endfor %}
             {% for field in form.visible_fields %}
             <td class="field_cell {{ field.name }}">{{ field }}</td>
@@ -78,6 +79,9 @@
             {% for field in form.hidden_fields %}{{ field}}{% endfor %}
         {% endfor %}
         </tr>
+        <td colspan="2" style="text-align: center;">
+            <button name="back">Back</button><button name="continue">Continue</button>
+        </td>
     </table>
 </form>
 

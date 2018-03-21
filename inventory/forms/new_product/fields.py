@@ -3,10 +3,9 @@ import re
 
 from ccapi import CCAPI
 from django import forms
-from list_input import ListInput
-
 from inventory import models
 from inventory.forms import widgets
+from list_input import ListInput
 
 from . import fieldtypes
 from .fieldtypes import Validators
@@ -433,49 +432,3 @@ class AmazonSearchTerms(ListOption):
     html_class = 'amazon_search_terms'
     help_text = 'Create upto five search terms for Amazon listings.'
     maximum = 5
-
-
-class FormFields(metaclass=MetaFormFields):
-    fields = [
-        Title,
-        Barcode,
-        PurchasePrice,
-        VATRate,
-        Price,
-        StockLevel,
-        Department,
-        Location,
-        Supplier,
-        SupplierSKU,
-        Weight,
-        Height,
-        Width,
-        Length,
-        PackageType,
-        Brand,
-        Manufacturer,
-        Description,
-        Gender,
-        AmazonBulletPoints,
-        AmazonSearchTerms,
-        ]
-
-    delete_variation = DeleteVariation
-
-    variable_fields = [
-        field for field in fields if field.variable or field.must_vary]
-
-    option_names = [
-        option.option_name for option in CCAPI.get_product_options()
-        if option.exclusions['tesco'] is False]
-
-    option_fields = [
-        fieldtypes.option_field_factory(option) for option in option_names]
-
-    select_option_fields = [
-        fieldtypes.option_selection_field_factory(option) for
-        option in option_names]
-
-    option_value_fields = [
-        fieldtypes.variation_option_value_field_factory(option) for
-        option in option_names]
