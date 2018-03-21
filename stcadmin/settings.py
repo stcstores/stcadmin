@@ -137,9 +137,4 @@ LOGIN_URL = '/login/'
 
 LOGIN_REDIRECT_URL = 'home:index'
 
-
-
-
-
-
-CCAPI.credentials(CC_LOGIN, CC_PWD)
+CCAPI.credentials(CC_LOGIN, CC_PWD, verbose=True)
