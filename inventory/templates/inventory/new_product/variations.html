@@ -12,12 +12,20 @@
 
 <style>
     .new_product input, .new_product .selectize-input {
-        /*min-width: 100px;
-        max-width: 100px;*/
+        display: inline-block;
     }
 
     .field_cell {
 
+    }
+
+    .selectize-control {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .selected {
+        background-color: #7bc77b;
     }
 </style>
 {% endblock %}
@@ -30,20 +38,9 @@
     Description: <div>{{ product_data.basic.description | safe }}</div>
 </p>
 
-<table>
-    <tr>
-        <th></th>
-        <th>Show</th>
-        <th>Hide</th>
-    </tr>
-    {% for field in formset.0.visible_fields %}
-    <tr>
-        <td>{{ field.label }}</td>
-        <td><input type="radio" name="hide_{{ field.name }}" value="show"></td>
-        <td><input type="radio" name="hide_{{ field.name }}" value="hide" checked></td>
-    </tr>
-    {% endfor %}
-</table>
+{% for field in formset.0.visible_fields %}
+    <button id="hide_{{ field.name }}" class="field_select">{{ field.label }}</button>
+{% endfor %}
 
 {% if form.errors %}
     {% for field in form %}
@@ -73,7 +70,7 @@
         {% for form in formset %}
         <tr>
             {% for name, value in form.variation_options.items %}
-            <td>{{ value }}</td>
+            <span style="font-weight: bold;"><td>{{ value }}</td></span>
             {% endfor %}
             {% for field in form.visible_fields %}
             <td class="field_cell {{ field.name }}">{{ field }}</td>
@@ -89,17 +86,15 @@
 {% block script %}{{ block.super }}
 <script>
     $(document).ready(function() {
-        $('input[type=radio]').change(function() {
-            var name = $(this).attr('name');
+        $('.field_cell').prop('hidden', true);
+        $('.field_select').click(function() {
+            $('.field_select').removeClass('selected');
+            $(this).addClass('selected');
+            var name = $(this).attr('id');
             var target = $('.' + name.replace('hide_', ''));
-            if ($(this).val() == 'show') {
-                target.prop('hidden', false);
-            } else {
-                target.prop('hidden', true);
-            }
+            $('.field_cell').prop('hidden', true);
+            target.prop('hidden', false);
         });
-
-        $('input[type=radio]:checked').change();
     });
 </script>
 {% endblock %}
