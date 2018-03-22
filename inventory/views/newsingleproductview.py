@@ -2,13 +2,18 @@ import itertools
 
 from django.shortcuts import redirect
 from django.views.generic.edit import FormView
+
 from inventory import forms
 
 from .views import InventoryUserMixin
 
 
 class NewProductView(InventoryUserMixin, FormView):
-    pass
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['product_data'] = self.request.session['new_product_data']
+        return context
 
 
 class NewProductBasicView(NewProductView):
@@ -43,11 +48,6 @@ class VariationOptionsView(NewProductView):
             initial = super().get_initial(*args, **kwargs)
         return initial
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context['product_data'] = self.request.session['new_product_data']
-        return context
-
     def form_valid(self, form):
         self.request.session[
             'new_product_data']['variation_options'] = form.cleaned_data
@@ -58,9 +58,8 @@ class VariationOptionsView(NewProductView):
             return redirect('inventory:new_product_variations')
 
 
-class NewProductVariationsView(NewProductView):
+class BaseVariationProductView(NewProductView):
     template_name = 'inventory/new_product/variations.html'
-    form_class = forms.VariationFormSet
 
     def get_variation_options(self):
         variation_options = self.request.session[
@@ -77,7 +76,10 @@ class NewProductVariationsView(NewProductView):
 
     def get_form_kwargs(self, *args, **kwargs):
         kwargs = super().get_form_kwargs(*args, **kwargs)
+        existing_data = self.request.session['new_product_data'].get(
+            self.existing_data_key, None)
         kwargs['form_kwargs'] = [{
+            'existing_data': existing_data,
             'variation_options': v,
             } for v in self.get_variation_combinations(
                 self.get_variation_options())]
@@ -94,11 +96,26 @@ class NewProductVariationsView(NewProductView):
         return context
 
     def form_valid(self, form):
-        print(form.cleaned_data)
         self.request.session[
-            'new_product_data']['variation_data'] = form.cleaned_data
+            'new_product_data'][self.existing_data_key] = form.cleaned_data
         self.request.session.modified = True
         if 'back' in self.request.POST:
-            return redirect('inventory:variation_options')
+            return redirect(self.back_page)
         else:
-            return redirect('inventory:new_product_variations')
+            return redirect(self.continue_page)
+
+
+class NewProductVariationsView(BaseVariationProductView):
+
+    form_class = forms.VariationFormSet
+    existing_data_key = 'variation_data'
+    back_page = 'inventory:variation_options'
+    continue_page = 'inventory:variation_listing_options'
+
+
+class VariationListingOptionsView(BaseVariationProductView):
+
+    form_class = forms.VariationListingOptionsFormSet
+    existing_data_key = 'variation_listing_options'
+    back_page = 'inventory:new_product_variations'
+    continue_page = 'inventory:new_product_variations'

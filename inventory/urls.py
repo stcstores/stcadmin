@@ -49,7 +49,11 @@ new_product_urlpatterns = [
     path(
         'new_product/variations/',
         views.NewProductVariationsView.as_view(),
-        name='new_product_variations')
+        name='new_product_variations'),
+    path(
+        'new_product/variation_listing_options/',
+        views.VariationListingOptionsView.as_view(),
+        name='variation_listing_options'),
     ]
 
 api_urlpatterns = [

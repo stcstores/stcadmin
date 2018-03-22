@@ -27,6 +27,11 @@
     .selected {
         background-color: #7bc77b;
     }
+
+    .field_help {
+        display: inline-block;
+        max-width: 25%;
+    }
 </style>
 {% endblock %}
 
@@ -59,7 +64,7 @@
 
 <form method="POST">{% csrf_token %}
     {{ formset.management_form }}
-    <table class="new_product">
+    <table class="new_product" style="float: left;">
         <tr>
             {% for variation_field in formset.0.variation_options %}
             <th>{{ variation_field }}</th>
@@ -84,6 +89,18 @@
         </td>
     </table>
 </form>
+{% for field in formset.0 %}
+<div class="field_help">
+    <div class="field_cell {{ field.name }}">
+        <h3>{{ field.label }}</h3>
+        <div>
+            {% autoescape off %}
+            {{ field.help_text }}
+            {% endautoescape %}
+        </div>
+    </div>
+</div>
+{% endfor %}
 
 {% endblock %}
 

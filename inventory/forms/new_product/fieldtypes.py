@@ -2,6 +2,7 @@ from inspect import isclass
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.safestring import mark_safe
 from list_input import ListInput
 
 from inventory.forms import widgets
