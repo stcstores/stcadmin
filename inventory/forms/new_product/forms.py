@@ -58,10 +58,10 @@ class BaseOptionsForm(NewProductForm):
 
     def get_fields(self):
         for option_name, values in self.options:
-            choices = [
+            choices = [('', '')] + [
                 (v, v) for v in self.get_choice_values(option_name, values)]
             self.fields[option_name] = self.field_class(
-                option_name, choices)
+                label=option_name, choices=choices)
 
 
 class VariationOptionsForm(BaseOptionsForm):

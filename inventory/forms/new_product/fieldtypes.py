@@ -2,7 +2,6 @@ from inspect import isclass
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.utils.safestring import mark_safe
 from list_input import ListInput
 
 from inventory.forms import widgets
@@ -177,8 +176,9 @@ class SingleSelectize(FormField, forms.ChoiceField):
         else:
             self.choices = self.get_choices()
             kwargs['choices'] = self.choices
-        kwargs['label'] = self.label
-        kwargs = super().__init__(*args, **kwargs)
+        if 'label' not in kwargs:
+            kwargs['label'] = self.label
+        super().__init__(*args, **kwargs)
 
     def get_widget(self):
         attrs = {}

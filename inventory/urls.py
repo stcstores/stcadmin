@@ -44,6 +44,9 @@ new_product_urlpatterns = [
         'new_product/',
         views.NewProductBasicView.as_view(), name='new_product'),
     path(
+        'listing_options/',
+        views.ListingOptionsView.as_view(), name='listing_options'),
+    path(
         'new_product/variation_options/',
         views.VariationOptionsView.as_view(), name='variation_options'),
     path(

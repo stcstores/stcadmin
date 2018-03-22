@@ -3,9 +3,10 @@ import re
 
 from ccapi import CCAPI
 from django import forms
+from list_input import ListInput
+
 from inventory import models
 from inventory.forms import widgets
-from list_input import ListInput
 
 from . import fieldtypes
 from .fieldtypes import Validators
@@ -314,9 +315,9 @@ class DepartmentBayField(forms.MultiValueField):
 
 class SelectOptions(fieldtypes.SelectizeField):
 
-    def __init__(self, option_name, choices, *args, **kwargs):
-        self.label = option_name
-        self.choices = choices
+    def __init__(self, *args, **kwargs):
+        self.label = kwargs.get('label')
+        self.choices = kwargs.pop('choices')
         self.selectize_options['create'] = True
         self.validators = [fieldtypes.Validators.option_value(self.label)]
         super().__init__(*args, **kwargs)

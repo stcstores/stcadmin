@@ -33,7 +33,7 @@ class NewProductBasicView(NewProductView):
         if 'variations' in self.request.POST:
             return redirect('inventory:variation_options')
         else:
-            return redirect('single_product_options')
+            return redirect('inventory:listing_options')
 
 
 class VariationOptionsView(NewProductView):
@@ -51,6 +51,20 @@ class VariationOptionsView(NewProductView):
     def form_valid(self, form):
         self.request.session[
             'new_product_data']['variation_options'] = form.cleaned_data
+        self.request.session.modified = True
+        if 'back' in self.request.POST:
+            return redirect('inventory:new_product')
+        else:
+            return redirect('inventory:new_product_variations')
+
+
+class ListingOptionsView(NewProductView):
+    template_name = 'inventory/new_product/single_product_form.html'
+    form_class = forms.ListingOptionsForm
+
+    def form_valid(self, form):
+        self.request.session[
+            'new_product_data']['listing_options'] = form.cleaned_data
         self.request.session.modified = True
         if 'back' in self.request.POST:
             return redirect('inventory:new_product')
