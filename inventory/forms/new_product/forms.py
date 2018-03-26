@@ -158,8 +158,9 @@ class VariationListingOptionsForm(BaseVariationForm):
 class BaseVariationFormSet(KwargFormSet):
 
     def __init__(self, *args, **kwargs):
+        kwarg_update = self.update_form_kwargs()
         for form_kwargs in kwargs['form_kwargs']:
-            form_kwargs.update(self.update_form_kwargs())
+            form_kwargs.update(kwarg_update)
         super().__init__(*args, **kwargs)
 
     def update_form_kwargs(self):

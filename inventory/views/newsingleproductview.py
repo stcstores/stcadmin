@@ -1,3 +1,5 @@
+"""Views for creating new products."""
+
 import itertools
 
 from django.shortcuts import redirect
@@ -9,6 +11,8 @@ from .views import InventoryUserMixin
 
 
 class NewProductManager:
+    """Access new product data stored in session."""
+
     VARIATION = 'variation'
     SINGLE = 'single'
     NEW_PRODUCT = 'new_product_data'
@@ -104,7 +108,7 @@ class ListingOptionsView(NewProductView):
         if 'back' in self.request.POST:
             return redirect('inventory:new_product')
         else:
-            return redirect('inventory:new_product_variations')
+            return redirect('')
 
 
 class BaseVariationProductView(NewProductView):
