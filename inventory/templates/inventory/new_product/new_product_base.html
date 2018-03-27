@@ -16,6 +16,8 @@
 
 {% include "inventory/new_product/new_product_nav.html" %}
 
+<h1>{% block page_title %}{% endblock %}</h1>
+
 {% block pre_form %}{% endblock %}
 
 <form method="POST">{% csrf_token %}
@@ -33,10 +35,12 @@
 {% block basic_info %}
 <div class="formside basic_info">
     <p>Title: <input type="text" value="{{ manager.basic_info.data.title }}" readonly></p>
-    <p>Supplier SKU: <input type="text" value="{{ manager.basic_info.data.supplier_sku }}" readonly></p>
-    <p>
-        Description: <div class="description">{{ manager.basic_info.data.description | safe }}</div>
-    </p>
+    {% if manager.basic_info.data.supplier_sku %}
+        <p>Supplier SKU: <input type="text" value="{{ manager.basic_info.data.supplier_sku }}" readonly></p>
+    {% endif %}
+    {% if manager.basic_info.data.description %}
+        <p>Description: <div class="description">{{ manager.basic_info.data.description | safe }}</div></p>
+    {% endif %}
 </div>
 {% endblock %}
 

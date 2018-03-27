@@ -106,8 +106,6 @@ class ListingOptions(BaseNewProductView):
 class BaseVariationProductView(BaseNewProductView):
     """Base class for variation pages of the new product form."""
 
-    template_name = 'inventory/new_product/variation_info.html'
-
     def get_variation_options(self):
         variation_options = self.manager.variation_options.data
         return {
@@ -165,6 +163,7 @@ class BaseVariationProductView(BaseNewProductView):
 class VariationInfo(BaseVariationProductView):
     """View for the Variation Info page of the new product form."""
 
+    template_name = 'inventory/new_product/variation_info.html'
     form_class = forms.VariationFormSet
 
     def _get_back_url(self):
@@ -183,6 +182,7 @@ class VariationInfo(BaseVariationProductView):
 class VariationListingOptions(BaseVariationProductView):
     """View for the Variation Listing Options page of the new product form."""
 
+    template_name = 'inventory/new_product/variation_listing_options.html'
     form_class = forms.VariationListingOptionsFormSet
 
     def _get_back_url(self):

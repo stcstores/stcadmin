@@ -2,6 +2,19 @@
 {% load staticfiles %}
 {% load stcadmin_extras %}
 
+{% block page_title %}Listing Options{% endblock %}
+
+{% block formside %}{{ block.super }}
+    <p>
+        Listing options are used in listings to provide additional information
+        about the product.
+    </p>
+    <p>
+        Use any options that are applicable your product and
+        leave others blank.
+    </p>
+{% endblock %}
+
 {% block form %}
     <table class="new_product">
         {% for field in form %}
