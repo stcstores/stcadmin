@@ -67,6 +67,19 @@ class BaseOptionsForm(NewProductForm):
 class VariationOptions(BaseOptionsForm):
     field_class = fields.SelectOptions
 
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data = cleaned_data.copy()
+        if all([len(v) == 0 for k, v in cleaned_data.items()]):
+            self.add_error(None, 'At least one variation option must be used.')
+        for key, value in cleaned_data.items():
+            if len(value) == 1:
+                self.add_error(
+                    key, (
+                        'At least two values must be supplied '
+                        'for any used option.'))
+        return cleaned_data
+
 
 class ListingOptions(BaseOptionsForm):
     field_class = fieldtypes.SingleSelectize
