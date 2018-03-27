@@ -91,17 +91,6 @@ class BaseVariationForm(NewProductForm):
                 if correct_form:
                     self.initial.update(variation)
 
-    def get_fields(self):
-        for option_name, value in self.variation_options.items():
-            self.fields[option_name] = forms.CharField(
-                max_length=255, initial=value, widget=forms.HiddenInput())
-        for option_name, values in self.option_values.items():
-            if option_name not in self.variation_options:
-                choices = [('', '')] + [(v, v) for v in self.get_choice_values(
-                    option_name, values)]
-                self.fields[option_name] = fieldtypes.SingleSelectize(
-                    choices=choices)
-
     def get_choice_values(self, option_name, values):
         if option_name in self.initial:
             if self.initial[option_name] not in values:
@@ -135,6 +124,9 @@ class VariationForm(BaseVariationForm):
         self.fields['brand'] = fields.Brand()
         self.fields['manufacturer'] = fields.Manufacturer()
         self.fields['gender'] = fields.Gender()
+        for option_name, value in self.variation_options.items():
+            self.fields[option_name] = forms.CharField(
+                max_length=255, initial=value, widget=forms.HiddenInput())
 
 
 class VariationListingOptionsForm(BaseVariationForm):

@@ -1,0 +1,43 @@
+{% extends "inventory/base.html" %}
+{% load staticfiles %}
+{% load stcadmin_extras %}
+
+{% block additional_head %}{{ block.super }}
+<link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
+<link rel="stylesheet" href="{% static 'scripts/inventory.css' %}">
+<script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+<script src="{% static 'scripts/new_product.js' %}"></script>
+<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
+<script src="{% static 'scripts/new_product.js' %}"></script>
+{% include 'home/froala_head.html' %}
+{% endblock %}
+
+{% block content %}
+
+{% include "inventory/new_product/new_product_nav.html" %}
+
+{% block pre_form %}{% endblock %}
+
+<form method="POST">{% csrf_token %}
+    <input type="text" id="goto" name="goto" hidden>
+{% block form %}
+
+{% endblock %}
+<form>
+<br>
+
+<div class="formside">
+{% block formside %}{% endblock %}
+</div>
+
+{% block basic_info %}
+<div class="formside basic_info">
+    <p>Title: <input type="text" value="{{ manager.basic.data.title }}" readonly></p>
+    <p>Supplier SKU: <input type="text" value="{{ manager.basic.data.supplier_sku }}" readonly></p>
+    <p>
+        Description: <div class="description">{{ manager.basic.data.description | safe }}</div>
+    </p>
+</div>
+{% endblock %}
+
+{% endblock %}

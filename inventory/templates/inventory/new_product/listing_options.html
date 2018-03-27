@@ -2,8 +2,6 @@
 {% load staticfiles %}
 {% load stcadmin_extras %}
 
-{% block basic_info %}{% endblock %}
-
 {% block form %}
     <table class="new_product">
         {% for field in form %}
@@ -17,10 +15,10 @@
         </tr>
         {% endfor %}
         <tr>
-            <td colspan="2">
-                <input type="submit" name="variations" value="Add Variations"/>
-                <input type="submit" name="single" value="Continue Single Product"/>
-            </td>
+            <th colspan="3">
+                <input type="submit" name="back" value="Back"/>
+                <input type="submit" name="continue" value="Continue"/>
+            </th>
         </tr>
     </table>
 {% endblock %}

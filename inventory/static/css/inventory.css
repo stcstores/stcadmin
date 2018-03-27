@@ -33,6 +33,10 @@
     background: #ccc;
 }
 
+table.new_product {
+    float: left;
+}
+
 .new_product tr input, .new_product tr select, .new_product tr textarea {
     border-radius: 3px;
     padding: 0.25em;
@@ -61,4 +65,55 @@
 
 .selectize-input {
     min-width: 300px;
+}
+
+.goto_button {
+    color: black;
+}
+
+.current_page {
+    border: solid 3px grey;
+}
+
+.invalid_page, .current_page {
+    pointer-events: none;
+}
+
+.invalid_page {
+    background: grey;
+    border: solid 3px grey;
+    color: white;
+}
+
+.basic_info {
+    display: inline-block;
+}
+
+.formside {
+    display: inline-block;
+    max-width: 25%;
+    padding: 1em;
+    vertical-align: top;
+}
+
+.basic_info .description {
+    border: solid 2px grey;
+    border-radius: 1em;
+    padding: 1em;
+}
+
+.field_selection {
+    padding: 1em;
+}
+
+.form_nav {
+    padding: 1em;
+}
+
+.form_nav li {
+    display: inline-block;
+}
+
+.form_nav li:not(:first-child):before {
+    content: "> ";
 }

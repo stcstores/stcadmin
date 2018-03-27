@@ -45,10 +45,12 @@ new_product_urlpatterns = [
         views.NewProductBasicView.as_view(), name='new_product'),
     path(
         'listing_options/',
-        views.ListingOptionsView.as_view(), name='listing_options'),
+        views.ListingOptionsView.as_view(),
+        name='new_product_listing_options'),
     path(
         'new_product/variation_options/',
-        views.VariationOptionsView.as_view(), name='variation_options'),
+        views.VariationOptionsView.as_view(),
+        name='new_product_variation_options'),
     path(
         'new_product/variations/',
         views.NewProductVariationsView.as_view(),
@@ -56,7 +58,10 @@ new_product_urlpatterns = [
     path(
         'new_product/variation_listing_options/',
         views.VariationListingOptionsView.as_view(),
-        name='variation_listing_options'),
+        name='new_product_variation_listing_options'),
+    path(
+        'new_product/delete_product/',
+        views.DeleteProduct.as_view(), name='delete_product')
     ]
 
 api_urlpatterns = [

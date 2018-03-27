@@ -1,22 +1,11 @@
-{% extends "inventory/base.html" %}
+{% extends "inventory/new_product/new_product_base.html" %}
 {% load staticfiles %}
 {% load stcadmin_extras %}
 
 {% block additional_head %}{{ block.super }}
-<link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
-<script src="{% static 'scripts/selectize/selectize.js' %}"></script>
-<script src="{% static 'scripts/new_product.js' %}"></script>
-<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
-<script src="{% static 'scripts/new_product.js' %}"></script>
-{% include 'home/froala_head.html' %}
-
 <style>
     .new_product input, .new_product .selectize-input {
         display: inline-block;
-    }
-
-    .field_cell {
-
     }
 
     .selectize-control {
@@ -27,44 +16,35 @@
     .selected {
         background-color: #7bc77b;
     }
-
-    .field_help {
-        display: inline-block;
-        max-width: 25%;
-    }
 </style>
 {% endblock %}
 
-{% block content %}
+{% block pre_form %}
+<div class="field_selection">
+    {% for field in formset.0.visible_fields %}
+        <button id="hide_{{ field.name }}" class="field_select">{{ field.label }}</button>
+    {% endfor %}
+</div>
+{% endblock %}
 
-<p>Title: {{ product_data.basic.title }}</p>
-<p>Supplier SKU: {{ product_data.basic.supplier_sku }}</p>
-<p>
-    Description: <div>{{ product_data.basic.description | safe }}</div>
-</p>
+{% block form %}
 
-{% for field in formset.0.visible_fields %}
-    <button id="hide_{{ field.name }}" class="field_select">{{ field.label }}</button>
-{% endfor %}
-
-{% if form.errors %}
-    {% for field in form %}
-        {% for error in field.errors %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
             <div class="alert alert-danger">
                 <strong>{{ error|escape }}</strong>
             </div>
         {% endfor %}
-    {% endfor %}
-    {% for error in form.non_field_errors %}
-        <div class="alert alert-danger">
-            <strong>{{ error|escape }}</strong>
-        </div>
-    {% endfor %}
-{% endif %}
-
-<form method="POST">{% csrf_token %}
+    {% endif %}
     {{ formset.management_form }}
-    <table class="new_product" style="float: left;">
+    <table class="new_product">
         <tr>
             {% for variation_field in formset.0.variation_options %}
             <th>{{ variation_field }}</th>
@@ -81,16 +61,17 @@
             {% for field in form.visible_fields %}
             <td class="field_cell {{ field.name }}">{{ field }}</td>
             {% endfor %}
-            {% for field in form.hidden_fields %}{{ field}}{% endfor %}
+            {% for field in form.hidden_fields %}{{ field }}{% endfor %}
         {% endfor %}
         </tr>
-        <td colspan="2" style="text-align: center;">
+        <th colspan="2">
             <button name="back">Back</button><button name="continue">Continue</button>
-        </td>
+        </th>
     </table>
-</form>
+{% endblock %}
+
+{% block formside %}
 {% for field in formset.0 %}
-<div class="field_help">
     <div class="field_cell {{ field.name }}">
         <h3>{{ field.label }}</h3>
         <div>
@@ -99,9 +80,7 @@
             {% endautoescape %}
         </div>
     </div>
-</div>
 {% endfor %}
-
 {% endblock %}
 
 {% block script %}{{ block.super }}

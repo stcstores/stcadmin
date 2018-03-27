@@ -1,0 +1,20 @@
+<a href="{% url 'inventory:delete_product' %}" id="start_new_product"><button>Start New Product</button></a>
+<ul class="form_nav">
+    {% for page in manager.current_pages %}
+        {% url page.url as url %}
+        <li><button class="goto_button {% ifequal url request.path %}current_page{% else %}{% if page.data is null %}invalid_page{% endif %}{% endifequal %}" name="goto" value="{{ page.url }}">{{ page.name }}</button></li>
+    {% endfor %}
+</ul>
+<script>
+    $(document).ready(function() {
+        $('#start_new_product').click(function() {
+            return window.confirm("This will delete the current prduct and start a new one.\nAny progress on the current product will be lost.\nIs this what you want to do?");
+        });
+        $('.goto_button').click(function() {
+            var input = $('#goto');
+            input.val($(this).val());
+            var form = input.closest('form');
+            form.submit();
+        });
+    })
+</script>

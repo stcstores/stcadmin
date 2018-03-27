@@ -3,11 +3,33 @@
 import itertools
 
 from django.shortcuts import redirect
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, View
 
 from inventory import forms
 
 from .views import InventoryUserMixin
+
+
+class Page:
+    def __init__(self, name, identifier, manager, url=None):
+        self.name = name
+        self.identifier = identifier
+        if url is None:
+            self.url = 'inventory:new_product_{}'.format(self.identifier)
+        else:
+            self.url = 'inventory:{}'.format(url)
+        self.manager = manager
+
+    @property
+    def data(self):
+        data = self.manager.session[self.manager.NEW_PRODUCT].get(
+            self.identifier, None)
+        return data
+
+    @data.setter
+    def data(self, data):
+        self.manager.session[self.manager.NEW_PRODUCT][self.identifier] = data
+        self.manager.session.modified = True
 
 
 class NewProductManager:
@@ -20,36 +42,73 @@ class NewProductManager:
     TYPE = 'type'
     VARIATION_OPTIONS = 'variation_options'
     LISTING_OPTIONS = 'listing_options'
-    VARIATION_DATA = 'variation_data'
+    VARIATION_DATA = 'variations'
     VARIATION_LISTING_OPTIONS = 'variation_listing_options'
 
     def __init__(self, request):
         self.request = request
         self.session = request.session
-        self.request.session.modified = True
-        self.new_product_data = request.session.get(self.NEW_PRODUCT, None)
-        if self.new_product_data is not None:
-            self.basic = self.new_product_data.get(self.BASIC, None)
-            self.product_type = self.new_product_data.get(self.TYPE, None)
-            self.variation_options = self.new_product_data.get(
-                self.VARIATION_OPTIONS, None)
-            self.listing_options = self.new_product_data.get(
-                self.LISTING_OPTIONS, None)
-            self.variation_data = self.new_product_data.get(
-                self.VARIATION_DATA, None)
-            self.variation_listing_options = self.new_product_data.get(
-                self.VARIATION_LISTING_OPTIONS, None)
+        if self.NEW_PRODUCT not in self.session:
+            self.session[self.NEW_PRODUCT] = {}
+        self.session.modified = True
+        self.basic = Page('Baisic Info', self.BASIC, self, url='new_product')
+        self.listing_options = Page(
+            'Listing Options', self.LISTING_OPTIONS, self)
+        self.variation_options = Page(
+            'Variation Options', self.VARIATION_OPTIONS, self)
+        self.variations = Page('Variation Info', self.VARIATION_DATA, self)
+        self.variation_listing_options = Page(
+            'Variation Listing Options', self.VARIATION_LISTING_OPTIONS, self)
+        self.data = self.session.get(self.NEW_PRODUCT, None)
+        self.pages = (
+            self.basic, self.listing_options, self.variation_options,
+            self.variations, self.variation_listing_options)
+        self.single_product_pages = (self.basic, self.listing_options)
+        self.variation_product_pages = (
+            self.basic, self.variation_options, self.variations,
+            self.variation_listing_options)
+        if self.product_type == self.VARIATION:
+            self.current_pages = self.variation_product_pages
+        elif self.product_type == self.SINGLE:
+            self.current_pages = self.single_product_pages
+        else:
+            self.current_pages = (self.basic, )
+
+    @property
+    def product_type(self):
+        product_data = self.session.get(self.NEW_PRODUCT, None)
+        if product_data is not None:
+            return product_data.get(self.TYPE, None)
+        else:
+            return None
+
+    @product_type.setter
+    def product_type(self, product_type):
+        product_data = self.session.get(self.NEW_PRODUCT, None)
+        product_data[self.TYPE] = product_type
+        self.session.modified = True
+
+    def delete_product(self):
+        self.session[self.NEW_PRODUCT] = {}
+
+
+class DeleteProduct(InventoryUserMixin, View):
+
+    def dispatch(self, *args, **kwargs):
+        self.manager = NewProductManager(args[0])
+        self.manager.delete_product()
+        return redirect('inventory:new_product')
 
 
 class NewProductView(InventoryUserMixin, FormView):
 
     def dispatch(self, *args, **kwargs):
-        self.new_product_manager = NewProductManager(args[0])
+        self.manager = NewProductManager(args[0])
         return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['product_data'] = self.new_product_manager
+        context['manager'] = self.manager
         return context
 
 
@@ -58,7 +117,7 @@ class NewProductBasicView(NewProductView):
     form_class = forms.NewProductBasicForm
 
     def get_initial(self, *args, **kwargs):
-        existing_data = self.new_product_manager.basic
+        existing_data = self.manager.basic.data
         if existing_data is not None:
             initial = existing_data
         else:
@@ -66,13 +125,15 @@ class NewProductBasicView(NewProductView):
         return initial
 
     def form_valid(self, form):
-        self.new_product_manager.basic = form.cleaned_data
+        self.manager.basic.data = form.cleaned_data
+        if 'goto' in self.request.POST and ':' in self.request.POST['goto']:
+            return redirect(self.request.POST['goto'])
         if 'variations' in self.request.POST:
-            self.new_product_manager.product_type = NewProductManager.VARIATION
-            return redirect('inventory:variation_options')
+            self.manager.product_type = NewProductManager.VARIATION
+            return redirect(self.manager.variation_options.url)
         else:
-            self.new_product_manager.product_type = NewProductManager.SINGLE
-            return redirect('inventory:listing_options')
+            self.manager.product_type = NewProductManager.SINGLE
+            return redirect(self.manager.listing_options.url)
 
 
 class VariationOptionsView(NewProductView):
@@ -80,42 +141,46 @@ class VariationOptionsView(NewProductView):
     form_class = forms.VariationOptionsForm
 
     def get_initial(self, *args, **kwargs):
-        initial = self.new_product_manager.variation_options
+        initial = self.manager.variation_options.data
         if initial is None:
             initial = super().get_initial(*args, **kwargs)
         return initial
 
     def form_valid(self, form):
-        self.new_product_manager.variation_options = form.cleaned_data
+        self.manager.variation_options.data = form.cleaned_data
+        if 'goto' in self.request.POST and ':' in self.request.POST['goto']:
+            return redirect(self.request.POST['goto'])
         if 'back' in self.request.POST:
-            return redirect('inventory:new_product')
+            return redirect(self.manager.basic.url)
         else:
-            return redirect('inventory:new_product_variations')
+            return redirect(self.manager.variations.url)
 
 
 class ListingOptionsView(NewProductView):
-    template_name = 'inventory/new_product/single_product_form.html'
+    template_name = 'inventory/new_product/listing_options.html'
     form_class = forms.ListingOptionsForm
 
     def get_initial(self, *args, **kwargs):
-        initial = self.new_product_manager.listing_options
+        initial = self.manager.listing_options.data
         if initial is None:
             initial = super().get_initial(*args, **kwargs)
         return initial
 
     def form_valid(self, form):
-        self.new_product_manager.listing_options = form.cleaned_data
+        self.manager.listing_options.data = form.cleaned_data
+        if 'goto' in self.request.POST and ':' in self.request.POST['goto']:
+            return redirect(self.request.POST['goto'])
         if 'back' in self.request.POST:
             return redirect('inventory:new_product')
         else:
-            return redirect('')
+            return redirect('inventory:new_product')
 
 
 class BaseVariationProductView(NewProductView):
     template_name = 'inventory/new_product/variations.html'
 
     def get_variation_options(self):
-        variation_options = self.new_product_manager.variation_options
+        variation_options = self.manager.variation_options.data
         return {
             key: value for key, value in variation_options.items()
             if len(value) > 0}
@@ -123,7 +188,7 @@ class BaseVariationProductView(NewProductView):
     def get_initial(self, *args, **kwargs):
         initial = self.get_variation_combinations(self.get_variation_options())
         for init in initial:
-            init.update(self.new_product_manager.basic)
+            init.update(self.manager.basic.data)
         return initial
 
     def get_form_kwargs(self, *args, **kwargs):
@@ -148,39 +213,55 @@ class BaseVariationProductView(NewProductView):
 
     def form_valid(self, form):
         self.save_form_data(form.cleaned_data)
+        if 'goto' in self.request.POST and ':' in self.request.POST['goto']:
+            return redirect(self.request.POST['goto'])
         if 'back' in self.request.POST:
-            return redirect(self.back_page)
+            return redirect(self.get_back_url())
         else:
-            return redirect(self.continue_page)
+            return redirect(self.get_continue_url())
 
     def get_existing_data(self):
         raise NotImplementedError()
 
     def save_form_data(self, data):
+        raise NotImplementedError()
+
+    def get_back_url(self):
+        raise NotImplementedError()
+
+    def get_continue_url(self):
         raise NotImplementedError()
 
 
 class NewProductVariationsView(BaseVariationProductView):
 
     form_class = forms.VariationFormSet
-    back_page = 'inventory:variation_options'
-    continue_page = 'inventory:variation_listing_options'
+
+    def get_back_url(self):
+        return self.manager.variation_options.url
+
+    def get_continue_url(self):
+        return self.manager.variation_listing_options.url
 
     def get_existing_data(self):
-        return self.new_product_manager.variation_data
+        return self.manager.variations.data
 
     def save_form_data(self, data):
-        self.new_product_manager.variation_data = data
+        self.manager.variations.data = data
 
 
 class VariationListingOptionsView(BaseVariationProductView):
 
     form_class = forms.VariationListingOptionsFormSet
-    back_page = 'inventory:new_product_variations'
-    continue_page = 'inventory:new_product_variations'
+
+    def get_back_url(self):
+        return self.manager.variations.url
+
+    def get_continue_url(self):
+        return self.manager.variations.url
 
     def get_existing_data(self):
-        return self.new_product_manager.variation_listing_options
+        return self.manager.variation_listing_options.data
 
     def save_form_data(self, data):
-        self.new_product_manager.variation_listing_options = data
+        self.manager.variation_listing_options.data = data
