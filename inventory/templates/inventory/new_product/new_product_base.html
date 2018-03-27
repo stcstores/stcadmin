@@ -32,10 +32,10 @@
 
 {% block basic_info %}
 <div class="formside basic_info">
-    <p>Title: <input type="text" value="{{ manager.basic.data.title }}" readonly></p>
-    <p>Supplier SKU: <input type="text" value="{{ manager.basic.data.supplier_sku }}" readonly></p>
+    <p>Title: <input type="text" value="{{ manager.basic_info.data.title }}" readonly></p>
+    <p>Supplier SKU: <input type="text" value="{{ manager.basic_info.data.supplier_sku }}" readonly></p>
     <p>
-        Description: <div class="description">{{ manager.basic.data.description | safe }}</div>
+        Description: <div class="description">{{ manager.basic_info.data.description | safe }}</div>
     </p>
 </div>
 {% endblock %}
