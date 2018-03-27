@@ -41,10 +41,10 @@ inventory_urlpatterns = [
 
 new_product_urlpatterns = [
     path(
-        'basic_info/',
+        'new_product/basic_info/',
         views.BasicInfo.as_view(), name='new_product_basic_info'),
     path(
-        'listing_options/',
+        'new_product/listing_options/',
         views.ListingOptions.as_view(),
         name='new_product_listing_options'),
     path(
@@ -54,14 +54,16 @@ new_product_urlpatterns = [
     path(
         'new_product/variation_info/',
         views.VariationInfo.as_view(),
-        name='new_product_variations'),
+        name='new_product_variation_info'),
     path(
         'new_product/variation_listing_options/',
         views.VariationListingOptions.as_view(),
         name='new_product_variation_listing_options'),
     path(
         'new_product/delete_product/',
-        views.DeleteProductView.as_view(), name='new_product_delete_product')
+        views.DeleteProductView.as_view(), name='new_product_delete_product'),
+    path('new_product/finish_product/',
+         views.FinishProduct.as_view(), name='new_product_finish'),
     ]
 
 api_urlpatterns = [

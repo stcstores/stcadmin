@@ -17,7 +17,7 @@ class DeleteProductView(InventoryUserMixin, View):
     def dispatch(self, *args, **kwargs):
         self.manager = NewProductManager(args[0])
         self.manager.delete_product()
-        return redirect('inventory:new_product_basic_info')
+        return redirect(self.manager.basic_info.url)
 
 
 class BaseNewProductView(InventoryUserMixin, FormView):
@@ -98,9 +98,9 @@ class ListingOptions(BaseNewProductView):
         if 'goto' in self.request.POST and ':' in self.request.POST['goto']:
             return redirect(self.request.POST['goto'])
         if 'back' in self.request.POST:
-            return redirect('inventory:new_product_basic_info')
+            return redirect(self.manager.basic_info.url)
         else:
-            return redirect('inventory:new_product_basic_info')
+            return redirect(self.manager.finish.url)
 
 
 class BaseVariationProductView(BaseNewProductView):
@@ -189,10 +189,17 @@ class VariationListingOptions(BaseVariationProductView):
         return self.manager.variation_info.url
 
     def _get_continue_url(self):
-        return self.manager.variation_info.url
+        return self.manager.finish.url
 
     def _get_existing_data(self):
         return self.manager.variation_listing_options.data
 
     def _save_form_data(self, data):
         self.manager.variation_listing_options.data = data
+
+
+class FinishProduct(BaseNewProductView):
+
+    def dispatch(self, *args, **kwargs):
+        self.manager = NewProductManager(args[0])
+        return redirect(self.manager.basic_info.url)

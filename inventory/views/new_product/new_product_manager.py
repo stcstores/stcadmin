@@ -30,8 +30,9 @@ class NewProductManager:
     TYPE = 'type'
     VARIATION_OPTIONS = 'variation_options'
     LISTING_OPTIONS = 'listing_options'
-    VARIATION_DATA = 'variations'
+    VARIATION_INFO = 'variation_info'
     VARIATION_LISTING_OPTIONS = 'variation_listing_options'
+    FINISH = 'finish'
 
     def __init__(self, request):
         self.request = request
@@ -44,17 +45,19 @@ class NewProductManager:
             'Listing Options', self.LISTING_OPTIONS, self)
         self.variation_options = Page(
             'Variation Options', self.VARIATION_OPTIONS, self)
-        self.variation_info = Page('Variation Info', self.VARIATION_DATA, self)
+        self.variation_info = Page('Variation Info', self.VARIATION_INFO, self)
         self.variation_listing_options = Page(
             'Variation Listing Options', self.VARIATION_LISTING_OPTIONS, self)
+        self.finish = Page('Finish', self.FINISH, self)
         self.data = self.session.get(self.NEW_PRODUCT, None)
         self.pages = (
             self.basic_info, self.listing_options, self.variation_options,
-            self.variation_info, self.variation_listing_options)
-        self.single_product_pages = (self.basic_info, self.listing_options)
+            self.variation_info, self.variation_listing_options, self.finish)
+        self.single_product_pages = (
+            self.basic_info, self.listing_options, self.finish)
         self.variation_product_pages = (
             self.basic_info, self.variation_options, self.variation_info,
-            self.variation_listing_options)
+            self.variation_listing_options, self.finish)
         if self.product_type == self.VARIATION:
             self.current_pages = self.variation_product_pages
         elif self.product_type == self.SINGLE:
