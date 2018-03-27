@@ -37,7 +37,7 @@ class BasicInfo(BaseNewProductView):
     """View for the Basic Info page of the new product form."""
 
     template_name = 'inventory/new_product/basic_info.html'
-    form_class = forms.NewProductBasicForm
+    form_class = forms.BasicInfo
 
     def get_initial(self, *args, **kwargs):
         existing_data = self.manager.basic_info.data
@@ -63,7 +63,7 @@ class VariationOptions(BaseNewProductView):
     """View for the Variation Options page of the new product form."""
 
     template_name = 'inventory/new_product/variation_options.html'
-    form_class = forms.VariationOptionsForm
+    form_class = forms.VariationOptions
 
     def get_initial(self, *args, **kwargs):
         initial = self.manager.variation_options.data
@@ -85,7 +85,7 @@ class ListingOptions(BaseNewProductView):
     """View for the Listing Options page of the new product form."""
 
     template_name = 'inventory/new_product/listing_options.html'
-    form_class = forms.ListingOptionsForm
+    form_class = forms.ListingOptions
 
     def get_initial(self, *args, **kwargs):
         initial = self.manager.listing_options.data
@@ -164,7 +164,7 @@ class VariationInfo(BaseVariationProductView):
     """View for the Variation Info page of the new product form."""
 
     template_name = 'inventory/new_product/variation_info.html'
-    form_class = forms.VariationFormSet
+    form_class = forms.VariationInfoSet
 
     def _get_back_url(self):
         return self.manager.variation_options.url
@@ -183,7 +183,7 @@ class VariationListingOptions(BaseVariationProductView):
     """View for the Variation Listing Options page of the new product form."""
 
     template_name = 'inventory/new_product/variation_listing_options.html'
-    form_class = forms.VariationListingOptionsFormSet
+    form_class = forms.VariationListingOptionsSet
 
     def _get_back_url(self):
         return self.manager.variation_info.url

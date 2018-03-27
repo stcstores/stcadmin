@@ -10,7 +10,7 @@ class NewProductForm(forms.Form):
     field_size = 50
 
 
-class NewProductBasicForm(NewProductForm):
+class BasicInfo(NewProductForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -64,11 +64,11 @@ class BaseOptionsForm(NewProductForm):
                 label=option_name, choices=choices)
 
 
-class VariationOptionsForm(BaseOptionsForm):
+class VariationOptions(BaseOptionsForm):
     field_class = fields.SelectOptions
 
 
-class ListingOptionsForm(BaseOptionsForm):
+class ListingOptions(BaseOptionsForm):
     field_class = fieldtypes.SingleSelectize
 
 
@@ -98,7 +98,7 @@ class BaseVariationForm(NewProductForm):
         return values
 
 
-class VariationForm(BaseVariationForm):
+class VariationInfo(BaseVariationForm):
 
     def __init__(self, *args, **kwargs):
         choices = kwargs.pop('choices')
@@ -129,7 +129,7 @@ class VariationForm(BaseVariationForm):
                 max_length=255, initial=value, widget=forms.HiddenInput())
 
 
-class VariationListingOptionsForm(BaseVariationForm):
+class VariationListingOptions(BaseVariationForm):
 
     def __init__(self, *args, **kwargs):
         self.option_values = kwargs.pop('option_values')
@@ -159,8 +159,8 @@ class BaseVariationFormSet(KwargFormSet):
         raise NotImplementedError()
 
 
-class VariationFormSet(BaseVariationFormSet):
-    form = VariationForm
+class VariationInfoSet(BaseVariationFormSet):
+    form = VariationInfo
 
     def update_form_kwargs(self):
         choices = {
@@ -169,8 +169,8 @@ class VariationFormSet(BaseVariationFormSet):
         return {'choices': choices}
 
 
-class VariationListingOptionsFormSet(BaseVariationFormSet):
-    form = VariationListingOptionsForm
+class VariationListingOptionsSet(BaseVariationFormSet):
+    form = VariationListingOptions
 
     def update_form_kwargs(self):
         option_data = CCAPI.get_product_options()
