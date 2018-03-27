@@ -17,10 +17,29 @@
         </tr>
         {% endfor %}
         <tr>
-            <td colspan="2">
-                <input type="submit" name="variations" value="Add Variations"/>
-                <input type="submit" name="single" value="Continue Single Product"/>
-            </td>
+            <th colspan="3">
+                {% ifequal manager.product_type manager.VARIATION %}
+                    <input value="Change to Single Product" class="continue_button change_type" type="submit" name="single"/>
+                    <input value="Continue" class="continue_button" type="submit" name="variations"/>
+                {% else %}{% ifequal manager.product_type manager.SINGLE %}
+                    <input value="Change to Variation Product" class="continue_button change_type" type="submit" name="variations"/>
+                    <input value="Continue" class="continue_button" type="submit" name="single"/>
+                {% else %}
+                    <input value="Create Single Product" class="continue_button" type="submit" name="single"/>
+                    <input value="Create Variation Product" class="continue_button" type="submit" name="variations"/>
+                {% endifequal %}
+                {% endifequal %}
+            </th>
         </tr>
     </table>
+{% endblock %}
+
+{% block script %}{{ block.super }}
+    <script>
+        $(document).ready(function() {
+            $('.change_type').click(function() {
+                return window.confirm("Any information on later pages will be lost.\nDo you want to continue?");
+            });
+        });
+    </script>
 {% endblock %}
