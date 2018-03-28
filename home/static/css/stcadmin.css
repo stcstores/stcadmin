@@ -1,9 +1,9 @@
 @CHARSET "UTF-8";
 
 html, body {
+    height:100%;
     margin:0;
     padding:0;
-    height:100%;
     width: 100%;
 }
 
@@ -12,67 +12,66 @@ body {
 }
 
 .container {
-    position:relative;
-    margin: 0 auto;
-    height: auto !important;
     height: 100%;
+    margin: 0 auto;
     min-height: 100%;
+    position:relative;
     text-align: center;
     width: 100%;
 }
 
 .head {
-    text-align: left;
     background: #eee;
     padding: 0;
+    text-align: left;
     width: 100%;
 }
 
 .content {
     margin: 0 auto;
+    min-height: 100%;
     padding: 1em 1em 5em;
     text-align: left;
-    min-height: 100%;
     width: 90%;
 }
 
 .footer {
-    text-align: center;
-    position:absolute;
-    width: 100%;
-    bottom:0;
-    margin: 0 auto;
-    padding-top: 2em;
-    padding-bottom: 0.5em;
-    left: 0; /* IE 7 and below */
-    font-size: 0.75em;
-    font-family: serif;
     background: #eee;
+    bottom:0;
+    font-family: serif;
+    font-size: 0.75em;
+    left: 0; /* IE 7 and below */
+    margin: 0 auto;
+    padding-bottom: 0.5em;
+    padding-top: 2em;
+    position:absolute;
+    text-align: center;
+    width: 100%;
 }
 
 .loading {
-    padding: 1em;
     background-image: url('/media/images/loading.gif');
-    min-width: 500px;
-    min-height: 500px;
-    background-repeat: no-repeat;
     background-position: center;
+    background-repeat: no-repeat;
+    min-height: 500px;
+    min-width: 500px;
+    padding: 1em;
 }
 
 .header_feedback {
-    font-size: 1.25em;
     display: inline-block;
+    font-size: 1.25em;
     text-align: left;
-    width: 15%;
     vertical-align: top;
+    width: 15%;
 }
 
 .user_details {
-    font-size: 0.75em;
     display: inline-block;
+    font-size: 0.75em;
     text-align: right;
-    width: 15%;
     vertical-align: top;
+    width: 15%;
 }
 
 .user_details p {
@@ -83,9 +82,9 @@ body {
 }
 
 .user_details td {
-    vertical-align: center;
     padding-left: 0.75em;
     padding-right: 0.75em;
+    vertical-align: central;
 }
 
 .section_navigation {
@@ -94,9 +93,9 @@ body {
 
 .section_navigation li {
     display: inline-block;
-    margin: 1em;
-    font-weight: bold;
     font-size: 1em;
+    font-weight: bold;
+    margin: 1em;
 }
 
 .section_navigation a {
@@ -117,9 +116,9 @@ body {
 
 .main_navigation li {
     display: inline-block;
-    margin: 0.5em;
-    font-weight: bold;
     font-size: 1.5em;
+    font-weight: bold;
+    margin: 0.5em;
 }
 
 .main_navigation li a {
@@ -143,14 +142,14 @@ h3 {
 }
 
 p {
-    font-size: 1.25em;
     color: #111;
+    font-size: 1.25em;
 }
 
 table, form {
+    border-collapse:collapse;
     margin: 1em;
     padding: 1em;
-    border-collapse:collapse;
 }
 
 .login_form td {
@@ -158,9 +157,9 @@ table, form {
 }
 
 th, td {
-    padding: 0.25em;
     border: 1px #ccc solid;
     margin: 0;
+    padding: 0.25em;
 }
 
 th {
@@ -191,8 +190,8 @@ th {
 }
 
 .site_index {
-    line-height: 0;
     display: inline-block;
+    line-height: 0;
     width: 70%;
 }
 
@@ -219,10 +218,10 @@ th {
 }
 
 .ui-autocomplete {
-	max-height: 400px;
-	overflow-y: auto;
+    max-height: 400px;
 	/* prevent horizontal scrollbar */
 	overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .tooltip_image {
@@ -231,9 +230,9 @@ th {
 }
 
 .homepage_feedback {
-    width: 25%;
     display: inline-block;
     vertical-align: top;
+    width: 25%;
 }
 
 .positive {
@@ -244,16 +243,16 @@ th {
     color: red;
 }
 .messages {
-    width: 100%;
-    padding: 0;
     margin: 0;
+    padding: 0;
+    width: 100%;
 }
 
 .messages li {
-    width: 100%;
     list-style: none;
-    text-align: center;
     padding: 0.25em 0 0.25em 0;
+    text-align: center;
+    width: 100%;
 }
 
 .messages li.debug {
@@ -266,8 +265,8 @@ th {
 
 .messages li.success {
     background: #090;
-    font-weight: bold;
     color: black;
+    font-weight: bold;
 }
 
 .messages li.warning {
@@ -276,35 +275,35 @@ th {
 
 .messages li.error {
     background: red;
-    font-weight: bold;
     color: black;
+    font-weight: bold;
 }
 
 #pack_count, #feedback {
+    border: none;
     clear: both;
     margin: 0 auto;
-    border: none;
-    text-align: center;
     padding: 0.25em;
+    text-align: center;
 }
 
 .feedback td, .feedback th, .pack_count td, .pack_count th {
     border: none;
     border-collapse: collapse;
-    padding-top: 0;
-    padding-bottom: 0;
     margin: 0;
+    padding-bottom: 0;
+    padding-top: 0;
 }
 
 .feedback_name, .packer_name {
-    text-align: right;
     padding-right: 0.25em;
+    text-align: right;
 }
 
 .feedback_icons, .packer_count {
-    text-align: left;
-    padding-left: 0.25em;
     font-size: 5em;
+    padding-left: 0.25em;
+    text-align: left;
 }
 
 .feedback_name {
