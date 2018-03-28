@@ -27,27 +27,18 @@
 {% block pre_form %}
 <div class="field_selection">
     {% for field in formset.0.visible_fields %}
-        <button id="hide_{{ field.name }}" class="field_select">{{ field.label }}</button>
+        <button id="hide_{{ field.name }}" class="field_select{% if field.name in error_fields %} error{% endif %}">{{ field.label }}</button>
     {% endfor %}
 </div>
 {% endblock %}
 
 {% block form %}
 
-    {% if form.errors %}
-        {% for field in form %}
-            {% for error in field.errors %}
-                <div class="alert alert-danger">
-                    <strong>{{ error|escape }}</strong>
-                </div>
-            {% endfor %}
-        {% endfor %}
-        {% for error in form.non_field_errors %}
-            <div class="alert alert-danger">
-                <strong>{{ error|escape }}</strong>
-            </div>
-        {% endfor %}
-    {% endif %}
+    {% for dict in formset.non_field_errors %}
+    {% for field, error in dict.items %}
+        {{ field }} {{ error }}
+    {% endfor %}
+    {% endfor %}
     {{ formset.management_form }}
     <table class="new_product">
         <tr>
@@ -65,6 +56,9 @@
             {% endfor %}
             {% for field in form.visible_fields %}
             <td class="field_cell {{ field.name }}">{{ field }}</td>
+            {% if field.errors %}
+                <td class="error field_cell {{ field.name }}">{{ field.errors }}</td>
+            {% endif %}
             {% endfor %}
             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
         {% endfor %}

@@ -136,6 +136,12 @@ class BaseVariationProductView(BaseNewProductView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['formset'] = context.pop('form')
+        error_fields = []
+        for form in context['formset']:
+            for field in form:
+                if field.errors:
+                    error_fields.append(field.name)
+        context['error_fields'] = set(error_fields)
         return context
 
     def form_valid(self, form):
