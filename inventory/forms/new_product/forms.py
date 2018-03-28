@@ -61,7 +61,8 @@ class BaseOptionsForm(NewProductForm):
             choices = [('', '')] + [
                 (v, v) for v in self.get_choice_values(option_name, values)]
             self.fields[option_name] = self.field_class(
-                label=option_name, choices=choices)
+                label=option_name, choices=choices,
+                validators=fieldtypes.Validators.option_value(option_name))
 
 
 class VariationOptions(BaseOptionsForm):
@@ -157,6 +158,7 @@ class VariationListingOptions(BaseVariationForm):
                 choices = [('', '')] + [(v, v) for v in self.get_choice_values(
                     option_name, values)]
                 self.fields[option_name] = fieldtypes.SingleSelectize(
+                    validators=fieldtypes.Validators.option_value(option_name),
                     choices=choices)
 
 

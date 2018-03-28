@@ -41,14 +41,14 @@ class Validators:
 
     @classmethod
     def option_value(cls, option_name):
-        characters = {
+        allowed_characters = {
             'Size': ['+', '-', '.', '/', "'", '"'],
             'Weight': ['.'],
             'Strength': ['+', '-', '.'],
             'Material': ['%', ','],
         }
-        if option_name in characters:
-            return cls.limit_characters(characters[option_name])
+        if option_name in allowed_characters:
+            return cls.limit_characters(allowed_characters[option_name])
         return cls.alphanumeric
 
 
