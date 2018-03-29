@@ -3,6 +3,7 @@ import re
 
 from ccapi import CCAPI
 from django import forms
+from django.core.exceptions import ValidationError
 from list_input import ListInput
 
 from inventory import models
@@ -313,28 +314,47 @@ class DepartmentBayField(forms.MultiValueField):
         return value
 
 
-class SelectOptions(fieldtypes.SelectizeField):
+class OptionField:
+    allowed_characters = {
+        'Size': ['+', '-', '.', '/', "'", '"'],
+        'Weight': ['.'],
+        'Strength': ['+', '-', '.'],
+        'Material': ['%', ','],
+    }
 
     def __init__(self, *args, **kwargs):
-        self.label = kwargs.get('label')
-        self.choices = kwargs.pop('choices')
         self.selectize_options['create'] = True
-        self.validators = [fieldtypes.Validators.option_value(self.label)]
         super().__init__(*args, **kwargs)
 
-    def get_choices(self):
-        return self.choices
+    def valid_value(self, value):
+        return True
 
-    def validate(self, values):
-        for value in values:
-            forms.Field.validate(self, value)
+    def legal_characters(self, value):
+        error_message = '{} is not a valid character for {}.'
+        allowed_characters = []
+        if self.label in self.allowed_characters:
+            allowed_characters += self.allowed_characters[self.label]
+        for char in value:
+            if not char.isalnum():
+                if char not in allowed_characters:
+                    raise ValidationError(
+                        error_message.format(char, self.label))
 
-    def clean(self, values):
-        values = self.to_python(values)
-        for value in values:
-            self.validate(value)
-            self.run_validators(value)
-        return values
+    def validate(self, value):
+        super().validate(value)
+        if isinstance(value, list):
+            for v in value:
+                self.legal_characters(v)
+        else:
+            self.legal_characters(value)
+
+
+class VariationOptions(OptionField, fieldtypes.SelectizeField):
+    pass
+
+
+class ListingOption(OptionField, fieldtypes.SingleSelectize):
+    pass
 
 
 class Brand(fieldtypes.TextField):

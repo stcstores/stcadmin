@@ -1,6 +1,7 @@
 """Views for creating new products."""
 
 import itertools
+import os
 
 from django.shortcuts import redirect
 from django.views.generic.edit import FormView, View
@@ -112,12 +113,6 @@ class BaseVariationProductView(BaseNewProductView):
             key: value for key, value in variation_options.items()
             if len(value) > 0}
 
-    def get_initial(self, *args, **kwargs):
-        initial = self.get_variation_combinations(self.get_variation_options())
-        for init in initial:
-            init.update(self.manager.basic_info.data)
-        return initial
-
     def get_form_kwargs(self, *args, **kwargs):
         kwargs = super().get_form_kwargs(*args, **kwargs)
         existing_data = self._get_existing_data()
@@ -172,6 +167,12 @@ class VariationInfo(BaseVariationProductView):
     template_name = 'inventory/new_product/variation_info.html'
     form_class = forms.VariationInfoSet
 
+    def get_initial(self, *args, **kwargs):
+        initial = self.get_variation_combinations(self.get_variation_options())
+        for init in initial:
+            init.update(self.manager.basic_info.data)
+        return initial
+
     def _get_back_url(self):
         return self.manager.variation_options.url
 
@@ -191,6 +192,10 @@ class VariationListingOptions(BaseVariationProductView):
     template_name = 'inventory/new_product/variation_listing_options.html'
     form_class = forms.VariationListingOptionsSet
 
+    def get_initial(self, *args, **kwargs):
+        initial = self.get_variation_combinations(self.get_variation_options())
+        return initial
+
     def _get_back_url(self):
         return self.manager.variation_info.url
 
@@ -208,4 +213,8 @@ class FinishProduct(BaseNewProductView):
 
     def dispatch(self, *args, **kwargs):
         self.manager = NewProductManager(args[0])
+        dir = os.path.expanduser('~')
+        path = os.path.join(dir, 'new_product.json')
+        with open(path, 'w') as f:
+            self.manager.save_json(f)
         return redirect(self.manager.basic_info.url)

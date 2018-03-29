@@ -61,12 +61,11 @@ class BaseOptionsForm(NewProductForm):
             choices = [('', '')] + [
                 (v, v) for v in self.get_choice_values(option_name, values)]
             self.fields[option_name] = self.field_class(
-                label=option_name, choices=choices,
-                validators=fieldtypes.Validators.option_value(option_name))
+                label=option_name, choices=choices)
 
 
 class VariationOptions(BaseOptionsForm):
-    field_class = fields.SelectOptions
+    field_class = fields.VariationOptions
 
     def clean(self):
         cleaned_data = super().clean()
@@ -83,7 +82,7 @@ class VariationOptions(BaseOptionsForm):
 
 
 class ListingOptions(BaseOptionsForm):
-    field_class = fieldtypes.SingleSelectize
+    field_class = fields.ListingOption
 
 
 class BaseVariationForm(NewProductForm):
@@ -92,8 +91,8 @@ class BaseVariationForm(NewProductForm):
         self.variation_options = kwargs.pop('variation_options')
         self.existing_data = kwargs.pop('existing_data')
         super().__init__(*args, **kwargs)
-        self.get_fields()
         self.update_initial()
+        self.get_fields()
         self.order_fields(list(self.variation_options.keys()))
 
     def update_initial(self):
@@ -157,9 +156,8 @@ class VariationListingOptions(BaseVariationForm):
             if option_name not in self.variation_options:
                 choices = [('', '')] + [(v, v) for v in self.get_choice_values(
                     option_name, values)]
-                self.fields[option_name] = fieldtypes.SingleSelectize(
-                    validators=fieldtypes.Validators.option_value(option_name),
-                    choices=choices)
+                self.fields[option_name] = fields.ListingOption(
+                    choices=choices, label=option_name)
 
 
 class BaseVariationFormSet(KwargFormSet):

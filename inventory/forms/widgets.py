@@ -9,8 +9,11 @@ class HorizontalRadio(forms.RadioSelect):
     template_name = 'inventory/widgets/horizontal_radio.html'
 
 
-class SelectizeWidget(forms.SelectMultiple):
+class BaseSelectizeWidget:
     template_name = 'inventory/widgets/selectize.html'
+
+
+class MultipleSelectizeWidget(BaseSelectizeWidget, forms.SelectMultiple):
 
     def __init__(self, *args, **kwargs):
         self.selectize_options = kwargs.pop('selectize_options')
@@ -23,8 +26,7 @@ class SelectizeWidget(forms.SelectMultiple):
         return context
 
 
-class SingleSelectizeWidget(forms.Select):
-    template_name = 'inventory/widgets/selectize.html'
+class SingleSelectizeWidget(BaseSelectizeWidget, forms.Select):
 
     def __init__(self, *args, **kwargs):
         self.selectize_options = kwargs.pop('selectize_options', {})
@@ -89,7 +91,7 @@ class DepartmentBayWidget(forms.MultiWidget):
             SingleSelectizeWidget(
                 attrs=department_attrs, choices=choices[0],
                 selectize_options=selectize_options[0]),
-            SelectizeWidget(
+            MultipleSelectizeWidget(
                 attrs=bay_attrs, choices=choices[1],
                 selectize_options=selectize_options[1])]
         widgets[1].is_required = False

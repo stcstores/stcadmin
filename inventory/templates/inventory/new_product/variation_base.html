@@ -34,10 +34,8 @@
 
 {% block form %}
 
-    {% for dict in formset.non_field_errors %}
-    {% for field, error in dict.items %}
-        {{ field }} {{ error }}
-    {% endfor %}
+    {% for error in formset.non_field_errors %}
+        {{ error }}
     {% endfor %}
     {{ formset.management_form }}
     <table class="new_product">
@@ -63,8 +61,9 @@
             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
         {% endfor %}
         </tr>
-        <th colspan="2">
-            <button name="back">Back</button><button name="continue">Continue</button>
+        <th colspan="{{ formset.0.variation_options | length | add:"1" }}">
+            <button name="back">Back</button>
+            <button name="continue">Continue</button>
         </th>
     </table>
 {% endblock %}

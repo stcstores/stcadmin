@@ -11,14 +11,19 @@ class Validators:
 
     @staticmethod
     def alphanumeric(value):
-        valid = True
-        for char in str(value):
-            if char.isalnum() or char == ' ':
-                continue
-            valid = False
-            break
-        if valid is False:
-            raise ValidationError('Only alphanumeric characters are allowed.')
+        if isinstance(value, list):
+            for v in value:
+                Validators.alphanumeric(v)
+        else:
+            valid = True
+            for char in str(value):
+                if char.isalnum() or char == ' ':
+                    continue
+                valid = False
+                break
+            if valid is False:
+                raise ValidationError(
+                    'Only alphanumeric characters are allowed.')
 
     @staticmethod
     def numeric(value):
@@ -27,16 +32,20 @@ class Validators:
 
     def limit_characters(characters):
         def character_limit(value):
-            valid = True
-            for char in str(value):
-                if char == ' ' or char.isalnum() or char in characters:
-                    continue
-                valid = False
-                break
-            if valid is False:
-                raise ValidationError(
-                    'Allowed characters are letters, numbers or {}.'.format(
-                        characters))
+            error_message = 'Allowed characters are letters, numbers or {}.'
+            if isinstance(value, list):
+                for v in value:
+                    Validators.character_limit(v)
+                    return
+            else:
+                valid = True
+                for char in str(value):
+                    if char == ' ' or char.isalnum() or char in characters:
+                        continue
+                    valid = False
+                    break
+                if valid is False:
+                    raise ValidationError(error_message.format(characters))
         return character_limit
 
     @classmethod
@@ -134,7 +143,7 @@ class ChoiceField(FormField, forms.ChoiceField):
         kwargs = super().__init__(*args, **kwargs)
 
 
-class SelectizeField(FormField, forms.MultipleChoiceField):
+class BaseSelectizeField(FormField):
 
     selectize_options = {}
 
@@ -144,7 +153,8 @@ class SelectizeField(FormField, forms.MultipleChoiceField):
         else:
             self.choices = self.get_choices()
             kwargs['choices'] = self.choices
-        kwargs['label'] = self.label
+        if 'label' in kwargs:
+            self.label = kwargs.pop('label')
         kwargs = super().__init__(*args, **kwargs)
 
     def get_widget(self):
@@ -155,9 +165,13 @@ class SelectizeField(FormField, forms.MultipleChoiceField):
             attrs['class'] = self.html_class
         if self.size is not None:
             attrs['size'] = self.size
-        return widgets.SelectizeWidget(
+        return self.widget_class(
             attrs=attrs, selectize_options=self.selectize_options,
             choices=self.choices)
+
+
+class SelectizeField(BaseSelectizeField, forms.MultipleChoiceField):
+    widget_class = widgets.MultipleSelectizeWidget
 
     def to_python(self, *args, **kwargs):
         value = super().to_python(*args, **kwargs)
@@ -166,30 +180,15 @@ class SelectizeField(FormField, forms.MultipleChoiceField):
         return value
 
 
-class SingleSelectize(FormField, forms.ChoiceField):
-
+class SingleSelectize(BaseSelectizeField, forms.ChoiceField):
+    widget_class = widgets.SingleSelectizeWidget
     selectize_options = {'maxItems': 1, "dropdownParent": "body"}
 
-    def __init__(self, *args, **kwargs):
-        if 'choices' in kwargs:
-            self.choices = kwargs['choices']
-        else:
-            self.choices = self.get_choices()
-            kwargs['choices'] = self.choices
-        if 'label' not in kwargs:
-            kwargs['label'] = self.label
-        super().__init__(*args, **kwargs)
-
-    def get_widget(self):
-        attrs = {}
-        if self.placeholder is not None:
-            attrs['placeholder'] = self.placeholder
-        if self.html_class is not None:
-            attrs['class'] = self.html_class
-        if self.size is not None:
-            attrs['size'] = self.size
-        return widgets.SingleSelectizeWidget(
-            attrs=attrs, selectize_options=self.selectize_options)
+    def to_python(self, *args, **kwargs):
+        value = super().to_python(*args, **kwargs)
+        if isinstance(value, list):
+            return value[0]
+        return value
 
 
 class NumberField(FormField, forms.IntegerField):
