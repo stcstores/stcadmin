@@ -44,6 +44,7 @@ class FileUntrackedManifest(FileManifest):
         for row_number, row in enumerate(rows, start=1):
             for col_number, cell in enumerate(row.values()):
                 worksheet.write(row_number, col_number, cell)
+        worksheet.write('AD1', 'MailOrder 1.0')
         workbook.close()
         manifest.file_manifest()
         manifest.manifest_file.save(str(manifest) + '.xlsx', File(output))
