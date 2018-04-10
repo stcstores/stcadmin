@@ -48,6 +48,10 @@ new_product_urlpatterns = [
         views.ListingOptions.as_view(),
         name='new_product_listing_options'),
     path(
+        'new_product/unused_variations/',
+        views.UnusedVariations.as_view(),
+        name='new_product_unused_variations'),
+    path(
         'new_product/variation_options/',
         views.VariationOptions.as_view(),
         name='new_product_variation_options'),

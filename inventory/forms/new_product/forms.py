@@ -111,6 +111,15 @@ class BaseVariationForm(NewProductForm):
         return values
 
 
+class UnusedVariations(BaseVariationForm):
+
+    def get_fields(self):
+        self.fields['used'] = forms.BooleanField(initial=True, required=False)
+        for option_name, value in self.variation_options.items():
+            self.fields[option_name] = forms.CharField(
+                max_length=255, initial=value, widget=forms.HiddenInput())
+
+
 class VariationInfo(BaseVariationForm):
 
     def __init__(self, *args, **kwargs):
@@ -169,7 +178,11 @@ class BaseVariationFormSet(KwargFormSet):
         super().__init__(*args, **kwargs)
 
     def update_form_kwargs(self):
-        raise NotImplementedError()
+        return {}
+
+
+class UnusedVariationsFormSet(BaseVariationFormSet):
+    form = UnusedVariations
 
 
 class VariationInfoSet(BaseVariationFormSet):

@@ -1,3 +1,22 @@
+import json
+
+import cc_products
+
+
+class NewProductBase:
+    VARIATION = 'variation'
+    SINGLE = 'single'
+    NEW_PRODUCT = 'new_product_data'
+    BASIC = 'basic_info'
+    TYPE = 'type'
+    VARIATION_OPTIONS = 'variation_options'
+    UNUSED_VARIATIONS = 'unused_variations'
+    LISTING_OPTIONS = 'listing_options'
+    VARIATION_INFO = 'variation_info'
+    VARIATION_LISTING_OPTIONS = 'variation_listing_options'
+    FINISH = 'finish'
+
+
 class Page:
     def __init__(self, name, identifier, manager, url=None):
         self.name = name
@@ -20,19 +39,8 @@ class Page:
         self.manager.session.modified = True
 
 
-class NewProductManager:
+class NewProductManager(NewProductBase):
     """Access new product data stored in session."""
-
-    VARIATION = 'variation'
-    SINGLE = 'single'
-    NEW_PRODUCT = 'new_product_data'
-    BASIC = 'basic_info'
-    TYPE = 'type'
-    VARIATION_OPTIONS = 'variation_options'
-    LISTING_OPTIONS = 'listing_options'
-    VARIATION_INFO = 'variation_info'
-    VARIATION_LISTING_OPTIONS = 'variation_listing_options'
-    FINISH = 'finish'
 
     def __init__(self, request):
         self.request = request
@@ -45,6 +53,8 @@ class NewProductManager:
             'Listing Options', self.LISTING_OPTIONS, self)
         self.variation_options = Page(
             'Variation Options', self.VARIATION_OPTIONS, self)
+        self.unused_variations = Page(
+            'Unused Variations', self.UNUSED_VARIATIONS, self)
         self.variation_info = Page('Variation Info', self.VARIATION_INFO, self)
         self.variation_listing_options = Page(
             'Variation Listing Options', self.VARIATION_LISTING_OPTIONS, self)
@@ -56,8 +66,8 @@ class NewProductManager:
         self.single_product_pages = (
             self.basic_info, self.listing_options, self.finish)
         self.variation_product_pages = (
-            self.basic_info, self.variation_options, self.variation_info,
-            self.variation_listing_options, self.finish)
+            self.basic_info, self.variation_options, self.unused_variations,
+            self.variation_info, self.variation_listing_options, self.finish)
         if self.product_type == self.VARIATION:
             self.current_pages = self.variation_product_pages
         elif self.product_type == self.SINGLE:
@@ -81,3 +91,27 @@ class NewProductManager:
 
     def delete_product(self):
         self.session[self.NEW_PRODUCT] = {}
+
+    def save_json(self, outfile):
+        data = self.product_data
+        return json.dump(data, outfile, indent=4, sort_keys=True)
+
+    @property
+    def product_data(self):
+        return self.session[self.NEW_PRODUCT]
+
+    @staticmethod
+    def create_product(product_data):
+        return NewProduct(product_data)
+
+
+class NewProduct(NewProductBase):
+
+    def __new__(self, product_data):
+        self.product_data = product_data
+        title = self.product_data[self.BASIC]['title']
+        self.product_range = cc_products.create_range(title)
+        if self.product_data[self.TYPE] == self.SINGLE:
+            self.create_single_product(self.product_range)
+        elif self.product_data[self.TYPE] == self.VARIATION:
+            self.create_variation_product(self.product_range)

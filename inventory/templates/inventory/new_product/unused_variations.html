@@ -1,0 +1,44 @@
+{% extends "inventory/new_product/new_product_base.html" %}
+{% load staticfiles %}
+{% load stcadmin_extras %}
+
+{% block page_title %}Variation Options{% endblock %}
+
+{% block form %}
+{% for error in formset.non_field_errors %}
+    {{ error }}
+{% endfor %}
+{{ formset.management_form }}
+<table class="new_product">
+    <tr>
+        {% for variation_field in formset.0.variation_options %}
+        <th>{{ variation_field }}</th>
+        {% endfor %}
+        {% for field in formset.0.visible_fields %}
+        <th class="field_cell {{ field.name }}">{{ field.label }}</th>
+        {% endfor %}
+    </tr>
+    {% for form in formset %}
+    <tr>
+        {% for name, value in form.variation_options.items %}
+        <th>{{ value }}</th>
+        {% endfor %}
+        {% for field in form.visible_fields %}
+        <td class="field_cell {{ field.name }}">{{ field }}</td>
+        {% if field.errors %}
+            <td class="error field_cell {{ field.name }}">{{ field.errors }}</td>
+        {% endif %}
+        {% endfor %}
+        {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+    {% endfor %}
+    </tr>
+    <th colspan="{{ formset.0.variation_options | length | add:"1" }}">
+        <button name="back">Back</button>
+        <button name="continue">Continue</button>
+    </th>
+</table>
+{% endblock %}
+
+{% block formside %}
+    <p>Uncheck variations that do not exist.</p>
+{% endblock %}

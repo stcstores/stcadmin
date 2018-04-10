@@ -79,7 +79,7 @@ class VariationOptions(BaseNewProductView):
         if 'back' in self.request.POST:
             return redirect(self.manager.basic_info.url)
         else:
-            return redirect(self.manager.variation_info.url)
+            return redirect(self.manager.unused_variations.url)
 
 
 class ListingOptions(BaseNewProductView):
@@ -124,9 +124,10 @@ class BaseVariationProductView(BaseNewProductView):
         return kwargs
 
     def get_variation_combinations(self, variation_options):
-        return list(
-            dict(zip(variation_options, x)) for x in
-            itertools.product(*variation_options.values()))
+        combinations = [
+            {k: v for k, v in d.items() if k != 'used'}
+            for d in self.manager.unused_variations.data if d['used']]
+        return combinations
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -161,6 +162,32 @@ class BaseVariationProductView(BaseNewProductView):
         raise NotImplementedError()
 
 
+class UnusedVariations(BaseVariationProductView):
+
+    template_name = 'inventory/new_product/unused_variations.html'
+    form_class = forms.UnusedVariationsFormSet
+
+    def get_variation_combinations(self, variation_options):
+        return list(
+            dict(zip(variation_options, x)) for x in
+            itertools.product(*variation_options.values()))
+
+    def get_initial(self, *args, **kwargs):
+        return self.get_variation_combinations(self.get_variation_options())
+
+    def _get_back_url(self):
+        return self.manager.variation_options.url
+
+    def _get_continue_url(self):
+        return self.manager.variation_info.url
+
+    def _get_existing_data(self):
+        return self.manager.unused_variations.data
+
+    def _save_form_data(self, data):
+        self.manager.unused_variations.data = data
+
+
 class VariationInfo(BaseVariationProductView):
     """View for the Variation Info page of the new product form."""
 
@@ -174,7 +201,7 @@ class VariationInfo(BaseVariationProductView):
         return initial
 
     def _get_back_url(self):
-        return self.manager.variation_options.url
+        return self.manager.unused_variations.url
 
     def _get_continue_url(self):
         return self.manager.variation_listing_options.url
