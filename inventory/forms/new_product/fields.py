@@ -335,7 +335,7 @@ class OptionField:
         if self.label in self.allowed_characters:
             allowed_characters += self.allowed_characters[self.label]
         for char in value:
-            if not char.isalnum():
+            if not char.isalnum() and not char == ' ':
                 if char not in allowed_characters:
                     raise ValidationError(
                         error_message.format(char, self.label))
@@ -428,13 +428,13 @@ class ListOption(fieldtypes.FormField, ListInput):
             return json.dumps([])
         if value[0] == '[':
             return value
-        return json.dumps(value.split(self.separator))
+        return json.dumps(value)
 
     def clean(self, value):
         if value is None:
             return []
         value = json.loads(value)
-        return self.separator.join(value)
+        return value
 
 
 class AmazonBulletPoints(ListOption):

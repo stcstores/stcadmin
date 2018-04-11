@@ -2,6 +2,8 @@ import json
 
 import cc_products
 
+from inventory import models
+
 
 class NewProductBase:
     VARIATION = 'variation'
@@ -100,18 +102,91 @@ class NewProductManager(NewProductBase):
     def product_data(self):
         return self.session[self.NEW_PRODUCT]
 
-    @staticmethod
-    def create_product(product_data):
-        return NewProduct(product_data)
+    def create_product(self):
+        return NewProduct(self.product_data)
 
 
 class NewProduct(NewProductBase):
+
+    BARCODE = 'barcode'
+    DESCRIPTION = 'description'
+    PRICE = 'price'
+    VAT_RATE = 'vat_rate'
+    EX_VAT = 'ex_vat'
+    DEPARTMENT = 'department'
+    BAYS = 'bays'
+    PURCHASE_PRICE = 'purchase_price'
+    STOCK_LEVEL = 'stock_level'
+    SUPPLIER = 'supplier'
+    SUPPLIER_SKU = 'supplier_sku'
+    WEIGHT = 'weight'
+    HEIGHT = 'height'
+    WIDTH = 'width'
+    LENGTH = 'length'
+    PACKAGE_TYPE = 'package_type'
+    BRAND = 'brand'
+    MANUFACTURER = 'manufacturer'
+    GENDER = 'gender'
+    AMAZON_BULLET_POINTS = 'amazon_bullet_points'
+    AMAZON_SEARCH_TERMS = 'amazon_search_terms'
 
     def __new__(self, product_data):
         self.product_data = product_data
         title = self.product_data[self.BASIC]['title']
         self.product_range = cc_products.create_range(title)
         if self.product_data[self.TYPE] == self.SINGLE:
-            self.create_single_product(self.product_range)
+            self.create_single_product(self)
         elif self.product_data[self.TYPE] == self.VARIATION:
             self.create_variation_product(self.product_range)
+        return self.product_range.id
+
+    def create_single_product(self):
+        basic_data = self.product_data[self.BASIC]
+        option_data = self.product_data[self.LISTING_OPTIONS]
+        basic_fields = (
+            self.BARCODE, self.DESCRIPTION, self.PURCHASE_PRICE,
+            self.STOCK_LEVEL, self.SUPPLIER, self.SUPPLIER_SKU, self.WEIGHT,
+            self.HEIGHT, self.WIDTH, self.LENGTH, self.PACKAGE_TYPE,
+            self.BRAND, self.MANUFACTURER, self.GENDER,
+            self.AMAZON_BULLET_POINTS, self.AMAZON_SEARCH_TERMS)
+        data = {
+            field: basic_data[field] for field in basic_fields}
+        data[self.VAT_RATE] = basic_data[self.PRICE][self.VAT_RATE]
+        data[self.PRICE] = basic_data[self.PRICE][self.EX_VAT]
+        data[self.DEPARTMENT] = models.Warehouse.objects.get(
+            warehouse_id=basic_data[self.DEPARTMENT][self.DEPARTMENT]).name
+        data[self.BAYS] = basic_data[self.DEPARTMENT][self.BAYS]
+        if not data[self.BARCODE]:
+            data[self.BARCODE] = '99999999999'
+        data['options'] = {k: v for k, v in option_data.items() if v}
+        self.add_variation(self, **data)
+
+    def add_variation(self, **kwargs):
+        product = self.product_range.add_product(
+            kwargs[self.BARCODE], kwargs[self.DESCRIPTION],
+            kwargs[self.VAT_RATE])
+        product.handling_time = 1
+        product.department = kwargs[self.DEPARTMENT]
+        product.bays = kwargs[self.BAYS]
+        product.price = kwargs[self.PRICE]
+        product.purchase_price = kwargs[self.PURCHASE_PRICE]
+        product.stock_level = kwargs[self.STOCK_LEVEL]
+        product.supplier = kwargs[self.SUPPLIER]
+        product.weight = kwargs[self.WEIGHT]
+        product.height = kwargs[self.HEIGHT]
+        product.height = kwargs[self.HEIGHT]
+        product.width = kwargs[self.WIDTH]
+        product.length = kwargs[self.LENGTH]
+        product.package_type = kwargs[self.PACKAGE_TYPE]
+        product.brand = kwargs[self.BRAND]
+        product.manufacturer = kwargs[self.MANUFACTURER]
+        if kwargs[self.SUPPLIER_SKU]:
+            product.supplier_sku = kwargs[self.SUPPLIER_SKU]
+        if kwargs[self.GENDER]:
+            product.gender = kwargs[self.GENDER]
+        if kwargs[self.AMAZON_BULLET_POINTS]:
+            product.amazon_bullets = kwargs[self.AMAZON_BULLET_POINTS]
+        if kwargs[self.AMAZON_SEARCH_TERMS]:
+            product.amazon_search_terms = kwargs[self.AMAZON_SEARCH_TERMS]
+        for option_name, option_value in kwargs['options'].items():
+            product.options[option_name] = option_value

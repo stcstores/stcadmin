@@ -244,4 +244,5 @@ class FinishProduct(BaseNewProductView):
         path = os.path.join(dir, 'new_product.json')
         with open(path, 'w') as f:
             self.manager.save_json(f)
-        return redirect(self.manager.basic_info.url)
+        range_id = self.manager.create_product()
+        return redirect('inventory:product_range', range_id)

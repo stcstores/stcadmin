@@ -3,7 +3,7 @@ from django import forms
 
 from stcadmin.forms import KwargFormSet
 
-from . import fields, fieldtypes
+from . import fields
 
 
 class NewProductForm(forms.Form):
@@ -24,8 +24,8 @@ class BasicInfo(NewProductForm):
         self.fields['supplier_sku'] = fields.SupplierSKU()
         self.fields['weight'] = fields.Weight()
         self.fields['height'] = fields.Height()
-        self.fields['width'] = fields.Width()
         self.fields['length'] = fields.Length()
+        self.fields['width'] = fields.Width()
         self.fields['package_type'] = fields.PackageType()
         self.fields['brand'] = fields.Brand()
         self.fields['manufacturer'] = fields.Manufacturer()
