@@ -1,4 +1,5 @@
 import json
+import threading
 
 import cc_products
 
@@ -142,11 +143,18 @@ class NewProduct(NewProductBase):
         self.product_data = product_data
         title = self.product_data[self.BASIC]['title']
         self.product_range = cc_products.create_range(title)
+        self.product_range.options['Incomplete'].selected = True
+        t = threading.Thread(target=self.create_product, args=[self])
+        t.setDaemon(True)
+        t.start()
+        return self.product_range.id
+
+    def create_product(self):
         if self.product_data[self.TYPE] == self.SINGLE:
             self.create_single_product(self)
         elif self.product_data[self.TYPE] == self.VARIATION:
             self.create_variation_product(self)
-        return self.product_range.id
+        self.product_range.options['Incomplete'].selected = False
 
     def create_single_product(self):
         data = self.sanitize_basic_data(self, self.product_data[self.BASIC])
