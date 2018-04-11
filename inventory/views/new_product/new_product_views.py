@@ -107,27 +107,17 @@ class ListingOptions(BaseNewProductView):
 class BaseVariationProductView(BaseNewProductView):
     """Base class for variation pages of the new product form."""
 
-    def get_variation_options(self):
-        variation_options = self.manager.variation_options.data
-        return {
-            key: value for key, value in variation_options.items()
-            if len(value) > 0}
-
     def get_form_kwargs(self, *args, **kwargs):
         kwargs = super().get_form_kwargs(*args, **kwargs)
         existing_data = self._get_existing_data()
         kwargs['form_kwargs'] = [{
             'existing_data': existing_data,
             'variation_options': v,
-            } for v in self.get_variation_combinations(
-                self.get_variation_options())]
+            } for v in self.get_variation_combinations()]
         return kwargs
 
-    def get_variation_combinations(self, variation_options):
-        combinations = [
-            {k: v for k, v in d.items() if k != 'used'}
-            for d in self.manager.unused_variations.data if d['used']]
-        return combinations
+    def get_variation_combinations(self):
+        return self.manager.variations
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -167,13 +157,20 @@ class UnusedVariations(BaseVariationProductView):
     template_name = 'inventory/new_product/unused_variations.html'
     form_class = forms.UnusedVariationsFormSet
 
-    def get_variation_combinations(self, variation_options):
+    def get_variation_combinations(self):
+        variation_options = self.get_variation_options()
         return list(
             dict(zip(variation_options, x)) for x in
             itertools.product(*variation_options.values()))
 
+    def get_variation_options(self):
+        variation_options = self.manager.variation_options.data
+        return {
+            key: value for key, value in variation_options.items()
+            if len(value) > 0}
+
     def get_initial(self, *args, **kwargs):
-        return self.get_variation_combinations(self.get_variation_options())
+        return self.get_variation_combinations()
 
     def _get_back_url(self):
         return self.manager.variation_options.url
@@ -195,7 +192,7 @@ class VariationInfo(BaseVariationProductView):
     form_class = forms.VariationInfoSet
 
     def get_initial(self, *args, **kwargs):
-        initial = self.get_variation_combinations(self.get_variation_options())
+        initial = self.get_variation_combinations()
         for init in initial:
             init.update(self.manager.basic_info.data)
         return initial
@@ -220,7 +217,7 @@ class VariationListingOptions(BaseVariationProductView):
     form_class = forms.VariationListingOptionsSet
 
     def get_initial(self, *args, **kwargs):
-        initial = self.get_variation_combinations(self.get_variation_options())
+        initial = self.get_variation_combinations()
         return initial
 
     def _get_back_url(self):

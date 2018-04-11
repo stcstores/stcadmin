@@ -85,6 +85,13 @@ class NewProductManager(NewProductBase):
         else:
             return None
 
+    @property
+    def variations(self):
+        combinations = [
+            {k: v for k, v in d.items() if k != 'used'}
+            for d in self.unused_variations.data if d['used']]
+        return combinations
+
     @product_type.setter
     def product_type(self, product_type):
         product_data = self.session.get(self.NEW_PRODUCT, None)
@@ -129,6 +136,7 @@ class NewProduct(NewProductBase):
     GENDER = 'gender'
     AMAZON_BULLET_POINTS = 'amazon_bullet_points'
     AMAZON_SEARCH_TERMS = 'amazon_search_terms'
+    OPTIONS = 'options'
 
     def __new__(self, product_data):
         self.product_data = product_data
@@ -137,29 +145,71 @@ class NewProduct(NewProductBase):
         if self.product_data[self.TYPE] == self.SINGLE:
             self.create_single_product(self)
         elif self.product_data[self.TYPE] == self.VARIATION:
-            self.create_variation_product(self.product_range)
+            self.create_variation_product(self)
         return self.product_range.id
 
     def create_single_product(self):
-        basic_data = self.product_data[self.BASIC]
+        data = self.sanitize_basic_data(self, self.product_data[self.BASIC])
         option_data = self.product_data[self.LISTING_OPTIONS]
+        data[self.OPTIONS] = {k: v for k, v in option_data.items() if v}
+        self.add_variation(self, **data)
+
+    def sanitize_basic_data(self, basic_data):
         basic_fields = (
-            self.BARCODE, self.DESCRIPTION, self.PURCHASE_PRICE,
-            self.STOCK_LEVEL, self.SUPPLIER, self.SUPPLIER_SKU, self.WEIGHT,
-            self.HEIGHT, self.WIDTH, self.LENGTH, self.PACKAGE_TYPE,
-            self.BRAND, self.MANUFACTURER, self.GENDER,
-            self.AMAZON_BULLET_POINTS, self.AMAZON_SEARCH_TERMS)
+            self.BARCODE, self.PURCHASE_PRICE, self.STOCK_LEVEL,
+            self.SUPPLIER, self.SUPPLIER_SKU, self.WEIGHT, self.HEIGHT,
+            self.WIDTH, self.LENGTH, self.PACKAGE_TYPE, self.BRAND,
+            self.MANUFACTURER, self.GENDER)
+        universal_fields = (
+            self.DESCRIPTION, self.AMAZON_BULLET_POINTS,
+            self.AMAZON_SEARCH_TERMS)
         data = {
             field: basic_data[field] for field in basic_fields}
+        for key in universal_fields:
+            data[key] = self.product_data[self.BASIC][key]
         data[self.VAT_RATE] = basic_data[self.PRICE][self.VAT_RATE]
         data[self.PRICE] = basic_data[self.PRICE][self.EX_VAT]
         data[self.DEPARTMENT] = models.Warehouse.objects.get(
             warehouse_id=basic_data[self.DEPARTMENT][self.DEPARTMENT]).name
         data[self.BAYS] = basic_data[self.DEPARTMENT][self.BAYS]
         if not data[self.BARCODE]:
-            data[self.BARCODE] = '99999999999'
-        data['options'] = {k: v for k, v in option_data.items() if v}
-        self.add_variation(self, **data)
+            data[self.BARCODE] = '99999999999'  # Get from database.
+        return data
+
+    def create_variation_product(self):
+        variations = [
+            {k: v for k, v in d.items() if k != 'used'}
+            for d in self.product_data[self.UNUSED_VARIATIONS] if d['used']]
+        if not all([var.keys() == variations[0].keys() for var in variations]):
+            raise Exception('Non matching variation keys.')
+        for variation in variations:
+            data = self.get_variation_data(self, variation)
+            option_data = self.get_variation_option_data(self, variation)
+            data[self.OPTIONS] = {k: v for k, v in variation.items()}
+            data[self.OPTIONS].update(
+                {k: v for k, v in option_data.items() if v})
+            self.add_variation(self, **data)
+        for key in variations[0]:
+            self.product_range.options[key].variable = True
+
+    def get_variation_data(self, variation):
+        variation_infos = self.product_data[self.VARIATION_INFO]
+        for info in variation_infos:
+            if all([key in info for key in variation]):
+                if all([info[k] == v for k, v in variation.items()]):
+                    break
+        else:
+            raise Exception('Variation not found.')
+        data = self.sanitize_basic_data(self, info)
+        return data
+
+    def get_variation_option_data(self, variation):
+        all_option_data = self.product_data[self.VARIATION_LISTING_OPTIONS]
+        for data in all_option_data:
+            if all([key in data for key in variation]):
+                if all([data[k] == v for k, v in variation.items()]):
+                    return data
+        raise Exception('Option data not found.')
 
     def add_variation(self, **kwargs):
         product = self.product_range.add_product(
@@ -188,5 +238,5 @@ class NewProduct(NewProductBase):
             product.amazon_bullets = kwargs[self.AMAZON_BULLET_POINTS]
         if kwargs[self.AMAZON_SEARCH_TERMS]:
             product.amazon_search_terms = kwargs[self.AMAZON_SEARCH_TERMS]
-        for option_name, option_value in kwargs['options'].items():
+        for option_name, option_value in kwargs[self.OPTIONS].items():
             product.options[option_name] = option_value
