@@ -6,11 +6,11 @@ from stcadmin.forms import KwargFormSet
 
 
 class DepartmentForm(forms.Form):
-    department = Department()
 
     def __init__(self, *args, **kwargs):
         self.product_range = kwargs.pop('product_range')
         super().__init__(*args, **kwargs)
+        self.fields.department = Department()
         self.initial.update(self.get_initial())
 
     def get_initial(self):
@@ -42,12 +42,12 @@ class LocationsForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={'size': 200, 'class': 'product_title'}))
     stock_level = forms.CharField(required=False)
-    locations = Location()
 
     def __init__(self, *args, **kwargs):
         self.product = kwargs.pop('product')
         super().__init__(*args, **kwargs)
         self.initial.update(self.get_initial())
+        self.fields['location'] = Location()
 
     def get_initial(self):
         initial = {}

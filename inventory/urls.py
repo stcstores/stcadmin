@@ -37,6 +37,9 @@ inventory_urlpatterns = [
         views.PrintBarcodeLabels.as_view(), name='print_barcodes'),
     path(
         'barcode_pdf/', views.BarcodePDF.as_view(), name='barcode_pdf'),
+    path(
+        'create_warehouse_bay/',
+        views.CreateBayView.as_view(), name='create_warehouse_bay'),
 ]
 
 new_product_urlpatterns = [

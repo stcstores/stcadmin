@@ -28,9 +28,9 @@ class BarcodeAdmin(admin.ModelAdmin):
 
 @admin.register(models.Warehouse)
 class WarehouseAdmin(admin.ModelAdmin):
-    fields = ('warehouse_id', 'name')
-    list_display = ('warehouse_id', 'name')
-    search_fields = ('name', )
+    fields = ('warehouse_id', 'name', 'abriviation')
+    list_display = ('warehouse_id', 'name', 'abriviation')
+    search_fields = ('name', 'abriviation')
 
 
 @admin.register(models.Bay)

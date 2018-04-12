@@ -10,6 +10,7 @@ class UsedWarehouseManager(models.Manager):
 class Warehouse(models.Model):
     warehouse_id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
+    abriviation = models.CharField(max_length=4, null=True, blank=True)
 
     objects = models.Manager()
     used_warehouses = UsedWarehouseManager()

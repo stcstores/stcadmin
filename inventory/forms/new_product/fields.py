@@ -70,10 +70,12 @@ class Department(fieldtypes.SingleSelectize):
 
     def clean(self, value):
         value = super().clean(value)
+        if self.required is False and value == '':
+            return None
         try:
             department = models.Warehouse.used_warehouses.get(
                 warehouse_id=int(value)).name
-        except models.DoesNotExist:
+        except models.Warehouse.DoesNotExist:
             raise forms.ValidationError('Deparment not recognised')
         return department
 
