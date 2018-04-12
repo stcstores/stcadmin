@@ -1,5 +1,6 @@
 import cc_products
 from django import forms
+
 from inventory import models
 from inventory.forms.new_product.fields import Department, Location
 from stcadmin.forms import KwargFormSet
@@ -10,7 +11,7 @@ class DepartmentForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.product_range = kwargs.pop('product_range')
         super().__init__(*args, **kwargs)
-        self.fields.department = Department()
+        self.fields['department'] = Department()
         self.initial.update(self.get_initial())
 
     def get_initial(self):
@@ -46,8 +47,8 @@ class LocationsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.product = kwargs.pop('product')
         super().__init__(*args, **kwargs)
+        self.fields['locations'] = Location()
         self.initial.update(self.get_initial())
-        self.fields['location'] = Location()
 
     def get_initial(self):
         initial = {}
