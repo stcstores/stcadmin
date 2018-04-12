@@ -40,6 +40,9 @@ inventory_urlpatterns = [
     path(
         'create_warehouse_bay/',
         views.CreateBayView.as_view(), name='create_warehouse_bay'),
+    path(
+        'create_supplier/',
+        views.CreateSupplierView.as_view(), name='create_supplier')
 ]
 
 new_product_urlpatterns = [

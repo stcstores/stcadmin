@@ -22,6 +22,23 @@ class DescriptionForm(forms.Form):
     search_terms = fields.AmazonSearchTerms()
 
 
+class CreateSupplierForm(forms.Form):
+    supplier_name = forms.CharField(max_length=255)
+    SUPPLIER_OPTION_ID = 35131
+
+    def clean(self):
+        cleaned_data = super().clean()
+        factories = CCAPI.get_factories()
+        factory_names = [f.name for f in factories]
+        if cleaned_data['supplier_name'] in factory_names:
+            self.add_error('supplier_name', 'Supplier already exists.')
+
+    def save(self):
+        name = self.cleaned_data['supplier_name']
+        CCAPI.create_factory(name)
+        CCAPI.get_option_value_id(self.SUPPLIER_OPTION_ID, name, create=True)
+
+
 class CreateBayForm(forms.Form):
     BACKUP = 'backup'
     PRIMARY = 'primary'
