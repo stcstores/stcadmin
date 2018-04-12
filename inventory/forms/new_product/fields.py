@@ -308,8 +308,8 @@ class DepartmentBayField(forms.MultiValueField):
         value = super().clean(value)
         warehouse = models.Warehouse.used_warehouses.get(
             name=value['department'])
+        value['department'] = warehouse.id
         if len(value['bays']) == 0:
-            value['department'] = warehouse.warehouse_id
             value['bays'] = [warehouse.default_bay.id]
         return value
 
