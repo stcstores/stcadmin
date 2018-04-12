@@ -1,4 +1,5 @@
 import cc_products
+from ccapi import CCAPI
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
@@ -18,13 +19,18 @@ class ProductView(InventoryUserMixin, FormView):
         self.product_range = self.product.product_range
         self.option_names = [
             o.name for o in self.product_range.options.selected_options]
+        self.option_data = CCAPI.get_product_options()
+        self.options = {
+            option.option_name: [value.value for value in option]
+            for option in self.option_data if option.option_name in
+            self.option_names}
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['product'] = self.product
         kwargs['product_range'] = self.product_range
-        kwargs['option_names'] = self.option_names
+        kwargs['options'] = self.options
         return kwargs
 
     def form_valid(self, form):
