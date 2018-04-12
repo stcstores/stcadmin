@@ -3,7 +3,6 @@ from django import forms
 from inventory import models
 
 from .new_product import fields
-from .new_product.fieldtypes import option_field_factory
 
 
 class ProductForm(forms.Form):
@@ -33,7 +32,7 @@ class ProductForm(forms.Form):
         self.fields['supplier'] = fields.Supplier()
         self.fields['supplier_sku'] = fields.SupplierSKU()
         for option in self.option_names:
-            self.fields['opt_' + option] = option_field_factory(option)()
+            self.fields['opt_' + option] = fields.ListingOption(option)
         self.initial = self.get_initial()
 
     def get_initial(self):

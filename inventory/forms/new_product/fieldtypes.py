@@ -2,7 +2,6 @@ from inspect import isclass
 
 from django import forms
 from django.core.exceptions import ValidationError
-from list_input import ListInput
 
 from inventory.forms import widgets
 
@@ -247,100 +246,3 @@ class VATPriceField(forms.MultiValueField):
         return {
             'vat_rate': vat_rate, 'ex_vat': ex_vat_price,
             'with_vat_price': with_vat_price}
-
-
-class OptionField(TextField):
-
-    required = False
-    variable = True
-    variation = True
-    must_vary = False
-    size = 50
-    help_text = (
-        'This option is only used to add information to the listing and must '
-        '<b>only</b> be filled out if it is applicable to the product')
-
-    def __init__(self, *args, **kwargs):
-        kwargs['label'] = self.option
-        self.validators = [Validators.option_value(self)]
-        super().__init__(*args, **kwargs)
-
-    def clean(self, value):
-        return str(super().clean(value)).strip()
-
-
-class OptionSettingField(forms.MultiValueField):
-    required = False
-
-    def __init__(self, *args, **kwargs):
-        kwargs['label'] = self.option
-        kwargs['initial'] = ('unused', [], '')
-        fields = (
-            forms.ChoiceField(
-                required=False,
-                choices=widgets.OptionSettingsFieldWidget.radio_choices),
-            ListInput(minimum=0, required=False),
-            forms.CharField(
-                required=False))
-        kwargs['widget'] = widgets.OptionSettingsFieldWidget(None)
-        super().__init__(
-            fields=fields, require_all_fields=False, *args, **kwargs)
-
-    def clean(self, value):
-        clean_data = []
-        for i, field in enumerate(self.fields):
-            field_value = value[i]
-            clean_data.append(field.clean(field_value))
-        out = self.compress(clean_data)
-        self.validate(out)
-        self.run_validators(out)
-        return out
-
-    def compress(self, data_list):
-        use = data_list[0]
-        multi_value = data_list[1]
-        single_value = data_list[2]
-        if use == 'unused':
-            return (use, '')
-        if use == 'single':
-            Validators.option_value(self)(single_value)
-            return (use, single_value)
-        if use == 'variable':
-            Validators.option_value(self)(single_value)
-            return (use, single_value)
-        if use == 'variation':
-            for value in multi_value:
-                Validators.option_value(self)(value)
-            return (use, multi_value)
-
-
-class VariationOptionValueField(ListInput):
-
-    initial = ''
-    minimum = 2
-
-    def __init__(self, *args, **kwargs):
-        kwargs['label'] = self.option
-        kwargs['initial'] = ''
-        super().__init__(*args, **kwargs)
-
-
-def option_field_factory(option):
-    return type(
-        '{}OptionField'.format(option),
-        (OptionField, ),
-        {'option': option, 'name': 'opt_{}'.format(option), 'label': option})
-
-
-def option_selection_field_factory(option):
-    return type(
-        '{}OptionSettingField'.format(option),
-        (OptionSettingField, ),
-        {'option': option, 'name': 'opt_{}'.format(option), 'label': option})
-
-
-def variation_option_value_field_factory(option):
-    return type(
-        '{}VariationOptionValueField'.format(option),
-        (VariationOptionValueField, ),
-        {'option': option, 'name': 'opt_{}'.format(option), 'label': option})
