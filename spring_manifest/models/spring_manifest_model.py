@@ -21,7 +21,10 @@ class SpringManifest(models.Model):
 
     TRACKED = 'T'
     UNTRACKED = 'U'
-    MANIFEST_TYPE_CHOICES = ((TRACKED, 'Tracked'), (UNTRACKED, 'Untracked'))
+    SECURED_MAIL = 'S'
+    MANIFEST_TYPE_CHOICES = (
+        (TRACKED, 'Tracked'), (UNTRACKED, 'Untracked'),
+        (SECURED_MAIL, 'Secure Mail'))
 
     UNFILED = 'unfiled'
     IN_PROGRESS = 'in_progress'

@@ -9,6 +9,7 @@ from spring_manifest.views import SpringUserMixin
 
 from .tracked import FileTrackedManifest
 from .untracked import FileUntrackedManifest
+from .securedmail import FileSecuredMailManifest
 
 
 def file_manifest(manifest):
@@ -16,6 +17,8 @@ def file_manifest(manifest):
         FileUntrackedManifest(manifest)
     elif manifest.manifest_type == manifest.TRACKED:
         FileTrackedManifest(manifest)
+    elif manifest.manifest_type == manifest.SECURED_MAIL:
+        FileSecuredMailManifest(manifest)
     else:
         raise Exception(
             'Unknown manifest type {} for manifest {}'.format(

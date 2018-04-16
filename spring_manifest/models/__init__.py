@@ -58,6 +58,7 @@ def create_order(cc_order, service):
 @transaction.atomic
 def update_spring_orders(number_of_days=1):
     for service, rule_ids in SPRING_COURIER_RULES.items():
+        print(service)
         if not (rule_ids):
             continue
         for rule_id in rule_ids:

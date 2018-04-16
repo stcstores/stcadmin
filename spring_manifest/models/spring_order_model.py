@@ -58,15 +58,21 @@ class SpringOrder(models.Model):
     PARCEL = 'PAR'
     TRACKED = 'PAT'
     SIGNED = 'PAP'
+    SM_INT_UNTRACKED = 'SMIU'
+    SM_INT_TRACKED = 'SMIT'
     SERVICE_CHOICES = (
-        (PARCEL, 'Parcel'), (PACKET, 'Packet'), (TRACKED, 'Tracked'),
-        (SIGNED, 'Signed'))
+        (PARCEL, 'Spring Parcel'), (PACKET, 'Spring Packet'),
+        (TRACKED, 'Spring Tracked'), (SIGNED, 'Spring Signed'),
+        (SM_INT_UNTRACKED, 'Secure Mail International Untracked'),
+        (SM_INT_TRACKED, 'Secure Mail International Tracked'))
 
     MANIFEST_SELECTION = {
         PACKET: SpringManifest.UNTRACKED,
         PARCEL: SpringManifest.TRACKED,
         TRACKED: SpringManifest.TRACKED,
         SIGNED: SpringManifest.TRACKED,
+        SM_INT_TRACKED: SpringManifest.SECURED_MAIL,
+        SM_INT_UNTRACKED: SpringManifest.SECURED_MAIL,
     }
 
     order_id = models.CharField(max_length=10, unique=True)
