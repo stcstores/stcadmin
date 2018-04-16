@@ -7,6 +7,7 @@ from django.shortcuts import redirect
 from django.views.generic.edit import FormView, View
 
 from inventory import forms
+from stcadmin import settings
 
 from ..views import InventoryUserMixin
 from .new_product_manager import NewProductManager
@@ -234,12 +235,20 @@ class VariationListingOptions(BaseVariationProductView):
 
 
 class FinishProduct(BaseNewProductView):
+    product_log_directory = os.path.join(
+        settings.MEDIA_ROOT, 'logs', 'products')
 
     def dispatch(self, *args, **kwargs):
         self.manager = NewProductManager(args[0])
-        dir = os.path.expanduser('~')
-        path = os.path.join(dir, 'new_product.json')
+        dir = os.path.join(self.product_log_directory, str(args[0].user.id))
+        if not os.path.exists(dir):
+            os.mkdir(dir)
+        path = os.path.join(
+            dir, '{}.json'.format(self.manager.basic_info.data['title']))
+        most_recent = os.path.join(dir, 'most_recent.json')
         with open(path, 'w') as f:
+            self.manager.save_json(f)
+        with open(most_recent, 'w') as f:
             self.manager.save_json(f)
         range_id = self.manager.create_product()
         return redirect('inventory:product_range', range_id)
