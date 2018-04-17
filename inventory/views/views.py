@@ -33,10 +33,10 @@ class CreateSupplierView(InventoryUserMixin, FormView):
 
 class CreateBayView(InventoryUserMixin, FormView):
     form_class = forms.CreateBayForm
-    template_name = 'inventory/new_bay.html'
+    template_name = 'inventory/create_warehouse_bay.html'
 
     def form_valid(self, form):
         form.save()
         messages.add_message(
             self.request, messages.SUCCESS, 'Created bay {}'.format(form.bay))
-        return redirect('inventory:new_bay')
+        return redirect('inventory:create_warehouse_bay')
