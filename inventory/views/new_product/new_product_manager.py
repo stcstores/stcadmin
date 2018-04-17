@@ -181,7 +181,7 @@ class NewProduct(NewProductBase):
             warehouse_id=basic_data[self.DEPARTMENT][self.DEPARTMENT]).name
         data[self.BAYS] = basic_data[self.DEPARTMENT][self.BAYS]
         if not data[self.BARCODE]:
-            data[self.BARCODE] = '99999999999'  # Get from database.
+            data[self.BARCODE] = models.get_barcode()
         return data
 
     def create_variation_product(self):
