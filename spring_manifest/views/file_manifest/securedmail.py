@@ -101,7 +101,7 @@ class FileSecuredMailManifest(FileManifest):
                 ('Town', address.town_city),
                 ('Country', ''),
                 ('Postcode', address.post_code or ' '),
-                ('Item Description', '\n'.join(description)),
+                ('Item Description', ', '.join(description)),
                 ('Item Quantity', quantity),
                 ('Item Value', price),
                 ('Weight', weight),
@@ -124,16 +124,14 @@ class FileSecuredMailManifest(FileManifest):
         for product in order.products:
             price += float(product.price) * product.quantity
         if currency_code is None:
-            return price
-        return self.convert_to_GBP(currency_code, price)
+            return int(price)
+        return int(self.convert_to_GBP(currency_code, price))
 
     def get_date_string(self):
         return datetime.datetime.now().strftime('%Y-%m-%d')
 
     def get_product_weight(self, product):
-        weight_g = product.per_item_weight * product.quantity
-        weight_kg = weight_g / 1000
-        return round(weight_kg, 1)
+        return int(product.per_item_weight * product.quantity)
 
     def add_success_messages(self, manifest):
         orders = manifest.springorder_set.all()
