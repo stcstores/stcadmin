@@ -1,3 +1,7 @@
 {% extends "inventory/new_product/variation_base.html" %}
 
 {% block page_title %}Variation Info{% endblock %}
+
+{% block pre_form %}{{ block.super }}
+<p>Use the buttons above to select information to change for each variation.</p>
+{% endblock %}
