@@ -18,7 +18,7 @@ class Title(fieldtypes.TextField):
     name = 'title'
     required_message = "Please supply a range title"
     placeholder = 'Title'
-    validators = [Validators.limit_characters('%')]
+    validators = [Validators.limit_characters(('%', "'"))]
     help_text = 'The title for the <b>Product</b>.'
 
 
@@ -424,13 +424,6 @@ class ListOption(fieldtypes.FormField, ListInput):
 
     separator = '|'
     disallowed_characters = [separator]
-
-    def prepare_value(self, value):
-        if value is None or value == '':
-            return json.dumps([])
-        if value[0] == '[':
-            return value
-        return json.dumps(value)
 
     def clean(self, value):
         if value is None:
