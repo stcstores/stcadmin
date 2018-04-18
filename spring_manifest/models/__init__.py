@@ -1,5 +1,6 @@
 from . cloud_commerce_country_id import CloudCommerceCountryID  # NOQA
 from . destination_zone_model import DestinationZone  # NOQA
+from . secured_mail_destination_model import SecuredMailDestination  # NOQA
 from . spring_manifest_model import SpringManifest  # NOQA
 from . spring_order_model import SpringOrder  # NOQA
 from . spring_package_model import SpringPackage  # NOQA

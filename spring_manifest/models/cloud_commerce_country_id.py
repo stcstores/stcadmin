@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Q
 
 from .destination_zone_model import DestinationZone
+from .secured_mail_destination_model import SecuredMailDestination
 
 
 class IncompleteCountryManager(models.Manager):
@@ -20,6 +21,9 @@ class CloudCommerceCountryID(models.Model):
         max_length=3, blank=True, null=True, verbose_name='ISO Code')
     zone = models.ForeignKey(
         DestinationZone, blank=True, null=True, on_delete=models.SET_NULL)
+    secured_mail_destination = models.ForeignKey(
+        SecuredMailDestination, blank=True, null=True,
+        on_delete=models.SET_NULL)
     valid_spring_destination = models.BooleanField(
         default=True, verbose_name='Valid Spring Destination')
     currency_code = models.CharField(max_length=4, blank=True, null=True)

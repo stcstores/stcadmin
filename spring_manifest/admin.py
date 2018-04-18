@@ -18,16 +18,16 @@ class DestinationZoneAdmin(admin.ModelAdmin):
 class CloudCommerceCountryIDAdmin(admin.ModelAdmin):
     fields = (
         'cc_id', 'name', 'iso_code', 'zone', 'currency_code',
-        'valid_spring_destination')
+        'valid_spring_destination', 'secured_mail_destination')
     list_display = (
         'cc_id', 'name', 'iso_code', 'zone', 'currency_code',
-        'valid_spring_destination')
+        'valid_spring_destination', 'secured_mail_destination')
     list_display_links = ('cc_id', )
     list_editable = (
         'name', 'iso_code', 'zone', 'currency_code',
-        'valid_spring_destination')
-    search_fields = ('name', )
-    list_filter = ('zone', )
+        'valid_spring_destination', 'secured_mail_destination')
+    search_fields = ('name', 'secured_mail_destination__name')
+    list_filter = ('zone', 'secured_mail_destination__name')
 
     def __repr__(self):
         return str(self.name)
@@ -72,3 +72,10 @@ class SpringPackageAdmin(admin.ModelAdmin):
 class SpringItemAdmin(admin.ModelAdmin):
     fields = ('package', 'item_id', 'quantity')
     list_display = ('__str__', 'package', 'item_id', 'quantity')
+
+
+@admin.register(models.SecuredMailDestination)
+class SecuredMailDestinationAdmin(admin.ModelAdmin):
+    fields = ('name', 'manifest_row_number')
+    list_display = ('id', 'name', 'manifest_row_number')
+    list_editable = ('name', 'manifest_row_number')
