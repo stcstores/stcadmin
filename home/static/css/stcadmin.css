@@ -329,3 +329,8 @@ th {
     font-size: 1.5em;
     font-weight: bold;
 }
+
+.selectize-control {
+    border: solid 1px black;
+    padding: 0;
+}
