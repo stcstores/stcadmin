@@ -20,6 +20,7 @@ class Title(fieldtypes.TextField):
     placeholder = 'Title'
     validators = [Validators.limit_characters(('%', "'"))]
     help_text = 'The title for the <b>Product</b>.'
+    size = 60
 
 
 class Description(fieldtypes.TextareaField):
