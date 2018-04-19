@@ -138,6 +138,7 @@ class NewProduct(NewProductBase):
     AMAZON_BULLET_POINTS = 'amazon_bullet_points'
     AMAZON_SEARCH_TERMS = 'amazon_search_terms'
     OPTIONS = 'options'
+    LOCATION = 'location'
 
     def __new__(self, product_data):
         self.product_data = product_data
@@ -177,9 +178,14 @@ class NewProduct(NewProductBase):
             data[key] = self.product_data[self.BASIC][key]
         data[self.VAT_RATE] = basic_data[self.PRICE][self.VAT_RATE]
         data[self.PRICE] = basic_data[self.PRICE][self.EX_VAT]
+        department_id = self.product_data[self.BASIC][
+            self.DEPARTMENT][self.DEPARTMENT]
         data[self.DEPARTMENT] = models.Warehouse.objects.get(
-            warehouse_id=basic_data[self.DEPARTMENT][self.DEPARTMENT]).name
-        data[self.BAYS] = basic_data[self.DEPARTMENT][self.BAYS]
+            warehouse_id=department_id).name
+        if self.LOCATION in basic_data:
+            data[self.BAYS] = basic_data[self.LOCATION]
+        else:
+            data[self.BAYS] = basic_data[self.DEPARTMENT][self.BAYS]
         if not data[self.BARCODE]:
             data[self.BARCODE] = models.get_barcode()
         return data

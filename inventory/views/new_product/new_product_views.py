@@ -192,10 +192,17 @@ class VariationInfo(BaseVariationProductView):
     template_name = 'inventory/new_product/variation_info.html'
     form_class = forms.VariationInfoSet
 
+    def get_form_kwargs(self, *args, **kwargs):
+        kwargs = super().get_form_kwargs(*args, **kwargs)
+        kwargs['department'] = self.manager.basic_info.data[
+            'department']['department']
+        return kwargs
+
     def get_initial(self, *args, **kwargs):
         initial = self.get_variation_combinations()
         for init in initial:
             init.update(self.manager.basic_info.data)
+            init['location'] = init['department']['bays']
         return initial
 
     def _get_back_url(self):

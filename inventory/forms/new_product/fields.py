@@ -263,11 +263,18 @@ class Location(fieldtypes.SelectizeField):
             return options
         else:
             try:
-                warehouse = models.Warehouse.objects.get(name=self.department)
+                warehouse = self.get_warehouse()
             except models.Warehouse.DoesNotExist:
                 return [('', '')]
             else:
                 return [(bay.id, bay.name) for bay in warehouse.bay_set.all()]
+
+    def get_warehouse(self):
+        if isinstance(self.department, int):
+            return models.Warehouse.objects.get(
+                warehouse_id=self.department)
+        return models.Warehouse.objects.get(
+            name=self.department)
 
     def to_python(self, *args, **kwargs):
         return [int(x) for x in super().to_python(*args, **kwargs)]
@@ -285,6 +292,8 @@ class Location(fieldtypes.SelectizeField):
             raise forms.ValidationError(
                 'Bays from multiple warehouses selected.')
         value = [b.id for b in bays]
+        if len(value) == 0:
+            value = [self.get_warehouse().default_bay.id]
         return value
 
 

@@ -126,6 +126,7 @@ class VariationInfo(BaseVariationForm):
         choices = kwargs.pop('choices')
         self.supplier_choices = choices['supplier']
         self.package_type_choices = choices['package_type']
+        self.department = kwargs.pop('department')
         super().__init__(*args, **kwargs)
 
     def get_fields(self):
@@ -133,7 +134,7 @@ class VariationInfo(BaseVariationForm):
         self.fields['purchase_price'] = fields.PurchasePrice()
         self.fields['price'] = fields.VATPrice()
         self.fields['stock_level'] = fields.StockLevel()
-        self.fields['department'] = fields.DepartmentBayField()
+        self.fields['location'] = fields.Location(department=self.department)
         self.fields['supplier'] = fields.Supplier(
             choices=self.supplier_choices)
         self.fields['supplier_sku'] = fields.SupplierSKU()
@@ -172,6 +173,7 @@ class VariationListingOptions(BaseVariationForm):
 class BaseVariationFormSet(KwargFormSet):
 
     def __init__(self, *args, **kwargs):
+        self.kwargs = kwargs
         kwarg_update = self.update_form_kwargs()
         for form_kwargs in kwargs['form_kwargs']:
             form_kwargs.update(kwarg_update)
@@ -192,7 +194,8 @@ class VariationInfoSet(BaseVariationFormSet):
         choices = {
             'supplier': fields.Supplier.get_choices(),
             'package_type': fields.PackageType.get_choices()}
-        return {'choices': choices}
+        return {
+            'choices': choices, 'department': self.kwargs.pop('department')}
 
 
 class VariationListingOptionsSet(BaseVariationFormSet):
