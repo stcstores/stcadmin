@@ -40,6 +40,8 @@ class SpringManifest(models.Model):
     time_filed = models.DateTimeField(blank=True, null=True)
     manifest_file = models.FileField(
         upload_to='manifests', blank=True, null=True)
+    item_advice_file = models.FileField(
+        upload_to='item_advice', blank=True, null=True)
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default=FILED)
     errors = models.TextField(blank=True, null=True)

@@ -9,6 +9,9 @@
 {% if manifest.manifest_file and manifest.status == manifest.FILED %}
     <h3 class="success">Manifest Filed</h3>
     <a href="{{ manifest.manifest_file.url }}"><button>Download Manifest File</button></a>
+    {% if manifest.item_advice_file %}
+        <a href="{{ manifest.item_advice_file.url }}"><button>Download Item Advice File</button></a>
+    {% endif %}
 {% elif manifest.status == manifest.UNFILED %}
     <a href="{% url 'spring_manifest:file_manifest' manifest.id %}"><button>File Manifest</button></a>
 {% elif manifest.status == manifest.FAILED %}

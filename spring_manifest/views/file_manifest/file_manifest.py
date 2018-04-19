@@ -12,13 +12,15 @@ class FileManifest:
         self.manifest.save()
         try:
             self.process_manifest()
-        except Exception:
-            self.add_error('An error occured.')
+        except Exception as e:
+            self.add_error('An error occured: {}'.format(str(e)))
 
     def process_manifest(self):
         rows = self.get_manifest_rows(self.manifest)
         if self.valid():
             self.save_manifest_file(self.manifest, rows)
+        if self.valid():
+            self.save_item_advice_file(self.manifest, rows)
         if self.valid():
             self.send_file(self.manifest)
         if self.valid():
@@ -44,6 +46,9 @@ class FileManifest:
 
     def save_manifest_file(self, manifest, rows):
         raise NotImplementedError
+
+    def save_item_advice_file(self):
+        pass
 
     def add_error(self, message):
         self.manifest.status = self.manifest.FAILED

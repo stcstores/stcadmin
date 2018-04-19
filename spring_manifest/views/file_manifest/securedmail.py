@@ -1,21 +1,35 @@
 import csv
 import datetime
 import io
+import os
 from collections import OrderedDict
 
+import openpyxl
 from ccapi import CCAPI
 from django.contrib import messages
+from django.core.files import File
 from django.core.files.base import ContentFile
 from unidecode import unidecode
+
+from spring_manifest import models
 
 from .file_manifest import FileManifest
 
 
 class FileSecuredMailManifest(FileManifest):
     PROOF_OF_DELIVERY = {'SMIU': '', 'SMIT': 'T'}
+    TEMPLATE_FILENAME = 'secure_mail_manifest_template.xlsx'
+    MANIFEST_TEMPLATE_PATH = os.path.join(
+        os.path.abspath(os.path.dirname(__file__)), TEMPLATE_FILENAME)
+    ITEM_COL = 'M'
+    WEIGHT_COL = 'N'
+    REFERENCE_CELL = 'J3'
+    DATE_CELL = 'O3'
 
     def get_manifest_rows(self, manifest):
         rows = []
+        self.country_weights = {
+            dest: [] for dest in models.SecuredMailDestination.objects.all()}
         for order in manifest.springorder_set.all():
             try:
                 rows += self.get_row_for_order(order)
@@ -32,8 +46,26 @@ class FileSecuredMailManifest(FileManifest):
     def send_file(self, manifest):
         pass
 
-    @staticmethod
-    def save_manifest_file(manifest, rows):
+    def save_manifest_file(self, manifest, rows):
+        wb = openpyxl.load_workbook(filename=self.MANIFEST_TEMPLATE_PATH)
+        ws = wb.active
+        total_items = 0
+        total_weight = 0
+        for country, weights in self.country_weights.items():
+            country_items = len(weights)
+            country_weight = sum(weights)
+            total_items += country_items
+            total_weight += country_weight
+            row = str(country.manifest_row_number)
+            ws[self.ITEM_COL + row] = country_items
+            ws[self.WEIGHT_COL + row] = country_weight
+        ws[self.REFERENCE_CELL] = str(manifest)
+        ws[self.DATE_CELL] = datetime.datetime.now().strftime('%Y/%m/%d')
+        output = io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
+        manifest.manifest_file.save(
+            str(manifest) + '_manifest.xlsx', File(output))
+
+    def save_item_advice_file(self, manifest, rows):
         output = io.StringIO(newline='')
         writer = csv.DictWriter(
             output, rows[0].keys(), delimiter=',', lineterminator='\r\n')
@@ -42,7 +74,7 @@ class FileSecuredMailManifest(FileManifest):
         manifest.file_manifest()
         manifest_string = unidecode(
             output.getvalue()).encode('utf-8', 'replace')
-        manifest.manifest_file.save(
+        manifest.item_advice_file.save(
             str(manifest) + '.csv',
             ContentFile(manifest_string), save=True)
         output.close()
@@ -93,6 +125,9 @@ class FileSecuredMailManifest(FileManifest):
                     country.currency_code, product.price)
                 quantity += item.quantity
                 weight += self.get_product_weight(product)
+            self.country_weights[
+                country.secured_mail_destination].append(
+                    round(weight / 1000, 2))
             data = OrderedDict([
                 ('RecipientName', address.delivery_name),
                 ('Addr1', address.clean_address[0]),
@@ -104,7 +139,7 @@ class FileSecuredMailManifest(FileManifest):
                 ('Item Description', ', '.join(description)),
                 ('Item Quantity', quantity),
                 ('Item Value', price),
-                ('Weight', weight),
+                ('Weight', int(weight)),
                 ('Format', 'P'),
                 ('Client Item Reference', str(package)),
                 ('CountryCode', country.iso_code),
@@ -131,7 +166,7 @@ class FileSecuredMailManifest(FileManifest):
         return datetime.datetime.now().strftime('%Y-%m-%d')
 
     def get_product_weight(self, product):
-        return int(product.per_item_weight * product.quantity)
+        return product.per_item_weight * product.quantity
 
     def add_success_messages(self, manifest):
         orders = manifest.springorder_set.all()
