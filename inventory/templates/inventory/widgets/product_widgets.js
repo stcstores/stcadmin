@@ -20,7 +20,7 @@ function vat_price_widget(vat_input, ex_vat_input, with_vat_input) {
             with_vat_input.val('');
             return;
         }
-        var ex_vat_price = parseInt(value);
+        var ex_vat_price = parseFloat(value);
         var gross = (ex_vat_price / 100 * parseInt(vat_input.val())) + ex_vat_price;
         with_vat_input.val(gross.toFixed(2));
     });
@@ -31,7 +31,7 @@ function vat_price_widget(vat_input, ex_vat_input, with_vat_input) {
             ex_vat_input.val('');
             return;
         }
-        var with_vat_price = parseInt(value);
+        var with_vat_price = parseFloat(value);
         var net = value / (1 + (parseInt(vat_input.val()) / 100));
         ex_vat_input.val(net.toFixed(2));
     });
