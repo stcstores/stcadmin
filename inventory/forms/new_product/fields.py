@@ -292,7 +292,7 @@ class Location(fieldtypes.SelectizeField):
             raise forms.ValidationError(
                 'Bays from multiple warehouses selected.')
         value = [b.id for b in bays]
-        if len(value) == 0:
+        if self.department is not None and len(value) == 0:
             value = [self.get_warehouse().default_bay.id]
         return value
 
