@@ -83,7 +83,7 @@ class SpringOrder(models.Model):
         CloudCommerceCountryID, on_delete=models.CASCADE)
     manifest = models.ForeignKey(
         SpringManifest, blank=True, null=True, on_delete=models.CASCADE)
-    service = models.CharField(max_length=3, choices=SERVICE_CHOICES)
+    service = models.CharField(max_length=50, choices=SERVICE_CHOICES)
     canceled = models.BooleanField(default=False)
 
     objects = SpringOrderManager()
