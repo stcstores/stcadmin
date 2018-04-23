@@ -22,10 +22,13 @@ class FileManifest:
         if self.valid():
             self.save_item_advice_file(self.manifest, rows)
         if self.valid():
+            self.save_docket_file(self.manifest, rows)
+        if self.valid():
             self.send_file(self.manifest)
         if self.valid():
             self.manifest.status = self.manifest.FILED
             self.manifest.save()
+            self.cleanup()
         else:
             self.manifest.time_filed = None
             self.manifest.manifest_file = None
@@ -46,6 +49,9 @@ class FileManifest:
 
     def save_manifest_file(self, manifest, rows):
         raise NotImplementedError
+
+    def save_docket_file(self, manifest, rows):
+        pass
 
     def save_item_advice_file(self):
         pass
@@ -76,3 +82,6 @@ class FileManifest:
         return (
             self.manifest.status != self.manifest.FAILED and
             not self.manifest.errors)
+
+    def cleanup(self):
+        pass

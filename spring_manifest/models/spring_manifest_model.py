@@ -42,6 +42,8 @@ class SpringManifest(models.Model):
         upload_to='manifests', blank=True, null=True)
     item_advice_file = models.FileField(
         upload_to='item_advice', blank=True, null=True)
+    docket_file = models.FileField(
+        upload_to='docket', blank=True, null=True)
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default=FILED)
     errors = models.TextField(blank=True, null=True)

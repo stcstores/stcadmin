@@ -12,6 +12,9 @@
     {% if manifest.item_advice_file %}
         <a href="{{ manifest.item_advice_file.url }}"><button>Download Item Advice File</button></a>
     {% endif %}
+    {% if manifest.docket_file %}
+        <a href="{{ manifest.docket_file.url }}"><button>Download Docket File</button></a>
+    {% endif %}
 {% elif manifest.status == manifest.UNFILED %}
     <a href="{% url 'spring_manifest:file_manifest' manifest.id %}"><button>File Manifest</button></a>
 {% elif manifest.status == manifest.FAILED %}

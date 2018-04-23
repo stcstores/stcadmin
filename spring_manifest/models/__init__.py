@@ -5,6 +5,7 @@ from . spring_manifest_model import SpringManifest  # NOQA
 from . spring_order_model import SpringOrder  # NOQA
 from . spring_package_model import SpringPackage  # NOQA
 from . spring_item_model import SpringItem  # NOQA
+from . counter_model import Counter  # NOQA
 from stcadmin.settings import SPRING_COURIER_RULES  # NOQA
 from django.db import transaction
 

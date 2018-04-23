@@ -18,18 +18,16 @@ from .file_manifest import FileManifest
 
 class FileSecuredMailManifest(FileManifest):
     PROOF_OF_DELIVERY = {'SMIU': '', 'SMIT': 'T'}
-    TEMPLATE_FILENAME = 'secure_mail_manifest_template.xlsx'
-    MANIFEST_TEMPLATE_PATH = os.path.join(
-        os.path.abspath(os.path.dirname(__file__)), TEMPLATE_FILENAME)
-    ITEM_COL = 'M'
-    WEIGHT_COL = 'N'
-    REFERENCE_CELL = 'J3'
-    DATE_CELL = 'O3'
+    SERVICE = {
+        'SMIU': 'International Untracked',
+        'SMIT': 'International Tracked'}
 
     def get_manifest_rows(self, manifest):
         rows = []
         self.country_weights = {
             dest: [] for dest in models.SecuredMailDestination.objects.all()}
+        self.service_weights = {
+            service_name: [] for code, service_name in self.SERVICE.items()}
         for order in manifest.springorder_set.all():
             try:
                 rows += self.get_row_for_order(order)
@@ -46,25 +44,6 @@ class FileSecuredMailManifest(FileManifest):
     def send_file(self, manifest):
         pass
 
-    def save_manifest_file(self, manifest, rows):
-        wb = openpyxl.load_workbook(filename=self.MANIFEST_TEMPLATE_PATH)
-        ws = wb.active
-        total_items = 0
-        total_weight = 0
-        for country, weights in self.country_weights.items():
-            country_items = len(weights)
-            country_weight = sum(weights)
-            total_items += country_items
-            total_weight += country_weight
-            row = str(country.manifest_row_number)
-            ws[self.ITEM_COL + row] = country_items
-            ws[self.WEIGHT_COL + row] = country_weight
-        ws[self.REFERENCE_CELL] = str(manifest)
-        ws[self.DATE_CELL] = datetime.datetime.now().strftime('%Y/%m/%d')
-        output = io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
-        manifest.manifest_file.save(
-            str(manifest) + '_manifest.xlsx', File(output))
-
     def save_item_advice_file(self, manifest, rows):
         output = io.StringIO(newline='')
         writer = csv.DictWriter(
@@ -78,6 +57,16 @@ class FileSecuredMailManifest(FileManifest):
             str(manifest) + '.csv',
             ContentFile(manifest_string), save=True)
         output.close()
+
+    def save_manifest_file(self, manifest, country):
+        manifest_file = SecuredMailManifestFile(manifest, self.country_weights)
+        manifest.manifest_file.save(
+            str(manifest) + '_manifest.xlsx', File(manifest_file))
+
+    def save_docket_file(self, manifest, rows):
+        docket_file = SecuredMailDocketFile(manifest, self.service_weights)
+        manifest.docket_file.save(
+            str(manifest) + '_docket.xlsx', File(docket_file))
 
     def get_order_address(self, order):
         address = self.get_delivery_address(order)
@@ -128,23 +117,26 @@ class FileSecuredMailManifest(FileManifest):
             self.country_weights[
                 country.secured_mail_destination].append(
                     round(weight / 1000, 2))
-            data = OrderedDict([
-                ('RecipientName', address.delivery_name),
-                ('Addr1', address.clean_address[0]),
-                ('Addr2', address.clean_address[1]),
-                ('Addr3', address.clean_address[2]),
-                ('Town', address.town_city),
-                ('Country', ''),
-                ('Postcode', address.post_code or ' '),
-                ('Item Description', ', '.join(description)),
-                ('Item Quantity', quantity),
-                ('Item Value', price),
-                ('Weight', int(weight)),
-                ('Format', 'P'),
-                ('Client Item Reference', str(package)),
-                ('CountryCode', country.iso_code),
-                ('Proof of Delivery', self.PROOF_OF_DELIVERY[order.service])])
-            rows.append(data)
+            self.service_weights[self.SERVICE[order.service]].append(weight)
+            if order.service == order.SM_INT_TRACKED:
+                data = OrderedDict([
+                    ('RecipientName', address.delivery_name),
+                    ('Addr1', address.clean_address[0]),
+                    ('Addr2', address.clean_address[1]),
+                    ('Addr3', address.clean_address[2]),
+                    ('Town', address.town_city),
+                    ('Country', ''),
+                    ('Postcode', address.post_code or ' '),
+                    ('Item Description', ', '.join(description)),
+                    ('Item Quantity', quantity),
+                    ('Item Value', price),
+                    ('Weight', int(weight)),
+                    ('Format', 'P'),
+                    ('Client Item Reference', str(package)),
+                    ('CountryCode', country.iso_code),
+                    ('Proof of Delivery', self.PROOF_OF_DELIVERY[
+                        order.service])])
+                rows.append(data)
         return rows
 
     def clean_address(self, order, address):
@@ -176,3 +168,105 @@ class FileSecuredMailManifest(FileManifest):
             self.request, messages.SUCCESS,
             'Manifest file created with {} packages for {} orders'.format(
                 package_count, order_count))
+
+    def cleanup(self):
+        self.increment_docket_number()
+
+    def increment_docket_number(self):
+        counter = models.Counter.objects.get(name='Secured Mail Docket Number')
+        counter.count += 1
+        counter.save()
+
+
+class SecuredMailManifestFile:
+    TEMPLATE_FILENAME = 'secure_mail_manifest_template.xlsx'
+    TEMPLATE_PATH = os.path.join(
+        os.path.abspath(os.path.dirname(__file__)), TEMPLATE_FILENAME)
+    ITEM_COL = 'M'
+    WEIGHT_COL = 'N'
+    REFERENCE_CELL = 'J3'
+    DATE_CELL = 'O3'
+
+    def __new__(self, manifest, country_weights):
+        wb = openpyxl.load_workbook(filename=self.TEMPLATE_PATH)
+        ws = wb.active
+        total_items = 0
+        total_weight = 0
+        for country, weights in country_weights.items():
+            country_items = len(weights)
+            country_weight = sum(weights)
+            total_items += country_items
+            total_weight += country_weight
+            row = str(country.manifest_row_number)
+            ws[self.ITEM_COL + row] = country_items
+            ws[self.WEIGHT_COL + row] = country_weight
+        ws[self.REFERENCE_CELL] = str(manifest)
+        ws[self.DATE_CELL] = datetime.datetime.now().strftime('%Y/%m/%d')
+        return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
+
+
+class SecuredMailDocketFile:
+    TEMPLATE_FILENAME = 'secure_mail_docket_template.xlsx'
+    TEMPLATE_PATH = os.path.join(
+        os.path.abspath(os.path.dirname(__file__)), TEMPLATE_FILENAME)
+    COLLECTION_SITE_NAME = 'Seaton Trading Company Ltd'
+    CONTACT_NAME = 'Larry Guogis'
+    CONTACT_NUMBER = '01297 21874'
+    CONTACT_ADDRESS = '26 Harbour Road, Seaton, EX12 2NA'
+    CLIENT_TO_BE_BILLED = 'Seaton Trading Company Ltd'
+    PRESENTATION_TYPE = 'Bags'
+    FORMAT = 'Packets'
+    PRINTED_NAME = 'Larry Guogis'
+    INITIALS = 'ST'
+    JOB_NAME = INITIALS
+    COLLECTION_SITE_CELL = 'D3'
+    DOCKET_NUMBER_CELL = 'F3'
+    COLLECTION_DATE_CELL = 'I3'
+    CONTACT_NAME_CELL = 'D6'
+    CONTACT_NUMBER_CELL = 'I6'
+    CONTACT_ADDRESS_CELL = 'D8'
+    CLIENT_TO_BE_BILLED_CELL = 'D10'
+    PRINTED_NAME_CELL = 'C34'
+    SIGN_DATE_FIELD = 'C36'
+    TABLE_START_ROW = '16'
+    JOB_NAME_COL = 'B'
+    SERVICE_COL = 'C'
+    FORMAT_COL = 'E'
+    ITEM_WEIGHT_COL = 'F'
+    QUANTITY_MAILED_COL = 'G'
+    PRESENTATION_TYPE_COL = 'H'
+    PRESENTATION_QUANTITY_COL = 'I'
+
+    def __new__(self, manifest, service_weights):
+        wb = openpyxl.load_workbook(filename=self.TEMPLATE_PATH)
+        ws = wb.active
+        ws[self.COLLECTION_SITE_CELL] = self.COLLECTION_SITE_NAME
+        ws[self.DOCKET_NUMBER_CELL] = self.get_docket_number(self)
+        ws[self.CONTACT_NAME_CELL] = self.CONTACT_NAME
+        ws[self.CONTACT_ADDRESS_CELL] = self.CONTACT_ADDRESS
+        ws[self.COLLECTION_DATE_CELL] = self.get_date()
+        ws[self.CONTACT_NUMBER_CELL] = self.CONTACT_NUMBER
+        ws[self.CLIENT_TO_BE_BILLED_CELL] = self.CLIENT_TO_BE_BILLED
+        ws[self.PRINTED_NAME_CELL] = self.PRINTED_NAME
+        ws[self.SIGN_DATE_FIELD] = self.get_date()
+        row = self.TABLE_START_ROW
+        for service, weights in service_weights.items():
+            if len(weights) == 0:
+                continue
+            ws[self.JOB_NAME_COL + row] = self.JOB_NAME
+            ws[self.SERVICE_COL + row] = service
+            ws[self.FORMAT_COL + row] = self.FORMAT
+            ws[self.ITEM_WEIGHT_COL + row] = int(sum(weights) / len(weights))
+            ws[self.QUANTITY_MAILED_COL + row] = len(weights)
+            ws[self.PRESENTATION_TYPE_COL + row] = self.PRESENTATION_TYPE
+            row = str(int(row) + 1)
+        return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
+
+    def get_docket_number(self):
+        counter = models.Counter.objects.get(name='Secured Mail Docket Number')
+        docket_number = counter.count
+        return '{}{}{}'.format(self.INITIALS, self.INITIALS, docket_number)
+
+    @staticmethod
+    def get_date():
+        return datetime.datetime.now().strftime('%Y/%m/%d')

@@ -80,3 +80,10 @@ class SecuredMailDestinationAdmin(admin.ModelAdmin):
     fields = ('name', 'manifest_row_number')
     list_display = ('id', 'name', 'manifest_row_number')
     list_editable = ('name', 'manifest_row_number')
+
+
+@admin.register(models.Counter)
+class CounterAdmin(admin.ModelAdmin):
+    fields = ('name', 'count')
+    list_display = ('__str__', 'name', 'count')
+    list_editable = ('name', 'count')
