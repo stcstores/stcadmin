@@ -369,7 +369,7 @@ class ListingOption(OptionField, fieldtypes.SingleSelectize):
     pass
 
 
-class Brand(fieldtypes.TextField):
+class Brand(fieldtypes.SelectizeField):
     label = 'Brand'
     name = 'brand'
     required_message = "Please supply a brand"
@@ -377,8 +377,13 @@ class Brand(fieldtypes.TextField):
     help_text = (
         'The <b>Brand</b> of the product.<br>This is required for listings.')
 
+    def get_choices(self):
+        options = CCAPI.get_product_options()
+        values = [value.value for value in options['Brand']]
+        return ((v, v) for v in values)
 
-class Manufacturer(fieldtypes.TextField):
+
+class Manufacturer(fieldtypes.SelectizeField):
     label = 'Manufacturer'
     name = 'manufacturer'
     required_message = "Please supply a manufacturer",
@@ -386,6 +391,11 @@ class Manufacturer(fieldtypes.TextField):
     help_text = (
         'The <b>Manufacturer</b> of the product.<br>This is required for '
         'listings.')
+
+    def get_choices(self):
+        options = CCAPI.get_product_options()
+        values = [value.value for value in options['Manufacturer']]
+        return ((v, v) for v in values)
 
 
 class Gender(fieldtypes.ChoiceField):

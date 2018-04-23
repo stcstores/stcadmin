@@ -13,6 +13,7 @@ class NewProductForm(forms.Form):
 class BasicInfo(NewProductForm):
 
     def __init__(self, *args, **kwargs):
+        self.options = CCAPI.get_product_options()
         super().__init__(*args, **kwargs)
         self.fields['title'] = fields.Title()
         self.fields['barcode'] = fields.Barcode()
@@ -27,12 +28,17 @@ class BasicInfo(NewProductForm):
         self.fields['length'] = fields.Length()
         self.fields['width'] = fields.Width()
         self.fields['package_type'] = fields.PackageType()
-        self.fields['brand'] = fields.Brand()
-        self.fields['manufacturer'] = fields.Manufacturer()
+        self.fields['brand'] = fields.Brand(
+            choices=self.get_option_choices('Brand'))
+        self.fields['manufacturer'] = fields.Manufacturer(
+            choices=self.get_option_choices('Manufacturer'))
         self.fields['description'] = fields.Description()
         self.fields['gender'] = fields.Gender()
         self.fields['amazon_bullet_points'] = fields.AmazonBulletPoints()
         self.fields['amazon_search_terms'] = fields.AmazonSearchTerms()
+
+    def get_option_choices(self, option_name):
+        return [(v.value, v.value) for v in self.options[option_name]]
 
 
 class BaseOptionsForm(NewProductForm):
