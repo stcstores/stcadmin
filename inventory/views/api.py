@@ -1,3 +1,5 @@
+"""Views for AJAX requests."""
+
 import json
 
 from ccapi import CCAPI
@@ -10,25 +12,31 @@ from .views import InventoryUserMixin
 
 
 class GetNewSKUView(InventoryUserMixin, View):
+    """Return new Product SKU."""
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
+        """Process HTTP request."""
         sku = CCAPI.get_sku(range_sku=False)
         return HttpResponse(sku)
 
 
 class GetNewRangeSKUView(InventoryUserMixin, View):
+    """Return new Product Range SKU."""
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
+        """Process HTTP request."""
         sku = CCAPI.get_sku(range_sku=True)
         return HttpResponse(sku)
 
 
 class GetStockForProductView(InventoryUserMixin, View):
+    """Return stock number for product."""
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
+        """Process HTTP request."""
         variation_ids = json.loads(self.request.body)['variation_ids']
         stock_data = []
         for variation_id in variation_ids:
@@ -42,9 +50,11 @@ class GetStockForProductView(InventoryUserMixin, View):
 
 
 class UpdateStockLevelView(InventoryUserMixin, View):
+    """Update product stock level."""
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
+        """Process HTTP request."""
         request_data = json.loads(self.request.body)
         product_id = request_data['product_id']
         new_stock_level = request_data['new_stock_level']
@@ -57,9 +67,11 @@ class UpdateStockLevelView(InventoryUserMixin, View):
 
 
 class SetImageOrderView(InventoryUserMixin, View):
+    """Change order of images for a product."""
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
+        """Process HTTP request."""
         try:
             data = json.loads(self.request.body)
             response = CCAPI.set_image_order(
@@ -71,9 +83,11 @@ class SetImageOrderView(InventoryUserMixin, View):
 
 
 class DeleteImage(InventoryUserMixin, View):
+    """Remove image from a product."""
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
+        """Process HTTP request."""
         try:
             data = json.loads(self.request.body)
             CCAPI.delete_image(data['image_id'])

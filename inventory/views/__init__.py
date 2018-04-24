@@ -1,3 +1,5 @@
+"""Views for inventory app."""
+
 from . views import *  # NOQA
 from . api import *  # NOQA
 from . descriptions import DescriptionsView  # NOQA

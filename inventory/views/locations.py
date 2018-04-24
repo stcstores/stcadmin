@@ -1,8 +1,11 @@
+"""View for updating Product Warehouse Bays."""
+
 import cc_products
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
+
 from inventory import models
 from inventory.forms import DepartmentForm, LocationsFormSet
 
@@ -10,10 +13,12 @@ from .views import InventoryUserMixin
 
 
 class LocationFormView(InventoryUserMixin, TemplateView):
+    """View for LocationsFormSet."""
 
     template_name = 'inventory/locations.html'
 
     def get(self, *args, **kwargs):
+        """Process GET HTTP request."""
         self.range_id = self.kwargs.get('range_id')
         self.product_range = cc_products.get_range(self.range_id)
         self.department_form = DepartmentForm(
@@ -23,6 +28,7 @@ class LocationFormView(InventoryUserMixin, TemplateView):
         return super().get(*args, **kwargs)
 
     def post(self, *args, **kwargs):
+        """Process POST HTTP request."""
         self.range_id = self.kwargs.get('range_id')
         self.product_range = cc_products.get_range(self.range_id)
         self.department_form = DepartmentForm(
@@ -43,10 +49,12 @@ class LocationFormView(InventoryUserMixin, TemplateView):
         return super().get(*args, **kwargs)
 
     def get_success_url(self):
+        """Return URL to redirect to after successful form submission."""
         return reverse_lazy(
             'inventory:locations', kwargs={'range_id': self.range_id})
 
     def get_context_data(self, *args, **kwargs):
+        """Get template context data."""
         context = super().get_context_data(*args, **kwargs)
         context['product_range'] = self.product_range
         context['department_form'] = self.department_form

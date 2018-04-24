@@ -1,3 +1,5 @@
+"""Views for Barcode Label creation."""
+
 import json
 
 import labeler
@@ -10,9 +12,12 @@ from .views import InventoryUserMixin
 
 
 class PrintBarcodeLabels(InventoryUserMixin, TemplateView):
+    """View for barcode label page."""
+
     template_name = 'inventory/print_barcodes.html'
 
     def get_context_data(self, *args, **kwargs):
+        """Get template context data."""
         context = super().get_context_data(*args, **kwargs)
         product_range = CCAPI.get_range(
             self.kwargs.get('range_id'))
@@ -24,8 +29,10 @@ class PrintBarcodeLabels(InventoryUserMixin, TemplateView):
 
 
 class BarcodePDF(InventoryUserMixin, View):
+    """Create PDF document containing barcode labels."""
 
     def post(self, *args, **kwargs):
+        """Handle POST HTTP request."""
         data = self.get_label_data()
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="labels.pdf"'
@@ -37,6 +44,7 @@ class BarcodePDF(InventoryUserMixin, View):
         return response
 
     def get_label_data(self):
+        """Get data for barcode labels."""
         json_data = self.request.POST.get('data')
         data = json.loads(json_data)
         barcode_data = []
