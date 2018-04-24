@@ -45,18 +45,19 @@ class FileSecuredMailManifest(FileManifest):
         pass
 
     def save_item_advice_file(self, manifest, rows):
-        output = io.StringIO(newline='')
-        writer = csv.DictWriter(
-            output, rows[0].keys(), delimiter=',', lineterminator='\r\n')
-        writer.writeheader()
-        writer.writerows(rows)
-        manifest.file_manifest()
-        manifest_string = unidecode(
-            output.getvalue()).encode('utf-8', 'replace')
-        manifest.item_advice_file.save(
-            str(manifest) + '.csv',
-            ContentFile(manifest_string), save=True)
-        output.close()
+        if rows:
+            output = io.StringIO(newline='')
+            writer = csv.DictWriter(
+                output, rows[0].keys(), delimiter=',', lineterminator='\r\n')
+            writer.writeheader()
+            writer.writerows(rows)
+            manifest.file_manifest()
+            manifest_string = unidecode(
+                output.getvalue()).encode('utf-8', 'replace')
+            manifest.item_advice_file.save(
+                str(manifest) + '.csv',
+                ContentFile(manifest_string), save=True)
+            output.close()
 
     def save_manifest_file(self, manifest, country):
         manifest_file = SecuredMailManifestFile(manifest, self.country_weights)
@@ -67,6 +68,7 @@ class FileSecuredMailManifest(FileManifest):
         docket_file = SecuredMailDocketFile(manifest, self.service_weights)
         manifest.docket_file.save(
             str(manifest) + '_docket.xlsx', File(docket_file))
+        manifest.file_manifest()
 
     def get_order_address(self, order):
         address = self.get_delivery_address(order)

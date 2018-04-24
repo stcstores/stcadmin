@@ -1,4 +1,9 @@
+import os
+import sys
+import traceback
+
 from forex_python.converter import CurrencyRates
+
 from spring_manifest import models
 
 
@@ -13,7 +18,12 @@ class FileManifest:
         try:
             self.process_manifest()
         except Exception as e:
-            self.add_error('An error occured: {}'.format(str(e)))
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            tb = traceback.format_exception(None, e, e.__traceback__)
+            self.add_error(
+                'An error occured: {}\n{} {} {}\n{}'.format(
+                    str(e), exc_type, fname, exc_tb.tb_lineno, tb))
 
     def process_manifest(self):
         rows = self.get_manifest_rows(self.manifest)
@@ -50,10 +60,10 @@ class FileManifest:
     def save_manifest_file(self, manifest, rows):
         raise NotImplementedError
 
-    def save_docket_file(self, manifest, rows):
+    def save_docket_file(self, *args, **kwargs):
         pass
 
-    def save_item_advice_file(self):
+    def save_item_advice_file(self, *args, **kwargs):
         pass
 
     def add_error(self, message):
