@@ -1,3 +1,5 @@
+"""Classes for manageing product data stored in the session."""
+
 import json
 import threading
 
@@ -7,6 +9,8 @@ from inventory import models
 
 
 class NewProductBase:
+    """Base class for new product classes."""
+
     VARIATION = 'variation'
     SINGLE = 'single'
     NEW_PRODUCT = 'new_product_data'
@@ -21,7 +25,10 @@ class NewProductBase:
 
 
 class Page:
+    """Container for new product form pages."""
+
     def __init__(self, name, identifier, manager, url=None):
+        """Set page properties."""
         self.name = name
         self.identifier = identifier
         if url is None:
@@ -32,12 +39,14 @@ class Page:
 
     @property
     def data(self):
+        """Return data stored in the session for this page."""
         data = self.manager.session[self.manager.NEW_PRODUCT].get(
             self.identifier, None)
         return data
 
     @data.setter
     def data(self, data):
+        """Store data in the session for this page."""
         self.manager.session[self.manager.NEW_PRODUCT][self.identifier] = data
         self.manager.session.modified = True
 
@@ -46,6 +55,7 @@ class NewProductManager(NewProductBase):
     """Access new product data stored in session."""
 
     def __init__(self, request):
+        """Set object properties."""
         self.request = request
         self.session = request.session
         if self.NEW_PRODUCT not in self.session:
@@ -80,18 +90,12 @@ class NewProductManager(NewProductBase):
 
     @property
     def product_type(self):
+        """Type of product, Single or Variation."""
         product_data = self.session.get(self.NEW_PRODUCT, None)
         if product_data is not None:
             return product_data.get(self.TYPE, None)
         else:
             return None
-
-    @property
-    def variations(self):
-        combinations = [
-            {k: v for k, v in d.items() if k != 'used'}
-            for d in self.unused_variations.data if d['used']]
-        return combinations
 
     @product_type.setter
     def product_type(self, product_type):
@@ -99,22 +103,35 @@ class NewProductManager(NewProductBase):
         product_data[self.TYPE] = product_type
         self.session.modified = True
 
+    @property
+    def variations(self):
+        """Return variation combinations for product."""
+        combinations = [
+            {k: v for k, v in d.items() if k != 'used'}
+            for d in self.unused_variations.data if d['used']]
+        return combinations
+
     def delete_product(self):
+        """Clear all new product data from session."""
         self.session[self.NEW_PRODUCT] = {}
 
     def save_json(self, outfile):
+        """Output new product data as JSON to outfile."""
         data = self.product_data
         return json.dump(data, outfile, indent=4, sort_keys=True)
 
     @property
     def product_data(self):
+        """Return all new product data."""
         return self.session[self.NEW_PRODUCT]
 
     def create_product(self):
+        """Create new Cloud Commerce Product from data in session."""
         return NewProduct(self.product_data)
 
 
 class NewProduct(NewProductBase):
+    """Create new Cloud Commerce Product from data in session."""
 
     BARCODE = 'barcode'
     DESCRIPTION = 'description'
@@ -141,6 +158,7 @@ class NewProduct(NewProductBase):
     LOCATION = 'location'
 
     def __new__(self, product_data):
+        """Create new product and return it's range ID."""
         self.product_data = product_data
         title = self.product_data[self.BASIC]['title']
         self.product_range = cc_products.create_range(title)
@@ -151,6 +169,7 @@ class NewProduct(NewProductBase):
         return self.product_range.id
 
     def create_product(self):
+        """Create new Cloud Commerce Product from data in session."""
         if self.product_data[self.TYPE] == self.SINGLE:
             self.create_single_product(self)
         elif self.product_data[self.TYPE] == self.VARIATION:
@@ -158,12 +177,14 @@ class NewProduct(NewProductBase):
         self.product_range.options['Incomplete'].selected = False
 
     def create_single_product(self):
+        """Create a single (non variation) product."""
         data = self.sanitize_basic_data(self, self.product_data[self.BASIC])
         option_data = self.product_data[self.LISTING_OPTIONS]
         data[self.OPTIONS] = {k: v for k, v in option_data.items() if v}
         self.add_variation(self, **data)
 
     def sanitize_basic_data(self, basic_data):
+        """Clean data from basic_info or variation_info page."""
         basic_fields = (
             self.BARCODE, self.PURCHASE_PRICE, self.STOCK_LEVEL,
             self.SUPPLIER, self.SUPPLIER_SKU, self.WEIGHT, self.HEIGHT,
@@ -191,6 +212,7 @@ class NewProduct(NewProductBase):
         return data
 
     def create_variation_product(self):
+        """Create a variation product."""
         variations = [
             {k: v for k, v in d.items() if k != 'used'}
             for d in self.product_data[self.UNUSED_VARIATIONS] if d['used']]
@@ -207,6 +229,7 @@ class NewProduct(NewProductBase):
             self.product_range.options[key].variable = True
 
     def get_variation_data(self, variation):
+        """Return sanitized data for variation."""
         variation_infos = self.product_data[self.VARIATION_INFO]
         for info in variation_infos:
             if all([key in info for key in variation]):
@@ -218,6 +241,7 @@ class NewProduct(NewProductBase):
         return data
 
     def get_variation_option_data(self, variation):
+        """Return correct data for given variation."""
         all_option_data = self.product_data[self.VARIATION_LISTING_OPTIONS]
         for data in all_option_data:
             if all([key in data for key in variation]):
@@ -226,6 +250,7 @@ class NewProduct(NewProductBase):
         raise Exception('Option data not found.')
 
     def add_variation(self, **kwargs):
+        """Add single variation to Range."""
         product = self.product_range.add_product(
             kwargs[self.BARCODE], kwargs[self.DESCRIPTION],
             kwargs[self.VAT_RATE])
