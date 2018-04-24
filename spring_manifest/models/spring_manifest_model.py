@@ -67,3 +67,9 @@ class SpringManifest(models.Model):
     def get_error_list(self):
         if self.errors:
             return self.errors.split('\n')
+
+    def tracked_count(self):
+        return self.springorder_set.filter(service='SMIT').count()
+
+    def untracked_count(self):
+        return self.springorder_set.filter(service='SMIU').count()
