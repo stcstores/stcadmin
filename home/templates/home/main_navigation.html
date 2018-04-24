@@ -8,7 +8,7 @@
         {% for group in request.user.groups.all %}{% if group.name == 'labelmaker' %}<li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'suppliers' %}<li><a href="{% url 'suppliers:supplier_search' %}">Suppliers</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'print_audit' %}<li><a href="{% url 'print_audit:index' %}">Print Audit</a></li>{% endif %}{% endfor %}
-        {% for group in request.user.groups.all %}{% if group.name == 'spring' %}<li><a href="{% url 'spring_manifest:manifest_list' %}">Spring</a></li>{% endif %}{% endfor %}
+        {% for group in request.user.groups.all %}{% if group.name == 'spring' %}<li><a href="{% url 'spring_manifest:manifest_list' %}">Manifests</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'stock_check' %}<li><a href="{% url 'stock_check:warehouses' %}">Stock Check</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'profit_loss' %}<li><a href="{% url 'profit_loss:orders' %}">Profit Loss</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'admin' %}<li><a href="/admin/">Admin</a></li>{% endif %}{% endfor %}
