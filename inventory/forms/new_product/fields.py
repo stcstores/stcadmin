@@ -1,3 +1,5 @@
+"""Fields for use with forms for creating and editing products."""
+
 import json
 import re
 
@@ -14,16 +16,22 @@ from .fieldtypes import Validators
 
 
 class Title(fieldtypes.TextField):
+    """Product Range Title field."""
+
     label = 'Title'
     name = 'title'
     required_message = "Please supply a range title"
     placeholder = 'Title'
     validators = [Validators.limit_characters(('%', "'"))]
-    help_text = 'The title for the <b>Product</b>.'
+    help_text = (
+        "The title for the product.<br>This applies to the "
+        "Product Range and all of it's Products.")
     size = 60
 
 
 class Description(fieldtypes.TextareaField):
+    """Field for editing product descriptions."""
+
     required = False
     label = 'Description'
     name = 'description'
@@ -33,9 +41,11 @@ class Description(fieldtypes.TextareaField):
     help_text = (
         'The Description for the listings.<br>'
         'This can be changed on a channel by channel basis if necessary<br>'
-        'If left blank the description will duplicate the title.')
+        'If left blank the description will duplicate the title.<br>'
+        'For variation items the description applies to the range as a whole.')
 
     def clean(self, value):
+        """Remove invalid characters."""
         value = super().clean(value)
         value = value.replace('&nbsp;', ' ')  # Remove Non breaking spaces
         value = re.sub(' +', ' ', value)  # Remove multiple space characters
@@ -43,6 +53,8 @@ class Description(fieldtypes.TextareaField):
 
 
 class Barcode(fieldtypes.TextField):
+    """Field for product barcodes."""
+
     label = 'Barcode'
     name = 'barcode'
     placeholder = 'Barcode'
@@ -53,35 +65,28 @@ class Barcode(fieldtypes.TextField):
         "If left blank one will be provided from stock.")
 
 
-class Department(fieldtypes.SingleSelectize):
-    label = 'Department'
-    name = 'department'
-    required_message = "A <b>Department</b> must be selected."
-    help_text = (
-        'The <b>Department</b> to which the product belongs and the '
-        '<b>Warehouse</b> to which it will be added.')
+class VATRate(fieldtypes.ChoiceField):
+    """Field for VAT rates."""
+
+    label = 'VAT Rate'
+    name = 'vat_rate'
+    variable = True
+    help_text = 'The VAT rate that is applicable to the product.'
+    required_message = (
+        'Please specify the appropriate <b>VAT Rate</b> for the '
+        'product.')
 
     @staticmethod
     def get_choices():
-        departments = [
-            (w.warehouse_id, w.name) for w in
-            models.Warehouse.used_warehouses.all()]
-        departments.sort(key=lambda x: x[1])
-        return [('', '')] + departments
-
-    def clean(self, value):
-        value = super().clean(value)
-        if self.required is False and value == '':
-            return None
-        try:
-            department = models.Warehouse.used_warehouses.get(
-                warehouse_id=int(value)).name
-        except models.Warehouse.DoesNotExist:
-            raise forms.ValidationError('Deparment not recognised')
-        return department
+        """Return choice values."""
+        return ([
+            ('', ''), (20, 'Normal Rate 20%'), (5, 'Reduced 5%'),
+            (0, 'VAT Exempt')])
 
 
 class Price(fieldtypes.PriceField):
+    """Field for product price."""
+
     label = 'Price'
     name = 'price'
     required_message = (
@@ -92,13 +97,41 @@ class Price(fieldtypes.PriceField):
     variable = True
 
 
-class VATPrice(fieldtypes.VATPriceField):
+class VATPrice(fieldtypes.CombinationField):
+    """Combined field for VAT rate and price."""
+
     label = 'Price'
     name = 'vat_price'
     required = True
+    required_message = ('Please provide a <b>VAT rate</b> and <b>Price</b>.')
+    help_text = (
+        'Please provide a <b>VAT rate</b> and <b>Price</b>.<br>'
+        'The ex VAT price cannot be blank but can be zero.')
+
+    def __init__(self, *args, **kwargs):
+        """Create fields."""
+        kwargs['label'] = 'Price'
+        fields = (
+            forms.ChoiceField(
+                required=True,
+                choices=widgets.VATPriceWidget.vat_choices()),
+            forms.FloatField(required=True),
+            forms.FloatField(required=True))
+        kwargs['widget'] = widgets.VATPriceWidget()
+        super().__init__(
+            fields=fields, require_all_fields=True, *args, **kwargs)
+
+    def compress(self, data_list):
+        """Return submitted values as a dict."""
+        vat_rate, ex_vat_price, with_vat_price = data_list
+        return {
+            'vat_rate': vat_rate, 'ex_vat': ex_vat_price,
+            'with_vat_price': with_vat_price}
 
 
 class PurchasePrice(fieldtypes.PriceField):
+    """Field for purchase prices."""
+
     label = 'Purchase Price'
     name = 'purchase_price'
     required_message = (
@@ -112,6 +145,8 @@ class PurchasePrice(fieldtypes.PriceField):
 
 
 class StockLevel(fieldtypes.NumberField):
+    """Field for stock level."""
+
     label = 'Stock Level'
     name = 'stock_level'
     initial = 0
@@ -124,23 +159,9 @@ class StockLevel(fieldtypes.NumberField):
         '<br>Cannot be blank but can be zero.')
 
 
-class VATRate(fieldtypes.ChoiceField):
-    label = 'VAT Rate'
-    name = 'vat_rate'
-    variable = True
-    help_text = 'The VAT rate that is applicable to the product.'
-    required_message = (
-        'Please specify the appropriate <b>VAT Rate</b> for the '
-        'product.')
-
-    @staticmethod
-    def get_choices():
-        return ([
-            ('', ''), (20, 'Normal Rate 20%'), (5, 'Reduced 5%'),
-            (0, 'VAT Exempt')])
-
-
 class Supplier(fieldtypes.SingleSelectize):
+    """Field for selecting the supplier of a product."""
+
     label = 'Supplier'
     name = 'supplier'
     html_class = 'selectize'
@@ -155,6 +176,7 @@ class Supplier(fieldtypes.SingleSelectize):
 
     @staticmethod
     def get_choices():
+        """Return field choices."""
         factories = CCAPI.get_factories()
         suppliers = [(f.name, f.name) for f in factories]
         suppliers.sort(key=lambda x: x[1])
@@ -162,6 +184,8 @@ class Supplier(fieldtypes.SingleSelectize):
 
 
 class SupplierSKU(fieldtypes.TextField):
+    """Field for Supplier SKU."""
+
     label = 'Supplier SKU'
     name = 'supplier_SKU'
     placeholder = 'Supplier SKU'
@@ -170,6 +194,8 @@ class SupplierSKU(fieldtypes.TextField):
 
 
 class Weight(fieldtypes.NumberField):
+    """Field for the weight of the product."""
+
     label = 'Weight (Grams)'
     name = 'weight'
     required_message = (
@@ -180,6 +206,8 @@ class Weight(fieldtypes.NumberField):
 
 
 class Height(fieldtypes.NumberField):
+    """Field for the height of the product."""
+
     label = 'Height (Milimeters)'
     name = 'height'
     variable = True
@@ -189,6 +217,8 @@ class Height(fieldtypes.NumberField):
 
 
 class Width(fieldtypes.NumberField):
+    """Field for the width of the product."""
+
     label = 'Width (Milimeters)'
     name = 'width'
     variable = True
@@ -198,6 +228,8 @@ class Width(fieldtypes.NumberField):
 
 
 class Length(fieldtypes.NumberField):
+    """Field for the length of the product."""
+
     label = 'Length (Milimeters)'
     name = 'length'
     variable = True
@@ -207,6 +239,8 @@ class Length(fieldtypes.NumberField):
 
 
 class PackageType(fieldtypes.SingleSelectize):
+    """Field for selecting the package type of a product."""
+
     label = 'Package Type'
     name = 'package_type'
     variable = True
@@ -222,13 +256,46 @@ class PackageType(fieldtypes.SingleSelectize):
 
     @staticmethod
     def get_choices():
+        """Return choices for field."""
         package_types = [
             (service.value, service.value)
             for service in CCAPI.get_option_values("33852")]
         return [('', '')] + package_types
 
 
+class Department(fieldtypes.SingleSelectize):
+    """Field for product department."""
+
+    label = 'Department'
+    name = 'department'
+    required_message = "A <b>Department</b> must be selected."
+    help_text = (
+        'The <b>Department</b> to which the product belongs.')
+
+    @staticmethod
+    def get_choices():
+        """Get choice options for field."""
+        departments = [
+            (w.warehouse_id, w.name) for w in
+            models.Warehouse.used_warehouses.all()]
+        departments.sort(key=lambda x: x[1])
+        return [('', '')] + departments
+
+    def clean(self, value):
+        """Validate cleaned data."""
+        value = super().clean(value)
+        if self.required is False and value == '':
+            return None
+        try:
+            department = models.Warehouse.used_warehouses.get(
+                warehouse_id=int(value)).name
+        except models.Warehouse.DoesNotExist:
+            raise forms.ValidationError('Deparment not recognised')
+        return department
+
+
 class Location(fieldtypes.SelectizeField):
+    """Field for choosing warehouse bays."""
 
     label = 'Location'
     name = 'location'
@@ -249,10 +316,12 @@ class Location(fieldtypes.SelectizeField):
     }
 
     def __init__(self, department=None):
+        """Set department."""
         self.department = department
         super().__init__()
 
     def get_choices(self):
+        """Return choices for field."""
         if self.department is None:
             warehouses = models.Warehouse.used_warehouses.all()
             options = [['', '']]
@@ -270,6 +339,7 @@ class Location(fieldtypes.SelectizeField):
                 return [(bay.id, bay.name) for bay in warehouse.bay_set.all()]
 
     def get_warehouse(self):
+        """Return Warehouse object matching the field's department."""
         if isinstance(self.department, int):
             return models.Warehouse.objects.get(
                 warehouse_id=self.department)
@@ -277,9 +347,11 @@ class Location(fieldtypes.SelectizeField):
             name=self.department)
 
     def to_python(self, *args, **kwargs):
+        """Return submitted bays as a list of bay IDs."""
         return [int(x) for x in super().to_python(*args, **kwargs)]
 
     def clean(self, value):
+        """Validate bay selection."""
         value = super().clean(value)
         bays = []
         for bay_id in value:
@@ -297,9 +369,18 @@ class Location(fieldtypes.SelectizeField):
         return value
 
 
-class DepartmentBayField(forms.MultiValueField):
+class DepartmentBayField(fieldtypes.CombinationField):
+    """Combined Department and Location fields."""
+
+    help_text = (
+        'Set the <b>Department</b> to which the product belongs in the '
+        'Department field.<br>'
+        'Bays belonging to this department can then be added to the Bay field.'
+        '<br>If the bay field is left blank the default bay for the department'
+        ' will be added.')
 
     def __init__(self, *args, **kwargs):
+        """Create sub fields."""
         kwargs['label'] = 'Location'
         self.lock_department = kwargs.pop('lock_department', False)
         fields = (Department(), Location())
@@ -314,9 +395,11 @@ class DepartmentBayField(forms.MultiValueField):
             fields=fields, require_all_fields=False, *args, **kwargs)
 
     def compress(self, value):
+        """Return submitted values as a dict."""
         return {'department': value[0], 'bays': value[1]}
 
     def clean(self, value):
+        """Validate submitted values."""
         value = super().clean(value)
         warehouse = models.Warehouse.used_warehouses.get(
             name=value['department'])
@@ -327,6 +410,8 @@ class DepartmentBayField(forms.MultiValueField):
 
 
 class OptionField:
+    """Base field class for editing Product Options."""
+
     allowed_characters = {
         'Size': ['+', '-', '.', '/', "'", '"'],
         'Weight': ['.'],
@@ -335,13 +420,12 @@ class OptionField:
     }
 
     def __init__(self, *args, **kwargs):
+        """Set options for selectize."""
         self.selectize_options['create'] = True
         super().__init__(*args, **kwargs)
 
-    def valid_value(self, value):
-        return True
-
     def legal_characters(self, value):
+        """Validate all characters in submitted value are alowed."""
         error_message = '{} is not a valid character for {}.'
         allowed_characters = []
         if self.label in self.allowed_characters:
@@ -353,6 +437,7 @@ class OptionField:
                         error_message.format(char, self.label))
 
     def validate(self, value):
+        """Validate submitted value."""
         super().validate(value)
         if isinstance(value, list):
             for v in value:
@@ -362,14 +447,20 @@ class OptionField:
 
 
 class VariationOptions(OptionField, fieldtypes.SelectizeField):
+    """Field for options that define variations."""
+
     pass
 
 
 class ListingOption(OptionField, fieldtypes.SingleSelectize):
+    """Field for options that provide information for listings."""
+
     pass
 
 
 class Brand(fieldtypes.SelectizeField):
+    """Field for the Brand of the product."""
+
     label = 'Brand'
     name = 'brand'
     required_message = "Please supply a brand"
@@ -378,12 +469,15 @@ class Brand(fieldtypes.SelectizeField):
         'The <b>Brand</b> of the product.<br>This is required for listings.')
 
     def get_choices(self):
+        """Return choices for field."""
         options = CCAPI.get_product_options()
         values = [value.value for value in options['Brand']]
         return ((v, v) for v in values)
 
 
 class Manufacturer(fieldtypes.SelectizeField):
+    """Field for the manufacturer of the product."""
+
     label = 'Manufacturer'
     name = 'manufacturer'
     required_message = "Please supply a manufacturer",
@@ -393,12 +487,15 @@ class Manufacturer(fieldtypes.SelectizeField):
         'listings.')
 
     def get_choices(self):
+        """Return choices for field."""
         options = CCAPI.get_product_options()
         values = [value.value for value in options['Manufacturer']]
         return ((v, v) for v in values)
 
 
 class Gender(fieldtypes.ChoiceField):
+    """Field for the gender option of Amazon listings."""
+
     label = 'Gender'
     name = 'gender'
     placeholder = 'Gender'
@@ -413,6 +510,7 @@ class Gender(fieldtypes.ChoiceField):
     UNISEX_BABY = 'unisex-baby'
 
     def get_choices(self):
+        """Return choices for field."""
         return (
             (None, ''),
             (self.MENS, 'Mens'),
@@ -424,28 +522,14 @@ class Gender(fieldtypes.ChoiceField):
             (self.UNISEX_BABY, 'Unisex Baby'))
 
 
-class MetaFormFields(type):
-
-    def __iter__(self):
-        for field in self.fields:
-            yield field
-
-
-class DeleteVariation(fieldtypes.CheckboxField):
-
-    label = 'Delete'
-    html_class = 'delete_variation'
-    help_text = (
-        'Select this option for variations that do not exist or we will not '
-        'stock.')
-
-
 class ListOption(fieldtypes.FormField, ListInput):
+    """Base class for fields based on ListInput."""
 
     separator = '|'
     disallowed_characters = [separator]
 
     def clean(self, value):
+        """Clean submitted value."""
         if value is None:
             return []
         value = json.loads(value)
@@ -453,6 +537,7 @@ class ListOption(fieldtypes.FormField, ListInput):
 
 
 class AmazonBulletPoints(ListOption):
+    """Field for Amazon bullet point descriptions."""
 
     label = 'Amazon Bullet Points'
     name = 'amazon_bullet_points'
@@ -462,6 +547,7 @@ class AmazonBulletPoints(ListOption):
 
 
 class AmazonSearchTerms(ListOption):
+    """Field for Amazon search terms."""
 
     label = 'Amazon Search Terms'
     name = 'amazon_search_terms'

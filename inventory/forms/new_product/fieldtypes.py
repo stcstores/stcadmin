@@ -1,3 +1,5 @@
+"""Base classes for product fields."""
+
 from inspect import isclass
 
 from django import forms
@@ -7,9 +9,11 @@ from inventory.forms import widgets
 
 
 class Validators:
+    """Holder class for validation methods."""
 
     @staticmethod
     def alphanumeric(value):
+        """Validate every character in value is alphanumeric."""
         if isinstance(value, list):
             for v in value:
                 Validators.alphanumeric(v)
@@ -26,11 +30,14 @@ class Validators:
 
     @staticmethod
     def numeric(value):
+        """Validate every character in value is numeric."""
         if not value.isdigit():
             raise ValidationError('Not a valid barcode.')
 
     def limit_characters(characters):
+        """Return validator checking every character in value is allowed."""
         def character_limit(value):
+            """Check every character in value is allowed for the field."""
             error_message = 'Allowed characters are letters, numbers or {}.'
             if isinstance(value, list):
                 for v in value:
@@ -49,6 +56,7 @@ class Validators:
 
     @classmethod
     def option_value(cls, option_name):
+        """Return allowed characters for the given Product Option."""
         allowed_characters = {
             'Size': ['+', '-', '.', '/', "'", '"'],
             'Weight': ['.'],
@@ -61,6 +69,7 @@ class Validators:
 
 
 class FormField(forms.Field):
+    """Base class for product fields."""
 
     label = None
     name = None
@@ -79,6 +88,7 @@ class FormField(forms.Field):
     disallowed_characters = []
 
     def __init__(self, *args, **kwargs):
+        """Set field attributes."""
         if self.is_required:
             kwargs['required'] = True
             self.error_messages = {'required': self.required_message}
@@ -102,11 +112,13 @@ class FormField(forms.Field):
 
     @property
     def is_required(self):
+        """Return True if field is required, else False."""
         if len(self.required_message) > 0:
             return True
         return False
 
     def get_widget(self):
+        """Return widget for field."""
         attrs = {}
         if self.placeholder is not None:
             attrs['placeholder'] = self.placeholder
@@ -119,6 +131,7 @@ class FormField(forms.Field):
         return self.widget(attrs=attrs)
 
     def clean(self, value):
+        """Clean submitted value."""
         if value is not None:
             if any((c in value for c in self.disallowed_characters)):
                 raise ValidationError(
@@ -129,6 +142,8 @@ class FormField(forms.Field):
 
 
 class ChoiceField(FormField, forms.ChoiceField):
+    """Base class for product fields inheriting from ChoiceField."""
+
     variable = False
     variation = False
     must_vary = False
@@ -136,6 +151,7 @@ class ChoiceField(FormField, forms.ChoiceField):
     small_size = None
 
     def __init__(self, *args, **kwargs):
+        """Set field attributes."""
         if 'choices' not in kwargs:
             kwargs['choices'] = self.get_choices()
         kwargs['label'] = self.label
@@ -143,10 +159,12 @@ class ChoiceField(FormField, forms.ChoiceField):
 
 
 class BaseSelectizeField(FormField):
+    """Base class for choice fields using selectize.js."""
 
     selectize_options = {}
 
     def __init__(self, *args, **kwargs):
+        """Set field attributes."""
         if 'choices' in kwargs:
             self.choices = kwargs['choices']
         else:
@@ -157,6 +175,7 @@ class BaseSelectizeField(FormField):
         kwargs = super().__init__(*args, **kwargs)
 
     def get_widget(self):
+        """Return widget for field."""
         attrs = {}
         if self.placeholder is not None:
             attrs['placeholder'] = self.placeholder
@@ -170,9 +189,12 @@ class BaseSelectizeField(FormField):
 
 
 class SelectizeField(BaseSelectizeField, forms.MultipleChoiceField):
+    """Base class for selectize fields allowing multiple values."""
+
     widget_class = widgets.MultipleSelectizeWidget
 
     def to_python(self, *args, **kwargs):
+        """Return submited values as a list."""
         value = super().to_python(*args, **kwargs)
         if isinstance(value, str):
             return value.split(',')
@@ -180,10 +202,13 @@ class SelectizeField(BaseSelectizeField, forms.MultipleChoiceField):
 
 
 class SingleSelectize(BaseSelectizeField, forms.ChoiceField):
+    """Base class for selectize fields allowing a single value."""
+
     widget_class = widgets.SingleSelectizeWidget
     selectize_options = {'maxItems': 1, "dropdownParent": "body"}
 
     def to_python(self, *args, **kwargs):
+        """Return submitted value as a string."""
         value = super().to_python(*args, **kwargs)
         if isinstance(value, list):
             return value[0]
@@ -191,11 +216,13 @@ class SingleSelectize(BaseSelectizeField, forms.ChoiceField):
 
 
 class NumberField(FormField, forms.IntegerField):
+    """Base class for fields that only accept numeric values."""
 
     size = None
     small_size = None
 
     def to_python(self, value):
+        """Clean submitted value."""
         value = super().to_python(value)
         if value in self.empty_values:
             return self.empty_value
@@ -203,46 +230,43 @@ class NumberField(FormField, forms.IntegerField):
 
 
 class PriceField(FormField, forms.FloatField):
+    """Base class for product fields for handeling monetary values."""
 
     size = None
     small_size = None
 
 
 class CheckboxField(FormField, forms.BooleanField):
+    """Base class for product fields using a checkbox widget."""
+
     pass
 
 
 class TextField(FormField, forms.CharField):
+    """Base class for product fields using a text input."""
 
     def __init__(self, *args, **kwargs):
+        """Instansiate object."""
         FormField.__init__(self, *args, **kwargs)
         forms.CharField.__init__(self, *args, **self.kwargs)
 
     def clean(self, value):
+        """Clean whitespace from submitted value."""
         return super().clean(value).strip()
 
 
 class TextareaField(FormField, forms.CharField):
+    """Base class for product field using the textarea widget."""
+
     widget = forms.Textarea
 
 
-class VATPriceField(forms.MultiValueField):
-    required = True
+class CombinationField(forms.MultiValueField):
+    """Base class for product fields inheriting from MultiValueField."""
+
+    help_text = ''
 
     def __init__(self, *args, **kwargs):
-        kwargs['label'] = 'Price'
-        fields = (
-            forms.ChoiceField(
-                required=True,
-                choices=widgets.VATPriceWidget.vat_choices()),
-            forms.FloatField(required=True),
-            forms.FloatField(required=True))
-        kwargs['widget'] = widgets.VATPriceWidget()
-        super().__init__(
-            fields=fields, require_all_fields=True, *args, **kwargs)
-
-    def compress(self, data_list):
-        vat_rate, ex_vat_price, with_vat_price = data_list
-        return {
-            'vat_rate': vat_rate, 'ex_vat': ex_vat_price,
-            'with_vat_price': with_vat_price}
+        """Prevent class help_text being lost during instansiation."""
+        super().__init__(*args, **kwargs)
+        self.help_text = self.__class__.help_text
