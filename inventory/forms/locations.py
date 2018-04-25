@@ -1,3 +1,5 @@
+"""Forms for updating product locations."""
+
 import cc_products
 from django import forms
 
@@ -7,14 +9,17 @@ from stcadmin.forms import KwargFormSet
 
 
 class DepartmentForm(forms.Form):
+    """Form for changing the department of a Product Range."""
 
     def __init__(self, *args, **kwargs):
+        """Create fields for form."""
         self.product_range = kwargs.pop('product_range')
         super().__init__(*args, **kwargs)
         self.fields['department'] = Department()
         self.initial.update(self.get_initial())
 
     def get_initial(self):
+        """Return initial values for form."""
         initial = {}
         try:
             department = self.product_range.department
@@ -32,10 +37,13 @@ class DepartmentForm(forms.Form):
         return initial
 
     def save(self):
+        """Update Product Range department."""
         self.product_range.department = self.cleaned_data['department']
 
 
 class LocationsForm(forms.Form):
+    """Form for changing the Warehouse Bays associated with a product."""
+
     product_id = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'product_id'}))
     product_name = forms.CharField(
@@ -45,12 +53,14 @@ class LocationsForm(forms.Form):
     stock_level = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
+        """Add fields to form."""
         self.product = kwargs.pop('product')
         super().__init__(*args, **kwargs)
         self.fields['locations'] = Location()
         self.initial.update(self.get_initial())
 
     def get_initial(self):
+        """Return initial data."""
         initial = {}
         initial['product_id'] = self.product.id
         initial['product_name'] = self.product.full_name
@@ -61,6 +71,7 @@ class LocationsForm(forms.Form):
         return initial
 
     def get_warehouse_for_bays(self, bay_ids):
+        """Return warehouse for bay_ids."""
         if len(bay_ids) == 0:
             return None
         bays = models.Bay.objects.filter(
@@ -70,6 +81,7 @@ class LocationsForm(forms.Form):
         return None
 
     def clean(self):
+        """Add list of bay IDs to cleaned data."""
         cleaned_data = super().clean()
         cleaned_data.pop('product_name')
         cleaned_data.pop('stock_level')
@@ -80,9 +92,11 @@ class LocationsForm(forms.Form):
         return cleaned_data
 
     def save(self):
+        """Update product with new bays."""
         self.product.bays = self.cleaned_data['bays']
 
     def get_context_data(self, *args, **kwargs):
+        """Return cotext for template."""
         context = super().get_context_data(*args, **kwargs)
         context['bays'] = [
             bay.name for bay in models.Bay.objects.filter(
@@ -91,4 +105,6 @@ class LocationsForm(forms.Form):
 
 
 class LocationsFormSet(KwargFormSet):
+    """Formset for updating the locations of all Products within a Range."""
+
     form = LocationsForm

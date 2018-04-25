@@ -1,3 +1,5 @@
+"""Forms for product search page."""
+
 from ccapi import CCAPI
 from django import forms
 from django.core.exceptions import ValidationError
@@ -8,8 +10,10 @@ from .widgets import HorizontalRadio
 
 
 class OptionSelectField(forms.MultiValueField):
+    """Field for selecting a Product Option value to search by."""
 
     def __init__(self, *args, **kwargs):
+        """Add sub fields."""
         self.option_choices = kwargs.pop('option_choices')
         self.option_value_choices = kwargs.pop('option_value_choices')
         self.option_matches = kwargs.pop('option_matches')
@@ -24,16 +28,19 @@ class OptionSelectField(forms.MultiValueField):
             fields=fields, require_all_fields=False, *args, **kwargs)
 
     def compress(self, value):
+        """Return value as a list."""
         if len(value) == 0:
             return None
         return int(value[1])
 
 
 class OptionSelectWidget(forms.widgets.MultiWidget):
+    """Widget for OptionSelectField."""
 
     template_name = 'inventory/widgets/option_select_widget.html'
 
     def __init__(self, *args, **kwargs):
+        """Add sub widgets."""
         self.option_choices = kwargs.pop('option_choices')
         self.option_value_choices = kwargs.pop('option_value_choices')
         self.option_matches = kwargs.pop('option_matches')
@@ -45,11 +52,13 @@ class OptionSelectWidget(forms.widgets.MultiWidget):
         super().__init__(_widgets, *args, **kwargs)
 
     def decompress(self, value):
+        """Decompress value."""
         if value is not None and '' not in value:
             return value
         return [None, None]
 
     def render(self, name, value, attrs=None, renderer=None):
+        """Return widget as rendered HTML."""
         values = self.decompress(value)
         final_attrs = self.build_attrs(attrs)
         final_attrs['required'] = False
@@ -69,6 +78,8 @@ class OptionSelectWidget(forms.widgets.MultiWidget):
 
 
 class ProductSearchForm(forms.Form):
+    """Product search form."""
+
     EXCLUDE = 'exclude'
     INCLUDE = 'include'
     EXCLUSIVE = 'exclusive'
@@ -137,6 +148,7 @@ class ProductSearchForm(forms.Form):
         'International Shipping')
 
     def __init__(self, *args, **kwargs):
+        """Add advanced option field."""
         super().__init__(*args, **kwargs)
         option_data = CCAPI.get_product_options()
         option_choices = [('', '')]
@@ -160,6 +172,7 @@ class ProductSearchForm(forms.Form):
             option_matches=option_matches)
 
     def clean(self):
+        """Clean submitted data."""
         cleaned_data = super().clean()
         if cleaned_data['search_type'] == self.BASIC:
             cleaned_data = self.clean_basic_search(cleaned_data)
@@ -172,16 +185,19 @@ class ProductSearchForm(forms.Form):
         return cleaned_data
 
     def filter_end_of_line(self, cleaned_data):
+        """Filter results according to the end of line value."""
         if cleaned_data['end_of_line'] == self.EXCLUDE:
             self.ranges = [r for r in self.ranges if not r.end_of_line]
         elif cleaned_data['end_of_line'] == self.EXCLUSIVE:
             self.ranges = [r for r in self.ranges if r.end_of_line]
 
     def clean_basic_search(self, data):
+        """Add ranges according to basic search text."""
         self.ranges = self.get_ranges(data['basic_search_text'])
         return data
 
     def clean_advanced_search(self, data):
+        """Add ranges according to advanced search."""
         search_text = data.get('advanced_search_text')
         option_id = data.get('advanced_option', None)
         if len(search_text) == 0 and option_id == 0:
@@ -197,6 +213,7 @@ class ProductSearchForm(forms.Form):
         return data
 
     def get_ranges(self, search_text):
+        """Return Product Ranges according to submitted data."""
         search_result = CCAPI.search_products(search_text)
         range_ids = list(set([result.id for result in search_result]))
         ranges = [CCAPI.get_range(range_id) for range_id in range_ids]
