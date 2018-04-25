@@ -238,6 +238,26 @@ class Length(fieldtypes.NumberField):
         'The <b>Length</b> of the item when packed in <b>Milimeters</b>.')
 
 
+class Dimensions(fieldtypes.CombinationField):
+    """Combined field for height, width and lenght."""
+
+    label = 'Dimensions (mm)'
+    help_text = (
+        'The dimensions of the product in <b>milimeters</b> when packed.<br>'
+        'Cannot be blank but can be zero.')
+
+    def __init__(self, *args, **kwargs):
+        """Create sub fields."""
+        fields = (Height(), Width(), Length())
+        kwargs['widget'] = widgets.DimensionsWidget()
+        super().__init__(
+            fields=fields, require_all_fields=False, *args, **kwargs)
+
+    def compress(self, value):
+        """Return submitted values as a dict."""
+        return {'height': value[0], 'length': value[1], 'width': value[2]}
+
+
 class PackageType(fieldtypes.SingleSelectize):
     """Field for selecting the package type of a product."""
 
@@ -372,6 +392,7 @@ class Location(fieldtypes.SelectizeField):
 class DepartmentBayField(fieldtypes.CombinationField):
     """Combined Department and Location fields."""
 
+    label = 'Location'
     help_text = (
         'Set the <b>Department</b> to which the product belongs in the '
         'Department field.<br>'

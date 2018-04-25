@@ -267,6 +267,7 @@ class CombinationField(forms.MultiValueField):
     help_text = ''
 
     def __init__(self, *args, **kwargs):
-        """Prevent class help_text being lost during instansiation."""
+        """Prevent class attributes being lost during instantiation."""
         super().__init__(*args, **kwargs)
         self.help_text = self.__class__.help_text
+        self.label = self.__class__.label

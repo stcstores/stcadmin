@@ -30,9 +30,7 @@ class BasicInfo(NewProductForm):
         self.fields['supplier'] = fields.Supplier()
         self.fields['supplier_sku'] = fields.SupplierSKU()
         self.fields['weight'] = fields.Weight()
-        self.fields['height'] = fields.Height()
-        self.fields['length'] = fields.Length()
-        self.fields['width'] = fields.Width()
+        self.fields['dimensions'] = fields.Dimensions()
         self.fields['package_type'] = fields.PackageType()
         self.fields['brand'] = fields.Brand(
             choices=fields.Brand.get_choices(
@@ -163,9 +161,7 @@ class VariationInfo(BaseVariationForm):
             choices=self.supplier_choices)
         self.fields['supplier_sku'] = fields.SupplierSKU()
         self.fields['weight'] = fields.Weight()
-        self.fields['height'] = fields.Height()
-        self.fields['width'] = fields.Width()
-        self.fields['length'] = fields.Length()
+        self.fields['dimensions'] = fields.Dimensions()
         self.fields['package_type'] = fields.PackageType(
             choices=self.package_type_choices)
         self.fields['brand'] = fields.Brand(

@@ -156,6 +156,7 @@ class NewProduct(NewProductBase):
     AMAZON_SEARCH_TERMS = 'amazon_search_terms'
     OPTIONS = 'options'
     LOCATION = 'location'
+    DIMENSIONS = 'dimensions'
 
     def __new__(self, product_data):
         """Create new product and return it's range ID."""
@@ -187,9 +188,8 @@ class NewProduct(NewProductBase):
         """Clean data from basic_info or variation_info page."""
         basic_fields = (
             self.BARCODE, self.PURCHASE_PRICE, self.STOCK_LEVEL,
-            self.SUPPLIER, self.SUPPLIER_SKU, self.WEIGHT, self.HEIGHT,
-            self.WIDTH, self.LENGTH, self.PACKAGE_TYPE, self.BRAND,
-            self.MANUFACTURER, self.GENDER)
+            self.SUPPLIER, self.SUPPLIER_SKU, self.WEIGHT, self.PACKAGE_TYPE,
+            self.BRAND, self.MANUFACTURER, self.GENDER)
         universal_fields = (
             self.DESCRIPTION, self.AMAZON_BULLET_POINTS,
             self.AMAZON_SEARCH_TERMS)
@@ -199,6 +199,8 @@ class NewProduct(NewProductBase):
             data[key] = self.product_data[self.BASIC][key]
         data[self.VAT_RATE] = basic_data[self.PRICE][self.VAT_RATE]
         data[self.PRICE] = basic_data[self.PRICE][self.EX_VAT]
+        for key in (self.LENGTH, self.WIDTH, self.HEIGHT):
+            data[key] = basic_data[self.DIMENSIONS][key]
         department_id = self.product_data[self.BASIC][
             self.DEPARTMENT][self.DEPARTMENT]
         data[self.DEPARTMENT] = models.Warehouse.objects.get(
