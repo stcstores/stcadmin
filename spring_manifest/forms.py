@@ -1,5 +1,6 @@
 from django import forms
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
+
 from spring_manifest import models
 
 
@@ -67,12 +68,7 @@ class UpdateOrderForm(forms.ModelForm):
             order.manifest = None
             order.canceled = True
         elif 'uncancel' or 'undelay' in self.data:
-            if order.service == order.PACKET:
-                order.manifest = models.get_manifest(
-                    models.SpringManifest.UNTRACKED)
-            else:
-                order.manifest = models.get_manifest(
-                    models.SpringManifest.TRACKED)
+            order.manifest = models.get_manifest_by_service(order.service)
             order.canceled = False
         return super().save(commit=commit)
 
