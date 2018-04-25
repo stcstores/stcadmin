@@ -70,7 +70,7 @@ class BaseOptionsForm(NewProductForm):
         return values
 
     def _get_fields(self):
-        for option_name, values in self.options:
+        for option_name, values in self._get_options():
             choices = [('', '')] + [
                 (v, v) for v in self._get_choice_values(option_name, values)]
             self.fields[option_name] = self.field_class(
