@@ -35,16 +35,16 @@ class BasicInfo(NewProductForm):
         self.fields['width'] = fields.Width()
         self.fields['package_type'] = fields.PackageType()
         self.fields['brand'] = fields.Brand(
-            choices=self._get_option_choices('Brand'))
+            choices=fields.Brand.get_choices(
+                'Brand', self.options, self.initial.get('brand', None)))
         self.fields['manufacturer'] = fields.Manufacturer(
-            choices=self._get_option_choices('Manufacturer'))
+            choices=fields.Brand.get_choices(
+                'Manufacturer', self.options,
+                self.initial.get('manufacturer', None)))
         self.fields['description'] = fields.Description()
         self.fields['gender'] = fields.Gender()
         self.fields['amazon_bullet_points'] = fields.AmazonBulletPoints()
         self.fields['amazon_search_terms'] = fields.AmazonSearchTerms()
-
-    def _get_option_choices(self, option_name):
-        return [(v.value, v.value) for v in self.options[option_name]]
 
 
 class BaseOptionsForm(NewProductForm):
@@ -54,7 +54,6 @@ class BaseOptionsForm(NewProductForm):
         """Get choices for Product Option fields."""
         self.option_data = kwargs.pop(
             'option_data', CCAPI.get_product_options())
-        self.options = self._get_options()
         super().__init__(*args, **kwargs)
         self._get_fields()
 
@@ -151,6 +150,7 @@ class VariationInfo(BaseVariationForm):
         self.supplier_choices = choices['supplier']
         self.package_type_choices = choices['package_type']
         self.department = kwargs.pop('department')
+        self.options = kwargs.pop('options')
         super().__init__(*args, **kwargs)
 
     def _get_fields(self):
@@ -168,8 +168,13 @@ class VariationInfo(BaseVariationForm):
         self.fields['length'] = fields.Length()
         self.fields['package_type'] = fields.PackageType(
             choices=self.package_type_choices)
-        self.fields['brand'] = fields.Brand()
-        self.fields['manufacturer'] = fields.Manufacturer()
+        self.fields['brand'] = fields.Brand(
+            choices=fields.Brand.get_choices(
+                'Brand', self.options, self.initial.get('brand', None)))
+        self.fields['manufacturer'] = fields.Manufacturer(
+            choices=fields.Brand.get_choices(
+                'Manufacturer', self.options,
+                self.initial.get('manufacturer', None)))
         self.fields['gender'] = fields.Gender()
         for option_name, value in self.variation_options.items():
             self.fields[option_name] = forms.CharField(
@@ -227,8 +232,10 @@ class VariationInfoSet(BaseVariationFormSet):
         choices = {
             'supplier': fields.Supplier.get_choices(),
             'package_type': fields.PackageType.get_choices()}
+        options = CCAPI.get_product_options()
         return {
-            'choices': choices, 'department': self.kwargs.pop('department')}
+            'choices': choices, 'department': self.kwargs.pop('department'),
+            'options': options}
 
 
 class VariationListingOptionsSet(BaseVariationFormSet):

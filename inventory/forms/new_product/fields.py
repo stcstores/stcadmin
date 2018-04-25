@@ -436,6 +436,10 @@ class OptionField:
                     raise ValidationError(
                         error_message.format(char, self.label))
 
+    def valid_value(self, value):
+        """Allow values not in choices."""
+        return True
+
     def validate(self, value):
         """Validate submitted value."""
         super().validate(value)
@@ -444,6 +448,16 @@ class OptionField:
                 self.legal_characters(v)
         else:
             self.legal_characters(value)
+
+    @staticmethod
+    def get_choices(option_name, options=None, initial=None):
+        """Return choices for field."""
+        if not options:
+            options = CCAPI.get_product_options()
+        values = [value.value for value in options[option_name]]
+        if initial and initial not in values:
+            values.append(initial)
+        return [('', '')] + [(v, v) for v in values]
 
 
 class VariationOptions(OptionField, fieldtypes.SelectizeField):
@@ -458,7 +472,7 @@ class ListingOption(OptionField, fieldtypes.SingleSelectize):
     pass
 
 
-class Brand(fieldtypes.SelectizeField):
+class Brand(ListingOption):
     """Field for the Brand of the product."""
 
     label = 'Brand'
@@ -468,14 +482,8 @@ class Brand(fieldtypes.SelectizeField):
     help_text = (
         'The <b>Brand</b> of the product.<br>This is required for listings.')
 
-    def get_choices(self):
-        """Return choices for field."""
-        options = CCAPI.get_product_options()
-        values = [value.value for value in options['Brand']]
-        return ((v, v) for v in values)
 
-
-class Manufacturer(fieldtypes.SelectizeField):
+class Manufacturer(ListingOption):
     """Field for the manufacturer of the product."""
 
     label = 'Manufacturer'
@@ -485,12 +493,6 @@ class Manufacturer(fieldtypes.SelectizeField):
     help_text = (
         'The <b>Manufacturer</b> of the product.<br>This is required for '
         'listings.')
-
-    def get_choices(self):
-        """Return choices for field."""
-        options = CCAPI.get_product_options()
-        values = [value.value for value in options['Manufacturer']]
-        return ((v, v) for v in values)
 
 
 class Gender(fieldtypes.ChoiceField):
