@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from spring_manifest import models
 
 
@@ -48,7 +49,7 @@ class SpringManifestAdmin(admin.ModelAdmin):
 @admin.register(models.SpringOrder)
 class SpringOrderAdmin(admin.ModelAdmin):
     fields = (
-        'id', 'order_id', 'customer_name', 'date_recieved', 'dispatch_date',
+        'order_id', 'customer_name', 'date_recieved', 'dispatch_date',
         'country', 'manifest', 'service', 'canceled')
     list_display = (
         '__str__', 'order_id', 'customer_name', 'date_recieved',
