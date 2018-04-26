@@ -1,3 +1,5 @@
+"""Model admin for price_calculator app."""
+
 from django.contrib import admin
 
 from price_calculator import models
@@ -5,6 +7,8 @@ from price_calculator import models
 
 @admin.register(models.DestinationCountry)
 class DestinationCountryAdmin(admin.ModelAdmin):
+    """Model admin for DestinationCountry model."""
+
     fields = ('name', 'currency_code', 'min_channel_fee')
     list_display = ('name', 'currency_code', 'min_channel_fee')
     list_editable = ('currency_code', 'min_channel_fee')
@@ -13,6 +17,8 @@ class DestinationCountryAdmin(admin.ModelAdmin):
 
 @admin.register(models.PackageType)
 class PackageTypeAdmin(admin.ModelAdmin):
+    """Model admin for PackageType model."""
+
     fields = ('name', )
     list_display = ('name', )
     search_fields = ('name', )
@@ -20,6 +26,8 @@ class PackageTypeAdmin(admin.ModelAdmin):
 
 @admin.register(models.ShippingPrice)
 class ShippingPriceAdmin(admin.ModelAdmin):
+    """Model admin for ShippingPrice model."""
+
     fields = (
         'name', 'country', 'package_type', 'min_weight', 'max_weight',
         'min_price', 'max_price', 'item_price', 'kilo_price', 'vat_rates')
@@ -36,6 +44,8 @@ class ShippingPriceAdmin(admin.ModelAdmin):
 
 @admin.register(models.VATRate)
 class VATRateAdmin(admin.ModelAdmin):
+    """Model admin for VATRate model."""
+
     fields = ('name', 'cc_id', 'percentage')
     list_display = ('__str__', 'name', 'cc_id', 'percentage')
     list_display_links = ('__str__', )

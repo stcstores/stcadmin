@@ -1,3 +1,5 @@
+"""Views for price_calculator."""
+
 import json
 
 from ccapi import CCAPI
@@ -13,9 +15,11 @@ from price_calculator import models
 
 
 class GetShippingPriceView(InventoryUserMixin, View):
+    """View for AJAX requests for shipping prices."""
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
+        """Return shipping prices as JSON or return server error."""
         try:
             shipping_price_details = self.get_shipping_price_details()
             json_data = json.dumps(shipping_price_details)
@@ -24,6 +28,7 @@ class GetShippingPriceView(InventoryUserMixin, View):
         return HttpResponse(json_data)
 
     def get_shipping_price_details(self):
+        """Return details of shipping price as dict."""
         country_name = self.request.POST['country']
         package_type_name = self.request.POST['package_type']
         weight = int(self.request.POST['weight'])
@@ -50,9 +55,12 @@ class GetShippingPriceView(InventoryUserMixin, View):
 
 
 class RangePriceCalculatorView(InventoryUserMixin, TemplateView):
+    """View calcualting prices for an existing Product Range."""
+
     template_name = 'price_calculator/range_price_calculator.html'
 
     def get_context_data(self, *args, **kwargs):
+        """Get context data for template."""
         context_data = super().get_context_data(*args, **kwargs)
         product_range = CCAPI.get_range(
             self.kwargs.get('range_id'))
@@ -64,9 +72,12 @@ class RangePriceCalculatorView(InventoryUserMixin, TemplateView):
 
 
 class PriceCalculator(InventoryUserMixin, TemplateView):
+    """View for using price calcualtor without an existing Product."""
+
     template_name = 'price_calculator/price_calculator.html'
 
     def get_context_data(self, *args, **kwargs):
+        """Get context data for template."""
         context_data = super().get_context_data(*args, **kwargs)
         context_data['countries'] = models.DestinationCountry.objects.all()
         context_data['package_types'] = models.PackageType.objects.all()
