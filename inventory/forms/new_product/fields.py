@@ -475,7 +475,7 @@ class OptionField:
         """Return choices for field."""
         if not options:
             options = CCAPI.get_product_options()
-        values = [value.value for value in options[option_name]]
+        values = sorted([value.value for value in options[option_name]])
         if initial and initial not in values:
             values.append(initial)
         return [('', '')] + [(v, v) for v in values]
