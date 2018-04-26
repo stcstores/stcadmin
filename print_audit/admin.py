@@ -1,9 +1,14 @@
+"""Model admin for print_audit."""
+
 from django.contrib import admin
+
 from print_audit import models
 
 
 @admin.register(models.CloudCommerceUser)
 class CloudCommerceUserAdmin(admin.ModelAdmin):
+    """Model admin for CloudCommerceUser model."""
+
     fields = ['full_name', 'user_id', 'stcadmin_user']
     list_display = ('user_id', 'full_name')
     readonly_fields = ('full_name', )
@@ -14,6 +19,8 @@ class CloudCommerceUserAdmin(admin.ModelAdmin):
 
 @admin.register(models.CloudCommerceOrder)
 class CloudCommerceOrderAdmin(admin.ModelAdmin):
+    """Model admin for CloudCommerceOrder model."""
+
     list_display = (
         'order_id', 'user', 'date_created', 'date_completed', 'attempts',
         'customer_id')
@@ -24,9 +31,13 @@ class CloudCommerceOrderAdmin(admin.ModelAdmin):
 
 @admin.register(models.Feedback)
 class FeedbackAdmin(admin.ModelAdmin):
+    """Model admin for Feedback model."""
+
     pass
 
 
 @admin.register(models.UserFeedback)
 class UserFeedbackAdmin(admin.ModelAdmin):
+    """Model admin for UserFeedback model."""
+
     list_display = ('user', 'feedback_type', 'timestamp')

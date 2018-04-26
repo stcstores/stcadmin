@@ -1,3 +1,5 @@
+"""Models for print_audit."""
+
 import pytz
 from ccapi import CCAPI
 from django.contrib.auth.models import User
@@ -7,11 +9,14 @@ from django.utils.timezone import is_naive, now
 
 
 class CloudCommerceUser(models.Model):
+    """Model for storing details of Cloud Commerce Users."""
+
     user_id = models.CharField(max_length=10, unique=True)
     stcadmin_user = models.ForeignKey(
         User, null=True, blank=True, on_delete=models.CASCADE)
 
     def __init__(self, *args, **kwargs):
+        """Retrive user data from Cloud Commerce."""
         USERS = CCAPI.get_users()
         super(CloudCommerceUser, self).__init__(*args, **kwargs)
         try:
@@ -30,15 +35,19 @@ class CloudCommerceUser(models.Model):
         return self.full_name()
 
     def full_name(self):
+        """Return user's full name."""
         return '{} {}'.format(self.first_name, self.second_name)
 
     def feedback_count(self, feedback_type):
+        """Return number of feedback objects associated with user."""
         user_feedback = UserFeedback.objects.filter(
             user=self, feedback_type=feedback_type)
         return user_feedback.count()
 
 
 class CloudCommerceOrder(models.Model):
+    """Model for Cloud Commerce Orders."""
+
     order_id = models.CharField(max_length=10, unique=True)
     user = models.ForeignKey(CloudCommerceUser, on_delete=models.CASCADE)
     date_created = models.DateTimeField()
@@ -50,6 +59,7 @@ class CloudCommerceOrder(models.Model):
 
     @classmethod
     def create_from_print_queue(cls, print_log):
+        """Create CloudCommerceOrder from an entry in the print queue."""
         try:
             user = CloudCommerceUser.objects.get(
                 user_id=str(print_log.user_id))
@@ -66,12 +76,14 @@ class CloudCommerceOrder(models.Model):
                 print_log.customer_order_dispatch_id))
 
     def save(self, *args, **kwargs):
+        """Localise date created field."""
         self.date_created = self.localise_datetime(self.date_created)
         if self.date_completed:
             self.date_completed = self.localise_datetime(self.date_completed)
         super(CloudCommerceOrder, self).save(*args, **kwargs)
 
     def localise_datetime(self, date_input):
+        """Return localised datetime.datetime object."""
         if date_input is not None and is_naive(date_input):
             tz = pytz.timezone('Europe/London')
             date_input = date_input.replace(tzinfo=tz)
@@ -79,6 +91,8 @@ class CloudCommerceOrder(models.Model):
 
 
 class Feedback(models.Model):
+    """Model for feedback scores."""
+
     name = models.CharField(max_length=20)
     image = models.ImageField()
     score = models.IntegerField(default=0)
@@ -88,24 +102,40 @@ class Feedback(models.Model):
 
 
 class ScoredQuerySet(models.QuerySet):
+    """Add score method to querysets for UserFeedback model."""
 
     def score(self):
+        """Return accumulated score for feedback in queryset."""
         return sum(o.feedback_type.score for o in self.all())
 
 
 class UserFeedbackManager(models.Manager):
+    """
+    Manager for UserFeedback model.
+
+    Replaces QuerySet class with ScoredQuerySet.
+    """
 
     def get_queryset(self):
+        """Use ScoredQuerySet class in place of QuerySet."""
         return ScoredQuerySet(self.model)
 
 
 class UserFeedbackMonthlyManager(UserFeedbackManager):
+    """
+    Manager for UserFeedback.
+
+    Limits queries to feedback dated with in the current month.
+    """
 
     def get_queryset(self):
+        """Return QuerySet of User Feedback dated in the current month."""
         return ScoredQuerySet(self.model).filter(timestamp__month=now().month)
 
 
 class UserFeedback(models.Model):
+    """Model to link CloudCommerceUser with Feedback."""
+
     user = models.ForeignKey(CloudCommerceUser, on_delete=models.CASCADE)
     feedback_type = models.ForeignKey(Feedback, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default=now)

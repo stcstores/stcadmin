@@ -1,19 +1,26 @@
+"""Views for display monitor."""
+
 import json
 
 from django.http import HttpResponse
 from django.utils.timezone import now
 from django.views import View
 from django.views.generic.base import TemplateView
+
 from print_audit import models
 
 
 class DisplayMonitor(TemplateView):
+    """View for display monitor."""
+
     template_name = 'print_audit/display_monitor.html'
 
 
 class PackCountMonitor(View):
+    """View for pack count display."""
 
     def get(self, request):
+        """Return HttpResponse with pack count data."""
         orders = models.CloudCommerceOrder.objects.filter(
             date_created__year=now().year,
             date_created__month=now().month,
@@ -29,8 +36,10 @@ class PackCountMonitor(View):
 
 
 class FeedbackMonitor(View):
+    """View for feedback display."""
 
     def get(self, request):
+        """Return HttpResponse with feedback data for current month."""
         feedback_types = models.Feedback.objects.order_by('score')
         users = models.CloudCommerceUser.objects.all()
         data = []

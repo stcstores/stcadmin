@@ -1,20 +1,26 @@
+"""Charts for print audit app."""
+
 import datetime
 
 from jchart import Chart
 from jchart.config import Axes, DataSet
+
 from print_audit import models
 
 
 class OrdersByDay(Chart):
+    """Chart number of orders by day dispatched."""
 
     chart_type = 'horizontalBar'
     scales = {'yAxes': [Axes(ticks={'beginAtZero': True})]}
     legend = {'display': False}
     title = {'display': True, 'text': 'Orders by Day'}
+    DAYS_TO_DISPLAY = 60
 
     def __init__(self, *args, **kwargs):
+        """Get orders for dates to be charted."""
         self.today = datetime.datetime.today()
-        day = self.today - datetime.timedelta(days=60)
+        day = self.today - datetime.timedelta(days=self.DAYS_TO_DISPLAY)
         self.orders = {}
         while day <= self.today:
             self.orders[day] = models.CloudCommerceOrder.objects.filter(
@@ -23,10 +29,12 @@ class OrdersByDay(Chart):
         super().__init__(*args, **kwargs)
 
     def get_labels(self):
+        """Return axis labels for dates."""
         return [
             day.strftime('%a %d %b %Y') for day, count in self.orders.items()]
 
     def get_datasets(self, **kwargs):
+        """Return datasets for chart."""
         red = '#ff554f'
         green = '#4fff55'
         blue = '#554fff'
@@ -40,14 +48,16 @@ class OrdersByDay(Chart):
 
 
 class OrdersByWeek(Chart):
+    """Chart number of orders dispatched by week."""
 
     chart_type = 'line'
     scales = {'yAxes': [Axes(ticks={'beginAtZero': True})]}
     legend = {'display': False}
     title = {'display': True, 'text': 'Orders by Week'}
+    WEEKS_TO_DISPLAY = 52
 
     def __init__(self, *args, **kwargs):
-
+        """Get weeks in range."""
         class Week:
             def __init__(self, year, number):
                 self.year = year
@@ -59,7 +69,7 @@ class OrdersByWeek(Chart):
         years = [
             d.year for d in models.CloudCommerceOrder.objects.all().datetimes(
                 'date_created', 'year')]
-        weeks_numbers = list(range(1, 53))
+        weeks_numbers = list(range(1, self.WEEKS_TO_DISPLAY + 1))
         self.weeks = []
         self.now = datetime.datetime.now()
         self.first_order_date = models.CloudCommerceOrder.objects.order_by(
@@ -71,6 +81,7 @@ class OrdersByWeek(Chart):
         super().__init__(*args, **kwargs)
 
     def week_required(self, year, week):
+        """Return True if week is in required range."""
         if year == self.now.year and week > self.get_week(self.now) - 1:
             return False
         first_week = self.get_week(self.first_order_date)
@@ -80,11 +91,14 @@ class OrdersByWeek(Chart):
         return True
 
     def get_week(self, date):
+        """Return week number for date."""
         return date.isocalendar()[1]
 
     def get_labels(self):
+        """Return axis labels for weeks."""
         return [w.name for w in self.weeks]
 
     def get_datasets(self, **kwargs):
+        """Return datasets for chart."""
         data = [w.value for w in self.weeks]
         return [DataSet(data=data, color=(85, 79, 255))]

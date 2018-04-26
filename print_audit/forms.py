@@ -1,13 +1,18 @@
+"""Forms for print audit app."""
+
 import datetime
-from django.utils import timezone
-from django import forms
-from print_audit import models
-from dateutil.relativedelta import relativedelta
+
 import pytz
+from dateutil.relativedelta import relativedelta
+from django import forms
+from django.utils import timezone
+
+from print_audit import models
 from stcadmin import settings
 
 
 class FeedbackSearchForm(forms.Form):
+    """Form for searching feedback."""
 
     PAGINATION_VALUES = [5, 10, 25, 50, 100, 250, 500, 1000, 5000]
 
@@ -39,6 +44,7 @@ class FeedbackSearchForm(forms.Form):
 
 
 class FeedbackDateFilterForm(forms.Form):
+    """Form for filtering user feedback by date."""
 
     DATES_CHOICES = [
         ('all', 'All'), ('this_year', 'This Year'),
@@ -58,39 +64,46 @@ class FeedbackDateFilterForm(forms.Form):
         widget=forms.DateInput(attrs={'class': 'datepicker'}))
 
     def today(self):
+        """Return start and end dates for the current day."""
         date_from = timezone.now().date()
         date_to = date_from + datetime.timedelta(days=1)
         return (date_from, date_to)
 
     def yesterday(self):
+        """Return start and end dates for the previous day."""
         date_to = timezone.now().date()
         date_from = date_to - datetime.timedelta(days=1)
         return (date_from, date_to)
 
     def this_week(self):
+        """Return start and end dates for the current week."""
         today = timezone.now().date()
         date_from = today - datetime.timedelta(days=today.weekday())
         date_to = date_from + relativedelta(weeks=1)
         return (date_from, date_to)
 
     def this_month(self):
+        """Return start and end dates for the current month."""
         date_from = timezone.now().date().replace(day=1)
         date_to = date_from + relativedelta(months=1)
         return (date_from, date_to)
 
     def last_month(self):
+        """Return start and end dates for the previous month."""
         date_from = timezone.now().date().replace(
             day=1) - relativedelta(months=2)
         date_to = date_from + relativedelta(months=1)
         return (date_from, date_to)
 
     def this_year(self):
+        """Return start and end dates for the current year."""
         today = timezone.now()
         date_from = datetime.datetime(year=today.year, month=1, day=1)
         date_to = datetime.datetime(year=today.year + 1, month=1, day=1)
         return (date_from, date_to)
 
     def clean(self):
+        """Set final start and end dates according to submitted data."""
         data = super().clean()
         if data['dates'] == 'custom':
             data['date_to'] += datetime.timedelta(days=1)
@@ -113,6 +126,7 @@ class FeedbackDateFilterForm(forms.Form):
         return data
 
     def localise_time(self, time):
+        """Localise datetime object."""
         tz = pytz.timezone(settings.TIME_ZONE)
         if isinstance(time, datetime.date):
             time = datetime.datetime.combine(
