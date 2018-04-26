@@ -1,4 +1,7 @@
+"""URL patters for the labelmaker app."""
+
 from django.urls import path
+
 from labelmaker import views
 
 app_name = 'labelmaker'

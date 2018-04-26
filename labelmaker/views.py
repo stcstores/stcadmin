@@ -1,3 +1,5 @@
+"""Views for the labelmaker app."""
+
 import json
 
 import labeler
@@ -7,30 +9,38 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import DeleteView, FormView
+
 from home.views import UserInGroupMixin
 from labelmaker import forms
 from labelmaker.models import SizeChart, SizeChartSize
 
 
 class LabelmakerUserMixin(UserInGroupMixin):
+    """View mixin to ensure user in in the labelmaker group."""
+
     groups = ['labelmaker']
 
 
 class Index(LabelmakerUserMixin, TemplateView):
+    """View for labelmaker homepage."""
+
     template_name = 'labelmaker/index.html'
 
     def get_context_data(self, *args, **kwargs):
+        """Return context for template."""
         context_data = super().get_context_data()
         context_data['size_charts'] = SizeChart.objects.all()
         return context_data
 
 
 class SizeChartForm(FormView):
+    """View for Size Chart form."""
 
     template_name = 'labelmaker/size_chart.html'
     form_class = forms.SizeFormset
 
     def form_valid(self, form):
+        """Update model object."""
         size_chart_name = form.data.get('size_chart_name')
         if str(form.instance.name) != size_chart_name:
             form.instance.name = size_chart_name
@@ -39,11 +49,13 @@ class SizeChartForm(FormView):
         return super().form_valid(form)
 
     def get_context_data(self, *args, **kwargs):
+        """Return context data for template."""
         context_data = super().get_context_data()
         context_data['formset'] = context_data.pop('form')
         return context_data
 
     def get_form_kwargs(self, *args, **kwargs):
+        """Return kwargs for form."""
         kwargs = super().get_form_kwargs()
         self.size_chart_id = self.kwargs.get('pk')
         kwargs['instance'] = get_object_or_404(
@@ -51,31 +63,39 @@ class SizeChartForm(FormView):
         return kwargs
 
     def get_success_url(self):
-        return reverse_lazy(
-            'labelmaker:size_charts')
+        """Return URL to redirect to after successful submission."""
+        return reverse_lazy('labelmaker:size_charts')
 
 
 class CreateSizeChart(LabelmakerUserMixin, View):
+    """View for create size chart page."""
 
     def dispatch(self, *args, **kwargs):
+        """Create new size chart and redirct to it's edit page."""
         size_chart = SizeChart.objects.create(name='PLACEHOLDER NAME')
         SizeChartSize.objects.create(size_chart=size_chart)
         return redirect(size_chart.get_absolute_url())
 
 
 class SizeCharts(LabelmakerUserMixin, TemplateView):
+    """View for size chart edit page."""
+
     template_name = 'labelmaker/size_charts.html'
 
     def get_context_data(self, *args, **kwargs):
+        """Return context data for template."""
         context_data = super().get_context_data(*args, **kwargs)
         context_data['size_charts'] = SizeChart.objects.all()
         return context_data
 
 
 class LabelFormSizeChart(LabelmakerUserMixin, TemplateView):
+    """View for label form when using a size chart."""
+
     template_name = 'labelmaker/label_form.html'
 
     def get_context_data(self, *args, **kwargs):
+        """Return context data for template."""
         context_data = super().get_context_data(*args, **kwargs)
         size_chart_id = self.kwargs.get('size_chart_id')
         context_data['size_chart'] = get_object_or_404(
@@ -86,13 +106,17 @@ class LabelFormSizeChart(LabelmakerUserMixin, TemplateView):
 
 
 class LabelFormNoSizeChart(LabelmakerUserMixin, TemplateView):
+    """View for label form when not using a size chart."""
+
     template_name = 'labelmaker/label_form.html'
 
 
 class PDFLabelView(LabelmakerUserMixin, View):
+    """PDF document view for generated labels."""
 
     @staticmethod
     def generate_pdf_response(data):
+        """Create HTTP response."""
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'filename="labels.pdf"'
         label_format = labeler.DefaultLabelFormat
@@ -104,6 +128,7 @@ class PDFLabelView(LabelmakerUserMixin, View):
 
     @staticmethod
     def split_list(li, n):
+        """Split text lines to fit on label."""
         num = float(len(li))/n
         split_list = [
             li[i:i + int(num)] for i in range(0, (n-1)*int(num), int(num))]
@@ -112,6 +137,7 @@ class PDFLabelView(LabelmakerUserMixin, View):
 
     def get_label_data_for_size_chart(
                 self, product_code, json_data, size_chart_id):
+        """Return text lines for labels generated from a size chart."""
         label_data = []
         for variation in json_data:
             size = get_object_or_404(SizeChartSize, pk=variation['size'])
@@ -135,8 +161,10 @@ class PDFLabelView(LabelmakerUserMixin, View):
 
 
 class TestPDFLabel(PDFLabelView):
+    """View to create a PDF of labels generated from test data."""
 
     def dispatch(self, *args, **kwargs):
+        """Create PDF labels using test data."""
         data = [
             ['UK 12', 'Pink Cat Slipper', 'FW987'],
             ['38" Regular Tall', 'Grey Shoulders, Blue Body', '45632'],
@@ -151,14 +179,17 @@ class TestPDFLabel(PDFLabelView):
 
 
 class LabelPDF(PDFLabelView):
+    """View for returning a .PDF document of generated labels."""
 
     def dispatch(self, *args, **kwargs):
+        """Create label PDF."""
         size_chart_id = self.kwargs.get('size_chart_id') or None
         if size_chart_id is None:
             return self.no_size_chart()
         return self.with_size_chart(size_chart_id)
 
     def no_size_chart(self):
+        """Create label PDF without a size chart."""
         product_code = self.request.POST['product_code']
         data = []
         for item in json.loads(self.request.POST['data']):
@@ -167,6 +198,7 @@ class LabelPDF(PDFLabelView):
         return self.generate_pdf_response(data)
 
     def with_size_chart(self, size_chart_id):
+        """Create a label PDF using a size chart."""
         data = json.loads(self.request.POST['data'])
         product_code = self.request.POST['product_code']
         label_data = self.get_label_data_for_size_chart(
@@ -175,9 +207,12 @@ class LabelPDF(PDFLabelView):
 
 
 class DeleteSizeChart(LabelmakerUserMixin, DeleteView):
+    """View to delete SizeChart objects."""
+
     model = SizeChart
     success_url = reverse_lazy('labelmaker:size_charts')
 
     def get_object(self, *args, **kwargs):
+        """Return object to delete."""
         return get_object_or_404(
             SizeChart, pk=self.kwargs.get('size_chart_id'))
