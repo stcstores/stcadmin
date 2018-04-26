@@ -4,7 +4,11 @@
 {% load stcadmin_extras %}
 
 {% block additional_head %}{{ block.super }}
-<script src="{% static 'scripts/stock_manager.js' %}"></script>
+<link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
+<link rel="stylesheet" href="{% static 'scripts/inventory.css' %}">
+<script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
+<script src="{% static 'scripts/new_product.js' %}"></script>
 {% include 'home/froala_head.html' %}
 {% endblock %}
 
@@ -12,7 +16,7 @@
 
 {% block content %}{{ block.super }}
 <form action="" method="POST">{% csrf_token %}
-    <table>
+    <table class="new_product">
         {% for field in form %}
         <tr>
             <td>{{ field.label }}</td>
@@ -26,4 +30,15 @@
         <tr><td colspan="3"><input type="submit" value="Update"></td></tr>
     </table>
 </form>
+
+<div>
+    <ul class="formside">
+        <li>Must <b>not</b> start with the title of the product. It will be added automatically on ebay.</li>
+        <li>Must <b>not</b> include information about <b>price</b> or <b>postage</b>.</li>
+        <li>The description can <b>contain</b> bullet points to hightlight key information but <b>MUST NOT</b> consist only of bullet ponts.</li>
+        <li>Do <b>not</b> use abrieviations such as "L" for length as this cannot be translated for foriegn listings.</li>
+        <li>Sentences must end with full stops.</li>
+        <li>Proper use of capitalisation is required.</li>
+    </ul>
+</div>
 {% endblock %}
