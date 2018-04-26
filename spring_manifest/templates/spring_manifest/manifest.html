@@ -26,6 +26,8 @@
     <h3>IN PROGRESS</h3>
     <p>This manifest is currently being processed.</p>
 {% endif %}
+<br><br>
+<input type="text" value="{{ manifest }}" readonly>
 
 <ul>
 {% for error in manifest.get_error_list %}
