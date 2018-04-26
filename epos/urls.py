@@ -1,4 +1,7 @@
+"""URLs for epos app."""
+
 from django.urls import path
+
 from epos import views
 
 app_name = 'epos'

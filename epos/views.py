@@ -1,3 +1,5 @@
+"""Views for the epos app."""
+
 import json
 
 from ccapi import CCAPI
@@ -11,20 +13,27 @@ from home.views import UserInGroupMixin
 
 
 class EPOSUserMixin(UserInGroupMixin):
+    """View mixin to ensure that user in in the epos group."""
+
     groups = ['epos']
 
 
 class Index(EPOSUserMixin, TemplateView):
+    """View for the epos page."""
+
     template_name = 'epos/index.html'
 
 
 class BarcodeSearch(EPOSUserMixin, View):
+    """AJAX request view to return product data by barcode."""
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
+        """Mark view as CSRF exempt."""
         return super().dispatch(*args, **kwargs)
 
     def post(self, request):
+        """Search for products matching barcode and return relevent data."""
         barcode = request.POST['barcode']
         search_result = CCAPI.search_products(barcode)
         if len(search_result) == 0:
@@ -46,12 +55,15 @@ class BarcodeSearch(EPOSUserMixin, View):
 
 
 class EPOSOrder(EPOSUserMixin, View):
+    """AJAX request view to update stock levels according to an EPOS order."""
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
+        """Mark view as CSRF exempt."""
         return super().dispatch(*args, **kwargs)
 
     def post(self, request):
+        """Update Cloud Commerce stock levels."""
         products = json.loads(request.body)
         for product_id, product in products.items():
             old_stock_level = product['stock_level']
