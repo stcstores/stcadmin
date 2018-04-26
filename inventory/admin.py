@@ -1,3 +1,5 @@
+"""ModelAdmin classes for the inventory app."""
+
 from django.contrib import admin
 
 from inventory import models
@@ -5,6 +7,7 @@ from inventory import models
 
 @admin.register(models.STCAdminImage)
 class STCAdminImageAdmin(admin.ModelAdmin):
+    """ModelAdmin for the STCAdminImage model."""
 
     fields = ['range_id', 'image']
     list_display = ['id', '__str__', 'range_id', 'image']
@@ -17,6 +20,8 @@ class STCAdminImageAdmin(admin.ModelAdmin):
 
 @admin.register(models.Barcode)
 class BarcodeAdmin(admin.ModelAdmin):
+    """ModelAdmin for the Barcode model."""
+
     fields = ('barcode', 'used')
     list_display = ('barcode', 'used')
     search_fields = ('barcode', )
@@ -28,6 +33,8 @@ class BarcodeAdmin(admin.ModelAdmin):
 
 @admin.register(models.Warehouse)
 class WarehouseAdmin(admin.ModelAdmin):
+    """ModelAdmin for the Warehouse model."""
+
     fields = ('warehouse_id', 'name', 'abriviation')
     list_display = ('warehouse_id', 'name', 'abriviation')
     search_fields = ('name', 'abriviation')
@@ -35,6 +42,8 @@ class WarehouseAdmin(admin.ModelAdmin):
 
 @admin.register(models.Bay)
 class BayAdmin(admin.ModelAdmin):
+    """ModelAdmin for the Bay model."""
+
     fields = ('bay_id', 'name', 'warehouse')
     list_display = ('bay_id', '__str__', 'name', 'warehouse')
     search_fields = ('name', )

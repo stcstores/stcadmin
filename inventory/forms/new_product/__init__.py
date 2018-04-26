@@ -1,1 +1,3 @@
-from . forms import *  # noqa
+"""Forms and fields for new product creation."""
+
+from . forms import *  # NOQA
