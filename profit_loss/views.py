@@ -1,3 +1,6 @@
+"""Views for profit_loss app."""
+
+
 import csv
 import datetime
 from io import StringIO
@@ -16,6 +19,7 @@ from spring_manifest.models import CloudCommerceCountryID
 
 
 def localise_datetime(date_input):
+    """Return localised version of datetime object."""
     if date_input is not None and is_naive(date_input):
         tz = pytz.timezone('Europe/London')
         date_input = date_input.replace(tzinfo=tz)
@@ -23,10 +27,14 @@ def localise_datetime(date_input):
 
 
 class ProfitLossUserMixin(UserInGroupMixin):
+    """View mixin to ensure user is in the profit loss group."""
+
     groups = ['profit_loss']
 
 
 class Orders(ProfitLossUserMixin, ListView):
+    """View to display orders."""
+
     paginator_class = Paginator
     template_name = 'profit_loss/orders.html'
     model = models.Order
@@ -39,6 +47,7 @@ class Orders(ProfitLossUserMixin, ListView):
     order_id = None
 
     def get(self, *args, **kwargs):
+        """Get parameters from GET request."""
         if self.request.GET.get('date_from'):
             year, month, day = self.request.GET['date_from'].split('-')
             self.start_date = localise_datetime(datetime.datetime(
@@ -58,6 +67,7 @@ class Orders(ProfitLossUserMixin, ListView):
         return super().get(*args, **kwargs)
 
     def get_queryset(self):
+        """Return orders matching GET query."""
         orders = self.model.objects
         if self.order_id is not None:
             return orders.filter(order_id=self.order_id)
@@ -72,6 +82,7 @@ class Orders(ProfitLossUserMixin, ListView):
         return orders.all()
 
     def get_context_data(self, *args, **kwargs):
+        """Return context data for template."""
         context = super().get_context_data()
         context['date_from'] = self.request.GET.get('date_from', '')
         context['date_to'] = self.request.GET.get('date_to', '')
@@ -89,9 +100,12 @@ class Orders(ProfitLossUserMixin, ListView):
 
 
 class Order(ProfitLossUserMixin, TemplateView):
+    """View for details of individual orders."""
+
     template_name = 'profit_loss/order.html'
 
     def get_context_data(self, *args, **kwargs):
+        """Return context data for template."""
         context = super().get_context_data(*args, **kwargs)
         order_id = self.kwargs.get('order_id')
         context['order'] = get_object_or_404(models.Order, id=order_id)
@@ -100,10 +114,13 @@ class Order(ProfitLossUserMixin, TemplateView):
 
 
 class ExportOrders(View):
+    """View to export orders as .csv."""
+
     start_date = None
     end_date = None
 
     def dispatch(self, *args, **kwargs):
+        """Return HttpResponse containing CSV file."""
         self.request = args[0]
         output = StringIO()
         self.orders = self.get_orders()
@@ -119,6 +136,7 @@ class ExportOrders(View):
         return response
 
     def get_orders(self):
+        """Return orders matching query."""
         if self.request.POST.get('date_from'):
             year, month, day = self.request.POST['date_from'].split('-')
             self.start_date = localise_datetime(datetime.datetime(
@@ -135,11 +153,13 @@ class ExportOrders(View):
         return orders.all()
 
     def format_price(self, price):
+        """Return pence integer as formated price string."""
         if price is None:
             return '-'
         return '£{price:.2f}'.format(price=float(price / 100))
 
     def get_filename(self):
+        """Return filename for CSV file."""
         date_format = '%Y-%m-%d'
         if self.start_date is not None and self.end_date is not None:
             return 'profit_loss_{}_to_{}.csv'.format(
@@ -154,12 +174,14 @@ class ExportOrders(View):
         return 'profit_loss.csv'
 
     def header(self):
+        """Return column headers for CSV file."""
         return [
             'Order ID', 'Department', 'Country', 'Items', 'Price',
             'Weight (g)', 'Courier Rule', 'Postage Price', 'Purchase Price',
             'Channel Fee', 'VAT', 'Profit (with VAT)', 'Profit', 'Profit %']
 
     def get_data(self):
+        """Return row data for CSV file."""
         return [[
             order.order_id, order.department, order.country, order.item_count,
             self.format_price(order.price), order.weight,

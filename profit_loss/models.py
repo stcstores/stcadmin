@@ -1,3 +1,5 @@
+"""Models for proift loss."""
+
 import pytz
 from django.db import models, transaction
 from django.utils.timezone import is_naive
@@ -7,8 +9,11 @@ from spring_manifest.models import CloudCommerceCountryID
 
 
 class Order(models.Model):
+    """Model for Cloud Commerce orders."""
 
     class Meta:
+        """Sort orders by dispatch date."""
+
         ordering = ['-dispatch_date']
 
     order_id = models.PositiveIntegerField(unique=True)
@@ -28,35 +33,42 @@ class Order(models.Model):
     shipping_service = models.CharField(max_length=250)
 
     def vat(self):
+        """Return VAT paid on order."""
         if self.vat_rate is not None:
             return int(
                 ((self.price / (1 + (self.vat_rate / 100))) - self.price) * -1)
 
     def profit(self):
+        """Return profit made on order."""
         if self.vat() is not None:
             return self.price - sum([
                 self.postage_price, self.purchase_price, self.channel_fee(),
                 self.vat()])
 
     def profit_percentage(self):
+        """Return percentage of price paid that is profit."""
         profit = self.profit()
         if profit is not None:
             return int((self.profit() / self.price) * 100)
 
     def profit_no_vat(self):
+        """Return profit on order not taking VAT into account."""
         return self.price - sum([
             self.postage_price, self.purchase_price, self.channel_fee()])
 
     def channel_fee(self):
+        """Return amount paid as the channel fee."""
         return int(float(self.price / 100) * 15)
 
     def save(self, *args, **kwargs):
+        """Set time zone for date recieved and dispatch date."""
         self.date_recieved = self.localise_datetime(self.date_recieved)
         self.dispatch_date = self.localise_datetime(self.dispatch_date)
         super().save(*args, **kwargs)
 
     @staticmethod
     def localise_datetime(date_input):
+        """Return date_input as localised datetime."""
         if date_input is not None and is_naive(date_input):
             tz = pytz.timezone('Europe/London')
             date_input = date_input.replace(tzinfo=tz)
@@ -67,6 +79,7 @@ class Order(models.Model):
 
 
 class Product(models.Model):
+    """Model for Cloud Commerce Products."""
 
     sku = models.CharField(max_length=20)
     range_id = models.IntegerField()
@@ -80,11 +93,13 @@ class Product(models.Model):
 
 
 class UpdateOrderProfit(OrderProfit):
+    """Add profit_loss orders to database."""
 
     number_of_days = 4
 
     @transaction.atomic
     def __init__(self):
+        """Add profit_loss orders to database."""
         super().__init__()
         for o in self.orders:
             order = Order(
@@ -105,6 +120,7 @@ class UpdateOrderProfit(OrderProfit):
                 product.save()
 
     def filter_orders(self, orders):
+        """Filter out orders that already exist in the database."""
         orders = super().filter_orders(orders)
         existing_order_ids = Order._base_manager.all().values_list(
             'order_id', flat=True)

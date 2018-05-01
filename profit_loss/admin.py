@@ -1,3 +1,5 @@
+"""Model admin for profit loss models."""
+
 from django.contrib import admin
 
 from profit_loss import models
@@ -5,6 +7,7 @@ from profit_loss import models
 
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
+    """Model admin for Order model."""
 
     fields = (
         'order_id', 'department', 'country', 'weight', 'vat_rate', 'price',
@@ -24,6 +27,8 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
+    """Model admin for Product model."""
+
     fields = ('sku', 'name', 'range_id', 'product_id', 'quantity', 'order')
     list_display = (
         'id', 'sku', 'name', 'range_id', 'product_id', 'quantity', 'order')

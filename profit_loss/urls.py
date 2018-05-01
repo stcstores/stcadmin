@@ -1,3 +1,5 @@
+"""URL patterns for profit loss app."""
+
 from django.urls import path
 
 from profit_loss import views
