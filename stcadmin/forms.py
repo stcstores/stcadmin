@@ -1,12 +1,17 @@
+"""KwargFormSet class."""
+
 from django.forms.formsets import BaseFormSet
 
 
 class KwargFormSet(BaseFormSet):
+    """Base class for formsets allowing kwargs to be passed to each form."""
+
     extra = 0
     can_order = False
     can_delete = False
 
     def __init__(self, *args, **kwargs):
+        """Set formset attributes."""
         self.form_kwargs = kwargs['form_kwargs']
         self.min_num = len(self.form_kwargs)
         self.max_num = self.min_num
@@ -14,12 +19,15 @@ class KwargFormSet(BaseFormSet):
         super().__init__(*args, **kwargs)
 
     def validate_max(self):
+        """Return True if number of forms is equal to min_num."""
         return len(self.forms) == self.min_num
 
     def validate_min(self):
+        """Return True if number of forms is equal to max_num."""
         return len(self.forms) == self.min_num
 
     def get_form_kwargs(self, i):
+        """Return kwargs for formset i."""
         return self.form_kwargs[i]
 
     def _construct_form(self, i, **kwargs):
