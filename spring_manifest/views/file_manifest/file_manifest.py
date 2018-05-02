@@ -23,7 +23,11 @@ class FileManifest:
         try:
             self.process_manifest()
         except Exception as e:
+<<<<<<< HEAD
             self.add_error('An error occured.')
+=======
+            self.add_error('An error occured')
+>>>>>>> Remove traceback from manifest error.
             logger.error(
                 'Manifest Error: %s', ' '.join(sys.argv),
                 exc_info=sys.exc_info())
