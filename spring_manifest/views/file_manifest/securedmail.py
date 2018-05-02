@@ -1,3 +1,5 @@
+"""FileSecuredMailManifest class."""
+
 import csv
 import datetime
 import io
@@ -17,12 +19,15 @@ from .file_manifest import FileManifest
 
 
 class FileSecuredMailManifest(FileManifest):
+    """File a Secured Mail manifest."""
+
     PROOF_OF_DELIVERY = {'SMIU': '', 'SMIT': 'T'}
     SERVICE = {
         'SMIU': 'International Untracked',
         'SMIT': 'International Tracked'}
 
     def get_manifest_rows(self, manifest):
+        """Return rows for item advice."""
         rows = []
         self.country_weights = {
             dest: [] for dest in models.SecuredMailDestination.objects.all()}
@@ -38,13 +43,12 @@ class FileSecuredMailManifest(FileManifest):
         return rows
 
     def invalid_country_message(self, order):
+        """Return message for invalid countries."""
         return 'Order {}: Country {} info invalid.'.format(
             order, order.country)
 
-    def send_file(self, manifest):
-        pass
-
     def save_item_advice_file(self, manifest, rows):
+        """Create Item Advice file and save to database."""
         if rows:
             output = io.StringIO(newline='')
             writer = csv.DictWriter(
@@ -60,22 +64,26 @@ class FileSecuredMailManifest(FileManifest):
             output.close()
 
     def save_manifest_file(self, manifest, country):
+        """Create Manifest file and save to database."""
         manifest_file = SecuredMailManifestFile(manifest, self.country_weights)
         manifest.manifest_file.save(
             str(manifest) + '_manifest.xlsx', File(manifest_file))
 
     def save_docket_file(self, manifest, rows):
+        """Create Docket file and save to database."""
         docket_file = SecuredMailDocketFile(manifest, self.service_weights)
         manifest.docket_file.save(
             str(manifest) + '_docket.xlsx', File(docket_file))
         manifest.file_manifest()
 
     def get_order_address(self, order):
+        """Return formatted order address."""
         address = self.get_delivery_address(order)
         address.clean_address = self.clean_address(order, address)
         return address
 
     def get_order_product(self, item, cc_order):
+        """Return SpringItem object matching cc_order ID."""
         for product in cc_order.products:
             if int(product.product_id) == item.item_id:
                 return product
@@ -83,6 +91,7 @@ class FileSecuredMailManifest(FileManifest):
             item.sku, cc_order.order_id))
 
     def get_delivery_address(self, order):
+        """Fetch order address from Cloud Commerce."""
         try:
             address = CCAPI.get_order_addresses(
                 order.order_id, order.customer_id).delivery_address
@@ -93,6 +102,7 @@ class FileSecuredMailManifest(FileManifest):
             return address
 
     def get_row_for_order(self, order):
+        """Return item advice row for order."""
         cc_order = order.get_order_data()
         address = self.get_order_address(cc_order)
         country = order.country
@@ -142,6 +152,7 @@ class FileSecuredMailManifest(FileManifest):
         return rows
 
     def clean_address(self, order, address):
+        """Return formatted address lines."""
         original_address = address.address
         clean_address = [' '.join(a.split()) for a in original_address]
         while len(clean_address) < 3:
@@ -149,6 +160,7 @@ class FileSecuredMailManifest(FileManifest):
         return clean_address
 
     def get_order_value(self, order, currency_code=None):
+        """Return value of order."""
         price = 0
         for product in order.products:
             price += float(product.price) * product.quantity
@@ -157,12 +169,15 @@ class FileSecuredMailManifest(FileManifest):
         return int(self.convert_to_GBP(currency_code, price))
 
     def get_date_string(self):
+        """Return currenct date as string."""
         return datetime.datetime.now().strftime('%Y-%m-%d')
 
     def get_product_weight(self, product):
+        """Return weight for product."""
         return product.per_item_weight * product.quantity
 
     def add_success_messages(self, manifest):
+        """Create success message."""
         orders = manifest.springorder_set.all()
         package_count = sum(o.springpackage_set.count() for o in orders)
         order_count = len(orders)
@@ -172,15 +187,19 @@ class FileSecuredMailManifest(FileManifest):
                 package_count, order_count))
 
     def cleanup(self):
+        """Increase docket number."""
         self.increment_docket_number()
 
     def increment_docket_number(self):
+        """Update Docket number in database."""
         counter = models.Counter.objects.get(name='Secured Mail Docket Number')
         counter.count += 1
         counter.save()
 
 
 class SecuredMailManifestFile:
+    """Create Secured Mail Manifest file."""
+
     TEMPLATE_FILENAME = 'secure_mail_manifest_template.xlsx'
     TEMPLATE_PATH = os.path.join(
         os.path.abspath(os.path.dirname(__file__)), TEMPLATE_FILENAME)
@@ -190,6 +209,7 @@ class SecuredMailManifestFile:
     DATE_CELL = 'O3'
 
     def __new__(self, manifest, country_weights):
+        """Create Secured Mail Manifest file."""
         wb = openpyxl.load_workbook(filename=self.TEMPLATE_PATH)
         ws = wb.active
         total_items = 0
@@ -208,6 +228,8 @@ class SecuredMailManifestFile:
 
 
 class SecuredMailDocketFile:
+    """Create Secured Docket file."""
+
     TEMPLATE_FILENAME = 'secure_mail_docket_template.xlsx'
     TEMPLATE_PATH = os.path.join(
         os.path.abspath(os.path.dirname(__file__)), TEMPLATE_FILENAME)
@@ -240,6 +262,7 @@ class SecuredMailDocketFile:
     PRESENTATION_QUANTITY_COL = 'I'
 
     def __new__(self, manifest, service_weights):
+        """Create Secured Docket file."""
         wb = openpyxl.load_workbook(filename=self.TEMPLATE_PATH)
         ws = wb.active
         ws[self.COLLECTION_SITE_CELL] = self.COLLECTION_SITE_NAME
@@ -265,10 +288,12 @@ class SecuredMailDocketFile:
         return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
 
     def get_docket_number(self):
+        """Return current docket number."""
         counter = models.Counter.objects.get(name='Secured Mail Docket Number')
         docket_number = counter.count
         return '{}{}{}'.format(self.INITIALS, self.INITIALS, docket_number)
 
     @staticmethod
     def get_date():
+        """Return current date as string."""
         return datetime.datetime.now().strftime('%Y/%m/%d')

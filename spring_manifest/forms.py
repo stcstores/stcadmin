@@ -1,3 +1,5 @@
+"""Forms for manifest app."""
+
 from django import forms
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
 
@@ -5,8 +7,10 @@ from spring_manifest import models
 
 
 class BasePackageFormset(BaseInlineFormSet):
+    """Base form set for packages."""
 
     def add_fields(self, form, index):
+        """Add nested form."""
         super(BasePackageFormset, self).add_fields(form, index)
 
         form.nested = ItemFormset(
@@ -18,6 +22,7 @@ class BasePackageFormset(BaseInlineFormSet):
                 ItemFormset.get_default_prefix()))
 
     def is_valid(self):
+        """Return True if all forms are valid."""
         result = super().is_valid()
         if self.is_bound:
             for form in self.forms:
@@ -26,6 +31,7 @@ class BasePackageFormset(BaseInlineFormSet):
         return result
 
     def save(self, commit=True):
+        """Update database."""
         result = super().save(commit=commit)
         for form in self.forms:
             if hasattr(form, 'nested'):
@@ -34,6 +40,7 @@ class BasePackageFormset(BaseInlineFormSet):
         return result
 
     def add_package(self):
+        """Create new package for order."""
         existing_packages = self.instance.springpackage_set.all()
         package_number = max([p.package_number for p in existing_packages]) + 1
         package = models.SpringPackage(
@@ -45,6 +52,7 @@ class BasePackageFormset(BaseInlineFormSet):
             new_item.save()
 
     def clear_empty_packages(self):
+        """Remove packages with not items."""
         packages = self.instance.springpackage_set.all()
         for package in packages:
             if sum([i.quantity for i in package.springitem_set.all()]) == 0:
@@ -52,12 +60,16 @@ class BasePackageFormset(BaseInlineFormSet):
 
 
 class UpdateOrderForm(forms.ModelForm):
+    """Form for updating manifest orders."""
 
     class Meta:
+        """Set model and fields."""
+
         model = models.SpringOrder
         fields = ['country', 'service']
 
     def save(self, commit=True):
+        """Update database."""
         order = super().save(commit=False)
         if 'service' in self.changed_data:
             order.manifest = models.get_manifest_by_service(
@@ -74,8 +86,11 @@ class UpdateOrderForm(forms.ModelForm):
 
 
 class SpringItemForm(forms.ModelForm):
+    """Form for updating manifest items."""
 
     class Meta:
+        """Set models and fields."""
+
         model = models.SpringItem
         fields = ('quantity', 'item_id')
 

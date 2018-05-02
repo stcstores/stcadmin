@@ -1,3 +1,5 @@
+"""FileTrackedManifest class."""
+
 import csv
 import ftplib
 import io
@@ -16,12 +18,15 @@ from .state_code import StateCode
 
 
 class FileTrackedManifest(FileManifest):
+    """File the Spring Tracked manifest."""
 
     def send_file(self, manifest):
+        """Send manifest file to FTP server."""
         if self.valid:
             self.ftp_manifest(manifest)
 
     def get_manifest_rows(self, manifest):
+        """Return rows of manifest."""
         rows = []
         for order in manifest.springorder_set.all():
             try:
@@ -33,6 +38,7 @@ class FileTrackedManifest(FileManifest):
         return rows
 
     def save_manifest_file(self, manifest, rows):
+        """Create manifest file and save to database."""
         output = io.StringIO(newline='')
         writer = csv.DictWriter(
             output, rows[0].keys(), delimiter=',', lineterminator='\r\n')
@@ -47,6 +53,7 @@ class FileTrackedManifest(FileManifest):
         output.close()
 
     def add_success_messages(self, manifest):
+        """Create success messages."""
         orders = manifest.springorder_set.all()
         package_count = sum(o.springpackage_set.count() for o in orders)
         order_count = len(orders)
@@ -72,6 +79,7 @@ class FileTrackedManifest(FileManifest):
                 settings.SpringManifestSettings.ftp_host))
 
     def get_rows_for_order(self, order):
+        """Return manifest rows for order."""
         cc_order = order.get_order_data()
         shipper_id = settings.SpringManifestSettings.shipper_id
         address = self.get_order_address(cc_order)
@@ -138,11 +146,13 @@ class FileTrackedManifest(FileManifest):
         return rows
 
     def get_product_weight(self, product):
+        """Return weight for product in KG."""
         weight_g = product.per_item_weight * product.quantity
         weight_kg = weight_g / 1000
         return round(weight_kg, 1)
 
     def get_phone_number(self, phone_number):
+        """Return contact number for order."""
         if len(phone_number) < 5:
             return settings.SpringManifestSettings.default_phone_number
         for char in str(phone_number):
@@ -151,11 +161,13 @@ class FileTrackedManifest(FileManifest):
         return phone_number
 
     def get_order_address(self, order):
+        """Return address for order."""
         address = self.get_delivery_address(order)
         address.clean_address = self.clean_address(order, address)
         return address
 
     def get_delivery_address(self, order):
+        """Retrive delivery address for order from Cloud Commerce."""
         try:
             address = CCAPI.get_order_addresses(
                 order.order_id, order.customer_id).delivery_address
@@ -166,6 +178,7 @@ class FileTrackedManifest(FileManifest):
             return address
 
     def clean_address(self, order, address):
+        """Return formatted address."""
         original_address = address.address
         stripped_address = [' '.join(a.split()) for a in original_address]
         clean_address = []
@@ -181,12 +194,14 @@ class FileTrackedManifest(FileManifest):
         return clean_address
 
     def clean_address_line(self, address):
+        """Split address line if it exceeds character limit."""
         if len(address) <= 40:
             return [address]
         split_index = address[:40].rfind(' ')
         return [address[:split_index], address[split_index + 1:]]
 
     def get_order_value(self, order, currency_code=None):
+        """Return value of order in GBP."""
         price = 0
         for product in order.products:
             price += float(product.price) * product.quantity
@@ -195,6 +210,7 @@ class FileTrackedManifest(FileManifest):
         return self.convert_to_GBP(currency_code, price)
 
     def get_ftp(self):
+        """Return FTP Server connection."""
         ftp = ftplib.FTP()
         try:
             ftp.connect(
@@ -214,6 +230,7 @@ class FileTrackedManifest(FileManifest):
         return ftp
 
     def ftp_manifest(self, manifest):
+        """Send manifest file via FTP."""
         ftp = self.get_ftp()
         if not self.valid:
             return
@@ -234,6 +251,7 @@ class FileTrackedManifest(FileManifest):
             self.add_error('Error saving file to FTP Server')
 
     def get_order_product(self, item, cc_order):
+        """Return SpringItems for order."""
         for product in cc_order.products:
             if int(product.product_id) == item.item_id:
                 return product

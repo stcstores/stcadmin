@@ -1,3 +1,5 @@
+"""Models for manifests."""
+
 from . cloud_commerce_country_id import CloudCommerceCountryID  # NOQA
 from . destination_zone_model import DestinationZone  # NOQA
 from . secured_mail_destination_model import SecuredMailDestination  # NOQA
@@ -6,13 +8,14 @@ from . spring_order_model import SpringOrder  # NOQA
 from . spring_package_model import SpringPackage  # NOQA
 from . spring_item_model import SpringItem  # NOQA
 from . counter_model import Counter  # NOQA
-from stcadmin.settings import SPRING_COURIER_RULES  # NOQA
+from stcadmin.settings import SPRING_COURIER_RULES
 from django.db import transaction
 
 from ccapi import CCAPI
 
 
 def get_manifest(manifest_type):
+    """Return current manifest matching manfiest_type."""
     try:
         manifest = SpringManifest.unfiled.get(
             status=SpringManifest.UNFILED, manifest_type=manifest_type)
@@ -26,21 +29,25 @@ def get_manifest(manifest_type):
 
 
 def get_manifest_by_service(service):
+    """Return current manifest for service."""
     manifest_type = SpringOrder.MANIFEST_SELECTION[service]
     return get_manifest(manifest_type)
 
 
 def get_manifest_for_order(order):
+    """Return the correct current manifest for order."""
     return get_manifest_by_service(order.service)
 
 
 def get_orders(courier_rule_id, number_of_days=1):
+    """Return current orders matching courier_rule_id."""
     return CCAPI.get_orders_for_dispatch(
         order_type=1, number_of_days=number_of_days,
         courier_rule_id=courier_rule_id)
 
 
 def create_order(cc_order, service):
+    """Add Cloud Commerce Order to database."""
     order = SpringOrder._base_manager.create(
         order_id=str(cc_order.order_id),
         customer_name=cc_order.delivery_name,
@@ -59,6 +66,7 @@ def create_order(cc_order, service):
 
 @transaction.atomic
 def update_spring_orders(number_of_days=1):
+    """Update database with new orders."""
     for service, rule_ids in SPRING_COURIER_RULES.items():
         print(service)
         if not (rule_ids):

@@ -1,3 +1,5 @@
+"""FileUntrackedManifest class."""
+
 import datetime
 import io
 from collections import OrderedDict
@@ -5,14 +7,17 @@ from collections import OrderedDict
 import xlsxwriter
 from django.contrib import messages
 from django.core.files import File
+
 from stcadmin import settings
 
 from .file_manifest import FileManifest
 
 
 class FileUntrackedManifest(FileManifest):
+    """File the Spring Untracked manifest."""
 
     def get_manifest_rows(self, manifest):
+        """Return rows for manifest."""
         zones = {}
         for order in manifest.springorder_set.all():
             if not order.country.is_valid_destination():
@@ -28,14 +33,13 @@ class FileUntrackedManifest(FileManifest):
         return rows
 
     def invalid_country_message(self, order):
+        """Return message for invalid countries."""
         return 'Order {}: Country {} info invalid.'.format(
             order, order.country)
 
-    def send_file(self, manifest):
-        pass
-
     @staticmethod
     def save_manifest_file(manifest, rows):
+        """Create manifest file and save to database."""
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output)
         worksheet = workbook.add_worksheet()
@@ -50,6 +54,7 @@ class FileUntrackedManifest(FileManifest):
         manifest.manifest_file.save(str(manifest) + '.xlsx', File(output))
 
     def get_row_for_zone(self, zones, zone, orders):
+        """Return manifest row for zone."""
         customer_number = settings.SpringManifestSettings.customer_number
         customer_reference = 'STC_STORES_{}'.format(self.get_date_string())
         package_count = 0
@@ -87,9 +92,11 @@ class FileUntrackedManifest(FileManifest):
         return data
 
     def get_date_string(self):
+        """Return current date as string."""
         return datetime.datetime.now().strftime('%Y-%m-%d')
 
     def add_success_messages(self, manifest):
+        """Create success messages."""
         orders = manifest.springorder_set.all()
         package_count = sum(o.springpackage_set.count() for o in orders)
         order_count = len(orders)

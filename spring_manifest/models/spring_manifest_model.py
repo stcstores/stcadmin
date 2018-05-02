@@ -1,22 +1,31 @@
+"""SpringManifest model."""
+
 from django.db import models
 from django.utils.timezone import now
 
 
 class FiledManager(models.Manager):
+    """Manager for manifests that have been filed."""
 
     def get_queryset(self):
+        """Return queryset of filed manifests."""
         return super().get_queryset().filter(status=self.model.FILED)
 
 
 class UnFiledManager(models.Manager):
+    """Manager for manifests that are still unfiled."""
 
     def get_queryset(self):
+        """Return queryset of unfiled manifests."""
         return super().get_queryset().exclude(status=self.model.FILED)
 
 
 class SpringManifest(models.Model):
+    """Model for manifests."""
 
     class Meta:
+        """Set ordering."""
+
         ordering = ['-time_filed', '-time_created']
 
     TRACKED = 'T'
@@ -61,15 +70,19 @@ class SpringManifest(models.Model):
         return '{}_{}_{}'.format(self.id, manifest_type, time)
 
     def file_manifest(self):
+        """Set time_filed to current time."""
         self.time_filed = now()
         self.save()
 
     def get_error_list(self):
+        """Return list of errors."""
         if self.errors:
             return self.errors.split('\n')
 
     def tracked_count(self):
+        """Return number of orders on manifest using Secured Mail Tracked."""
         return self.springorder_set.filter(service='SMIT').count()
 
     def untracked_count(self):
+        """Return number of orders on manifest using Secured Mail Untracked."""
         return self.springorder_set.filter(service='SMIU').count()

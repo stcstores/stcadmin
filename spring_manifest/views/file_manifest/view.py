@@ -1,18 +1,22 @@
+"""FileManifestView class."""
+
 import threading
 
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView
+
 from spring_manifest import models
 from spring_manifest.views import SpringUserMixin
 
+from .securedmail import FileSecuredMailManifest
 from .tracked import FileTrackedManifest
 from .untracked import FileUntrackedManifest
-from .securedmail import FileSecuredMailManifest
 
 
 def file_manifest(manifest):
+    """File manifest using appropriate FileManifest class."""
     if manifest.manifest_type == manifest.UNTRACKED:
         FileUntrackedManifest(manifest)
     elif manifest.manifest_type == manifest.TRACKED:
@@ -26,8 +30,10 @@ def file_manifest(manifest):
 
 
 class FileManifestView(SpringUserMixin, RedirectView):
+    """File a manifest."""
 
     def get_manifest(self):
+        """Return requested manifest."""
         manifest_id = self.kwargs['manifest_id']
         manifest = get_object_or_404(
             models.SpringManifest, pk=manifest_id)
@@ -38,6 +44,7 @@ class FileManifestView(SpringUserMixin, RedirectView):
         return manifest
 
     def process_manifest(self):
+        """Set manifest as in progress and start thread to file it."""
         models.update_spring_orders()
         manifest = self.get_manifest()
         manifest.status = manifest.IN_PROGRESS
@@ -48,6 +55,7 @@ class FileManifestView(SpringUserMixin, RedirectView):
         t.start()
 
     def get_redirect_url(self, *args, **kwargs):
+        """Return URL to redirect to after manifest process starts."""
         self.process_manifest()
         return reverse_lazy(
                 'spring_manifest:manifest',

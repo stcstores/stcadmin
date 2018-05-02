@@ -1,4 +1,7 @@
+"""URL patters for manifest app."""
+
 from django.urls import path
+
 from spring_manifest import views
 
 app_name = 'spring_manifest'

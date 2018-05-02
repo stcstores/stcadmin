@@ -1,4 +1,8 @@
+"""State codes class."""
+
+
 class StateCode:
+    """Lookup codes for states."""
 
     STATE_CODES = {
         'alaska': 'AK',
@@ -88,6 +92,7 @@ class StateCode:
     }
 
     def __new__(cls, state_name):
+        """Return state code for state name."""
         if state_name and state_name.strip().lower() in cls.STATE_CODES:
             return cls.STATE_CODES[state_name.strip().lower()]
         return None

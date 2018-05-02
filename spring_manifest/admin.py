@@ -1,3 +1,5 @@
+"""Model admins for manifest app."""
+
 from django.contrib import admin
 
 from spring_manifest import models
@@ -5,6 +7,7 @@ from spring_manifest import models
 
 @admin.register(models.DestinationZone)
 class DestinationZoneAdmin(admin.ModelAdmin):
+    """Model admin for DestinationZone model."""
 
     fields = ['name', 'code', 'format_code']
     list_display = ['name', 'code', 'format_code']
@@ -17,6 +20,8 @@ class DestinationZoneAdmin(admin.ModelAdmin):
 
 @admin.register(models.CloudCommerceCountryID)
 class CloudCommerceCountryIDAdmin(admin.ModelAdmin):
+    """Model admin for CloudCommerceCountryID model."""
+
     fields = (
         'cc_id', 'name', 'iso_code', 'zone', 'currency_code',
         'valid_spring_destination', 'secured_mail_destination')
@@ -36,6 +41,8 @@ class CloudCommerceCountryIDAdmin(admin.ModelAdmin):
 
 @admin.register(models.SpringManifest)
 class SpringManifestAdmin(admin.ModelAdmin):
+    """Model admin for SpringManifest model."""
+
     fields = (
         'manifest_type', 'time_filed', 'manifest_file', 'item_advice_file',
         'status', 'errors')
@@ -48,6 +55,8 @@ class SpringManifestAdmin(admin.ModelAdmin):
 
 @admin.register(models.SpringOrder)
 class SpringOrderAdmin(admin.ModelAdmin):
+    """Model admin for SpringOrder model."""
+
     fields = (
         'order_id', 'customer_name', 'date_recieved', 'dispatch_date',
         'country', 'manifest', 'service', 'canceled')
@@ -66,18 +75,24 @@ class SpringOrderAdmin(admin.ModelAdmin):
 
 @admin.register(models.SpringPackage)
 class SpringPackageAdmin(admin.ModelAdmin):
+    """Model admin for SpringPackage model."""
+
     fields = ('package_number', 'order')
     list_display = ('__str__', 'package_number', 'order')
 
 
 @admin.register(models.SpringItem)
 class SpringItemAdmin(admin.ModelAdmin):
+    """Model admin for SpringItem model."""
+
     fields = ('package', 'item_id', 'quantity')
     list_display = ('__str__', 'package', 'item_id', 'quantity')
 
 
 @admin.register(models.SecuredMailDestination)
 class SecuredMailDestinationAdmin(admin.ModelAdmin):
+    """Model admin for SecuredMailDestination model."""
+
     fields = ('name', 'manifest_row_number')
     list_display = ('id', 'name', 'manifest_row_number')
     list_editable = ('name', 'manifest_row_number')
@@ -85,6 +100,8 @@ class SecuredMailDestinationAdmin(admin.ModelAdmin):
 
 @admin.register(models.Counter)
 class CounterAdmin(admin.ModelAdmin):
+    """Model admin for Counter model."""
+
     fields = ('name', 'count')
     list_display = ('__str__', 'name', 'count')
     list_editable = ('name', 'count')
