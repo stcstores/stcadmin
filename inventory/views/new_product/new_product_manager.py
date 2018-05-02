@@ -216,6 +216,9 @@ class NewProduct(NewProductBase):
             data[self.BAYS] = basic_data[self.DEPARTMENT][self.BAYS]
         if not data[self.BARCODE]:
             data[self.BARCODE] = models.get_barcode()
+        for field in (self.AMAZON_SEARCH_TERMS, self.AMAZON_BULLET_POINTS):
+            if not data[field][0]:
+                data[field] = None
         return data
 
     def create_variation_product(self):
