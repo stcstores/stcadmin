@@ -2,11 +2,15 @@
 
 import datetime
 import json
+import logging
+import sys
 import threading
 
 import cc_products
 
 from inventory import models
+
+logger = logging.getLogger('product_creation')
 
 
 class NewProductBase:
@@ -176,11 +180,18 @@ class NewProduct(NewProductBase):
 
     def create_product(self):
         """Create new Cloud Commerce Product from data in session."""
-        if self.product_data[self.TYPE] == self.SINGLE:
-            self.create_single_product(self)
-        elif self.product_data[self.TYPE] == self.VARIATION:
-            self.create_variation_product(self)
-        self.product_range.options['Incomplete'].selected = False
+        try:
+            if self.product_data[self.TYPE] == self.SINGLE:
+                self.create_single_product(self)
+            elif self.product_data[self.TYPE] == self.VARIATION:
+                self.create_variation_product(self)
+            self.product_range.options['Incomplete'].selected = False
+        except Exception as e:
+            logger.error(
+                'Product Creation Error: %s', ' '.join(sys.argv),
+                exc_info=sys.exc_info())
+            self.product_range.delete()
+            raise e
 
     def create_single_product(self):
         """Create a single (non variation) product."""
@@ -257,7 +268,6 @@ class NewProduct(NewProductBase):
             if all([key in data for key in variation]):
                 if all([data[k] == v for k, v in variation.items()]):
                     return data
-        raise Exception('Option data not found.')
 
     def add_variation(self, **kwargs):
         """Add single variation to Range."""

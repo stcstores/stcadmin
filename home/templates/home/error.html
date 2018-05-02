@@ -1,0 +1,10 @@
+{% extends "home/base.html" %}
+{% load staticfiles %}
+{% block page_title %}Error{% endblock %}
+
+{% block content %}
+    <h1 class="error">Error</h1>
+    <div>
+        {{ error_message | linebreaks }}
+    </div>
+{% endblock %}

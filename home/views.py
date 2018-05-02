@@ -24,3 +24,15 @@ class Index(LoginRequiredMixin, TemplateView):
     """View for homepage."""
 
     template_name = 'home/index.html'
+
+
+class Error(TemplateView):
+    """View for error pages."""
+
+    template_name = 'home/error.html'
+
+
+def error_page(request, error_message=''):
+    """Show error page."""
+    kwargs = {'error_message': error_message}
+    return Error.as_view()(request, **kwargs)
