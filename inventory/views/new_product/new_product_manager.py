@@ -1,5 +1,6 @@
 """Classes for manageing product data stored in the session."""
 
+import datetime
 import json
 import threading
 
@@ -157,6 +158,10 @@ class NewProduct(NewProductBase):
     OPTIONS = 'options'
     LOCATION = 'location'
     DIMENSIONS = 'dimensions'
+    HEAVY_AND_LARGE = 'Heavy and Large'
+    COURIER = 'Courier'
+    STANDARD = 'Standard'
+    EXPRESS = 'Express'
 
     def __new__(self, product_data):
         """Create new product and return it's range ID."""
@@ -271,6 +276,7 @@ class NewProduct(NewProductBase):
         product.package_type = kwargs[self.PACKAGE_TYPE]
         product.brand = kwargs[self.BRAND]
         product.manufacturer = kwargs[self.MANUFACTURER]
+        product.date_created = datetime.datetime.now()
         if kwargs[self.SUPPLIER_SKU]:
             product.supplier_sku = kwargs[self.SUPPLIER_SKU]
         if kwargs[self.GENDER]:
@@ -279,5 +285,9 @@ class NewProduct(NewProductBase):
             product.amazon_bullets = kwargs[self.AMAZON_BULLET_POINTS]
         if kwargs[self.AMAZON_SEARCH_TERMS]:
             product.amazon_search_terms = kwargs[self.AMAZON_SEARCH_TERMS]
+        if kwargs[self.PACKAGE_TYPE] in (self.HEAVY_AND_LARGE, self.COURIER):
+            product.international_shipping = self.EXPRESS
+        else:
+            product.international_shipping = self.STANDARD
         for option_name, option_value in kwargs[self.OPTIONS].items():
             product.options[option_name] = option_value
