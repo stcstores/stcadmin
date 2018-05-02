@@ -10,10 +10,10 @@ class Command(BaseCommand):
     Management command to update manifest orders.
 
     Usage:
-        python manage.py update_spring
+        python manage.py update_manifest
     """
 
-    help = 'Update Spring Manifest Orders'
+    help = 'Update Manifest Orders'
 
     def handle(self, *args, **options):
         """Update manifests."""
