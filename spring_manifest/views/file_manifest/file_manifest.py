@@ -1,12 +1,13 @@
 """FileManifest class."""
 
-import os
+import logging
 import sys
-import traceback
 
 from forex_python.converter import CurrencyRates
 
 from spring_manifest import models
+
+logger = logging.getLogger('file_manifest')
 
 
 class FileManifest:
@@ -22,12 +23,10 @@ class FileManifest:
         try:
             self.process_manifest()
         except Exception as e:
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            tb = traceback.format_exception(None, e, e.__traceback__)
-            self.add_error(
-                'An error occured: {}\n{} {} {}\n{}'.format(
-                    str(e), exc_type, fname, exc_tb.tb_lineno, tb))
+            self.add_error('An error occured.')
+            logger.error(
+                'Manifest Error: %s', ' '.join(sys.argv),
+                exc_info=sys.exc_info())
 
     def process_manifest(self):
         """File manifest."""
