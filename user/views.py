@@ -1,28 +1,52 @@
-from stcadmin import settings
-from django.shortcuts import render
-from django.contrib.auth.views import password_change
-from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
+"""Views for the User app."""
 
+from django.contrib.auth import logout
+from django.contrib.auth.views import password_change
+from django.shortcuts import get_object_or_404
+from django.views import View
+from django.views.generic.base import TemplateView
+
+from home.views import UserLoginMixin
 from print_audit import models
 
-@login_required(login_url=settings.LOGIN_URL)
-def user(request):
-    try:
-        user = models.CloudCommerceUser.objects.filter(stcadmin_user=request.user)[0]
-    except Exception as e:
-        raise
-    feedback_types = models.Feedback.objects.all()
-    feedback_count = {feedback_type: models.UserFeedback.objects.filter(user=user.pk, feedback_type=feedback_type).count() for feedback_type in feedback_types}
-    return render(request, 'user/user.html', {'feedback_count': feedback_count})
+
+class User(UserLoginMixin, TemplateView):
+    """View for the User page."""
+
+    template_name = 'user/user.html'
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for template."""
+        context = super().get_context_data(*args, **kwargs)
+        context['feedback_count'] = self.get_feedback_count()
+        return context
+
+    def get_feedback_count(self):
+        """Return dict of feedback counts by feedback type for current user."""
+        user = get_object_or_404(
+            models.CloudCommerceUser, stcadmin_user=self.request.user)
+        feedback_types = models.Feedback.objects.all()
+        feedback_count = {
+            feedback_type: models.UserFeedback.objects.filter(
+                user=user.pk, feedback_type=feedback_type).count()
+            for feedback_type in feedback_types}
+        return feedback_count
 
 
-@login_required(login_url=settings.LOGIN_URL)
-def change_password(request):
-    return password_change(request, 'user/change_password.html')
+class ChangePassword(UserLoginMixin, View):
+    """Allow user to change their password."""
+
+    template_name = 'user/change_password.html'
+
+    def dispatch(self, request):
+        """Return rendered change password page."""
+        return password_change(request, self.template_name)
 
 
-def change_password_done(request):
-    logout(request)
-    return render(request, 'user/change_password_done.html')
+class ChangePasswordDone(UserLoginMixin, TemplateView):
+    """Landing page after succesful password update."""
+
+    def post(self, *args, **kwargs):
+        """Logout user."""
+        logout(self.request)
+        return super().post(self, *args, **kwargs)

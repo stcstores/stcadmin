@@ -31,7 +31,7 @@ urlpatterns = [
         include('profit_loss.urls', namespace='profit_loss')),
     path('', include('home.urls', namespace='home')),
     path(
-        'password_change_done/', user_views.change_password_done,
+        'password_change_done/', user_views.ChangePasswordDone.as_view(),
         name='password_change_done')
 ]
 
