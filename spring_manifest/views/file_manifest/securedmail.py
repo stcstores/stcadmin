@@ -21,7 +21,7 @@ from .file_manifest import FileManifest
 class FileSecuredMailManifest(FileManifest):
     """File a Secured Mail manifest."""
 
-    PROOF_OF_DELIVERY = {'SMIU': '', 'SMIT': 'T'}
+    PROOF_OF_DELIVERY = {'SMIU': '', 'SMIT': 'S'}
     SERVICE = {
         'SMIU': 'International Untracked',
         'SMIT': 'International Tracked'}
