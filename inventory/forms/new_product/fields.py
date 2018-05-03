@@ -216,6 +216,18 @@ class Height(fieldtypes.NumberField):
         'The <b>Height</b> of the item when packed in <b>Milimeters</b>.')
 
 
+class Length(fieldtypes.NumberField):
+    """Field for the length of the product."""
+
+    label = 'Length (Milimeters)'
+    name = 'length'
+    variable = True
+    empty_value = 0
+    required = False
+    help_text = (
+        'The <b>Length</b> of the item when packed in <b>Milimeters</b>.')
+
+
 class Width(fieldtypes.NumberField):
     """Field for the width of the product."""
 
@@ -227,34 +239,25 @@ class Width(fieldtypes.NumberField):
         'The <b>Width</b> of the item when packed in <b>Milimeters</b>.')
 
 
-class Length(fieldtypes.NumberField):
-    """Field for the length of the product."""
-
-    label = 'Length (Milimeters)'
-    name = 'length'
-    variable = True
-    empty_value = 0
-    help_text = (
-        'The <b>Length</b> of the item when packed in <b>Milimeters</b>.')
-
-
 class Dimensions(fieldtypes.CombinationField):
     """Combined field for height, width and lenght."""
 
     label = 'Dimensions (mm)'
     help_text = (
-        'The dimensions of the product in <b>milimeters</b> when packed.<br>'
-        'Cannot be blank but can be zero.')
+        'The dimensions of the product in <b>milimeters</b> when packed.<br>')
 
     def __init__(self, *args, **kwargs):
         """Create sub fields."""
         fields = (Height(), Width(), Length())
         kwargs['widget'] = widgets.DimensionsWidget()
         super().__init__(
-            fields=fields, require_all_fields=False, *args, **kwargs)
+            fields=fields, require_all_fields=False, required=False,
+            *args, **kwargs)
 
     def compress(self, value):
         """Return submitted values as a dict."""
+        if not value:
+            value = [0, 0, 0]
         return {'height': value[0], 'length': value[1], 'width': value[2]}
 
 

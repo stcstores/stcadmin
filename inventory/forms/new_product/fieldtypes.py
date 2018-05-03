@@ -228,6 +228,13 @@ class NumberField(FormField, forms.IntegerField):
             return self.empty_value
         return value
 
+    def clean(self, value):
+        """If value is blank return zero."""
+        value = super().clean(value)
+        if not value:
+            value = 0
+        return value
+
 
 class PriceField(FormField, forms.FloatField):
     """Base class for product fields for handeling monetary values."""
