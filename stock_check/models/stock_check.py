@@ -1,9 +1,13 @@
+"""Models for Stock Check app."""
+
 from django.db import models
 
 
 class DuplicateBayManager(models.Manager):
+    """Model manager for finding bays with duplicate names."""
 
     def get_queryset(self, *args, **kwargs):
+        """Return queryset of bays with duplicate names."""
         queryset = super().get_queryset(*args, **kwargs)
         dupes = queryset.values('name').annotate(
             models.Count('id')).filter(id__count__gt=1)
@@ -11,8 +15,11 @@ class DuplicateBayManager(models.Manager):
 
 
 class Warehouse(models.Model):
+    """The Warehouse model stores Cloud Commerce Warehouses."""
 
     class Meta:
+        """Sort by name."""
+
         ordering = ('name', )
 
     warehouse_id = models.PositiveIntegerField(
@@ -25,8 +32,11 @@ class Warehouse(models.Model):
 
 
 class Bay(models.Model):
+    """The Bay model stores Cloud Commerce Warehouse Bays."""
 
     class Meta:
+        """Stort by name."""
+
         ordering = ('name', )
 
     bay_id = models.PositiveIntegerField(
@@ -42,6 +52,7 @@ class Bay(models.Model):
 
 
 class Product(models.Model):
+    """The Product models stores Cloud Commerce Products."""
 
     range_id = models.PositiveIntegerField(
         verbose_name='Range ID', primary_key=False, null=True, blank=True)
@@ -52,6 +63,7 @@ class Product(models.Model):
     bays = models.ManyToManyField(Bay, through='ProductBay')
 
     def bay_names(self):
+        """Return list of bay names as a string."""
         return ', '.join([str(bay) for bay in self.bays.all()])
 
     def __str__(self):
@@ -59,6 +71,7 @@ class Product(models.Model):
 
 
 class ProductBay(models.Model):
+    """THe ProductBay model stores the quantity of a product in a Bay."""
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     bay = models.ForeignKey(Bay, on_delete=models.CASCADE)

@@ -1,3 +1,5 @@
+"""Views for the Stock Check app."""
+
 import json
 
 from ccapi import CCAPI
@@ -7,17 +9,22 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
+
 from home.views import UserInGroupMixin
 from stock_check import models
 
 
 class StockCheckUserMixin(UserInGroupMixin):
+    """View mixin to ensure user has permissions for the Stock Check app."""
+
     groups = ['stock_check']
 
 
 class OpenOrderCheck(StockCheckUserMixin, TemplateView):
+    """Provides methods for checking products currently in orders."""
 
     def get_order_data(self):
+        """Return details of current orders."""
         self.orders = CCAPI.get_orders_for_dispatch(
             order_type=0, number_of_days=4)
         self.orders += CCAPI.get_orders_for_dispatch(issue_orders=True)
@@ -31,6 +38,7 @@ class OpenOrderCheck(StockCheckUserMixin, TemplateView):
                 self.product_lookup[product_id].append(product)
 
     def get_open_orders_for_product(self, product):
+        """Add current order status to product."""
         product.printed = 0
         product.unprinted = 0
         if int(product.id) not in self.product_lookup:
@@ -45,9 +53,12 @@ class OpenOrderCheck(StockCheckUserMixin, TemplateView):
 
 
 class ProductSearch(OpenOrderCheck):
+    """Search for products and get current stock level details."""
+
     template_name = 'stock_check/product_search.html'
 
     def get_context_data(self, *args, **kwargs):
+        """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
         search_term = self.request.GET.get('search_term', None)
         if search_term:
@@ -65,18 +76,24 @@ class ProductSearch(OpenOrderCheck):
 
 
 class Warehouses(StockCheckUserMixin, TemplateView):
+    """View provides an index of Warehouses."""
+
     template_name = 'stock_check/warehouses.html'
 
     def get_context_data(self, *args, **kwargs):
+        """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
         context['warehouses'] = models.Warehouse.objects.all()
         return context
 
 
 class Warehouse(StockCheckUserMixin, TemplateView):
+    """View provides an index of Bays for a given Warehouse."""
+
     template_name = 'stock_check/warehouse.html'
 
     def get_context_data(self, *args, **kwargs):
+        """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
         warehouse_id = self.kwargs.get('warehouse_id')
         context['warehouse'] = get_object_or_404(
@@ -87,9 +104,12 @@ class Warehouse(StockCheckUserMixin, TemplateView):
 
 
 class Bay(OpenOrderCheck):
+    """Show current Products and Stock levels for Bay."""
+
     template_name = 'stock_check/bay.html'
 
     def get_context_data(self, *args, **kwargs):
+        """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
         self.get_order_data()
         bay_id = self.kwargs.get('bay_id')
@@ -105,9 +125,11 @@ class Bay(OpenOrderCheck):
 
 
 class UpdateStockCheckLevel(StockCheckUserMixin, View):
+    """Allows the quantity of a Product in a Bay to be updated via AJAX."""
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
+        """Update ProductBay model with new stock number."""
         request_data = json.loads(self.request.body)
         product_id = int(request_data['product_id'])
         bay_id = int(request_data['bay_id'])

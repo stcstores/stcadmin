@@ -1,8 +1,11 @@
+"""Models for the Stock Check app."""
+
 from . stock_check import Warehouse, Bay, Product, ProductBay  # NOQA
 from ccapi import CCAPI
 
 
 def get_cc_product_by_sku(sku):
+    """Return Cloud Commerce product with SKU sku."""
     search_result = CCAPI.search_products(sku)
     if len(search_result) != 1:
         raise Exception(
@@ -11,6 +14,11 @@ def get_cc_product_by_sku(sku):
 
 
 def update_products(inventory_table):
+    """
+    Update Product database.
+
+    Add new products and delete any no longer in the inventory export.
+    """
     print('Updating Products...')
     skus = [sku for sku in inventory_table.get_column('VAR_SKU') if sku]
     db_skus = [p.sku for p in Product.objects.all()]
@@ -34,6 +42,11 @@ def update_products(inventory_table):
 
 
 def update_product_bays(inventory_table):
+    """
+    Update Warehouse model.
+
+    Add new Warehouses and delete any that no longer exist.
+    """
     print('Updating product bay mapping...')
     locations = {}
     for row in inventory_table:
@@ -65,6 +78,11 @@ def update_product_bays(inventory_table):
 
 
 def update_locations():
+    """
+    Update Bay model.
+
+    Add new Warehouse Bays and delete any that no longer exist.
+    """
     print('Updating warehouses...')
     warehouses_created = 0
     bays_created = 0
@@ -108,6 +126,7 @@ def update_locations():
 
 
 def update_stock_check(inventory_table):
+    """Update Stock Check models from a Cloud Commerce inventory export."""
     update_locations()
     update_products(inventory_table)
     update_product_bays(inventory_table)
