@@ -10,7 +10,8 @@
     overflow: hidden;
     padding: 0;
     text-align: left;
-    width: 700px;
+    /*width: 700px;*/
+    width: 100%;
 }
 
 .products_table td {
