@@ -130,7 +130,10 @@ class UserFeedbackMonthlyManager(UserFeedbackManager):
 
     def get_queryset(self):
         """Return QuerySet of User Feedback dated in the current month."""
-        return ScoredQuerySet(self.model).filter(timestamp__month=now().month)
+        current_time = now()
+        return ScoredQuerySet(self.model).filter(
+            timestamp__month=current_time.month,
+            timestamp__year=current_time.year)
 
 
 class UserFeedback(models.Model):

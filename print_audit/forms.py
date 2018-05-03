@@ -1,9 +1,9 @@
 """Forms for print audit app."""
 
+import calendar
 import datetime
 
 import pytz
-from dateutil.relativedelta import relativedelta
 from django import forms
 from django.utils import timezone
 
@@ -52,6 +52,8 @@ class FeedbackDateFilterForm(forms.Form):
         ('this_week', 'This Week'), ('yesterday', 'Yesterday'),
         ('today', 'Today'), ('custom', 'Custom')]
 
+    day = datetime.timedelta(days=1)
+
     dates = forms.ChoiceField(
         choices=DATES_CHOICES, widget=(forms.RadioSelect))
 
@@ -63,50 +65,57 @@ class FeedbackDateFilterForm(forms.Form):
         required=False,
         widget=forms.DateInput(attrs={'class': 'datepicker'}))
 
+    def get_month_range(self, year, month):
+        """Return first and last day for month."""
+        last_day = calendar.monthrange(year, month)[1]
+        date_from = datetime.datetime(
+            year=year, month=month, day=1)
+        date_to = datetime.datetime(
+            year=year, month=month, day=last_day)
+        return (date_from, date_to)
+
     def today(self):
         """Return start and end dates for the current day."""
         date_from = timezone.now().date()
-        date_to = date_from + datetime.timedelta(days=1)
+        date_to = date_from
         return (date_from, date_to)
 
     def yesterday(self):
         """Return start and end dates for the previous day."""
-        date_to = timezone.now().date()
-        date_from = date_to - datetime.timedelta(days=1)
+        date_to = timezone.now().date() - self.day
+        date_from = date_to
         return (date_from, date_to)
 
     def this_week(self):
         """Return start and end dates for the current week."""
         today = timezone.now().date()
         date_from = today - datetime.timedelta(days=today.weekday())
-        date_to = date_from + relativedelta(weeks=1)
+        date_to = date_from + datetime.timedelta(days=6)
         return (date_from, date_to)
 
     def this_month(self):
         """Return start and end dates for the current month."""
-        date_from = timezone.now().date().replace(day=1)
-        date_to = date_from + relativedelta(months=1)
-        return (date_from, date_to)
+        now = timezone.now()
+        return self.get_month_range(now.year, now.month)
 
     def last_month(self):
         """Return start and end dates for the previous month."""
-        date_from = timezone.now().date().replace(
-            day=1) - relativedelta(months=2)
-        date_to = date_from + relativedelta(months=1)
-        return (date_from, date_to)
+        now = timezone.now()
+        month = now.month - 1
+        if month == 0:
+            month = 1
+        return self.get_month_range(now.year, month)
 
     def this_year(self):
         """Return start and end dates for the current year."""
         today = timezone.now()
         date_from = datetime.datetime(year=today.year, month=1, day=1)
-        date_to = datetime.datetime(year=today.year + 1, month=1, day=1)
+        date_to = datetime.datetime(year=today.year, month=12, day=31)
         return (date_from, date_to)
 
     def clean(self):
         """Set final start and end dates according to submitted data."""
         data = super().clean()
-        if data['dates'] == 'custom':
-            data['date_to'] += datetime.timedelta(days=1)
         if data['dates'] == 'today':
             data['date_from'], data['date_to'] = self.today()
         if data['dates'] == 'yesterday':

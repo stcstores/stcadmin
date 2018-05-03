@@ -77,9 +77,11 @@ class UserFeedback(PrintAuditUserMixin, TemplateView):
                     self.form.cleaned_data['date_from'],
                     self.form.cleaned_data['date_to'])
                 self.orders = self.orders.filter(
-                    date_created__range=date_range)
+                    date_created__gte=date_range[0],
+                    date_created__lte=date_range[1])
                 self.feedback = self.feedback.filter(
-                    timestamp__range=date_range)
+                    timestamp__gte=date_range[0],
+                    timestamp__lte=date_range[1])
 
 
 class CreateUserFeedback(PrintAuditUserMixin, CreateView):
