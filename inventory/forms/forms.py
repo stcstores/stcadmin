@@ -173,7 +173,8 @@ class ProductForm(forms.Form):
         initial['width'] = self.product.width
         initial['purchase_price'] = self.product.purchase_price
         initial['package_type'] = self.product.package_type
-        initial['supplier'] = self.product.supplier.factory_name
+        if self.product.supplier:
+            initial['supplier'] = self.product.supplier.factory_name
         initial['supplier_sku'] = self.product.supplier_sku
         for option in self.options:
             initial['opt_' + option] = self.product.options[option]
