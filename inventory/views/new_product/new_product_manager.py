@@ -146,6 +146,7 @@ class NewProduct(NewProductBase):
     DEPARTMENT = 'department'
     BAYS = 'bays'
     PURCHASE_PRICE = 'purchase_price'
+    RETAIL_PRICE = 'retail_price'
     STOCK_LEVEL = 'stock_level'
     SUPPLIER = 'supplier'
     SUPPLIER_SKU = 'supplier_sku'
@@ -203,9 +204,9 @@ class NewProduct(NewProductBase):
     def sanitize_basic_data(self, basic_data):
         """Clean data from basic_info or variation_info page."""
         basic_fields = (
-            self.BARCODE, self.PURCHASE_PRICE, self.STOCK_LEVEL,
-            self.SUPPLIER, self.SUPPLIER_SKU, self.WEIGHT, self.PACKAGE_TYPE,
-            self.BRAND, self.MANUFACTURER, self.GENDER)
+            self.BARCODE, self.PURCHASE_PRICE, self.RETAIL_PRICE,
+            self.STOCK_LEVEL, self.SUPPLIER, self.SUPPLIER_SKU, self.WEIGHT,
+            self.PACKAGE_TYPE, self.BRAND, self.MANUFACTURER, self.GENDER)
         universal_fields = (
             self.DESCRIPTION, self.AMAZON_BULLET_POINTS,
             self.AMAZON_SEARCH_TERMS)
@@ -279,6 +280,7 @@ class NewProduct(NewProductBase):
         product.bays = kwargs[self.BAYS]
         product.price = kwargs[self.PRICE]
         product.purchase_price = kwargs[self.PURCHASE_PRICE]
+        product.retail_price = kwargs[self.RETAIL_PRICE]
         product.stock_level = kwargs[self.STOCK_LEVEL]
         product.supplier = kwargs[self.SUPPLIER]
         product.weight = kwargs[self.WEIGHT]

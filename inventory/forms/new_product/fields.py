@@ -144,6 +144,16 @@ class PurchasePrice(fieldtypes.PriceField):
         '<br>Cannot be blank but can be zero.')
 
 
+class RetailPrice(fieldtypes.PriceField):
+    """Field for retail prices."""
+
+    label = 'Retail Price'
+    name = 'retail_price'
+    variable = True
+    empty_value = 0.0
+    help_text = ('Price at which the item is available in shop.')
+
+
 class StockLevel(fieldtypes.NumberField):
     """Field for stock level."""
 

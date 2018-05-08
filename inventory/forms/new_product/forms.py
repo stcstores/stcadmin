@@ -25,6 +25,7 @@ class BasicInfo(NewProductForm):
         self.fields['barcode'] = fields.Barcode()
         self.fields['purchase_price'] = fields.PurchasePrice()
         self.fields['price'] = fields.VATPrice()
+        self.fields['retail_price'] = fields.RetailPrice()
         self.fields['stock_level'] = fields.StockLevel()
         self.fields['department'] = fields.DepartmentBayField()
         self.fields['supplier'] = fields.Supplier()
@@ -155,6 +156,7 @@ class VariationInfo(BaseVariationForm):
         self.fields['barcode'] = fields.Barcode()
         self.fields['purchase_price'] = fields.PurchasePrice()
         self.fields['price'] = fields.VATPrice()
+        self.fields['retail_price'] = fields.RetailPrice()
         self.fields['stock_level'] = fields.StockLevel()
         self.fields['location'] = fields.Location(department=self.department)
         self.fields['supplier'] = fields.Supplier(

@@ -128,7 +128,8 @@ class ProductForm(forms.Form):
         'Department', 'Brand', 'Manufacturer', 'WooCategory1', 'WooCategory2',
         'WooCategory3', 'International Shipping', 'Package Type', 'Supplier',
         'Purchase Price', 'Date Created', 'Location', 'Supplier SKU',
-        'Amazon Bullets', 'Amazon Search Terms', 'Linn SKU', 'Linn Title']
+        'Amazon Bullets', 'Amazon Search Terms', 'Linn SKU', 'Linn Title',
+        'Retail Price']
 
     def __init__(self, *args, **kwargs):
         """Configure form fields."""
@@ -147,6 +148,7 @@ class ProductForm(forms.Form):
         self.fields['width'] = fields.Width()
         self.fields['package_type'] = fields.PackageType()
         self.fields['purchase_price'] = fields.PurchasePrice()
+        self.fields['retail_price'] = fields.RetailPrice()
         self.fields['supplier'] = fields.Supplier()
         self.fields['supplier_sku'] = fields.SupplierSKU()
         for option_name, values in self.options.items():
@@ -172,6 +174,7 @@ class ProductForm(forms.Form):
         initial['length'] = self.product.length
         initial['width'] = self.product.width
         initial['purchase_price'] = self.product.purchase_price
+        initial['retail_price'] = self.product.retail_price
         initial['package_type'] = self.product.package_type
         if self.product.supplier:
             initial['supplier'] = self.product.supplier.factory_name
@@ -199,6 +202,7 @@ class ProductForm(forms.Form):
         self.product.width = data['width']
         self.product.package_type = data['package_type']
         self.product.purchase_price = data['purchase_price']
+        self.product.retail_price = data['retail_price']
         self.product.supplier = data['supplier']
         self.product.supplier_sku = data['supplier_sku']
         options = [key[4:] for key in data.keys() if key[:4] == 'opt_']

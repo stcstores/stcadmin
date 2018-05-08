@@ -14,10 +14,13 @@ class VariationForm(forms.Form):
         'Department', 'Brand', 'Manufacturer', 'WooCategory1', 'WooCategory2',
         'WooCategory3', 'International Shipping', 'Package Type', 'Supplier',
         'Purchase Price', 'Date Created', 'Location', 'Supplier SKU',
-        'Amazon Bullets', 'Amazon Search Terms', 'Linn SKU', 'Linn Title']
+        'Amazon Bullets', 'Amazon Search Terms', 'Linn SKU', 'Linn Title',
+        'Retail Price']
 
     product_id = forms.CharField(widget=forms.HiddenInput)
     price = fields.VATPrice()
+    purchase_price = fields.PurchasePrice()
+    retail_price = fields.RetailPrice()
     weight = fields.Weight()
 
     def __init__(self, *args, **kwargs):
@@ -44,6 +47,8 @@ class VariationForm(forms.Form):
             'ex_vat': self.product.price,
             'with_vat_price': None}
         initial['weight'] = self.product.weight
+        initial['purchase_price'] = self.product.purchase_price
+        initial['retail_price'] = self.product.retail_price
         for option_name in self.option_names:
             value = self.product.options[option_name]
             if value is not None:
@@ -66,6 +71,8 @@ class VariationForm(forms.Form):
         self.product.vat_rate = data['price']['vat_rate']
         self.product.price = data['price']['ex_vat']
         self.product.weight = data['weight']
+        self.product.purchase_price = data['purchase_price']
+        self.product.retail_price = data['retail_price']
         options = [key[4:] for key in data.keys() if key[:4] == 'opt_']
         for option in options:
             value = data['opt_' + option]
