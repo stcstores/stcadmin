@@ -25,12 +25,14 @@ class FileSecuredMailManifest(FileManifest):
     SERVICE = {
         'SMIU': 'International Untracked',
         'SMIT': 'International Tracked'}
+    TRACKED = 'Tracked'
 
     def get_manifest_rows(self, manifest):
         """Return rows for item advice."""
         rows = []
         self.country_weights = {
             dest: [] for dest in models.SecuredMailDestination.objects.all()}
+        self.tracked_weights = []
         self.service_weights = {
             service_name: [] for code, service_name in self.SERVICE.items()}
         for order in manifest.springorder_set.all():
@@ -65,7 +67,8 @@ class FileSecuredMailManifest(FileManifest):
 
     def save_manifest_file(self, manifest, country):
         """Create Manifest file and save to database."""
-        manifest_file = SecuredMailManifestFile(manifest, self.country_weights)
+        manifest_file = SecuredMailManifestFile(
+            manifest, self.country_weights, self.tracked_weights)
         manifest.manifest_file.save(
             str(manifest) + '_manifest.xlsx', File(manifest_file))
 
@@ -126,9 +129,12 @@ class FileSecuredMailManifest(FileManifest):
                     country.currency_code, product.price)
                 quantity += item.quantity
                 weight += self.get_product_weight(product)
-            self.country_weights[
-                country.secured_mail_destination].append(
-                    round(weight / 1000, 2))
+            if order.service == order.SM_INT_TRACKED:
+                self.tracked_weights.append(round(weight / 1000, 2))
+            else:
+                self.country_weights[
+                    country.secured_mail_destination].append(
+                        round(weight / 1000, 2))
             self.service_weights[self.SERVICE[order.service]].append(weight)
             if order.service == order.SM_INT_TRACKED:
                 data = OrderedDict([
@@ -207,8 +213,9 @@ class SecuredMailManifestFile:
     WEIGHT_COL = 'N'
     REFERENCE_CELL = 'J3'
     DATE_CELL = 'O3'
+    TRACKED_ROW = '21'
 
-    def __new__(self, manifest, country_weights):
+    def __new__(self, manifest, country_weights, tracked_weights):
         """Create Secured Mail Manifest file."""
         wb = openpyxl.load_workbook(filename=self.TEMPLATE_PATH)
         ws = wb.active
@@ -222,6 +229,8 @@ class SecuredMailManifestFile:
             row = str(country.manifest_row_number)
             ws[self.ITEM_COL + row] = country_items
             ws[self.WEIGHT_COL + row] = country_weight
+            ws[self.ITEM_COL + self.TRACKED_ROW] = len(tracked_weights)
+            ws[self.WEIGHT_COL + self.TRACKED_ROW] = sum(tracked_weights)
         ws[self.REFERENCE_CELL] = str(manifest)
         ws[self.DATE_CELL] = datetime.datetime.now().strftime('%Y/%m/%d')
         return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
