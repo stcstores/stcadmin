@@ -1,6 +1,7 @@
 """View for Variations page."""
 
 import cc_products
+from ccapi import CCAPI
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
@@ -20,13 +21,23 @@ class VariationsFormView(InventoryUserMixin, FormView):
         """Process HTTP request."""
         self.range_id = self.kwargs.get('range_id')
         self.product_range = cc_products.get_range(self.range_id)
+        self.option_data = CCAPI.get_product_options()
+        self.selected_options = [
+            o.name for o in self.product_range.selected_options]
+        self.options = {
+            option.option_name: [value.value for value in option]
+            for option in self.option_data if option.option_name in
+            self.selected_options}
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
         """Return kwargs for form."""
         kwargs = super().get_form_kwargs()
         kwargs['form_kwargs'] = [
-            {'product': p} for p in self.product_range.products]
+            {
+                'product': p, 'selected_options': self.selected_options,
+                'options': self.options}
+            for p in self.product_range.products]
         return kwargs
 
     def get_success_url(self):
