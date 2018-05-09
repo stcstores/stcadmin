@@ -30,6 +30,18 @@
         <button id="hide_{{ field.name }}" class="field_select{% if field.name in error_fields %} error{% endif %}">{{ field.label }}</button>
     {% endfor %}
 </div>
+<div class="variation_selectors">
+    <table>
+        <th></th>
+        <td><button id="select_all">All</button>&nbsp;<button id="select_none">None</button></td>
+    {% for option, values in variation_values.items %}
+        <tr>
+            <th>{{ option }}</th>
+            <td>{% for value in values %}<button class="select_option" onclick="select_products('{{ option }}', '{{ value }}')">{{ value }}</button>&nbsp;{% endfor %}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
 {% endblock %}
 
 {% block form %}
@@ -49,7 +61,7 @@
             {% endfor %}
         </tr>
         <tr class="copyrow">
-            <th></th>
+            <th colspan="{{ formset.0.variation_options | length }}"></th>
             {% for field in formset.0.visible_fields %}
                 <td class="field_cell {{ field.name }}">{{ field }}</td>
             {% endfor %}
@@ -78,7 +90,7 @@
             {% endif %}
             {% endfor %}
 
-            <td><input type="checkbox" class="copy_checkbox" checked></td>
+            <td><input type="checkbox" class="copy_checkbox"></td>
             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
         {% endfor %}
         </tr>

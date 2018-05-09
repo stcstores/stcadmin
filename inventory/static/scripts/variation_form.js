@@ -34,6 +34,49 @@ function product_row_copy(row) {
       target.prop('hidden', false);
   }
 
+  function select_all() {
+    $('.copy_checkbox').prop('checked', true);
+  }
+
+  function select_none() {
+    $('.copy_checkbox').prop('checked', false);
+  }
+
+  function select_products(option, value) {
+    var column_headers = $('.new_product').find('tr').eq(0).find('th');
+    var checkboxes = [];
+    column_headers.each(function() {
+      if ($(this).text() == option) {
+        var column_number = $(this).index();
+        $('.new_product tr').each(function() {
+          header = $(this).children().eq(column_number);
+          if (header.text() == value) {
+            checkboxes.push($(this).find('.copy_checkbox'));
+          }
+        });
+      }
+    });
+    toggle_selection(checkboxes);
+  }
+
+  function toggle_selection(checkboxes) {
+    var checked = [];
+    for (var i=0; i<checkboxes.length; i++) {
+      if (checkboxes[i].prop('checked')) {
+        checked.push(checkboxes[i]);
+      }
+    }
+    if (checked.length == checkboxes.length) {
+      for (var i=0; i<checkboxes.length; i++) {
+        checkboxes[i].prop('checked', false);
+      }
+    } else {
+      for (var i=0; i<checkboxes.length; i++) {
+        checkboxes[i].prop('checked', true);
+      }
+    }
+  }
+
   $(document).ready(function() {
       $('.field_cell').prop('hidden', true);
       $('.field_select').click(function() {
@@ -45,5 +88,8 @@ function product_row_copy(row) {
               product_row_copy($(this));
           });
       });
+
+      $('#select_all').click(function() {select_all()});
+      $('#select_none').click(function() {select_none()});
 
   });

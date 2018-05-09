@@ -141,7 +141,19 @@ class BaseVariationProductView(BaseNewProductView):
                 if field.errors:
                     error_fields.append(field.name)
         context['error_fields'] = set(error_fields)
+        context['variation_values'] = self.get_variation_values()
         return context
+
+    def get_variation_values(self):
+        """Return dict of variation options and their values."""
+        variation_combinations = self.get_variation_combinations()
+        variation_values = {v: [] for v in variation_combinations[0]}
+        for combination in variation_combinations:
+            for key, value in combination.items():
+                variation_values[key].append(value)
+        for key, value in variation_values.items():
+            variation_values[key] = sorted(list(set(value)))
+        return variation_values
 
     def form_valid(self, form):
         """Save form data and return redirect."""
