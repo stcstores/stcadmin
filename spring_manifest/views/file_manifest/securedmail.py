@@ -11,7 +11,6 @@ from ccapi import CCAPI
 from django.contrib import messages
 from django.core.files import File
 from django.core.files.base import ContentFile
-from unidecode import unidecode
 
 from spring_manifest import models
 
@@ -58,8 +57,7 @@ class FileSecuredMailManifest(FileManifest):
             writer.writeheader()
             writer.writerows(rows)
             manifest.file_manifest()
-            manifest_string = unidecode(
-                output.getvalue()).encode('utf-8', 'replace')
+            manifest_string = output.getvalue().encode('utf-8', 'replace')
             manifest.item_advice_file.save(
                 str(manifest) + '.csv',
                 ContentFile(manifest_string), save=True)
@@ -143,7 +141,7 @@ class FileSecuredMailManifest(FileManifest):
                     ('Addr2', address.clean_address[1]),
                     ('Addr3', address.clean_address[2]),
                     ('State', address.county_region),
-                    ('Town', address.town_city),
+                    ('Town', address.town_city or 'N/A'),
                     ('Country', ''),
                     ('Postcode', address.post_code or ' '),
                     ('Item Description', ', '.join(description)),
