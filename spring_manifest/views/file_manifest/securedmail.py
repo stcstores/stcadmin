@@ -142,6 +142,7 @@ class FileSecuredMailManifest(FileManifest):
                     ('Addr1', address.clean_address[0]),
                     ('Addr2', address.clean_address[1]),
                     ('Addr3', address.clean_address[2]),
+                    ('State', address.county_region),
                     ('Town', address.town_city),
                     ('Country', ''),
                     ('Postcode', address.post_code or ' '),
