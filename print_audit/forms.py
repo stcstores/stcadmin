@@ -128,11 +128,15 @@ class FeedbackDateFilterForm(forms.Form):
             data['date_from'], data['date_to'] = self.last_month()
         if data['dates'] == 'this_year':
             data['date_from'], data['date_to'] = self.this_year()
-        if data['date_from'] is not None:
-            data['date_from'] = self.localise_time(data['date_from'])
-        if data['date_to'] is not None:
-            data['date_to'] = self.localise_time(data['date_to'])
+        data['date_from'] = self.clean_time(data['date_from'])
+        data['date_to'] = self.clean_time(data['date_to'])
         return data
+
+    def clean_time(self, time):
+        """Return cleaned time value in current timezone."""
+        if time is None:
+            time = timezone.now().date()
+        return self.localise_time(time)
 
     def localise_time(self, time):
         """Localise datetime object."""
