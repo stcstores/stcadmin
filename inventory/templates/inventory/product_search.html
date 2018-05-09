@@ -33,7 +33,6 @@
     <table id="stock_search_result">
         <thead>
             <tr>
-                <th>SKU</th>
                 <th>Name</th>
                 <th></th>
                 <th colspan="2"><button id="show_hide_all">Show/Hide all</button></th>
@@ -42,7 +41,6 @@
             <tbody>
             {% for range in product_ranges %}
                 <tr{% if range.end_of_line %} class="end_of_line"{% endif %}>
-                    <td>{{ range.sku }}</td>
                     <td><a href="{% url 'inventory:product_range' range.id %}">{{ range.name }}</a> </td>
                     {% if 'Incomplete' in range.options.option_names %}
                         <td class="error">INCOMPLETE</td>
