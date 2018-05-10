@@ -7,12 +7,14 @@ from django.urls import reverse
 class SizeChart(models.Model):
     """Model for size charts."""
 
-    class Meta:
-        """Set default ordering."""
-
-        ordering = ('name', )
-
     name = models.CharField(max_length=200)
+
+    class Meta:
+        """Meta class for SizeChart."""
+
+        verbose_name = 'Size Chart'
+        verbose_name_plural = 'Size Charts'
+        ordering = ('name', )
 
     def get_absolute_url(self):
         """Return URL for the object."""
@@ -32,11 +34,6 @@ class SizeChart(models.Model):
 class SizeChartSize(models.Model):
     """Model for sizes used in size charts."""
 
-    class Meta:
-        """Set default ordering."""
-
-        ordering = ('sort', )
-
     size_chart = models.ForeignKey('SizeChart', on_delete=models.CASCADE)
     sort = models.PositiveSmallIntegerField(default=0)
     name = models.CharField(
@@ -45,6 +42,13 @@ class SizeChartSize(models.Model):
     eu_size = models.CharField(max_length=200, verbose_name='EUR Size')
     us_size = models.CharField(max_length=200, verbose_name='USA Size')
     au_size = models.CharField(max_length=200, verbose_name='AUS Size')
+
+    class Meta:
+        """Meta class for SizeChartSize."""
+
+        verbose_name = 'Size Chart Size'
+        verbose_name_plural = 'Size Chart Sizes'
+        ordering = ('sort', )
 
     def __str__(self):
         return '{} - UK {}'.format(self.size_chart.name, self.uk_size)

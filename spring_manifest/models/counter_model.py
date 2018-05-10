@@ -9,5 +9,11 @@ class Counter(models.Model):
     name = models.CharField(max_length=255)
     count = models.PositiveIntegerField()
 
+    class Meta:
+        """Meta class for Counter."""
+
+        verbose_name = 'Counter'
+        verbose_name_plural = 'Counters'
+
     def __str__(self):
         return self.name

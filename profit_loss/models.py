@@ -11,11 +11,6 @@ from spring_manifest.models import CloudCommerceCountryID
 class Order(models.Model):
     """Model for Cloud Commerce orders."""
 
-    class Meta:
-        """Sort orders by dispatch date."""
-
-        ordering = ['-dispatch_date']
-
     order_id = models.PositiveIntegerField(unique=True)
     customer_id = models.PositiveIntegerField()
     country = models.ForeignKey(
@@ -31,6 +26,13 @@ class Order(models.Model):
     date_recieved = models.DateTimeField()
     dispatch_date = models.DateTimeField()
     shipping_service = models.CharField(max_length=250)
+
+    class Meta:
+        """Meta class for Order."""
+
+        verbose_name = 'Order'
+        verbose_name_plural = 'Orders'
+        ordering = ['-dispatch_date']
 
     def vat(self):
         """Return VAT paid on order."""
@@ -87,6 +89,12 @@ class Product(models.Model):
     name = models.TextField()
     quantity = models.IntegerField()
     order = models.ForeignKey(Order, models.CASCADE)
+
+    class Meta:
+        """Meta class for Product."""
+
+        verbose_name = 'Product'
+        verbose_name_plural = 'Products'
 
     def __repr__(self):
         return '{} - {} x {}'.format(self.sku, self.name, self.quantity)

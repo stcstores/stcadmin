@@ -27,6 +27,12 @@ class Warehouse(models.Model):
     objects = models.Manager()
     used_warehouses = UsedWarehouseManager()
 
+    class Meta:
+        """Meta class for Warehouse."""
+
+        verbose_name = 'Warehouse'
+        verbose_name_plural = 'Warehouses'
+
     def __str__(self):
         return self.name
 
@@ -69,6 +75,12 @@ class Bay(models.Model):
 
     objects = models.Manager()
     non_default = NonDefaultBaysManager()
+
+    class Meta:
+        """Meta class for Bay."""
+
+        verbose_name = 'Bay'
+        verbose_name_plural = 'Bays'
 
     def __str__(self):
         return '{} - {}'.format(self.warehouse, self.name)

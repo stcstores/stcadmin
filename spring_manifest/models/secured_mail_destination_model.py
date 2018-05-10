@@ -9,5 +9,11 @@ class SecuredMailDestination(models.Model):
     name = models.CharField(max_length=255)
     manifest_row_number = models.PositiveIntegerField()
 
+    class Meta:
+        """Meta class for SecuredMailDestination."""
+
+        verbose_name = 'Secured Mail Destination'
+        verbose_name_plural = 'Secured Mail Destinations'
+
     def __str__(self):
         return self.name

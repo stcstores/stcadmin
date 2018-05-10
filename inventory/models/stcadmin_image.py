@@ -23,6 +23,12 @@ class STCAdminImage(models.Model):
     range_id = models.CharField(max_length=10)
     image = models.ImageField(upload_to=get_product_image_upload_to)
 
+    class Meta:
+        """Meta class for STCAdminImage."""
+
+        verbose_name = 'STC Admin Image'
+        verbose_name_plural = 'STC Admin Images'
+
     def delete(self, *args, **kwargs):
         """Delete file when object is deleted."""
         image_path = self.image.path

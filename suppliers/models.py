@@ -11,6 +11,12 @@ class Supplier(models.Model):
     email = models.CharField(max_length=200, null=True, blank=True)
     phone = models.CharField(max_length=200, null=True, blank=True)
 
+    class Meta:
+        """Meta class for Supplier."""
+
+        verbose_name = 'Supplier'
+        verbose_name_plural = 'Suppliers'
+
     def get_absolute_url(self):
         """Return URL for supplier."""
         return reverse(
@@ -30,6 +36,12 @@ class StockItem(models.Model):
     linnworks_title = models.CharField(max_length=200, null=True, blank=True)
     linnworks_sku = models.CharField(max_length=200, null=True, blank=True)
     notes = models.CharField(max_length=200, null=True, blank=True)
+
+    class Meta:
+        """Meta class for StockItem."""
+
+        verbose_name = 'Stock Item'
+        verbose_name_plural = 'Stock Items'
 
     def __str__(self):
         return self.linnworks_title

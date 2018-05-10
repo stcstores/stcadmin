@@ -23,11 +23,6 @@ class UnFiledManager(models.Manager):
 class SpringManifest(models.Model):
     """Model for manifests."""
 
-    class Meta:
-        """Set ordering."""
-
-        ordering = ['-time_filed', '-time_created']
-
     TRACKED = 'T'
     UNTRACKED = 'U'
     SECURED_MAIL = 'S'
@@ -60,6 +55,13 @@ class SpringManifest(models.Model):
     objects = models.Manager()
     filed = FiledManager()
     unfiled = UnFiledManager()
+
+    class Meta:
+        """Meta class for SpringManifest."""
+
+        verbose_name = 'Spring Manifest'
+        verbose_name_plural = 'Spring Manifests'
+        ordering = ['-time_filed', '-time_created']
 
     def __str__(self):
         manifest_type = dict(self.MANIFEST_TYPE_CHOICES)[self.manifest_type]

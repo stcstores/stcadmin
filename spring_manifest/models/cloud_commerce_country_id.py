@@ -37,8 +37,10 @@ class CloudCommerceCountryID(models.Model):
     incomplete = IncompleteCountryManager()
 
     class Meta:
-        """Sort objects by name field."""
+        """Meta class for CloudCommerceCountryID."""
 
+        verbose_name = 'Cloud Commerce Country ID'
+        verbose_name_plural = 'Cloud Commerce Country IDs'
         ordering = ('name', )
 
     def __str__(self):

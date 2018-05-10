@@ -13,6 +13,12 @@ class Barcode(models.Model):
     barcode = models.CharField(max_length=13, unique=True)
     used = models.BooleanField(default=False)
 
+    class Meta:
+        """Meta class for Barcode."""
+
+        verbose_name = 'Barcode'
+        verbose_name_plural = 'Barcodes'
+
     def mark_used(self):
         """Mark barcode as used."""
         self.used = True

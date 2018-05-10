@@ -15,6 +15,12 @@ class CloudCommerceUser(models.Model):
     stcadmin_user = models.ForeignKey(
         User, null=True, blank=True, on_delete=models.CASCADE)
 
+    class Meta:
+        """Meta class for CloudCommerceUser."""
+
+        verbose_name = 'Cloud Commerce User'
+        verbose_name_plural = 'Cloud Commerce Users'
+
     def __init__(self, *args, **kwargs):
         """Retrive user data from Cloud Commerce."""
         USERS = CCAPI.get_users()
@@ -57,6 +63,12 @@ class CloudCommerceOrder(models.Model):
     attempts = models.IntegerField()
     customer_order_dispatch_id = models.CharField(max_length=10)
 
+    class Meta:
+        """Meta class for CloudCommerceOrder."""
+
+        verbose_name = 'Cloud Commerce Order'
+        verbose_name_plural = 'Cloud Commerce Orders'
+
     @classmethod
     def create_from_print_queue(cls, print_log):
         """Create CloudCommerceOrder from an entry in the print queue."""
@@ -96,6 +108,12 @@ class Feedback(models.Model):
     name = models.CharField(max_length=20)
     image = models.ImageField(upload_to='feedback')
     score = models.IntegerField(default=0)
+
+    class Meta:
+        """Meta class for Feedback."""
+
+        verbose_name = 'Feedback'
+        verbose_name_plural = 'Feedback'
 
     def __str__(self):
         return self.name
@@ -147,6 +165,12 @@ class UserFeedback(models.Model):
 
     objects = UserFeedbackManager()
     this_month = UserFeedbackMonthlyManager()
+
+    class Meta:
+        """Meta class for UserFeedback."""
+
+        verbose_name = 'User Feedback'
+        verbose_name_plural = 'User Feedback'
 
     def __str__(self):
         return '{} for {}'.format(

@@ -17,15 +17,17 @@ class DuplicateBayManager(models.Manager):
 class Warehouse(models.Model):
     """The Warehouse model stores Cloud Commerce Warehouses."""
 
-    class Meta:
-        """Sort by name."""
-
-        ordering = ('name', )
-
     warehouse_id = models.PositiveIntegerField(
         verbose_name='Warehouse ID', primary_key=False, unique=True,
         db_index=True)
     name = models.CharField(max_length=50)
+
+    class Meta:
+        """Meta class for Warehouse."""
+
+        verbose_name = 'Warehouse'
+        verbose_name_plural = 'Warehouses'
+        ordering = ('name', )
 
     def __str__(self):
         return self.name
@@ -34,11 +36,6 @@ class Warehouse(models.Model):
 class Bay(models.Model):
     """The Bay model stores Cloud Commerce Warehouse Bays."""
 
-    class Meta:
-        """Stort by name."""
-
-        ordering = ('name', )
-
     bay_id = models.PositiveIntegerField(
         verbose_name='Bay ID', primary_key=False, unique=True, db_index=True)
     name = models.CharField(max_length=50, unique=True)
@@ -46,6 +43,13 @@ class Bay(models.Model):
 
     objects = models.Manager()
     duplicates = DuplicateBayManager()
+
+    class Meta:
+        """Meta class for Bay."""
+
+        verbose_name = 'Bay'
+        verbose_name_plural = 'Bays'
+        ordering = ('name', )
 
     def __str__(self):
         return '{}: {}'.format(self.warehouse, self.name)
@@ -62,6 +66,12 @@ class Product(models.Model):
     sku = models.CharField(max_length=50, db_index=True, unique=True)
     bays = models.ManyToManyField(Bay, through='ProductBay')
 
+    class Meta:
+        """Meta class for Product."""
+
+        verbose_name = 'Product'
+        verbose_name_plural = 'Products'
+
     def bay_names(self):
         """Return list of bay names as a string."""
         return ', '.join([str(bay) for bay in self.bays.all()])
@@ -77,3 +87,9 @@ class ProductBay(models.Model):
     bay = models.ForeignKey(Bay, on_delete=models.CASCADE)
     stock_level = models.PositiveIntegerField(
         blank=True, null=True, default=None)
+
+    class Meta:
+        """Meta class for ProductBay."""
+
+        verbose_name = 'Product Bay'
+        verbose_name_plural = 'Product Bays'

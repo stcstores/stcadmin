@@ -12,8 +12,10 @@ class DestinationZone(models.Model):
         max_length=1, blank=True, null=True, default=None)
 
     class Meta:
-        """Sort by name."""
+        """Meta class for DestinationZone."""
 
+        verbose_name = 'Destination Zone'
+        verbose_name_plural = 'Destination Zones'
         ordering = ('name', )
 
     def safe_name(self):

@@ -12,6 +12,12 @@ class DestinationCountry(models.Model):
     currency_code = models.CharField(max_length=4, default='GBP')
     min_channel_fee = models.IntegerField(null=True, blank=True)
 
+    class Meta:
+        """Meta class for DestinationCountry."""
+
+        verbose_name = 'Destination Country'
+        verbose_name_plural = 'Destination Countries'
+
     def __str__(self):
         return self.name
 
@@ -28,6 +34,12 @@ class PackageType(models.Model):
 
     name = models.CharField(max_length=50, unique=True)
 
+    class Meta:
+        """Meta class for PackageType."""
+
+        verbose_name = 'Package Type'
+        verbose_name_plural = 'Package Types'
+
     def __str__(self):
         return self.name
 
@@ -38,6 +50,12 @@ class VATRate(models.Model):
     name = models.CharField(max_length=50)
     cc_id = models.PositiveSmallIntegerField()
     percentage = models.PositiveSmallIntegerField()
+
+    class Meta:
+        """Meta class for VATRate."""
+
+        verbose_name = 'VAT Rate'
+        verbose_name_plural = 'VAT Rates'
 
     def __str__(self):
         return self.name
@@ -99,6 +117,12 @@ class ShippingPrice(models.Model):
     disabled = models.BooleanField(default=False)
 
     objects = ShippingPriceManager()
+
+    class Meta:
+        """Meta class for ShippingPrice."""
+
+        verbose_name = 'Shipping Price'
+        verbose_name_plural = 'Shippng Prices'
 
     def __str__(self):
         return self.name

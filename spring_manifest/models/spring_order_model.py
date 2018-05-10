@@ -109,6 +109,12 @@ class SpringOrder(models.Model):
     unfiled = UnFiledManager()
     canceled_orders = CanceledOrdersManager()
 
+    class Meta:
+        """Meta class for SpringOrder."""
+
+        verbose_name = 'Spring Order'
+        verbose_name_plural = 'Spring Orders'
+
     def __str__(self):
         return self.order_id
 
