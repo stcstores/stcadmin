@@ -58,6 +58,7 @@ class ShippingPriceManager(models.Manager):
         package_type = PackageType.objects.get(
             name__icontains=package_type_name)
         shipping_prices = self.get_queryset().filter(Q(country=country))
+        shipping_prices = shipping_prices.filter(Q(disabled=False))
         shipping_prices = shipping_prices.filter(Q(package_type=package_type))
         shipping_prices = shipping_prices.filter(
             Q(min_weight__isnull=True) | Q(min_weight__lte=weight))
@@ -95,6 +96,7 @@ class ShippingPrice(models.Model):
     item_price = models.PositiveSmallIntegerField()
     kilo_price = models.PositiveSmallIntegerField(null=True, blank=True)
     vat_rates = models.ManyToManyField(VATRate, blank=True)
+    disabled = models.BooleanField(default=False)
 
     objects = ShippingPriceManager()
 
