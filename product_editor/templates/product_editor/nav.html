@@ -1,4 +1,4 @@
-<a href="{% url 'inventory:new_product_delete_product' %}" id="start_new_product"><button>Start New Product</button></a>
+<a href="{% url 'product_editor:delete_product' %}" id="start_new_product"><button>Start New Product</button></a>
 <ul class="form_nav">
     {% for page in manager.current_pages %}
         {% url page.url as url %}

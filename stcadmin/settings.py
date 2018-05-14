@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'stock_check',
     'jchart',
     'profit_loss',
+    'product_editor',
 ]
 
 MIDDLEWARE = [

@@ -7,14 +7,14 @@
 <link rel="stylesheet" href="{% static 'scripts/inventory.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
 <script src="{% static 'scripts/new_product.js' %}"></script>
-<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
+<script>{% include 'product_editor/widgets/product_widgets.js' %}</script>
 <script src="{% static 'scripts/new_product.js' %}"></script>
 {% include 'home/froala_head.html' %}
 {% endblock %}
 
 {% block content %}
 
-{% include "inventory/new_product/new_product_nav.html" %}
+{% include "product_editor/nav.html" %}
 
 <h1>{% block page_title %}{% endblock %}</h1>
 

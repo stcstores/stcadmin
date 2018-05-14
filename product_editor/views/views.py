@@ -6,11 +6,11 @@ import os
 from django.shortcuts import redirect
 from django.views.generic.edit import FormView, View
 
-from inventory import forms
+from inventory.views import InventoryUserMixin
+from product_editor import forms
 from stcadmin import settings
 
-from ..views import InventoryUserMixin
-from .new_product_manager import NewProductManager
+from .editor_manager import NewProductManager
 
 
 class DeleteProductView(InventoryUserMixin, View):
@@ -41,7 +41,7 @@ class BaseNewProductView(InventoryUserMixin, FormView):
 class BasicInfo(BaseNewProductView):
     """View for the Basic Info page of the new product form."""
 
-    template_name = 'inventory/new_product/basic_info.html'
+    template_name = 'product_editor/basic_info.html'
     form_class = forms.BasicInfo
 
     def get_initial(self, *args, **kwargs):
@@ -69,7 +69,7 @@ class BasicInfo(BaseNewProductView):
 class VariationOptions(BaseNewProductView):
     """View for the Variation Options page of the new product form."""
 
-    template_name = 'inventory/new_product/variation_options.html'
+    template_name = 'product_editor/variation_options.html'
     form_class = forms.VariationOptions
 
     def get_initial(self, *args, **kwargs):
@@ -93,7 +93,7 @@ class VariationOptions(BaseNewProductView):
 class ListingOptions(BaseNewProductView):
     """View for the Listing Options page of the new product form."""
 
-    template_name = 'inventory/new_product/listing_options.html'
+    template_name = 'product_editor/listing_options.html'
     form_class = forms.ListingOptions
 
     def get_initial(self, *args, **kwargs):
@@ -181,7 +181,7 @@ class BaseVariationProductView(BaseNewProductView):
 class UnusedVariations(BaseVariationProductView):
     """View for Unused variations page of the new product form."""
 
-    template_name = 'inventory/new_product/unused_variations.html'
+    template_name = 'product_editor/unused_variations.html'
     form_class = forms.UnusedVariationsFormSet
 
     def get_variation_combinations(self):
@@ -218,7 +218,7 @@ class UnusedVariations(BaseVariationProductView):
 class VariationInfo(BaseVariationProductView):
     """View for the Variation Info page of the new product form."""
 
-    template_name = 'inventory/new_product/variation_info.html'
+    template_name = 'product_editor/variation_info.html'
     form_class = forms.VariationInfoSet
 
     def get_form_kwargs(self, *args, **kwargs):
@@ -252,7 +252,7 @@ class VariationInfo(BaseVariationProductView):
 class VariationListingOptions(BaseVariationProductView):
     """View for the Variation Listing Options page of the new product form."""
 
-    template_name = 'inventory/new_product/variation_listing_options.html'
+    template_name = 'product_editor/variation_listing_options.html'
     form_class = forms.VariationListingOptionsSet
 
     def get_initial(self, *args, **kwargs):

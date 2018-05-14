@@ -5,7 +5,6 @@ from . api import *  # NOQA
 from . descriptions import DescriptionsView  # NOQA
 from . images import ImageFormView, DeleteSTCAdminImage  # NOQA
 from . locations import LocationFormView  # NOQA
-from . new_product import *  # NOQA
 from . print_barcodes import PrintBarcodeLabels, BarcodePDF  # NOQA
 from . product import ProductView  # NOQA
 from . productrange import ProductRangeView  # NOQA

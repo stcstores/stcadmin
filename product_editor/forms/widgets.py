@@ -9,13 +9,13 @@ from django.utils.safestring import mark_safe
 class HorizontalRadio(forms.RadioSelect):
     """Widget for radio buttons layed out horizontally."""
 
-    template_name = 'inventory/widgets/horizontal_radio.html'
+    template_name = 'product_editor/widgets/horizontal_radio.html'
 
 
 class BaseSelectizeWidget:
     """Base class for widgets using selectize.js."""
 
-    template_name = 'inventory/widgets/selectize.html'
+    template_name = 'product_editor/widgets/selectize.html'
 
 
 class MultipleSelectizeWidget(BaseSelectizeWidget, forms.SelectMultiple):
@@ -54,7 +54,7 @@ class SingleSelectizeWidget(BaseSelectizeWidget, forms.Select):
 class VATPriceWidget(forms.MultiWidget):
     """Widget for VATPrice field."""
 
-    template_name = 'inventory/widgets/vat_price.html'
+    template_name = 'product_editor/widgets/vat_price.html'
     required = True
 
     def __init__(self, attrs=None):
@@ -89,7 +89,7 @@ class VATPriceWidget(forms.MultiWidget):
 class DepartmentBayWidget(forms.MultiWidget):
     """Widget for DepartmentBay field."""
 
-    template_name = 'inventory/widgets/department_bay.html'
+    template_name = 'product_editor/widgets/department_bay.html'
     required = False
     is_required = False
 
@@ -132,7 +132,7 @@ class DepartmentBayWidget(forms.MultiWidget):
 class DimensionsWidget(forms.MultiWidget):
     """Widget for Dimensions field."""
 
-    template_name = 'inventory/widgets/dimensions.html'
+    template_name = 'product_editor/widgets/dimensions.html'
     required = False
     is_required = False
 

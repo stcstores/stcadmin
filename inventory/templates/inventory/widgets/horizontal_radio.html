@@ -1,7 +1,0 @@
-{% with id=widget.attrs.id %}
-        {% for group, options, index in widget.optgroups %}
-            {% for option in options %}
-                <li style="display: inline-block">{% include option.template_name with widget=option %}</li>
-            {% endfor %}
-        {% endfor %}
-{% endwith %}

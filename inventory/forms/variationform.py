@@ -2,9 +2,8 @@
 
 from django import forms
 
+from product_editor.forms import fields
 from stcadmin.forms import KwargFormSet
-
-from .new_product import fields
 
 
 class VariationForm(forms.Form):

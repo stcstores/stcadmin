@@ -4,7 +4,7 @@ import cc_products
 from django import forms
 
 from inventory import models
-from inventory.forms.new_product.fields import Department, Location
+from product_editor.forms.fields import Department, Location
 from stcadmin.forms import KwargFormSet
 
 

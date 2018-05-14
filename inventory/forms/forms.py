@@ -4,9 +4,8 @@ from ccapi import CCAPI
 from django import forms
 
 from inventory import models
-
-from .new_product import fields
-from .new_product.fields import Description, Title
+from product_editor.forms import fields
+from product_editor.forms.fields import Description, Title
 
 
 class ProductRangeForm(forms.Form):

@@ -5,7 +5,7 @@ from inspect import isclass
 from django import forms
 from django.core.exceptions import ValidationError
 
-from inventory.forms import widgets
+from . import widgets
 
 
 class Validators:

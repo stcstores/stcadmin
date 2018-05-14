@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
-from .widgets import HorizontalRadio
+from product_editor.forms.widgets import HorizontalRadio
 
 
 class OptionSelectField(forms.MultiValueField):
@@ -37,7 +37,7 @@ class OptionSelectField(forms.MultiValueField):
 class OptionSelectWidget(forms.widgets.MultiWidget):
     """Widget for OptionSelectField."""
 
-    template_name = 'inventory/widgets/option_select_widget.html'
+    template_name = 'product_editor/widgets/option_select_widget.html'
 
     def __init__(self, *args, **kwargs):
         """Add sub widgets."""

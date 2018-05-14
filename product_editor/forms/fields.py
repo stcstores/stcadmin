@@ -9,9 +9,8 @@ from django.core.exceptions import ValidationError
 from list_input import ListInput
 
 from inventory import models
-from inventory.forms import widgets
 
-from . import fieldtypes
+from . import fieldtypes, widgets
 from .fieldtypes import Validators
 
 

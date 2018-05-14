@@ -37,9 +37,9 @@ class Page:
         self.name = name
         self.identifier = identifier
         if url is None:
-            self.url = 'inventory:new_product_{}'.format(self.identifier)
+            self.url = 'product_editor:{}'.format(self.identifier)
         else:
-            self.url = 'inventory:{}'.format(url)
+            self.url = 'product_editor:{}'.format(url)
         self.manager = manager
 
     @property

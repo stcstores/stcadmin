@@ -47,37 +47,6 @@ inventory_urlpatterns = [
         views.CreateSupplierView.as_view(), name='create_supplier')
 ]
 
-new_product_urlpatterns = [
-    path(
-        'new_product/basic_info/',
-        views.BasicInfo.as_view(), name='new_product_basic_info'),
-    path(
-        'new_product/listing_options/',
-        views.ListingOptions.as_view(),
-        name='new_product_listing_options'),
-    path(
-        'new_product/unused_variations/',
-        views.UnusedVariations.as_view(),
-        name='new_product_unused_variations'),
-    path(
-        'new_product/variation_options/',
-        views.VariationOptions.as_view(),
-        name='new_product_variation_options'),
-    path(
-        'new_product/variation_info/',
-        views.VariationInfo.as_view(),
-        name='new_product_variation_info'),
-    path(
-        'new_product/variation_listing_options/',
-        views.VariationListingOptions.as_view(),
-        name='new_product_variation_listing_options'),
-    path(
-        'new_product/delete_product/',
-        views.DeleteProductView.as_view(), name='new_product_delete_product'),
-    path('new_product/finish_product/',
-         views.FinishProduct.as_view(), name='new_product_finish'),
-    ]
-
 api_urlpatterns = [
     path(
         'get_stock_for_products/',
@@ -99,4 +68,4 @@ api_urlpatterns = [
         views.DeleteImage.as_view(), name='delete_image'),
 ]
 
-urlpatterns = inventory_urlpatterns + new_product_urlpatterns + api_urlpatterns
+urlpatterns = inventory_urlpatterns + api_urlpatterns

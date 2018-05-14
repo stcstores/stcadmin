@@ -13,15 +13,15 @@
             </p>
             <p>
                 If this is the your <b>first</b> attempt to create the product please
-                <a href="{% url 'inventory:new_product_finish' %}">
+                <a href="{% url 'product_editor:finish' %}">
                     try creating the product again
                 </a>.
             </p>
             <p>If you have tried more than once pleaese seek assistance.</p>
-            <a href="{% url 'inventory:new_product_finish' %}">
+            <a href="{% url 'product_editor:finish' %}">
                 <button>Retry Product Creation</button>
             </a>
-            <a href="{% url 'inventory:new_product_basic_info' %}">
+            <a href="{% url 'product_editor:basic_info' %}">
                 <button>Edit Product and Try Again</button>
             </a>
         </div>
