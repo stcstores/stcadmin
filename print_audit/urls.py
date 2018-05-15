@@ -37,4 +37,12 @@ urlpatterns = [
     path(
         'feedback_quickview/',
         views.FeedbackQuickview.as_view(), name='feedback_quickview'),
+    path('breakages/', views.BreakageIndex.as_view(), name='breakages'),
+    path('add_breakage/', views.AddBreakage.as_view(), name='add_breakage'),
+    path(
+        'update_breakage/<int:breakage_id>/',
+        views.UpdateBreakage.as_view(), name='update_breakage'),
+    path(
+        'delete_breakage/<int:breakage_id>/',
+        views.DeleteBreakage.as_view(), name='delete_breakage'),
 ]

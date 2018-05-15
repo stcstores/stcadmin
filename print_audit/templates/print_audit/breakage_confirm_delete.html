@@ -1,0 +1,9 @@
+{% extends "print_audit/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<form method="POST">{% csrf_token %}
+    <p>Are you sure you want to delete "{{ object }}"?</p>
+    <input type="submit" value="Confirm" />
+</form>
+{% endblock %}

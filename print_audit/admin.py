@@ -41,3 +41,17 @@ class UserFeedbackAdmin(admin.ModelAdmin):
     """Model admin for UserFeedback model."""
 
     list_display = ('user', 'feedback_type', 'timestamp')
+
+
+@admin.register(models.Breakage)
+class BreakageAdmin(admin.ModelAdmin):
+    """Model admin for Breackage model."""
+
+    fields = ('product_sku', 'order_id', 'packer')
+    list_display = (
+        '__str__', 'product_sku', 'order_id', 'note', 'packer', 'timestamp')
+    list_display_links = ('__str__', )
+    list_editable = ('product_sku', 'order_id', 'packer')
+    date_hierarchy = 'timestamp'
+    search_fields = ('order_id', 'product_sku')
+    list_filter = ('packer', )

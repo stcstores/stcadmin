@@ -1,5 +1,6 @@
 """Views for print audit app."""
 
-from . views import *  # NOQA
+from . breakages import *  # NOQA
 from . display_monitor import *  # NOQA
 from . user_feedback import *  # NOQA
+from . views import *  # NOQA
