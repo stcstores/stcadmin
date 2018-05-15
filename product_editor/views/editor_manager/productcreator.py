@@ -1,3 +1,5 @@
+"""ProductCreator class."""
+
 import datetime
 import logging
 import sys
@@ -43,13 +45,16 @@ class ProductCreator(ProductBase):
 
     def create_single_product(self):
         """Create a single (non variation) product."""
-        data = self.sanitize_basic_data(self, self.product_data[self.BASIC])
+        data = self.sanitize_data(
+            self, self.product_data[self.BASIC],
+            self.product_data[self.PRODUCT_INFO])
         option_data = self.product_data[self.LISTING_OPTIONS]
         data[self.OPTIONS] = {k: v for k, v in option_data.items() if v}
         self.add_variation(self, **data)
 
-    def sanitize_basic_data(self, basic_data):
+    def sanitize_data(self, universal_data, basic_data):
         """Clean data from basic_info or variation_info page."""
+        print(universal_data)
         basic_fields = (
             self.BARCODE, self.PURCHASE_PRICE, self.RETAIL_PRICE,
             self.STOCK_LEVEL, self.SUPPLIER, self.SUPPLIER_SKU, self.WEIGHT,
@@ -57,14 +62,13 @@ class ProductCreator(ProductBase):
         universal_fields = (
             self.DESCRIPTION, self.AMAZON_BULLET_POINTS,
             self.AMAZON_SEARCH_TERMS)
-        data = {field: basic_data[field] for field in basic_fields}
-        for key in universal_fields:
-            data[key] = self.product_data[self.BASIC][key]
+        data = {field: universal_data[field] for field in universal_fields}
+        data.update({field: basic_data[field] for field in basic_fields})
         data[self.VAT_RATE] = basic_data[self.PRICE][self.VAT_RATE]
         data[self.PRICE] = basic_data[self.PRICE][self.EX_VAT]
         for key in (self.LENGTH, self.WIDTH, self.HEIGHT):
             data[key] = basic_data[self.DIMENSIONS][key]
-        department_id = self.product_data[self.BASIC][
+        department_id = self.product_data[self.PRODUCT_INFO][
             self.DEPARTMENT][self.DEPARTMENT]
         data[self.DEPARTMENT] = models.Warehouse.objects.get(
             warehouse_id=department_id).name
@@ -105,7 +109,8 @@ class ProductCreator(ProductBase):
                     break
         else:
             raise Exception('Variation not found.')
-        data = self.sanitize_basic_data(self, info)
+        data = self.sanitize_data(
+            self, self.product_data[self.BASIC], info)
         return data
 
     def get_variation_option_data(self, variation):
