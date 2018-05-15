@@ -1,0 +1,40 @@
+{% extends "product_editor/base.html" %}
+{% load staticfiles %}
+{% load stcadmin_extras %}
+
+{% block basic_info %}{% endblock %}
+
+{% block page_title %}Product Info{% endblock %}
+
+{% block form %}
+    <table class="new_product">
+        {% for field in form %}
+        <tr>
+            <td>{{ field.label }}</td>
+            <td>{{ field }}</td>
+            <td>{% tooltip_help_text field %}</td>
+            {% if field.errors %}
+                <td class="error">{{ field.errors }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        <tr>
+            <th colspan="3">
+                <button name="back">Back</button>
+                <button name="continue">Continue</button>
+            </th>
+        </tr>
+    </table>
+{% endblock %}
+
+{% block script %}{{ block.super }}
+    <script>
+        $(document).ready(function() {
+            $('.change_type').click(function() {
+                return window.confirm("Any information on later pages will be lost.\nDo you want to continue?");
+            });
+            $(window).scrollTop(0);
+            $('#{{ form.title.auto_id }}').focus();
+        });
+    </script>
+{% endblock %}

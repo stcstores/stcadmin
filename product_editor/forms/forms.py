@@ -8,13 +8,13 @@ from stcadmin.forms import KwargFormSet
 from . import fields
 
 
-class NewProductForm(forms.Form):
+class ProductForm(forms.Form):
     """Base class for new product forms."""
 
     field_size = 50
 
 
-class BasicInfo(NewProductForm):
+class BasicInfo(ProductForm):
     """Form to set necessary information about new products."""
 
     def __init__(self, *args, **kwargs):
@@ -22,6 +22,16 @@ class BasicInfo(NewProductForm):
         self.options = CCAPI.get_product_options()
         super().__init__(*args, **kwargs)
         self.fields['title'] = fields.Title()
+        self.fields['description'] = fields.Description()
+        self.fields['amazon_bullet_points'] = fields.AmazonBulletPoints()
+        self.fields['amazon_search_terms'] = fields.AmazonSearchTerms()
+
+
+class ProductInfo(ProductForm):
+    def __init__(self, *args, **kwargs):
+        """Get fields for form."""
+        self.options = CCAPI.get_product_options()
+        super().__init__(*args, **kwargs)
         self.fields['barcode'] = fields.Barcode()
         self.fields['purchase_price'] = fields.PurchasePrice()
         self.fields['price'] = fields.VATPrice()
@@ -40,13 +50,10 @@ class BasicInfo(NewProductForm):
             choices=fields.Brand.get_choices(
                 'Manufacturer', self.options,
                 self.initial.get('manufacturer', None)))
-        self.fields['description'] = fields.Description()
         self.fields['gender'] = fields.Gender()
-        self.fields['amazon_bullet_points'] = fields.AmazonBulletPoints()
-        self.fields['amazon_search_terms'] = fields.AmazonSearchTerms()
 
 
-class BaseOptionsForm(NewProductForm):
+class BaseOptionsForm(ProductForm):
     """Base class for forms dealing with Product Options."""
 
     def __init__(self, *args, **kwargs):
@@ -102,7 +109,7 @@ class ListingOptions(BaseOptionsForm):
     field_class = fields.ListingOption
 
 
-class BaseVariationForm(NewProductForm):
+class BaseVariationForm(ProductForm):
     """Base class for forms handeling variations."""
 
     def __init__(self, *args, **kwargs):

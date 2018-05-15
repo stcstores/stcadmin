@@ -10,7 +10,7 @@ from inventory.views import InventoryUserMixin
 from product_editor import forms
 from stcadmin import settings
 
-from .editor_manager import NewProductManager
+from .editor_manager import EditProductManager, NewProductManager
 
 
 class DeleteProductView(InventoryUserMixin, View):
@@ -20,29 +20,61 @@ class DeleteProductView(InventoryUserMixin, View):
         """Process request."""
         self.manager = NewProductManager(args[0])
         self.manager.delete_product()
-        return redirect(self.manager.basic_info.url)
+        return self.manager.redirect_start()
 
 
-class BaseNewProductView(InventoryUserMixin, FormView):
+class BaseProductView(InventoryUserMixin, FormView):
     """Base class for new product form views."""
 
     def dispatch(self, *args, **kwargs):
         """Process request."""
-        self.manager = NewProductManager(args[0])
+        self.manager = self.get_manager(*args, **kwargs)
+        self.page = self.get_page()
         return super().dispatch(*args, **kwargs)
+
+    def get_page(self):
+        """Return current page from manager."""
+        return self.manager.get_page(self.name)
 
     def get_context_data(self, *args, **kwargs):
         """Return context data for template."""
         context = super().get_context_data(*args, **kwargs)
         context['manager'] = self.manager
+        context['page'] = self.page
         return context
 
+    def form_valid(self, form):
+        """Save form data and return redirect."""
+        self.page.data = form.cleaned_data
+        return self.manager.get_redirect(self.page, self.request.POST)
 
-class BasicInfo(BaseNewProductView):
+
+class NewProductView:
+    """Add New Product Manager to view."""
+
+    manager_class = NewProductManager
+
+    def get_manager(self, *args, **kwargs):
+        """Return product manager."""
+        return self.manager_class(args[0])
+
+
+class EditProductView:
+    """Add Edit Product Manager to view."""
+
+    manager_class = EditProductManager
+
+    def get_manager(self, *args, **kwargs):
+        """Return product manager."""
+        return self.manager_class(args[0], kwargs['range_id'])
+
+
+class BasicInfo(BaseProductView):
     """View for the Basic Info page of the new product form."""
 
     template_name = 'product_editor/basic_info.html'
     form_class = forms.BasicInfo
+    name = 'Basic Info'
 
     def get_initial(self, *args, **kwargs):
         """Get initial data for form."""
@@ -53,24 +85,46 @@ class BasicInfo(BaseNewProductView):
             initial = super().get_initial(*args, **kwargs)
         return initial
 
-    def form_valid(self, form):
-        """Save form data and return redirect."""
-        self.manager.basic_info.data = form.cleaned_data
-        if 'goto' in self.request.POST and ':' in self.request.POST['goto']:
-            return redirect(self.request.POST['goto'])
-        if 'variations' in self.request.POST:
-            self.manager.product_type = NewProductManager.VARIATION
-            return redirect(self.manager.variation_options.url)
+
+class NewBasicInfo(BasicInfo, NewProductView):
+    pass
+
+
+class EditBasicInfo(BasicInfo, EditProductView):
+    pass
+
+
+class ProductInfo(BaseProductView):
+    """View for the Single Product Info page of the product form."""
+
+    template_name = 'product_editor/product_info.html'
+    form_class = forms.ProductInfo
+    name = 'Product Info'
+
+    def get_initial(self, *args, **kwargs):
+        """Get initial data for form."""
+        existing_data = self.manager.product_info.data
+        if existing_data is not None:
+            initial = existing_data
         else:
-            self.manager.product_type = NewProductManager.SINGLE
-            return redirect(self.manager.listing_options.url)
+            initial = super().get_initial(*args, **kwargs)
+        return initial
 
 
-class VariationOptions(BaseNewProductView):
+class NewProductInfo(ProductInfo, NewProductView):
+    pass
+
+
+class EditProductInfo(ProductInfo, EditProductView):
+    pass
+
+
+class VariationOptions(BaseProductView):
     """View for the Variation Options page of the new product form."""
 
     template_name = 'product_editor/variation_options.html'
     form_class = forms.VariationOptions
+    name = 'Variation Options'
 
     def get_initial(self, *args, **kwargs):
         """Get initial data for form."""
@@ -79,22 +133,21 @@ class VariationOptions(BaseNewProductView):
             initial = super().get_initial(*args, **kwargs)
         return initial
 
-    def form_valid(self, form):
-        """Save form data and return redirect."""
-        self.manager.variation_options.data = form.cleaned_data
-        if 'goto' in self.request.POST and ':' in self.request.POST['goto']:
-            return redirect(self.request.POST['goto'])
-        if 'back' in self.request.POST:
-            return redirect(self.manager.basic_info.url)
-        else:
-            return redirect(self.manager.unused_variations.url)
+
+class NewVariationOptions(VariationOptions, NewProductView):
+    pass
 
 
-class ListingOptions(BaseNewProductView):
+class EditVariationOptions(VariationOptions, EditProductView):
+    pass
+
+
+class ListingOptions(BaseProductView):
     """View for the Listing Options page of the new product form."""
 
     template_name = 'product_editor/listing_options.html'
     form_class = forms.ListingOptions
+    name = 'Listing Options'
 
     def get_initial(self, *args, **kwargs):
         """Get initial data for form."""
@@ -103,18 +156,16 @@ class ListingOptions(BaseNewProductView):
             initial = super().get_initial(*args, **kwargs)
         return initial
 
-    def form_valid(self, form):
-        """Save form data and return redirect."""
-        self.manager.listing_options.data = form.cleaned_data
-        if 'goto' in self.request.POST and ':' in self.request.POST['goto']:
-            return redirect(self.request.POST['goto'])
-        if 'back' in self.request.POST:
-            return redirect(self.manager.basic_info.url)
-        else:
-            return redirect(self.manager.finish.url)
+
+class NewListingOptions(ListingOptions, NewProductView):
+    pass
 
 
-class BaseVariationProductView(BaseNewProductView):
+class EditListingOptions(ListingOptions, EditProductView):
+    pass
+
+
+class BaseVariationProductView(BaseProductView):
     """Base class for variation pages of the new product form."""
 
     def get_form_kwargs(self, *args, **kwargs):
@@ -155,26 +206,10 @@ class BaseVariationProductView(BaseNewProductView):
             variation_values[key] = sorted(list(set(value)))
         return variation_values
 
-    def form_valid(self, form):
-        """Save form data and return redirect."""
-        self._save_form_data(form.cleaned_data)
-        if 'goto' in self.request.POST and ':' in self.request.POST['goto']:
-            return redirect(self.request.POST['goto'])
-        if 'back' in self.request.POST:
-            return redirect(self._get_back_url())
-        else:
-            return redirect(self._get_continue_url())
-
     def _get_existing_data(self):
         raise NotImplementedError()
 
     def _save_form_data(self, data):
-        raise NotImplementedError()
-
-    def _get_back_url(self):
-        raise NotImplementedError()
-
-    def _get_continue_url(self):
         raise NotImplementedError()
 
 
@@ -183,6 +218,7 @@ class UnusedVariations(BaseVariationProductView):
 
     template_name = 'product_editor/unused_variations.html'
     form_class = forms.UnusedVariationsFormSet
+    name = 'Unused Variations'
 
     def get_variation_combinations(self):
         """Create and return all combination of variation options."""
@@ -202,12 +238,6 @@ class UnusedVariations(BaseVariationProductView):
         """Get initial data for form."""
         return self.get_variation_combinations()
 
-    def _get_back_url(self):
-        return self.manager.variation_options.url
-
-    def _get_continue_url(self):
-        return self.manager.variation_info.url
-
     def _get_existing_data(self):
         return self.manager.unused_variations.data
 
@@ -215,16 +245,25 @@ class UnusedVariations(BaseVariationProductView):
         self.manager.unused_variations.data = data
 
 
+class NewUnusedVariations(UnusedVariations, NewProductView):
+    pass
+
+
+class EditUnusedVariations(UnusedVariations, EditProductView):
+    pass
+
+
 class VariationInfo(BaseVariationProductView):
     """View for the Variation Info page of the new product form."""
 
     template_name = 'product_editor/variation_info.html'
     form_class = forms.VariationInfoSet
+    name = 'Variation Info'
 
     def get_form_kwargs(self, *args, **kwargs):
         """Get kwargs for form."""
         kwargs = super().get_form_kwargs(*args, **kwargs)
-        kwargs['department'] = self.manager.basic_info.data[
+        kwargs['department'] = self.manager.product_info.data[
             'department']['department']
         return kwargs
 
@@ -232,15 +271,9 @@ class VariationInfo(BaseVariationProductView):
         """Get initial data for form."""
         initial = self.get_variation_combinations()
         for init in initial:
-            init.update(self.manager.basic_info.data)
+            init.update(self.manager.product_info.data)
             init['location'] = init['department']['bays']
         return initial
-
-    def _get_back_url(self):
-        return self.manager.unused_variations.url
-
-    def _get_continue_url(self):
-        return self.manager.variation_listing_options.url
 
     def _get_existing_data(self):
         return self.manager.variation_info.data
@@ -249,22 +282,25 @@ class VariationInfo(BaseVariationProductView):
         self.manager.variation_info.data = data
 
 
+class NewVariationInfo(VariationInfo, NewProductView):
+    pass
+
+
+class EditVariationInfo(VariationInfo, EditProductView):
+    pass
+
+
 class VariationListingOptions(BaseVariationProductView):
     """View for the Variation Listing Options page of the new product form."""
 
     template_name = 'product_editor/variation_listing_options.html'
     form_class = forms.VariationListingOptionsSet
+    name = 'Variation Listing Options'
 
     def get_initial(self, *args, **kwargs):
         """Get initial data for form."""
         initial = self.get_variation_combinations()
         return initial
-
-    def _get_back_url(self):
-        return self.manager.variation_info.url
-
-    def _get_continue_url(self):
-        return self.manager.finish.url
 
     def _get_existing_data(self):
         return self.manager.variation_listing_options.data
@@ -273,7 +309,15 @@ class VariationListingOptions(BaseVariationProductView):
         self.manager.variation_listing_options.data = data
 
 
-class FinishProduct(BaseNewProductView):
+class NewVariationListingOptions(VariationListingOptions, NewProductView):
+    pass
+
+
+class EditVariationListingOptions(VariationListingOptions, EditProductView):
+    pass
+
+
+class FinishProduct(BaseProductView):
     """
     View for final page of the new product form.
 
