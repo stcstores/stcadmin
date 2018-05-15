@@ -10,7 +10,7 @@ from inventory.views import InventoryUserMixin
 from product_editor import forms
 from stcadmin import settings
 
-from .editor_manager import EditProductManager, NewProductManager
+from . import editor_manager
 
 
 class DeleteProductView(InventoryUserMixin, View):
@@ -18,12 +18,13 @@ class DeleteProductView(InventoryUserMixin, View):
 
     def dispatch(self, *args, **kwargs):
         """Process request."""
-        self.manager = NewProductManager(args[0])
+        self.manager = editor_manager.NewProductManager(args[0])
         self.manager.delete_product()
         return self.manager.redirect_start()
 
 
-class BaseProductView(InventoryUserMixin, FormView):
+class BaseProductView(
+        InventoryUserMixin, editor_manager.ProductEditorBase, FormView):
     """Base class for new product form views."""
 
     def dispatch(self, *args, **kwargs):
@@ -52,7 +53,7 @@ class BaseProductView(InventoryUserMixin, FormView):
 class NewProductView:
     """Add New Product Manager to view."""
 
-    manager_class = NewProductManager
+    manager_class = editor_manager.NewProductManager
 
     def get_manager(self, *args, **kwargs):
         """Return product manager."""
@@ -62,7 +63,7 @@ class NewProductView:
 class EditProductView:
     """Add Edit Product Manager to view."""
 
-    manager_class = EditProductManager
+    manager_class = editor_manager.EditProductManager
 
     def get_manager(self, *args, **kwargs):
         """Return product manager."""
@@ -74,7 +75,7 @@ class BasicInfo(BaseProductView):
 
     template_name = 'product_editor/basic_info.html'
     form_class = forms.BasicInfo
-    name = 'Basic Info'
+    name = editor_manager.ProductEditorBase.BASIC
 
     def get_initial(self, *args, **kwargs):
         """Get initial data for form."""
@@ -87,10 +88,14 @@ class BasicInfo(BaseProductView):
 
 
 class NewBasicInfo(BasicInfo, NewProductView):
+    """Basic Info view for new products."""
+
     pass
 
 
 class EditBasicInfo(BasicInfo, EditProductView):
+    """Basic Info view for existing products."""
+
     pass
 
 
@@ -99,7 +104,7 @@ class ProductInfo(BaseProductView):
 
     template_name = 'product_editor/product_info.html'
     form_class = forms.ProductInfo
-    name = 'Product Info'
+    name = editor_manager.ProductEditorBase.PRODUCT_INFO
 
     def get_initial(self, *args, **kwargs):
         """Get initial data for form."""
@@ -112,10 +117,14 @@ class ProductInfo(BaseProductView):
 
 
 class NewProductInfo(ProductInfo, NewProductView):
+    """Product Info view for new products."""
+
     pass
 
 
 class EditProductInfo(ProductInfo, EditProductView):
+    """Product Info view for existing products."""
+
     pass
 
 
@@ -124,7 +133,7 @@ class VariationOptions(BaseProductView):
 
     template_name = 'product_editor/variation_options.html'
     form_class = forms.VariationOptions
-    name = 'Variation Options'
+    name = editor_manager.ProductEditorBase.VARIATION_OPTIONS
 
     def get_initial(self, *args, **kwargs):
         """Get initial data for form."""
@@ -135,10 +144,14 @@ class VariationOptions(BaseProductView):
 
 
 class NewVariationOptions(VariationOptions, NewProductView):
+    """Variation Options view for new products."""
+
     pass
 
 
 class EditVariationOptions(VariationOptions, EditProductView):
+    """Variation Options view for existing products."""
+
     pass
 
 
@@ -147,7 +160,7 @@ class ListingOptions(BaseProductView):
 
     template_name = 'product_editor/listing_options.html'
     form_class = forms.ListingOptions
-    name = 'Listing Options'
+    name = editor_manager.ProductEditorBase.LISTING_OPTIONS
 
     def get_initial(self, *args, **kwargs):
         """Get initial data for form."""
@@ -158,10 +171,14 @@ class ListingOptions(BaseProductView):
 
 
 class NewListingOptions(ListingOptions, NewProductView):
+    """Listing Options view for new products."""
+
     pass
 
 
 class EditListingOptions(ListingOptions, EditProductView):
+    """Listing Options view for existing products."""
+
     pass
 
 
@@ -207,10 +224,7 @@ class BaseVariationProductView(BaseProductView):
         return variation_values
 
     def _get_existing_data(self):
-        raise NotImplementedError()
-
-    def _save_form_data(self, data):
-        raise NotImplementedError()
+        return self.page.data
 
 
 class UnusedVariations(BaseVariationProductView):
@@ -218,7 +232,7 @@ class UnusedVariations(BaseVariationProductView):
 
     template_name = 'product_editor/unused_variations.html'
     form_class = forms.UnusedVariationsFormSet
-    name = 'Unused Variations'
+    name = editor_manager.ProductEditorBase.UNUSED_VARIATIONS
 
     def get_variation_combinations(self):
         """Create and return all combination of variation options."""
@@ -238,18 +252,16 @@ class UnusedVariations(BaseVariationProductView):
         """Get initial data for form."""
         return self.get_variation_combinations()
 
-    def _get_existing_data(self):
-        return self.manager.unused_variations.data
-
-    def _save_form_data(self, data):
-        self.manager.unused_variations.data = data
-
 
 class NewUnusedVariations(UnusedVariations, NewProductView):
+    """Unused Variations view for new products."""
+
     pass
 
 
 class EditUnusedVariations(UnusedVariations, EditProductView):
+    """Unused Variations view for existing products."""
+
     pass
 
 
@@ -258,13 +270,13 @@ class VariationInfo(BaseVariationProductView):
 
     template_name = 'product_editor/variation_info.html'
     form_class = forms.VariationInfoSet
-    name = 'Variation Info'
+    name = editor_manager.ProductEditorBase.VARIATION_INFO
 
     def get_form_kwargs(self, *args, **kwargs):
         """Get kwargs for form."""
         kwargs = super().get_form_kwargs(*args, **kwargs)
-        kwargs['department'] = self.manager.product_info.data[
-            'department']['department']
+        kwargs[self.DEPARTMENT] = self.manager.product_info.data[
+            self.DEPARTMENT][self.DEPARTMENT]
         return kwargs
 
     def get_initial(self, *args, **kwargs):
@@ -272,21 +284,19 @@ class VariationInfo(BaseVariationProductView):
         initial = self.get_variation_combinations()
         for init in initial:
             init.update(self.manager.product_info.data)
-            init['location'] = init['department']['bays']
+            init[self.LOCATION] = init[self.DEPARTMENT][self.BAYS]
         return initial
-
-    def _get_existing_data(self):
-        return self.manager.variation_info.data
-
-    def _save_form_data(self, data):
-        self.manager.variation_info.data = data
 
 
 class NewVariationInfo(VariationInfo, NewProductView):
+    """Variation Info view for new proudcts."""
+
     pass
 
 
 class EditVariationInfo(VariationInfo, EditProductView):
+    """Variation Info view for existing products."""
+
     pass
 
 
@@ -295,25 +305,23 @@ class VariationListingOptions(BaseVariationProductView):
 
     template_name = 'product_editor/variation_listing_options.html'
     form_class = forms.VariationListingOptionsSet
-    name = 'Variation Listing Options'
+    name = editor_manager.ProductEditorBase.VARIATION_LISTING_OPTIONS
 
     def get_initial(self, *args, **kwargs):
         """Get initial data for form."""
         initial = self.get_variation_combinations()
         return initial
 
-    def _get_existing_data(self):
-        return self.manager.variation_listing_options.data
-
-    def _save_form_data(self, data):
-        self.manager.variation_listing_options.data = data
-
 
 class NewVariationListingOptions(VariationListingOptions, NewProductView):
+    """Variation Listing Options view for new products."""
+
     pass
 
 
 class EditVariationListingOptions(VariationListingOptions, EditProductView):
+    """Variation Listing Options view for exisiting products."""
+
     pass
 
 
@@ -329,12 +337,12 @@ class FinishProduct(BaseProductView):
 
     def dispatch(self, *args, **kwargs):
         """Process request."""
-        self.manager = NewProductManager(args[0])
+        self.manager = editor_manager.NewProductManager(args[0])
         dir = os.path.join(self.product_log_directory, str(args[0].user.id))
         if not os.path.exists(dir):
             os.mkdir(dir)
         path = os.path.join(
-            dir, '{}.json'.format(self.manager.basic_info.data['title']))
+            dir, '{}.json'.format(self.manager.basic_info.data[self.TITLE]))
         most_recent = os.path.join(dir, 'most_recent.json')
         with open(path, 'w') as f:
             self.manager.save_json(f)

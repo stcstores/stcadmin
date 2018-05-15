@@ -2,7 +2,11 @@
 <ul class="form_nav">
     {% for page in manager.current_pages %}
         {% url page.url as url %}
-        <li><button class="goto_button {% ifequal url request.path %}current_page{% else %}{% if page.data is null %}invalid_page{% endif %}{% endifequal %}" name="goto" value="{{ page.name }}">{{ page.name }}</button></li>
+        <li>
+            <button name="goto" value="{{ page.identifier }}" class="goto_button {% ifequal url request.path %}current_page{% else %}{% if page.data is null %}invalid_page{% endif %}{% endifequal %}">
+                {{ page.name }}
+            </button>
+        </li>
     {% endfor %}
 </ul>
 <script>

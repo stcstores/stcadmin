@@ -9,12 +9,12 @@ import cc_products
 
 from inventory import models
 
-from .productbase import ProductBase
+from .productbase import ProductEditorBase
 
 logger = logging.getLogger('product_creation')
 
 
-class ProductCreator(ProductBase):
+class ProductCreator(ProductEditorBase):
     """Create new Cloud Commerce Product from data in session."""
 
     def __new__(self, product_data):
@@ -54,7 +54,6 @@ class ProductCreator(ProductBase):
 
     def sanitize_data(self, universal_data, basic_data):
         """Clean data from basic_info or variation_info page."""
-        print(universal_data)
         basic_fields = (
             self.BARCODE, self.PURCHASE_PRICE, self.RETAIL_PRICE,
             self.STOCK_LEVEL, self.SUPPLIER, self.SUPPLIER_SKU, self.WEIGHT,

@@ -1,3 +1,6 @@
+"""Page classes containing information about form pages."""
+
+
 class BasePage:
     """Base class for product editor form pages."""
 
@@ -33,10 +36,12 @@ class BasePage:
 
 
 class NewProductPage(BasePage):
-    """Container for new product form pages."""
+    """Container for pages used for creating new products."""
 
     pass
 
 
 class EditProductPage(BasePage):
+    """Container for pages used for editing existing products."""
+
     pass

@@ -2,10 +2,10 @@ from pprint import pprint
 
 import cc_products
 
-from .productbase import ProductBase
+from .productbase import ProductEditorBase
 
 
-class ProductLoader(ProductBase):
+class ProductLoader(ProductEditorBase):
     """Load Cloud Commerce Product data for product editor."""
 
     def __new__(self, range_id):

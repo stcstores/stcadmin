@@ -1,5 +1,8 @@
-class ProductBase:
-    """Base class for new product classes."""
+"""ProductEditorBase class."""
+
+
+class ProductEditorBase:
+    """Container for constants used by product_editor."""
 
     VARIATION = 'variation'
     SINGLE = 'single'
