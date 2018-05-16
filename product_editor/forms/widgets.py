@@ -59,6 +59,10 @@ class VATPriceWidget(forms.MultiWidget):
     template_name = 'product_editor/widgets/vat_price.html'
     required = True
 
+    VAT_RATE = ProductEditorBase.VAT_RATE
+    EX_VAT = ProductEditorBase.EX_VAT
+    WITH_VAT_PRICE = 'with_vat_price'
+
     def __init__(self, attrs=None):
         """Configure sub widgets."""
         if attrs is None:
@@ -83,7 +87,7 @@ class VATPriceWidget(forms.MultiWidget):
     def decompress(self, value):
         """Return value as a list of values."""
         if value:
-            return [value['vat_rate'], value['ex_vat'], '']
+            return [value[self.VAT_RATE], value[self.EX_VAT], '']
         else:
             return ['', '', '']
 

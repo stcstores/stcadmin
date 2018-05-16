@@ -125,8 +125,9 @@ class VATPrice(fieldtypes.CombinationField):
         """Return submitted values as a dict."""
         vat_rate, ex_vat_price, with_vat_price = data_list
         return {
-            'vat_rate': vat_rate, 'ex_vat': ex_vat_price,
-            'with_vat_price': with_vat_price}
+            widgets.VATPriceWidget.VAT_RATE: vat_rate,
+            widgets.VATPriceWidget.EX_VAT: ex_vat_price,
+            widgets.VATPriceWidget.WITH_VAT_PRICE: with_vat_price}
 
 
 class PurchasePrice(fieldtypes.PriceField):

@@ -8,6 +8,7 @@ import threading
 import cc_products
 
 from inventory import models
+from product_editor import exceptions
 
 from .productbase import ProductEditorBase
 
@@ -36,12 +37,12 @@ class ProductCreator(ProductEditorBase):
             elif self.product_data[self.TYPE] == self.VARIATION:
                 self.create_variation_product(self)
             self.product_range.options[self.INCOMPLETE].selected = False
-        except Exception as e:
+        except Exception as exception:
             logger.error(
                 'Product Creation Error: %s', ' '.join(sys.argv),
                 exc_info=sys.exc_info())
             self.product_range.delete()
-            raise e
+            raise exception
 
     def create_single_product(self):
         """Create a single (non variation) product."""
@@ -54,11 +55,7 @@ class ProductCreator(ProductEditorBase):
 
     def create_variation_product(self):
         """Create a variation product."""
-        variations = [
-            {k: v for k, v in d.items() if k != 'used'}
-            for d in self.product_data[self.UNUSED_VARIATIONS] if d['used']]
-        if not all([var.keys() == variations[0].keys() for var in variations]):
-            raise Exception('Non matching variation keys.')
+        variations = self.get_variations(self)
         for variation in variations:
             data = self.get_variation_data(self, variation)
             option_data = self.get_variation_option_data(self, variation)
@@ -69,6 +66,17 @@ class ProductCreator(ProductEditorBase):
         for key in variations[0]:
             self.product_range.options[key].variable = True
 
+    def get_variations(self):
+        """Return list of variation option dicts."""
+        form_data = self.product_data[self.UNUSED_VARIATIONS]
+        variations = []
+        for variation in [d for d in form_data if d[self.USED]]:
+            variations.append({
+                k: v for k, v in variation.items() if k != self.USED})
+        if not all([var.keys() == variations[0].keys() for var in variations]):
+            raise exceptions.VariationKeyMissmatch(variations)
+        return variations
+
     def get_variation_data(self, variation):
         """Return sanitized data for variation."""
         variation_infos = self.product_data[self.VARIATION_INFO]
@@ -77,7 +85,7 @@ class ProductCreator(ProductEditorBase):
                 if all([variation_info[k] == v for k, v in variation.items()]):
                     break
         else:
-            raise Exception('Variation not found.')
+            raise exceptions.VariationNotFoundError(variation_info)
         data = DataSanitizer(
             self.product_data[self.BASIC],
             self.product_data[self.PRODUCT_INFO],
@@ -91,6 +99,7 @@ class ProductCreator(ProductEditorBase):
             if all([key in data for key in variation]):
                 if all([data[k] == v for k, v in variation.items()]):
                     return data
+        raise exceptions.VariationNotFoundError(variation)
 
     def add_variation(self, **kwargs):
         """Add single variation to Range."""

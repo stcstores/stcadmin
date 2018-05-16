@@ -6,6 +6,7 @@ class ProductEditorBase:
 
     VARIATION = 'variation'
     SINGLE = 'single'
+    USED = 'used'
     NEW_PRODUCT = 'new_product_data'
     TYPE = 'type'
     BASIC = 'basic_info'
