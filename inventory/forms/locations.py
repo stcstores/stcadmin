@@ -4,18 +4,21 @@ import cc_products
 from django import forms
 
 from inventory import models
-from product_editor.forms.fields import Department, DepartmentBayField
+from product_editor.editor_manager import ProductEditorBase
+from product_editor.forms.fields import Department, WarehouseBayField
 from stcadmin.forms import KwargFormSet
 
 
 class DepartmentForm(forms.Form):
     """Form for changing the department of a Product Range."""
 
+    DEPARTMENT = ProductEditorBase.DEPARTMENT
+
     def __init__(self, *args, **kwargs):
         """Create fields for form."""
         self.product_range = kwargs.pop('product_range')
         super().__init__(*args, **kwargs)
-        self.fields['department'] = Department()
+        self.fields[self.DEPARTMENT] = Department()
         self.initial.update(self.get_initial())
 
     def get_initial(self):
@@ -33,16 +36,25 @@ class DepartmentForm(forms.Form):
                     name=department).warehouse_id
             except models.Warehouse.DoesNotExist:
                 department_id = None
-        initial['department'] = department_id
+        initial[self.DEPARTMENT] = department_id
         return initial
 
     def save(self):
         """Update Product Range department."""
-        self.product_range.department = self.cleaned_data['department']
+        department = models.Warehouse.objects.get(
+            warehouse_id=self.cleaned_data[self.DEPARTMENT])
+        self.product_range.department = department.name
 
 
 class LocationsForm(forms.Form):
     """Form for changing the Warehouse Bays associated with a product."""
+
+    PRODUCT_ID = 'product_id'
+    PRODUCT_NAME = 'product_name'
+    STOCK_LEVEL = 'stock_level'
+    LOCATIONS = 'locations'
+    WAREHOUSE = ProductEditorBase.WAREHOUSE
+    BAYS = ProductEditorBase.BAYS
 
     product_id = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'product_id'}))
@@ -56,25 +68,25 @@ class LocationsForm(forms.Form):
         """Add fields to form."""
         self.product = kwargs.pop('product')
         super().__init__(*args, **kwargs)
-        self.fields['locations'] = DepartmentBayField()
+        self.fields[self.LOCATIONS] = WarehouseBayField()
         self.initial.update(self.get_initial())
 
     def get_initial(self):
         """Return initial data."""
         initial = {}
-        initial['product_id'] = self.product.id
-        initial['product_name'] = self.product.full_name
-        initial['stock_level'] = self.product.stock_level
+        initial[self.PRODUCT_ID] = self.product.id
+        initial[self.PRODUCT_NAME] = self.product.full_name
+        initial[self.STOCK_LEVEL] = self.product.stock_level
         bays = [
             bay for bay in models.Bay.objects.filter(
                 bay_id__in=self.product.bays)]
         warehouses = list(set([bay.warehouse for bay in bays]))
         if len(warehouses) == 1:
-            initial['locations'] = {
-                'department': warehouses[0].warehouse_id,
-                'bays': [bay.id for bay in bays]}
+            initial[self.LOCATIONS] = {
+                self.WAREHOUSE: warehouses[0].warehouse_id,
+                self.BAYS: [bay.id for bay in bays]}
         else:
-            self.add_error('locations', 'Mixed warehouses.')
+            self.add_error(self.LOCATIONS, 'Mixed warehouses.')
         return initial
 
     def get_warehouse_for_bays(self, bay_ids):
@@ -90,17 +102,17 @@ class LocationsForm(forms.Form):
     def clean(self):
         """Add list of bay IDs to cleaned data."""
         cleaned_data = super().clean()
-        cleaned_data.pop('product_name')
-        cleaned_data.pop('stock_level')
-        bays = self.cleaned_data['locations']
+        cleaned_data.pop(self.PRODUCT_NAME)
+        cleaned_data.pop(self.STOCK_LEVEL)
+        bays = self.cleaned_data[self.LOCATIONS][self.BAYS]
         if len(bays) == 0:
             bays = [self.warehouse.default_bay.bay_id]
-        cleaned_data['bays'] = bays
+        cleaned_data[self.LOCATIONS][self.BAYS] = bays
         return cleaned_data
 
     def save(self):
         """Update product with new bays."""
-        self.product.bays = self.cleaned_data['bays']
+        self.product.bays = self.cleaned_data[self.LOCATIONS][self.BAYS]
 
     def get_context_data(self, *args, **kwargs):
         """Return cotext for template."""

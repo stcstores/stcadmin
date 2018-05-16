@@ -39,17 +39,17 @@ function vat_price_widget(vat_input, ex_vat_input, with_vat_input) {
     vat_input.change();
 }
 
-function department_bay(department, bay, lock_department) {
+function warehouse_bay(warehouse, bay, lock_warehouse) {
     var warehouses = {% warehouses %};
     var bay_options = bay[0].selectize.options;
 
     function filter_bays() {
-        var department_id = department[0].selectize.getValue();
+        var department_id = warehouse[0].selectize.getValue();
         return warehouses[department_id];
     }
 
-    department.change(function() {
-        if (department.val() == '') {
+    warehouse.change(function() {
+        if (warehouse.val() == '') {
             bay[0].selectize.disable();
             return;
         }
@@ -64,13 +64,13 @@ function department_bay(department, bay, lock_department) {
     });
 
     $(document).ready(function() {
-        department.change();
-        var value = department.val();
-        var name = department.attr('name');
-        if (lock_department) {
-            department[0].selectize.destroy();
-            department.replaceWith('<input value="' + value + '" name="' + name + '" hidden/>');
-            department.remove();
+        warehouse.change();
+        var value = warehouse.val();
+        var name = warehouse.attr('name');
+        if (lock_warehouse) {
+            warehouse[0].selectize.destroy();
+            warehouse.replaceWith('<input value="' + value + '" name="' + name + '" hidden/>');
+            warehouse.remove();
         }
     });
 }

@@ -113,14 +113,13 @@ class ProductInfo(BaseProductView):
             initial = super().get_initial(*args, **kwargs)
             basic_info = self.manager.basic_info.data
             initial[self.LOCATION] = {
-                self.DEPARTMENT: basic_info[self.DEPARTMENT],
+                self.WAREHOUSE: basic_info[self.DEPARTMENT],
                 self.BAYS: []}
         return initial
 
     def get_form_kwargs(self, *args, **kwargs):
         """Return key word arguments for form."""
         kwargs = super().get_form_kwargs(*args, **kwargs)
-        kwargs[self.DEPARTMENT] = self.manager.basic_info.data[self.DEPARTMENT]
         return kwargs
 
 
@@ -283,7 +282,6 @@ class VariationInfo(BaseVariationProductView):
     def get_form_kwargs(self, *args, **kwargs):
         """Get kwargs for form."""
         kwargs = super().get_form_kwargs(*args, **kwargs)
-        kwargs[self.DEPARTMENT] = self.manager.basic_info.data[self.DEPARTMENT]
         return kwargs
 
     def get_initial(self, *args, **kwargs):

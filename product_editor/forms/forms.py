@@ -35,7 +35,6 @@ class ProductInfo(ProductForm):
     def __init__(self, *args, **kwargs):
         """Get Product option data and set fields."""
         self.options = CCAPI.get_product_options()
-        self.department = kwargs.pop(self.DEPARTMENT)
         super().__init__(*args, **kwargs)
         self.get_fields()
 
@@ -46,7 +45,7 @@ class ProductInfo(ProductForm):
         self.fields[self.PRICE] = fields.VATPrice()
         self.fields[self.RETAIL_PRICE] = fields.RetailPrice()
         self.fields[self.STOCK_LEVEL] = fields.StockLevel()
-        self.fields[self.LOCATION] = fields.DepartmentBayField()
+        self.fields[self.LOCATION] = fields.WarehouseBayField()
         self.fields[self.SUPPLIER] = fields.Supplier()
         self.fields[self.SUPPLIER_SKU] = fields.SupplierSKU()
         self.fields[self.WEIGHT] = fields.Weight()
@@ -165,7 +164,6 @@ class VariationInfo(BaseVariationForm):
         choices = kwargs.pop('choices')
         self.supplier_choices = choices['supplier']
         self.package_type_choices = choices['package_type']
-        self.department = kwargs.pop('department')
         self.options = kwargs.pop('options')
         super().__init__(*args, **kwargs)
 
@@ -230,9 +228,7 @@ class VariationInfoSet(BaseVariationFormSet):
             'supplier': fields.Supplier.get_choices(),
             'package_type': fields.PackageType.get_choices()}
         options = CCAPI.get_product_options()
-        return {
-            'choices': choices, 'department': self.kwargs.pop('department'),
-            'options': options}
+        return {'choices': choices, 'options': options}
 
 
 class VariationListingOptionsSet(BaseVariationFormSet):

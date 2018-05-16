@@ -102,7 +102,6 @@ class ProductCreator(ProductEditorBase):
         product.bays = kwargs[self.BAYS]
         product.price = kwargs[self.PRICE]
         product.purchase_price = kwargs[self.PURCHASE_PRICE]
-        product.retail_price = kwargs[self.RETAIL_PRICE]
         product.stock_level = kwargs[self.STOCK_LEVEL]
         product.supplier = kwargs[self.SUPPLIER]
         product.weight = kwargs[self.WEIGHT]
@@ -114,6 +113,8 @@ class ProductCreator(ProductEditorBase):
         product.brand = kwargs[self.BRAND]
         product.manufacturer = kwargs[self.MANUFACTURER]
         product.date_created = datetime.datetime.now()
+        if kwargs[self.RETAIL_PRICE]:
+            product.retail_price = kwargs[self.RETAIL_PRICE]
         if kwargs[self.SUPPLIER_SKU]:
             product.supplier_sku = kwargs[self.SUPPLIER_SKU]
         if kwargs[self.GENDER]:
@@ -162,19 +163,12 @@ class DataSanitizer(ProductEditorBase):
         """Convert product data from form to arg dict."""
         data = {}
         self.set_simple_fields(self, product_data, data)
-        self.set_department(self, product_data, data)
         self.set_location_data(self, product_data, data)
         self.set_list_fields(self, product_data, data)
         self.set_barcode(self, product_data, data)
         self.set_dimension_fields(self, product_data, data)
         self.set_vat_price(self, product_data, data)
         return data
-
-    def set_department(self, product_data, data):
-        """Set department data."""
-        department = models.Warehouse.objects.get(
-            warehouse_id=product_data[self.DEPARTMENT])
-        data[self.DEPARTMENT] = department.name
 
     def set_simple_fields(self, product_data, data):
         """Create data dict with fields that do not require processing set."""
@@ -183,6 +177,8 @@ class DataSanitizer(ProductEditorBase):
 
     def set_location_data(self, product_data, data):
         """Set location and department data."""
+        data[self.DEPARTMENT] = models.Warehouse.objects.get(
+            warehouse_id=product_data[self.DEPARTMENT]).name
         data[self.BAYS] = product_data[self.LOCATION][self.BAYS]
 
     def set_dimension_fields(self, product_data, data):

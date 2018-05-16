@@ -8,6 +8,7 @@ from django.views.generic.base import TemplateView
 
 from inventory import models
 from inventory.forms import DepartmentForm, LocationsFormSet
+from product_editor.editor_manager import ProductEditorBase
 
 from .views import InventoryUserMixin
 
@@ -16,6 +17,9 @@ class LocationFormView(InventoryUserMixin, TemplateView):
     """View for LocationsFormSet."""
 
     template_name = 'inventory/locations.html'
+    DEPARTMENT = ProductEditorBase.DEPARTMENT
+    WAREHOUSE = ProductEditorBase.WAREHOUSE
+    BAYS = ProductEditorBase.BAYS
 
     def get(self, *args, **kwargs):
         """Process GET HTTP request."""
@@ -37,9 +41,6 @@ class LocationFormView(InventoryUserMixin, TemplateView):
             'product': p} for p in self.product_range.products])
         if self.department_form.is_valid():
             self.department_form.save()
-            for form in self.bay_formset:
-                form.warehouse = models.Warehouse.used_warehouses.get(
-                    name=self.department_form.cleaned_data['department'])
             if self.bay_formset.is_valid():
                 for form in self.bay_formset:
                     form.save()

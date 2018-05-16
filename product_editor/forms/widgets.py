@@ -5,6 +5,8 @@ import json
 from django import forms
 from django.utils.safestring import mark_safe
 
+from product_editor.editor_manager import ProductEditorBase
+
 
 class HorizontalRadio(forms.RadioSelect):
     """Widget for radio buttons layed out horizontally."""
@@ -86,18 +88,21 @@ class VATPriceWidget(forms.MultiWidget):
             return ['', '', '']
 
 
-class DepartmentBayWidget(forms.MultiWidget):
-    """Widget for DepartmentBay field."""
+class WarehouseBayWidget(forms.MultiWidget):
+    """Widget for WarehouseBay field."""
 
-    template_name = 'product_editor/widgets/department_bay.html'
+    template_name = 'product_editor/widgets/warehouse_bay.html'
     required = False
     is_required = False
 
+    WAREHOUSE = ProductEditorBase.WAREHOUSE
+    BAYS = ProductEditorBase.BAYS
+
     def __init__(
             self, attrs=None, choices=[], selectize_options=[],
-            lock_department=False):
+            lock_warehouse=False):
         """Configure sub widgets."""
-        self.lock_department = lock_department
+        self.lock_warehouse = lock_warehouse
         if attrs is None:
             department_attrs = {}
             bay_attrs = {}
@@ -117,7 +122,7 @@ class DepartmentBayWidget(forms.MultiWidget):
     def decompress(self, value):
         """Return value as a list of values."""
         if value:
-            return [value['department'], value['bays']]
+            return [value[self.WAREHOUSE], value[self.BAYS]]
         else:
             return ['', []]
 
@@ -125,7 +130,7 @@ class DepartmentBayWidget(forms.MultiWidget):
         """Return context for template."""
         context = super().get_context(*args, **kwargs)
         context['widget']['subwidgets'][1]['attrs']['required'] = False
-        context['widget']['lock_department'] = self.lock_department
+        context['widget']['lock_warehouse'] = self.lock_warehouse
         return context
 
 

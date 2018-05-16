@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 from list_input import ListInput
 
 from inventory import models
+from product_editor.editor_manager import ProductEditorBase
 
 from . import fieldtypes, widgets
 from .fieldtypes import Validators
@@ -401,44 +402,46 @@ class Location(fieldtypes.SelectizeField):
         return value
 
 
-class DepartmentBayField(fieldtypes.CombinationField):
+class WarehouseBayField(fieldtypes.CombinationField):
     """Combined Department and Location fields."""
 
     label = 'Location'
     help_text = (
-        'Set the <b>Department</b> to which the product belongs in the '
-        'Department field.<br>'
-        'Bays belonging to this department can then be added to the Bay field.'
-        '<br>If the bay field is left blank the default bay for the department'
+        'Select the <b>Warehouse</b> from which the item will be picked.<br>'
+        'Bays in this Warehouse can then be added to the Bay field.'
+        '<br>If the bay field is left blank the default bay for the Warehouse'
         ' will be added.')
+
+    WAREHOUSE = ProductEditorBase.WAREHOUSE
+    BAYS = ProductEditorBase.BAYS
 
     def __init__(self, *args, **kwargs):
         """Create sub fields."""
         kwargs['label'] = 'Location'
-        self.lock_department = kwargs.pop('lock_department', False)
+        self.lock_warehouse = kwargs.pop('lock_warehouse', False)
         fields = (Department(), Location())
         choices = [field.get_choices() for field in fields]
         selectize_options = [field.selectize_options for field in fields]
-        if self.lock_department:
+        if self.lock_warehouse:
             selectize_options[0]['readOnly'] = True
-        kwargs['widget'] = widgets.DepartmentBayWidget(
+        kwargs['widget'] = widgets.WarehouseBayWidget(
             choices=choices, selectize_options=selectize_options,
-            lock_department=self.lock_department)
+            lock_warehouse=self.lock_warehouse)
         super().__init__(
             fields=fields, require_all_fields=False, *args, **kwargs)
 
     def compress(self, value):
         """Return submitted values as a dict."""
-        return {'department': value[0], 'bays': value[1]}
+        return {self.WAREHOUSE: value[0], self.BAYS: value[1]}
 
     def clean(self, value):
         """Validate submitted values."""
         value = super().clean(value)
         warehouse = models.Warehouse.used_warehouses.get(
-            warehouse_id=value['department'])
-        value['department'] = warehouse.id
-        if len(value['bays']) == 0:
-            value['bays'] = [warehouse.default_bay.id]
+            warehouse_id=value[self.WAREHOUSE])
+        value[self.WAREHOUSE] = warehouse.id
+        if len(value[self.BAYS]) == 0:
+            value[self.BAYS] = [warehouse.default_bay.id]
         return value
 
 

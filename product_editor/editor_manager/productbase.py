@@ -23,6 +23,7 @@ class ProductEditorBase:
     VAT_RATE = 'vat_rate'
     EX_VAT = 'ex_vat'
     DEPARTMENT = 'department'
+    WAREHOUSE = 'warehouse'
     BAYS = 'bays'
     PURCHASE_PRICE = 'purchase_price'
     RETAIL_PRICE = 'retail_price'
