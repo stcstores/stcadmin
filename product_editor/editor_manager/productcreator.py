@@ -52,36 +52,6 @@ class ProductCreator(ProductEditorBase):
         data[self.OPTIONS] = {k: v for k, v in option_data.items() if v}
         self.add_variation(self, **data)
 
-    def sanitize_data(self, universal_data, basic_data):
-        """Clean data from basic_info or variation_info page."""
-        basic_fields = (
-            self.BARCODE, self.PURCHASE_PRICE, self.RETAIL_PRICE,
-            self.STOCK_LEVEL, self.SUPPLIER, self.SUPPLIER_SKU, self.WEIGHT,
-            self.PACKAGE_TYPE, self.BRAND, self.MANUFACTURER, self.GENDER)
-        universal_fields = (
-            self.DESCRIPTION, self.AMAZON_BULLET_POINTS,
-            self.AMAZON_SEARCH_TERMS)
-        data = {field: universal_data[field] for field in universal_fields}
-        data.update({field: basic_data[field] for field in basic_fields})
-        data[self.VAT_RATE] = basic_data[self.PRICE][self.VAT_RATE]
-        data[self.PRICE] = basic_data[self.PRICE][self.EX_VAT]
-        for key in (self.LENGTH, self.WIDTH, self.HEIGHT):
-            data[key] = basic_data[self.DIMENSIONS][key]
-        department_id = self.product_data[self.PRODUCT_INFO][
-            self.DEPARTMENT][self.DEPARTMENT]
-        data[self.DEPARTMENT] = models.Warehouse.objects.get(
-            warehouse_id=department_id).name
-        if self.LOCATION in basic_data:
-            data[self.BAYS] = basic_data[self.LOCATION]
-        else:
-            data[self.BAYS] = basic_data[self.DEPARTMENT][self.BAYS]
-        if not data[self.BARCODE]:
-            data[self.BARCODE] = models.get_barcode()
-        for field in (self.AMAZON_SEARCH_TERMS, self.AMAZON_BULLET_POINTS):
-            if not data[field][0]:
-                data[field] = None
-        return data
-
     def create_variation_product(self):
         """Create a variation product."""
         variations = [
@@ -164,19 +134,19 @@ class DataSanitizer(ProductEditorBase):
     """Return dict of kwargs for product creation from form data."""
 
     SIMPLE_FIELDS = (
-        ProductEditorBase.PURCHASE_PRICE, ProductEditorBase.RETAIL_PRICE,
-        ProductEditorBase.STOCK_LEVEL, ProductEditorBase.SUPPLIER,
-        ProductEditorBase.SUPPLIER_SKU, ProductEditorBase.WEIGHT,
-        ProductEditorBase.PACKAGE_TYPE, ProductEditorBase.BRAND,
-        ProductEditorBase.MANUFACTURER, ProductEditorBase.GENDER,
-        ProductEditorBase.DESCRIPTION, ProductEditorBase.AMAZON_BULLET_POINTS,
-        ProductEditorBase.AMAZON_SEARCH_TERMS)
+        ProductEditorBase.BRAND, ProductEditorBase.DESCRIPTION,
+        ProductEditorBase.GENDER, ProductEditorBase.MANUFACTURER,
+        ProductEditorBase.PACKAGE_TYPE, ProductEditorBase.PURCHASE_PRICE,
+        ProductEditorBase.RETAIL_PRICE, ProductEditorBase.STOCK_LEVEL,
+        ProductEditorBase.SUPPLIER, ProductEditorBase.SUPPLIER_SKU,
+        ProductEditorBase.WEIGHT)
+
     LIST_FIELDS = (
-        ProductEditorBase.AMAZON_SEARCH_TERMS,
-        ProductEditorBase.AMAZON_BULLET_POINTS)
+        ProductEditorBase.AMAZON_BULLET_POINTS,
+        ProductEditorBase.AMAZON_SEARCH_TERMS)
     DIMENSION_FIELDS = (
-        ProductEditorBase.LENGTH, ProductEditorBase.WIDTH,
-        ProductEditorBase.HEIGHT)
+        ProductEditorBase.HEIGHT, ProductEditorBase.LENGTH,
+        ProductEditorBase.WIDTH)
 
     def __new__(self, basic_info, product_info, variation_info=None):
         """Clean data from basic_info or variation_info page."""
@@ -185,37 +155,35 @@ class DataSanitizer(ProductEditorBase):
         product_data.update(product_info)
         if variation_info is not None:
             product_data.update(variation_info)
-        from pprint import pprint
-        pprint(product_data)
         kwargs = self.sanitize_product_data(self, product_data)
-        print()
-        pprint(kwargs)
         return kwargs
 
     def sanitize_product_data(self, product_data):
         """Convert product data from form to arg dict."""
-        data = self.get_simple_fields(self, product_data)
+        data = {}
+        self.set_simple_fields(self, product_data, data)
+        self.set_department(self, product_data, data)
         self.set_location_data(self, product_data, data)
-        self.set_list_fields(self, product_data, data)
         self.set_list_fields(self, product_data, data)
         self.set_barcode(self, product_data, data)
         self.set_dimension_fields(self, product_data, data)
         self.set_vat_price(self, product_data, data)
         return data
 
-    def get_simple_fields(self, product_data):
+    def set_department(self, product_data, data):
+        """Set department data."""
+        department = models.Warehouse.objects.get(
+            warehouse_id=product_data[self.DEPARTMENT])
+        data[self.DEPARTMENT] = department.name
+
+    def set_simple_fields(self, product_data, data):
         """Create data dict with fields that do not require processing set."""
-        return {field: product_data[field] for field in self.SIMPLE_FIELDS}
+        for key in self.SIMPLE_FIELDS:
+            data[key] = product_data[key]
 
     def set_location_data(self, product_data, data):
         """Set location and department data."""
-        department_id = product_data[self.DEPARTMENT][self.DEPARTMENT]
-        data[self.DEPARTMENT] = models.Warehouse.objects.get(
-            warehouse_id=department_id).name
-        if self.LOCATION in product_data:
-            data[self.BAYS] = product_data[self.LOCATION]
-        else:
-            data[self.BAYS] = product_data[self.DEPARTMENT][self.BAYS]
+        data[self.BAYS] = product_data[self.LOCATION][self.BAYS]
 
     def set_dimension_fields(self, product_data, data):
         """Set dimension data."""
@@ -225,7 +193,9 @@ class DataSanitizer(ProductEditorBase):
     def set_list_fields(self, product_data, data):
         """Set data from list fields."""
         for field in self.LIST_FIELDS:
-            if not data[field][0]:
+            if product_data[field][0]:
+                data[field] = product_data[field]
+            else:
                 data[field] = None
 
     def set_barcode(self, product_data, data):

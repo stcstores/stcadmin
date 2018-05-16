@@ -320,7 +320,7 @@ class Department(fieldtypes.SingleSelectize):
             return None
         try:
             department = models.Warehouse.used_warehouses.get(
-                warehouse_id=int(value)).name
+                warehouse_id=int(value)).warehouse_id
         except models.Warehouse.DoesNotExist:
             raise forms.ValidationError('Deparment not recognised')
         return department
@@ -435,7 +435,7 @@ class DepartmentBayField(fieldtypes.CombinationField):
         """Validate submitted values."""
         value = super().clean(value)
         warehouse = models.Warehouse.used_warehouses.get(
-            name=value['department'])
+            warehouse_id=value['department'])
         value['department'] = warehouse.id
         if len(value['bays']) == 0:
             value['bays'] = [warehouse.default_bay.id]

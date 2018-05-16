@@ -3,12 +3,13 @@
 from ccapi import CCAPI
 from django import forms
 
+from product_editor.editor_manager import ProductEditorBase
 from stcadmin.forms import KwargFormSet
 
 from . import fields
 
 
-class ProductForm(forms.Form):
+class ProductForm(forms.Form, ProductEditorBase):
     """Base class for new product forms."""
 
     field_size = 50
@@ -21,38 +22,44 @@ class BasicInfo(ProductForm):
         """Get fields for form."""
         self.options = CCAPI.get_product_options()
         super().__init__(*args, **kwargs)
-        self.fields['title'] = fields.Title()
-        self.fields['description'] = fields.Description()
-        self.fields['amazon_bullet_points'] = fields.AmazonBulletPoints()
-        self.fields['amazon_search_terms'] = fields.AmazonSearchTerms()
+        self.fields[self.TITLE] = fields.Title()
+        self.fields[self.DEPARTMENT] = fields.Department()
+        self.fields[self.DESCRIPTION] = fields.Description()
+        self.fields[self.AMAZON_BULLET_POINTS] = fields.AmazonBulletPoints()
+        self.fields[self.AMAZON_SEARCH_TERMS] = fields.AmazonSearchTerms()
 
 
 class ProductInfo(ProductForm):
     """Form for product attributes that vary between variations."""
 
     def __init__(self, *args, **kwargs):
-        """Get fields for form."""
+        """Get Product option data and set fields."""
         self.options = CCAPI.get_product_options()
+        self.department = kwargs.pop(self.DEPARTMENT)
         super().__init__(*args, **kwargs)
-        self.fields['barcode'] = fields.Barcode()
-        self.fields['purchase_price'] = fields.PurchasePrice()
-        self.fields['price'] = fields.VATPrice()
-        self.fields['retail_price'] = fields.RetailPrice()
-        self.fields['stock_level'] = fields.StockLevel()
-        self.fields['department'] = fields.DepartmentBayField()
-        self.fields['supplier'] = fields.Supplier()
-        self.fields['supplier_sku'] = fields.SupplierSKU()
-        self.fields['weight'] = fields.Weight()
-        self.fields['dimensions'] = fields.Dimensions()
-        self.fields['package_type'] = fields.PackageType()
-        self.fields['brand'] = fields.Brand(
+        self.get_fields()
+
+    def get_fields(self):
+        """Set form fields."""
+        self.fields[self.BARCODE] = fields.Barcode()
+        self.fields[self.PURCHASE_PRICE] = fields.PurchasePrice()
+        self.fields[self.PRICE] = fields.VATPrice()
+        self.fields[self.RETAIL_PRICE] = fields.RetailPrice()
+        self.fields[self.STOCK_LEVEL] = fields.StockLevel()
+        self.fields[self.LOCATION] = fields.DepartmentBayField()
+        self.fields[self.SUPPLIER] = fields.Supplier()
+        self.fields[self.SUPPLIER_SKU] = fields.SupplierSKU()
+        self.fields[self.WEIGHT] = fields.Weight()
+        self.fields[self.DIMENSIONS] = fields.Dimensions()
+        self.fields[self.PACKAGE_TYPE] = fields.PackageType()
+        self.fields[self.BRAND] = fields.Brand(
             choices=fields.Brand.get_choices(
-                'Brand', self.options, self.initial.get('brand', None)))
-        self.fields['manufacturer'] = fields.Manufacturer(
+                'Brand', self.options, self.initial.get(self.BRAND, None)))
+        self.fields[self.MANUFACTURER] = fields.Manufacturer(
             choices=fields.Brand.get_choices(
                 'Manufacturer', self.options,
-                self.initial.get('manufacturer', None)))
-        self.fields['gender'] = fields.Gender()
+                self.initial.get(self.MANUFACTURER, None)))
+        self.fields[self.GENDER] = fields.Gender()
 
 
 class BaseOptionsForm(ProductForm):
@@ -120,7 +127,7 @@ class BaseVariationForm(ProductForm):
         self.existing_data = kwargs.pop('existing_data')
         super().__init__(*args, **kwargs)
         self._update_initial()
-        self._get_fields()
+        self.get_fields()
         self.order_fields(list(self.variation_options.keys()))
 
     def _update_initial(self):
@@ -142,7 +149,8 @@ class BaseVariationForm(ProductForm):
 class UnusedVariations(BaseVariationForm):
     """Form to mark non existant variations as unused."""
 
-    def _get_fields(self):
+    def get_fields(self):
+        """Set form fields."""
         self.fields['used'] = forms.BooleanField(initial=True, required=False)
         for option_name, value in self.variation_options.items():
             self.fields[option_name] = forms.CharField(
@@ -161,28 +169,9 @@ class VariationInfo(BaseVariationForm):
         self.options = kwargs.pop('options')
         super().__init__(*args, **kwargs)
 
-    def _get_fields(self):
-        self.fields['barcode'] = fields.Barcode()
-        self.fields['purchase_price'] = fields.PurchasePrice()
-        self.fields['price'] = fields.VATPrice()
-        self.fields['retail_price'] = fields.RetailPrice()
-        self.fields['stock_level'] = fields.StockLevel()
-        self.fields['location'] = fields.Location(department=self.department)
-        self.fields['supplier'] = fields.Supplier(
-            choices=self.supplier_choices)
-        self.fields['supplier_sku'] = fields.SupplierSKU()
-        self.fields['weight'] = fields.Weight()
-        self.fields['dimensions'] = fields.Dimensions()
-        self.fields['package_type'] = fields.PackageType(
-            choices=self.package_type_choices)
-        self.fields['brand'] = fields.Brand(
-            choices=fields.Brand.get_choices(
-                'Brand', self.options, self.initial.get('brand', None)))
-        self.fields['manufacturer'] = fields.Manufacturer(
-            choices=fields.Brand.get_choices(
-                'Manufacturer', self.options,
-                self.initial.get('manufacturer', None)))
-        self.fields['gender'] = fields.Gender()
+    def get_fields(self):
+        """Set form fields."""
+        ProductInfo.get_fields(self)
         for option_name, value in self.variation_options.items():
             self.fields[option_name] = forms.CharField(
                 max_length=255, initial=value, widget=forms.HiddenInput())
@@ -196,7 +185,8 @@ class VariationListingOptions(BaseVariationForm):
         self.option_values = kwargs.pop('option_values')
         super().__init__(*args, **kwargs)
 
-    def _get_fields(self):
+    def get_fields(self):
+        """Set form fields."""
         for option_name, value in self.variation_options.items():
             self.fields[option_name] = forms.CharField(
                 max_length=255, initial=value, widget=forms.HiddenInput())

@@ -31,7 +31,7 @@ class DepartmentForm(forms.Form):
             try:
                 department_id = models.Warehouse.used_warehouses.get(
                     name=department).warehouse_id
-            except models.DoesNotExist:
+            except models.Warehouse.DoesNotExist:
                 department_id = None
         initial['department'] = department_id
         return initial

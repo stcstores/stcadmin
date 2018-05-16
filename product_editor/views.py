@@ -7,10 +7,8 @@ from django.shortcuts import redirect
 from django.views.generic.edit import FormView, View
 
 from inventory.views import InventoryUserMixin
-from product_editor import forms
+from product_editor import editor_manager, forms
 from stcadmin import settings
-
-from . import editor_manager
 
 
 class DeleteProductView(InventoryUserMixin, View):
@@ -113,7 +111,17 @@ class ProductInfo(BaseProductView):
             initial = existing_data
         else:
             initial = super().get_initial(*args, **kwargs)
+            basic_info = self.manager.basic_info.data
+            initial[self.LOCATION] = {
+                self.DEPARTMENT: basic_info[self.DEPARTMENT],
+                self.BAYS: []}
         return initial
+
+    def get_form_kwargs(self, *args, **kwargs):
+        """Return key word arguments for form."""
+        kwargs = super().get_form_kwargs(*args, **kwargs)
+        kwargs[self.DEPARTMENT] = self.manager.basic_info.data[self.DEPARTMENT]
+        return kwargs
 
 
 class NewProductInfo(ProductInfo, NewProductView):
@@ -275,8 +283,7 @@ class VariationInfo(BaseVariationProductView):
     def get_form_kwargs(self, *args, **kwargs):
         """Get kwargs for form."""
         kwargs = super().get_form_kwargs(*args, **kwargs)
-        kwargs[self.DEPARTMENT] = self.manager.product_info.data[
-            self.DEPARTMENT][self.DEPARTMENT]
+        kwargs[self.DEPARTMENT] = self.manager.basic_info.data[self.DEPARTMENT]
         return kwargs
 
     def get_initial(self, *args, **kwargs):
@@ -284,7 +291,6 @@ class VariationInfo(BaseVariationProductView):
         initial = self.get_variation_combinations()
         for init in initial:
             init.update(self.manager.product_info.data)
-            init[self.LOCATION] = init[self.DEPARTMENT][self.BAYS]
         return initial
 
 
