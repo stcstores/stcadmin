@@ -4,7 +4,7 @@ import cc_products
 from django import forms
 
 from inventory import models
-from product_editor.forms.fields import Department, Location
+from product_editor.forms.fields import Department, DepartmentBayField
 from stcadmin.forms import KwargFormSet
 
 
@@ -56,7 +56,7 @@ class LocationsForm(forms.Form):
         """Add fields to form."""
         self.product = kwargs.pop('product')
         super().__init__(*args, **kwargs)
-        self.fields['locations'] = Location()
+        self.fields['locations'] = DepartmentBayField()
         self.initial.update(self.get_initial())
 
     def get_initial(self):
@@ -65,9 +65,16 @@ class LocationsForm(forms.Form):
         initial['product_id'] = self.product.id
         initial['product_name'] = self.product.full_name
         initial['stock_level'] = self.product.stock_level
-        initial['locations'] = [
-            bay.id for bay in models.Bay.objects.filter(
+        bays = [
+            bay for bay in models.Bay.objects.filter(
                 bay_id__in=self.product.bays)]
+        warehouses = list(set([bay.warehouse for bay in bays]))
+        if len(warehouses) == 1:
+            initial['locations'] = {
+                'department': warehouses[0].warehouse_id,
+                'bays': [bay.id for bay in bays]}
+        else:
+            self.add_error('locations', 'Mixed warehouses.')
         return initial
 
     def get_warehouse_for_bays(self, bay_ids):

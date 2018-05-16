@@ -7,6 +7,7 @@
 <script src="{% static 'scripts/stock_manager.js' %}"></script>
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+<script>{% include 'product_editor/widgets/product_widgets.js' %}</script>
 {% endblock %}
 
 {% block page_title %}Product Locations{% endblock %}
@@ -39,57 +40,5 @@
     </table>
     <input type="submit" value="Update Locations" />
 </form>
-
-{% endblock %}
-
-{% block script %}
-<script>
-
-function get_bays() {
-    return $('.location_field').find('select');
-}
-
-function disable_bays() {
-    get_bays().each(function() {
-        $(this)[0].selectize.disable();
-    });
-}
-
-function enable_bays() {
-    get_bays().each(function() {
-        $(this)[0].selectize.enable();
-    });
-}
-
-$(document).ready(function() {
-
-    var warehouses = {% warehouses %};
-
-    var department = $('select[name="department"]').change(function(){
-        var value = $(this)[0].selectize.getValue();
-        if (value == '') {
-            disable_bays();
-            return
-        }
-        enable_bays();
-        set_department(value);
-    });
-
-    function set_department(department_id) {
-        var options = warehouses[department_id];
-        get_bays().each(function() {
-            var selectize = $(this)[0].selectize;
-            var value = selectize.getValue();
-            selectize.clear();
-            selectize.clearOptions();
-            selectize.addOption(options);
-            selectize.setValue(value);
-        });
-    }
-
-    var department = $('select[name="department"]').change();
-});
-
-</script>
 
 {% endblock %}
