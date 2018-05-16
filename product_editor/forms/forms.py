@@ -15,7 +15,7 @@ class ProductForm(forms.Form):
 
 
 class BasicInfo(ProductForm):
-    """Form to set necessary information about new products."""
+    """Form for product attributes that stay the same between variations."""
 
     def __init__(self, *args, **kwargs):
         """Get fields for form."""
@@ -28,6 +28,8 @@ class BasicInfo(ProductForm):
 
 
 class ProductInfo(ProductForm):
+    """Form for product attributes that vary between variations."""
+
     def __init__(self, *args, **kwargs):
         """Get fields for form."""
         self.options = CCAPI.get_product_options()
