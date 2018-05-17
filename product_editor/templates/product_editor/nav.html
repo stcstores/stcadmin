@@ -1,12 +1,13 @@
 <a href="{% url 'product_editor:delete_product' %}" id="start_new_product"><button>Start New Product</button></a>
 <ul class="form_nav">
-    {% for page in manager.current_pages %}
-        {% url page.url as url %}
+    {% for nav_page in manager.pages %}
+        {% if nav_page.visible %}
         <li>
-            <button name="goto" value="{{ page.identifier }}" class="goto_button {% ifequal url request.path %}current_page{% else %}{% if page.data is null %}invalid_page{% endif %}{% endifequal %}">
-                {{ page.name }}
+            <button name="goto" value="{{ nav_page.identifier }}" class="goto_button {% ifequal nav_page.identifier page.identifier %}current_page{% else %}{% if not nav_page.enabled %}invalid_page{% endif %}{% endifequal %}">
+                {{ nav_page.name }}
             </button>
         </li>
+        {% endif %}
     {% endfor %}
 </ul>
 <script>

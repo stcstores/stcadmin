@@ -9,7 +9,7 @@ import json
 
 from django.shortcuts import redirect
 
-from .page import EditProductPage, NewProductPage
+from . import page
 from .productbase import ProductEditorBase
 from .productcreator import ProductCreator
 from .productloader import ProductLoader
@@ -32,20 +32,14 @@ class BaseProductManager(ProductEditorBase):
 
     def set_pages(self):
         """Create pages."""
-        self.basic_info = self.page_class('Basic Info', self.BASIC, self)
-        self.product_info = self.page_class(
-            'Product Info', self.PRODUCT_INFO, self)
-        self.listing_options = self.page_class(
-            'Listing Options', self.LISTING_OPTIONS, self)
-        self.variation_options = self.page_class(
-            'Variation Options', self.VARIATION_OPTIONS, self)
-        self.unused_variations = self.page_class(
-            'Unused Variations', self.UNUSED_VARIATIONS, self)
-        self.variation_info = self.page_class(
-            'Variation Info', self.VARIATION_INFO, self)
-        self.variation_listing_options = self.page_class(
-            'Variation Listing Options', self.VARIATION_LISTING_OPTIONS, self)
-        self.finish = self.page_class('Finish', self.FINISH, self)
+        self.basic_info = page.BasicInfo(self)
+        self.product_info = page.ProductInfo(self)
+        self.listing_options = page.ListingOptions(self)
+        self.variation_options = page.VariationOptions(self)
+        self.unused_variations = page.UnusedVariations(self)
+        self.variation_info = page.VariationInfo(self)
+        self.variation_listing_options = page.VariationListingOptions(self)
+        self.finish = page.Finish(self)
 
     @property
     def product_data(self):
@@ -81,8 +75,8 @@ class BaseProductManager(ProductEditorBase):
         """Return all pages for this manager."""
         return [
             self.basic_info, self.product_info, self.listing_options,
-            self.variation_options, self.variation_info,
-            self.variation_listing_options, self.finish]
+            self.variation_options, self.unused_variations,
+            self.variation_info, self.variation_listing_options, self.finish]
 
     @property
     def single_product_pages(self):
@@ -138,7 +132,6 @@ class BaseProductManager(ProductEditorBase):
 class NewProductManager(BaseProductManager):
     """Product manager for creating new products."""
 
-    page_class = NewProductPage
     SESSION_KEY = 'new_product'
 
     def get_data_from_session(self):
@@ -183,7 +176,6 @@ class NewProductManager(BaseProductManager):
 class EditProductManager(BaseProductManager):
     """Product Manager for editing existing products."""
 
-    page_class = EditProductPage
     SESSION_KEY = 'edit_product'
 
     def __init__(self, request, range_id):
