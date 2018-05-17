@@ -16,15 +16,13 @@
 
 {% include "product_editor/nav.html" %}
 
-<h1>{% block page_title %}{% endblock %}</h1>
+<h1>{{ page.name }}</h1>
 
 {% block pre_form %}{% endblock %}
 
 <form method="POST">{% csrf_token %}
     <input type="text" id="goto" name="goto" hidden>
-{% block form %}
-
-{% endblock %}
+{% block form %}{% endblock %}
 <form>
 <br>
 
@@ -36,7 +34,7 @@
 <div class="formside basic_info">
     <p>Title: <input type="text" value="{{ manager.basic_info.data.title }}" readonly></p>
     {% if manager.basic_info.data.supplier_sku %}
-        <p>Supplier SKU: <input type="text" value="{{ manager.basic_info.data.supplier_sku }}" readonly></p>
+        <p>Supplier SKU: <input type="text" value="{{ manager.product_info.data.supplier_sku }}" readonly></p>
     {% endif %}
     {% if manager.basic_info.data.description %}
         <p>Description: <div class="description">{{ manager.basic_info.data.description | safe }}</div></p>

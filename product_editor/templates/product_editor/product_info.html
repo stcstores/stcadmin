@@ -26,15 +26,3 @@
         </tr>
     </table>
 {% endblock %}
-
-{% block script %}{{ block.super }}
-    <script>
-        $(document).ready(function() {
-            $('.change_type').click(function() {
-                return window.confirm("Any information on later pages will be lost.\nDo you want to continue?");
-            });
-            $(window).scrollTop(0);
-            $('#{{ form.title.auto_id }}').focus();
-        });
-    </script>
-{% endblock %}

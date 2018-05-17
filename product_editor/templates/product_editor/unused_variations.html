@@ -2,8 +2,6 @@
 {% load staticfiles %}
 {% load stcadmin_extras %}
 
-{% block page_title %}Variation Options{% endblock %}
-
 {% block form %}
 {% for error in formset.non_field_errors %}
     {{ error }}

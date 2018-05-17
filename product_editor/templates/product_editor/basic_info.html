@@ -4,8 +4,6 @@
 
 {% block basic_info %}{% endblock %}
 
-{% block page_title %}Basic Info{% endblock %}
-
 {% block form %}
     <table class="new_product">
         {% for field in form %}
@@ -42,7 +40,6 @@
             $('.change_type').click(function() {
                 return window.confirm("Any information on later pages will be lost.\nDo you want to continue?");
             });
-            $(window).scrollTop(0);
             $('#{{ form.title.auto_id }}').focus();
         });
     </script>
