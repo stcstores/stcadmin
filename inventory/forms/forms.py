@@ -81,12 +81,16 @@ class CreateBayForm(forms.Form):
                     'location', 'Location is required for backup bays.')
                 return
         if data['bay_type'] == self.PRIMARY:
-            warehouse = models.Warehouse.objects.get(name=data['department'])
+            warehouse = models.Warehouse.objects.get(
+                warehouse_id=data['department'])
             data['bay_name'] = data['name']
         else:
-            warehouse = models.Warehouse.objects.get(name=data['department'])
+            warehouse = models.Warehouse.objects.get(
+                warehouse_id=data['department'])
+            location = models.Warehouse.objects.get(
+                warehouse_id=data['location'])
             data['bay_name'] = '{} Backup {} {}'.format(
-                warehouse.abriviation, data['location'], data['name'])
+                warehouse.abriviation, location.name, data['name'])
         data['warehouse_id'] = warehouse.warehouse_id
         data['warehouse_name'] = warehouse.name
         if models.Bay.objects.filter(name=data['bay_name']).exists():
