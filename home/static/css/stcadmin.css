@@ -171,6 +171,7 @@ th {
 }
 
 .errorlist {
+    color: red;
     margin: 0.25em;
     margin-left: 1em;
     padding: 0;

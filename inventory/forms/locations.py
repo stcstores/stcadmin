@@ -69,6 +69,7 @@ class LocationsForm(forms.Form):
         self.product = kwargs.pop('product')
         super().__init__(*args, **kwargs)
         self.fields[self.LOCATIONS] = WarehouseBayField()
+        self.cleaned_data = {}
         self.initial.update(self.get_initial())
 
     def get_initial(self):

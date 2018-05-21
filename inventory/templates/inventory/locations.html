@@ -29,12 +29,12 @@
             <th>Bays</th>
         </tr>
         {% for form in bay_formset %}
-        {% if form.errors %}{{ form.errors }}{% endif %}
         <tr hidden><td>{{ form.product_id }}</td></tr>
         <tr>
             <td class="title_field">{{ form.product_name.value }}</td>
             <td class="stock_level_field">{{ form.stock_level.value }}</td>
             <td class="location_field">{{ form.locations }}</td>
+            {% if form.errors %}<td>{% for field in form %}{{ field.errors }}{% endfor %}</td>{% endif %}
         </tr>
         {% endfor %}
     </table>
