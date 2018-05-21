@@ -82,12 +82,13 @@ class LocationsForm(forms.Form):
             bay for bay in models.Bay.objects.filter(
                 bay_id__in=self.product.bays)]
         warehouses = list(set([bay.warehouse for bay in bays]))
-        if len(warehouses) == 1:
+        print(warehouses)
+        if len(warehouses) > 1:
+            self.add_error(self.LOCATIONS, 'Mixed warehouses.')
+        elif len(warehouses) == 1:
             initial[self.LOCATIONS] = {
                 self.WAREHOUSE: warehouses[0].warehouse_id,
                 self.BAYS: [bay.id for bay in bays]}
-        else:
-            self.add_error(self.LOCATIONS, 'Mixed warehouses.')
         return initial
 
     def get_warehouse_for_bays(self, bay_ids):
