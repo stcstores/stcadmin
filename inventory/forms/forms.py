@@ -4,6 +4,7 @@ from ccapi import CCAPI
 from django import forms
 
 from inventory import models
+from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms import fields
 from product_editor.forms.fields import Description, Title
 
@@ -124,7 +125,7 @@ class ImagesForm(forms.Form):
             attrs={'multiple': True, 'accept': '.jpg, .png'}))
 
 
-class ProductForm(forms.Form):
+class ProductForm(ProductEditorBase, forms.Form):
     """Form for editing indivdual Products."""
 
     ignore_options = [
@@ -142,18 +143,15 @@ class ProductForm(forms.Form):
         self.options = {
             o: v for o, v in options.items() if o not in self.ignore_options}
         super().__init__(*args, **kwargs)
-        self.fields['price'] = fields.VATPrice()
-        self.fields['locations'] = fields.DepartmentBayField(
-            lock_department=True)
-        self.fields['weight'] = fields.Weight()
-        self.fields['height'] = fields.Height()
-        self.fields['length'] = fields.Length()
-        self.fields['width'] = fields.Width()
-        self.fields['package_type'] = fields.PackageType()
-        self.fields['purchase_price'] = fields.PurchasePrice()
-        self.fields['retail_price'] = fields.RetailPrice()
-        self.fields['supplier'] = fields.Supplier()
-        self.fields['supplier_sku'] = fields.SupplierSKU()
+        self.fields[self.PRICE] = fields.VATPrice()
+        self.fields[self.LOCATION] = fields.WarehouseBayField()
+        self.fields[self.WEIGHT] = fields.Weight()
+        self.fields[self.DIMENSIONS] = fields.Dimensions()
+        self.fields[self.PACKAGE_TYPE] = fields.PackageType()
+        self.fields[self.PURCHASE_PRICE] = fields.PurchasePrice()
+        self.fields[self.RETAIL_PRICE] = fields.RetailPrice()
+        self.fields[self.SUPPLIER] = fields.Supplier()
+        self.fields[self.SUPPLIER_SKU] = fields.SupplierSKU()
         for option_name, values in self.options.items():
             choices = [('', '')] + [
                 (v, v) for v in self.get_choice_values(option_name, values)]
@@ -164,24 +162,31 @@ class ProductForm(forms.Form):
     def get_initial(self):
         """Get initial values for form."""
         initial = {}
-        department = models.Warehouse.used_warehouses.get(
-            name=self.product.department).id
-        initial['price'] = {
-            'vat_rate': self.product.vat_rate,
-            'ex_vat': self.product.price,
+        initial[self.PRICE] = {
+            self.VAT_RATE: self.product.vat_rate,
+            self.EX_VAT: self.product.price,
             'with_vat_price': None}
-        initial['locations'] = {
-            'department': department, 'bays': self.product.bays}
-        initial['weight'] = self.product.weight
-        initial['height'] = self.product.height
-        initial['length'] = self.product.length
-        initial['width'] = self.product.width
-        initial['purchase_price'] = self.product.purchase_price
-        initial['retail_price'] = self.product.retail_price
-        initial['package_type'] = self.product.package_type
+        bays = [
+            bay for bay in models.Bay.objects.filter(
+                bay_id__in=self.product.bays)]
+        warehouses = list(set([bay.warehouse for bay in bays]))
+        if len(warehouses) > 1:
+            self.add_error(self.LOCATIONS, 'Mixed warehouses.')
+        elif len(warehouses) == 1:
+            initial[self.LOCATION] = {
+                self.WAREHOUSE: warehouses[0].warehouse_id,
+                self.BAYS: [bay.id for bay in bays]}
+        initial[self.DIMENSIONS] = {
+            self.WIDTH: self.product.width,
+            self.HEIGHT: self.product.height,
+            self.LENGTH: self.product.length}
+        initial[self.WEIGHT] = self.product.weight
+        initial[self.PURCHASE_PRICE] = self.product.purchase_price
+        initial[self.RETAIL_PRICE] = self.product.retail_price
+        initial[self.PACKAGE_TYPE] = self.product.package_type
         if self.product.supplier:
-            initial['supplier'] = self.product.supplier.factory_name
-        initial['supplier_sku'] = self.product.supplier_sku
+            initial[self.SUPPLIER] = self.product.supplier.factory_name
+        initial[self.SUPPLIER_SKU] = self.product.supplier_sku
         for option in self.options:
             initial['opt_' + option] = self.product.options[option]
         return initial
@@ -196,18 +201,18 @@ class ProductForm(forms.Form):
     def save(self, *args, **kwargs):
         """Update product."""
         data = self.cleaned_data
-        self.product.vat_rate = data['price']['vat_rate']
-        self.product.price = data['price']['ex_vat']
-        self.product.bays = data['locations']['bays']
-        self.product.weight = data['weight']
-        self.product.height = data['height']
-        self.product.length = data['length']
-        self.product.width = data['width']
-        self.product.package_type = data['package_type']
-        self.product.purchase_price = data['purchase_price']
-        self.product.retail_price = data['retail_price']
-        self.product.supplier = data['supplier']
-        self.product.supplier_sku = data['supplier_sku']
+        self.product.vat_rate = data[self.PRICE][self.VAT_RATE]
+        self.product.price = data[self.PRICE][self.EX_VAT]
+        self.product.bays = data[self.LOCATION][self.BAYS]
+        self.product.width = data[self.DIMENSIONS][self.WIDTH]
+        self.product.height = data[self.DIMENSIONS][self.HEIGHT]
+        self.product.length = data[self.DIMENSIONS][self.LENGTH]
+        self.product.weight = data[self.WEIGHT]
+        self.product.package_type = data[self.PACKAGE_TYPE]
+        self.product.purchase_price = data[self.PURCHASE_PRICE]
+        self.product.retail_price = data[self.RETAIL_PRICE]
+        self.product.supplier = data[self.SUPPLIER]
+        self.product.supplier_sku = data[self.SUPPLIER_SKU]
         options = [key[4:] for key in data.keys() if key[:4] == 'opt_']
         for option in options:
             value = data['opt_' + option]
