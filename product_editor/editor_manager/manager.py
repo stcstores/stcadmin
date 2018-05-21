@@ -7,7 +7,7 @@ page progression for Product Creator forms.
 
 import json
 
-from django.shortcuts import redirect
+from django.shortcuts import redirect, reverse
 
 from . import form_pages
 from .productbase import ProductEditorBase
@@ -85,6 +85,11 @@ class BaseProductManager(ProductEditorBase):
             self.basic_info, self.product_info, self.variation_options,
             self.unused_variations, self.variation_info,
             self.variation_listing_options, self.finish]
+
+    @property
+    def landing_page(self):
+        """Return URL of the first page to be displaid."""
+        raise NotImplementedError()
 
     def get_page(self, page_identifier):
         """Return page by identifier."""
@@ -173,6 +178,11 @@ class NewProductManager(BaseProductManager):
             for d in self.unused_variations.data if d['used']]
         return combinations
 
+    @classmethod
+    def landing_page(cls):
+        """Return URL of the first page to be displaid."""
+        return reverse('product_editor:{}'.format(cls.BASIC))
+
     def delete_product(self):
         """Clear all new product data from session."""
         self.session[self.SESSION_KEY] = {}
@@ -218,6 +228,12 @@ class EditProductManager(BaseProductManager):
     def load_product_data(self):
         """Replace data in session with current product data."""
         self.session[self.SESSION_KEY] = ProductLoader(self.range_id)
+
+    @classmethod
+    def landing_page(cls, range_id):
+        """Return URL of the first page to be displaid."""
+        return reverse('product_editor:{}'.format(
+            cls.BASIC), kwargs={'range_id': range_id})
 
     @property
     def product_type(self):
