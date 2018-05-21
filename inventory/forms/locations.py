@@ -82,7 +82,6 @@ class LocationsForm(forms.Form):
             bay for bay in models.Bay.objects.filter(
                 bay_id__in=self.product.bays)]
         warehouses = list(set([bay.warehouse for bay in bays]))
-        print(warehouses)
         if len(warehouses) > 1:
             self.add_error(self.LOCATIONS, 'Mixed warehouses.')
         elif len(warehouses) == 1:
