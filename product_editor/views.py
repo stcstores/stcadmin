@@ -313,7 +313,12 @@ class NewVariationInfo(VariationInfo, NewProductView):
 class EditVariationInfo(VariationInfo, EditProductView):
     """Variation Info view for existing products."""
 
-    pass
+    def get_form(self, form_class=None):
+        """Return an instance of the form to be used in this view."""
+        formset = super().get_form(form_class)
+        for form in formset:
+            form.fields.pop(self.STOCK_LEVEL)
+        return formset
 
 
 class VariationListingOptions(BaseVariationProductView):
