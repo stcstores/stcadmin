@@ -1,4 +1,3 @@
-<a href="{% url 'product_editor:delete_product' %}" id="start_new_product"><button>Start New Product</button></a>
 <ul class="form_nav">
     {% for nav_page in manager.pages %}
         {% if nav_page.visible %}
@@ -10,16 +9,3 @@
         {% endif %}
     {% endfor %}
 </ul>
-<script>
-    $(document).ready(function() {
-        $('#start_new_product').click(function() {
-            return window.confirm("This will delete the current prduct and start a new one.\nAny progress on the current product will be lost.\nIs this what you want to do?");
-        });
-        $('.goto_button').click(function() {
-            var input = $('#goto');
-            input.val($(this).val());
-            var form = input.closest('form');
-            form.submit();
-        });
-    })
-</script>

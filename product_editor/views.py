@@ -11,16 +11,6 @@ from product_editor import editor_manager, forms
 from stcadmin import settings
 
 
-class DeleteProductView(InventoryUserMixin, View):
-    """Clear new product from session and redirect to Basic Info."""
-
-    def dispatch(self, *args, **kwargs):
-        """Process request."""
-        self.manager = editor_manager.NewProductManager(args[0])
-        self.manager.delete_product()
-        return self.manager.redirect_start()
-
-
 class BaseProductView(
         InventoryUserMixin, editor_manager.ProductEditorBase, FormView):
     """Base class for new product form views."""
@@ -66,6 +56,28 @@ class EditProductView:
     def get_manager(self, *args, **kwargs):
         """Return product manager."""
         return self.manager_class(args[0], kwargs['range_id'])
+
+
+class ClearProduct(InventoryUserMixin, View):
+    """Clear product from session and redirect."""
+
+    def dispatch(self, *args, **kwargs):
+        """Process request."""
+        self.manager = self.get_manager(*args, **kwargs)
+        self.manager.clear_session()
+        return self.manager.redirect_start()
+
+
+class ClearNewProduct(ClearProduct, NewProductView):
+    """Clear new product from session and redirect to Basic Info."""
+
+    pass
+
+
+class ClearEditedProduct(ClearProduct, EditProductView):
+    """Clear product being edited from session and reload."""
+
+    pass
 
 
 class BasicInfo(BaseProductView):

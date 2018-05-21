@@ -215,6 +215,20 @@ class Finish:
         return False
 
 
+class ClearProduct(Page):
+    """Clear session data."""
+
+    identifier = ProductEditorBase.CLEAR_PRODUCT
+
+    def visible(self):
+        """Return True if page is currently visible in navigation."""
+        return False
+
+    def enabled(self):
+        """Return True if page is available in navigation."""
+        return False
+
+
 class NewBasicInfo(BasicInfo, NewProductPage):
     """Page for product attributes that stay the same between variations."""
 
@@ -309,3 +323,22 @@ class EditFinish(Finish, EditProductPage):
     """Update edited product."""
 
     pass
+
+
+class ClearNewProduct(ClearProduct, NewProductPage):
+    """Clear new product data from session."""
+
+    name = 'Clear New Product'
+    warning_text = '\n'.join([
+        'This will delete the current prduct and start a new one.',
+        'Any progress on the current product will be lost.',
+        'Is this what you want to do?'])
+
+
+class ClearEditedProduct(ClearProduct, EditProductPage):
+    """Clear new product data from session."""
+
+    name = 'Clear Changes'
+    warning_text = '\\n'.join([
+        'This will delete any current changes.',
+        'Is this what you want to do?'])

@@ -9,6 +9,7 @@ class ProductEditorBase:
     USED = 'used'
     NEW_PRODUCT = 'new_product_data'
     TYPE = 'type'
+    CLEAR_PRODUCT = 'clear_product'
     BASIC = 'basic_info'
     PRODUCT_INFO = 'product_info'
     VARIATION_OPTIONS = 'variation_options'

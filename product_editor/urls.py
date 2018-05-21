@@ -53,7 +53,10 @@ urlpatterns = [
         views.EditVariationListingOptions.as_view(),
         name='variation_listing_options'),
     path(
-        'delete_product/',
-        views.DeleteProductView.as_view(), name='delete_product'),
+        'clear_product/',
+        views.ClearNewProduct.as_view(), name='clear_product'),
+    path(
+        'clear_product/<int:range_id>',
+        views.ClearEditedProduct.as_view(), name='clear_product'),
     path('finish_product/', views.FinishProduct.as_view(), name='finish'),
 ]

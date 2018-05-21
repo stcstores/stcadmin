@@ -8,11 +8,12 @@
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
 <script src="{% static 'scripts/new_product.js' %}"></script>
 <script>{% include 'product_editor/widgets/product_widgets.js' %}</script>
-<script src="{% static 'scripts/new_product.js' %}"></script>
 {% include 'home/froala_head.html' %}
 {% endblock %}
 
 {% block content %}
+
+<a href="{{ manager.clear_product.url }}" id="clear_product"><button>{{ manager.clear_product.name }}</button></a>
 
 {% include "product_editor/nav.html" %}
 
@@ -42,4 +43,20 @@
 </div>
 {% endblock %}
 
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        $('#clear_product').click(function() {
+            return window.confirm("{{ manager.clear_product.warning_text }}");
+        });
+        $('.goto_button').click(function() {
+            var input = $('#goto');
+            input.val($(this).val());
+            var form = input.closest('form');
+            form.submit();
+        });
+    })
+</script>
 {% endblock %}

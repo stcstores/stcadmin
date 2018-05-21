@@ -34,6 +34,10 @@ class BaseProductManager(ProductEditorBase):
         """Create pages."""
         raise NotImplementedError()
 
+    def clear_session(self):
+        """Clear all new product data from session."""
+        self.session[self.SESSION_KEY] = {}
+
     @property
     def product_data(self):
         """Return all new product data."""
@@ -144,6 +148,7 @@ class NewProductManager(BaseProductManager):
         self.variation_info = form_pages.NewVariationInfo(self)
         self.variation_listing_options = form_pages.NewVariationListingOptions(
             self)
+        self.clear_product = form_pages.ClearNewProduct(self)
         self.finish = form_pages.NewFinish(self)
 
     def get_redirect(self, page, post_data):
@@ -183,10 +188,6 @@ class NewProductManager(BaseProductManager):
         """Return URL of the first page to be displaid."""
         return reverse('product_editor:{}'.format(cls.BASIC))
 
-    def delete_product(self):
-        """Clear all new product data from session."""
-        self.session[self.SESSION_KEY] = {}
-
     def create_product(self):
         """Create new Cloud Commerce Product from data in session."""
         return ProductCreator(self.product_data)
@@ -223,6 +224,7 @@ class EditProductManager(BaseProductManager):
         self.variation_info = form_pages.EditVariationInfo(self)
         self.variation_listing_options = (
             form_pages.EditVariationListingOptions(self))
+        self.clear_product = form_pages.ClearEditedProduct(self)
         self.finish = form_pages.EditFinish(self)
 
     def load_product_data(self):
