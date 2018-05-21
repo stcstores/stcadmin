@@ -27,14 +27,17 @@ class Page(ProductEditorBase):
         self.manager.product_data[self.identifier] = data
         self.manager.session.modified = True
 
-    def data_exists(self, page_identifier=None):
-        """Return True if data exists for the indicated page."""
-        if page_identifier is None:
-            page_identifier = self.identifier
-        if page_identifier in self.manager.product_data:
-            if len(self.manager.product_data[page_identifier]) > 1:
-                return True
+    @property
+    def data_exists(self):
+        """Return True if data exists for this page, else False."""
+        if len(self.data) > 1:
+            return True
         return False
+
+    def data_exists_for_page(self, page_identifier):
+        """Return True if data exists for the indicated page."""
+        if page_identifier in self.manager.product_data:
+            return self.manager.get_page(page_identifier).data_exists
 
     @property
     def url(self):
@@ -92,7 +95,7 @@ class ProductInfo:
     def visible(self):
         """Return True if page is currently visible in navigation."""
         if self.manager.product_type == self.VARIATION:
-            if self.data_exists(self.UNUSED_VARIATIONS):
+            if self.data_exists_for_page(self.UNUSED_VARIATIONS):
                 return False
         return True
 
@@ -105,7 +108,7 @@ class ListingOptions:
 
     def enabled(self):
         """Return True if page is available in navigation."""
-        if self.data_exists(self.BASIC):
+        if self.data_exists_for_page(self.BASIC):
             return True
         return False
 
@@ -124,13 +127,20 @@ class VariationOptions:
 
     def enabled(self):
         """Return True if page is available in navigation."""
-        if self.data_exists(self.BASIC):
+        if self.data_exists_for_page(self.BASIC):
             return True
         return False
 
     def visible(self):
         """Return True if page is currently visible in navigation."""
         if self.manager.product_type == self.VARIATION:
+            return True
+        return False
+
+    @property
+    def data_exists(self):
+        """Return True if data exists for this page, else False."""
+        if len(self.data) > 0:
             return True
         return False
 
@@ -143,7 +153,7 @@ class UnusedVariations:
 
     def enabled(self):
         """Return True if page is available in navigation."""
-        if self.data_exists(self.PRODUCT_INFO):
+        if self.data_exists_for_page(self.PRODUCT_INFO):
             return True
         return False
 
@@ -162,7 +172,7 @@ class VariationInfo(Page):
 
     def enabled(self):
         """Return True if page is available in navigation."""
-        if self.data_exists(self.VARIATION_OPTIONS):
+        if self.data_exists_for_page(self.VARIATION_OPTIONS):
             return True
         return False
 
@@ -181,7 +191,7 @@ class VariationListingOptions:
 
     def enabled(self):
         """Return True if page is available in navigation."""
-        if self.data_exists(self.UNUSED_VARIATIONS):
+        if self.data_exists_for_page(self.UNUSED_VARIATIONS):
             return True
         return False
 
@@ -201,10 +211,10 @@ class Finish:
     def enabled(self):
         """Return True if page is currently visible in navigation."""
         if self.manager.product_type == self.VARIATION:
-            if self.data_exists(self.VARIATION_INFO):
+            if self.data_exists_for_page(self.VARIATION_INFO):
                 return True
         if self.manager.product_type == self.SINGLE:
-            if self.data_exists(self.PRODUCT_INFO):
+            if self.data_exists_for_page(self.PRODUCT_INFO):
                 return True
         return False
 
