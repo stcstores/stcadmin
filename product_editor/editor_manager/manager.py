@@ -9,7 +9,7 @@ import json
 
 from django.shortcuts import redirect
 
-from . import page
+from . import form_pages
 from .productbase import ProductEditorBase
 from .productcreator import ProductCreator
 from .productloader import ProductLoader
@@ -32,14 +32,7 @@ class BaseProductManager(ProductEditorBase):
 
     def set_pages(self):
         """Create pages."""
-        self.basic_info = page.BasicInfo(self)
-        self.product_info = page.ProductInfo(self)
-        self.listing_options = page.ListingOptions(self)
-        self.variation_options = page.VariationOptions(self)
-        self.unused_variations = page.UnusedVariations(self)
-        self.variation_info = page.VariationInfo(self)
-        self.variation_listing_options = page.VariationListingOptions(self)
-        self.finish = page.Finish(self)
+        raise NotImplementedError()
 
     @property
     def product_data(self):
@@ -107,11 +100,6 @@ class BaseProductManager(ProductEditorBase):
 
     def get_redirect(self, page, post_data):
         """Return HTTP redirect for the appropriate page."""
-        if page == self.basic_info:
-            if 'variations' in post_data:
-                self.product_type = self.VARIATION
-            elif 'single' in post_data:
-                self.product_type = self.SINGLE
         if 'goto' in post_data and post_data['goto']:
             return redirect(self.get_url(self.request.POST['goto']))
         page_index = self.current_pages.index(page)
@@ -140,6 +128,27 @@ class NewProductManager(BaseProductManager):
             self.session[self.SESSION_KEY] = {}
         self.session.modified = True
         self.data = self.session.get(self.SESSION_KEY, None)
+
+    def set_pages(self):
+        """Create pages."""
+        self.basic_info = form_pages.NewBasicInfo(self)
+        self.product_info = form_pages.NewProductInfo(self)
+        self.listing_options = form_pages.NewListingOptions(self)
+        self.variation_options = form_pages.NewVariationOptions(self)
+        self.unused_variations = form_pages.NewUnusedVariations(self)
+        self.variation_info = form_pages.NewVariationInfo(self)
+        self.variation_listing_options = form_pages.NewVariationListingOptions(
+            self)
+        self.finish = form_pages.NewFinish(self)
+
+    def get_redirect(self, page, post_data):
+        """Return HTTP redirect for the appropriate page."""
+        if page == self.basic_info:
+            if 'variations' in post_data:
+                self.product_type = self.VARIATION
+            elif 'single' in post_data:
+                self.product_type = self.SINGLE
+        return super().get_redirect(page, post_data)
 
     @property
     def product_type(self):
@@ -193,6 +202,18 @@ class EditProductManager(BaseProductManager):
             self.load_product_data()
         else:
             self.load_product_data()  # TEMP
+
+    def set_pages(self):
+        """Create pages."""
+        self.basic_info = form_pages.EditBasicInfo(self)
+        self.product_info = form_pages.EditProductInfo(self)
+        self.listing_options = form_pages.EditListingOptions(self)
+        self.variation_options = form_pages.EditVariationOptions(self)
+        self.unused_variations = form_pages.EditUnusedVariations(self)
+        self.variation_info = form_pages.EditVariationInfo(self)
+        self.variation_listing_options = (
+            form_pages.EditVariationListingOptions(self))
+        self.finish = form_pages.EditFinish(self)
 
     def load_product_data(self):
         """Replace data in session with current product data."""

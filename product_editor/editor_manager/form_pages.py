@@ -1,4 +1,6 @@
 """Page classes containing information about form pages."""
+from django.urls import reverse
+
 from .productbase import ProductEditorBase
 
 
@@ -28,7 +30,7 @@ class Page(ProductEditorBase):
     def data_exists(self, page_identifier=None):
         """Return True if data exists for the indicated page."""
         if page_identifier is None:
-            page_identifier = self.identifer
+            page_identifier = self.identifier
         if page_identifier in self.manager.product_data:
             if len(self.manager.product_data[page_identifier]) > 1:
                 return True
@@ -36,8 +38,8 @@ class Page(ProductEditorBase):
 
     @property
     def url(self):
-        """Return URL identifer for this page."""
-        return 'product_editor:{}'.format(self.identifier)
+        """Return URL identifier for this page."""
+        raise NotImplementedError()
 
     def visible(self):
         """Return True if page is currently visible in navigation."""
@@ -48,14 +50,34 @@ class Page(ProductEditorBase):
         return True
 
 
-class BasicInfo(Page):
+class NewProductPage(Page):
+    """Page class for the new product forms."""
+
+    @property
+    def url(self):
+        """Return URL identifier for this page."""
+        return reverse('product_editor:{}'.format(self.identifier))
+
+
+class EditProductPage(Page):
+    """Page class for the edit product forms."""
+
+    @property
+    def url(self):
+        """Return URL identifier for this page."""
+        return reverse(
+            'product_editor:{}'.format(self.identifier),
+            kwargs={'range_id': self.manager.range_id})
+
+
+class BasicInfo:
     """Page for product attributes that stay the same between variations."""
 
     name = 'Basic Info'
     identifier = ProductEditorBase.BASIC
 
 
-class ProductInfo(Page):
+class ProductInfo:
     """Page for product attributes that vary between variations."""
 
     name = 'Product Info'
@@ -75,7 +97,7 @@ class ProductInfo(Page):
         return True
 
 
-class ListingOptions(Page):
+class ListingOptions:
     """Page to set Product Options for listings for single items."""
 
     name = 'Listing Options'
@@ -94,7 +116,7 @@ class ListingOptions(Page):
         return False
 
 
-class VariationOptions(Page):
+class VariationOptions:
     """Page to select variations for new variation products."""
 
     name = 'Variation Options'
@@ -113,7 +135,7 @@ class VariationOptions(Page):
         return False
 
 
-class UnusedVariations(Page):
+class UnusedVariations:
     """Page to mark non existant variations as unused."""
 
     name = 'Unused Variations'
@@ -151,7 +173,7 @@ class VariationInfo(Page):
         return False
 
 
-class VariationListingOptions(Page):
+class VariationListingOptions:
     """Page to set listing Product Options for variations."""
 
     name = 'Variation Listing Options'
@@ -170,7 +192,7 @@ class VariationListingOptions(Page):
         return False
 
 
-class Finish(Page):
+class Finish:
     """Final page to create the new product or edit the existing product."""
 
     name = 'Finish'
@@ -191,3 +213,99 @@ class Finish(Page):
         if self.manager.product_type is not None:
             return True
         return False
+
+
+class NewBasicInfo(BasicInfo, NewProductPage):
+    """Page for product attributes that stay the same between variations."""
+
+    pass
+
+
+class EditBasicInfo(BasicInfo, EditProductPage):
+    """Page for product attributes that stay the same between variations."""
+
+    pass
+
+
+class NewProductInfo(ProductInfo, NewProductPage):
+    """Page for product attributes that vary between variations."""
+
+    pass
+
+
+class EditProductInfo(ProductInfo, EditProductPage):
+    """Page for product attributes that vary between variations."""
+
+    pass
+
+
+class NewListingOptions(ListingOptions, NewProductPage):
+    """Page to set Product Options for listings for single items."""
+
+    pass
+
+
+class EditListingOptions(ListingOptions, EditProductPage):
+    """Page to set Product Options for listings for single items."""
+
+    pass
+
+
+class NewVariationOptions(VariationOptions, NewProductPage):
+    """Page to select variations for new variation products."""
+
+    pass
+
+
+class EditVariationOptions(VariationOptions, EditProductPage):
+    """Page to select variations for new variation products."""
+
+    pass
+
+
+class NewUnusedVariations(UnusedVariations, NewProductPage):
+    """Page to mark non existant variations as unused."""
+
+    pass
+
+
+class EditUnusedVariations(UnusedVariations, EditProductPage):
+    """Page to mark non existant variations as unused."""
+
+    pass
+
+
+class NewVariationInfo(VariationInfo, NewProductPage):
+    """Page to set required information for variation."""
+
+    pass
+
+
+class EditVariationInfo(VariationInfo, EditProductPage):
+    """Page to set required information for variation."""
+
+    pass
+
+
+class NewVariationListingOptions(VariationListingOptions, NewProductPage):
+    """Page to set listing Product Options for variations."""
+
+    pass
+
+
+class EditVariationListingOptions(VariationListingOptions, EditProductPage):
+    """Page to set listing Product Options for variations."""
+
+    pass
+
+
+class NewFinish(Finish, NewProductPage):
+    """Create new product."""
+
+    pass
+
+
+class EditFinish(Finish, EditProductPage):
+    """Update edited product."""
+
+    pass

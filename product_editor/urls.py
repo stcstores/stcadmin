@@ -18,14 +18,14 @@ urlpatterns = [
         'product_info/',
         views.NewProductInfo.as_view(), name='product_info'),
     path(
-        'single_product_info/<int:range_id>/',
+        'product_info/<int:range_id>/',
         views.EditProductInfo.as_view(), name='product_info'),
     path(
         'listing_options/',
         views.NewListingOptions.as_view(), name='listing_options'),
     path(
         'listing_options/<int:range_id>/',
-        views.EditListingOptions.as_view(), name='edit_basic_info'),
+        views.EditListingOptions.as_view(), name='listing_options'),
     path(
         'variation_options/',
         views.NewVariationOptions.as_view(), name='variation_options'),
