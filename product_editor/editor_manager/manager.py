@@ -95,6 +95,29 @@ class BaseProductManager(ProductEditorBase):
         """Return URL of the first page to be displaid."""
         raise NotImplementedError()
 
+    @property
+    def product_type(self):
+        """Return the type of the product, Single or Variation."""
+        product_data = self.session.get(self.SESSION_KEY, None)
+        if product_data is not None:
+            return product_data.get(self.TYPE, None)
+        else:
+            return None
+
+    @product_type.setter
+    def product_type(self, product_type):
+        product_data = self.session.get(self.SESSION_KEY, None)
+        product_data[self.TYPE] = product_type
+        self.session.modified = True
+
+    @property
+    def variations(self):
+        """Return variation combinations for product."""
+        combinations = [
+            {k: v for k, v in d.items() if k != 'used'}
+            for d in self.unused_variations.data if d['used']]
+        return combinations
+
     def get_page(self, page_identifier):
         """Return page by identifier."""
         return self.page_identifiers[page_identifier]
@@ -160,29 +183,6 @@ class NewProductManager(BaseProductManager):
                 self.product_type = self.SINGLE
         return super().get_redirect(page, post_data)
 
-    @property
-    def product_type(self):
-        """Return the type of the product, Single or Variation."""
-        product_data = self.session.get(self.SESSION_KEY, None)
-        if product_data is not None:
-            return product_data.get(self.TYPE, None)
-        else:
-            return None
-
-    @product_type.setter
-    def product_type(self, product_type):
-        product_data = self.session.get(self.SESSION_KEY, None)
-        product_data[self.TYPE] = product_type
-        self.session.modified = True
-
-    @property
-    def variations(self):
-        """Return variation combinations for product."""
-        combinations = [
-            {k: v for k, v in d.items() if k != 'used'}
-            for d in self.unused_variations.data if d['used']]
-        return combinations
-
     @classmethod
     def landing_page(cls):
         """Return URL of the first page to be displaid."""
@@ -236,8 +236,3 @@ class EditProductManager(BaseProductManager):
         """Return URL of the first page to be displaid."""
         return reverse('product_editor:{}'.format(
             cls.BASIC), kwargs={'range_id': range_id})
-
-    @property
-    def product_type(self):
-        """Return the type of the product, Single or Variation."""
-        return self.SINGLE  # TEMP
