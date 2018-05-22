@@ -339,7 +339,7 @@ class ClearNewProduct(ClearProduct, NewProductPage):
     """Clear new product data from session."""
 
     name = 'Clear New Product'
-    warning_text = '\n'.join([
+    warning_text = '\\n'.join([
         'This will delete the current prduct and start a new one.',
         'Any progress on the current product will be lost.',
         'Is this what you want to do?'])

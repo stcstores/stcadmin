@@ -175,7 +175,7 @@ class ProductCreator(ProductSaver):
         product = self.product_range.add_product(
             kwargs[self.BARCODE], kwargs[self.DESCRIPTION],
             kwargs[self.VAT_RATE])
-        self.update_product(product, **kwargs)
+        self.update_product(self, product, **kwargs)
 
     def get_variation(self, **kwargs):
         """Return variation to be saved."""
