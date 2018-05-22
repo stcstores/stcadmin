@@ -17,8 +17,7 @@ class Page(ProductEditorBase):
     @property
     def data(self):
         """Return data stored in the session for this page."""
-        data = self.manager.product_data.get(
-            self.identifier, None)
+        data = self.manager.product_data.get(self.identifier, None)
         return data
 
     @data.setter
@@ -284,7 +283,9 @@ class NewVariationOptions(VariationOptions, NewProductPage):
 class EditVariationOptions(VariationOptions, EditProductPage):
     """Page to select variations for new variation products."""
 
-    pass
+    def visible(self):
+        """Return True if page is currently visible in navigation."""
+        return False
 
 
 class NewUnusedVariations(UnusedVariations, NewProductPage):
@@ -296,7 +297,9 @@ class NewUnusedVariations(UnusedVariations, NewProductPage):
 class EditUnusedVariations(UnusedVariations, EditProductPage):
     """Page to mark non existant variations as unused."""
 
-    pass
+    def visible(self):
+        """Return True if page is currently visible in navigation."""
+        return False
 
 
 class NewVariationInfo(VariationInfo, NewProductPage):

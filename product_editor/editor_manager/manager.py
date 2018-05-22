@@ -46,26 +46,17 @@ class BaseProductManager(ProductEditorBase):
     @property
     def current_pages(self):
         """Return pages relevent to current product."""
-        if self.product_type == self.VARIATION:
-            if self.unused_variations.data:
-                return [
-                    page for page in self.variation_product_pages
-                    if page != self.product_info]
-            return self.variation_product_pages
-        elif self.product_type == self.SINGLE:
-            return self.single_product_pages
-        else:
-            return (self.basic_info, self.product_info)
+        return [page for page in self.pages if page.visible()]
 
     @property
     def page_names(self):
         """Return dict of pages by page name."""
-        return {page.name: page for page in self.current_pages}
+        return {page.name: page for page in self.pages}
 
     @property
     def page_identifiers(self):
         """Return dict of pages by page name."""
-        return {page.identifier: page for page in self.current_pages}
+        return {page.identifier: page for page in self.pages}
 
     @property
     def pages(self):
