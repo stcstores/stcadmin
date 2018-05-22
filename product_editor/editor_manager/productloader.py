@@ -115,12 +115,12 @@ class ProductLoader(ProductEditorBase):
         variation_options = {o.name: [] for o in variable_options}
         unused_variation_data = []
         for product in product_range.products:
+            variation = {self.USED: True, self.PRODUCT_ID: product.id}
             for option in variation_options:
                 value = product.options[option]
                 variation_options[option].append(value)
-                unused_variation_data.append({
-                    option: value, self.USED: True,
-                    self.PRODUCT_ID: product.id})
+                variation[option] = value
+            unused_variation_data.append(variation)
         return variation_options, unused_variation_data
 
     def product_matches_variation(product, variation):
