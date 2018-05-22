@@ -26,10 +26,9 @@ class ProductLoader(ProductEditorBase):
             self.data[self.LISTING_OPTIONS] = self.get_listing_options(
                 self, self.product_range.products[0])
         elif self.data[self.TYPE] == self.VARIATION:
-            self.data[self.VARIATION_OPTIONS] = self.get_variation_options(
-                self, self.product_range)
-            self.data[self.UNUSED_VARIATIONS] = self.get_unused_variations(
-                self)
+            self.data[self.VARIATION_OPTIONS], self.data[
+                self.UNUSED_VARIATIONS] = self.get_variation_options(
+                    self, self.product_range)
             self.data[self.VARIATION_INFO] = self.get_variation_info(
                 self, self.product_range)
             self.data[
@@ -42,8 +41,9 @@ class ProductLoader(ProductEditorBase):
     def variations_combinations(self):
         """Return variation combinations for product."""
         combinations = [
-            {k: v for k, v in d.items() if k != 'used'}
-            for d in self.data[self.UNUSED_VARIATIONS] if d['used']]
+            {k: v for k, v in d.items() if k not in
+                (self.USED, self.PRODUCT_ID)}
+            for d in self.data[self.UNUSED_VARIATIONS] if d[self.USED]]
         return combinations
 
     def get_warehouse_id(self, warehouse_name):
@@ -101,7 +101,8 @@ class ProductLoader(ProductEditorBase):
             self.PACKAGE_TYPE: product.package_type,
             self.BRAND: product.brand,
             self.MANUFACTURER: product.manufacturer,
-            self.GENDER: product.gender}
+            self.GENDER: product.gender,
+            self.PRODUCT_ID: product.id}
         return data
 
     def get_listing_options(self, product):
@@ -112,19 +113,15 @@ class ProductLoader(ProductEditorBase):
         """Return data for the Variation Options page."""
         variable_options = product_range.variable_options
         variation_options = {o.name: [] for o in variable_options}
+        unused_variation_data = []
         for product in product_range.products:
             for option in variation_options:
-                variation_options[option].append(product.options[option])
-        return variation_options
-
-    def get_unused_variations(self):
-        """Return data for the Unused Variation page."""
-        variations = self.data[self.VARIATION_OPTIONS]
-        unused_variation_data = []
-        for option, values in variations.items():
-            for value in values:
-                unused_variation_data.append({option: value, self.USED: True})
-        return unused_variation_data
+                value = product.options[option]
+                variation_options[option].append(value)
+                unused_variation_data.append({
+                    option: value, self.USED: True,
+                    self.PRODUCT_ID: product.id})
+        return variation_options, unused_variation_data
 
     def product_matches_variation(product, variation):
         """Return True if variation matches the options of product."""
@@ -151,7 +148,6 @@ class ProductLoader(ProductEditorBase):
             product_data = self.get_product_data(self, product)
             for key, value in variation.items():
                 product_data[key] = value
-            product_data[self.PRODUCT_ID] = product.id
             variation_info_data.append(product_data)
         return variation_info_data
 

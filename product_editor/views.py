@@ -347,18 +347,14 @@ class EditVariationListingOptions(VariationListingOptions, EditProductView):
 
 
 class FinishProduct(BaseProductView):
-    """
-    View for final page of the new product form.
-
-    Start product creation process and return redirect.
-    """
+    """Complete product creation or update."""
 
     product_log_directory = os.path.join(
         settings.MEDIA_ROOT, 'logs', 'products')
 
     def dispatch(self, *args, **kwargs):
         """Process request."""
-        self.manager = editor_manager.NewProductManager(args[0])
+        self.manager = self.get_manager(*args, **kwargs)
         dir = os.path.join(self.product_log_directory, str(args[0].user.id))
         if not os.path.exists(dir):
             os.mkdir(dir)
@@ -369,5 +365,21 @@ class FinishProduct(BaseProductView):
             self.manager.save_json(f)
         with open(most_recent, 'w') as f:
             self.manager.save_json(f)
-        range_id = self.manager.create_product()
+        range_id = self.manager.save_product()
         return redirect('inventory:product_range', range_id)
+
+
+class FinishNewProduct(FinishProduct, NewProductView):
+    """
+    View for final page of the new product form.
+
+    Start product creation process and return redirect.
+    """
+
+    pass
+
+
+class FinishEditProduct(FinishProduct, EditProductView):
+    """Apply changes to product."""
+
+    pass

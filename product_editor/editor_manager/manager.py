@@ -11,7 +11,7 @@ from django.shortcuts import redirect, reverse
 
 from . import form_pages
 from .productbase import ProductEditorBase
-from .productcreator import ProductCreator
+from .productcreator import ProductCreator, ProductEditor
 from .productloader import ProductLoader
 
 
@@ -114,8 +114,9 @@ class BaseProductManager(ProductEditorBase):
     def variations(self):
         """Return variation combinations for product."""
         combinations = [
-            {k: v for k, v in d.items() if k != 'used'}
-            for d in self.unused_variations.data if d['used']]
+            {k: v for k, v in d.items() if k not in
+                (self.USED, self.PRODUCT_ID)}
+            for d in self.unused_variations.data if d[self.USED]]
         return combinations
 
     def get_page(self, page_identifier):
@@ -147,6 +148,10 @@ class BaseProductManager(ProductEditorBase):
         """Output new product data as JSON to outfile."""
         data = self.product_data
         return json.dump(data, outfile, indent=4, sort_keys=True)
+
+    def save_product(self):
+        """Complete product creation or editing."""
+        raise NotImplementedError()
 
 
 class NewProductManager(BaseProductManager):
@@ -188,8 +193,8 @@ class NewProductManager(BaseProductManager):
         """Return URL of the first page to be displaid."""
         return reverse('product_editor:{}'.format(cls.BASIC))
 
-    def create_product(self):
-        """Create new Cloud Commerce Product from data in session."""
+    def save_product(self):
+        """Save new product."""
         return ProductCreator(self.product_data)
 
 
@@ -212,6 +217,7 @@ class EditProductManager(BaseProductManager):
         if not self.data or not self.range_id == self.data.get(self.RANGE_ID):
             self.load_product_data()
         else:
+            return
             self.load_product_data()  # TEMP
 
     def set_pages(self):
@@ -236,3 +242,9 @@ class EditProductManager(BaseProductManager):
         """Return URL of the first page to be displaid."""
         return reverse('product_editor:{}'.format(
             cls.BASIC), kwargs={'range_id': range_id})
+
+    def save_product(self):
+        """Update product."""
+        data = self.product_data
+        self.clear_session()
+        return ProductEditor(data)

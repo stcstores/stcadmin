@@ -59,6 +59,8 @@ class ProductInfo(ProductForm):
                 'Manufacturer', self.options,
                 self.initial.get(self.MANUFACTURER, None)))
         self.fields[self.GENDER] = fields.Gender()
+        self.fields[self.PRODUCT_ID] = forms.CharField(
+            widget=forms.HiddenInput(), required=False)
 
 
 class BaseOptionsForm(ProductForm):
@@ -150,7 +152,10 @@ class UnusedVariations(BaseVariationForm):
 
     def get_fields(self):
         """Set form fields."""
-        self.fields['used'] = forms.BooleanField(initial=True, required=False)
+        self.fields[self.USED] = forms.BooleanField(
+            initial=True, required=False)
+        self.fields[self.PRODUCT_ID] = forms.CharField(
+            widget=forms.HiddenInput(), required=False)
         for option_name, value in self.variation_options.items():
             self.fields[option_name] = forms.CharField(
                 max_length=255, initial=value, widget=forms.HiddenInput())

@@ -4,6 +4,7 @@ import datetime
 import logging
 import sys
 import threading
+from pprint import pprint
 
 import cc_products
 
@@ -15,19 +16,23 @@ from .productbase import ProductEditorBase
 logger = logging.getLogger('product_creation')
 
 
-class ProductCreator(ProductEditorBase):
+class ProductSaver(ProductEditorBase):
     """Create new Cloud Commerce Product from data in session."""
 
     def __new__(self, product_data):
         """Create new product and return it's range ID."""
         self.product_data = product_data
-        title = self.product_data[self.BASIC][self.TITLE]
-        self.product_range = cc_products.create_range(title)
+        pprint(self.product_data)
+        self.product_range = self.get_product_range(self)
         self.product_range.options[self.INCOMPLETE].selected = True
         t = threading.Thread(target=self.create_product, args=[self])
         t.setDaemon(True)
         t.start()
         return self.product_range.id
+
+    def get_product_range(self):
+        """Return Product Range to be saved."""
+        raise NotImplementedError()
 
     def create_product(self):
         """Create new Cloud Commerce Product from data in session."""
@@ -41,7 +46,7 @@ class ProductCreator(ProductEditorBase):
             logger.error(
                 'Product Creation Error: %s', ' '.join(sys.argv),
                 exc_info=sys.exc_info())
-            self.product_range.delete()
+            self.handle_error(self)
             raise exception
 
     def create_single_product(self):
@@ -72,7 +77,8 @@ class ProductCreator(ProductEditorBase):
         variations = []
         for variation in [d for d in form_data if d[self.USED]]:
             variations.append({
-                k: v for k, v in variation.items() if k != self.USED})
+                k: v for k, v in variation.items() if k not in
+                (self.PRODUCT_ID, self.USED)})
         if not all([var.keys() == variations[0].keys() for var in variations]):
             raise exceptions.VariationKeyMissmatch(variations)
         return variations
@@ -101,11 +107,27 @@ class ProductCreator(ProductEditorBase):
                     return data
         raise exceptions.VariationNotFoundError(variation)
 
+    def get_variation(self, **kwargs):
+        """Return variation to be saved."""
+        raise NotImplementedError()
+
     def add_variation(self, **kwargs):
         """Add single variation to Range."""
-        product = self.product_range.add_product(
+        product = self.get_variation(**kwargs)
+        self.update_product(product, **kwargs)
+
+    def get_new_product(self, **kwargs):
+        """Add new Product to Range and return."""
+        return self.product_range.add_product(
             kwargs[self.BARCODE], kwargs[self.DESCRIPTION],
             kwargs[self.VAT_RATE])
+
+    def handle_error(self):
+        """Call after an error saving the product."""
+        pass
+
+    def update_product(self, product, **kwargs):
+        """Update product details from form data."""
         product.handling_time = 1
         product.department = kwargs[self.DEPARTMENT]
         product.bays = kwargs[self.BAYS]
@@ -140,16 +162,60 @@ class ProductCreator(ProductEditorBase):
             product.options[option_name] = option_value
 
 
+class ProductCreator(ProductSaver):
+    """Create product in Cloud Commerce."""
+
+    def get_product_range(self):
+        """Return new product range."""
+        title = self.product_data[self.BASIC][self.TITLE]
+        return cc_products.create_range(title)
+
+    def add_variation(self, **kwargs):
+        """Add single variation to Range."""
+        product = self.product_range.add_product(
+            kwargs[self.BARCODE], kwargs[self.DESCRIPTION],
+            kwargs[self.VAT_RATE])
+        self.update_product(product, **kwargs)
+
+    def get_variation(self, **kwargs):
+        """Return variation to be saved."""
+        return self.get_new_product(**kwargs)
+
+    def handle_error(self):
+        """Delete the product if creation fails."""
+        self.product_range.delete()
+
+
+class ProductEditor(ProductSaver):
+    """Update product in Cloud Commerce."""
+
+    def get_product_range(self):
+        """Return Product Range to be updated."""
+        return cc_products.get_range(self.product_data[self.RANGE_ID])
+
+    def add_variation(self, **kwargs):
+        """Add single variation to Range."""
+        product = cc_products.get_product(kwargs[self.PRODUCT_ID])
+        self.update_product(self, product, **kwargs)
+
+    def get_variation(self, **kwargs):
+        """Return variation to be saved."""
+        if kwargs[self.PRODUCT_ID]:
+            return cc_products.get_product(kwargs[self.PRODUCT_ID])
+        else:
+            return self.get_new_product(**kwargs)
+
+
 class DataSanitizer(ProductEditorBase):
     """Return dict of kwargs for product creation from form data."""
 
     SIMPLE_FIELDS = (
         ProductEditorBase.BRAND, ProductEditorBase.DESCRIPTION,
         ProductEditorBase.GENDER, ProductEditorBase.MANUFACTURER,
-        ProductEditorBase.PACKAGE_TYPE, ProductEditorBase.PURCHASE_PRICE,
-        ProductEditorBase.RETAIL_PRICE, ProductEditorBase.STOCK_LEVEL,
-        ProductEditorBase.SUPPLIER, ProductEditorBase.SUPPLIER_SKU,
-        ProductEditorBase.WEIGHT)
+        ProductEditorBase.PACKAGE_TYPE, ProductEditorBase.PRODUCT_ID,
+        ProductEditorBase.PURCHASE_PRICE, ProductEditorBase.RETAIL_PRICE,
+        ProductEditorBase.STOCK_LEVEL, ProductEditorBase.SUPPLIER,
+        ProductEditorBase.SUPPLIER_SKU, ProductEditorBase.WEIGHT)
 
     LIST_FIELDS = (
         ProductEditorBase.AMAZON_BULLET_POINTS,

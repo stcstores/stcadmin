@@ -8,7 +8,7 @@
 
 {% block form %}
     <table class="new_product">
-        {% for field in form %}
+        {% for field in form.visible_fields %}
         <tr>
             <td>{{ field.label }}</td>
             <td>{{ field }}</td>
@@ -25,4 +25,5 @@
             </th>
         </tr>
     </table>
+    {% for field in form.hidden_fields %}{{ field }}{% endfor %}
 {% endblock %}

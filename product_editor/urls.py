@@ -58,5 +58,8 @@ urlpatterns = [
     path(
         'clear_product/<int:range_id>',
         views.ClearEditedProduct.as_view(), name='clear_product'),
-    path('finish_product/', views.FinishProduct.as_view(), name='finish'),
+    path('finish_product/', views.FinishNewProduct.as_view(), name='finish'),
+    path(
+        'finish_product/<int:range_id>/',
+        views.FinishEditProduct.as_view(), name='finish'),
 ]

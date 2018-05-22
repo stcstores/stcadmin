@@ -40,3 +40,20 @@
 {% block formside %}
     <p>Uncheck variations that do not exist.</p>
 {% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+    $(document).ready(function() {
+        {% for form in formset %}
+        {% if form.product_id.value %}
+            $('#{{ form.used.auto_id }}').prop('disabled', true);
+        {% endif %}
+        {% endfor %}
+
+        $('form').submit(function() {
+            $(this).find(':checkbox').prop('disabled', false);
+        });
+    });
+</script>
+
+{% endblock %}
