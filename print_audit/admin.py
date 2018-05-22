@@ -9,8 +9,10 @@ from print_audit import models
 class CloudCommerceUserAdmin(admin.ModelAdmin):
     """Model admin for CloudCommerceUser model."""
 
-    fields = ['full_name', 'user_id', 'stcadmin_user']
-    list_display = ('user_id', 'full_name')
+    fields = ['full_name', 'user_id', 'stcadmin_user', 'hidden']
+    list_display = ('full_name', 'user_id', 'hidden')
+    list_display_links = ('full_name', )
+    list_editable = ('user_id', 'hidden')
     readonly_fields = ('full_name', )
 
     def __str__(self):

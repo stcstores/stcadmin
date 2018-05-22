@@ -63,7 +63,7 @@ class UserFeedback(PrintAuditUserMixin, TemplateView):
     def get_models(self):
         """Get users, feedback_types, orders and feedbacks."""
         self.users = sorted(
-            models.CloudCommerceUser.objects.all(),
+            models.CloudCommerceUser.unhidden.all(),
             key=lambda x: x.full_name())
         self.feedback_types = models.Feedback.objects.all()
         self.orders = models.CloudCommerceOrder.objects.all()

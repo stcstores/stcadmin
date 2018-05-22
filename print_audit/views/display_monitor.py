@@ -25,7 +25,7 @@ class PackCountMonitor(View):
             date_created__year=now().year,
             date_created__month=now().month,
             date_created__day=now().day)
-        packers = models.CloudCommerceUser.objects.all()
+        packers = models.CloudCommerceUser.unhidden.all()
         pack_count = [
             (user.full_name(), orders.filter(user=user).count())
             for user in packers]
@@ -41,7 +41,7 @@ class FeedbackMonitor(View):
     def get(self, request):
         """Return HttpResponse with feedback data for current month."""
         feedback_types = models.Feedback.objects.order_by('score')
-        users = models.CloudCommerceUser.objects.all()
+        users = models.CloudCommerceUser.unhidden.all()
         data = []
         for user in users:
             feedback = models.UserFeedback.this_month.filter(user=user)

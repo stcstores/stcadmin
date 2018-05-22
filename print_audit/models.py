@@ -8,12 +8,25 @@ from django.db import models
 from django.utils.timezone import is_naive, now
 
 
+class UnHidden(models.Manager):
+    """Manager for Cloud Commerce Users that are not hidden."""
+
+    def get_queryset(self, *args, **kwargs):
+        """Return queryset of Cloud Commerce Users that are not hidden."""
+        queryset = super().get_queryset(*args, **kwargs)
+        return queryset.filter(hidden=False)
+
+
 class CloudCommerceUser(models.Model):
     """Model for storing details of Cloud Commerce Users."""
 
     user_id = models.CharField(max_length=10, unique=True)
     stcadmin_user = models.ForeignKey(
         User, null=True, blank=True, on_delete=models.CASCADE)
+    hidden = models.BooleanField(default=False)
+
+    objects = models.Manager()
+    unhidden = UnHidden()
 
     class Meta:
         """Meta class for CloudCommerceUser."""
