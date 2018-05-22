@@ -301,6 +301,7 @@ class VariationInfo(BaseVariationProductView):
         initial = self.get_variation_combinations()
         for init in initial:
             init.update(self.manager.product_info.data)
+            init.pop(self.PRODUCT_ID)
         return initial
 
 

@@ -195,7 +195,7 @@ class ProductEditor(ProductSaver):
 
     def add_variation(self, **kwargs):
         """Add single variation to Range."""
-        product = cc_products.get_product(kwargs[self.PRODUCT_ID])
+        product = self.get_variation(self, **kwargs)
         self.update_product(self, product, **kwargs)
 
     def get_variation(self, **kwargs):
@@ -203,7 +203,7 @@ class ProductEditor(ProductSaver):
         if kwargs[self.PRODUCT_ID]:
             return cc_products.get_product(kwargs[self.PRODUCT_ID])
         else:
-            return self.get_new_product(**kwargs)
+            return self.get_new_product(self, **kwargs)
 
 
 class DataSanitizer(ProductEditorBase):
