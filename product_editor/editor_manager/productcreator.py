@@ -217,7 +217,8 @@ class DataSanitizer(ProductEditorBase):
         ProductEditorBase.PACKAGE_TYPE, ProductEditorBase.PRODUCT_ID,
         ProductEditorBase.PURCHASE_PRICE, ProductEditorBase.RETAIL_PRICE,
         ProductEditorBase.STOCK_LEVEL, ProductEditorBase.SUPPLIER,
-        ProductEditorBase.SUPPLIER_SKU, ProductEditorBase.WEIGHT)
+        ProductEditorBase.SUPPLIER_SKU, ProductEditorBase.TITLE,
+        ProductEditorBase.WEIGHT)
 
     LIST_FIELDS = (
         ProductEditorBase.AMAZON_BULLET_POINTS,
