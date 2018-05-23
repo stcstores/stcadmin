@@ -49,10 +49,6 @@
             $('#{{ form.used.auto_id }}').prop('disabled', true);
         {% endif %}
         {% endfor %}
-
-        $('form').submit(function() {
-            $(this).find(':checkbox').prop('disabled', false);
-        });
     });
 </script>
 

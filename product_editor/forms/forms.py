@@ -160,6 +160,13 @@ class UnusedVariations(BaseVariationForm):
             self.fields[option_name] = forms.CharField(
                 max_length=255, initial=value, widget=forms.HiddenInput())
 
+    def clean(self):
+        """Ensure existing products are not marked unused."""
+        data = super().clean()
+        if data[self.PRODUCT_ID]:
+            data[self.USED] = True
+        return data
+
 
 class VariationInfo(BaseVariationForm):
     """Form to set required information for variation."""
