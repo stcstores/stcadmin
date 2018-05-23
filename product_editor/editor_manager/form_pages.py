@@ -283,9 +283,7 @@ class NewVariationOptions(VariationOptions, NewProductPage):
 class EditVariationOptions(VariationOptions, EditProductPage):
     """Page to select variations for new variation products."""
 
-    def visible(self):
-        """Return True if page is currently visible in navigation."""
-        return False
+    pass
 
 
 class NewUnusedVariations(UnusedVariations, NewProductPage):
@@ -297,9 +295,7 @@ class NewUnusedVariations(UnusedVariations, NewProductPage):
 class EditUnusedVariations(UnusedVariations, EditProductPage):
     """Page to mark non existant variations as unused."""
 
-    def visible(self):
-        """Return True if page is currently visible in navigation."""
-        return False
+    pass
 
 
 class NewVariationInfo(VariationInfo, NewProductPage):
