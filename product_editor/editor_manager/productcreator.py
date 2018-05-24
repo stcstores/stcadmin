@@ -70,7 +70,7 @@ class ProductSaver(ProductEditorBase):
             self.add_variation(self, **data)
         for key in variations[0]:
             self.product_range.options[key].variable = True
-        self.product_range.title = data[self.TITLE]
+        self.product_range.name = data[self.TITLE]
         self.product_range.description = data[self.DESCRIPTION]
 
     def get_variations(self):
