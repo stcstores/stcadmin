@@ -18,10 +18,13 @@
     border-color: #eee;
 }
 
+.show_hide_field {
+  text-align: left;
+}
+
 .show_hide_products {
     color: blue;
     cursor: pointer;
-    float: right;
     font-size: 1em;
     overflow: hidden;
 }

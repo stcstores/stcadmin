@@ -69,7 +69,9 @@
                                 </tr>
                             {% endfor %}
                         </table>
-                        <td nowrap><span id="show_hide_products_{{ range.id }}" class="show_hide_products">[[ show ]]</span></td>
+                        <td class="show_hide_field" nowrap>
+                            <a id="show_hide_products_{{ range.id }}" class="show_hide_products">[[ show ]]</a> {{ range.products|length }}
+                        </td>
                     </td>
                     {% endif %}
                 </tr>
