@@ -62,6 +62,7 @@ $(document).ready(function() {
 
     function update_stock(product_id) {
         var stock_input = $('#stock_' + product_id);
+        $('#update_' + product_id).prop('disabled', true);
         var status = $('#status_' + product_id);
         status.attr('src', loading_image);
         $.ajax({
@@ -76,6 +77,7 @@ $(document).ready(function() {
                 product_details[product_id].stock_level = response;
                 $('#stock_' + product_id).val(response);
                 status.attr('src', complete_image);
+                $('#update_' + product_id).prop('disabled', false);
             },
             error: function() {
                 api_error();
