@@ -120,3 +120,8 @@ table.new_product {
 .form_nav li:not(:first-child):before {
   content: "> ";
 }
+
+.selectize-control {
+    display: inline-block;
+    vertical-align: middle;
+}
