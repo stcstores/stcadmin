@@ -29,6 +29,8 @@ class ProductLoader(ProductEditorBase):
             self.data[self.VARIATION_OPTIONS], self.data[
                 self.UNUSED_VARIATIONS] = self.get_variation_options(
                     self, self.product_range)
+            self.data[self.EXISTING_VARIATIONS] = self.data[
+                self.VARIATION_OPTIONS]
             self.data[self.VARIATION_INFO] = self.get_variation_info(
                 self, self.product_range)
             self.data[

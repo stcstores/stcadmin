@@ -52,3 +52,4 @@ class ProductEditorBase:
     INCOMPLETE = 'Incomplete'
     RANGE_ID = 'range_id'
     PRODUCT_ID = 'product_id'
+    EXISTING_VARIATIONS = 'existing_variations'

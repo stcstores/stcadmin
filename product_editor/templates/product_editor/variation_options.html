@@ -3,34 +3,38 @@
 {% load stcadmin_extras %}
 
 {% block form %}
-{% if form.errors %}
-    {% for field in form %}
-        {% for error in field.errors %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
             <div class="alert alert-danger">
                 <strong>{{ error|escape }}</strong>
             </div>
         {% endfor %}
-    {% endfor %}
-    {% for error in form.non_field_errors %}
-        <div class="alert alert-danger">
-            <strong>{{ error|escape }}</strong>
-        </div>
-    {% endfor %}
-{% endif %}
+    {% endif %}
     <table class="new_product">
         {% for field in form %}
-        <tr>
-            <td>{{ field.label }}</td>
-            <td>{{ field }}</td>
-            <td>{% tooltip_help_text field %}</td>
-            {% if field.errors %}
-                <td class="error">{{ field.errors }}</td>
+            {% if manager.range_id and not field.value %}
+
+            {% else %}
+                <tr>
+                    <td>{{ field.label }}</td>
+                    <td>{{ field }}</td>
+                    <td>{% tooltip_help_text field %}</td>
+                    {% if field.errors %}
+                        <td class="error">{{ field.errors }}</td>
+                    {% endif %}
+                </tr>
             {% endif %}
-        </tr>
         {% endfor %}
         <th colspan="3">
-            <button name="back">Back</button><button name="continue">Continue</button>
+            <button name="back">Back</button>
+            <button name="continue">Continue</button>
         </th>
     </table>
-
 {% endblock %}

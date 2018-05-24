@@ -283,7 +283,22 @@ class NewVariationOptions(VariationOptions, NewProductPage):
 class EditVariationOptions(VariationOptions, EditProductPage):
     """Page to select variations for new variation products."""
 
-    pass
+    @property
+    def data(self):
+        """Return data stored in the session for this page."""
+        data = self.manager.product_data.get(self.identifier, None)
+        return data
+
+    @data.setter
+    def data(self, data):
+        """Store data in the session for this page."""
+        existing_data = self.manager.product_data[self.EXISTING_VARIATIONS]
+        for option, value_list in existing_data.items():
+            for value in value_list:
+                if value not in data[option]:
+                    data[option].insert(0, value)
+        self.manager.product_data[self.identifier] = data
+        self.manager.session.modified = True
 
 
 class NewUnusedVariations(UnusedVariations, NewProductPage):
