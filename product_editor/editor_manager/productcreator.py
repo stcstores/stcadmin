@@ -161,7 +161,8 @@ class ProductSaver(ProductEditorBase):
         else:
             product.international_shipping = self.STANDARD
         for option_name, option_value in kwargs[self.OPTIONS].items():
-            product.options[option_name] = option_value
+            if option_name not in (self.PRODUCT_ID, self.RANGE_ID):
+                product.options[option_name] = option_value
 
 
 class ProductCreator(ProductSaver):
