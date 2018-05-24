@@ -76,7 +76,7 @@
                 <th></th>
             </tr>
         {% for product in product_range.products %}
-        </tr>
+        <tr>
             <td>{{ product.sku}}</td>
             <td><a href="{% url 'inventory:product' product.id %}">{{product.full_name}}</a></td>
             <td>{{product.barcode}}</td>
@@ -84,6 +84,7 @@
             <td><button id="update_{{ product.id }}" class="stock_update_button">Update Stock Level</button></td>
             <td><img id="status_{{ product.id }}" class="update_status" src=""></td>
             <td><a href="{% ccp_product_page product_range.id product.id %}" target="_blank"><button>View Product on Cloud Commerce</button></a></td>
+        </tr>
         {% endfor %}
         </table>
     </div>
