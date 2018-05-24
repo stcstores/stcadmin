@@ -4,6 +4,17 @@ from django.urls import reverse
 from .productbase import ProductEditorBase
 
 
+class PageData:
+    """Descriptor for page data."""
+
+    def __get__(self, instance, owner):
+        return instance.manager.product_data.get(instance.identifier, None)
+
+    def __set__(self, instance, value):
+        instance.manager.product_data[instance.identifier] = value
+        instance.manager.session.modified = True
+
+
 class Page(ProductEditorBase):
     """Base class for product editor form pages."""
 
@@ -14,17 +25,7 @@ class Page(ProductEditorBase):
     def __repr__(self):
         return self.name
 
-    @property
-    def data(self):
-        """Return data stored in the session for this page."""
-        data = self.manager.product_data.get(self.identifier, None)
-        return data
-
-    @data.setter
-    def data(self, data):
-        """Store data in the session for this page."""
-        self.manager.product_data[self.identifier] = data
-        self.manager.session.modified = True
+    data = PageData()
 
     @property
     def data_exists(self):
@@ -283,22 +284,19 @@ class NewVariationOptions(VariationOptions, NewProductPage):
 class EditVariationOptions(VariationOptions, EditProductPage):
     """Page to select variations for new variation products."""
 
-    @property
-    def data(self):
-        """Return data stored in the session for this page."""
-        data = self.manager.product_data.get(self.identifier, None)
-        return data
+    class PageDataWithExistingData(PageData):
+        """Retain existing variation data when updating."""
 
-    @data.setter
-    def data(self, data):
-        """Store data in the session for this page."""
-        existing_data = self.manager.product_data[self.EXISTING_VARIATIONS]
-        for option, value_list in existing_data.items():
-            for value in value_list:
-                if value not in data[option]:
-                    data[option].insert(0, value)
-        self.manager.product_data[self.identifier] = data
-        self.manager.session.modified = True
+        def __set__(self, instance, data):
+            existing_data = instance.manager.product_data[
+                instance.EXISTING_VARIATIONS]
+            for option, value_list in existing_data.items():
+                for value in value_list:
+                    if value not in data[option]:
+                        data[option].insert(0, value)
+            super().__set__(instance, data)
+
+    data = PageDataWithExistingData()
 
 
 class NewUnusedVariations(UnusedVariations, NewProductPage):
