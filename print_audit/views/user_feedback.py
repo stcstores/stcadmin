@@ -204,3 +204,17 @@ class FeedbackList(PrintAuditUserMixin, ListView):
         context['feedback_type'] = self.feedback_type
         context['form'] = forms.FeedbackSearchForm(self.get_initial())
         return context
+
+
+class FeedbackDetails(TemplateView):
+    """View for feedback details page."""
+
+    template_name = 'print_audit/feedback_details.html'
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context data for template."""
+        context = super().get_context_data(*args, **kwargs)
+        feedback_id = self.kwargs.get('feedback_id')
+        context['feedback'] = get_object_or_404(
+            models.UserFeedback, id=feedback_id)
+        return context

@@ -45,4 +45,7 @@ urlpatterns = [
     path(
         'delete_breakage/<int:breakage_id>/',
         views.DeleteBreakage.as_view(), name='delete_breakage'),
+    path(
+        'feedback_details/<int:feedback_id>/',
+        views.FeedbackDetails.as_view(), name='feedback_details'),
 ]

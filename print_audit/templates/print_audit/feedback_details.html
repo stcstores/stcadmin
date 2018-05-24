@@ -1,0 +1,18 @@
+{% extends "print_audit/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<table>
+    <tr>
+        <th>User</th>
+        <th colspan="2">Type</th>
+        <th>Note</th>
+    </tr>
+    <tr>
+        <td>{{ feedback.user }}</td>
+        <td><img src="{{ feedback.feedback_type.image.url }}" alt=""></td>
+        <td>{{ feedback.feedback_type }}</td>
+        <td>{% if feedback.note %}{{ feedback.note }}{% endif %}</td>
+    </tr>
+</table>
+{% endblock %}

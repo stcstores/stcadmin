@@ -40,20 +40,23 @@ class FeedbackMonitor(View):
 
     def get(self, request):
         """Return HttpResponse with feedback data for current month."""
-        feedback_types = models.Feedback.objects.order_by('score')
-        users = models.CloudCommerceUser.unhidden.all()
+        all_feedback = models.UserFeedback.this_month.all()
+        users = list(set([f.user for f in all_feedback if not f.user.hidden]))
         data = []
         for user in users:
-            feedback = models.UserFeedback.this_month.filter(user=user)
-            if feedback.count() == 0:
-                continue
-            user_data = {'name': user.full_name(), 'feedback': []}
-            for f in feedback_types:
-                count = feedback.filter(feedback_type=f).count()
+            user_data = {
+                'name': user.full_name(), 'feedback': [],
+                'score': models.UserFeedback.this_month.filter(
+                    user=user).score()}
+            feedback = [f for f in all_feedback if f.user == user]
+            feedback_types = list(set([f.feedback_type for f in feedback]))
+            for f_type in feedback_types:
+                feedback_ids = [
+                    fb.id for fb in feedback if fb.feedback_type == f_type]
                 user_data['feedback'].append({
-                    'name': f.name, 'image_url': f.image.url,
-                    'count': count, 'score': f.score})
-            user_data['score'] = feedback.score()
+                    'name': f_type.name, 'image_url': f_type.image.url,
+                    'ids': feedback_ids, 'score': f_type.score
+                })
             data.append(user_data)
         data.sort(key=lambda x: x['score'], reverse=True)
         response = {
