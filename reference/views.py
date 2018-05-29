@@ -10,12 +10,6 @@ class Index(LoginRequiredMixin, TemplateView):
     template_name = 'reference/index.html'
 
 
-class SpringServices(LoginRequiredMixin, TemplateView):
-    """View for the list of Spring services and destinations."""
-
-    template_name = 'reference/spring_services.html'
-
-
 class ReStructuredTextView(TemplateView):
     """Base View for rendered ReST files."""
 
