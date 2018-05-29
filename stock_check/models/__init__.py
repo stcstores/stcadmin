@@ -1,6 +1,7 @@
 """Models for the Stock Check app."""
 
-from . stock_check import Warehouse, Bay, Product, ProductBay  # NOQA
+from . stock_check import Product, ProductBay  # NOQA
+from inventory.models import Bay, Warehouse
 from ccapi import CCAPI
 
 
@@ -127,6 +128,5 @@ def update_locations():
 
 def update_stock_check(inventory_table):
     """Update Stock Check models from a Cloud Commerce inventory export."""
-    update_locations()
     update_products(inventory_table)
     update_product_bays(inventory_table)
