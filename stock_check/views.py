@@ -12,6 +12,7 @@ from django.views.generic.base import TemplateView
 
 from home.views import UserInGroupMixin
 from stock_check import models
+import cc_products
 
 
 class StockCheckUserMixin(UserInGroupMixin):
@@ -52,7 +53,7 @@ class OpenOrderCheck(StockCheckUserMixin, TemplateView):
         product.allocated = product.printed + product.unprinted
 
 
-class ProductSearch(OpenOrderCheck):
+class ProductSearch(TemplateView):
     """Search for products and get current stock level details."""
 
     template_name = 'stock_check/product_search.html'
@@ -62,13 +63,11 @@ class ProductSearch(OpenOrderCheck):
         context = super().get_context_data(*args, **kwargs)
         search_term = self.request.GET.get('search_term', None)
         if search_term:
-            self.get_order_data()
             context['search_term'] = search_term
             context['products'] = []
             for result in CCAPI.search_products(search_term):
-                cc_product = CCAPI.get_product(result.variation_id)
+                cc_product = cc_products.get_product(result.variation_id)
                 product = models.Product.objects.get(product_id=cc_product.id)
-                self.get_open_orders_for_product(cc_product)
                 product.cc_product = cc_product
                 context['products'].append(product)
             context['products'].sort(key=lambda x: x.cc_product.full_name)
@@ -96,14 +95,16 @@ class Warehouse(StockCheckUserMixin, TemplateView):
         """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
         warehouse_id = self.kwargs.get('warehouse_id')
-        context['warehouse'] = get_object_or_404(
-            models.Warehouse, id=warehouse_id)
-        context['bays'] = models.Bay.objects.filter(
-            warehouse=context['warehouse'])
+        warehouse = get_object_or_404(
+            models.Warehouse, warehouse_id=warehouse_id)
+        context['warehouse'] = warehouse
+        context['bays'] = list(models.Bay.non_default.filter(
+            warehouse=warehouse).all())
+        context['bays'].insert(0, warehouse.default_bay)
         return context
 
 
-class Bay(OpenOrderCheck):
+class Bay(TemplateView):
     """Show current Products and Stock levels for Bay."""
 
     template_name = 'stock_check/bay.html'
@@ -111,14 +112,12 @@ class Bay(OpenOrderCheck):
     def get_context_data(self, *args, **kwargs):
         """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
-        self.get_order_data()
         bay_id = self.kwargs.get('bay_id')
-        context['bay'] = get_object_or_404(models.Bay, id=bay_id)
+        context['bay'] = get_object_or_404(models.Bay, bay_id=bay_id)
         products = context['bay'].product_set.all()
         context['products'] = []
         for product in products:
-            product.cc_product = models.get_cc_product_by_sku(product.sku)
-            self.get_open_orders_for_product(product.cc_product)
+            product.cc_product = cc_products.get_product(product.product_id)
             context['products'].append(product)
         context['products'].sort(key=lambda x: x.cc_product.full_name)
         return context
