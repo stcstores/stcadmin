@@ -1,296 +1,393 @@
 
-
 .. contents:: Table of Contents
 
 ******************************
 Creating Productcs on STCAdmin
 ******************************
 
-To begin creating a product navigate to http://stcadmin.stcstores.co.uk and go to the
+How to Create a New Product Range
+=================================
+
+The product creation process consists of a number of pages containing forms
+in which you will enter the details of the product. The top of each of these
+pages will show a list of pages required to complete the product and allow
+you to jump to other pages. Some pages may not appear or may not allow you to
+jump to them depending on the type of product you are creating and how far
+through the process you have gotten.
+
+To begin creating a product navigate to
+`STC Admin`_ and go to the
 `Inventory <{% url 'inventory:product_search' %}>`_ section and select
 `New Product <{% url 'product_editor:basic_info' %}>`_.
 
-The New Product Form
-====================
+.. _STC Admin: http://stcadmin.stcstores.co.uk
 
-The new product form is where you put information about your product. This is
-the only step when creating single products, however variation products work
-slightly differently and also require the `Variation Table <#variation_table>`_
-to be filled in. For more information see `Variation Listings <#variation_listings>`_.
+If you have already created a product you will see forms are still filled
+with the details of that product. This is so that a product can be re-created
+if there is an error during product creation. To start a new product click the
+*Clear New Product* button at the top of the page. This will clear the current
+product and take you to the first page of the product creation process, the
+`Basic Info`_ page. This page allows you to enter basic detail of the product
+range as well as information relevent to listings that needs to be identcal
+for every product in the range.
 
-The new product form is colour coded:
+After completing this page click the continue button underneath the form. This
+will take you to the `Product Info`_ page. On this page you will enter all the
+details of the product, or one of them if you are creating a variation product
+range. At the bottom of the form you will see buttons to *Create Single Product*
+or *Create Variation Product*. Select *Create Single Product*, if your
+new Product Range contains a single Product, or the *Create Variation Product*
+button, if it contains more than one Product.
 
-* Fields with a **White background** are **optional** and can be left blank if they are not applicable or are to be filled in later.
-* Fields witha **Grey background** are **required** for all products and must always be filled in.
-* Fields with a **Blue background** are for **Product Options**. They work differently for `single products <#single_product_options>`_ and `variation products <#variation_product_options>`_.
+Creating Single Products
+________________________
+
+Selecting *Create Single Product* you will take you to the `Listing Options`_
+page. This page allows you to set *Product Options* for your product to add
+information about it that will appear in the listings. Clicking continue
+will create the product.
+
+Creating Variation Products
+___________________________
+
+Selecting *Create Variation Product* will take you to the `Variation Options`_
+page. On this page you will set the *Product Options* used to differentiate
+the your variations. The used *Product Options* will appear in the listing
+as the dropdown boxes used to select a variation. List the existant values
+for each required *Product Option* and click continue.
+
+The next page is the `Unused Variations`_ page. This page will list every
+possible combination of the variations you set up on the previous page. If any
+combination is not required deselect the checkbox next to it. It will now not
+appear on any susequent pages or in the inventory.
+
+The next page is the `Variation Info`_ page. This page will allow you to set
+the details of the variations. You can select a field to update from the list
+at the top of the page. This will show you a list of all the product's
+variations and their current values for the field. Unless changed each
+variation will have the value set for that field on the `Product Info`_ page.
+Change the value for any variation for which it is not correct.
+
+The final page is the `Variation Listing Options`_ page. This page allows you
+to set *Product Options* for your productto add information that will appear
+in the listing. Select and update *Product Options* in the same way as the
+fields on the `Variation Info`_ page where appropriate.
+
+Finishing Products
+__________________
+
+When you click continue on the `Listing Options`_ or
+`Variation Listing Options`_ pages the product creation process will begin. You
+will land on the inventory page for the product, however it will not yet be
+complete. If this is the case a message will appear stating it. Please wait
+for the product to complete. Products with more variations will take longer to
+create.
+
+Once the product is complete the inventory page will appear as usual, without
+the "Incomplete Product" message. If any error occurs during product creation
+you will be able to retry the process or change the details of the product.
+
+Pages
+=====
+
+Basic Info
+__________
+
+The basic info page collects information required for both single and
+variation products and that will be the same for every variation in a range.
+
+Fields:
+
+* `Title`_
+* `Department`_
+* `Description`_
+* `Amazon Bullet Points`_
+* `Amazon Search Terms`_
+
+
+Product Info
+____________
+
+The product info page collects information required for a single variation.
+When creating a single product this is where you will put the bulk of the
+details. When creating variations this page will set default values for the
+Variation Info page where you can alter it for each variation.
+
+Fields:
+
+* `Barcode`_
+* `Purchase Price`_
+* `Price`_
+* `Retail Price`_
+* `Stock Level`_
+* `Location`_
+* `Supplier`_
+* `Supplier SKU`_
+* `Weight`_
+* `Dimensions`_
+* `Package Type`_
+* `Brand`_
+* `Manufacturer`_
+* `Gender`_
+
+Listing Options
+_______________
+
+The Listing Options page allows you to use *Product Options* to add details
+to your product listings. The `Variation Listing Options`_ page performs the
+same role for variation listings.
+
+Variation Options
+_________________
+
+The Variation Options page is where you set the variations for a varation
+product. It will give you a choice of *Product Options* to use as the way in
+which the product varies *e.g* Colour, Size. List every value each applicable
+*Product Option*.
+
+Unused Variations
+_________________
+
+The Unused Variation page gives you a list of every possible combination of
+variations as set on the `Variation Options`_ page. If any combination is not
+required for your product deselect the apropriate checkbox. Deselected
+combinations will not appear as variations in your product.
+
+Variation Info
+______________
+
+The Variation Info page allows you to set the details of each variation.
+Unless changed each variation will copy the details set on the `Product Info`_
+page. At the top of the page is the list of fields, you can use this to
+select a field to edit. When you select a field it will appear for each of the
+variations listed below. You can manually change the field for each variation
+or update them in bulk. To bulk update variations, select them using the
+checkboxes next to them or by toggeing them by variation option using the
+buttons above. You can then type the required value into the top field next
+to the copy button and click copy to replace the contents of the field for all
+selected variations.
+
+Fields:
+
+* `Barcode`_
+* `Purchase Price`_
+* `Price`_
+* `Retail Price`_
+* `Stock Level`_
+* `Location`_
+* `Supplier`_
+* `Supplier SKU`_
+* `Weight`_
+* `Dimensions`_
+* `Package Type`_
+* `Brand`_
+* `Manufacturer`_
+* `Gender`_
+
+
+Variation Listing Options
+_________________________
+
+The Listing Options page allows you to use *Product Options* to add details
+to your product listings. You select fields  and update variations in the same
+way as the  `Variation Info`_ page. The `Listing Options`_ page performs the
+same role for single products.
+
+Finish
+______
+The **Finish** page will redirect you to the inventory page for your new product
+and begin the process of creating it. Until all the variations complete the
+range will show as **INCOMPLETE**. When all variations are complete the
+incomplete message will disapear. If an error occurs during product creation
+you will have the option to try again or edit the product.
 
 
 Fields
 ======
 
-The following is a list of fields that appear in the new product forms. This can be used as a checklist when creating products.
-
 Title
-______
-The name of the **Product Range** to be created.
-
-.. note:: All products are part of a **Product Range** even if they do not include variatons.
-
-* The title should *not* contain key words. This includes colours, sizes etc.
-* This title is for internal reference and will not necessarily be used for listings on eBay. It will, however, be used on our website.
-* It must make sense gramatically and not include dashes.
-* It must use proper **title case**. (The first letter of every word should be capital except for connective words such as "and" or "the" unless they are the first word of the title.)
-
-Barcode
-_______
-The barcode that will be used when listing the item.
-
-* Must be unique within our inventory.
-* If left blank a new barcode will be applied from our stock.
-* If the product has a barcode from the manufacturer this should be used.
-* If the product has variations with the same barcode they should **not** be used.
-* When listing variations do **not** mix our barcodes with manufacturer barcodes. If manufacturer barcodes are not available for all variations our own should be used.
-
-Purchase Price
-______________
-The price for which this product was purchased.
-
-* This should always reflect the currrent price at which we can restock the item.
-* It should be updated if the supplier's prices change.
-
-VAT Rate
-________
-The applicable rate of VAT for this product in the UK.
-
-* Most products require 20% VAT.
-* Books and children's clothing and shoes require 0% VAT.
-* The selected VAT Rate will affect the **Price** field and so must be set first.
-
-Price
 _____
-The base price of the product.
 
-* The price depends on the selected **VAT Rate**. This must always be set first.
-* Two fields are provided allowing you to enter the price either with or without VAT. Use the appropriate field and the other will update.
-* This should **NOT** include **Shipping**.
-* This is for internal reference and will **Not** be used for listings
+The name of the **Product Range** to create.
 
-Stock Level
-___________
-The initial stock level of the product.
+* The title must *not* contain key words. This includes colours, sizes etc.
+* This title is for internal reference and is not necessarily used for listings.
+  It is, however, used on our website.
+* It must make sense gramatically and not include dashes.
+* It must use proper **title case**. (The first letter of every word should be
+  capital except for connective words such as "and" or "the" unless they are the
+  first word of the title.)
+* **Required**
 
 Department
 __________
 The department to which the product belongs.
 
+* **Required**
+
+Description
+___________
+Full description used in listings.
+
+* This is **required** for any item listed online. You can leavit it blank and
+  add it later if necessary.
+* Must **not** start with the title of the product.
+* Must **not** include information about **price** or **postage**.
+* Do **not** use abrieviations such as "L" for length as this is not
+  translatable for foreign listings.
+* Sentences must end with full stops.
+* Make correct use of capitalisation.
+* The description can **contain** bullet points to hightlight key information
+  but **MUST NOT** consist soley of bullet ponts.
+* **Not Required**
+
+Amazon Bullet Points
+____________________
+The bullet points that will appear at the top of the Amazon listing.
+
+* These are far more prominent than the main description.
+* Each bullet point should be about one sentence long.
+* Can repeat key information from the main description.
+* All rules for descriptions also apply to bullet ponts.
+* **Not Required**
+
+Amazon Search Terms
+___________________
+Key words and phrases that people might use to find the product.
+
+* A list of keywords and key phrases used by Amazon to match a listing to
+  customer's searches.
+* Can include alternate words and spelling.
+* Search terms must go here, **not** in the product title.
+* **Not Required**
+
+Barcode
+_______
+The barcode used when listing the product.
+
+* Must be unique within our inventory.
+* Use the manufacturer provided barcode where possible.
+* Do not use the manufactuer's barcode if multiple variations use the same one.
+* Leave blank to use a barcode from our stock.
+* When listing variations do **not** mix our barcodes with manufacturer
+  barcodes. If manufacturer barcodes are not available for all variations use
+  our own.
+* **Not Required**
+
+Purchase Price
+______________
+The price paid to purchase the product.
+
+* This should always reflect the currrent price at which we can restock the
+  item.
+* If the supplier's prices change update the purchase price.
+* **Required**
+
+Price
+_____
+The price and VAT rate the product sells with online in the UK.
+
+* You cannot enter a price until you select a VAT rate.
+* You can enter the price either with or without VAT using the apropriate
+  field, the other will update accordingly.
+* **Required**
+
+Retail Price
+____________
+
+The price at which the product sells in shops.
+
+* **Not Required**
+
+Stock Level
+___________
+The initial stock level of the product.
+
+* **Required**
+
 Location
 ________
-The location where the product will be stocked.
+The picking location of the product.
 
-* If your department does not use **Locations** this can be left blank.
+* Set the Warehouse field according to the pick list on which the product
+  should appear.
+* The warehouse field will default to the department selected on the Basic Info
+  page.
+* You can set multiple bays as required but they must all belong to the same
+  warehouse.
+* If you leave the product field blank it will set to the default bay for the
+  selected warehouse.
+* Add new bays using the Create Bay page.
+* **Warehouse field required.**
+
 
 Supplier
 ________
-The supplier from which the item is purchased.
+The supplier which sells the product.
 
 * Select the supplier from the list.
-* If the supplier is new or does not appear in the list it must be added before you create your product. Contact Luke or Jake to add a supllier to the list.
+* Create new suppliers on the Create Supplier page.
+* **Required**
 
 Supplier SKU
 ____________
 The supplier's SKU for the product.
 
 * This is sometimes refered to as a **Product Code**.
-* This can be left blank if none exists.
+* **Not Required**
 
 Weight
 ______
-The weight of the product in **Grams**.
+The weight of the product in **grams**.
 
 * Enter the correct weight to the nearest gram.
-* Accuracy is important as we are charged postage based on this number.
-* If the item is likely to require extra packaging such as cardboard estimate how much weight this will add and add that to the weight.
+* Accuracy is important as our couriers charge based on this number.
+* If the item requires extra packaging such as cardboard estimate how much
+  weight this will add and add that to the weight.
+* **Required**
 
-Dimensions (Height, Width and Length)
+Dimensions
 _____________________________________
 Dimensions of the product in Milimeters.
 
-* Can be left blank if unavilable (if you do not have the product to hand to measure for example) but should be added later when possible.
 * Enter the largest dimension in Length.
 * Enter the second largest dimenstion in Weight.
 * Enter the smallest dimension in Height.
-* This is used to select the appropriate shipping service and will not appear in the listing.
+* Used to select the appropriate shipping service and will not appear in the
+  listing.
+* **Not Required.**
 
 Package Type
 ____________
-The shipping method that will be used in the UK.
+The type of package used to send the product.
 
-* Used to select the appropriate shipping service for the product both in the UK and internationally.
-* This must be selected correctly as we will be billed for postage based on this.
-* Based on size and weight when the item is packed. Items requiering cardboard will be effected. If in doubt contact the packing department.
-* See `Package Types <{% url 'reference:package_types' %}>`_ for information about which package type to select.
+* Used to select the appropriate shipping service for the product both in the UK
+  and internationally.
+* Based on size and weight of the item when packed.
+* This will be greater for items requiring additional packaging such as
+  cardboard.
+* If in doubt contact the packing department.
+* See `Package Types <{% url 'reference:package_types' %}>`_ for information
+  about which package type to select.
+* **Required**
 
 Brand
 _____
 The brand of the product.
 
-* A brand must be supplied.
-* If there is no available brand for the product a placeholder such as "Unbranded" can be used.
+* If there is no available brand for the product a placeholder such as
+  "Unbranded" is acceptable.
+* **Required**
 
 Manufacturer
 ____________
 The manufacturer of the product.
 
-* A manufacturer must be supplied.
 * If the manufacturer is unknown use the name of the supplier.
-
-
-Description
-___________
-Full description to be used in listings.
-
-* This is **required** for any item that will be listed online. It can be left blank and added to a product later if necessary.
-* Must **not** start with the title of the product. It will be added automatically on ebay.
-* Must **not** include information about **price** or **postage**.
-* Do **not** use abrieviations such as "L" for length as this cannot be translated for foreign listings.
-* Sentences must end with full stops.
-* Proper use of capitalisation is required.
-* The description can **contain** bullet points to hightlight key information but **MUST NOT** consist only of bullet ponts.
+* **Required**
 
 Gender
 ______
-Gender for which the product is intended.
+The target gender of the product.
 
-* This is required only for clothing items being listed on Amazon.
-
-
-Amazon Bullet Points
-____________________
-The bullet points that will appear at the top of the Amazon listing.
-
-* These are far more prominent than the main description. This makes it crucial that these are included.
-* Each bullet point should be about one sentence long.
-* Can repeat key information from the main description.
-* All rules for descriptions also apply to bullet ponts.
-
-Amazon Search Terms
-___________________
-Key words and phrases that people might use to find the product.
-
-* A list of keywords and key phrases used by Amazon to match a listing to customer's searches.
-* Can include alternate words and spelling.
-* Search terms must be put here, **not** in the product title.
-
-
-Single Product Options
-______________________
-
-Product options work differently for single items and variation products. This
-information is for single items.
-
-* Fill in any fields you feel apply to the product.
-* Any fields that do not seem applicable or relevent should be left blank.
-* Colour should be filled in for all products as this is required by Amazon.
-
-Listing Variations
-==================
-While a single form is required to create a single item, creating a product with
-variations is a two step process. The first step is the
-`new variation product form <#variation_product_form>`_, which is very similar
-to the new single product variation form.
-This is followed by the `Variation Table <#variation_table>`_.
-
-New Variation Product Form
-__________________________
-The variation product form is very similar to the single product form.
-The **Barcode** field does not appear here. You will be able to add
-barcodes later. All the above information about fields still applies and
-can still be used as a checklist. You will notice that when listing
-variation products that checkboxes appear to the right of some fields.
-If there are any fields for which the required information is not the same
-for **every** variation the box next to it should be checked. If the
-field is optional it can be left blank, however anything you do enter will
-be provided as a default for all variations. If the information in this
-field will be the same for most of your variations you can enter it here
-to save typing later. If the field is not optional something must be
-entered. This can be the correct information for one or some of your
-variations or a placeholder. For **Price**, **Purchase Price** and
-**Weight** zero is a viable placeholder but another value must be
-entered for all variations on the next page.
-
-When the form is complete you will be presented with a table containing
-each field you have selected for each existant variation. These fields
-should be filled in in exactly the same way they otherwise would be.
-
-The **Barcode** field will always appear here. As usual the manufactuer
-barcode can be used if available, otherwise it can be left blank to use
-new barcodes from our stock.
-
-Variation Product Options
-_________________________
-At the bottom of the new variation product form you will see the same list
-of **Product Options** as on the new single product form. Instead of a
-text box you will see the options **Unused**, **Single**,
-**Variable** and **Variation**.
-
-If the field is not applicable to the product leave **Unused** selected.
-
-**Variation** should be selected for the options that most closely
-relates the the way in which the variation product varies. For instance
-shoes might use **Colour** and **Size**. This will be the name next to
-the drop down box(es) in listings. All existant values for each selected
-option must be listed in the boxes provided. This will be used to create
-the variation table on the next page. The **TAB** key can be used after
-typing a variation to enter the next box.
-
-Relevent product options can be used in the same way they are used for
-single items, to add information to the listing, if they are not variation
-options.
-
-If the information is the same for every variation select **Single**.
-The typed value will be applied to every variation.
-
-If the information is **not** the same for every variation
-select **Variable**. This will add this field to the table on the next page.
-As with other fields a default value can be added here. There are few products
-for which this is applicable. See below for an example of when it might be.
-
-To clarify the above here are some examples:
-
-* For a red T-Shirt that comes in a range of sizes you would select **Variation** for the **Size** option and list the sizes. Then select **Single** for the **Colour** option and type "Red". This would allow the customer to select their size and see that all the sizes come in one colour.
-* For a product that comes in a range of sizes and colours you would select **Vatiation** for both **Size** and **Colour** and list the appropriate options in the applicable fields.
-* For a named door plaque for which each name has a particular coloured background you would select **Variation** for **Name** and list the names, then select **Variable** for **Colour**. This would allow you to put the appropriate colour next to each name in the variation table on the next page.
-
-
-The Variation Table
-___________________
-When the new variation product form is complete you will see the **variation table**.
-This will list every possible variation for your product by combining all
-the values from **Product Option** fields marked as **Variation**.
-For each variation you will have a **Barcode** field as well as any
-other field for which you checked the variable check box and any **Product Option**
-that was marked as **Variable**.
-
-You will also have a **Delete** checkbox.
-This should be checked for any variation that does not exist or that we will
-not be stocking. If there are any variations that we do not stock but are
-likely to in the future do not delete them. It is far easier to create them
-now and leave them out of stock than to add them later.
-
-All the fields in the **Variation Table** should be filled out in the
-same way they would in the new single product form or the new variation
-product form.
-
-Incomplete Products
-___________________
-When the **Variation Table** has been submitted your new Product Range
-will be created and you will be taken to it's page in the inventory.
-However it will likey not yet be complete as variations are created in
-the background. This will happen even for single products. If you refresh
-the page you will see variations appearing. When all the variations have appeared
-and the page no longer says **INCOMPLETE** your product will have been
-successfully created. It is possible an error, in this case the product will
-remain **INCOMPLETE**. Please allow some time for it to complete before
-acting on this. Products with more variations will take longer to create
-and Cloud Commerce does not always operate at it's full capacity. If you are
-sure that an error has occured the product must be deleted and recreated.
+* Required for listing clothing items on Amazon. Leave blank for other products.
