@@ -145,7 +145,6 @@ class ProductSaver(ProductEditorBase):
         product.package_type = kwargs[self.PACKAGE_TYPE]
         product.brand = kwargs[self.BRAND]
         product.manufacturer = kwargs[self.MANUFACTURER]
-        product.date_created = datetime.datetime.now()
         if kwargs[self.RETAIL_PRICE]:
             product.retail_price = kwargs[self.RETAIL_PRICE]
         if kwargs[self.SUPPLIER_SKU]:
@@ -187,6 +186,11 @@ class ProductCreator(ProductSaver):
     def handle_error(self):
         """Delete the product if creation fails."""
         self.product_range.delete()
+
+    def update_product(self, product, **kwargs):
+        """Set Date Created product option."""
+        super().update_product(self, product, **kwargs)
+        product.date_created = datetime.datetime.now()
 
 
 class ProductEditor(ProductSaver):
