@@ -1,3 +1,5 @@
+"""Management commands for the Print Audit app."""
+
 from django.core.management.base import BaseCommand
 from print_audit.models import CloudCommerceOrder
 
@@ -5,9 +7,12 @@ from ccapi import CCAPI
 
 
 class Command(BaseCommand):
+    """Update print audit."""
+
     help = 'Updates Print Audit'
 
     def handle(self, *args, **options):
+        """Update print audit."""
         print_logs = CCAPI.get_print_queue()
         new_order_count = 0
         for print_log in print_logs:
