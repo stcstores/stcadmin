@@ -135,7 +135,6 @@ class ProductSaver(ProductEditorBase):
         product.bays = kwargs[self.BAYS]
         product.price = kwargs[self.PRICE]
         product.purchase_price = kwargs[self.PURCHASE_PRICE]
-        product.stock_level = kwargs[self.STOCK_LEVEL]
         product.supplier = kwargs[self.SUPPLIER]
         product.weight = kwargs[self.WEIGHT]
         product.height = kwargs[self.HEIGHT]
@@ -188,8 +187,9 @@ class ProductCreator(ProductSaver):
         self.product_range.delete()
 
     def update_product(self, product, **kwargs):
-        """Set Date Created product option."""
+        """Set initial stock level and date created."""
         super().update_product(self, product, **kwargs)
+        product.stock_level = kwargs[self.STOCK_LEVEL]
         product.date_created = datetime.datetime.now()
 
 
