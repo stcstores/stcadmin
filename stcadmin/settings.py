@@ -134,6 +134,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(os.path.abspath(
     os.path.dirname(BASE_DIR)), 'media')
 
+DOCS_ROOT = os.path.join(BASE_DIR, 'docs', 'build', 'html')
+
 LOGIN_URL = '/login/'
 
 LOGIN_REDIRECT_URL = 'home:index'

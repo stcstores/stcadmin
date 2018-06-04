@@ -16,6 +16,7 @@ def deploy():
     _update_settings(source_folder, env.host)
     _add_server_settings(source_folder)
     _update_virtualenv(source_folder)
+    _update_docs(source_folder)
     _update_static_files(source_folder)
     _update_database(source_folder)
     _restart_server(env.host)
@@ -62,6 +63,10 @@ def _update_virtualenv(source_folder):
         run('python3 -m venv {}'.format(virtualenv_folder))
     run('{}/bin/pip install -U -r {}/requirements.txt'.format(
         virtualenv_folder, source_folder))
+
+
+def _update_docs(source_folder):
+    run('cd {}/docs && make html')
 
 
 def _update_static_files(source_folder):

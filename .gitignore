@@ -1,3 +1,5 @@
+reference/static/docs/*
+
 *.pyo
 *.pyc
 env/*

@@ -16,6 +16,7 @@ PyMySQL
 pytz
 psycopg2-binary
 reportlab
+sphinx
 tabler
 Unidecode
 XlsxWriter

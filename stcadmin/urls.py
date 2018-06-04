@@ -4,6 +4,7 @@ from user import views as user_views
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
+from django.views.static import serve
 
 admin.site.site_header = 'STC Stores Administration'
 
@@ -35,7 +36,13 @@ urlpatterns = [
     path('', include('home.urls', namespace='home')),
     path(
         'password_change_done/', user_views.ChangePasswordDone.as_view(),
-        name='password_change_done')
+        name='password_change_done'),
+    path(
+        'docs/<str:path>', serve,
+        {'document_root': settings.DOCS_ROOT}),
+    path(
+        'docs/_static/<str:path>', serve,
+        {'document_root': settings.DOCS_ROOT}),
 ]
 
 if settings.DEBUG:
