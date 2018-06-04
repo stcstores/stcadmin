@@ -211,7 +211,7 @@ class BaseVariationProductView(BaseProductView):
         kwargs['form_kwargs'] = [{
             'existing_data': existing_data,
             'variation_options': v,
-            } for v in self.get_variation_combinations()]
+        } for v in self.get_variation_combinations()]
         return kwargs
 
     def get_variation_combinations(self):

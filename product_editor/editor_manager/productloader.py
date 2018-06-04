@@ -33,8 +33,8 @@ class ProductLoader(ProductEditorBase):
                 self, self.product_range)
             self.data[
                 self.VARIATION_LISTING_OPTIONS
-                ] = self.get_variation_listing_options(
-                    self, self.product_range)
+            ] = self.get_variation_listing_options(
+                self, self.product_range)
         pprint(self.data)
         return self.data
 

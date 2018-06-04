@@ -58,5 +58,5 @@ class FileManifestView(SpringUserMixin, RedirectView):
         """Return URL to redirect to after manifest process starts."""
         self.process_manifest()
         return reverse_lazy(
-                'spring_manifest:manifest',
-                kwargs={'manifest_id': self.kwargs['manifest_id']})
+            'spring_manifest:manifest',
+            kwargs={'manifest_id': self.kwargs['manifest_id']})

@@ -129,14 +129,14 @@ class PDFLabelView(LabelmakerUserMixin, View):
     @staticmethod
     def split_list(li, n):
         """Split text lines to fit on label."""
-        num = float(len(li))/n
+        num = float(len(li)) / n
         split_list = [
-            li[i:i + int(num)] for i in range(0, (n-1)*int(num), int(num))]
-        split_list.append(li[(n-1)*int(num):])
+            li[i:i + int(num)] for i in range(0, (n - 1) * int(num), int(num))]
+        split_list.append(li[(n - 1) * int(num):])
         return split_list
 
     def get_label_data_for_size_chart(
-                self, product_code, json_data, size_chart_id):
+            self, product_code, json_data, size_chart_id):
         """Return text lines for labels generated from a size chart."""
         label_data = []
         for variation in json_data:
