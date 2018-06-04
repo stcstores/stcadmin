@@ -60,8 +60,10 @@ class ProductLoader(ProductEditorBase):
         """Return form data for the location field."""
         bay_ids = product.bays
         bays = models.Bay.objects.filter(bay_id__in=bay_ids)
-        warehouse_id = bays[0].warehouse.warehouse_id
-        return {self.WAREHOUSE: warehouse_id, self.BAYS: bay_ids}
+        if len(bays) > 0:
+            warehouse_id = bays[0].warehouse.warehouse_id
+            return {self.WAREHOUSE: warehouse_id, self.BAYS: bay_ids}
+        return {self.WAREHOUSE: '', self.BAYS: []}
 
     def get_product_type(self, product_range):
         """Return product type form data."""
