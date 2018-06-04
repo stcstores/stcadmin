@@ -42,8 +42,50 @@ button, if it contains more than one Product.
 Creating Single Products
 ________________________
 
-After selecting *Create Single Product* you will be taken to the
-`Listing Options`_ page.
+Selecting *Create Single Product* you will take you to the `Listing Options`_
+page. This page allows you to set *Product Options* for your product to add
+information about it that will appear in the listings. Clicking continue
+will create the product.
+
+Creating Variation Products
+___________________________
+
+Selecting *Create Variation Product* will take you to the `Variation Options`_
+page. On this page you will set the *Product Options* used to differentiate
+the your variations. The used *Product Options* will appear in the listing
+as the dropdown boxes used to select a variation. List the existant values
+for each required *Product Option* and click continue.
+
+The next page is the `Unused Variations`_ page. This page will list every
+possible combination of the variations you set up on the previous page. If any
+combination is not required deselect the checkbox next to it. It will now not
+appear on any susequent pages or in the inventory.
+
+The next page is the `Variation Info`_ page. This page will allow you to set
+the details of the variations. You can select a field to update from the list
+at the top of the page. This will show you a list of all the product's
+variations and their current values for the field. Unless changed each
+variation will have the value set for that field on the `Product Info`_ page.
+Change the value for any variation for which it is not correct.
+
+The final page is the `Variation Listing Options`_ page. This page allows you
+to set *Product Options* for your productto add information that will appear
+in the listing. Select and update *Product Options* in the same way as the
+fields on the `Variation Info`_ page where appropriate.
+
+Finishing Products
+__________________
+
+When you click continue on the `Listing Options`_ or
+`Variation Listing Options`_ pages the product creation process will begin. You
+will land on the inventory page for the product, however it will not yet be
+complete. If this is the case a message will appear stating it. Please wait
+for the product to complete. Products with more variations will take longer to
+create.
+
+Once the product is complete the inventory page will appear as usual, without
+the "Incomplete Product" message. If any error occurs during product creation
+you will be able to retry the process or change the details of the product.
 
 Pages
 =====
