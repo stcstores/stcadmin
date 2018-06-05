@@ -1,10 +1,11 @@
 {% extends "reference/base.html" %}
 {% load staticfiles %}
+{% load reference_extras %}
 
 {% block content %}
 <div class="site_index">
     <ul class="section">
-        <li><a href="{% static "docs/html/index.html" %}">STC Admin Help</a></li>
+        <li><a href="{% help_url 'index' %}">STC Admin Help</a></li>
         <p>Instructions for using the STC Admin.</p>
     </ul>
 </div>
