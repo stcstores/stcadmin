@@ -6,7 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = STCAdmin
 SOURCEDIR     = source
-BUILDDIR      = ../reference/static/docs
+BUILDDIR      = ../static/docs
 
 # Put it first so that "make" without argument is like "make help".
 help:
