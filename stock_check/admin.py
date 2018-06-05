@@ -14,3 +14,11 @@ class ProductAdmin(admin.ModelAdmin):
     list_display_links = ('__str__', )
     list_editable = ('range_id', 'product_id', 'sku')
     search_fields = ('range_id', 'product_id', 'sku')
+
+
+@admin.register(models.ProductBay)
+class ProductBayAdmin(admin.ModelAdmin):
+    """Model admin for the Product Bay model."""
+
+    fields = ('product', 'bay', 'stock_level')
+    list_display = ('product', 'bay', 'stock_level')
