@@ -161,6 +161,8 @@ class ProductSaver(ProductEditorBase):
         for option_name, option_value in kwargs[self.OPTIONS].items():
             if option_name not in (self.PRODUCT_ID, self.RANGE_ID):
                 product.options[option_name] = option_value
+        if self.PRODUCT_ID not in kwargs or not kwargs[self.PRODUCT_ID]:
+            product.date_created = datetime.datetime.now()
 
 
 class ProductCreator(ProductSaver):
@@ -187,10 +189,9 @@ class ProductCreator(ProductSaver):
         self.product_range.delete()
 
     def update_product(self, product, **kwargs):
-        """Set initial stock level and date created."""
+        """Set initial stock level."""
         super().update_product(self, product, **kwargs)
         product.stock_level = kwargs[self.STOCK_LEVEL]
-        product.date_created = datetime.datetime.now()
 
 
 class ProductEditor(ProductSaver):
