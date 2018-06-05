@@ -14,7 +14,7 @@ pycountry
 pylabels
 PyMySQL
 pytz
-psycopg2
+psycopg2-binary
 reportlab
 tabler
 Unidecode
