@@ -75,7 +75,10 @@ def update_product_bays(inventory_table):
             continue
         product = Product.objects.get(sku=row['VAR_SKU'])
         bay_names = row['VAR_Bays'].split(';')
-        bays = [Bay.objects.get(name=name) for name in bay_names]
+        try:
+            bays = [Bay.objects.get(name=name) for name in bay_names]
+        except Bay.DoesNotExist:
+            raise Exception('Bay not found: {}'.format(', '.join(bay_names)))
         stock_level = int(row['VAR_Stock'])
         for bay in bays:
             product_bays.append(ProductBay(
