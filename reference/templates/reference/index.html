@@ -4,12 +4,8 @@
 {% block content %}
 <div class="site_index">
     <ul class="section">
-        <li><a href="{% url 'reference:inventory_reference' %}">Inventory Reference</a></li>
-        <p>Instructions for using the inventory.</p>
-        <li><a href="{% url 'reference:product_creation' %}">Product Creation</a></li>
-        <p>Instructions for creating products in STCAdmin</p>
-        <li><a href="{% url 'reference:package_types' %}">Package Types</a></li>
-        <p>Information about package types.</p>
+        <li><a href="{% static "docs/html/index.html" %}">STC Admin Help</a></li>
+        <p>Instructions for using the STC Admin.</p>
     </ul>
 </div>
 
