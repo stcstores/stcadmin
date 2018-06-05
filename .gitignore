@@ -1,4 +1,4 @@
-reference/static/docs/*
+reference/static/help/*
 
 *.pyo
 *.pyc
