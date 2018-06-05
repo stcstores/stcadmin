@@ -81,8 +81,7 @@ def update_product_bays(inventory_table):
             raise Exception('Bay not found: {}'.format(', '.join(bay_names)))
         stock_level = int(row['VAR_Stock'])
         for bay in bays:
-            product_bays.append(ProductBay(
-                product=product, bay=bay, stock_level=stock_level))
+            product_bays.append(ProductBay(product=product, bay=bay))
     ProductBay.objects.bulk_create(product_bays)
     print('Created {} product bay links.'.format(
         ProductBay.objects.all().count()))
