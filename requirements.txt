@@ -17,6 +17,7 @@ pytz
 psycopg2-binary
 reportlab
 sphinx
+sphinx-rtd-theme
 tabler
 Unidecode
 XlsxWriter
