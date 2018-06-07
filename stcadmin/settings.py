@@ -90,6 +90,7 @@ STATICFILES_DIRS = [
 
 WSGI_APPLICATION = 'stcadmin.wsgi.application'
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
