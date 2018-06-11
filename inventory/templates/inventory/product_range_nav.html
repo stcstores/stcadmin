@@ -1,10 +1,12 @@
 {% load product_editor_extras %}
 {% load inventory_extras %}
-<a href="{% url 'inventory:product_range' product_range.id %}"><button>Range Page</button></a>
-<a href="{% edit_product_url product_range.id %}"><button>Product Editor</button></a>
-<a href="{% url 'inventory:descriptions' product_range.id %}"><button>Description Page</button></a>
-<a href="{% url 'inventory:locations' product_range.id %}"><button>Location Page</button></a>
-<a href="{% url 'inventory:images' product_range.id %}"><button>Images Page</button></a>
-<a href="{% url 'price_calculator:range_price_calculator' product_range.id %}"><button>Range Price Calculator</button></a>
-<a href="{% url 'inventory:print_barcodes' product_range.id %}"><button>Print Barcodes</button></a>
-<a href="{% ccp_product_range_page product_range.id %}" target="_blank"><button>View Range on Cloud Commerce</button></a>
+<div>
+    <a href="{% url 'inventory:product_range' product_range.id %}"><button>Range Page</button></a>
+    <a href="{% edit_product_url product_range.id %}"><button>Product Editor</button></a>
+    <a href="{% url 'inventory:descriptions' product_range.id %}"><button>Description Page</button></a>
+    <a href="{% url 'inventory:locations' product_range.id %}"><button>Location Page</button></a>
+    <a href="{% url 'inventory:images' product_range.id %}"><button>Images Page</button></a>
+    <a href="{% url 'price_calculator:range_price_calculator' product_range.id %}"><button>Range Price Calculator</button></a>
+    <a href="{% url 'inventory:print_barcodes' product_range.id %}"><button>Barcode Labels</button></a>
+    <a href="{% ccp_product_range_page product_range.id %}" target="_blank"><button>View Range on Cloud Commerce</button></a>
+</div>

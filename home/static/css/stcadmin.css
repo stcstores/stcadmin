@@ -339,3 +339,22 @@ th {
   margin: 1em;
   padding: 1em;
 }
+
+.help_button {
+  background-color: #2980B9;
+  color: white;
+  display: inline-block;
+  padding: 0.25em 0.75em;
+}
+
+.page_title {
+  display: inline-block;
+  padding: 0.5em;
+}
+
+.price_negative {
+  color: red;
+}
+.price_zero, .price_positive {
+  color: black;
+}

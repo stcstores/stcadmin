@@ -1,6 +1,7 @@
 {% extends "inventory/range_settings.html" %}
 {% load staticfiles %}
 {% load inventory_extras %}
+{% load reference_extras %}
 
 {% block additional_head %}
 {{ block.super }}
@@ -10,14 +11,9 @@
 {% block page_title %}Range Price Calculator{% endblock %}
 
 {% block content %}{{ block.super }}
-    <style>
-        .price_negative {
-            color: red;
-        }
-        .price_zero, .price_positive {
-            color: black;
-        }
-    </style>
+<h1 class="page_title">Range Price Calculator</h1>
+{% help_button 'inventory_help' 'inventory-price_calculator' %}
+<h2>{{ product_range.name }}</h2>
 
     <select name="country" id="country">
         {% for country in countries %}

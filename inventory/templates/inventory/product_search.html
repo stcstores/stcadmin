@@ -3,6 +3,7 @@
 {% load inventory_extras %}
 {% load product_editor_extras %}
 {% load stcadmin_extras %}
+{% load reference_extras %}
 
 {% block additional_head %}
 {{ block.super }}
@@ -12,6 +13,9 @@
 {% block page_title %}CCP Stock Manager{% endblock %}
 
 {% block content %}
+    <h1 class="page_title">Product Search</h1>
+    {% help_button 'inventory_help' 'inventory-product_search' %}
+
     <form method="POST" action="">{% csrf_token %}
         <div class="error">{{ form.non_field_errors }}</div>
 

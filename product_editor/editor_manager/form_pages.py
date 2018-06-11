@@ -52,6 +52,11 @@ class Page(ProductEditorBase):
         """Return True if page is available in navigation."""
         return True
 
+    @property
+    def help_anchor(self):
+        """Return page anchor for this page's help entry."""
+        return 'product_editor-pages-{}'.format(self.identifier)
+
 
 class NewProductPage(Page):
     """Page class for the new product forms."""

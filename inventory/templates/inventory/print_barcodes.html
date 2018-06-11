@@ -1,20 +1,28 @@
 {% extends "inventory/range_settings.html" %}
 {% load staticfiles %}
 {% load inventory_extras %}
+{% load reference_extras %}
 
-{% block content %}{{ block.super }}
+{% block additional_head %}
 <style>
     #barcode_table tr:nth-child(even) {
-        background: #CCC
+        background: #CCC;
     }
     #barcode_table tr:nth-child(odd) {
-        background: #FFF
+        background: #FFF;
     }
 </style>
-<input type="number" id="update_selected_quantity" min="0" step="1" value="0">
-<input type="button" value="Update Selected" id="update_selected_button">
+{% endblock %}
 
-<input type="submit" value="Produce Barcodes" id="produce_barcodes">
+{% block content %}{{ block.super }}
+<h1 class="page_title">Barcode Labels</h1>
+{% help_button 'inventory_help' 'inventory-barcode_labels' %}
+
+<div>
+    <input type="number" id="update_selected_quantity" min="0" step="1" value="0">
+    <input type="button" value="Update Selected" id="update_selected_button">
+    <input type="submit" value="Produce Barcodes" id="produce_barcodes">
+</div>
 <table id="barcode_table">
     <thead>
         <tr>

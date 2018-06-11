@@ -1,3 +1,5 @@
+{% load reference_extras %}
+
 <div class="section_navigation">
     <ul>
         <li><a href="{% url 'inventory:product_search' %}">Product Search</a></li>
@@ -6,5 +8,6 @@
         <li><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>
         <li><a href="{% url 'inventory:create_warehouse_bay' %}">Create Bay</a></li>
         <li><a href="{% url 'inventory:create_supplier' %}">Create Supplier</a></li>
+        <li><a href="{% help_url 'inventory_help' %}" target="_blank">Help</a></li>
     </ul>
 </div>

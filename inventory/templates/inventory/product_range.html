@@ -3,6 +3,7 @@
 {% load inventory_extras %}
 {% load product_editor_extras %}
 {% load stcadmin_extras %}
+{% load reference_extras %}
 
 {% block additional_head %}
 {{ block.super }}
@@ -12,6 +13,11 @@
 {% block page_title %}CCP New Product Success{% endblock %}
 
 {% block content %}
+    {% if 'Incomplete' not in  product_range.options.option_names %}
+        {% include "inventory/product_range_nav.html" %}
+    {% endif %}
+    <h1 class="page_title">Range Page</h1>
+    {% help_button 'inventory_help' 'inventory-range_page' %}
     <h2>{{ product_range.name }}</h2>
     <p>SKU: {{ product_range.sku}}</p>
     <p>ID: {{ product_range.id }}</p>
@@ -38,9 +44,6 @@
             <span style="font-weight: bold;">OR</span> Cloud Commerce.
         </p>
     </div>
-
-    {% else %}
-    {% include "inventory/product_range_nav.html" %}
 
     <form action="" method="POST">{% csrf_token %}
         <table>

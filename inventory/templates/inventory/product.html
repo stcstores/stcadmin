@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load inventory_extras %}
 {% load stcadmin_extras %}
+{% load reference_extras %}
 
 {% block page_title %}CCP Product{% endblock %}
 
@@ -12,6 +13,9 @@
 {% endblock %}
 
 {% block content %}
+    {% include "inventory/product_range_nav.html" %}
+    <h1 class="page_title">Product Page</h1>
+    {% help_button 'inventory_help' 'inventory-product_page' %}
     <h2>{{ product.full_name }}</h2>
     <p>SKU: {{ product.sku}}</p>
     <p>ID: {{ product.id }}</p>

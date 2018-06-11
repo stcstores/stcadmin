@@ -55,6 +55,7 @@ class ProductView(InventoryUserMixin, FormView):
         """Get template context data."""
         context_data = super().get_context_data(*args, **kwargs)
         context_data['product'] = self.product
+        context_data['product_range'] = self.product.product_range
         if 'Linn Title' in self.option_names:
             context_data['linnworks_title'] = self.product.linn_title
         if 'Linn SKU' in self.option_names:

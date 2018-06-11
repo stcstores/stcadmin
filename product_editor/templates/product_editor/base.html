@@ -1,6 +1,7 @@
 {% extends "home/base.html" %}
 {% load staticfiles %}
 {% load stcadmin_extras %}
+{% load reference_extras %}
 
 {% block additional_head %}{{ block.super }}
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
@@ -13,13 +14,18 @@
 
 {% block page_title %}Product Editor - {% if manager.range_id %}{{ manager.basic_info.data.title }}{% else %}New Product{% endif %}{% endblock %}
 
+{% block section_navigation %}
+{% include "product_editor/section_navigation.html" %}
+{% endblock %}
+
 {% block content %}
 
 <a href="{{ manager.clear_product.url }}" id="clear_product"><button>{{ manager.clear_product.name }}</button></a>
 
 {% include "product_editor/nav.html" %}
 
-<h1>{{ page.name }}</h1>
+<h1 class="page_title">{{ page.name }}</h1>
+{% help_button 'product_editor_help' page.help_anchor %}
 
 {% block pre_form %}{% endblock %}
 

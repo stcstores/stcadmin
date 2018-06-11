@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load inventory_extras %}
 {% load stcadmin_extras %}
+{% load reference_extras %}
 
 {% block additional_head %}{{ block.super }}
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
@@ -12,9 +13,10 @@
 {% include 'home/froala_head.html' %}
 {% endblock %}
 
-{% block page_title %}CCP Stock Manager{% endblock %}
-
 {% block content %}{{ block.super }}
+<h1 class="page_title">Desciption Page</h1>
+{% help_button 'inventory_help' 'inventory-description_page' %}
+<h2>{{ product_range.name }}</h2>
 <form action="" method="POST">{% csrf_token %}
     <table class="new_product">
         {% for field in form %}

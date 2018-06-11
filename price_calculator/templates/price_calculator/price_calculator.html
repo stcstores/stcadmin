@@ -1,28 +1,24 @@
 {% extends "inventory/base.html" %}
 {% load staticfiles %}
 {% load inventory_extras %}
+{% load reference_extras %}
 
 {% block additional_head %}
 {{ block.super }}
 <script src="{% static 'scripts/price_calculator.js' %}"></script>
+<style>
+    #profit, #profit_percentage {
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+</style>
 {% endblock %}
 
 {% block page_title %}Price Calculator{% endblock %}
 
 {% block content %}{{ block.super }}
-    <style>
-        .price_negative {
-            color: red;
-        }
-        .price_zero, .price_positive {
-            color: black;
-        }
-        #profit, #profit_percentage {
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-    </style>
-
+    <h1 class="page_title">Price Calculator</h1>
+    {% help_button 'inventory_help' 'inventory-price_calculator' %}
     <table class="price_calculator">
         <tr>
             <th>Country</th>
