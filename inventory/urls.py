@@ -17,9 +17,6 @@ inventory_urlpatterns = [
         'locations/<int:range_id>/',
         views.LocationFormView.as_view(), name='locations'),
     path(
-        'variations/<int:range_id>/',
-        views.VariationsFormView.as_view(), name='variations'),
-    path(
         'images/<int:range_id>/',
         views.ImageFormView.as_view(), name='images'),
     path(

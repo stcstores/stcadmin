@@ -9,4 +9,3 @@ from . print_barcodes import PrintBarcodeLabels, BarcodePDF  # NOQA
 from . product import ProductView  # NOQA
 from . productrange import ProductRangeView  # NOQA
 from . productsearch import ProductSearchView  # NOQA
-from . variationsformview import VariationsFormView  # NOQA
