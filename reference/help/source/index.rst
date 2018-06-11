@@ -3,16 +3,16 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to STC Admin's documentation!
-=====================================
+Welcome to STC Admin Help
+=========================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   product_creation
-   package_types
-   inventory_reference
+   inventory_help
+   product_editor_help
+   glossary
 
 
 
