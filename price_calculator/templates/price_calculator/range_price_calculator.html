@@ -63,13 +63,6 @@
 
     get_postage_price_url = "{% url 'price_calculator:get_shipping_price' %}";
 
-    postage_prices = {
-        'Large Letter': 0.63,
-        'Packet': 2.15,
-        'Heavy and Large': 3.12,
-        'Courier': 7.56,
-    }
-
     function update_vat_rates(vat_rates, calculator) {
         if (vat_rates.length == 0) {
             {% for product in product_range.products %}
@@ -85,16 +78,21 @@
 
     $(document).ready(function() {
         calcs = {};
+        var options = {
+            {% for product in product_range.products %}
+                '{{ product.id }}': {},
+            {% endfor %}
+        }
         {% for product in product_range.products %}
         var ex_vat_price = {{ product.base_price }};
         var vat_rate = 20;
-        var options = {
+        options['{{ product.id }}'] = {
             {% for option in product.options %}
                 '{{ option.option_name }}': '{{ option.value }}',
             {% endfor %}
         }
-        var purchase_price = options['Purchase Price'];
-        var package_type = options['Package Type'];
+        var purchase_price = options['{{ product.id }}']['Purchase Price'];
+        var package_type = options['{{ product.id }}']['Package Type'];
         var postage_price = 10;
         var data = {
             'sale_price': ex_vat_price,
@@ -155,7 +153,7 @@
         $('#country').change(function() {
             {% for product in product_range.products %}
             var country = $(this).val();
-            var package_type = options['Package Type'];
+            var package_type = options['{{ product.id }}']['Package Type'];
             var price = calcs['{{ product.id }}'].sale_price;
             get_postage_price(
                 calcs['{{ product.id}}'], country, package_type,
