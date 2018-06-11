@@ -16,7 +16,7 @@ def deploy():
     _update_settings(source_folder, env.host)
     _add_server_settings(source_folder)
     _update_virtualenv(source_folder)
-    _update_docs(source_folder)
+    _update_docs(site_folder, source_folder)
     _update_static_files(source_folder)
     _update_database(source_folder)
     _restart_server(env.host)
@@ -65,8 +65,11 @@ def _update_virtualenv(source_folder):
         virtualenv_folder, source_folder))
 
 
-def _update_docs(source_folder):
-    run('cd {}/docs && make html')
+def _update_docs(site_folder, source_folder):
+    activate = 'source {}/virtualenv/bin/activate'.format(site_folder)
+    path = '{}/reference/help'.format(source_folder)
+    command = 'make html'
+    run('{} && cd {} && {}'.format(activate, path, command))
 
 
 def _update_static_files(source_folder):
