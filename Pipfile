@@ -1,0 +1,40 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django-formtools = "*"
+django-jchart = "*"
+django-markup = "*"
+docutils = "*"
+forex-python = "*"
+gunicorn = "*"
+matplotlib = "*"
+"mpld3" = "*"
+mysqlclient = "*"
+pycountry = "*"
+pylabels = "*"
+pytz = "*"
+"psycopg2-binary" = "*"
+reportlab = "*"
+tabler = "*"
+labeler = {git = "https://github.com/axevalley/labeler.git", ref = "v1.1"}
+ccapi = {git = "https://github.com/stcstores/ccapi.git"}
+list_input = {git = "https://github.com/axevalley/list_input.git"}
+order_profit = {git = "https://github.com/stcstores/order_profit.git"}
+cc_products = {git = "https://github.com/stcstores/cc_products.git"}
+Django = ">=2.0"
+"Jinja2" = "*"
+Pillow = "*"
+PyMySQL = "*"
+Sphinx = "*"
+sphinx_rtd_theme = "*"
+Unidecode = "*"
+XlsxWriter = "*"
+
+[dev-packages]
+"Fabric3" = "*"
+
+[requires]
+python_version = "3.6"

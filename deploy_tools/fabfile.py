@@ -1,9 +1,9 @@
 import os
-
-from fabric.contrib.files import append, exists, sed
-from fabric.api import env, local, run, put
-from fabric.operations import sudo
 import random
+
+from fabric.api import env, local, put, run
+from fabric.contrib.files import append, exists, sed
+from fabric.operations import sudo
 
 REPO_URL = 'https://github.com/stcstores/stcadmin.git'
 
