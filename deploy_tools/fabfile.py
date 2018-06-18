@@ -5,6 +5,8 @@ from fabric.api import env, local, put, run
 from fabric.contrib.files import append, exists, sed
 from fabric.operations import sudo
 
+env.shell = "/bin/bash -l -i -c"
+
 REPO_URL = 'https://github.com/stcstores/stcadmin.git'
 
 
@@ -60,16 +62,15 @@ def _add_server_settings(source_folder):
 def _update_virtualenv(source_folder):
     virtualenv_folder = '/'.join([source_folder, '..', 'virtualenv'])
     if not exists('/'.join([virtualenv_folder, 'bin', 'pip'])):
-        run('python3 -m venv {}'.format(virtualenv_folder))
-    run('{}/bin/pip install -U -r {}/requirements.txt'.format(
-        virtualenv_folder, source_folder))
+        run('python -m venv {}'.format(virtualenv_folder))
+    run('cd {} && {}/bin/pipenv install --ignore-pipfile'.format(
+        source_folder, virtualenv_folder))
 
 
 def _update_docs(site_folder, source_folder):
-    activate = 'source {}/virtualenv/bin/activate'.format(site_folder)
     path = '{}/reference/help'.format(source_folder)
-    command = 'make html'
-    run('{} && cd {} && {}'.format(activate, path, command))
+    command = '{}/virtualenv/bin/pipenv run make html'.format(site_folder)
+    run('cd {} && {}'.format(path, command))
 
 
 def _update_static_files(source_folder):
