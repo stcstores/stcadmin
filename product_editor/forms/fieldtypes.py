@@ -36,6 +36,7 @@ class Validators:
 
     def limit_characters(characters):
         """Return validator checking every character in value is allowed."""
+
         def character_limit(value):
             """Check every character in value is allowed for the field."""
             error_message = 'Allowed characters are letters, numbers or {}.'
@@ -52,13 +53,14 @@ class Validators:
                     break
                 if valid is False:
                     raise ValidationError(error_message.format(characters))
+
         return character_limit
 
     @classmethod
     def option_value(cls, option_name):
         """Return allowed characters for the given Product Option."""
         allowed_characters = {
-            'Size': ['+', '-', '.', '/', "'", '"'],
+            'Size': ['+', '-', '.', '/', "'", '"', '(', ')'],
             'Weight': ['.'],
             'Strength': ['+', '-', '.'],
             'Material': ['%', ','],
@@ -184,7 +186,8 @@ class BaseSelectizeField(FormField):
         if self.size is not None:
             attrs['size'] = self.size
         return self.widget_class(
-            attrs=attrs, selectize_options=self.selectize_options,
+            attrs=attrs,
+            selectize_options=self.selectize_options,
             choices=self.choices)
 
 
