@@ -19,7 +19,7 @@ pytz = "*"
 "psycopg2-binary" = "*"
 reportlab = "*"
 tabler = "*"
-labeler = {git = "https://github.com/axevalley/labeler.git", ref = "v1.1"}
+labeler = {git = "https://github.com/axevalley/labeler.git"}
 ccapi = {git = "https://github.com/stcstores/ccapi.git"}
 list_input = {git = "https://github.com/axevalley/list_input.git"}
 order_profit = {git = "https://github.com/stcstores/order_profit.git"}

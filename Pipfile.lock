@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ec5ca57a795fbc4b2045e3e26245d5278bba3b6e9f7d66b6948a00f2cf2a6801"
+            "sha256": "8e7467786a67641efaa6c21aa4a2de7ef89ea056485c2f1480b894215978e3cc"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -18,10 +18,10 @@
     "default": {
         "alabaster": {
             "hashes": [
-                "sha256:2eef172f44e8d301d25aff8068fddd65f767a3f04b5f15b0f4922f113aa1c732",
-                "sha256:37cdcb9e9954ed60912ebc1ca12a9d12178c26637abdf124e3cde2341c257fe0"
+                "sha256:674bb3bab080f598371f4443c5008cbfeb1a5e622dd312395d2d82af2c54c456",
+                "sha256:b63b1f4dc77c074d386752ec4a8a7517600f6c0db8cd42980cae17ab7b3275d7"
             ],
-            "version": "==0.7.10"
+            "version": "==0.7.11"
         },
         "babel": {
             "hashes": [
@@ -111,11 +111,11 @@
         },
         "forex-python": {
             "hashes": [
-                "sha256:263e7be3c5d4b6604bb3c0fbc5d266e33600d287eaa13b0c29edb4ba2f81e705",
-                "sha256:a1a1529584bc031c6b383ce07f3ec1b53a4912b030b521112f74632f789309f4"
+                "sha256:71f4c17871e5dee60c58bb365bec4b3c26c0985158e79c817b9316c989f91da3",
+                "sha256:9f629eee99ae3e211fb2eb09f2427af8380e3d5c4e4a6e94d16ab5be774a08cf"
             ],
             "index": "pypi",
-            "version": "==1.0.0"
+            "version": "==1.1"
         },
         "gunicorn": {
             "hashes": [
@@ -183,8 +183,7 @@
             "version": "==1.0.1"
         },
         "labeler": {
-            "git": "https://github.com/axevalley/labeler.git",
-            "ref": "v1.1"
+            "git": "https://github.com/axevalley/labeler.git"
         },
         "list-input": {
             "git": "https://github.com/axevalley/list_input.git"
@@ -564,11 +563,11 @@
         },
         "tabler": {
             "hashes": [
-                "sha256:8cc70afd6ea3ba93b31ffd7c9a8e4bebf5940ac4cbe14ba5644f03c3c1e157e5",
-                "sha256:ed8473d4cf78b37cfbfd3be658fac412789e8b4f0138cf0ebbe558fedb6a353f"
+                "sha256:61b0090b7d67a5cf324930d18b9c71214a21cce3075ccfd12c235326f384d467",
+                "sha256:bfee817201267e6b71a87e26f1a706d1778d50ae9f01cd31a0640af1b99461b0"
             ],
             "index": "pypi",
-            "version": "==2.2"
+            "version": "==2.2.1"
         },
         "unidecode": {
             "hashes": [
@@ -666,6 +665,7 @@
                 "sha256:edabd457cd23a02965166026fd9bfd196f4324fe6032e866d0f3bd0301cd486f",
                 "sha256:fdf1c1dc5bafc32bc5d08b054f94d659422b05aba244d6be4ddc1c72d9aa70fb"
             ],
+            "markers": "platform_python_implementation != 'pypy'",
             "version": "==1.11.5"
         },
         "cryptography": {
