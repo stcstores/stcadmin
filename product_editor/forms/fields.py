@@ -6,13 +6,12 @@ import re
 from ccapi import CCAPI
 from django import forms
 from django.core.exceptions import ValidationError
-from list_input import ListInput
-
 from inventory import models
+from list_input import ListInput
 from product_editor.editor_manager import ProductEditorBase
 
 from . import fieldtypes, widgets
-from .fieldtypes import Validators
+from .fieldtypes import FormField, Validators
 
 
 class Title(fieldtypes.TextField):
@@ -22,7 +21,7 @@ class Title(fieldtypes.TextField):
     name = 'title'
     required_message = "Please supply a range title"
     placeholder = 'Title'
-    validators = [Validators.limit_characters(('%', "'"))]
+    allowed_characters = ['%', "'"]
     help_text = (
         "The title for the product.<br>This applies to the "
         "Product Range and all of it's Products.")
@@ -79,9 +78,11 @@ class VATRate(fieldtypes.ChoiceField):
     @staticmethod
     def get_choices():
         """Return choice values."""
-        return ([
-            ('', ''), (20, 'Normal Rate 20%'), (5, 'Reduced 5%'),
-            (0, 'VAT Exempt')])
+        return (
+            [
+                ('', ''), (20, 'Normal Rate 20%'), (5, 'Reduced 5%'),
+                (0, 'VAT Exempt')
+            ])
 
 
 class Price(fieldtypes.PriceField):
@@ -113,10 +114,8 @@ class VATPrice(fieldtypes.CombinationField):
         kwargs['label'] = 'Price'
         fields = (
             forms.ChoiceField(
-                required=True,
-                choices=widgets.VATPriceWidget.vat_choices()),
-            forms.FloatField(required=True),
-            forms.FloatField(required=True))
+                required=True, choices=widgets.VATPriceWidget.vat_choices()),
+            forms.FloatField(required=True), forms.FloatField(required=True))
         kwargs['widget'] = widgets.VATPriceWidget()
         super().__init__(
             fields=fields, require_all_fields=True, *args, **kwargs)
@@ -127,7 +126,8 @@ class VATPrice(fieldtypes.CombinationField):
         return {
             widgets.VATPriceWidget.VAT_RATE: vat_rate,
             widgets.VATPriceWidget.EX_VAT: ex_vat_price,
-            widgets.VATPriceWidget.WITH_VAT_PRICE: with_vat_price}
+            widgets.VATPriceWidget.WITH_VAT_PRICE: with_vat_price
+        }
 
 
 class PurchasePrice(fieldtypes.PriceField):
@@ -262,8 +262,11 @@ class Dimensions(fieldtypes.CombinationField):
         fields = (Height(), Width(), Length())
         kwargs['widget'] = widgets.DimensionsWidget()
         super().__init__(
-            fields=fields, require_all_fields=False, required=False,
-            *args, **kwargs)
+            fields=fields,
+            require_all_fields=False,
+            required=False,
+            *args,
+            **kwargs)
 
     def compress(self, value):
         """Return submitted values as a dict."""
@@ -293,7 +296,8 @@ class PackageType(fieldtypes.SingleSelectize):
         """Return choices for field."""
         package_types = [
             (service.value, service.value)
-            for service in CCAPI.get_option_values("33852")]
+            for service in CCAPI.get_option_values("33852")
+        ]
         return [('', '')] + package_types
 
 
@@ -303,15 +307,15 @@ class Department(fieldtypes.SingleSelectize):
     label = 'Department'
     name = 'department'
     required_message = "A <b>Department</b> must be selected."
-    help_text = (
-        'The <b>Department</b> to which the product belongs.')
+    help_text = ('The <b>Department</b> to which the product belongs.')
 
     @staticmethod
     def get_choices():
         """Get choice options for field."""
         departments = [
-            (w.warehouse_id, w.name) for w in
-            models.Warehouse.used_warehouses.all()]
+            (w.warehouse_id, w.name)
+            for w in models.Warehouse.used_warehouses.all()
+        ]
         departments.sort(key=lambda x: x[1])
         return [('', '')] + departments
 
@@ -361,8 +365,10 @@ class Location(fieldtypes.SelectizeField):
             options = [['', '']]
             for warehouse in warehouses:
                 options.append(
-                    [warehouse.name, [
-                        [bay.id, bay] for bay in warehouse.bay_set.all()]])
+                    [
+                        warehouse.name,
+                        [[bay.id, bay] for bay in warehouse.bay_set.all()]
+                    ])
             return options
         else:
             try:
@@ -375,10 +381,8 @@ class Location(fieldtypes.SelectizeField):
     def get_warehouse(self):
         """Return Warehouse object matching the field's department."""
         if isinstance(self.department, int):
-            return models.Warehouse.objects.get(
-                warehouse_id=self.department)
-        return models.Warehouse.objects.get(
-            name=self.department)
+            return models.Warehouse.objects.get(warehouse_id=self.department)
+        return models.Warehouse.objects.get(name=self.department)
 
     def to_python(self, *args, **kwargs):
         """Return submitted bays as a list of bay IDs."""
@@ -426,7 +430,8 @@ class WarehouseBayField(fieldtypes.CombinationField):
         if self.lock_warehouse:
             selectize_options[0]['readOnly'] = True
         kwargs['widget'] = widgets.WarehouseBayWidget(
-            choices=choices, selectize_options=selectize_options,
+            choices=choices,
+            selectize_options=selectize_options,
             lock_warehouse=self.lock_warehouse)
         super().__init__(
             fields=fields, require_all_fields=False, *args, **kwargs)
@@ -446,11 +451,11 @@ class WarehouseBayField(fieldtypes.CombinationField):
         return value
 
 
-class OptionField:
+class OptionField(FormField):
     """Base field class for editing Product Options."""
 
-    allowed_characters = {
-        'Size': ['+', '-', '.', '/', "'", '"'],
+    option_allowed_characters = {
+        'Size': ['+', '-', '.', '/', "'", '"', '(', ')'],
         'Weight': ['.'],
         'Strength': ['+', '-', '.'],
         'Material': ['%', ','],
@@ -460,31 +465,12 @@ class OptionField:
         """Set options for selectize."""
         self.selectize_options['create'] = True
         super().__init__(*args, **kwargs)
-
-    def legal_characters(self, value):
-        """Validate all characters in submitted value are alowed."""
-        error_message = '{} is not a valid character for {}.'
-        allowed_characters = []
-        if self.label in self.allowed_characters:
-            allowed_characters += self.allowed_characters[self.label]
-        for char in value:
-            if not char.isalnum() and not char == ' ':
-                if char not in allowed_characters:
-                    raise ValidationError(
-                        error_message.format(char, self.label))
+        if self.name in self.option_allowed_characters:
+            self.allowed_characters = self.option_allowed_characters[self.name]
 
     def valid_value(self, value):
         """Allow values not in choices."""
         return True
-
-    def validate(self, value):
-        """Validate submitted value."""
-        super().validate(value)
-        if isinstance(value, list):
-            for v in value:
-                self.legal_characters(v)
-        else:
-            self.legal_characters(value)
 
     @staticmethod
     def get_choices(option_name, options=None, initial=None):
@@ -551,14 +537,10 @@ class Gender(fieldtypes.ChoiceField):
     def get_choices(self):
         """Return choices for field."""
         return (
-            (None, ''),
-            (self.MENS, 'Mens'),
-            (self.WOMENS, 'Womens'),
-            (self.BOYS, 'Boys'),
-            (self.GIRLS, 'Girls'),
-            (self.BABY_BOYS, 'Baby Boys'),
-            (self.BABY_GIRLS, 'Baby Girls'),
-            (self.UNISEX_BABY, 'Unisex Baby'))
+            (None, ''), (self.MENS, 'Mens'), (self.WOMENS, 'Womens'),
+            (self.BOYS, 'Boys'), (self.GIRLS,
+                                  'Girls'), (self.BABY_BOYS, 'Baby Boys'),
+            (self.BABY_GIRLS, 'Baby Girls'), (self.UNISEX_BABY, 'Unisex Baby'))
 
 
 class ListOption(fieldtypes.FormField, ListInput):

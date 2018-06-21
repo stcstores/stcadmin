@@ -32,42 +32,36 @@ class Validators:
     def numeric(value):
         """Validate every character in value is numeric."""
         if not value.isdigit():
-            raise ValidationError('Not a valid barcode.')
+            raise ValidationError('"{}" is not a valid a integer.')
 
-    def limit_characters(characters):
-        """Return validator checking every character in value is allowed."""
+    @staticmethod
+    def allow_characters(value, allowed_characters):
+        """Raise ValidationError if any illegal characters are in value."""
+        error_message = (
+            'Allowed characters are letters, numbers or {}.'
+            'The following characters where found: {}.')
+        errors = [
+            char for char in value if not char.isalnum() and char != ' '
+            and char not in allowed_characters
+        ]
+        if len(errors) > 0:
+            str_allowed_characters = ', '.join(allowed_characters)
+            str_errors = ', '.join(errors)
+            raise ValidationError(
+                error_message.format(str_allowed_characters, str_errors))
 
-        def character_limit(value):
-            """Check every character in value is allowed for the field."""
-            error_message = 'Allowed characters are letters, numbers or {}.'
-            if isinstance(value, list):
-                for v in value:
-                    Validators.character_limit(v)
-                    return
-            else:
-                valid = True
-                for char in str(value):
-                    if char == ' ' or char.isalnum() or char in characters:
-                        continue
-                    valid = False
-                    break
-                if valid is False:
-                    raise ValidationError(error_message.format(characters))
-
-        return character_limit
-
-    @classmethod
-    def option_value(cls, option_name):
-        """Return allowed characters for the given Product Option."""
-        allowed_characters = {
-            'Size': ['+', '-', '.', '/', "'", '"', '(', ')'],
-            'Weight': ['.'],
-            'Strength': ['+', '-', '.'],
-            'Material': ['%', ','],
-        }
-        if option_name in allowed_characters:
-            return cls.limit_characters(allowed_characters[option_name])
-        return cls.alphanumeric
+    @staticmethod
+    def disallow_characters(value, disallowed_characters):
+        """Raise ValidationError if any disallowed characters are in value."""
+        error_message = (
+            'The characters {} are not allowed in this field.'
+            'The following characters where found: {}.')
+        errors = [char for char in value if char in disallowed_characters]
+        if len(errors) > 0:
+            str_disallowed_characters = ', '.join(disallowed_characters)
+            str_errors = ', '.join(errors)
+            raise ValidationError(
+                error_message.format(str_disallowed_characters, str_errors))
 
 
 class FormField(forms.Field):
@@ -87,7 +81,8 @@ class FormField(forms.Field):
     initial = None
     required_message = ''
     validators = []
-    disallowed_characters = []
+    allowed_characters = None
+    disallowed_characters = None
 
     def __init__(self, *args, **kwargs):
         """Set field attributes."""
@@ -132,15 +127,12 @@ class FormField(forms.Field):
             attrs['required'] = 'true'
         return self.widget(attrs=attrs)
 
-    def clean(self, value):
-        """Clean submitted value."""
-        if value is not None:
-            if any((c in value for c in self.disallowed_characters)):
-                raise ValidationError(
-                    "The following characters are not allowed in "
-                    "this field: {}".format(
-                        ', '.join(self.disallowed_characters)))
-        return super().clean(value)
+    def validate(self, value):
+        """Limit characters if disallowed_characters is set."""
+        if self.disallowed_characters is not None:
+            Validators.allow_characters(value, self.disallowed_characters)
+        if self.allowed_characters is not None:
+            Validators.allow_characters(value, self.allowed_characters)
 
 
 class ChoiceField(FormField, forms.ChoiceField):
