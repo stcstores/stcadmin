@@ -5,7 +5,6 @@ import re
 
 from ccapi import CCAPI
 from django import forms
-from django.core.exceptions import ValidationError
 from inventory import models
 from list_input import ListInput
 from product_editor.editor_manager import ProductEditorBase
@@ -464,9 +463,10 @@ class OptionField(FormField):
     def __init__(self, *args, **kwargs):
         """Set options for selectize."""
         self.selectize_options['create'] = True
+        if kwargs.get('label') in self.option_allowed_characters:
+            self.allowed_characters = self.option_allowed_characters[
+                kwargs.get('label')]
         super().__init__(*args, **kwargs)
-        if self.name in self.option_allowed_characters:
-            self.allowed_characters = self.option_allowed_characters[self.name]
 
     def valid_value(self, value):
         """Allow values not in choices."""
