@@ -8,3 +8,4 @@ class StockCheckConfig(AppConfig):
 
     name = 'stock_check'
     verbose_name = 'Stock Check'
+    create_group = True

@@ -8,3 +8,4 @@ class SpringManifestConfig(AppConfig):
 
     name = 'spring_manifest'
     verbose_name = 'Manifest'
+    create_group = True

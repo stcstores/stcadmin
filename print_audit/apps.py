@@ -8,3 +8,4 @@ class PrintAuditConfig(AppConfig):
 
     name = 'print_audit'
     verbose_name = 'Print Audit'
+    create_group = True

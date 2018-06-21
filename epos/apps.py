@@ -8,3 +8,4 @@ class EposConfig(AppConfig):
 
     name = 'epos'
     verbose_name = 'EPOS'
+    create_group = True

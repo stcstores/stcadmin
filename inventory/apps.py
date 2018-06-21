@@ -8,3 +8,4 @@ class InventoryConfig(AppConfig):
 
     name = 'inventory'
     verbose_name = 'Inventory'
+    create_group = True

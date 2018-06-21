@@ -8,3 +8,4 @@ class SuppliersConfig(AppConfig):
 
     name = 'suppliers'
     verbose_name = 'Suppliers'
+    create_group = True

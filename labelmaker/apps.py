@@ -8,3 +8,4 @@ class LabelmakerConfig(AppConfig):
 
     name = 'labelmaker'
     verbose_name = 'Label Maker'
+    create_group = True
