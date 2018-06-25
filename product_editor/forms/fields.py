@@ -482,6 +482,12 @@ class OptionField(FormField):
             values.append(initial)
         return [('', '')] + [(v, v) for v in values]
 
+    def validate(self, values):
+        """Validate each input value."""
+        if self.allowed_characters is not None:
+            for value in values:
+                Validators.allow_characters(value, self.allowed_characters)
+
 
 class VariationOptions(OptionField, fieldtypes.SelectizeField):
     """Field for options that define variations."""

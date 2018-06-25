@@ -18,10 +18,12 @@ class TestField(TestCase):
     def test_option_field_allowed_characters(self):
         """Test option field allowed characters."""
         field = fields.VariationOptions(label='Size', choices=[])
-        field.validate('Hello World')
-        field.validate('Hello + (world) .')
+        field.validate(['Hello World'])
+        field.validate(['Hello World', 'Hello Earth'])
+        field.validate(['Hello + (world) .'])
+        field.validate(['Hello-world'])
         with self.assertRaises(ValidationError):
-            field.validate('Hello ~ world')
+            field.validate(['Hello ~ world'])
 
     def test_description_disallowed_characters(self):
         """Test Description field class allowed characters."""
