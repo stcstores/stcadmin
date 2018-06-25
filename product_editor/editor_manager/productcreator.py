@@ -7,7 +7,6 @@ import threading
 from pprint import pprint
 
 import cc_products
-
 from inventory import models
 from product_editor import exceptions
 
@@ -149,7 +148,8 @@ class ProductSaver(ProductEditorBase):
         product.package_type = kwargs[self.PACKAGE_TYPE]
         product.brand = kwargs[self.BRAND]
         product.manufacturer = kwargs[self.MANUFACTURER]
-        product.barcode = kwargs[self.BARCODE]
+        if product.barcode != kwargs[self.BARCODE]:
+            product.barcode = kwargs[self.BARCODE]
         if kwargs[self.RETAIL_PRICE]:
             product.retail_price = kwargs[self.RETAIL_PRICE]
         if kwargs[self.SUPPLIER_SKU]:
