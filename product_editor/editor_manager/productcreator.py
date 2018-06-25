@@ -44,7 +44,8 @@ class ProductSaver(ProductEditorBase):
             self.product_range.options[self.INCOMPLETE].selected = False
         except Exception as exception:
             logger.error(
-                'Product Creation Error: %s', ' '.join(sys.argv),
+                'Product Creation Error: %s',
+                ' '.join(sys.argv),
                 exc_info=sys.exc_info())
             self.handle_error(self)
             raise exception
@@ -66,7 +67,8 @@ class ProductSaver(ProductEditorBase):
             option_data = self.get_variation_option_data(self, variation)
             data[self.OPTIONS] = {k: v for k, v in variation.items()}
             data[self.OPTIONS].update(
-                {k: v for k, v in option_data.items() if v})
+                {k: v
+                 for k, v in option_data.items() if v})
             self.add_variation(self, **data)
         for key in variations[0]:
             self.product_range.options[key].variable = True
@@ -78,9 +80,12 @@ class ProductSaver(ProductEditorBase):
         form_data = self.product_data[self.UNUSED_VARIATIONS]
         variations = []
         for variation in [d for d in form_data if d[self.USED]]:
-            variations.append({
-                k: v for k, v in variation.items() if k not in
-                (self.PRODUCT_ID, self.USED)})
+            variations.append(
+                {
+                    k: v
+                    for k, v in variation.items()
+                    if k not in (self.PRODUCT_ID, self.USED)
+                })
         if not all([var.keys() == variations[0].keys() for var in variations]):
             raise exceptions.VariationKeyMissmatch(variations)
         return variations
@@ -144,6 +149,7 @@ class ProductSaver(ProductEditorBase):
         product.package_type = kwargs[self.PACKAGE_TYPE]
         product.brand = kwargs[self.BRAND]
         product.manufacturer = kwargs[self.MANUFACTURER]
+        product.barcode = kwargs[self.BARCODE]
         if kwargs[self.RETAIL_PRICE]:
             product.retail_price = kwargs[self.RETAIL_PRICE]
         if kwargs[self.SUPPLIER_SKU]:
