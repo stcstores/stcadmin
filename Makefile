@@ -4,6 +4,10 @@ init:
 	pip install pipenv --upgrade
 	pipenv install --dev --skip-lock
 
+re-init:
+	pipenv --rm
+	make init
+
 deploy:
 	cd deploy_tools && pipenv run fab deploy:host=stcstores@stcadmin.stcstores.co.uk
 
