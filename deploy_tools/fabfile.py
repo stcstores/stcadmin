@@ -2,6 +2,7 @@
 
 import os
 import random
+import sys
 
 from fabric.api import env, local, put, run
 from fabric.context_managers import cd
@@ -100,8 +101,10 @@ class Deploy():
 
     def update_virtualenv(self):
         """Create virtualenv and install packages."""
-        if not exists('/'.join([self.virtualenv_folder, 'bin', 'pip'])):
-            run('python -m venv {}'.format(self.virtualenv_folder))
+        run('rm -rf {}'.format(self.virtualenv_folder))
+        python_executable = 'python{}.{}'.format(
+            sys.version_info.major, sys.version_info.minor)
+        run('{} -m venv {}'.format(python_executable, self.virtualenv_folder))
         self.venv_run('pip install pip -U')
         self.venv_run('pip install pipenv --upgrade')
         with cd(self.source_folder):
