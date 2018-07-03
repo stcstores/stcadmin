@@ -12,7 +12,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEBUG = local_settings.DEBUG
 DATABASES = local_settings.DATABASES
 ALLOWED_HOSTS = local_settings.ALLOWED_HOSTS
-LOGGING = local_settings.LOGGING
 ADMINS = local_settings.ADMINS
 EMAIL_HOST = local_settings.EMAIL_HOST
 EMAIL_HOST_USER = local_settings.EMAIL_HOST_USER
@@ -104,6 +103,39 @@ AUTH_PASSWORD_VALIDATORS = [
         'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'management_commands': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'product_creation': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'file_manifest': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
+}
 
 LANGUAGE_CODE = 'en-gb'
 TIME_ZONE = 'UTC'
