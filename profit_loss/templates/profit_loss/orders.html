@@ -51,6 +51,9 @@
 <form action="{% url 'profit_loss:export_orders' %}" method="POST">{% csrf_token %}
     <input type="text" name="date_from" value="{{ date_from }}" hidden>
     <input type="text" name="date_to" value="{{ date_to }}" hidden>
+    <input type="text" name="department" value="{{ department }}" hidden>
+    <input type="text" name="country" value="{{ country }}" hidden>
+    <input type="text" name="order_id" value="{{ order_id }}" hidden>
     <input type="submit" value="Export Orders">
 </form>
 {% if is_paginated %}

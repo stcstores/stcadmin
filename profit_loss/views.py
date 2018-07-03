@@ -1,6 +1,5 @@
 """Views for profit_loss app."""
 
-
 import csv
 import datetime
 from io import StringIO
@@ -12,7 +11,6 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import is_naive
 from django.views.generic.base import TemplateView, View
 from django.views.generic.list import ListView
-
 from home.views import UserInGroupMixin
 from profit_loss import models
 from spring_manifest.models import CloudCommerceCountryID
@@ -24,6 +22,31 @@ def localise_datetime(date_input):
         tz = pytz.timezone('Europe/London')
         date_input = date_input.replace(tzinfo=tz)
     return date_input
+
+
+def get_order_queryset(posted_data):
+    """Return orders matching GET query."""
+    orders = models.Order.objects
+    if posted_data.get('order_id', None) is not None:
+        order_id = posted_data.get('order_id')
+        if isinstance(order_id, str) and order_id.isdigit():
+            return orders.filter(order_id=int(order_id))
+    if posted_data.get('date_from'):
+        year, month, day = posted_data['date_from'].split('-')
+        start_date = localise_datetime(
+            datetime.datetime(year=int(year), month=int(month), day=int(day)))
+        orders = orders.filter(date_recieved__gte=start_date)
+    if posted_data.get('date_to'):
+        year, month, day = posted_data['date_to'].split('-')
+        end_date = localise_datetime(
+            datetime.datetime(year=int(year), month=int(month), day=int(day)))
+        end_date += datetime.timedelta(days=1)
+        orders = orders.filter(date_recieved__lte=end_date)
+    if posted_data.get('department'):
+        orders = orders.filter(department=posted_data.get('department'))
+    if posted_data.get('country'):
+        orders = orders.filter(country__name=posted_data.get('country'))
+    return orders
 
 
 class ProfitLossUserMixin(UserInGroupMixin):
@@ -46,40 +69,9 @@ class Orders(ProfitLossUserMixin, ListView):
     country = None
     order_id = None
 
-    def get(self, *args, **kwargs):
-        """Get parameters from GET request."""
-        if self.request.GET.get('date_from'):
-            year, month, day = self.request.GET['date_from'].split('-')
-            self.start_date = localise_datetime(datetime.datetime(
-                year=int(year), month=int(month), day=int(day)))
-        if self.request.GET.get('date_to'):
-            year, month, day = self.request.GET['date_to'].split('-')
-            self.end_date = localise_datetime(datetime.datetime(
-                year=int(year), month=int(month), day=int(day)))
-            self.end_date += datetime.timedelta(days=1)
-        if self.request.GET.get('department'):
-            self.department = self.request.GET.get('department')
-        if self.request.GET.get('country'):
-            self.country = self.request.GET.get('country')
-        order_id = self.request.GET.get('order_id')
-        if order_id and order_id.isdigit():
-            self.order_id = int(order_id)
-        return super().get(*args, **kwargs)
-
     def get_queryset(self):
         """Return orders matching GET query."""
-        orders = self.model.objects
-        if self.order_id is not None:
-            return orders.filter(order_id=self.order_id)
-        if self.start_date is not None:
-            orders = orders.filter(date_recieved__gte=self.start_date)
-        if self.end_date is not None:
-            orders = orders.filter(date_recieved__lte=self.end_date)
-        if self.department is not None:
-            orders = orders.filter(department=self.department)
-        if self.country is not None:
-            orders = orders.filter(country__name=self.country)
-        return orders.all()
+        return get_order_queryset(self.request.GET).all()
 
     def get_context_data(self, *args, **kwargs):
         """Return context data for template."""
@@ -90,11 +82,13 @@ class Orders(ProfitLossUserMixin, ListView):
         context['country'] = self.request.GET.get('country')
         context['departments'] = [
             v[0] for v in self.model.objects.order_by().values_list(
-                'department').distinct()]
+                'department').distinct()
+        ]
         context['countries'] = [
-            v[0] for v in
-            CloudCommerceCountryID.objects.order_by().values_list(
-                'name').distinct()]
+            v[0]
+            for v in CloudCommerceCountryID.objects.order_by().values_list(
+                'name').distinct()
+        ]
         context['order_id'] = self.request.GET.get('order_id') or ''
         return context
 
@@ -137,20 +131,7 @@ class ExportOrders(View):
 
     def get_orders(self):
         """Return orders matching query."""
-        if self.request.POST.get('date_from'):
-            year, month, day = self.request.POST['date_from'].split('-')
-            self.start_date = localise_datetime(datetime.datetime(
-                year=int(year), month=int(month), day=int(day)))
-        if self.request.POST.get('date_to'):
-            year, month, day = self.request.POST['date_to'].split('-')
-            self.end_date = localise_datetime(datetime.datetime(
-                year=int(year), month=int(month), day=int(day)))
-        orders = models.Order.objects.filter()
-        if self.start_date is not None:
-            orders = orders.filter(date_recieved__gte=self.start_date)
-        if self.end_date is not None:
-            orders = orders.filter(date_recieved__lte=self.end_date)
-        return orders.all()
+        return get_order_queryset(self.request.POST).all()
 
     def format_price(self, price):
         """Return pence integer as formated price string."""
@@ -178,17 +159,23 @@ class ExportOrders(View):
         return [
             'Order ID', 'Department', 'Country', 'Items', 'Price',
             'Weight (g)', 'Courier Rule', 'Postage Price', 'Purchase Price',
-            'Channel Fee', 'VAT', 'Profit (with VAT)', 'Profit', 'Profit %']
+            'Channel Fee', 'VAT', 'Profit (with VAT)', 'Profit', 'Profit %'
+        ]
 
     def get_data(self):
         """Return row data for CSV file."""
-        return [[
-            order.order_id, order.department, order.country, order.item_count,
-            self.format_price(order.price), order.weight,
-            order.shipping_service, self.format_price(order.postage_price),
-            self.format_price(order.purchase_price),
-            self.format_price(order.channel_fee()),
-            self.format_price(order.vat()),
-            self.format_price(order.profit_no_vat()),
-            self.format_price(order.profit()),
-            str(order.profit_percentage()) + '%'] for order in self.orders]
+        return [
+            [
+                order.order_id, order.department, order.country,
+                order.item_count,
+                self.format_price(order.price), order.weight,
+                order.shipping_service,
+                self.format_price(order.postage_price),
+                self.format_price(order.purchase_price),
+                self.format_price(order.channel_fee()),
+                self.format_price(order.vat()),
+                self.format_price(order.profit_no_vat()),
+                self.format_price(order.profit()),
+                str(order.profit_percentage()) + '%'
+            ] for order in self.orders
+        ]
