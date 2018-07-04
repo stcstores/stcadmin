@@ -116,11 +116,6 @@
     }
 
     $(document).ready(function() {
-        $('.datepicker').datepicker({
-          showOtherMonths: true,
-          selectOtherMonths: true,
-          dateFormat: 'yy-mm-dd'
-        });
         {% if page_obj.has_previous %}
         $('#first_page').click(function() {
             go_to_page(1);
