@@ -172,7 +172,7 @@ class UserFeedback(models.Model):
 
     user = models.ForeignKey(CloudCommerceUser, on_delete=models.CASCADE)
     feedback_type = models.ForeignKey(Feedback, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(default=now)
+    timestamp = models.DateField(default=now)
     order_id = models.CharField(max_length=10, blank=True, null=True)
     note = models.TextField(blank=True, null=True)
 
