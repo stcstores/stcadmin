@@ -103,6 +103,12 @@ class CreateUserFeedback(PrintAuditUserMixin, CreateView):
                 models.CloudCommerceUser, id=user_id)
         return initial
 
+    def get_form(self, *args, **kwargs):
+        """Add HTML class to the timestamp field."""
+        form = super().get_form(*args, **kwargs)
+        form.fields['timestamp'].widget.attrs['class'] = 'datepicker'
+        return form
+
 
 class UpdateUserFeedback(PrintAuditUserMixin, UpdateView):
     """View for update user feedback page."""
@@ -115,6 +121,12 @@ class UpdateUserFeedback(PrintAuditUserMixin, UpdateView):
     def get_object(self):
         """Return UserFeedback object to update."""
         return get_object_or_404(self.model, id=self.kwargs.get('feedback_id'))
+
+    def get_form(self, *args, **kwargs):
+        """Add HTML class to the timestamp field."""
+        form = super().get_form(*args, **kwargs)
+        form.fields['timestamp'].widget.attrs['class'] = 'datepicker'
+        return form
 
 
 class DeleteUserFeedback(PrintAuditUserMixin, DeleteView):
