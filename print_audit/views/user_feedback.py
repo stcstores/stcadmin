@@ -6,7 +6,6 @@ from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-
 from print_audit import forms, models
 
 from .views import PrintAuditUserMixin
@@ -40,15 +39,19 @@ class UserFeedback(PrintAuditUserMixin, TemplateView):
         self.get_pack_counts()
         self.get_feedback_counts()
         return {
-            'users': self.users, 'feedback_types': self.feedback_types,
+            'users': self.users,
+            'feedback_types': self.feedback_types,
             'feedback_counts': self.feedback_counts,
-            'pack_counts': self.pack_counts, 'form': self.form}
+            'pack_counts': self.pack_counts,
+            'form': self.form
+        }
 
     def get_pack_counts(self):
         """Return dict of the number of order packed by users."""
         self.pack_counts = {
-            user.id: self.orders.filter(user=user).count() for user
-            in self.users}
+            user.id: self.orders.filter(user=user).count()
+            for user in self.users
+        }
 
     def get_feedback_counts(self):
         """Return dict of the number of feedbacks given to users."""
@@ -58,7 +61,7 @@ class UserFeedback(PrintAuditUserMixin, TemplateView):
             for feedback_type in self.feedback_types:
                 self.feedback_counts[user.id][
                     feedback_type.id] = self.feedback.filter(
-                    user=user, feedback_type=feedback_type).count()
+                        user=user, feedback_type=feedback_type).count()
 
     def get_models(self):
         """Get users, feedback_types, orders and feedbacks."""
@@ -80,15 +83,14 @@ class UserFeedback(PrintAuditUserMixin, TemplateView):
                     date_created__gte=date_range[0],
                     date_created__lte=date_range[1])
                 self.feedback = self.feedback.filter(
-                    timestamp__gte=date_range[0],
-                    timestamp__lte=date_range[1])
+                    timestamp__gte=date_range[0], timestamp__lte=date_range[1])
 
 
 class CreateUserFeedback(PrintAuditUserMixin, CreateView):
     """View for create user feedback page."""
 
     model = models.UserFeedback
-    fields = ['user', 'feedback_type', 'order_id', 'note']
+    fields = ['user', 'timestamp', 'feedback_type', 'order_id', 'note']
     template_name = 'print_audit/user_feedback_form.html'
     success_url = reverse_lazy('print_audit:user_feedback')
 
@@ -106,7 +108,7 @@ class UpdateUserFeedback(PrintAuditUserMixin, UpdateView):
     """View for update user feedback page."""
 
     model = models.UserFeedback
-    fields = ['user', 'feedback_type', 'order_id', 'note']
+    fields = ['user', 'timestamp', 'feedback_type', 'order_id', 'note']
     template_name = 'print_audit/user_feedback_form.html'
     success_url = reverse_lazy('print_audit:user_feedback')
 
@@ -159,8 +161,7 @@ class FeedbackList(PrintAuditUserMixin, ListView):
         """Process GET request."""
         user_id = self.request.GET.get('user_id') or None
         if user_id is not None:
-            self.user = get_object_or_404(
-                models.CloudCommerceUser, pk=user_id)
+            self.user = get_object_or_404(models.CloudCommerceUser, pk=user_id)
         feedback_id = self.request.GET.get('feedback_id') or None
         if feedback_id is not None:
             self.feedback_type = get_object_or_404(
