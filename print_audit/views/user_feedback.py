@@ -164,7 +164,7 @@ class FeedbackList(PrintAuditUserMixin, ListView):
     paginator_class = SafePaginator
     template_name = 'print_audit/feedback_list.html'
     model = models.UserFeedback
-    paginate_by = 10
+    paginate_by = 50
     context_object_name = 'feedback_list'
     user = None
     feedback_type = None
