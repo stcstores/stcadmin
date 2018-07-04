@@ -2,10 +2,24 @@
 {% load staticfiles %}
 {% load print_audit_extras %}
 
+{% block additional_head %}{{ block.super }}
+    <style>
+        .feedback_list {
+            display: inline-block;
+            max-width: 70%;
+        }
+
+        .feedback_filters {
+            display: inline-block;
+            max-width: 25%;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
 <h1>Feedback List</h1>
 <div class="feedback_list">
-    <table class="feedback_list">
+    <table>
         <th>User</th>
         <th>Feedback Type</th>
         <th>Created</th>
@@ -87,8 +101,6 @@
 {% block script %}{{ block.super }}
 <script>
     $(document).ready(function() {
-        $('.datepicker').datepicker();
-
         $(".delete_button").submit(function() {
             var c = confirm("Are you sure you want to delete this feedback?");
             return c;
