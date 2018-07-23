@@ -20,7 +20,8 @@ EMAIL_PORT = local_settings.EMAIL_PORT
 EMAIL_USE_TLS = local_settings.EMAIL_USE_TLS
 SERVER_EMAIL = local_settings.SERVER_EMAIL
 DEFAULT_FROM_EMAIL = local_settings.DEFAULT_FROM_EMAIL
-CC_LOGIN = local_settings.CC_LOGIN
+CC_DOMAIN = local_settings.CC_DOMAIN
+CC_USERNAME = local_settings.CC_LOGIN
 CC_PWD = local_settings.CC_PWD
 SPRING_COURIER_RULES = local_settings.SPRING_COURIER_RULES
 SCAYT_CUSTOMER_ID = local_settings.SCAYT_CUSTOMER_ID
@@ -155,4 +156,4 @@ DOCS_ROOT = os.path.join(BASE_DIR, 'docs', 'build', 'html')
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = 'home:index'
 
-CCAPI.credentials(CC_LOGIN, CC_PWD, verbose=True)
+CCAPI.create_session(domain=CC_DOMAIN, username=CC_USERNAME, password=CC_PWD)
