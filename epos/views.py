@@ -8,7 +8,6 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
-
 from home.views import UserInGroupMixin
 
 
@@ -67,8 +66,10 @@ class EPOSOrder(EPOSUserMixin, View):
         products = json.loads(request.body)
         for product_id, product in products.items():
             old_stock_level = product['stock_level']
-            new_stock_level = int(product[
-                'stock_level']) - int(product['order_quantity'])
+            new_stock_level = int(product['stock_level']) - int(
+                product['order_quantity'])
             CCAPI.update_product_stock_level(
-                product_id, new_stock_level, old_stock_level)
+                product_id=product_id,
+                new_stock_level=new_stock_level,
+                old_stock_level=old_stock_level)
         return HttpResponse('ok')

@@ -41,11 +41,16 @@ class GetStockForProductView(InventoryUserMixin, View):
         stock_data = []
         for variation_id in variation_ids:
             product = CCAPI.get_product(variation_id)
-            stock_data.append({
-                'variation_id': variation_id,
-                'stock_level': product.stock_level,
-                'locations': ' '.join(
-                    [location.name for location in product.locations])})
+            stock_data.append(
+                {
+                    'variation_id':
+                    variation_id,
+                    'stock_level':
+                    product.stock_level,
+                    'locations':
+                    ' '.join(
+                        [location.name for location in product.locations])
+                })
         return HttpResponse(json.dumps(stock_data))
 
 
@@ -60,7 +65,9 @@ class UpdateStockLevelView(InventoryUserMixin, View):
         new_stock_level = request_data['new_stock_level']
         old_stock_level = request_data['old_stock_level']
         CCAPI.update_product_stock_level(
-            product_id, new_stock_level, old_stock_level)
+            product_id=product_id,
+            new_stock_level=new_stock_level,
+            old_stock_level=old_stock_level)
         product = CCAPI.get_product(product_id)
         stock_level = product.stock_level
         return HttpResponse(stock_level)
