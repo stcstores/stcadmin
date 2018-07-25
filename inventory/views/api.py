@@ -81,9 +81,8 @@ class SetImageOrderView(InventoryUserMixin, View):
         """Process HTTP request."""
         try:
             data = json.loads(self.request.body)
-            response = CCAPI.set_image_order(
+            CCAPI.set_image_order(
                 product_id=data['product_id'], image_ids=data['image_order'])
-            response.raise_for_status()
         except Exception:
             return HttpResponse(status=500)
         return HttpResponse('ok')

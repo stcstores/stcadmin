@@ -7,7 +7,6 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormView
-
 from inventory.forms import ImagesForm
 from inventory.models import STCAdminImage
 
@@ -19,12 +18,10 @@ class DeleteSTCAdminImage(InventoryUserMixin, RedirectView):
 
     def get_redirect_url(self, image_id):
         """Return URL to redirect to."""
-        stcadmin_image = get_object_or_404(
-            STCAdminImage, pk=image_id)
+        stcadmin_image = get_object_or_404(STCAdminImage, pk=image_id)
         range_id = stcadmin_image.range_id
         stcadmin_image.delete()
-        return reverse_lazy(
-            'inventory:images', kwargs={'range_id': range_id})
+        return reverse_lazy('inventory:images', kwargs={'range_id': range_id})
 
 
 class ImageFormView(InventoryUserMixin, FormView):
@@ -48,8 +45,9 @@ class ImageFormView(InventoryUserMixin, FormView):
         context['product_range'] = self.product_range
         context['products'] = self.products
         options = {
-            o.option_name: {} for o in self.product_range.options if
-            o.is_web_shop_select}
+            o.option_name: {}
+            for o in self.product_range.options if o.is_web_shop_select
+        }
         for product in self.products:
             for o in [x for x in product.options if x.value]:
                 if o.option_name in options:
@@ -75,9 +73,7 @@ class ImageFormView(InventoryUserMixin, FormView):
         stcadmin_images = self.request.FILES.getlist('stcadmin_images')
         for image in cc_files:
             image_file = image
-            r = CCAPI.upload_image(
-                product_ids=product_ids, image_file=image_file)
-            r.raise_for_status()
+            CCAPI.upload_image(product_ids=product_ids, image_file=image_file)
         for image in stcadmin_images:
             STCAdminImage(range_id=self.range_id, image=image).save()
         return super().form_valid(form)
