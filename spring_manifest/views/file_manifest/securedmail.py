@@ -329,7 +329,6 @@ class SecuredMailDocketFile:
     CONTACT_NUMBER = '01297 21874'
     CONTACT_ADDRESS = '26 Harbour Road, Seaton, EX12 2NA'
     CLIENT_TO_BE_BILLED = 'Seaton Trading Company Ltd'
-    PRESENTATION_TYPE = 'Bags'
     PRINTED_NAME = 'Larry Guogis'
     INITIALS = 'ST'
     JOB_NAME = INITIALS
@@ -379,7 +378,6 @@ class SecuredMailDocketFile:
             ws[self.FORMAT_COL + row] = service.format
             ws[self.ITEM_WEIGHT_COL + row] = int(sum(weights) / len(weights))
             ws[self.QUANTITY_MAILED_COL + row] = len(weights)
-            ws[self.PRESENTATION_TYPE_COL + row] = self.PRESENTATION_TYPE
             row = str(int(row) + 1)
         return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
 
@@ -392,4 +390,4 @@ class SecuredMailDocketFile:
     @staticmethod
     def get_date():
         """Return current date as string."""
-        return datetime.datetime.now().strftime('%Y/%m/%d')
+        return datetime.datetime.now().strftime('%d/%m/%Y')
