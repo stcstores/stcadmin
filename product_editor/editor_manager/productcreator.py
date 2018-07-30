@@ -71,8 +71,10 @@ class ProductSaver(ProductEditorBase):
             self.add_variation(self, **data)
         for key in variations[0]:
             self.product_range.options[key].variable = True
-        self.product_range.name = data[self.TITLE]
-        self.product_range.description = data[self.DESCRIPTION]
+        if len(self.product_range.products
+               ) > 0:  # Range already contains products
+            self.product_range.name = data[self.TITLE]
+            self.product_range.description = data[self.DESCRIPTION]
 
     def get_variations(self):
         """Return list of variation option dicts."""
@@ -129,7 +131,7 @@ class ProductSaver(ProductEditorBase):
             kwargs[self.VAT_RATE])
 
     def handle_error(self):
-        """Call after an error saving the product."""
+        """Called after an error saving the product."""
         pass
 
     def update_product(self, product, **kwargs):
