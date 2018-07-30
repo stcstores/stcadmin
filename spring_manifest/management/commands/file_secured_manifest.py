@@ -1,7 +1,8 @@
 """Management command to file the Secured Mail manifest."""
 
-from django.core.management.base import BaseCommand
+import sys
 
+from django.core.management.base import BaseCommand
 from spring_manifest import models
 from spring_manifest.views.file_manifest import FileSecuredMailManifest
 
@@ -18,10 +19,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """File the Spring Tracked manifest."""
-        print('Updating Orders...')
+        print('Updating Orders...', file=sys.stderr)
         models.update_spring_orders()
         manifest = models.get_manifest(models.SpringManifest.SECURED_MAIL)
-        print('Filing Manifest {}...'.format(manifest))
+        print(f'Filing Manifest {manifest}...', file=sys.stderr)
         FileSecuredMailManifest(manifest)
-        print('{} orders filed for {} at {}'.format(
-            manifest.springorder_set.count(), manifest, manifest.time_filed))
+        print(
+            (
+                f'{manifest.springorder_set.count()} orders filed for '
+                '{manifest} at {manifest.time_filed}'),
+            file=sys.stderr)

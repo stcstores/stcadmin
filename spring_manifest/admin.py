@@ -1,7 +1,6 @@
 """Model admins for manifest app."""
 
 from django.contrib import admin
-
 from spring_manifest import models
 
 
@@ -64,8 +63,8 @@ class SpringOrderAdmin(admin.ModelAdmin):
         '__str__', 'order_id', 'customer_name', 'date_recieved',
         'dispatch_date', 'country', 'manifest', 'service', 'canceled')
     list_display_links = ('__str__', )
-    list_editable = ('canceled', )
-    list_filter = ('date_recieved', 'dispatch_date', 'service', 'manifest')
+    list_editable = ('canceled', 'service')
+    list_filter = ('date_recieved', 'service', 'dispatch_date', 'manifest')
     search_fields = (
         'order_id', 'customer_name', 'date_recieved', 'dispatch_date')
 
@@ -105,3 +104,47 @@ class CounterAdmin(admin.ModelAdmin):
     fields = ('name', 'count')
     list_display = ('__str__', 'name', 'count')
     list_editable = ('name', 'count')
+
+
+@admin.register(models.CloudCommerceShippingRule)
+class CloudCommerceShippingRuleAdmin(admin.ModelAdmin):
+    """Model admin for the CloudCommerceShippingRule model."""
+
+    fields = ('rule_id', 'name', 'full_name')
+    list_display = ('__str__', 'rule_id', 'name', 'full_name')
+    list_editable = ('rule_id', 'name', 'full_name')
+
+
+@admin.register(models.ManifestService)
+class ManifestServiceAdmin(admin.ModelAdmin):
+    """Model admin for the ManifestService model."""
+
+    fields = ('name', 'code', 'manifest_type', 'shipping_rules', 'enabled')
+    list_display = (
+        '__str__', 'name', 'code', 'manifest_type', 'shipping_rule_IDs',
+        'enabled')
+    list_editable = ('name', 'code', 'manifest_type', 'enabled')
+
+
+@admin.register(models.SecuredMailService)
+class SecuredMailServiceAdmin(admin.ModelAdmin):
+    """Model admin for the SecuredMailService model."""
+
+    fields = (
+        'shipping_service', 'on_item_advice', 'on_manifest', 'on_docket',
+        'docket_service', 'format', 'proof_of_delivery')
+    list_display = (
+        '__str__', 'shipping_service', 'on_item_advice', 'on_manifest',
+        'on_docket', 'docket_service', 'format', 'proof_of_delivery')
+    list_editable = (
+        'shipping_service', 'on_item_advice', 'on_manifest', 'on_docket',
+        'docket_service', 'format', 'proof_of_delivery')
+
+
+@admin.register(models.ManifestType)
+class ManifestTypeAdmin(admin.ModelAdmin):
+    """Model admin for the ManifestType model."""
+
+    fields = ('name', )
+    list_display = ('__str__', 'name')
+    list_editable = ('name', )

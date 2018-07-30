@@ -6,22 +6,15 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView
-
 from spring_manifest import models
 from spring_manifest.views import SpringUserMixin
 
 from .securedmail import FileSecuredMailManifest
-from .tracked import FileTrackedManifest
-from .untracked import FileUntrackedManifest
 
 
 def file_manifest(manifest):
     """File manifest using appropriate FileManifest class."""
-    if manifest.manifest_type == manifest.UNTRACKED:
-        FileUntrackedManifest(manifest)
-    elif manifest.manifest_type == manifest.TRACKED:
-        FileTrackedManifest(manifest)
-    elif manifest.manifest_type == manifest.SECURED_MAIL:
+    if manifest.manifest_type.name == 'Secured Mail':
         FileSecuredMailManifest(manifest)
     else:
         raise Exception(
@@ -35,11 +28,8 @@ class FileManifestView(SpringUserMixin, RedirectView):
     def get_manifest(self):
         """Return requested manifest."""
         manifest_id = self.kwargs['manifest_id']
-        manifest = get_object_or_404(
-            models.SpringManifest, pk=manifest_id)
+        manifest = get_object_or_404(models.SpringManifest, pk=manifest_id)
         if manifest.status != manifest.FAILED and manifest.manifest_file:
-            messages.add_message(
-                self.request, messages.ERROR, 'Manifest already filed.')
             return None
         return manifest
 
@@ -47,12 +37,16 @@ class FileManifestView(SpringUserMixin, RedirectView):
         """Set manifest as in progress and start thread to file it."""
         models.update_spring_orders()
         manifest = self.get_manifest()
-        manifest.status = manifest.IN_PROGRESS
-        manifest.errors = ''
-        manifest.save()
-        t = threading.Thread(target=file_manifest, args=[manifest])
-        t.setDaemon(True)
-        t.start()
+        if manifest is not None:
+            manifest.status = manifest.IN_PROGRESS
+            manifest.errors = ''
+            manifest.save()
+            t = threading.Thread(target=file_manifest, args=[manifest])
+            t.setDaemon(True)
+            t.start()
+        else:
+            messages.add_message(
+                self.request, messages.ERROR, 'Manifest already filed.')
 
     def get_redirect_url(self, *args, **kwargs):
         """Return URL to redirect to after manifest process starts."""

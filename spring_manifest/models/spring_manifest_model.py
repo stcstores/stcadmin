@@ -3,6 +3,8 @@
 from django.db import models
 from django.utils.timezone import now
 
+from .manifest_type_model import ManifestType
+
 
 class FiledManager(models.Manager):
     """Manager for manifests that have been filed."""
@@ -23,13 +25,6 @@ class UnFiledManager(models.Manager):
 class SpringManifest(models.Model):
     """Model for manifests."""
 
-    TRACKED = 'T'
-    UNTRACKED = 'U'
-    SECURED_MAIL = 'S'
-    MANIFEST_TYPE_CHOICES = (
-        (TRACKED, 'Tracked'), (UNTRACKED, 'Untracked'),
-        (SECURED_MAIL, 'Secure Mail'))
-
     UNFILED = 'unfiled'
     IN_PROGRESS = 'in_progress'
     FILED = 'filed'
@@ -38,16 +33,15 @@ class SpringManifest(models.Model):
         (UNFILED, 'Unfiled'), (IN_PROGRESS, 'In Progress'), (FILED, 'Filed'),
         (FAILED, 'Failed'))
 
-    manifest_type = models.CharField(
-        max_length=1, choices=MANIFEST_TYPE_CHOICES)
+    manifest_type = models.ForeignKey(
+        ManifestType, on_delete=models.SET_NULL, null=True, blank=True)
     time_created = models.DateTimeField(default=now)
     time_filed = models.DateTimeField(blank=True, null=True)
     manifest_file = models.FileField(
         upload_to='manifests', blank=True, null=True)
     item_advice_file = models.FileField(
         upload_to='item_advice', blank=True, null=True)
-    docket_file = models.FileField(
-        upload_to='docket', blank=True, null=True)
+    docket_file = models.FileField(upload_to='docket', blank=True, null=True)
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default=FILED)
     errors = models.TextField(blank=True, null=True)
@@ -64,7 +58,7 @@ class SpringManifest(models.Model):
         ordering = ['-time_filed', '-time_created']
 
     def __str__(self):
-        manifest_type = dict(self.MANIFEST_TYPE_CHOICES)[self.manifest_type]
+        manifest_type = self.manifest_type
         if self.time_filed is None:
             time = 'Unfiled'
         else:

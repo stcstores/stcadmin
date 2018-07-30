@@ -17,9 +17,8 @@ class BasePackageFormset(BaseInlineFormSet):
             instance=form.instance,
             data=form.data if form.is_bound else None,
             files=form.files if form.is_bound else None,
-            prefix='item-%s-%s' % (
-                form.prefix,
-                ItemFormset.get_default_prefix()))
+            prefix='item-%s-%s' %
+            (form.prefix, ItemFormset.get_default_prefix()))
 
     def is_valid(self):
         """Return True if all forms are valid."""
@@ -96,11 +95,17 @@ class SpringItemForm(forms.ModelForm):
 
 
 ItemFormset = inlineformset_factory(
-    models.SpringPackage, models.SpringItem,
-    fields=('quantity', 'item_id'), extra=0, can_delete=False,
+    models.SpringPackage,
+    models.SpringItem,
+    fields=('quantity', 'item_id'),
+    extra=0,
+    can_delete=False,
     form=SpringItemForm)
 
 PackageFormset = inlineformset_factory(
-    models.SpringOrder, models.SpringPackage,
+    models.SpringOrder,
+    models.SpringPackage,
     formset=BasePackageFormset,
-    fields=('package_number', ), extra=0, can_delete=False)
+    fields=('package_number', ),
+    extra=0,
+    can_delete=False)

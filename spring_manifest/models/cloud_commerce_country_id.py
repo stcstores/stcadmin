@@ -27,7 +27,9 @@ class CloudCommerceCountryID(models.Model):
     zone = models.ForeignKey(
         DestinationZone, blank=True, null=True, on_delete=models.SET_NULL)
     secured_mail_destination = models.ForeignKey(
-        SecuredMailDestination, blank=True, null=True,
+        SecuredMailDestination,
+        blank=True,
+        null=True,
         on_delete=models.SET_NULL)
     valid_spring_destination = models.BooleanField(
         default=True, verbose_name='Valid Spring Destination')
@@ -45,7 +47,3 @@ class CloudCommerceCountryID(models.Model):
 
     def __str__(self):
         return str(self.name)
-
-    def is_valid_destination(self):
-        """Return True if all necessary fields are True. Else return False."""
-        return all((self.iso_code, self.zone, self.valid_spring_destination))

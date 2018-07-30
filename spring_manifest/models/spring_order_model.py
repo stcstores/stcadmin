@@ -7,6 +7,7 @@ from django.db.models import Sum
 from django.utils.timezone import is_naive
 
 from .cloud_commerce_country_id import CloudCommerceCountryID
+from .service_models import ManifestService
 from .spring_manifest_model import SpringManifest
 
 
@@ -70,27 +71,6 @@ class CanceledOrdersManager(SpringOrderManager):
 class SpringOrder(models.Model):
     """Model for orders on manifests."""
 
-    PACKET = 'PAK'
-    PARCEL = 'PAR'
-    TRACKED = 'PAT'
-    SIGNED = 'PAP'
-    SM_INT_UNTRACKED = 'SMIU'
-    SM_INT_TRACKED = 'SMIT'
-    SERVICE_CHOICES = (
-        (PARCEL, 'Spring Parcel'), (PACKET, 'Spring Packet'),
-        (TRACKED, 'Spring Tracked'), (SIGNED, 'Spring Signed'),
-        (SM_INT_UNTRACKED, 'Secure Mail International Untracked'),
-        (SM_INT_TRACKED, 'Secure Mail International Tracked'))
-
-    MANIFEST_SELECTION = {
-        PACKET: SpringManifest.UNTRACKED,
-        PARCEL: SpringManifest.TRACKED,
-        TRACKED: SpringManifest.TRACKED,
-        SIGNED: SpringManifest.TRACKED,
-        SM_INT_TRACKED: SpringManifest.SECURED_MAIL,
-        SM_INT_UNTRACKED: SpringManifest.SECURED_MAIL,
-    }
-
     order_id = models.CharField(max_length=10, unique=True)
     customer_name = models.CharField(max_length=100)
     date_recieved = models.DateTimeField()
@@ -99,7 +79,8 @@ class SpringOrder(models.Model):
         CloudCommerceCountryID, on_delete=models.CASCADE)
     manifest = models.ForeignKey(
         SpringManifest, blank=True, null=True, on_delete=models.CASCADE)
-    service = models.CharField(max_length=50, choices=SERVICE_CHOICES)
+    service = models.ForeignKey(
+        ManifestService, blank=True, null=True, on_delete=models.SET_NULL)
     canceled = models.BooleanField(default=False)
 
     objects = SpringOrderManager()
@@ -185,6 +166,5 @@ class SpringOrder(models.Model):
             for item_data in package:
                 item_id, quantity = item_data
                 item = SpringItem(
-                    package=package_obj, item_id=item_id,
-                    quantity=quantity)
+                    package=package_obj, item_id=item_id, quantity=quantity)
                 item.save()

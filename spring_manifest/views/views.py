@@ -8,7 +8,6 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView
-
 from home.views import UserInGroupMixin
 from spring_manifest import forms, models
 
@@ -106,13 +105,17 @@ class ManifestView(SpringUserMixin, TemplateView):
         """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
         manifest_id = self.kwargs['manifest_id']
-        manifest = get_object_or_404(
-            models.SpringManifest, id=manifest_id)
+        manifest = get_object_or_404(models.SpringManifest, id=manifest_id)
         if manifest.status == manifest.UNFILED:
             models.update_spring_orders()
         orders = manifest.springorder_set.all().order_by('dispatch_date')
         context['manifest'] = manifest
         context['orders'] = orders
+        context['services'] = {
+            service.name: len(
+                [order for order in orders if order.service == service])
+            for service in models.ManifestService.enabled_services.all()
+        }
         return context
 
 
@@ -186,5 +189,7 @@ class OrderExists(SpringUserMixin, View):
         except models.SpringOrder.DoesNotExist:
             return HttpResponse('0')
         else:
-            return HttpResponse(reverse_lazy(
-                'spring_manifest:update_order', kwargs={'order_pk': order.pk}))
+            return HttpResponse(
+                reverse_lazy(
+                    'spring_manifest:update_order',
+                    kwargs={'order_pk': order.pk}))

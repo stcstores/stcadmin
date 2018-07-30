@@ -39,22 +39,24 @@
     <tr>
         <th>Manifest</th>
         <th>Created</th>
-        {% if manifest.status == manifest.FILED and manifest.time_filed %}<th>Filed</th>{% endif %}
-        <th>Orders</th>
-        {% if manifest.manifest_type == manifest.SECURED_MAIL %}
-            <th>Untracked Orders</th>
-            <th>Tracked Orders</th>
+        {% if manifest.status == manifest.FILED and manifest.time_filed %}
+            <th>Filed</th>
         {% endif %}
+        <th>Orders</th>
+        {% for service, order_count in services.items %}
+            <th>{{ service }}</th>
+        {% endfor %}
     </tr>
     <tr>
         <th>{{ manifest }}</th>
         <td class="date">{{ manifest.time_created|date:'D jS N h:iA' }}</td>
-        {% if manifest.status == manifest.FILED and manifest.time_filed %}<td class="date">{{ manifest.time_filed|date:'D jS N h:iA' }}</td>{% endif %}
-        <td>{{ manifest.springorder_set.count }}</td>
-        {% if manifest.manifest_type == manifest.SECURED_MAIL %}
-            <td>{{ manifest.untracked_count }}</td>
-            <td>{{ manifest.tracked_count }}</td>
+        {% if manifest.status == manifest.FILED and manifest.time_filed %}
+            <td class="date">{{ manifest.time_filed|date:'D jS N h:iA' }}</td>
         {% endif %}
+        <td>{{ manifest.springorder_set.count }}</td>
+        {% for service, order_count in services.items %}
+            <td>{{ order_count }}</td>
+        {% endfor %}
     </tr>
 </table>
 <table>
@@ -72,7 +74,15 @@
     </tr>
     {% for order in orders %}
         <tr>
-            <th>{% if manifest.time_filed %}{{ order }}{% else %}<a href="{% url 'spring_manifest:update_order' order.id %}">{{ order }}</a>{% endif %}</th>
+            <th>
+                {% if manifest.time_filed %}
+                    {{ order }}
+                {% else %}
+                    <a href="{% url 'spring_manifest:update_order' order.id %}">
+                        {{ order }}
+                    </a>
+                {% endif %}
+            </th>
             <td>{{ order.customer_name }}</td>
             <td class="date">{{ order.date_recieved|date:'D jS N h:iA' }}</td>
             <td class="date">{{ order.dispatch_date|date:'D jS N h:iA' }}</td>
