@@ -27,7 +27,6 @@ class FileManifest:
                 'Manifest Error: %s',
                 ' '.join(sys.argv),
                 exc_info=sys.exc_info())
-            raise e  # REMOVE
 
     def get_currency_rates(self):
         """Return dict of currency rates."""

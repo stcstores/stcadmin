@@ -136,7 +136,6 @@ class FileSecuredMailManifest(FileManifest):
             except Exception as e:
                 self.add_error(
                     'Problem with order {}.\n{}'.format(order.order_id, e))
-                raise e  # REMOVE
         self.packages = sum([order.packages for order in self.orders], [])
         if self.valid():
             self.save_manifest_file()

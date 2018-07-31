@@ -73,7 +73,6 @@ def update_spring_orders(number_of_days=1):
         for shipping_rule in service.shipping_rules.all():
             orders = get_orders(
                 shipping_rule.rule_id, number_of_days=number_of_days)
-            orders = orders[-20:]  # LIMIT ORDERS; REMOVE IN PRODUCTiON
             for order in orders:
                 order_id = str(order.order_id)
                 if not SpringOrder.objects.filter(order_id=order_id).exists():
