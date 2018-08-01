@@ -23,9 +23,7 @@ DEFAULT_FROM_EMAIL = local_settings.DEFAULT_FROM_EMAIL
 CC_DOMAIN = local_settings.CC_DOMAIN
 CC_USERNAME = local_settings.CC_USERNAME
 CC_PWD = local_settings.CC_PWD
-SPRING_COURIER_RULES = local_settings.SPRING_COURIER_RULES
 SCAYT_CUSTOMER_ID = local_settings.SCAYT_CUSTOMER_ID
-SpringManifestSettings = local_settings.SpringManifestSettings
 
 # This Security Key must be overriden in production.
 SECRET_KEY = '@cy+o@khyz!qttree+#md!1hl#c7w3qf_0^cy-r5%)5f5#2^zt'
