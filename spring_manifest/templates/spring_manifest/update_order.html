@@ -36,7 +36,7 @@
         <th>Item</th>
         <th>Quantity</th>
     </tr>
-    {% for item in package.springitem_set.all %}
+    {% for item in package.manifestitem_set.all %}
     {% with item.get_item as cc_item %}
     <tr>
         <td>{{ item }}</td>

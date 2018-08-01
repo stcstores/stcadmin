@@ -6,7 +6,7 @@ from django.db import models
 from .spring_package_model import SpringPackage
 
 
-class SpringItem(models.Model):
+class ManifestItem(models.Model):
     """Model for products in orders on manifests."""
 
     package = models.ForeignKey(SpringPackage, on_delete=models.CASCADE)
@@ -14,10 +14,10 @@ class SpringItem(models.Model):
     quantity = models.PositiveIntegerField()
 
     class Meta:
-        """Meta class for SpringItem."""
+        """Meta class for ManifestItem."""
 
-        verbose_name = 'Spring Item'
-        verbose_name_plural = 'Spring Items'
+        verbose_name = 'Manifest Item'
+        verbose_name_plural = 'Manifest Items'
         ordering = ('item_id', )
 
     def __str__(self):

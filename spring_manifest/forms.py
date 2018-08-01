@@ -2,7 +2,6 @@
 
 from django import forms
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
-
 from spring_manifest import models
 
 
@@ -45,8 +44,8 @@ class BasePackageFormset(BaseInlineFormSet):
         package = models.SpringPackage(
             order=self.instance, package_number=package_number)
         package.save()
-        for item in existing_packages[0].springitem_set.all():
-            new_item = models.SpringItem(
+        for item in existing_packages[0].manifestitem_set.all():
+            new_item = models.ManifestItem(
                 item_id=item.item_id, package=package, quantity=0)
             new_item.save()
 
@@ -54,7 +53,7 @@ class BasePackageFormset(BaseInlineFormSet):
         """Remove packages with not items."""
         packages = self.instance.springpackage_set.all()
         for package in packages:
-            if sum([i.quantity for i in package.springitem_set.all()]) == 0:
+            if sum([i.quantity for i in package.manifestitem_set.all()]) == 0:
                 package.delete()
 
 
@@ -84,23 +83,23 @@ class UpdateOrderForm(forms.ModelForm):
         return super().save(commit=commit)
 
 
-class SpringItemForm(forms.ModelForm):
+class ManifestItemForm(forms.ModelForm):
     """Form for updating manifest items."""
 
     class Meta:
         """Set models and fields."""
 
-        model = models.SpringItem
+        model = models.ManifestItem
         fields = ('quantity', 'item_id')
 
 
 ItemFormset = inlineformset_factory(
     models.SpringPackage,
-    models.SpringItem,
+    models.ManifestItem,
     fields=('quantity', 'item_id'),
     extra=0,
     can_delete=False,
-    form=SpringItemForm)
+    form=ManifestItemForm)
 
 PackageFormset = inlineformset_factory(
     models.SpringOrder,

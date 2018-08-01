@@ -20,8 +20,8 @@ class SpringOrderManager(models.Manager):
 
     def items(self):
         """Return items included in order."""
-        from .spring_item_model import SpringItem
-        return SpringItem._base_manager.filter(
+        from .manifest_item_model import ManifestItem
+        return ManifestItem._base_manager.filter(
             package__order__in=self.get_queryset())
 
 
@@ -126,8 +126,8 @@ class SpringOrder(models.Model):
 
     def items(self):
         """Return queryset of items in order."""
-        from .spring_item_model import SpringItem
-        return SpringItem._base_manager.filter(package__order=self)
+        from .manifest_item_model import ManifestItem
+        return ManifestItem._base_manager.filter(package__order=self)
 
     def get_cc_item_dict(self):
         """Return product IDs and quantities according to Cloud Commerce."""
@@ -138,7 +138,7 @@ class SpringOrder(models.Model):
         """Return product IDs and quantities according to database."""
         quantities = {}
         for package in self.springpackage_set.all():
-            for item in package.springitem_set.all():
+            for item in package.manifestitem_set.all():
                 if item.item_id not in quantities:
                     quantities[item.item_id] = 0
                 quantities[item.item_id] += item.quantity
@@ -150,14 +150,14 @@ class SpringOrder(models.Model):
 
     def item_quantity(self):
         """Return number of items associated with order."""
-        from .spring_item_model import SpringItem
-        return SpringItem.objects.filter(package__order=self).aggregate(
+        from .manifest_item_model import ManifestItem
+        return ManifestItem.objects.filter(package__order=self).aggregate(
             Sum('quantity'))['quantity__sum']
 
     def update_packages(self, package_data):
         """Update package information associated with this order."""
         from .spring_package_model import SpringPackage
-        from .spring_item_model import SpringItem
+        from .manifest_item_model import ManifestItem
         self.clear_packages()
         for package_number, package in enumerate(package_data):
             package_obj = SpringPackage(
@@ -165,6 +165,6 @@ class SpringOrder(models.Model):
             package_obj.save()
             for item_data in package:
                 item_id, quantity = item_data
-                item = SpringItem(
+                item = ManifestItem(
                     package=package_obj, item_id=item_id, quantity=quantity)
                 item.save()

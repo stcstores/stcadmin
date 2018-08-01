@@ -80,9 +80,9 @@ class SpringPackageAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'package_number', 'order')
 
 
-@admin.register(models.SpringItem)
-class SpringItemAdmin(admin.ModelAdmin):
-    """Model admin for SpringItem model."""
+@admin.register(models.ManifestItem)
+class ManifestItemAdmin(admin.ModelAdmin):
+    """Model admin for ManifestItem model."""
 
     fields = ('package', 'item_id', 'quantity')
     list_display = ('__str__', 'package', 'item_id', 'quantity')

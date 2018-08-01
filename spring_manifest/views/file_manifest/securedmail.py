@@ -33,7 +33,7 @@ class SecuredMailItem:
         self.weight = self.cc_product.per_item_weight
 
     def get_order_product(self, item, cc_order):
-        """Return SpringItem object matching cc_order ID."""
+        """Return ManifestItem object matching cc_order ID."""
         for product in self.order.cc_order.products:
             if int(product.product_id) == item.item_id:
                 return product
@@ -52,7 +52,7 @@ class SecuredMailPackage:
         self.manifest_filer = order.manifest_filer
         self.items = [
             SecuredMailItem(self.order, self, i)
-            for i in self.manifest_package.springitem_set.all()
+            for i in self.manifest_package.manifestitem_set.all()
             if i.quantity > 0
         ]
         self.description = ', '.join([item.name for item in self.items])
