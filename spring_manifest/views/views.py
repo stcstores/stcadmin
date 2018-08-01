@@ -15,7 +15,7 @@ from spring_manifest import forms, models
 class SpringUserMixin(UserInGroupMixin):
     """View mixin ensuring user has permissions for this app."""
 
-    groups = ['spring']
+    groups = ['manifests']
 
 
 class Index(SpringUserMixin, TemplateView):

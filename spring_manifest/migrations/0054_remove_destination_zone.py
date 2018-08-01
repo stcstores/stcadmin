@@ -6,7 +6,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('spring_manifest', '0053_remove_cloudcommercecountryid_valid_spring_destination'),
+        (
+            'spring_manifest',
+            '0053_remove_cloudcommercecountryid_valid_spring_destination'),
     ]
 
     operations = [
@@ -14,7 +16,5 @@ class Migration(migrations.Migration):
             model_name='cloudcommercecountryid',
             name='zone',
         ),
-        migrations.DeleteModel(
-            name='DestinationZone',
-        ),
+        migrations.DeleteModel(name='DestinationZone', ),
     ]
