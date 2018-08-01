@@ -28,7 +28,7 @@ class FileManifestView(SpringUserMixin, RedirectView):
     def get_manifest(self):
         """Return requested manifest."""
         manifest_id = self.kwargs['manifest_id']
-        manifest = get_object_or_404(models.SpringManifest, pk=manifest_id)
+        manifest = get_object_or_404(models.Manifest, pk=manifest_id)
         if manifest.status != manifest.FAILED and manifest.manifest_file:
             return None
         return manifest

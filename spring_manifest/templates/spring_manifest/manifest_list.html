@@ -52,7 +52,7 @@
         <tr>
             <th><a href="{% url 'spring_manifest:manifest' manifest.id %}">{{ manifest }}</a></th>
             <td class="date">{{ manifest.time_created|date:'D jS N h:iA' }}</td>
-            <td>{{ manifest.springorder_set.count }}</td>
+            <td>{{ manifest.manifestorder_set.count }}</td>
             <td>{{ manifest.get_status_display }}</td>
         </tr>
     {% endfor %}
@@ -73,7 +73,7 @@
         <tr>
             <th><a href="{% url 'spring_manifest:manifest' manifest.id %}">{{ manifest }}</a></th>
             <td class="date">{{ manifest.time_created|date:'D jS N h:iA' }}</td>
-            <td>{{ manifest.springorder_set.count }}</td>
+            <td>{{ manifest.manifestorder_set.count }}</td>
             <td class="date">{{ manifest.time_filed|date:'D jS N h:iA' }}</td>
             <td>{{ manifest.get_status_display }}</td>
         </tr>

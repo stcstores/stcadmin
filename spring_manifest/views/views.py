@@ -58,7 +58,7 @@ class UpdateOrderView(SpringUserMixin, FormView):
     def get_object(self):
         """Return order to be updated."""
         order = get_object_or_404(
-            models.SpringOrder, id=self.kwargs.get('order_pk'))
+            models.ManifestOrder, id=self.kwargs.get('order_pk'))
         if order.manifest is not None:
             self.manifest_id = order.manifest.id
         else:
@@ -90,9 +90,10 @@ class ManifestListView(SpringUserMixin, TemplateView):
         """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
         models.update_spring_orders()
-        context['current_manifests'] = models.SpringManifest.unfiled.all()
-        context['previous_manifests'] = models.SpringManifest.filed.all()[:50]
-        context['unmanifested_orders'] = models.SpringOrder.unmanifested.all()
+        context['current_manifests'] = models.Manifest.unfiled.all()
+        context['previous_manifests'] = models.Manifest.filed.all()[:50]
+        context[
+            'unmanifested_orders'] = models.ManifestOrder.unmanifested.all()
         return context
 
 
@@ -105,10 +106,10 @@ class ManifestView(SpringUserMixin, TemplateView):
         """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
         manifest_id = self.kwargs['manifest_id']
-        manifest = get_object_or_404(models.SpringManifest, id=manifest_id)
+        manifest = get_object_or_404(models.Manifest, id=manifest_id)
         if manifest.status == manifest.UNFILED:
             models.update_spring_orders()
-        orders = manifest.springorder_set.all().order_by('dispatch_date')
+        orders = manifest.manifestorder_set.all().order_by('dispatch_date')
         context['manifest'] = manifest
         context['orders'] = orders
         context['services'] = {
@@ -127,10 +128,11 @@ class CanceledOrdersView(SpringUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
-        context['unmanifested_orders'] = models.SpringOrder.objects.filter(
+        context['unmanifested_orders'] = models.ManifestOrder.objects.filter(
             manifest__isnull=True, canceled=False)
-        context['canceled_orders'] = models.SpringOrder.canceled_orders.filter(
-            manifest__isnull=True, canceled=True)
+        context[
+            'canceled_orders'] = models.ManifestOrder.canceled_orders.filter(
+                manifest__isnull=True, canceled=True)
         return context
 
 
@@ -144,7 +146,7 @@ class SplitOrderView(SpringUserMixin, FormView):
         """Return kwargs for form."""
         kwargs = super().get_form_kwargs()
         self.order = get_object_or_404(
-            models.SpringOrder, id=self.kwargs.get('order_pk'))
+            models.ManifestOrder, id=self.kwargs.get('order_pk'))
         kwargs['instance'] = self.order
         return kwargs
 
@@ -185,8 +187,8 @@ class OrderExists(SpringUserMixin, View):
         """If order ID exists redirect to edit page for it."""
         order_id = self.request.POST.get('order_id')
         try:
-            order = models.SpringOrder.objects.get(order_id=order_id)
-        except models.SpringOrder.DoesNotExist:
+            order = models.ManifestOrder.objects.get(order_id=order_id)
+        except models.ManifestOrder.DoesNotExist:
             return HttpResponse('0')
         else:
             return HttpResponse(

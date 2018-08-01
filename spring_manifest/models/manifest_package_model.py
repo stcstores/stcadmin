@@ -2,14 +2,14 @@
 
 from django.db import models
 
-from .spring_order_model import SpringOrder
+from .manifest_order_model import ManifestOrder
 
 
 class ManifestPackage(models.Model):
     """Model for packages used to complete orders."""
 
     package_number = models.PositiveIntegerField(default=1)
-    order = models.ForeignKey(SpringOrder, on_delete=models.CASCADE)
+    order = models.ForeignKey(ManifestOrder, on_delete=models.CASCADE)
 
     class Meta:
         """Meta class for the ManifestPackage model."""

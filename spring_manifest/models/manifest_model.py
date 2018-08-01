@@ -1,4 +1,4 @@
-"""SpringManifest model."""
+"""Manifest model."""
 
 from django.db import models
 from django.utils.timezone import now
@@ -22,7 +22,7 @@ class UnFiledManager(models.Manager):
         return super().get_queryset().exclude(status=self.model.FILED)
 
 
-class SpringManifest(models.Model):
+class Manifest(models.Model):
     """Model for manifests."""
 
     UNFILED = 'unfiled'
@@ -51,10 +51,10 @@ class SpringManifest(models.Model):
     unfiled = UnFiledManager()
 
     class Meta:
-        """Meta class for SpringManifest."""
+        """Meta class for Manifest."""
 
-        verbose_name = 'Spring Manifest'
-        verbose_name_plural = 'Spring Manifests'
+        verbose_name = 'Manifest'
+        verbose_name_plural = 'Manifests'
         ordering = ['-time_filed', '-time_created']
 
     def __str__(self):
@@ -77,8 +77,8 @@ class SpringManifest(models.Model):
 
     def tracked_count(self):
         """Return number of orders on manifest using Secured Mail Tracked."""
-        return self.springorder_set.filter(service='SMIT').count()
+        return self.manifestorder_set.filter(service='SMIT').count()
 
     def untracked_count(self):
         """Return number of orders on manifest using Secured Mail Untracked."""
-        return self.springorder_set.filter(service='SMIU').count()
+        return self.manifestorder_set.filter(service='SMIU').count()

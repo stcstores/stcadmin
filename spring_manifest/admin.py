@@ -38,9 +38,9 @@ class CloudCommerceCountryIDAdmin(admin.ModelAdmin):
         return str(self.name)
 
 
-@admin.register(models.SpringManifest)
-class SpringManifestAdmin(admin.ModelAdmin):
-    """Model admin for SpringManifest model."""
+@admin.register(models.Manifest)
+class ManifestAdmin(admin.ModelAdmin):
+    """Model admin for Manifest model."""
 
     fields = (
         'manifest_type', 'time_filed', 'manifest_file', 'item_advice_file',
@@ -52,9 +52,9 @@ class SpringManifestAdmin(admin.ModelAdmin):
     list_editable = ('manifest_type', 'status')
 
 
-@admin.register(models.SpringOrder)
-class SpringOrderAdmin(admin.ModelAdmin):
-    """Model admin for SpringOrder model."""
+@admin.register(models.ManifestOrder)
+class ManifestOrderAdmin(admin.ModelAdmin):
+    """Model admin for ManifestOrder model."""
 
     fields = (
         'order_id', 'customer_name', 'date_recieved', 'dispatch_date',

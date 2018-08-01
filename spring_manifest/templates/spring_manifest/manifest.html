@@ -53,7 +53,7 @@
         {% if manifest.status == manifest.FILED and manifest.time_filed %}
             <td class="date">{{ manifest.time_filed|date:'D jS N h:iA' }}</td>
         {% endif %}
-        <td>{{ manifest.springorder_set.count }}</td>
+        <td>{{ manifest.manifestorder_set.count }}</td>
         {% for service, order_count in services.items %}
             <td>{{ order_count }}</td>
         {% endfor %}

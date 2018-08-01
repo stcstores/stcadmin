@@ -4,8 +4,8 @@ from .cloud_commerce_country_id import CloudCommerceCountryID  # NOQA
 from .cloud_commerce_shipping_rule import CloudCommerceShippingRule  # NOQA
 from .destination_zone_model import DestinationZone  # NOQA
 from .secured_mail_destination_model import SecuredMailDestination  # NOQA
-from .spring_manifest_model import SpringManifest  # NOQA
-from .spring_order_model import SpringOrder  # NOQA
+from .manifest_model import Manifest  # NOQA
+from .manifest_order_model import ManifestOrder  # NOQA
 from .manifest_package_model import ManifestPackage  # NOQA
 from .manifest_item_model import ManifestItem  # NOQA
 from .service_models import ManifestService, SecuredMailService  # NOQA
@@ -18,13 +18,13 @@ from ccapi import CCAPI
 def get_manifest(manifest_type):
     """Return current manifest matching manfiest_type."""
     try:
-        manifest = SpringManifest.unfiled.get(
-            status=SpringManifest.UNFILED, manifest_type=manifest_type)
-    except SpringManifest.DoesNotExist:
-        manifest = SpringManifest(
-            manifest_type=manifest_type, status=SpringManifest.UNFILED)
+        manifest = Manifest.unfiled.get(
+            status=Manifest.UNFILED, manifest_type=manifest_type)
+    except Manifest.DoesNotExist:
+        manifest = Manifest(
+            manifest_type=manifest_type, status=Manifest.UNFILED)
         manifest.save()
-    except SpringManifest.MultipleObjectsReturned as e:
+    except Manifest.MultipleObjectsReturned as e:
         raise e
     return manifest
 
@@ -49,7 +49,7 @@ def get_orders(courier_rule_id, number_of_days=1):
 
 def create_order(cc_order, service):
     """Add Cloud Commerce Order to database."""
-    order = SpringOrder._base_manager.create(
+    order = ManifestOrder._base_manager.create(
         order_id=str(cc_order.order_id),
         customer_name=cc_order.delivery_name,
         date_recieved=cc_order.date_recieved,
@@ -75,5 +75,6 @@ def update_spring_orders(number_of_days=1):
                 shipping_rule.rule_id, number_of_days=number_of_days)
             for order in orders:
                 order_id = str(order.order_id)
-                if not SpringOrder.objects.filter(order_id=order_id).exists():
+                if not ManifestOrder.objects.filter(
+                        order_id=order_id).exists():
                     create_order(order, service=service)

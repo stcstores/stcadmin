@@ -1,4 +1,4 @@
-"""SpringOrder model."""
+"""ManifestOrder model."""
 
 import pytz
 from ccapi import CCAPI
@@ -8,11 +8,11 @@ from django.utils.timezone import is_naive
 
 from .cloud_commerce_country_id import CloudCommerceCountryID
 from .service_models import ManifestService
-from .spring_manifest_model import SpringManifest
+from .manifest_model import Manifest
 
 
-class SpringOrderManager(models.Manager):
-    """Manager for SpringOrder model."""
+class ManifestOrderManager(models.Manager):
+    """Manager for ManifestOrder model."""
 
     def order_ids(self):
         """Return set of order IDs for orders in queryset."""
@@ -25,7 +25,7 @@ class SpringOrderManager(models.Manager):
             package__order__in=self.get_queryset())
 
 
-class UnManifestedManager(SpringOrderManager):
+class UnManifestedManager(ManifestOrderManager):
     """Manager for orders not on any manifest."""
 
     def get_queryset(self):
@@ -34,7 +34,7 @@ class UnManifestedManager(SpringOrderManager):
             manifest__isnull=True, canceled=False)
 
 
-class ManifestedManager(SpringOrderManager):
+class ManifestedManager(ManifestOrderManager):
     """Manager for orders on manifests."""
 
     def get_queryset(self):
@@ -60,7 +60,7 @@ class UnFiledManager(ManifestedManager):
             manifest__time_filed__isnull=True, canceled=False)
 
 
-class CanceledOrdersManager(SpringOrderManager):
+class CanceledOrdersManager(ManifestOrderManager):
     """Manager for canceled orders."""
 
     def get_queryset(self):
@@ -68,7 +68,7 @@ class CanceledOrdersManager(SpringOrderManager):
         return super().get_queryset().filter(canceled=True)
 
 
-class SpringOrder(models.Model):
+class ManifestOrder(models.Model):
     """Model for orders on manifests."""
 
     order_id = models.CharField(max_length=10, unique=True)
@@ -78,12 +78,12 @@ class SpringOrder(models.Model):
     country = models.ForeignKey(
         CloudCommerceCountryID, on_delete=models.CASCADE)
     manifest = models.ForeignKey(
-        SpringManifest, blank=True, null=True, on_delete=models.CASCADE)
+        Manifest, blank=True, null=True, on_delete=models.CASCADE)
     service = models.ForeignKey(
         ManifestService, blank=True, null=True, on_delete=models.SET_NULL)
     canceled = models.BooleanField(default=False)
 
-    objects = SpringOrderManager()
+    objects = ManifestOrderManager()
     manifested = ManifestedManager()
     unmanifested = UnManifestedManager()
     filed = FiledManager()
@@ -91,10 +91,10 @@ class SpringOrder(models.Model):
     canceled_orders = CanceledOrdersManager()
 
     class Meta:
-        """Meta class for SpringOrder."""
+        """Meta class for ManifestOrder."""
 
-        verbose_name = 'Spring Order'
-        verbose_name_plural = 'Spring Orders'
+        verbose_name = 'Manifest Order'
+        verbose_name_plural = 'Manifest Orders'
 
     def __str__(self):
         return self.order_id

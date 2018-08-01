@@ -130,7 +130,7 @@ class FileSecuredMailManifest(FileManifest):
     def process_manifest(self):
         """File manifest."""
         self.orders = []
-        for order in self.manifest.springorder_set.all():
+        for order in self.manifest.manifestorder_set.all():
             try:
                 self.orders.append(SecuredMailOrder(order, self))
             except Exception as e:
@@ -199,7 +199,7 @@ class FileSecuredMailManifest(FileManifest):
 
     def add_success_messages(self, manifest):
         """Create success message."""
-        orders = manifest.springorder_set.all()
+        orders = manifest.manifestorder_set.all()
         package_count = sum(o.manifestpackage_set.count() for o in orders)
         order_count = len(orders)
         messages.add_message(

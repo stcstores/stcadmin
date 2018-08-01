@@ -21,11 +21,11 @@ class Command(BaseCommand):
         """File the Spring Tracked manifest."""
         print('Updating Orders...', file=sys.stderr)
         models.update_spring_orders()
-        manifest = models.get_manifest(models.SpringManifest.SECURED_MAIL)
+        manifest = models.get_manifest(models.Manifest.SECURED_MAIL)
         print(f'Filing Manifest {manifest}...', file=sys.stderr)
         FileSecuredMailManifest(manifest)
         print(
             (
-                f'{manifest.springorder_set.count()} orders filed for '
+                f'{manifest.manifestorder_set.count()} orders filed for '
                 '{manifest} at {manifest.time_filed}'),
             file=sys.stderr)

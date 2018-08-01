@@ -63,7 +63,7 @@ class UpdateOrderForm(forms.ModelForm):
     class Meta:
         """Set model and fields."""
 
-        model = models.SpringOrder
+        model = models.ManifestOrder
         fields = ['country', 'service']
 
     def save(self, commit=True):
@@ -102,7 +102,7 @@ ItemFormset = inlineformset_factory(
     form=ManifestItemForm)
 
 PackageFormset = inlineformset_factory(
-    models.SpringOrder,
+    models.ManifestOrder,
     models.ManifestPackage,
     formset=BasePackageFormset,
     fields=('package_number', ),
