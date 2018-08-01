@@ -72,9 +72,9 @@ class SpringOrderAdmin(admin.ModelAdmin):
         return str(self.order_id)
 
 
-@admin.register(models.SpringPackage)
-class SpringPackageAdmin(admin.ModelAdmin):
-    """Model admin for SpringPackage model."""
+@admin.register(models.ManifestPackage)
+class ManifestPackageAdmin(admin.ModelAdmin):
+    """Model admin for ManifestPackage model."""
 
     fields = ('package_number', 'order')
     list_display = ('__str__', 'package_number', 'order')

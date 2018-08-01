@@ -1,22 +1,25 @@
-"""SpringPackage model."""
+"""ManifestPackage model."""
 
 from django.db import models
 
 from .spring_order_model import SpringOrder
 
 
-class SpringPackage(models.Model):
+class ManifestPackage(models.Model):
     """Model for packages used to complete orders."""
 
     package_number = models.PositiveIntegerField(default=1)
     order = models.ForeignKey(SpringOrder, on_delete=models.CASCADE)
 
     class Meta:
-        """Meta class for SpringPackage."""
+        """Meta class for the ManifestPackage model."""
 
-        verbose_name = 'Spring Package'
-        verbose_name_plural = 'Spring Packages'
-        unique_together = ('package_number', 'order', )
+        verbose_name = 'Manifest Package'
+        verbose_name_plural = 'Manifest Packages'
+        unique_together = (
+            'package_number',
+            'order',
+        )
         ordering = ('package_number', )
 
     def package_id(self):

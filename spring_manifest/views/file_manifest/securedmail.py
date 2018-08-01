@@ -78,7 +78,7 @@ class SecuredMailOrder:
             self.cc_order, self.country.currency_code)
         self.packages = [
             SecuredMailPackage(self, p)
-            for p in self.manifest_order.springpackage_set.all()
+            for p in self.manifest_order.manifestpackage_set.all()
         ]
         self.weight = sum([package.weight for package in self.packages])
 
@@ -200,7 +200,7 @@ class FileSecuredMailManifest(FileManifest):
     def add_success_messages(self, manifest):
         """Create success message."""
         orders = manifest.springorder_set.all()
-        package_count = sum(o.springpackage_set.count() for o in orders)
+        package_count = sum(o.manifestpackage_set.count() for o in orders)
         order_count = len(orders)
         messages.add_message(
             self.request, messages.SUCCESS,

@@ -137,7 +137,7 @@ class SpringOrder(models.Model):
     def get_item_dict(self):
         """Return product IDs and quantities according to database."""
         quantities = {}
-        for package in self.springpackage_set.all():
+        for package in self.manifestpackage_set.all():
             for item in package.manifestitem_set.all():
                 if item.item_id not in quantities:
                     quantities[item.item_id] = 0
@@ -156,11 +156,11 @@ class SpringOrder(models.Model):
 
     def update_packages(self, package_data):
         """Update package information associated with this order."""
-        from .spring_package_model import SpringPackage
+        from .manifest_package_model import ManifestPackage
         from .manifest_item_model import ManifestItem
         self.clear_packages()
         for package_number, package in enumerate(package_data):
-            package_obj = SpringPackage(
+            package_obj = ManifestPackage(
                 order=self, package_number=package_number)
             package_obj.save()
             for item_data in package:

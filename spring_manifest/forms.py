@@ -39,9 +39,9 @@ class BasePackageFormset(BaseInlineFormSet):
 
     def add_package(self):
         """Create new package for order."""
-        existing_packages = self.instance.springpackage_set.all()
+        existing_packages = self.instance.manifestpackage_set.all()
         package_number = max([p.package_number for p in existing_packages]) + 1
-        package = models.SpringPackage(
+        package = models.ManifestPackage(
             order=self.instance, package_number=package_number)
         package.save()
         for item in existing_packages[0].manifestitem_set.all():
@@ -51,7 +51,7 @@ class BasePackageFormset(BaseInlineFormSet):
 
     def clear_empty_packages(self):
         """Remove packages with not items."""
-        packages = self.instance.springpackage_set.all()
+        packages = self.instance.manifestpackage_set.all()
         for package in packages:
             if sum([i.quantity for i in package.manifestitem_set.all()]) == 0:
                 package.delete()
@@ -94,7 +94,7 @@ class ManifestItemForm(forms.ModelForm):
 
 
 ItemFormset = inlineformset_factory(
-    models.SpringPackage,
+    models.ManifestPackage,
     models.ManifestItem,
     fields=('quantity', 'item_id'),
     extra=0,
@@ -103,7 +103,7 @@ ItemFormset = inlineformset_factory(
 
 PackageFormset = inlineformset_factory(
     models.SpringOrder,
-    models.SpringPackage,
+    models.ManifestPackage,
     formset=BasePackageFormset,
     fields=('package_number', ),
     extra=0,

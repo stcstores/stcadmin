@@ -3,13 +3,13 @@
 from ccapi import CCAPI
 from django.db import models
 
-from .spring_package_model import SpringPackage
+from .manifest_package_model import ManifestPackage
 
 
 class ManifestItem(models.Model):
     """Model for products in orders on manifests."""
 
-    package = models.ForeignKey(SpringPackage, on_delete=models.CASCADE)
+    package = models.ForeignKey(ManifestPackage, on_delete=models.CASCADE)
     item_id = models.PositiveIntegerField()
     quantity = models.PositiveIntegerField()
 

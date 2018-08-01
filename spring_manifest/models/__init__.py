@@ -6,7 +6,7 @@ from .destination_zone_model import DestinationZone  # NOQA
 from .secured_mail_destination_model import SecuredMailDestination  # NOQA
 from .spring_manifest_model import SpringManifest  # NOQA
 from .spring_order_model import SpringOrder  # NOQA
-from .spring_package_model import SpringPackage  # NOQA
+from .manifest_package_model import ManifestPackage  # NOQA
 from .manifest_item_model import ManifestItem  # NOQA
 from .service_models import ManifestService, SecuredMailService  # NOQA
 from .counter_model import Counter  # NOQA
@@ -58,7 +58,7 @@ def create_order(cc_order, service):
             cc_id=cc_order.delivery_country_code),
         manifest=get_manifest_by_service(service),
         service=service)
-    package = SpringPackage._base_manager.create(order=order)
+    package = ManifestPackage._base_manager.create(order=order)
     for product in cc_order.products:
         ManifestItem._base_manager.create(
             package=package,
