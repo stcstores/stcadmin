@@ -32,7 +32,6 @@ Sphinx = "*"
 sphinx_rtd_theme = "*"
 Unidecode = "*"
 XlsxWriter = "*"
-black = "==18.6b4"
 
 [dev-packages]
 "Fabric3" = "*"
