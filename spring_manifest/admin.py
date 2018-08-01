@@ -4,35 +4,21 @@ from django.contrib import admin
 from spring_manifest import models
 
 
-@admin.register(models.DestinationZone)
-class DestinationZoneAdmin(admin.ModelAdmin):
-    """Model admin for DestinationZone model."""
-
-    fields = ['name', 'code', 'format_code']
-    list_display = ['name', 'code', 'format_code']
-    list_display_links = ('name', )
-    list_editable = ('code', 'format_code')
-
-    def __repr__(self):
-        return str(self.name)
-
-
 @admin.register(models.CloudCommerceCountryID)
 class CloudCommerceCountryIDAdmin(admin.ModelAdmin):
     """Model admin for CloudCommerceCountryID model."""
 
     fields = (
-        'cc_id', 'name', 'iso_code', 'zone', 'currency_code',
+        'cc_id', 'name', 'iso_code', 'currency_code',
         'secured_mail_destination')
     list_display = (
-        'cc_id', 'name', 'iso_code', 'zone', 'currency_code',
+        'cc_id', 'name', 'iso_code', 'currency_code',
         'secured_mail_destination')
     list_display_links = ('cc_id', )
     list_editable = (
-        'name', 'iso_code', 'zone', 'currency_code',
-        'secured_mail_destination')
+        'name', 'iso_code', 'currency_code', 'secured_mail_destination')
     search_fields = ('name', 'secured_mail_destination__name')
-    list_filter = ('zone', 'secured_mail_destination__name')
+    list_filter = ('secured_mail_destination__name', )
 
     def __repr__(self):
         return str(self.name)

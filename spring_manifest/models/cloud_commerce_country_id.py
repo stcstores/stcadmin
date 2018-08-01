@@ -3,7 +3,6 @@
 from django.db import models
 from django.db.models import Q
 
-from .destination_zone_model import DestinationZone
 from .secured_mail_destination_model import SecuredMailDestination
 
 
@@ -22,8 +21,6 @@ class CloudCommerceCountryID(models.Model):
     cc_id = models.IntegerField()
     iso_code = models.CharField(
         max_length=3, blank=True, null=True, verbose_name='ISO Code')
-    zone = models.ForeignKey(
-        DestinationZone, blank=True, null=True, on_delete=models.SET_NULL)
     secured_mail_destination = models.ForeignKey(
         SecuredMailDestination,
         blank=True,

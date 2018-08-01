@@ -2,7 +2,6 @@
 
 from .cloud_commerce_country_id import CloudCommerceCountryID  # NOQA
 from .cloud_commerce_shipping_rule import CloudCommerceShippingRule  # NOQA
-from .destination_zone_model import DestinationZone  # NOQA
 from .secured_mail_destination_model import SecuredMailDestination  # NOQA
 from .manifest_model import Manifest  # NOQA
 from .manifest_order_model import ManifestOrder  # NOQA
