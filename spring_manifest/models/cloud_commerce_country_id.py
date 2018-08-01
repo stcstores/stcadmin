@@ -12,9 +12,7 @@ class IncompleteCountryManager(models.Manager):
 
     def get_queryset(self):
         """Return queryset of countries with missing information."""
-        return super().get_queryset().filter(
-            valid_spring_destination=True).filter(
-                Q(iso_code='') | Q(zone=None))
+        return super().get_queryset().filter(Q(iso_code='') | Q(zone=None))
 
 
 class CloudCommerceCountryID(models.Model):
@@ -31,8 +29,6 @@ class CloudCommerceCountryID(models.Model):
         blank=True,
         null=True,
         on_delete=models.SET_NULL)
-    valid_spring_destination = models.BooleanField(
-        default=True, verbose_name='Valid Spring Destination')
     currency_code = models.CharField(max_length=4, blank=True, null=True)
 
     objects = models.Manager()

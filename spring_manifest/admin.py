@@ -23,14 +23,14 @@ class CloudCommerceCountryIDAdmin(admin.ModelAdmin):
 
     fields = (
         'cc_id', 'name', 'iso_code', 'zone', 'currency_code',
-        'valid_spring_destination', 'secured_mail_destination')
+        'secured_mail_destination')
     list_display = (
         'cc_id', 'name', 'iso_code', 'zone', 'currency_code',
-        'valid_spring_destination', 'secured_mail_destination')
+        'secured_mail_destination')
     list_display_links = ('cc_id', )
     list_editable = (
         'name', 'iso_code', 'zone', 'currency_code',
-        'valid_spring_destination', 'secured_mail_destination')
+        'secured_mail_destination')
     search_fields = ('name', 'secured_mail_destination__name')
     list_filter = ('zone', 'secured_mail_destination__name')
 
