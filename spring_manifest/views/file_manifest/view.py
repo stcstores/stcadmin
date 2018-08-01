@@ -35,7 +35,7 @@ class FileManifestView(SpringUserMixin, RedirectView):
 
     def process_manifest(self):
         """Set manifest as in progress and start thread to file it."""
-        models.update_spring_orders()
+        models.update_manifest_orders()
         manifest = self.get_manifest()
         if manifest is not None:
             manifest.status = manifest.IN_PROGRESS

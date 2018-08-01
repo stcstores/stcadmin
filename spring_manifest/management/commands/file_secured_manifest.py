@@ -18,9 +18,9 @@ class Command(BaseCommand):
     help = 'File Tracked Manifest'
 
     def handle(self, *args, **options):
-        """File the Spring Tracked manifest."""
+        """File the Secured Mail manifest."""
         print('Updating Orders...', file=sys.stderr)
-        models.update_spring_orders()
+        models.update_manifest_orders()
         manifest = models.get_manifest(models.Manifest.SECURED_MAIL)
         print(f'Filing Manifest {manifest}...', file=sys.stderr)
         FileSecuredMailManifest(manifest)

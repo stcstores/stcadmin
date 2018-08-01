@@ -2,7 +2,7 @@
 
 from django.core.management.base import BaseCommand
 
-from spring_manifest.models import update_spring_orders
+from spring_manifest.models import update_manifest_orders
 
 
 class Command(BaseCommand):
@@ -17,4 +17,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Update manifests."""
-        update_spring_orders()
+        update_manifest_orders()

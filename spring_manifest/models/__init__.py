@@ -66,7 +66,7 @@ def create_order(cc_order, service):
 
 
 @transaction.atomic
-def update_spring_orders(number_of_days=1):
+def update_manifest_orders(number_of_days=1):
     """Update database with new orders."""
     for service in ManifestService.enabled_services.all():
         for shipping_rule in service.shipping_rules.all():

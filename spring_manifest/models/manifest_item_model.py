@@ -1,4 +1,4 @@
-"""Spring Item model for products on manifests."""
+"""SpringOrder model for products on manifests."""
 
 from ccapi import CCAPI
 from django.db import models
