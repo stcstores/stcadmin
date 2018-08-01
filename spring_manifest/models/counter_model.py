@@ -12,8 +12,8 @@ class Counter(models.Model):
     class Meta:
         """Meta class for Counter."""
 
-        verbose_name = 'Counter'
-        verbose_name_plural = 'Counters'
+        verbose_name = "Counter"
+        verbose_name_plural = "Counters"
 
     def __str__(self):
         return self.name

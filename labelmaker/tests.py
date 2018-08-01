@@ -7,12 +7,12 @@ from django.test import TestCase
 class LabelMakerTemplateTest(TestCase):
     """Tests for labelmaker templates."""
 
-    GROUP = 'labelmaker'
+    GROUP = "labelmaker"
 
     def setUp(self):
         """Login user."""
-        user = User.objects.create_user('foo', 'myemail@test.com', 'bar')
-        self.client.login(username='foo', password='bar')
+        user = User.objects.create_user("foo", "myemail@test.com", "bar")
+        self.client.login(username="foo", password="bar")
         group = Group.objects.get(name=self.GROUP)
         group.user_set.add(user)
 
@@ -24,4 +24,4 @@ class LabelMakerTemplateTest(TestCase):
 
     def test_uses_index_template(self):
         """Test labelmaker index page uses the correct template."""
-        self.template_test('/labelmaker/', 'labelmaker/index.html')
+        self.template_test("/labelmaker/", "labelmaker/index.html")

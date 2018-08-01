@@ -6,6 +6,6 @@ from django.apps import AppConfig
 class SuppliersConfig(AppConfig):
     """Config for Suppliers app."""
 
-    name = 'suppliers'
-    verbose_name = 'Suppliers'
+    name = "suppliers"
+    verbose_name = "Suppliers"
     create_group = True

@@ -20,13 +20,12 @@ class Validators:
         else:
             valid = True
             for char in str(value):
-                if char.isalnum() or char == ' ':
+                if char.isalnum() or char == " ":
                     continue
                 valid = False
                 break
             if valid is False:
-                raise ValidationError(
-                    'Only alphanumeric characters are allowed.')
+                raise ValidationError("Only alphanumeric characters are allowed.")
 
     @staticmethod
     def numeric(value):
@@ -38,30 +37,35 @@ class Validators:
     def allow_characters(value, allowed_characters):
         """Raise ValidationError if any illegal characters are in value."""
         error_message = (
-            'Allowed characters are letters, numbers or {}.'
-            'The following characters where found: {}.')
+            "Allowed characters are letters, numbers or {}."
+            "The following characters where found: {}."
+        )
         errors = [
-            char for char in value if not char.isalnum() and char != ' '
-            and char not in allowed_characters
+            char
+            for char in value
+            if not char.isalnum() and char != " " and char not in allowed_characters
         ]
         if len(errors) > 0:
-            str_allowed_characters = ', '.join(allowed_characters)
-            str_errors = ', '.join(errors)
+            str_allowed_characters = ", ".join(allowed_characters)
+            str_errors = ", ".join(errors)
             raise ValidationError(
-                error_message.format(str_allowed_characters, str_errors))
+                error_message.format(str_allowed_characters, str_errors)
+            )
 
     @staticmethod
     def disallow_characters(value, disallowed_characters):
         """Raise ValidationError if any disallowed characters are in value."""
         error_message = (
-            'The characters {} are not allowed in this field.'
-            'The following characters where found: {}.')
+            "The characters {} are not allowed in this field."
+            "The following characters where found: {}."
+        )
         errors = [char for char in value if char in disallowed_characters]
         if len(errors) > 0:
-            str_disallowed_characters = ', '.join(disallowed_characters)
-            str_errors = ', '.join(errors)
+            str_disallowed_characters = ", ".join(disallowed_characters)
+            str_errors = ", ".join(errors)
             raise ValidationError(
-                error_message.format(str_disallowed_characters, str_errors))
+                error_message.format(str_disallowed_characters, str_errors)
+            )
 
 
 class FormField(forms.Field):
@@ -79,7 +83,7 @@ class FormField(forms.Field):
     size = None
     small_size = None
     initial = None
-    required_message = ''
+    required_message = ""
     validators = []
     allowed_characters = None
     disallowed_characters = None
@@ -87,21 +91,21 @@ class FormField(forms.Field):
     def __init__(self, *args, **kwargs):
         """Set field attributes."""
         if self.is_required:
-            kwargs['required'] = True
-            self.error_messages = {'required': self.required_message}
+            kwargs["required"] = True
+            self.error_messages = {"required": self.required_message}
         else:
-            kwargs['required'] = False
-        if 'small' in kwargs:
-            if kwargs['small'] is True:
+            kwargs["required"] = False
+        if "small" in kwargs:
+            if kwargs["small"] is True:
                 self.size = self.small_size
-            kwargs.pop('small')
-        kwargs['label'] = self.label
-        kwargs['help_text'] = self.help_text
-        kwargs['validators'] = self.validators
+            kwargs.pop("small")
+        kwargs["label"] = self.label
+        kwargs["help_text"] = self.help_text
+        kwargs["validators"] = self.validators
         if self.initial is not None:
-            kwargs['initial'] = self.initial
-        if 'html_class' in kwargs:
-            self.html_class = kwargs.pop('html_class')
+            kwargs["initial"] = self.initial
+        if "html_class" in kwargs:
+            self.html_class = kwargs.pop("html_class")
         if isclass(self.widget):
             self.widget = self.get_widget()
         self.kwargs = kwargs
@@ -118,13 +122,13 @@ class FormField(forms.Field):
         """Return widget for field."""
         attrs = {}
         if self.placeholder is not None:
-            attrs['placeholder'] = self.placeholder
+            attrs["placeholder"] = self.placeholder
         if self.html_class is not None:
-            attrs['class'] = self.html_class
+            attrs["class"] = self.html_class
         if self.size is not None:
-            attrs['size'] = self.size
+            attrs["size"] = self.size
         if self.is_required:
-            attrs['required'] = 'true'
+            attrs["required"] = "true"
         return self.widget(attrs=attrs)
 
     def validate(self, value):
@@ -146,9 +150,9 @@ class ChoiceField(FormField, forms.ChoiceField):
 
     def __init__(self, *args, **kwargs):
         """Set field attributes."""
-        if 'choices' not in kwargs:
-            kwargs['choices'] = self.get_choices()
-        kwargs['label'] = self.label
+        if "choices" not in kwargs:
+            kwargs["choices"] = self.get_choices()
+        kwargs["label"] = self.label
         kwargs = super().__init__(*args, **kwargs)
 
 
@@ -159,28 +163,27 @@ class BaseSelectizeField(FormField):
 
     def __init__(self, *args, **kwargs):
         """Set field attributes."""
-        if 'choices' in kwargs:
-            self.choices = kwargs['choices']
+        if "choices" in kwargs:
+            self.choices = kwargs["choices"]
         else:
             self.choices = self.get_choices()
-            kwargs['choices'] = self.choices
-        if 'label' in kwargs:
-            self.label = kwargs.pop('label')
+            kwargs["choices"] = self.choices
+        if "label" in kwargs:
+            self.label = kwargs.pop("label")
         kwargs = super().__init__(*args, **kwargs)
 
     def get_widget(self):
         """Return widget for field."""
         attrs = {}
         if self.placeholder is not None:
-            attrs['placeholder'] = self.placeholder
+            attrs["placeholder"] = self.placeholder
         if self.html_class is not None:
-            attrs['class'] = self.html_class
+            attrs["class"] = self.html_class
         if self.size is not None:
-            attrs['size'] = self.size
+            attrs["size"] = self.size
         return self.widget_class(
-            attrs=attrs,
-            selectize_options=self.selectize_options,
-            choices=self.choices)
+            attrs=attrs, selectize_options=self.selectize_options, choices=self.choices
+        )
 
 
 class SelectizeField(BaseSelectizeField, forms.MultipleChoiceField):
@@ -192,7 +195,7 @@ class SelectizeField(BaseSelectizeField, forms.MultipleChoiceField):
         """Return submited values as a list."""
         value = super().to_python(*args, **kwargs)
         if isinstance(value, str):
-            return value.split(',')
+            return value.split(",")
         return value
 
 
@@ -200,7 +203,7 @@ class SingleSelectize(BaseSelectizeField, forms.ChoiceField):
     """Base class for selectize fields allowing a single value."""
 
     widget_class = widgets.SingleSelectizeWidget
-    selectize_options = {'maxItems': 1, "dropdownParent": "body"}
+    selectize_options = {"maxItems": 1, "dropdownParent": "body"}
 
     def to_python(self, *args, **kwargs):
         """Return submitted value as a string."""
@@ -266,7 +269,7 @@ class TextareaField(FormField, forms.CharField):
 class CombinationField(forms.MultiValueField):
     """Base class for product fields inheriting from MultiValueField."""
 
-    help_text = ''
+    help_text = ""
 
     def __init__(self, *args, **kwargs):
         """Prevent class attributes being lost during instantiation."""

@@ -11,10 +11,10 @@ from print_audit import models
 class OrdersByDay(Chart):
     """Chart number of orders by day dispatched."""
 
-    chart_type = 'horizontalBar'
-    scales = {'yAxes': [Axes(ticks={'beginAtZero': True})]}
-    legend = {'display': False}
-    title = {'display': True, 'text': 'Orders by Day'}
+    chart_type = "horizontalBar"
+    scales = {"yAxes": [Axes(ticks={"beginAtZero": True})]}
+    legend = {"display": False}
+    title = {"display": True, "text": "Orders by Day"}
     DAYS_TO_DISPLAY = 60
 
     def __init__(self, *args, **kwargs):
@@ -24,56 +24,64 @@ class OrdersByDay(Chart):
         self.orders = {}
         while day <= self.today:
             self.orders[day] = models.CloudCommerceOrder.objects.filter(
-                date_created__date=day).count()
+                date_created__date=day
+            ).count()
             day = day + datetime.timedelta(days=1)
         super().__init__(*args, **kwargs)
 
     def get_labels(self):
         """Return axis labels for dates."""
-        return [
-            day.strftime('%a %d %b %Y') for day, count in self.orders.items()]
+        return [day.strftime("%a %d %b %Y") for day, count in self.orders.items()]
 
     def get_datasets(self, **kwargs):
         """Return datasets for chart."""
-        red = '#ff554f'
-        green = '#4fff55'
-        blue = '#554fff'
+        red = "#ff554f"
+        green = "#4fff55"
+        blue = "#554fff"
         colours = []
         data = []
         day_colours = [red, blue, blue, blue, blue, green, green]
         for day, count in self.orders.items():
             data.append(count)
             colours.append(day_colours[day.weekday()])
-        return [{'data': data, 'backgroundColor': colours}]
+        return [{"data": data, "backgroundColor": colours}]
 
 
 class OrdersByWeek(Chart):
     """Chart number of orders dispatched by week."""
 
-    chart_type = 'line'
-    scales = {'yAxes': [Axes(ticks={'beginAtZero': True})]}
-    legend = {'display': False}
-    title = {'display': True, 'text': 'Orders by Week'}
+    chart_type = "line"
+    scales = {"yAxes": [Axes(ticks={"beginAtZero": True})]}
+    legend = {"display": False}
+    title = {"display": True, "text": "Orders by Week"}
     WEEKS_TO_DISPLAY = 52
 
     def __init__(self, *args, **kwargs):
         """Get weeks in range."""
+
         class Week:
             def __init__(self, year, number):
                 self.year = year
                 self.number = number
-                self.name = '{} - {}'.format(self.year, self.number)
+                self.name = "{} - {}".format(self.year, self.number)
                 self.value = models.CloudCommerceOrder.objects.filter(
-                    date_created__year=year, date_created__week=number).count()
+                    date_created__year=year, date_created__week=number
+                ).count()
 
         years = [
-            d.year for d in models.CloudCommerceOrder.objects.all().datetimes(
-                'date_created', 'year')]
+            d.year
+            for d in models.CloudCommerceOrder.objects.all().datetimes(
+                "date_created", "year"
+            )
+        ]
         weeks_numbers = list(range(1, self.WEEKS_TO_DISPLAY + 1))
         self.weeks = []
         self.now = datetime.datetime.now()
-        self.first_order_date = models.CloudCommerceOrder.objects.order_by(
-            'date_created').all()[0].date_created
+        self.first_order_date = (
+            models.CloudCommerceOrder.objects.order_by("date_created")
+            .all()[0]
+            .date_created
+        )
         for year in years:
             for week in weeks_numbers:
                 if self.week_required(year, week):

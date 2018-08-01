@@ -55,7 +55,7 @@ class Page(ProductEditorBase):
     @property
     def help_anchor(self):
         """Return page anchor for this page's help entry."""
-        return 'product_editor-pages-{}'.format(self.identifier)
+        return "product_editor-pages-{}".format(self.identifier)
 
 
 class NewProductPage(Page):
@@ -64,7 +64,7 @@ class NewProductPage(Page):
     @property
     def url(self):
         """Return URL identifier for this page."""
-        return reverse('product_editor:{}'.format(self.identifier))
+        return reverse("product_editor:{}".format(self.identifier))
 
 
 class EditProductPage(Page):
@@ -74,21 +74,22 @@ class EditProductPage(Page):
     def url(self):
         """Return URL identifier for this page."""
         return reverse(
-            'product_editor:{}'.format(self.identifier),
-            kwargs={'range_id': self.manager.range_id})
+            "product_editor:{}".format(self.identifier),
+            kwargs={"range_id": self.manager.range_id},
+        )
 
 
 class BasicInfo:
     """Page for product attributes that stay the same between variations."""
 
-    name = 'Basic Info'
+    name = "Basic Info"
     identifier = ProductEditorBase.BASIC
 
 
 class ProductInfo:
     """Page for product attributes that vary between variations."""
 
-    name = 'Product Info'
+    name = "Product Info"
     identifier = ProductEditorBase.PRODUCT_INFO
 
     def enabled(self):
@@ -108,7 +109,7 @@ class ProductInfo:
 class ListingOptions:
     """Page to set Product Options for listings for single items."""
 
-    name = 'Listing Options'
+    name = "Listing Options"
     identifier = ProductEditorBase.LISTING_OPTIONS
 
     def enabled(self):
@@ -127,7 +128,7 @@ class ListingOptions:
 class VariationOptions:
     """Page to select variations for new variation products."""
 
-    name = 'Variation Options'
+    name = "Variation Options"
     identifier = ProductEditorBase.VARIATION_OPTIONS
 
     def enabled(self):
@@ -153,7 +154,7 @@ class VariationOptions:
 class UnusedVariations:
     """Page to mark non existant variations as unused."""
 
-    name = 'Unused Variations'
+    name = "Unused Variations"
     identifier = ProductEditorBase.UNUSED_VARIATIONS
 
     def enabled(self):
@@ -172,7 +173,7 @@ class UnusedVariations:
 class VariationInfo(Page):
     """Page to set required information for variation."""
 
-    name = 'Variation Info'
+    name = "Variation Info"
     identifier = ProductEditorBase.VARIATION_INFO
 
     def enabled(self):
@@ -191,7 +192,7 @@ class VariationInfo(Page):
 class VariationListingOptions:
     """Page to set listing Product Options for variations."""
 
-    name = 'Variation Listing Options'
+    name = "Variation Listing Options"
     identifier = ProductEditorBase.VARIATION_LISTING_OPTIONS
 
     def enabled(self):
@@ -210,7 +211,7 @@ class VariationListingOptions:
 class Finish:
     """Final page to create the new product or edit the existing product."""
 
-    name = 'Finish'
+    name = "Finish"
     identifier = ProductEditorBase.FINISH
 
     def enabled(self):
@@ -293,8 +294,7 @@ class EditVariationOptions(VariationOptions, EditProductPage):
         """Retain existing variation data when updating."""
 
         def __set__(self, instance, data):
-            existing_data = instance.manager.product_data[
-                instance.EXISTING_VARIATIONS]
+            existing_data = instance.manager.product_data[instance.EXISTING_VARIATIONS]
             for option, value_list in existing_data.items():
                 for value in value_list:
                     if value not in data[option]:
@@ -355,17 +355,20 @@ class EditFinish(Finish, EditProductPage):
 class ClearNewProduct(ClearProduct, NewProductPage):
     """Clear new product data from session."""
 
-    name = 'Clear New Product'
-    warning_text = '\\n'.join([
-        'This will delete the current prduct and start a new one.',
-        'Any progress on the current product will be lost.',
-        'Is this what you want to do?'])
+    name = "Clear New Product"
+    warning_text = "\\n".join(
+        [
+            "This will delete the current prduct and start a new one.",
+            "Any progress on the current product will be lost.",
+            "Is this what you want to do?",
+        ]
+    )
 
 
 class ClearEditedProduct(ClearProduct, EditProductPage):
     """Clear new product data from session."""
 
-    name = 'Clear Changes'
-    warning_text = '\\n'.join([
-        'This will delete any current changes.',
-        'Is this what you want to do?'])
+    name = "Clear Changes"
+    warning_text = "\\n".join(
+        ["This will delete any current changes.", "Is this what you want to do?"]
+    )

@@ -12,8 +12,8 @@ class SecuredMailDestination(models.Model):
     class Meta:
         """Meta class for SecuredMailDestination."""
 
-        verbose_name = 'Secured Mail Destination'
-        verbose_name_plural = 'Secured Mail Destinations'
+        verbose_name = "Secured Mail Destination"
+        verbose_name_plural = "Secured Mail Destinations"
 
     def __str__(self):
         return self.name

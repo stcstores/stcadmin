@@ -6,53 +6,81 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [('suppliers', '0001_initial'), ('suppliers', '0002_auto_20161011_1530'), ('suppliers', '0003_stockitem_box_quantity'), ('suppliers', '0004_auto_20180514_0933')]
-
-    dependencies = [
+    replaces = [
+        ("suppliers", "0001_initial"),
+        ("suppliers", "0002_auto_20161011_1530"),
+        ("suppliers", "0003_stockitem_box_quantity"),
+        ("suppliers", "0004_auto_20180514_0933"),
     ]
+
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='StockItem',
+            name="StockItem",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('supplier_title', models.CharField(max_length=200)),
-                ('product_code', models.CharField(max_length=200)),
-                ('linnworks_title', models.CharField(blank=True, max_length=200, null=True)),
-                ('linnworks_sku', models.CharField(blank=True, max_length=200, null=True)),
-                ('notes', models.CharField(blank=True, max_length=200, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("supplier_title", models.CharField(max_length=200)),
+                ("product_code", models.CharField(max_length=200)),
+                (
+                    "linnworks_title",
+                    models.CharField(blank=True, max_length=200, null=True),
+                ),
+                (
+                    "linnworks_sku",
+                    models.CharField(blank=True, max_length=200, null=True),
+                ),
+                ("notes", models.CharField(blank=True, max_length=200, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Supplier',
+            name="Supplier",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200, unique=True)),
-                ('email', models.CharField(blank=True, max_length=200, null=True)),
-                ('phone', models.CharField(blank=True, max_length=200, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200, unique=True)),
+                ("email", models.CharField(blank=True, max_length=200, null=True)),
+                ("phone", models.CharField(blank=True, max_length=200, null=True)),
             ],
-            options={
-                'verbose_name': 'Supplier',
-                'verbose_name_plural': 'Suppliers',
-            },
+            options={"verbose_name": "Supplier", "verbose_name_plural": "Suppliers"},
         ),
         migrations.AddField(
-            model_name='stockitem',
-            name='supplier',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='suppliers.Supplier'),
+            model_name="stockitem",
+            name="supplier",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="suppliers.Supplier"
+            ),
         ),
         migrations.AlterField(
-            model_name='stockitem',
-            name='product_code',
+            model_name="stockitem",
+            name="product_code",
             field=models.CharField(max_length=200, unique=True),
         ),
         migrations.AddField(
-            model_name='stockitem',
-            name='box_quantity',
+            model_name="stockitem",
+            name="box_quantity",
             field=models.PositiveSmallIntegerField(blank=True, null=True),
         ),
         migrations.AlterModelOptions(
-            name='stockitem',
-            options={'verbose_name': 'Stock Item', 'verbose_name_plural': 'Stock Items'},
+            name="stockitem",
+            options={
+                "verbose_name": "Stock Item",
+                "verbose_name_plural": "Stock Items",
+            },
         ),
     ]

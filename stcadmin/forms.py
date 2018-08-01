@@ -12,7 +12,7 @@ class KwargFormSet(BaseFormSet):
 
     def __init__(self, *args, **kwargs):
         """Set formset attributes."""
-        self.form_kwargs = kwargs['form_kwargs']
+        self.form_kwargs = kwargs["form_kwargs"]
         self.min_num = len(self.form_kwargs)
         self.max_num = self.min_num
         self.absolute_max = self.max_num
@@ -33,22 +33,22 @@ class KwargFormSet(BaseFormSet):
     def _construct_form(self, i, **kwargs):
         """Instantiate and return the i-th form instance in a formset."""
         defaults = {
-            'auto_id': self.auto_id,
-            'prefix': self.add_prefix(i),
-            'error_class': self.error_class,
-            'use_required_attribute': False,
+            "auto_id": self.auto_id,
+            "prefix": self.add_prefix(i),
+            "error_class": self.error_class,
+            "use_required_attribute": False,
         }
         defaults.update(self.get_form_kwargs(i))
         if self.is_bound:
-            defaults['data'] = self.data
-            defaults['files'] = self.files
-        if self.initial and 'initial' not in kwargs:
+            defaults["data"] = self.data
+            defaults["files"] = self.files
+        if self.initial and "initial" not in kwargs:
             try:
-                defaults['initial'] = self.initial[i]
+                defaults["initial"] = self.initial[i]
             except IndexError:
                 pass
         if i >= self.initial_form_count() and i >= self.min_num:
-            defaults['empty_permitted'] = True
+            defaults["empty_permitted"] = True
         defaults.update(kwargs)
         form = self.form(**defaults)
         self.add_fields(form, i)

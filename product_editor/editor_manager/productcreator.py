@@ -12,7 +12,7 @@ from product_editor import exceptions
 
 from .productbase import ProductEditorBase
 
-logger = logging.getLogger('product_creation')
+logger = logging.getLogger("product_creation")
 
 
 class ProductSaver(ProductEditorBase):
@@ -43,17 +43,18 @@ class ProductSaver(ProductEditorBase):
             self.product_range.options[self.INCOMPLETE].selected = False
         except Exception as exception:
             logger.error(
-                'Product Creation Error: %s',
-                ' '.join(sys.argv),
-                exc_info=sys.exc_info())
+                "Product Creation Error: %s",
+                " ".join(sys.argv),
+                exc_info=sys.exc_info(),
+            )
             self.handle_error(self)
             raise exception
 
     def create_single_product(self):
         """Create a single (non variation) product."""
         data = DataSanitizer(
-            self.product_data[self.BASIC],
-            self.product_data[self.PRODUCT_INFO])
+            self.product_data[self.BASIC], self.product_data[self.PRODUCT_INFO]
+        )
         option_data = self.product_data[self.LISTING_OPTIONS]
         data[self.OPTIONS] = {k: v for k, v in option_data.items() if v}
         self.add_variation(self, **data)
@@ -65,14 +66,11 @@ class ProductSaver(ProductEditorBase):
             data = self.get_variation_data(self, variation)
             option_data = self.get_variation_option_data(self, variation)
             data[self.OPTIONS] = {k: v for k, v in variation.items()}
-            data[self.OPTIONS].update(
-                {k: v
-                 for k, v in option_data.items() if v})
+            data[self.OPTIONS].update({k: v for k, v in option_data.items() if v})
             self.add_variation(self, **data)
         for key in variations[0]:
             self.product_range.options[key].variable = True
-        if len(self.product_range.products
-               ) > 0:  # Range already contains products
+        if len(self.product_range.products) > 0:  # Range already contains products
             self.product_range.name = data[self.TITLE]
             self.product_range.description = data[self.DESCRIPTION]
 
@@ -86,7 +84,8 @@ class ProductSaver(ProductEditorBase):
                     k: v
                     for k, v in variation.items()
                     if k not in (self.PRODUCT_ID, self.USED)
-                })
+                }
+            )
         if not all([var.keys() == variations[0].keys() for var in variations]):
             raise exceptions.VariationKeyMissmatch(variations)
         return variations
@@ -103,7 +102,8 @@ class ProductSaver(ProductEditorBase):
         data = DataSanitizer(
             self.product_data[self.BASIC],
             self.product_data[self.PRODUCT_INFO],
-            variation_info=variation_info)
+            variation_info=variation_info,
+        )
         return data
 
     def get_variation_option_data(self, variation):
@@ -127,8 +127,8 @@ class ProductSaver(ProductEditorBase):
     def get_new_product(self, **kwargs):
         """Add new Product to Range and return."""
         return self.product_range.add_product(
-            kwargs[self.BARCODE], kwargs[self.DESCRIPTION],
-            kwargs[self.VAT_RATE])
+            kwargs[self.BARCODE], kwargs[self.DESCRIPTION], kwargs[self.VAT_RATE]
+        )
 
     def handle_error(self):
         """Called after an error saving the product."""
@@ -184,8 +184,8 @@ class ProductCreator(ProductSaver):
     def add_variation(self, **kwargs):
         """Add single variation to Range."""
         product = self.product_range.add_product(
-            kwargs[self.BARCODE], kwargs[self.DESCRIPTION],
-            kwargs[self.VAT_RATE])
+            kwargs[self.BARCODE], kwargs[self.DESCRIPTION], kwargs[self.VAT_RATE]
+        )
         self.update_product(self, product, **kwargs)
 
     def get_variation(self, **kwargs):
@@ -226,20 +226,30 @@ class DataSanitizer(ProductEditorBase):
     """Return dict of kwargs for product creation from form data."""
 
     SIMPLE_FIELDS = (
-        ProductEditorBase.BRAND, ProductEditorBase.DESCRIPTION,
-        ProductEditorBase.GENDER, ProductEditorBase.MANUFACTURER,
-        ProductEditorBase.PACKAGE_TYPE, ProductEditorBase.PRODUCT_ID,
-        ProductEditorBase.PURCHASE_PRICE, ProductEditorBase.RETAIL_PRICE,
-        ProductEditorBase.STOCK_LEVEL, ProductEditorBase.SUPPLIER,
-        ProductEditorBase.SUPPLIER_SKU, ProductEditorBase.TITLE,
-        ProductEditorBase.WEIGHT)
+        ProductEditorBase.BRAND,
+        ProductEditorBase.DESCRIPTION,
+        ProductEditorBase.GENDER,
+        ProductEditorBase.MANUFACTURER,
+        ProductEditorBase.PACKAGE_TYPE,
+        ProductEditorBase.PRODUCT_ID,
+        ProductEditorBase.PURCHASE_PRICE,
+        ProductEditorBase.RETAIL_PRICE,
+        ProductEditorBase.STOCK_LEVEL,
+        ProductEditorBase.SUPPLIER,
+        ProductEditorBase.SUPPLIER_SKU,
+        ProductEditorBase.TITLE,
+        ProductEditorBase.WEIGHT,
+    )
 
     LIST_FIELDS = (
         ProductEditorBase.AMAZON_BULLET_POINTS,
-        ProductEditorBase.AMAZON_SEARCH_TERMS)
+        ProductEditorBase.AMAZON_SEARCH_TERMS,
+    )
     DIMENSION_FIELDS = (
-        ProductEditorBase.HEIGHT, ProductEditorBase.LENGTH,
-        ProductEditorBase.WIDTH)
+        ProductEditorBase.HEIGHT,
+        ProductEditorBase.LENGTH,
+        ProductEditorBase.WIDTH,
+    )
 
     def __new__(self, basic_info, product_info, variation_info=None):
         """Clean data from basic_info or variation_info page."""
@@ -270,7 +280,8 @@ class DataSanitizer(ProductEditorBase):
     def set_location_data(self, product_data, data):
         """Set location and department data."""
         data[self.DEPARTMENT] = models.Warehouse.objects.get(
-            warehouse_id=product_data[self.DEPARTMENT]).name
+            warehouse_id=product_data[self.DEPARTMENT]
+        ).name
         data[self.BAYS] = product_data[self.LOCATION][self.BAYS]
 
     def set_dimension_fields(self, product_data, data):

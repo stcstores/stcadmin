@@ -15,7 +15,7 @@ from inventory.models import check_location_integrity
 class Command(BaseCommand):
     """Check Location Integrity command."""
 
-    help = 'Check integrity of product location database.'
+    help = "Check integrity of product location database."
 
     def handle(self, *args, **options):
         """Check integity of bay database."""

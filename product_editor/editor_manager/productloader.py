@@ -21,31 +21,33 @@ class ProductLoader(ProductEditorBase):
         self.data[self.TYPE] = self.get_product_type(self, self.product_range)
         self.data[self.BASIC] = self.get_basic(self, self.product_range)
         self.data[self.PRODUCT_INFO] = self.get_product_data(
-            self, self.product_range.products[0])
+            self, self.product_range.products[0]
+        )
         if self.data[self.TYPE] == self.SINGLE:
             self.data[self.LISTING_OPTIONS] = self.get_listing_options(
-                self, self.product_range.products[0])
+                self, self.product_range.products[0]
+            )
         elif self.data[self.TYPE] == self.VARIATION:
             self.data[self.VARIATION_OPTIONS], self.data[
-                self.UNUSED_VARIATIONS] = self.get_variation_options(
-                    self, self.product_range)
-            self.data[self.EXISTING_VARIATIONS] = self.data[
-                self.VARIATION_OPTIONS]
+                self.UNUSED_VARIATIONS
+            ] = self.get_variation_options(self, self.product_range)
+            self.data[self.EXISTING_VARIATIONS] = self.data[self.VARIATION_OPTIONS]
             self.data[self.VARIATION_INFO] = self.get_variation_info(
-                self, self.product_range)
+                self, self.product_range
+            )
             self.data[
                 self.VARIATION_LISTING_OPTIONS
-            ] = self.get_variation_listing_options(
-                self, self.product_range)
+            ] = self.get_variation_listing_options(self, self.product_range)
         pprint(self.data)
         return self.data
 
     def variations_combinations(self):
         """Return variation combinations for product."""
         combinations = [
-            {k: v for k, v in d.items() if k not in
-                (self.USED, self.PRODUCT_ID)}
-            for d in self.data[self.UNUSED_VARIATIONS] if d[self.USED]]
+            {k: v for k, v in d.items() if k not in (self.USED, self.PRODUCT_ID)}
+            for d in self.data[self.UNUSED_VARIATIONS]
+            if d[self.USED]
+        ]
         return combinations
 
     def get_warehouse_id(self, warehouse_name):
@@ -55,8 +57,10 @@ class ProductLoader(ProductEditorBase):
     def get_dimension_data(self, product):
         """Return form data for the dimensions field."""
         return {
-            self.HEIGHT: product.height, self.LENGTH: product.length,
-            self.WIDTH: product.width}
+            self.HEIGHT: product.height,
+            self.LENGTH: product.length,
+            self.WIDTH: product.width,
+        }
 
     def get_location_data(self, product):
         """Return form data for the location field."""
@@ -65,7 +69,7 @@ class ProductLoader(ProductEditorBase):
         if len(bays) > 0:
             warehouse_id = bays[0].warehouse.warehouse_id
             return {self.WAREHOUSE: warehouse_id, self.BAYS: bay_ids}
-        return {self.WAREHOUSE: '', self.BAYS: []}
+        return {self.WAREHOUSE: "", self.BAYS: []}
 
     def get_product_type(self, product_range):
         """Return product type form data."""
@@ -79,12 +83,9 @@ class ProductLoader(ProductEditorBase):
         data = {
             self.TITLE: product_range.name,
             self.DESCRIPTION: product_range.description,
-            self.DEPARTMENT: self.get_warehouse_id(
-                self, product_range.department),
-            self.AMAZON_BULLET_POINTS: product_range.products[
-                0].amazon_bullets,
-            self.AMAZON_SEARCH_TERMS: product_range.products[
-                0].amazon_search_terms,
+            self.DEPARTMENT: self.get_warehouse_id(self, product_range.department),
+            self.AMAZON_BULLET_POINTS: product_range.products[0].amazon_bullets,
+            self.AMAZON_SEARCH_TERMS: product_range.products[0].amazon_search_terms,
         }
         return data
 
@@ -93,8 +94,7 @@ class ProductLoader(ProductEditorBase):
         data = {
             self.BARCODE: product.barcode,
             self.PURCHASE_PRICE: product.purchase_price,
-            self.PRICE: {
-                self.VAT_RATE: product.vat_rate, self.EX_VAT: product.price},
+            self.PRICE: {self.VAT_RATE: product.vat_rate, self.EX_VAT: product.price},
             self.RETAIL_PRICE: product.retail_price,
             self.STOCK_LEVEL: product.stock_level,
             self.LOCATION: self.get_location_data(self, product),
@@ -106,7 +106,8 @@ class ProductLoader(ProductEditorBase):
             self.BRAND: product.brand,
             self.MANUFACTURER: product.manufacturer,
             self.GENDER: product.gender,
-            self.PRODUCT_ID: product.id}
+            self.PRODUCT_ID: product.id,
+        }
         return data
 
     def get_listing_options(self, product):

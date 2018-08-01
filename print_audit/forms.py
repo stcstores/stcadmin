@@ -16,62 +16,66 @@ class FeedbackSearchForm(forms.Form):
 
     PAGINATION_VALUES = [5, 10, 25, 50, 100, 250, 500, 1000, 5000]
 
-    PAGINATION_CHOICES = [(None, '')] + [
-        (int(num), str(num)) for num in PAGINATION_VALUES]
+    PAGINATION_CHOICES = [(None, "")] + [
+        (int(num), str(num)) for num in PAGINATION_VALUES
+    ]
 
     user = forms.ModelChoiceField(
-        label='User',
+        label="User",
         required=False,
         queryset=models.CloudCommerceUser.objects.all(),
-        widget=forms.RadioSelect())
+        widget=forms.RadioSelect(),
+    )
 
     feedback = forms.ModelChoiceField(
-        label='Feedback Type',
+        label="Feedback Type",
         required=False,
         queryset=models.Feedback.objects.all(),
-        widget=forms.RadioSelect())
+        widget=forms.RadioSelect(),
+    )
 
     date_from = forms.DateField(
-        required=False,
-        widget=forms.DateInput(attrs={'class': 'datepicker'}))
+        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+    )
 
     date_to = forms.DateField(
-        required=False,
-        widget=forms.DateInput(attrs={'class': 'datepicker'}))
+        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+    )
 
-    paginate_by = forms.ChoiceField(
-        choices=PAGINATION_CHOICES)
+    paginate_by = forms.ChoiceField(choices=PAGINATION_CHOICES)
 
 
 class FeedbackDateFilterForm(forms.Form):
     """Form for filtering user feedback by date."""
 
     DATES_CHOICES = [
-        ('all', 'All'), ('this_year', 'This Year'),
-        ('last_month', 'Last Month'), ('this_month', 'This Month'),
-        ('this_week', 'This Week'), ('yesterday', 'Yesterday'),
-        ('today', 'Today'), ('custom', 'Custom')]
+        ("all", "All"),
+        ("this_year", "This Year"),
+        ("last_month", "Last Month"),
+        ("this_month", "This Month"),
+        ("this_week", "This Week"),
+        ("yesterday", "Yesterday"),
+        ("today", "Today"),
+        ("custom", "Custom"),
+    ]
 
     day = datetime.timedelta(days=1)
 
-    dates = forms.ChoiceField(
-        choices=DATES_CHOICES, widget=(forms.RadioSelect))
+    dates = forms.ChoiceField(choices=DATES_CHOICES, widget=(forms.RadioSelect))
 
     date_to = forms.DateField(
-        required=False,
-        widget=forms.DateInput(attrs={'class': 'datepicker'}))
+        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+    )
 
     date_from = forms.DateField(
-        required=False,
-        widget=forms.DateInput(attrs={'class': 'datepicker'}))
+        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+    )
 
     def get_month_range(self, year, month):
         """Return first and last day for month."""
         last_day = calendar.monthrange(year, month)[1]
-        date_from = datetime.datetime(
-            year=year, month=month, day=1)
-        date_to = datetime.datetime(
-            year=year, month=month, day=last_day)
+        date_from = datetime.datetime(year=year, month=month, day=1)
+        date_to = datetime.datetime(year=year, month=month, day=last_day)
         return (date_from, date_to)
 
     def today(self):
@@ -116,20 +120,20 @@ class FeedbackDateFilterForm(forms.Form):
     def clean(self):
         """Set final start and end dates according to submitted data."""
         data = super().clean()
-        if data['dates'] == 'today':
-            data['date_from'], data['date_to'] = self.today()
-        if data['dates'] == 'yesterday':
-            data['date_from'], data['date_to'] = self.yesterday()
-        if data['dates'] == 'this_week':
-            data['date_from'], data['date_to'] = self.this_week()
-        if data['dates'] == 'this_month':
-            data['date_from'], data['date_to'] = self.this_month()
-        if data['dates'] == 'last_month':
-            data['date_from'], data['date_to'] = self.last_month()
-        if data['dates'] == 'this_year':
-            data['date_from'], data['date_to'] = self.this_year()
-        data['date_from'] = self.clean_time(data['date_from'])
-        data['date_to'] = self.clean_time(data['date_to'])
+        if data["dates"] == "today":
+            data["date_from"], data["date_to"] = self.today()
+        if data["dates"] == "yesterday":
+            data["date_from"], data["date_to"] = self.yesterday()
+        if data["dates"] == "this_week":
+            data["date_from"], data["date_to"] = self.this_week()
+        if data["dates"] == "this_month":
+            data["date_from"], data["date_to"] = self.this_month()
+        if data["dates"] == "last_month":
+            data["date_from"], data["date_to"] = self.last_month()
+        if data["dates"] == "this_year":
+            data["date_from"], data["date_to"] = self.this_year()
+        data["date_from"] = self.clean_time(data["date_from"])
+        data["date_to"] = self.clean_time(data["date_to"])
         return data
 
     def clean_time(self, time):
@@ -142,7 +146,6 @@ class FeedbackDateFilterForm(forms.Form):
         """Localise datetime object."""
         tz = pytz.timezone(settings.TIME_ZONE)
         if isinstance(time, datetime.date):
-            time = datetime.datetime.combine(
-                time, datetime.datetime.min.time())
+            time = datetime.datetime.combine(time, datetime.datetime.min.time())
         time = tz.localize(time)
         return time

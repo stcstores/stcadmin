@@ -11,8 +11,8 @@ class ManifestType(models.Model):
     class Meta:
         """Meta class for the Service model."""
 
-        verbose_name = 'Manifest Type'
-        verbose_name_plural = 'Manifest Types'
+        verbose_name = "Manifest Type"
+        verbose_name_plural = "Manifest Types"
 
     def __str__(self):
         return self.name

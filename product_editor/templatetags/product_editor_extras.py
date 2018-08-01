@@ -2,8 +2,7 @@
 
 from django import template
 
-from product_editor.editor_manager.manager import (EditProductManager,
-                                                   NewProductManager)
+from product_editor.editor_manager.manager import EditProductManager, NewProductManager
 
 register = template.Library()
 

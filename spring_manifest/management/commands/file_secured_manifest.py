@@ -15,17 +15,19 @@ class Command(BaseCommand):
         python manage.py file_secured_manifest
     """
 
-    help = 'File Tracked Manifest'
+    help = "File Tracked Manifest"
 
     def handle(self, *args, **options):
         """File the Secured Mail manifest."""
-        print('Updating Orders...', file=sys.stderr)
+        print("Updating Orders...", file=sys.stderr)
         models.update_manifest_orders()
         manifest = models.get_manifest(models.Manifest.SECURED_MAIL)
-        print(f'Filing Manifest {manifest}...', file=sys.stderr)
+        print(f"Filing Manifest {manifest}...", file=sys.stderr)
         FileSecuredMailManifest(manifest)
         print(
             (
-                f'{manifest.manifestorder_set.count()} orders filed for '
-                '{manifest} at {manifest.time_filed}'),
-            file=sys.stderr)
+                f"{manifest.manifestorder_set.count()} orders filed for "
+                "{manifest} at {manifest.time_filed}"
+            ),
+            file=sys.stderr,
+        )

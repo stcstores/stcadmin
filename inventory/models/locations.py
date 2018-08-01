@@ -30,9 +30,9 @@ class Warehouse(models.Model):
     class Meta:
         """Meta class for Warehouse."""
 
-        verbose_name = 'Warehouse'
-        verbose_name_plural = 'Warehouses'
-        ordering = ('name', )
+        verbose_name = "Warehouse"
+        verbose_name_plural = "Warehouses"
+        ordering = ("name",)
 
     def __str__(self):
         return self.name
@@ -80,11 +80,11 @@ class Bay(models.Model):
     class Meta:
         """Meta class for Bay."""
 
-        verbose_name = 'Bay'
-        verbose_name_plural = 'Bays'
+        verbose_name = "Bay"
+        verbose_name_plural = "Bays"
 
     def __str__(self):
-        return '{} - {}'.format(self.warehouse, self.name)
+        return "{} - {}".format(self.warehouse, self.name)
 
     @property
     def id(self):
@@ -111,10 +111,13 @@ class LocationIntegrityCheck:
     """
 
     header = [
-        'Duplicates', 'Missing form DB', 'Missing from CC',
-        'Incorrect Information']
-    output_dir = os.path.join(settings.MEDIA_ROOT, 'logs')
-    output_file = os.path.join(output_dir, 'bay_integrity.csv')
+        "Duplicates",
+        "Missing form DB",
+        "Missing from CC",
+        "Incorrect Information",
+    ]
+    output_dir = os.path.join(settings.MEDIA_ROOT, "logs")
+    output_file = os.path.join(output_dir, "bay_integrity.csv")
 
     def __init__(self):
         """
@@ -127,13 +130,10 @@ class LocationIntegrityCheck:
         self.missing_bays()
         self.excess_bays()
         self.incorrect_bays()
-        print('Duplicate Bays: {}'.format(len(self.duplicate_bays)))
-        print('Bays missing from Database: {}'.format(
-            len(self.missing_bays)))
-        print('Bays missing from Cloud Commerce: {}'.format(
-            len(self.excess_bays)))
-        print('Bays with non matching information: {}'.format(
-            len(self.incorrect_bays)))
+        print("Duplicate Bays: {}".format(len(self.duplicate_bays)))
+        print("Bays missing from Database: {}".format(len(self.missing_bays)))
+        print("Bays missing from Cloud Commerce: {}".format(len(self.excess_bays)))
+        print("Bays with non matching information: {}".format(len(self.incorrect_bays)))
 
     def get_bays(self):
         """Return list of bays present in Cloud Commerce."""
@@ -148,20 +148,18 @@ class LocationIntegrityCheck:
         """Create list of bays with duplicate names in Cloud Commerce."""
         bay_names = [b.name for b in self.bays]
         duplicate_bay_names = [n for n in bay_names if bay_names.count(n) > 1]
-        self.duplicate_bays = [
-            b for b in self.bays if b.name in duplicate_bay_names]
+        self.duplicate_bays = [b for b in self.bays if b.name in duplicate_bay_names]
 
     def missing_bays(self):
         """Create list of bays existing in Cloud Commerce but not STCAdmin."""
         self.missing_bays = [
-            b for b in self.bays if not
-            Bay.objects.filter(bay_id=b.id).exists()]
+            b for b in self.bays if not Bay.objects.filter(bay_id=b.id).exists()
+        ]
 
     def excess_bays(self):
         """Create list of bays existing in STCAdmin but not Cloud Commerce."""
         bay_ids = [int(b.id) for b in self.bays]
-        self.excess_bays = [
-            b for b in Bay.objects.all() if b.bay_id not in bay_ids]
+        self.excess_bays = [b for b in Bay.objects.all() if b.bay_id not in bay_ids]
 
     def incorrect_bays(self):
         """
@@ -170,14 +168,23 @@ class LocationIntegrityCheck:
         List consists of Cloud Commerce bays for which the STCAdmin Bay with
         a matching ID does not have a matching name.
         """
-        matched_bays = [b for b in self.bays if not any([
-            b in self.duplicate_bays, b in self.missing_bays,
-            b in self.excess_bays])]
+        matched_bays = [
+            b
+            for b in self.bays
+            if not any(
+                [
+                    b in self.duplicate_bays,
+                    b in self.missing_bays,
+                    b in self.excess_bays,
+                ]
+            )
+        ]
         incorrect_bays = []
         for bay in matched_bays:
             db_bay = Bay.objects.get(bay_id=bay.id)
-            bay_invalid = any([
-                bay.name != db_bay.name, bay.warehouse.id != bay.warehouse.id])
+            bay_invalid = any(
+                [bay.name != db_bay.name, bay.warehouse.id != bay.warehouse.id]
+            )
             if bay_invalid:
                 incorrect_bays.append(bay)
         self.incorrect_bays = incorrect_bays
@@ -186,13 +193,16 @@ class LocationIntegrityCheck:
         """Return correctly formatted bay name."""
         if isinstance(bay, Bay):
             return str(bay)
-        return '{} - {}'.format(bay.warehouse.name, bay.name)
+        return "{} - {}".format(bay.warehouse.name, bay.name)
 
     def create_output(self):
         """Save bays with errors to .csv file."""
         bay_lists = [
-            self.duplicate_bays, self.missing_bays, self.excess_bays,
-            self.incorrect_bays]
+            self.duplicate_bays,
+            self.missing_bays,
+            self.excess_bays,
+            self.incorrect_bays,
+        ]
         data = []
         for i in range(max([len(l) for l in bay_lists])):
             row = []
@@ -200,7 +210,7 @@ class LocationIntegrityCheck:
                 try:
                     row.append(self.format_bay(bay_list[i]))
                 except IndexError:
-                    row.append('')
+                    row.append("")
             data.append(row)
         output = Table(header=self.header, data=data)
         output.write(self.output_file)

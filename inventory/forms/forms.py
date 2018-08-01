@@ -15,8 +15,10 @@ class ProductRangeForm(forms.Form):
     end_of_line = forms.BooleanField(
         required=False,
         help_text=(
-            'Ranges are maked as <b>end of line</b> if the entire range is'
-            ' out of stock and unlikely to be re-ordered.'))
+            "Ranges are maked as <b>end of line</b> if the entire range is"
+            " out of stock and unlikely to be re-ordered."
+        ),
+    )
 
 
 class DescriptionForm(forms.Form):
@@ -39,12 +41,12 @@ class CreateSupplierForm(forms.Form):
         cleaned_data = super().clean()
         factories = CCAPI.get_factories()
         factory_names = [f.name for f in factories]
-        if cleaned_data['supplier_name'] in factory_names:
-            self.add_error('supplier_name', 'Supplier already exists.')
+        if cleaned_data["supplier_name"] in factory_names:
+            self.add_error("supplier_name", "Supplier already exists.")
 
     def save(self):
         """Create new supplier."""
-        name = self.cleaned_data['supplier_name']
+        name = self.cleaned_data["supplier_name"]
         CCAPI.create_factory(name)
         CCAPI.get_option_value_id(self.SUPPLIER_OPTION_ID, name, create=True)
 
@@ -52,60 +54,61 @@ class CreateSupplierForm(forms.Form):
 class CreateBayForm(forms.Form):
     """Form for creating new Warehouse Bays."""
 
-    BACKUP = 'backup'
-    PRIMARY = 'primary'
-    BAY_TYPE_CHOICES = ((PRIMARY, 'Primary'), (BACKUP, 'Backup'))
+    BACKUP = "backup"
+    PRIMARY = "primary"
+    BAY_TYPE_CHOICES = ((PRIMARY, "Primary"), (BACKUP, "Backup"))
 
     def __init__(self, *args, **kwargs):
         """Add fields to form."""
         super().__init__(*args, **kwargs)
-        self.fields['department'] = fields.Department(label='Department')
-        self.fields['department'].help_text = (
-            "The department to which the bay's contents belong.")
-        self.fields['name'] = forms.CharField(max_length=255, required=True)
-        self.fields['name'].help_text = 'The name of the bay to be created.'
-        self.fields['bay_type'] = forms.ChoiceField(
-            choices=self.BAY_TYPE_CHOICES, widget=forms.RadioSelect,
-            required=True, initial=self.PRIMARY)
-        self.fields['bay_type'].help_text = (
-            'Is this a primary picking location or backup bay?')
-        self.fields['location'] = fields.Department(label='Location')
-        self.fields['location'].help_text = 'The physical location of the bay.'
-        self.fields['location'].required = False
+        self.fields["department"] = fields.Department(label="Department")
+        self.fields[
+            "department"
+        ].help_text = "The department to which the bay's contents belong."
+        self.fields["name"] = forms.CharField(max_length=255, required=True)
+        self.fields["name"].help_text = "The name of the bay to be created."
+        self.fields["bay_type"] = forms.ChoiceField(
+            choices=self.BAY_TYPE_CHOICES,
+            widget=forms.RadioSelect,
+            required=True,
+            initial=self.PRIMARY,
+        )
+        self.fields[
+            "bay_type"
+        ].help_text = "Is this a primary picking location or backup bay?"
+        self.fields["location"] = fields.Department(label="Location")
+        self.fields["location"].help_text = "The physical location of the bay."
+        self.fields["location"].required = False
 
     def clean(self, *args, **kwargs):
         """Create correct name for bay and ensure it does not already exist."""
         data = super().clean(*args, **kwargs)
-        if data['bay_type'] == self.BACKUP:
-            if not data['location']:
-                self.add_error(
-                    'location', 'Location is required for backup bays.')
+        if data["bay_type"] == self.BACKUP:
+            if not data["location"]:
+                self.add_error("location", "Location is required for backup bays.")
                 return
-        if data['bay_type'] == self.PRIMARY:
-            warehouse = models.Warehouse.objects.get(
-                warehouse_id=data['department'])
-            data['bay_name'] = data['name']
+        if data["bay_type"] == self.PRIMARY:
+            warehouse = models.Warehouse.objects.get(warehouse_id=data["department"])
+            data["bay_name"] = data["name"]
         else:
-            warehouse = models.Warehouse.objects.get(
-                warehouse_id=data['department'])
-            location = models.Warehouse.objects.get(
-                warehouse_id=data['location'])
-            data['bay_name'] = '{} Backup {} {}'.format(
-                warehouse.abriviation, location.name, data['name'])
-        data['warehouse_id'] = warehouse.warehouse_id
-        data['warehouse_name'] = warehouse.name
-        if models.Bay.objects.filter(name=data['bay_name']).exists():
-            self.add_error('name', 'Bay name already exists.')
+            warehouse = models.Warehouse.objects.get(warehouse_id=data["department"])
+            location = models.Warehouse.objects.get(warehouse_id=data["location"])
+            data["bay_name"] = "{} Backup {} {}".format(
+                warehouse.abriviation, location.name, data["name"]
+            )
+        data["warehouse_id"] = warehouse.warehouse_id
+        data["warehouse_name"] = warehouse.name
+        if models.Bay.objects.filter(name=data["bay_name"]).exists():
+            self.add_error("name", "Bay name already exists.")
         return data
 
     def save(self):
         """Create Warehouse Bay."""
-        warehouse_id = self.cleaned_data['warehouse_id']
+        warehouse_id = self.cleaned_data["warehouse_id"]
         warehouse = models.Warehouse.objects.get(warehouse_id=warehouse_id)
-        bay_name = self.cleaned_data['bay_name']
+        bay_name = self.cleaned_data["bay_name"]
         bay_id = CCAPI.get_bay_id(bay_name, warehouse.name, create=True)
-        self.bay = models.Bay(
-            bay_id=bay_id, warehouse=warehouse, name=bay_name)
+        self.bay = models.Bay(bay_id=bay_id, warehouse=warehouse, name=bay_name)
         self.bay.save()
 
 
@@ -115,33 +118,52 @@ class ImagesForm(forms.Form):
     product_ids = forms.CharField(widget=forms.HiddenInput)
     cloud_commerce_images = forms.ImageField(
         required=False,
-        label='Cloud Commerce Images',
+        label="Cloud Commerce Images",
         widget=forms.ClearableFileInput(
-            attrs={'multiple': True, 'accept': '.jpg, .png'}))
+            attrs={"multiple": True, "accept": ".jpg, .png"}
+        ),
+    )
     stcadmin_images = forms.ImageField(
         required=False,
-        label='STC Admin Images',
+        label="STC Admin Images",
         widget=forms.ClearableFileInput(
-            attrs={'multiple': True, 'accept': '.jpg, .png'}))
+            attrs={"multiple": True, "accept": ".jpg, .png"}
+        ),
+    )
 
 
 class ProductForm(ProductEditorBase, forms.Form):
     """Form for editing indivdual Products."""
 
     ignore_options = [
-        'Department', 'Brand', 'Manufacturer', 'WooCategory1', 'WooCategory2',
-        'WooCategory3', 'International Shipping', 'Package Type', 'Supplier',
-        'Purchase Price', 'Date Created', 'Location', 'Supplier SKU',
-        'Amazon Bullets', 'Amazon Search Terms', 'Linn SKU', 'Linn Title',
-        'Retail Price']
+        "Department",
+        "Brand",
+        "Manufacturer",
+        "WooCategory1",
+        "WooCategory2",
+        "WooCategory3",
+        "International Shipping",
+        "Package Type",
+        "Supplier",
+        "Purchase Price",
+        "Date Created",
+        "Location",
+        "Supplier SKU",
+        "Amazon Bullets",
+        "Amazon Search Terms",
+        "Linn SKU",
+        "Linn Title",
+        "Retail Price",
+    ]
 
     def __init__(self, *args, **kwargs):
         """Configure form fields."""
-        self.product = kwargs.pop('product')
-        self.product_range = kwargs.pop('product_range')
-        options = kwargs.pop('options')
+        self.product = kwargs.pop("product")
+        self.product_range = kwargs.pop("product_range")
+        options = kwargs.pop("options")
         self.options = {
-            o: v for o, v in options.items() if o not in self.ignore_options}
+            o: v for o, v in options.items() if o not in self.ignore_options
+        }
         super().__init__(*args, **kwargs)
         self.fields[self.PRICE] = fields.VATPrice()
         self.fields[self.LOCATION] = fields.WarehouseBayField()
@@ -153,10 +175,12 @@ class ProductForm(ProductEditorBase, forms.Form):
         self.fields[self.SUPPLIER] = fields.Supplier()
         self.fields[self.SUPPLIER_SKU] = fields.SupplierSKU()
         for option_name, values in self.options.items():
-            choices = [('', '')] + [
-                (v, v) for v in self.get_choice_values(option_name, values)]
-            self.fields['opt_' + option_name] = fields.ListingOption(
-                choices=choices, label=option_name)
+            choices = [("", "")] + [
+                (v, v) for v in self.get_choice_values(option_name, values)
+            ]
+            self.fields["opt_" + option_name] = fields.ListingOption(
+                choices=choices, label=option_name
+            )
         self.initial = self.get_initial()
 
     def get_initial(self):
@@ -165,21 +189,22 @@ class ProductForm(ProductEditorBase, forms.Form):
         initial[self.PRICE] = {
             self.VAT_RATE: self.product.vat_rate,
             self.EX_VAT: self.product.price,
-            'with_vat_price': None}
-        bays = [
-            bay for bay in models.Bay.objects.filter(
-                bay_id__in=self.product.bays)]
+            "with_vat_price": None,
+        }
+        bays = [bay for bay in models.Bay.objects.filter(bay_id__in=self.product.bays)]
         warehouses = list(set([bay.warehouse for bay in bays]))
         if len(warehouses) > 1:
-            self.add_error(self.LOCATIONS, 'Mixed warehouses.')
+            self.add_error(self.LOCATIONS, "Mixed warehouses.")
         elif len(warehouses) == 1:
             initial[self.LOCATION] = {
                 self.WAREHOUSE: warehouses[0].warehouse_id,
-                self.BAYS: [bay.id for bay in bays]}
+                self.BAYS: [bay.id for bay in bays],
+            }
         initial[self.DIMENSIONS] = {
             self.WIDTH: self.product.width,
             self.HEIGHT: self.product.height,
-            self.LENGTH: self.product.length}
+            self.LENGTH: self.product.length,
+        }
         initial[self.WEIGHT] = self.product.weight
         initial[self.PURCHASE_PRICE] = self.product.purchase_price
         initial[self.RETAIL_PRICE] = self.product.retail_price
@@ -188,7 +213,7 @@ class ProductForm(ProductEditorBase, forms.Form):
             initial[self.SUPPLIER] = self.product.supplier.factory_name
         initial[self.SUPPLIER_SKU] = self.product.supplier_sku
         for option in self.options:
-            initial['opt_' + option] = self.product.options[option]
+            initial["opt_" + option] = self.product.options[option]
         return initial
 
     def get_choice_values(self, option_name, values):
@@ -213,7 +238,7 @@ class ProductForm(ProductEditorBase, forms.Form):
         self.product.retail_price = data[self.RETAIL_PRICE]
         self.product.supplier = data[self.SUPPLIER]
         self.product.supplier_sku = data[self.SUPPLIER_SKU]
-        options = [key[4:] for key in data.keys() if key[:4] == 'opt_']
+        options = [key[4:] for key in data.keys() if key[:4] == "opt_"]
         for option in options:
-            value = data['opt_' + option]
+            value = data["opt_" + option]
             self.product.options[option] = value

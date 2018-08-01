@@ -6,7 +6,7 @@ import sys
 from forex_python.converter import CurrencyRates
 from spring_manifest import models
 
-logger = logging.getLogger('file_manifest')
+logger = logging.getLogger("file_manifest")
 
 
 class FileManifest:
@@ -17,16 +17,15 @@ class FileManifest:
         self.currency_rates = self.get_currency_rates()
         self.manifest = manifest
         self.manifest.status = manifest.IN_PROGRESS
-        self.manifest.errors = ''
+        self.manifest.errors = ""
         self.manifest.save()
         try:
             self.process_manifest()
         except Exception as e:
-            self.add_error('An error occured.')
+            self.add_error("An error occured.")
             logger.error(
-                'Manifest Error: %s',
-                ' '.join(sys.argv),
-                exc_info=sys.exc_info())
+                "Manifest Error: %s", " ".join(sys.argv), exc_info=sys.exc_info()
+            )
 
     def get_currency_rates(self):
         """Return dict of currency rates."""
@@ -36,12 +35,11 @@ class FileManifest:
                 [
                     c.currency_code
                     for c in models.CloudCommerceCountryID.objects.all()
-                    if c.currency_code is not None and c.currency_code != 'GBP'
-                ]))
-        return {
-            c: currency_converter.get_rate(c, 'GBP')
-            for c in currency_codes
-        }
+                    if c.currency_code is not None and c.currency_code != "GBP"
+                ]
+            )
+        )
+        return {c: currency_converter.get_rate(c, "GBP") for c in currency_codes}
 
     def file_manifest(self, manifest):
         """File manifest."""
@@ -62,22 +60,20 @@ class FileManifest:
     def add_error(self, message):
         """Add error message to manifest."""
         self.manifest.status = self.manifest.FAILED
-        self.manifest.errors += '{}\n'.format(message)
+        self.manifest.errors += "{}\n".format(message)
         self.manifest.save()
 
     def get_order_weight(self, order):
         """Return weight of order in KG."""
         weight_grams = sum(
-            [
-                product.per_item_weight * product.quantity
-                for product in order.products
-            ])
+            [product.per_item_weight * product.quantity for product in order.products]
+        )
         weight_kg = weight_grams / 1000
         return weight_kg
 
     def convert_to_GBP(self, currency, amount):
         """Return amount converted from currency to GBP."""
-        if currency is None or currency == 'GBP':
+        if currency is None or currency == "GBP":
             return round(amount, 2)
         rate = self.currency_rates[currency]
         converted_amount = amount * rate
@@ -89,9 +85,7 @@ class FileManifest:
 
     def valid(self):
         """Return True if manifest has no errors and is not marked failed."""
-        return (
-            self.manifest.status != self.manifest.FAILED
-            and not self.manifest.errors)
+        return self.manifest.status != self.manifest.FAILED and not self.manifest.errors
 
     def cleanup(self):
         """Subclass this method to do things after manifest is filed."""

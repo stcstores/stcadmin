@@ -6,94 +6,147 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [('price_calculator', '0001_initial'), ('price_calculator', '0002_auto_20171120_1601'), ('price_calculator', '0003_destinationcountry_currency_code'), ('price_calculator', '0004_destinationcountry_min_channel_fee'), ('price_calculator', '0005_shippingprice_disabled'), ('price_calculator', '0006_auto_20180514_0933')]
-
-    dependencies = [
+    replaces = [
+        ("price_calculator", "0001_initial"),
+        ("price_calculator", "0002_auto_20171120_1601"),
+        ("price_calculator", "0003_destinationcountry_currency_code"),
+        ("price_calculator", "0004_destinationcountry_min_channel_fee"),
+        ("price_calculator", "0005_shippingprice_disabled"),
+        ("price_calculator", "0006_auto_20180514_0933"),
     ]
+
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='DestinationCountry',
+            name="DestinationCountry",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=20, unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=20, unique=True)),
             ],
         ),
         migrations.CreateModel(
-            name='PackageType',
+            name="PackageType",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=20, unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=20, unique=True)),
             ],
         ),
         migrations.CreateModel(
-            name='ShippingPrice',
+            name="ShippingPrice",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, unique=True)),
-                ('min_weight', models.PositiveSmallIntegerField(blank=True, null=True)),
-                ('max_weight', models.PositiveSmallIntegerField(blank=True, null=True)),
-                ('min_price', models.PositiveSmallIntegerField(blank=True, null=True)),
-                ('max_price', models.PositiveSmallIntegerField(blank=True, null=True)),
-                ('item_price', models.PositiveSmallIntegerField()),
-                ('kilo_price', models.PositiveSmallIntegerField(blank=True, null=True)),
-                ('country', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='price_calculator.DestinationCountry')),
-                ('package_type', models.ManyToManyField(to='price_calculator.PackageType')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50, unique=True)),
+                ("min_weight", models.PositiveSmallIntegerField(blank=True, null=True)),
+                ("max_weight", models.PositiveSmallIntegerField(blank=True, null=True)),
+                ("min_price", models.PositiveSmallIntegerField(blank=True, null=True)),
+                ("max_price", models.PositiveSmallIntegerField(blank=True, null=True)),
+                ("item_price", models.PositiveSmallIntegerField()),
+                ("kilo_price", models.PositiveSmallIntegerField(blank=True, null=True)),
+                (
+                    "country",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="price_calculator.DestinationCountry",
+                    ),
+                ),
+                (
+                    "package_type",
+                    models.ManyToManyField(to="price_calculator.PackageType"),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='VATRate',
+            name="VATRate",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50)),
-                ('cc_id', models.PositiveSmallIntegerField()),
-                ('percentage', models.PositiveSmallIntegerField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50)),
+                ("cc_id", models.PositiveSmallIntegerField()),
+                ("percentage", models.PositiveSmallIntegerField()),
             ],
-            options={
-                'verbose_name': 'VAT Rate',
-                'verbose_name_plural': 'VAT Rates',
-            },
+            options={"verbose_name": "VAT Rate", "verbose_name_plural": "VAT Rates"},
         ),
         migrations.AddField(
-            model_name='shippingprice',
-            name='vat_rates',
-            field=models.ManyToManyField(blank=True, to='price_calculator.VATRate'),
+            model_name="shippingprice",
+            name="vat_rates",
+            field=models.ManyToManyField(blank=True, to="price_calculator.VATRate"),
         ),
         migrations.AlterField(
-            model_name='destinationcountry',
-            name='name',
+            model_name="destinationcountry",
+            name="name",
             field=models.CharField(max_length=50, unique=True),
         ),
         migrations.AlterField(
-            model_name='packagetype',
-            name='name',
+            model_name="packagetype",
+            name="name",
             field=models.CharField(max_length=50, unique=True),
         ),
         migrations.AddField(
-            model_name='destinationcountry',
-            name='currency_code',
-            field=models.CharField(default='GBP', max_length=4),
+            model_name="destinationcountry",
+            name="currency_code",
+            field=models.CharField(default="GBP", max_length=4),
         ),
         migrations.AddField(
-            model_name='destinationcountry',
-            name='min_channel_fee',
+            model_name="destinationcountry",
+            name="min_channel_fee",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='shippingprice',
-            name='disabled',
+            model_name="shippingprice",
+            name="disabled",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterModelOptions(
-            name='destinationcountry',
-            options={'verbose_name': 'Destination Country', 'verbose_name_plural': 'Destination Countries'},
+            name="destinationcountry",
+            options={
+                "verbose_name": "Destination Country",
+                "verbose_name_plural": "Destination Countries",
+            },
         ),
         migrations.AlterModelOptions(
-            name='packagetype',
-            options={'verbose_name': 'Package Type', 'verbose_name_plural': 'Package Types'},
+            name="packagetype",
+            options={
+                "verbose_name": "Package Type",
+                "verbose_name_plural": "Package Types",
+            },
         ),
         migrations.AlterModelOptions(
-            name='shippingprice',
-            options={'verbose_name': 'Shipping Price', 'verbose_name_plural': 'Shippng Prices'},
+            name="shippingprice",
+            options={
+                "verbose_name": "Shipping Price",
+                "verbose_name_plural": "Shippng Prices",
+            },
         ),
     ]

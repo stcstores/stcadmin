@@ -9,7 +9,7 @@ from django.utils.safestring import mark_safe
 from inventory import models
 
 register = template.Library()
-SUBDOMAIN = 'seatontradingcompany'
+SUBDOMAIN = "seatontradingcompany"
 
 
 @register.simple_tag
@@ -37,7 +37,8 @@ def warehouses():
     data = {}
     for w in warehouses:
         data[w.warehouse_id] = [
-            {'value': b.bay_id, 'text': b.name} for b in w.bay_set.all()]
+            {"value": b.bay_id, "text": b.name} for b in w.bay_set.all()
+        ]
     return mark_safe(json.dumps(data))
 
 
@@ -45,6 +46,7 @@ def warehouses():
 def product_options(option=None):
     """Return dict containing product options and values."""
     from ccapi import ProductOptions
+
     if option is None:
         return {x.option_name: x.values for x in ProductOptions}
     else:

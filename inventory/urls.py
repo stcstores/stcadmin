@@ -4,65 +4,66 @@ from django.urls import path
 
 from inventory import views
 
-app_name = 'inventory'
+app_name = "inventory"
 
 inventory_urlpatterns = [
+    path("product_search/", views.ProductSearchView.as_view(), name="product_search"),
     path(
-        'product_search/',
-        views.ProductSearchView.as_view(), name='product_search'),
+        "product_range/<int:range_id>/",
+        views.ProductRangeView.as_view(),
+        name="product_range",
+    ),
     path(
-        'product_range/<int:range_id>/',
-        views.ProductRangeView.as_view(), name='product_range'),
+        "locations/<int:range_id>/", views.LocationFormView.as_view(), name="locations"
+    ),
+    path("images/<int:range_id>/", views.ImageFormView.as_view(), name="images"),
+    path("product/<int:product_id>/", views.ProductView.as_view(), name="product"),
     path(
-        'locations/<int:range_id>/',
-        views.LocationFormView.as_view(), name='locations'),
+        "descriptions/<int:range_id>/",
+        views.DescriptionsView.as_view(),
+        name="descriptions",
+    ),
+    path("sku_generator/", views.SKUGeneratorView.as_view(), name="sku_generator"),
     path(
-        'images/<int:range_id>/',
-        views.ImageFormView.as_view(), name='images'),
+        "delete_stcadmin_image/<int:image_id>/",
+        views.DeleteSTCAdminImage.as_view(),
+        name="delete_stcadmin_image",
+    ),
     path(
-        'product/<int:product_id>/',
-        views.ProductView.as_view(), name='product'),
+        "print_barcodes/<int:range_id>/",
+        views.PrintBarcodeLabels.as_view(),
+        name="print_barcodes",
+    ),
+    path("barcode_pdf/", views.BarcodePDF.as_view(), name="barcode_pdf"),
     path(
-        'descriptions/<int:range_id>/',
-        views.DescriptionsView.as_view(), name='descriptions'),
+        "create_warehouse_bay/",
+        views.CreateBayView.as_view(),
+        name="create_warehouse_bay",
+    ),
     path(
-        'sku_generator/',
-        views.SKUGeneratorView.as_view(), name='sku_generator'),
-    path(
-        'delete_stcadmin_image/<int:image_id>/',
-        views.DeleteSTCAdminImage.as_view(), name='delete_stcadmin_image'),
-    path(
-        'print_barcodes/<int:range_id>/',
-        views.PrintBarcodeLabels.as_view(), name='print_barcodes'),
-    path(
-        'barcode_pdf/', views.BarcodePDF.as_view(), name='barcode_pdf'),
-    path(
-        'create_warehouse_bay/',
-        views.CreateBayView.as_view(), name='create_warehouse_bay'),
-    path(
-        'create_supplier/',
-        views.CreateSupplierView.as_view(), name='create_supplier')
+        "create_supplier/", views.CreateSupplierView.as_view(), name="create_supplier"
+    ),
 ]
 
 api_urlpatterns = [
     path(
-        'get_stock_for_products/',
-        views.GetStockForProductView.as_view(), name='get_stock_for_product'),
+        "get_stock_for_products/",
+        views.GetStockForProductView.as_view(),
+        name="get_stock_for_product",
+    ),
+    path("get_new_sku/", views.GetNewSKUView.as_view(), name="get_new_sku"),
     path(
-        'get_new_sku/',
-        views.GetNewSKUView.as_view(), name='get_new_sku'),
+        "get_new_range_sku/",
+        views.GetNewRangeSKUView.as_view(),
+        name="get_new_range_sku",
+    ),
     path(
-        'get_new_range_sku/',
-        views.GetNewRangeSKUView.as_view(), name='get_new_range_sku'),
-    path(
-        'update_stock_level/',
-        views.UpdateStockLevelView.as_view(), name='update_stock_level'),
-    path(
-        'set_image_order/',
-        views.SetImageOrderView.as_view(), name='set_image_order'),
-    path(
-        'delete_image/',
-        views.DeleteImage.as_view(), name='delete_image'),
+        "update_stock_level/",
+        views.UpdateStockLevelView.as_view(),
+        name="update_stock_level",
+    ),
+    path("set_image_order/", views.SetImageOrderView.as_view(), name="set_image_order"),
+    path("delete_image/", views.DeleteImage.as_view(), name="delete_image"),
 ]
 
 urlpatterns = inventory_urlpatterns + api_urlpatterns

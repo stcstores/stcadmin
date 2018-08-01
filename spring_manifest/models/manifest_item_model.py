@@ -16,12 +16,12 @@ class ManifestItem(models.Model):
     class Meta:
         """Meta class for ManifestItem."""
 
-        verbose_name = 'Manifest Item'
-        verbose_name_plural = 'Manifest Items'
-        ordering = ('item_id', )
+        verbose_name = "Manifest Item"
+        verbose_name_plural = "Manifest Items"
+        ordering = ("item_id",)
 
     def __str__(self):
-        return '{}_{}'.format(str(self.package), self.item_id)
+        return "{}_{}".format(str(self.package), self.item_id)
 
     def get_item(self):
         """Return product information."""

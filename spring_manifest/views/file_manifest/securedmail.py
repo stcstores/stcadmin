@@ -25,10 +25,12 @@ class SecuredMailItem:
         self.package = package
         self.manifest_item = manifest_item
         self.cc_product = self.get_order_product(
-            self.manifest_item, self.order.cc_order)
+            self.manifest_item, self.order.cc_order
+        )
         self.name = self.cc_product.product_name
         self.price = self.order.manifest_filer.convert_to_GBP(
-            self.order.country.currency_code, self.cc_product.price)
+            self.order.country.currency_code, self.cc_product.price
+        )
         self.quantity = self.manifest_item.quantity
         self.weight = self.cc_product.per_item_weight
 
@@ -38,8 +40,8 @@ class SecuredMailItem:
             if int(product.product_id) == item.item_id:
                 return product
         self.add_error(
-            'Product {} not found for order {}'.format(
-                item.sku, cc_order.order_id))
+            "Product {} not found for order {}".format(item.sku, cc_order.order_id)
+        )
 
 
 class SecuredMailPackage:
@@ -55,7 +57,7 @@ class SecuredMailPackage:
             for i in self.manifest_package.manifestitem_set.all()
             if i.quantity > 0
         ]
-        self.description = ', '.join([item.name for item in self.items])
+        self.description = ", ".join([item.name for item in self.items])
         self.price = sum([item.price for item in self.items])
         self.quantity = sum([item.quantity for item in self.items])
         self.weight = sum([item.weight * item.quantity for item in self.items])
@@ -70,12 +72,12 @@ class SecuredMailOrder:
         self.manifest_filer = manifest_filer
         self.service = manifest_order.service
         self.secured_mail_service = models.SecuredMailService.objects.get(
-            shipping_service=self.service)
+            shipping_service=self.service
+        )
         self.cc_order = manifest_order.get_order_data()
         self.address = self.get_order_address(self.cc_order)
         self.country = self.manifest_order.country
-        self.price = self.get_order_value(
-            self.cc_order, self.country.currency_code)
+        self.price = self.get_order_value(self.cc_order, self.country.currency_code)
         self.packages = [
             SecuredMailPackage(self, p)
             for p in self.manifest_order.manifestpackage_set.all()
@@ -92,19 +94,21 @@ class SecuredMailOrder:
         """Fetch order address from Cloud Commerce."""
         try:
             address = CCAPI.get_order_addresses(
-                order.order_id, order.customer_id).delivery_address
+                order.order_id, order.customer_id
+            ).delivery_address
         except Exception:
             self.add_error(
-                'Error getting addresses for order {}'.format(order.order_id))
+                "Error getting addresses for order {}".format(order.order_id)
+            )
         else:
             return address
 
     def clean_address(self, order, address):
         """Return formatted address lines."""
         original_address = address.address
-        clean_address = [' '.join(a.split()) for a in original_address]
+        clean_address = [" ".join(a.split()) for a in original_address]
         while len(clean_address) < 3:
-            clean_address.append('')
+            clean_address.append("")
         return clean_address
 
     def get_order_value(self, order, currency_code=None):
@@ -120,12 +124,9 @@ class SecuredMailOrder:
 class FileSecuredMailManifest(FileManifest):
     """File a Secured Mail manifest."""
 
-    PROOF_OF_DELIVERY = {'SMIU': '', 'SMIT': 'S'}
-    SERVICE = {
-        'SMIU': 'International Untracked',
-        'SMIT': 'International Tracked'
-    }
-    TRACKED = 'Tracked'
+    PROOF_OF_DELIVERY = {"SMIU": "", "SMIT": "S"}
+    SERVICE = {"SMIU": "International Untracked", "SMIT": "International Tracked"}
+    TRACKED = "Tracked"
 
     def process_manifest(self):
         """File manifest."""
@@ -134,8 +135,7 @@ class FileSecuredMailManifest(FileManifest):
             try:
                 self.orders.append(SecuredMailOrder(order, self))
             except Exception as e:
-                self.add_error(
-                    'Problem with order {}.\n{}'.format(order.order_id, e))
+                self.add_error("Problem with order {}.\n{}".format(order.order_id, e))
         self.packages = sum([order.packages for order in self.orders], [])
         if self.valid():
             self.save_manifest_file()
@@ -155,8 +155,7 @@ class FileSecuredMailManifest(FileManifest):
 
     def invalid_country_message(self, order):
         """Return message for invalid countries."""
-        return 'Order {}: Country {} info invalid.'.format(
-            order, order.country)
+        return "Order {}: Country {} info invalid.".format(order, order.country)
 
     @staticmethod
     def get_packages_for_orders(orders):
@@ -171,31 +170,31 @@ class FileSecuredMailManifest(FileManifest):
         packages = self.get_packages_for_orders(item_advice_orders)
         manifest_string = SecuredMailItemAdviceFile(self.manifest, packages)
         self.manifest.item_advice_file.save(
-            str(self.manifest) + '.csv',
-            ContentFile(manifest_string),
-            save=True)
+            str(self.manifest) + ".csv", ContentFile(manifest_string), save=True
+        )
 
     def save_manifest_file(self):
         """Create Manifest file and save to database."""
         manifest_file = SecuredMailManifestFile(self.manifest, self.orders)
         self.manifest.manifest_file.save(
-            str(self.manifest) + '_manifest.xlsx', File(manifest_file))
+            str(self.manifest) + "_manifest.xlsx", File(manifest_file)
+        )
 
     def save_docket_file(self):
         """Create Docket file and save to database."""
         docket_orders = [
-            order for order in self.orders
-            if order.secured_mail_service.on_docket
+            order for order in self.orders if order.secured_mail_service.on_docket
         ]
         packages = self.get_packages_for_orders(docket_orders)
         docket_file = SecuredMailDocketFile(self.manifest, packages)
         self.manifest.docket_file.save(
-            str(self.manifest) + '_docket.xlsx', File(docket_file))
+            str(self.manifest) + "_docket.xlsx", File(docket_file)
+        )
         self.manifest.file_manifest()
 
     def get_date_string(self):
         """Return currenct date as string."""
-        return datetime.datetime.now().strftime('%Y-%m-%d')
+        return datetime.datetime.now().strftime("%Y-%m-%d")
 
     def add_success_messages(self, manifest):
         """Create success message."""
@@ -203,9 +202,12 @@ class FileSecuredMailManifest(FileManifest):
         package_count = sum(o.manifestpackage_set.count() for o in orders)
         order_count = len(orders)
         messages.add_message(
-            self.request, messages.SUCCESS,
-            'Manifest file created with {} packages for {} orders'.format(
-                package_count, order_count))
+            self.request,
+            messages.SUCCESS,
+            "Manifest file created with {} packages for {} orders".format(
+                package_count, order_count
+            ),
+        )
 
     def cleanup(self):
         """Increase docket number."""
@@ -213,7 +215,7 @@ class FileSecuredMailManifest(FileManifest):
 
     def increment_docket_number(self):
         """Update Docket number in database."""
-        counter = models.Counter.objects.get(name='Secured Mail Docket Number')
+        counter = models.Counter.objects.get(name="Secured Mail Docket Number")
         counter.count += 1
         counter.save()
 
@@ -223,21 +225,20 @@ class SecuredMailItemAdviceFile:
 
     def __new__(self, manifest, packages):
         """Create a Secured Mail Item Advice file."""
-        rows = [
-            self.get_row_for_package(self, package) for package in packages
-        ]
+        rows = [self.get_row_for_package(self, package) for package in packages]
         if rows:
-            output = io.StringIO(newline='')
+            output = io.StringIO(newline="")
             writer = csv.DictWriter(
-                output, rows[0].keys(), delimiter=',', lineterminator='\r\n')
+                output, rows[0].keys(), delimiter=",", lineterminator="\r\n"
+            )
             writer.writeheader()
             writer.writerows(rows)
             manifest.file_manifest()
-            manifest_string = output.getvalue().encode('utf-8', 'replace')
+            manifest_string = output.getvalue().encode("utf-8", "replace")
             output.close()
             return manifest_string
         else:
-            return ''
+            return ""
 
     def get_row_for_package(self, package):
         """Return a spreadsheet row of the passed package."""
@@ -246,49 +247,54 @@ class SecuredMailItemAdviceFile:
         secured_mail_service = order.secured_mail_service
         return OrderedDict(
             {
-                'RecipientName': address.delivery_name,
-                'Addr1': address.clean_address[0],
-                'Addr2': address.clean_address[1],
-                'Addr3': address.clean_address[2],
-                'State': address.county_region,
-                'Town': address.town_city or 'N/A',
-                'Country': '',
-                'Postcode': address.post_code or ' ',
-                'Item Description': package.description,
-                'Item Quantity': package.quantity,
-                'Item Value': package.price,
-                'Weight': int(package.weight),
-                'Format': 'P',
-                'Client Item Reference': str(package.manifest_package),
-                'CountryCode': order.country.iso_code,
-                'Proof of Delivery': secured_mail_service.proof_of_delivery
-            })
+                "RecipientName": address.delivery_name,
+                "Addr1": address.clean_address[0],
+                "Addr2": address.clean_address[1],
+                "Addr3": address.clean_address[2],
+                "State": address.county_region,
+                "Town": address.town_city or "N/A",
+                "Country": "",
+                "Postcode": address.post_code or " ",
+                "Item Description": package.description,
+                "Item Quantity": package.quantity,
+                "Item Value": package.price,
+                "Weight": int(package.weight),
+                "Format": "P",
+                "Client Item Reference": str(package.manifest_package),
+                "CountryCode": order.country.iso_code,
+                "Proof of Delivery": secured_mail_service.proof_of_delivery,
+            }
+        )
 
 
 class SecuredMailManifestFile:
     """Create a Secured Mail Manifest file."""
 
-    TEMPLATE_FILENAME = 'secure_mail_manifest_template.xlsx'
+    TEMPLATE_FILENAME = "secure_mail_manifest_template.xlsx"
     TEMPLATE_PATH = os.path.join(
-        os.path.abspath(os.path.dirname(__file__)), TEMPLATE_FILENAME)
-    ITEM_COL = 'M'
-    WEIGHT_COL = 'N'
-    REFERENCE_CELL = 'J3'
-    DATE_CELL = 'O3'
-    TRACKED_ROW = '21'
+        os.path.abspath(os.path.dirname(__file__)), TEMPLATE_FILENAME
+    )
+    ITEM_COL = "M"
+    WEIGHT_COL = "N"
+    REFERENCE_CELL = "J3"
+    DATE_CELL = "O3"
+    TRACKED_ROW = "21"
 
     def __new__(self, manifest, orders):
         """Create Secured Mail Manifest file."""
         untracked_orders = [
-            order for order in orders
-            if order.service.name == 'Secured Mail International Untracked'
+            order
+            for order in orders
+            if order.service.name == "Secured Mail International Untracked"
         ]
         tracked_orders = [
-            order for order in orders
-            if order.service.name == 'Secured Mail International Tracked'
+            order
+            for order in orders
+            if order.service.name == "Secured Mail International Tracked"
         ]
         tracked_weight = self.convert_weight(
-            self, sum([o.weight for o in tracked_orders]))
+            self, sum([o.weight for o in tracked_orders])
+        )
         destinations = models.SecuredMailDestination.objects.all()
         wb = openpyxl.load_workbook(filename=self.TEMPLATE_PATH)
         ws = wb.active
@@ -296,11 +302,13 @@ class SecuredMailManifestFile:
         total_weight = 0
         for destination in destinations:
             orders_for_destination = [
-                order for order in untracked_orders
+                order
+                for order in untracked_orders
                 if order.country.secured_mail_destination == destination
             ]
             weight_for_destination = self.convert_weight(
-                self, sum([o.weight for o in orders_for_destination]))
+                self, sum([o.weight for o in orders_for_destination])
+            )
             total_items += len(orders_for_destination)
             total_weight += weight_for_destination
             row = str(destination.manifest_row_number)
@@ -309,7 +317,7 @@ class SecuredMailManifestFile:
         ws[self.ITEM_COL + self.TRACKED_ROW] = len(tracked_orders)
         ws[self.WEIGHT_COL + self.TRACKED_ROW] = tracked_weight
         ws[self.REFERENCE_CELL] = str(manifest)
-        ws[self.DATE_CELL] = datetime.datetime.now().strftime('%Y/%m/%d')
+        ws[self.DATE_CELL] = datetime.datetime.now().strftime("%Y/%m/%d")
         return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
 
     def convert_weight(self, weight):
@@ -320,34 +328,35 @@ class SecuredMailManifestFile:
 class SecuredMailDocketFile:
     """Create Secured Docket file."""
 
-    TEMPLATE_FILENAME = 'secure_mail_docket_template.xlsx'
+    TEMPLATE_FILENAME = "secure_mail_docket_template.xlsx"
     TEMPLATE_PATH = os.path.join(
-        os.path.abspath(os.path.dirname(__file__)), TEMPLATE_FILENAME)
-    COLLECTION_SITE_NAME = 'Seaton Trading Company Ltd'
-    CONTACT_NAME = 'Larry Guogis'
-    CONTACT_NUMBER = '01297 21874'
-    CONTACT_ADDRESS = '26 Harbour Road, Seaton, EX12 2NA'
-    CLIENT_TO_BE_BILLED = 'Seaton Trading Company Ltd'
-    PRINTED_NAME = 'Larry Guogis'
-    INITIALS = 'ST'
+        os.path.abspath(os.path.dirname(__file__)), TEMPLATE_FILENAME
+    )
+    COLLECTION_SITE_NAME = "Seaton Trading Company Ltd"
+    CONTACT_NAME = "Larry Guogis"
+    CONTACT_NUMBER = "01297 21874"
+    CONTACT_ADDRESS = "26 Harbour Road, Seaton, EX12 2NA"
+    CLIENT_TO_BE_BILLED = "Seaton Trading Company Ltd"
+    PRINTED_NAME = "Larry Guogis"
+    INITIALS = "ST"
     JOB_NAME = INITIALS
-    COLLECTION_SITE_CELL = 'D3'
-    DOCKET_NUMBER_CELL = 'F3'
-    COLLECTION_DATE_CELL = 'I3'
-    CONTACT_NAME_CELL = 'D6'
-    CONTACT_NUMBER_CELL = 'I6'
-    CONTACT_ADDRESS_CELL = 'D8'
-    CLIENT_TO_BE_BILLED_CELL = 'D10'
-    PRINTED_NAME_CELL = 'C34'
-    SIGN_DATE_FIELD = 'C36'
-    TABLE_START_ROW = '16'
-    JOB_NAME_COL = 'B'
-    SERVICE_COL = 'C'
-    FORMAT_COL = 'E'
-    ITEM_WEIGHT_COL = 'F'
-    QUANTITY_MAILED_COL = 'G'
-    PRESENTATION_TYPE_COL = 'H'
-    PRESENTATION_QUANTITY_COL = 'I'
+    COLLECTION_SITE_CELL = "D3"
+    DOCKET_NUMBER_CELL = "F3"
+    COLLECTION_DATE_CELL = "I3"
+    CONTACT_NAME_CELL = "D6"
+    CONTACT_NUMBER_CELL = "I6"
+    CONTACT_ADDRESS_CELL = "D8"
+    CLIENT_TO_BE_BILLED_CELL = "D10"
+    PRINTED_NAME_CELL = "C34"
+    SIGN_DATE_FIELD = "C36"
+    TABLE_START_ROW = "16"
+    JOB_NAME_COL = "B"
+    SERVICE_COL = "C"
+    FORMAT_COL = "E"
+    ITEM_WEIGHT_COL = "F"
+    QUANTITY_MAILED_COL = "G"
+    PRESENTATION_TYPE_COL = "H"
+    PRESENTATION_QUANTITY_COL = "I"
 
     def __new__(self, manifest, packages):
         """Create Secured Docket file."""
@@ -363,10 +372,10 @@ class SecuredMailDocketFile:
         ws[self.PRINTED_NAME_CELL] = self.PRINTED_NAME
         ws[self.SIGN_DATE_FIELD] = self.get_date()
         row = self.TABLE_START_ROW
-        for service in models.SecuredMailService.objects.filter(
-                on_docket=True):
+        for service in models.SecuredMailService.objects.filter(on_docket=True):
             service_packages = [
-                package for package in packages
+                package
+                for package in packages
                 if package.order.secured_mail_service == service
             ]
             if len(service_packages) == 0:
@@ -382,11 +391,11 @@ class SecuredMailDocketFile:
 
     def get_docket_number(self):
         """Return current docket number."""
-        counter = models.Counter.objects.get(name='Secured Mail Docket Number')
+        counter = models.Counter.objects.get(name="Secured Mail Docket Number")
         docket_number = counter.count
-        return '{}{}{}'.format(self.INITIALS, self.INITIALS, docket_number)
+        return "{}{}{}".format(self.INITIALS, self.INITIALS, docket_number)
 
     @staticmethod
     def get_date():
         """Return current date as string."""
-        return datetime.datetime.now().strftime('%d/%m/%Y')
+        return datetime.datetime.now().strftime("%d/%m/%Y")

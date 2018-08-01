@@ -12,9 +12,9 @@ from django.db import models
 
 def get_product_image_upload_to(instance, original_filename):
     """Return save location for STCAdminImage.image files."""
-    extension = original_filename.split('.')[-1]
-    filename = '{}.{}'.format(uuid.uuid4(), extension)
-    return os.path.join('product_images', str(instance.range_id), filename)
+    extension = original_filename.split(".")[-1]
+    filename = "{}.{}".format(uuid.uuid4(), extension)
+    return os.path.join("product_images", str(instance.range_id), filename)
 
 
 class STCAdminImage(models.Model):
@@ -26,8 +26,8 @@ class STCAdminImage(models.Model):
     class Meta:
         """Meta class for STCAdminImage."""
 
-        verbose_name = 'STC Admin Image'
-        verbose_name_plural = 'STC Admin Images'
+        verbose_name = "STC Admin Image"
+        verbose_name_plural = "STC Admin Images"
 
     def delete(self, *args, **kwargs):
         """Delete file when object is deleted."""

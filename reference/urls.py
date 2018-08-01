@@ -4,8 +4,6 @@ from django.urls import path
 
 from reference import views
 
-app_name = 'reference'
+app_name = "reference"
 
-urlpatterns = [
-    path('', views.Index.as_view(), name='index'),
-]
+urlpatterns = [path("", views.Index.as_view(), name="index")]

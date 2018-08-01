@@ -9,12 +9,12 @@ class CloudCommerceShippingRule(models.Model):
     class Meta:
         """Meta class for the CloudCommerceShippingRule model."""
 
-        verbose_name = 'Cloud Commerce Shipping Rule'
-        verbose_name_plural = 'Cloud Commerce Shipping Rules'
+        verbose_name = "Cloud Commerce Shipping Rule"
+        verbose_name_plural = "Cloud Commerce Shipping Rules"
 
     name = models.CharField(max_length=255)
     full_name = models.CharField(max_length=255)
     rule_id = models.PositiveIntegerField()
 
     def __str__(self):
-        return f'{self.rule_id} - {self.name}'
+        return f"{self.rule_id} - {self.name}"

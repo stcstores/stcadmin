@@ -9,7 +9,7 @@ from suppliers import models
 class SupplierAdmin(admin.ModelAdmin):
     """Model admin for the Supplier model."""
 
-    list_display = ('name', 'email', 'phone')
+    list_display = ("name", "email", "phone")
 
 
 @admin.register(models.StockItem)
@@ -17,5 +17,10 @@ class StockItemAdmin(admin.ModelAdmin):
     """Model admin for the StockItem model."""
 
     list_display = (
-        'product_code', 'supplier_title', 'box_quantity', 'linnworks_title',
-        'linnworks_sku', 'supplier',)
+        "product_code",
+        "supplier_title",
+        "box_quantity",
+        "linnworks_title",
+        "linnworks_sku",
+        "supplier",
+    )

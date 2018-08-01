@@ -6,46 +6,51 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('stock_check', '0002_auto_20180104_1154'),
-    ]
+    dependencies = [("stock_check", "0002_auto_20180104_1154")]
 
     operations = [
         migrations.CreateModel(
-            name='ProductBay',
+            name="ProductBay",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('stock_level', models.PositiveIntegerField(blank=True, default=None, null=True)),
-                ('bay', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='stock_check.Bay')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "stock_level",
+                    models.PositiveIntegerField(blank=True, default=None, null=True),
+                ),
+                (
+                    "bay",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="stock_check.Bay",
+                    ),
+                ),
             ],
         ),
-        migrations.AlterUniqueTogether(
-            name='productbaystock',
-            unique_together=set(),
-        ),
-        migrations.RemoveField(
-            model_name='productbaystock',
-            name='bay',
-        ),
-        migrations.RemoveField(
-            model_name='productbaystock',
-            name='product',
-        ),
-        migrations.RemoveField(
-            model_name='product',
-            name='bays',
-        ),
+        migrations.AlterUniqueTogether(name="productbaystock", unique_together=set()),
+        migrations.RemoveField(model_name="productbaystock", name="bay"),
+        migrations.RemoveField(model_name="productbaystock", name="product"),
+        migrations.RemoveField(model_name="product", name="bays"),
         migrations.AddField(
-            model_name='product',
-            name='bays',
-            field=models.ManyToManyField(through='stock_check.ProductBay', to='stock_check.Bay'),
+            model_name="product",
+            name="bays",
+            field=models.ManyToManyField(
+                through="stock_check.ProductBay", to="stock_check.Bay"
+            ),
         ),
-        migrations.DeleteModel(
-            name='ProductBayStock',
-        ),
+        migrations.DeleteModel(name="ProductBayStock"),
         migrations.AddField(
-            model_name='productbay',
-            name='product',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='stock_check.Product'),
+            model_name="productbay",
+            name="product",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="stock_check.Product"
+            ),
         ),
     ]

@@ -13,7 +13,7 @@ class Command(BaseCommand):
         python manage.py update_manifest
     """
 
-    help = 'Update Manifest Orders'
+    help = "Update Manifest Orders"
 
     def handle(self, *args, **options):
         """Update manifests."""

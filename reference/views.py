@@ -7,4 +7,4 @@ from django.views.generic.base import TemplateView
 class Index(LoginRequiredMixin, TemplateView):
     """View for the reference landing page."""
 
-    template_name = 'reference/index.html'
+    template_name = "reference/index.html"

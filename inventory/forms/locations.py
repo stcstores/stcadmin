@@ -16,7 +16,7 @@ class DepartmentForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         """Create fields for form."""
-        self.product_range = kwargs.pop('product_range')
+        self.product_range = kwargs.pop("product_range")
         super().__init__(*args, **kwargs)
         self.fields[self.DEPARTMENT] = Department()
         self.initial.update(self.get_initial())
@@ -33,7 +33,8 @@ class DepartmentForm(forms.Form):
         else:
             try:
                 department_id = models.Warehouse.used_warehouses.get(
-                    name=department).warehouse_id
+                    name=department
+                ).warehouse_id
             except models.Warehouse.DoesNotExist:
                 department_id = None
         initial[self.DEPARTMENT] = department_id
@@ -42,31 +43,32 @@ class DepartmentForm(forms.Form):
     def save(self):
         """Update Product Range department."""
         department = models.Warehouse.objects.get(
-            warehouse_id=self.cleaned_data[self.DEPARTMENT])
+            warehouse_id=self.cleaned_data[self.DEPARTMENT]
+        )
         self.product_range.department = department.name
 
 
 class LocationsForm(forms.Form):
     """Form for changing the Warehouse Bays associated with a product."""
 
-    PRODUCT_ID = 'product_id'
-    PRODUCT_NAME = 'product_name'
-    STOCK_LEVEL = 'stock_level'
-    LOCATIONS = 'locations'
+    PRODUCT_ID = "product_id"
+    PRODUCT_NAME = "product_name"
+    STOCK_LEVEL = "stock_level"
+    LOCATIONS = "locations"
     WAREHOUSE = ProductEditorBase.WAREHOUSE
     BAYS = ProductEditorBase.BAYS
 
-    product_id = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'product_id'}))
+    product_id = forms.CharField(widget=forms.TextInput(attrs={"class": "product_id"}))
     product_name = forms.CharField(
         disabled=True,
         required=False,
-        widget=forms.TextInput(attrs={'size': 200, 'class': 'product_title'}))
+        widget=forms.TextInput(attrs={"size": 200, "class": "product_title"}),
+    )
     stock_level = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Add fields to form."""
-        self.product = kwargs.pop('product')
+        self.product = kwargs.pop("product")
         super().__init__(*args, **kwargs)
         self.fields[self.LOCATIONS] = WarehouseBayField()
         self.cleaned_data = {}
@@ -78,16 +80,15 @@ class LocationsForm(forms.Form):
         initial[self.PRODUCT_ID] = self.product.id
         initial[self.PRODUCT_NAME] = self.product.full_name
         initial[self.STOCK_LEVEL] = self.product.stock_level
-        bays = [
-            bay for bay in models.Bay.objects.filter(
-                bay_id__in=self.product.bays)]
+        bays = [bay for bay in models.Bay.objects.filter(bay_id__in=self.product.bays)]
         warehouses = list(set([bay.warehouse for bay in bays]))
         if len(warehouses) > 1:
-            self.add_error(self.LOCATIONS, 'Mixed warehouses.')
+            self.add_error(self.LOCATIONS, "Mixed warehouses.")
         elif len(warehouses) == 1:
             initial[self.LOCATIONS] = {
                 self.WAREHOUSE: warehouses[0].warehouse_id,
-                self.BAYS: [bay.id for bay in bays]}
+                self.BAYS: [bay.id for bay in bays],
+            }
         return initial
 
     def get_warehouse_for_bays(self, bay_ids):
@@ -95,7 +96,8 @@ class LocationsForm(forms.Form):
         if len(bay_ids) == 0:
             return None
         bays = models.Bay.objects.filter(
-            bay_id__in=[int(bay_id) for bay_id in bay_ids]).all()
+            bay_id__in=[int(bay_id) for bay_id in bay_ids]
+        ).all()
         if all([bay.warehouse == bays[0].warehouse for bay in bays]):
             return bays[0].warehouse
         return None
@@ -118,9 +120,9 @@ class LocationsForm(forms.Form):
     def get_context_data(self, *args, **kwargs):
         """Return cotext for template."""
         context = super().get_context_data(*args, **kwargs)
-        context['bays'] = [
-            bay.name for bay in models.Bay.objects.filter(
-                bay_id__in=self.product.bays)]
+        context["bays"] = [
+            bay.name for bay in models.Bay.objects.filter(bay_id__in=self.product.bays)
+        ]
         return context
 
 

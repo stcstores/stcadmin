@@ -6,7 +6,7 @@ class VariationNotFoundError(ValueError):
 
     def __init__(self, variation):
         """Raise exception."""
-        super().__init__('Variation not found: {}'.format(variation))
+        super().__init__("Variation not found: {}".format(variation))
 
 
 class VariationKeyMissmatch(ValueError):
@@ -14,4 +14,4 @@ class VariationKeyMissmatch(ValueError):
 
     def __init__(self, variations):
         """Raise exception."""
-        super().__init__('Variation key missmatched: {}'.format(variations))
+        super().__init__("Variation key missmatched: {}".format(variations))

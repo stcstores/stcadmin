@@ -14,13 +14,12 @@ class Supplier(models.Model):
     class Meta:
         """Meta class for Supplier."""
 
-        verbose_name = 'Supplier'
-        verbose_name_plural = 'Suppliers'
+        verbose_name = "Supplier"
+        verbose_name_plural = "Suppliers"
 
     def get_absolute_url(self):
         """Return URL for supplier."""
-        return reverse(
-            'suppliers:supplier', kwargs={'pk': str(self.id)})
+        return reverse("suppliers:supplier", kwargs={"pk": str(self.id)})
 
     def __str__(self):
         return self.name
@@ -40,8 +39,8 @@ class StockItem(models.Model):
     class Meta:
         """Meta class for StockItem."""
 
-        verbose_name = 'Stock Item'
-        verbose_name_plural = 'Stock Items'
+        verbose_name = "Stock Item"
+        verbose_name_plural = "Stock Items"
 
     def __str__(self):
         return self.linnworks_title

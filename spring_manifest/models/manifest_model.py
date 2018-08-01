@@ -25,25 +25,26 @@ class UnFiledManager(models.Manager):
 class Manifest(models.Model):
     """Model for manifests."""
 
-    UNFILED = 'unfiled'
-    IN_PROGRESS = 'in_progress'
-    FILED = 'filed'
-    FAILED = 'failed'
+    UNFILED = "unfiled"
+    IN_PROGRESS = "in_progress"
+    FILED = "filed"
+    FAILED = "failed"
     STATUS_CHOICES = (
-        (UNFILED, 'Unfiled'), (IN_PROGRESS, 'In Progress'), (FILED, 'Filed'),
-        (FAILED, 'Failed'))
+        (UNFILED, "Unfiled"),
+        (IN_PROGRESS, "In Progress"),
+        (FILED, "Filed"),
+        (FAILED, "Failed"),
+    )
 
     manifest_type = models.ForeignKey(
-        ManifestType, on_delete=models.SET_NULL, null=True, blank=True)
+        ManifestType, on_delete=models.SET_NULL, null=True, blank=True
+    )
     time_created = models.DateTimeField(default=now)
     time_filed = models.DateTimeField(blank=True, null=True)
-    manifest_file = models.FileField(
-        upload_to='manifests', blank=True, null=True)
-    item_advice_file = models.FileField(
-        upload_to='item_advice', blank=True, null=True)
-    docket_file = models.FileField(upload_to='docket', blank=True, null=True)
-    status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default=FILED)
+    manifest_file = models.FileField(upload_to="manifests", blank=True, null=True)
+    item_advice_file = models.FileField(upload_to="item_advice", blank=True, null=True)
+    docket_file = models.FileField(upload_to="docket", blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=FILED)
     errors = models.TextField(blank=True, null=True)
 
     objects = models.Manager()
@@ -53,17 +54,17 @@ class Manifest(models.Model):
     class Meta:
         """Meta class for Manifest."""
 
-        verbose_name = 'Manifest'
-        verbose_name_plural = 'Manifests'
-        ordering = ['-time_filed', '-time_created']
+        verbose_name = "Manifest"
+        verbose_name_plural = "Manifests"
+        ordering = ["-time_filed", "-time_created"]
 
     def __str__(self):
         manifest_type = self.manifest_type
         if self.time_filed is None:
-            time = 'Unfiled'
+            time = "Unfiled"
         else:
-            time = self.time_filed.strftime('%Y-%m-%d')
-        return '{}_{}_{}'.format(self.id, manifest_type, time)
+            time = self.time_filed.strftime("%Y-%m-%d")
+        return "{}_{}_{}".format(self.id, manifest_type, time)
 
     def file_manifest(self):
         """Set time_filed to current time."""
@@ -73,12 +74,12 @@ class Manifest(models.Model):
     def get_error_list(self):
         """Return list of errors."""
         if self.errors:
-            return self.errors.split('\n')
+            return self.errors.split("\n")
 
     def tracked_count(self):
         """Return number of orders on manifest using Secured Mail Tracked."""
-        return self.manifestorder_set.filter(service='SMIT').count()
+        return self.manifestorder_set.filter(service="SMIT").count()
 
     def untracked_count(self):
         """Return number of orders on manifest using Secured Mail Untracked."""
-        return self.manifestorder_set.filter(service='SMIU').count()
+        return self.manifestorder_set.filter(service="SMIU").count()

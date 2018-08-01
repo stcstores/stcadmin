@@ -11,8 +11,7 @@ from product_editor import editor_manager, forms
 from stcadmin import settings
 
 
-class BaseProductView(
-        InventoryUserMixin, editor_manager.ProductEditorBase, FormView):
+class BaseProductView(InventoryUserMixin, editor_manager.ProductEditorBase, FormView):
     """Base class for new product form views."""
 
     def dispatch(self, *args, **kwargs):
@@ -28,8 +27,8 @@ class BaseProductView(
     def get_context_data(self, *args, **kwargs):
         """Return context data for template."""
         context = super().get_context_data(*args, **kwargs)
-        context['manager'] = self.manager
-        context['page'] = self.page
+        context["manager"] = self.manager
+        context["page"] = self.page
         return context
 
     def form_valid(self, form):
@@ -55,7 +54,7 @@ class EditProductView:
 
     def get_manager(self, *args, **kwargs):
         """Return product manager."""
-        return self.manager_class(args[0], kwargs['range_id'])
+        return self.manager_class(args[0], kwargs["range_id"])
 
 
 class ClearProduct(InventoryUserMixin, View):
@@ -83,7 +82,7 @@ class ClearEditedProduct(ClearProduct, EditProductView):
 class BasicInfo(BaseProductView):
     """View for the Basic Info page of the new product form."""
 
-    template_name = 'product_editor/basic_info.html'
+    template_name = "product_editor/basic_info.html"
     form_class = forms.BasicInfo
     name = editor_manager.ProductEditorBase.BASIC
 
@@ -112,7 +111,7 @@ class EditBasicInfo(BasicInfo, EditProductView):
 class ProductInfo(BaseProductView):
     """View for the Single Product Info page of the product form."""
 
-    template_name = 'product_editor/product_info.html'
+    template_name = "product_editor/product_info.html"
     form_class = forms.ProductInfo
     name = editor_manager.ProductEditorBase.PRODUCT_INFO
 
@@ -126,7 +125,8 @@ class ProductInfo(BaseProductView):
             basic_info = self.manager.basic_info.data
             initial[self.LOCATION] = {
                 self.WAREHOUSE: basic_info[self.DEPARTMENT],
-                self.BAYS: []}
+                self.BAYS: [],
+            }
         return initial
 
     def get_form_kwargs(self, *args, **kwargs):
@@ -150,7 +150,7 @@ class EditProductInfo(ProductInfo, EditProductView):
 class VariationOptions(BaseProductView):
     """View for the Variation Options page of the new product form."""
 
-    template_name = 'product_editor/variation_options.html'
+    template_name = "product_editor/variation_options.html"
     form_class = forms.VariationOptions
     name = editor_manager.ProductEditorBase.VARIATION_OPTIONS
 
@@ -177,7 +177,7 @@ class EditVariationOptions(VariationOptions, EditProductView):
 class ListingOptions(BaseProductView):
     """View for the Listing Options page of the new product form."""
 
-    template_name = 'product_editor/listing_options.html'
+    template_name = "product_editor/listing_options.html"
     form_class = forms.ListingOptions
     name = editor_manager.ProductEditorBase.LISTING_OPTIONS
 
@@ -208,10 +208,10 @@ class BaseVariationProductView(BaseProductView):
         """Get kwargs for form."""
         kwargs = super().get_form_kwargs(*args, **kwargs)
         existing_data = self._get_existing_data()
-        kwargs['form_kwargs'] = [{
-            'existing_data': existing_data,
-            'variation_options': v,
-        } for v in self.get_variation_combinations()]
+        kwargs["form_kwargs"] = [
+            {"existing_data": existing_data, "variation_options": v}
+            for v in self.get_variation_combinations()
+        ]
         return kwargs
 
     def get_variation_combinations(self):
@@ -221,14 +221,14 @@ class BaseVariationProductView(BaseProductView):
     def get_context_data(self, *args, **kwargs):
         """Return context data for template."""
         context = super().get_context_data(*args, **kwargs)
-        context['formset'] = context.pop('form')
+        context["formset"] = context.pop("form")
         error_fields = []
-        for form in context['formset']:
+        for form in context["formset"]:
             for field in form:
                 if field.errors:
                     error_fields.append(field.name)
-        context['error_fields'] = set(error_fields)
-        context['variation_values'] = self.get_variation_values()
+        context["error_fields"] = set(error_fields)
+        context["variation_values"] = self.get_variation_values()
         return context
 
     def get_variation_values(self):
@@ -249,7 +249,7 @@ class BaseVariationProductView(BaseProductView):
 class UnusedVariations(BaseVariationProductView):
     """View for Unused variations page of the new product form."""
 
-    template_name = 'product_editor/unused_variations.html'
+    template_name = "product_editor/unused_variations.html"
     form_class = forms.UnusedVariationsFormSet
     name = editor_manager.ProductEditorBase.UNUSED_VARIATIONS
 
@@ -257,15 +257,16 @@ class UnusedVariations(BaseVariationProductView):
         """Create and return all combination of variation options."""
         variation_options = self.get_variation_options()
         return list(
-            dict(zip(variation_options, x)) for x in
-            itertools.product(*variation_options.values()))
+            dict(zip(variation_options, x))
+            for x in itertools.product(*variation_options.values())
+        )
 
     def get_variation_options(self):
         """Return variation options."""
         variation_options = self.manager.variation_options.data
         return {
-            key: value for key, value in variation_options.items()
-            if len(value) > 0}
+            key: value for key, value in variation_options.items() if len(value) > 0
+        }
 
     def get_initial(self, *args, **kwargs):
         """Get initial data for form."""
@@ -287,7 +288,7 @@ class EditUnusedVariations(UnusedVariations, EditProductView):
 class VariationInfo(BaseVariationProductView):
     """View for the Variation Info page of the new product form."""
 
-    template_name = 'product_editor/variation_info.html'
+    template_name = "product_editor/variation_info.html"
     form_class = forms.VariationInfoSet
     name = editor_manager.ProductEditorBase.VARIATION_INFO
 
@@ -325,7 +326,7 @@ class EditVariationInfo(VariationInfo, EditProductView):
 class VariationListingOptions(BaseVariationProductView):
     """View for the Variation Listing Options page of the new product form."""
 
-    template_name = 'product_editor/variation_listing_options.html'
+    template_name = "product_editor/variation_listing_options.html"
     form_class = forms.VariationListingOptionsSet
     name = editor_manager.ProductEditorBase.VARIATION_LISTING_OPTIONS
 
@@ -350,8 +351,7 @@ class EditVariationListingOptions(VariationListingOptions, EditProductView):
 class FinishProduct(BaseProductView):
     """Complete product creation or update."""
 
-    product_log_directory = os.path.join(
-        settings.MEDIA_ROOT, 'logs', 'products')
+    product_log_directory = os.path.join(settings.MEDIA_ROOT, "logs", "products")
 
     def dispatch(self, *args, **kwargs):
         """Process request."""
@@ -360,14 +360,15 @@ class FinishProduct(BaseProductView):
         if not os.path.exists(dir):
             os.mkdir(dir)
         path = os.path.join(
-            dir, '{}.json'.format(self.manager.basic_info.data[self.TITLE]))
-        most_recent = os.path.join(dir, 'most_recent.json')
-        with open(path, 'w') as f:
+            dir, "{}.json".format(self.manager.basic_info.data[self.TITLE])
+        )
+        most_recent = os.path.join(dir, "most_recent.json")
+        with open(path, "w") as f:
             self.manager.save_json(f)
-        with open(most_recent, 'w') as f:
+        with open(most_recent, "w") as f:
             self.manager.save_json(f)
         range_id = self.manager.save_product()
-        return redirect('inventory:product_range', range_id)
+        return redirect("inventory:product_range", range_id)
 
 
 class FinishNewProduct(FinishProduct, NewProductView):

@@ -5,25 +5,34 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('stock_check', '0004_auto_20180124_1053'),
-    ]
+    dependencies = [("stock_check", "0004_auto_20180124_1053")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='bay',
-            options={'ordering': ('name',), 'verbose_name': 'Bay', 'verbose_name_plural': 'Bays'},
+            name="bay",
+            options={
+                "ordering": ("name",),
+                "verbose_name": "Bay",
+                "verbose_name_plural": "Bays",
+            },
         ),
         migrations.AlterModelOptions(
-            name='product',
-            options={'verbose_name': 'Product', 'verbose_name_plural': 'Products'},
+            name="product",
+            options={"verbose_name": "Product", "verbose_name_plural": "Products"},
         ),
         migrations.AlterModelOptions(
-            name='productbay',
-            options={'verbose_name': 'Product Bay', 'verbose_name_plural': 'Product Bays'},
+            name="productbay",
+            options={
+                "verbose_name": "Product Bay",
+                "verbose_name_plural": "Product Bays",
+            },
         ),
         migrations.AlterModelOptions(
-            name='warehouse',
-            options={'ordering': ('name',), 'verbose_name': 'Warehouse', 'verbose_name_plural': 'Warehouses'},
+            name="warehouse",
+            options={
+                "ordering": ("name",),
+                "verbose_name": "Warehouse",
+                "verbose_name_plural": "Warehouses",
+            },
         ),
     ]

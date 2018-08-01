@@ -14,7 +14,7 @@ from django.core.management.base import BaseCommand
 
 from profit_loss.models import UpdateOrderProfit
 
-logger = logging.getLogger('management_commands')
+logger = logging.getLogger("management_commands")
 
 
 class Command(BaseCommand):
@@ -27,7 +27,7 @@ class Command(BaseCommand):
         python manage.py update_profit_loss
     """
 
-    help = 'Updates Print Audit'
+    help = "Updates Print Audit"
 
     def handle(self, *args, **options):
         """Update profit loss database or log error."""
@@ -35,6 +35,6 @@ class Command(BaseCommand):
             UpdateOrderProfit()
         except Exception as e:
             logger.error(
-                'Admin Command Error: %s', ' '.join(sys.argv),
-                exc_info=sys.exc_info())
+                "Admin Command Error: %s", " ".join(sys.argv), exc_info=sys.exc_info()
+            )
             raise e

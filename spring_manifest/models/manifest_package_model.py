@@ -14,17 +14,14 @@ class ManifestPackage(models.Model):
     class Meta:
         """Meta class for the ManifestPackage model."""
 
-        verbose_name = 'Manifest Package'
-        verbose_name_plural = 'Manifest Packages'
-        unique_together = (
-            'package_number',
-            'order',
-        )
-        ordering = ('package_number', )
+        verbose_name = "Manifest Package"
+        verbose_name_plural = "Manifest Packages"
+        unique_together = ("package_number", "order")
+        ordering = ("package_number",)
 
     def package_id(self):
         """Return unique string for package."""
-        return '{}_{}'.format(self.order.order_id, self.package_number)
+        return "{}_{}".format(self.order.order_id, self.package_number)
 
     def __str__(self):
         return self.package_id()

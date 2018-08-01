@@ -5,20 +5,22 @@ from django.db import migrations, models
 
 def get_group_names():
     from django.apps import apps
+
     return [
-        name for name, app in apps.app_configs.items()
-        if hasattr(app, 'create_group') and app.create_group is True
+        name
+        for name, app in apps.app_configs.items()
+        if hasattr(app, "create_group") and app.create_group is True
     ]
 
 
 def apply_migration(apps, schema_editor):
-    Group = apps.get_model('auth', 'Group')
+    Group = apps.get_model("auth", "Group")
     for name in get_group_names():
         Group.objects.get_or_create(name=name)
 
 
 def revert_migration(apps, schema_editor):
-    Group = apps.get_model('auth', 'Group')
+    Group = apps.get_model("auth", "Group")
     Group.objects.filter(name__in=get_group_names()).delete()
 
 

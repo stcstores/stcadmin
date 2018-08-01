@@ -10,4 +10,4 @@ class TestAppGroupsCreated(TestCase):
     def test_app_groups_exist(self):
         """Test app groups are created in database."""
         group_names = [group.name for group in Group.objects.all()]
-        self.assertIn('labelmaker', group_names)
+        self.assertIn("labelmaker", group_names)

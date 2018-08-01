@@ -62,24 +62,33 @@ class BaseProductManager(ProductEditorBase):
     def pages(self):
         """Return all pages for this manager."""
         return [
-            self.basic_info, self.product_info, self.listing_options,
-            self.variation_options, self.unused_variations,
-            self.variation_info, self.variation_listing_options, self.finish]
+            self.basic_info,
+            self.product_info,
+            self.listing_options,
+            self.variation_options,
+            self.unused_variations,
+            self.variation_info,
+            self.variation_listing_options,
+            self.finish,
+        ]
 
     @property
     def single_product_pages(self):
         """Return pages used for single products."""
-        return [
-            self.basic_info, self.product_info, self.listing_options,
-            self.finish]
+        return [self.basic_info, self.product_info, self.listing_options, self.finish]
 
     @property
     def variation_product_pages(self):
         """Return pages used for variation products."""
         return [
-            self.basic_info, self.product_info, self.variation_options,
-            self.unused_variations, self.variation_info,
-            self.variation_listing_options, self.finish]
+            self.basic_info,
+            self.product_info,
+            self.variation_options,
+            self.unused_variations,
+            self.variation_info,
+            self.variation_listing_options,
+            self.finish,
+        ]
 
     @property
     def landing_page(self):
@@ -105,9 +114,10 @@ class BaseProductManager(ProductEditorBase):
     def variations(self):
         """Return variation combinations for product."""
         combinations = [
-            {k: v for k, v in d.items() if k not in
-                (self.USED, self.PRODUCT_ID)}
-            for d in self.unused_variations.data if d[self.USED]]
+            {k: v for k, v in d.items() if k not in (self.USED, self.PRODUCT_ID)}
+            for d in self.unused_variations.data
+            if d[self.USED]
+        ]
         return combinations
 
     def get_page(self, page_identifier):
@@ -124,10 +134,10 @@ class BaseProductManager(ProductEditorBase):
 
     def get_redirect(self, page, post_data):
         """Return HTTP redirect for the appropriate page."""
-        if 'goto' in post_data and post_data['goto']:
-            return redirect(self.get_url(self.request.POST['goto']))
+        if "goto" in post_data and post_data["goto"]:
+            return redirect(self.get_url(self.request.POST["goto"]))
         page_index = self.current_pages.index(page)
-        if 'back' in post_data:
+        if "back" in post_data:
             return redirect(self.current_pages[page_index - 1].url)
         return redirect(self.current_pages[page_index + 1].url)
 
@@ -148,7 +158,7 @@ class BaseProductManager(ProductEditorBase):
 class NewProductManager(BaseProductManager):
     """Product manager for creating new products."""
 
-    SESSION_KEY = 'new_product'
+    SESSION_KEY = "new_product"
 
     def get_data_from_session(self):
         """Retrive data from session."""
@@ -165,24 +175,23 @@ class NewProductManager(BaseProductManager):
         self.variation_options = form_pages.NewVariationOptions(self)
         self.unused_variations = form_pages.NewUnusedVariations(self)
         self.variation_info = form_pages.NewVariationInfo(self)
-        self.variation_listing_options = form_pages.NewVariationListingOptions(
-            self)
+        self.variation_listing_options = form_pages.NewVariationListingOptions(self)
         self.clear_product = form_pages.ClearNewProduct(self)
         self.finish = form_pages.NewFinish(self)
 
     def get_redirect(self, page, post_data):
         """Return HTTP redirect for the appropriate page."""
         if page == self.basic_info:
-            if 'variations' in post_data:
+            if "variations" in post_data:
                 self.product_type = self.VARIATION
-            elif 'single' in post_data:
+            elif "single" in post_data:
                 self.product_type = self.SINGLE
         return super().get_redirect(page, post_data)
 
     @classmethod
     def landing_page(cls):
         """Return URL of the first page to be displaid."""
-        return reverse('product_editor:{}'.format(cls.BASIC))
+        return reverse("product_editor:{}".format(cls.BASIC))
 
     def save_product(self):
         """Save new product."""
@@ -192,7 +201,7 @@ class NewProductManager(BaseProductManager):
 class EditProductManager(BaseProductManager):
     """Product Manager for editing existing products."""
 
-    SESSION_KEY = 'edit_product'
+    SESSION_KEY = "edit_product"
 
     def __init__(self, request, range_id):
         """Get Range ID for product range being edited."""
@@ -219,8 +228,7 @@ class EditProductManager(BaseProductManager):
         self.variation_options = form_pages.EditVariationOptions(self)
         self.unused_variations = form_pages.EditUnusedVariations(self)
         self.variation_info = form_pages.EditVariationInfo(self)
-        self.variation_listing_options = (
-            form_pages.EditVariationListingOptions(self))
+        self.variation_listing_options = form_pages.EditVariationListingOptions(self)
         self.clear_product = form_pages.ClearEditedProduct(self)
         self.finish = form_pages.EditFinish(self)
 
@@ -231,8 +239,9 @@ class EditProductManager(BaseProductManager):
     @classmethod
     def landing_page(cls, range_id):
         """Return URL of the first page to be displaid."""
-        return reverse('product_editor:{}'.format(
-            cls.BASIC), kwargs={'range_id': range_id})
+        return reverse(
+            "product_editor:{}".format(cls.BASIC), kwargs={"range_id": range_id}
+        )
 
     def save_product(self):
         """Update product."""

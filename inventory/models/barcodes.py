@@ -16,8 +16,8 @@ class Barcode(models.Model):
     class Meta:
         """Meta class for Barcode."""
 
-        verbose_name = 'Barcode'
-        verbose_name_plural = 'Barcodes'
+        verbose_name = "Barcode"
+        verbose_name_plural = "Barcodes"
 
     def mark_used(self):
         """Mark barcode as used."""

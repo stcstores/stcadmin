@@ -6,5 +6,5 @@ from django.apps import AppConfig
 class UserConfig(AppConfig):
     """Config for User app."""
 
-    name = 'user'
-    verbose_name = 'User'
+    name = "user"
+    verbose_name = "User"

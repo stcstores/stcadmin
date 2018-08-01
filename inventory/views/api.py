@@ -37,20 +37,19 @@ class GetStockForProductView(InventoryUserMixin, View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
         """Process HTTP request."""
-        variation_ids = json.loads(self.request.body)['variation_ids']
+        variation_ids = json.loads(self.request.body)["variation_ids"]
         stock_data = []
         for variation_id in variation_ids:
             product = CCAPI.get_product(variation_id)
             stock_data.append(
                 {
-                    'variation_id':
-                    variation_id,
-                    'stock_level':
-                    product.stock_level,
-                    'locations':
-                    ' '.join(
-                        [location.name for location in product.locations])
-                })
+                    "variation_id": variation_id,
+                    "stock_level": product.stock_level,
+                    "locations": " ".join(
+                        [location.name for location in product.locations]
+                    ),
+                }
+            )
         return HttpResponse(json.dumps(stock_data))
 
 
@@ -61,13 +60,14 @@ class UpdateStockLevelView(InventoryUserMixin, View):
     def dispatch(self, request):
         """Process HTTP request."""
         request_data = json.loads(self.request.body)
-        product_id = request_data['product_id']
-        new_stock_level = request_data['new_stock_level']
-        old_stock_level = request_data['old_stock_level']
+        product_id = request_data["product_id"]
+        new_stock_level = request_data["new_stock_level"]
+        old_stock_level = request_data["old_stock_level"]
         CCAPI.update_product_stock_level(
             product_id=product_id,
             new_stock_level=new_stock_level,
-            old_stock_level=old_stock_level)
+            old_stock_level=old_stock_level,
+        )
         product = CCAPI.get_product(product_id)
         stock_level = product.stock_level
         return HttpResponse(stock_level)
@@ -82,10 +82,11 @@ class SetImageOrderView(InventoryUserMixin, View):
         try:
             data = json.loads(self.request.body)
             CCAPI.set_image_order(
-                product_id=data['product_id'], image_ids=data['image_order'])
+                product_id=data["product_id"], image_ids=data["image_order"]
+            )
         except Exception:
             return HttpResponse(status=500)
-        return HttpResponse('ok')
+        return HttpResponse("ok")
 
 
 class DeleteImage(InventoryUserMixin, View):
@@ -96,7 +97,7 @@ class DeleteImage(InventoryUserMixin, View):
         """Process HTTP request."""
         try:
             data = json.loads(self.request.body)
-            CCAPI.delete_image(data['image_id'])
+            CCAPI.delete_image(data["image_id"])
         except Exception:
             return HttpResponse(status=500)
-        return HttpResponse('ok')
+        return HttpResponse("ok")

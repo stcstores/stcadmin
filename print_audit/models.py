@@ -22,7 +22,8 @@ class CloudCommerceUser(models.Model):
 
     user_id = models.CharField(max_length=10, unique=True)
     stcadmin_user = models.ForeignKey(
-        User, null=True, blank=True, on_delete=models.CASCADE)
+        User, null=True, blank=True, on_delete=models.CASCADE
+    )
     hidden = models.BooleanField(default=False)
 
     objects = models.Manager()
@@ -31,8 +32,8 @@ class CloudCommerceUser(models.Model):
     class Meta:
         """Meta class for CloudCommerceUser."""
 
-        verbose_name = 'Cloud Commerce User'
-        verbose_name_plural = 'Cloud Commerce Users'
+        verbose_name = "Cloud Commerce User"
+        verbose_name_plural = "Cloud Commerce Users"
 
     def __init__(self, *args, **kwargs):
         """Retrive user data from Cloud Commerce."""
@@ -41,8 +42,8 @@ class CloudCommerceUser(models.Model):
         try:
             self.cc_user = USERS[self.user_id]
         except IndexError:
-            self.first_name = ''
-            self.second_name = ''
+            self.first_name = ""
+            self.second_name = ""
         else:
             self.first_name = self.cc_user.first_name
             self.second_name = self.cc_user.second_name
@@ -55,12 +56,13 @@ class CloudCommerceUser(models.Model):
 
     def full_name(self):
         """Return user's full name."""
-        return '{} {}'.format(self.first_name, self.second_name)
+        return "{} {}".format(self.first_name, self.second_name)
 
     def feedback_count(self, feedback_type):
         """Return number of feedback objects associated with user."""
         user_feedback = UserFeedback.objects.filter(
-            user=self, feedback_type=feedback_type)
+            user=self, feedback_type=feedback_type
+        )
         return user_feedback.count()
 
 
@@ -79,15 +81,14 @@ class CloudCommerceOrder(models.Model):
     class Meta:
         """Meta class for CloudCommerceOrder."""
 
-        verbose_name = 'Cloud Commerce Order'
-        verbose_name_plural = 'Cloud Commerce Orders'
+        verbose_name = "Cloud Commerce Order"
+        verbose_name_plural = "Cloud Commerce Orders"
 
     @classmethod
     def create_from_print_queue(cls, print_log):
         """Create CloudCommerceOrder from an entry in the print queue."""
         try:
-            user = CloudCommerceUser.objects.get(
-                user_id=str(print_log.user_id))
+            user = CloudCommerceUser.objects.get(user_id=str(print_log.user_id))
         except ObjectDoesNotExist:
             return
         cls.objects.create(
@@ -97,8 +98,8 @@ class CloudCommerceOrder(models.Model):
             trigger_id=str(print_log.trigger_id),
             attempts=int(print_log.attempts),
             date_completed=(print_log.date_completed),
-            customer_order_dispatch_id=str(
-                print_log.customer_order_dispatch_id))
+            customer_order_dispatch_id=str(print_log.customer_order_dispatch_id),
+        )
 
     def save(self, *args, **kwargs):
         """Localise date created field."""
@@ -110,7 +111,7 @@ class CloudCommerceOrder(models.Model):
     def localise_datetime(self, date_input):
         """Return localised datetime.datetime object."""
         if date_input is not None and is_naive(date_input):
-            tz = pytz.timezone('Europe/London')
+            tz = pytz.timezone("Europe/London")
             date_input = date_input.replace(tzinfo=tz)
         return date_input
 
@@ -119,14 +120,14 @@ class Feedback(models.Model):
     """Model for feedback scores."""
 
     name = models.CharField(max_length=20)
-    image = models.ImageField(upload_to='feedback')
+    image = models.ImageField(upload_to="feedback")
     score = models.IntegerField(default=0)
 
     class Meta:
         """Meta class for Feedback."""
 
-        verbose_name = 'Feedback'
-        verbose_name_plural = 'Feedback'
+        verbose_name = "Feedback"
+        verbose_name_plural = "Feedback"
 
     def __str__(self):
         return self.name
@@ -163,8 +164,8 @@ class UserFeedbackMonthlyManager(UserFeedbackManager):
         """Return QuerySet of User Feedback dated in the current month."""
         current_time = now()
         return ScoredQuerySet(self.model).filter(
-            timestamp__month=current_time.month,
-            timestamp__year=current_time.year)
+            timestamp__month=current_time.month, timestamp__year=current_time.year
+        )
 
 
 class UserFeedback(models.Model):
@@ -182,12 +183,11 @@ class UserFeedback(models.Model):
     class Meta:
         """Meta class for UserFeedback."""
 
-        verbose_name = 'User Feedback'
-        verbose_name_plural = 'User Feedback'
+        verbose_name = "User Feedback"
+        verbose_name_plural = "User Feedback"
 
     def __str__(self):
-        return '{} for {}'.format(
-            self.feedback_type.name, self.user.full_name())
+        return "{} for {}".format(self.feedback_type.name, self.user.full_name())
 
 
 class Breakage(models.Model):
@@ -202,9 +202,9 @@ class Breakage(models.Model):
     class Meta:
         """Meta class for UserFeedback."""
 
-        verbose_name = 'Breakage'
-        verbose_name_plural = 'Breakages'
-        ordering = ('timestamp', )
+        verbose_name = "Breakage"
+        verbose_name_plural = "Breakages"
+        ordering = ("timestamp",)
 
     def __str__(self):
-        return '{} on order {}'.format(self.product_sku, self.order_id)
+        return "{} on order {}".format(self.product_sku, self.order_id)

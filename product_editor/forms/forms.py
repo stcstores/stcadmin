@@ -53,14 +53,18 @@ class ProductInfo(ProductForm):
         self.fields[self.PACKAGE_TYPE] = fields.PackageType()
         self.fields[self.BRAND] = fields.Brand(
             choices=fields.Brand.get_choices(
-                'Brand', self.options, self.initial.get(self.BRAND, None)))
+                "Brand", self.options, self.initial.get(self.BRAND, None)
+            )
+        )
         self.fields[self.MANUFACTURER] = fields.Manufacturer(
             choices=fields.Brand.get_choices(
-                'Manufacturer', self.options,
-                self.initial.get(self.MANUFACTURER, None)))
+                "Manufacturer", self.options, self.initial.get(self.MANUFACTURER, None)
+            )
+        )
         self.fields[self.GENDER] = fields.Gender()
         self.fields[self.PRODUCT_ID] = forms.CharField(
-            widget=forms.HiddenInput(), required=False)
+            widget=forms.HiddenInput(), required=False
+        )
 
 
 class BaseOptionsForm(ProductForm):
@@ -68,29 +72,31 @@ class BaseOptionsForm(ProductForm):
 
     def __init__(self, *args, **kwargs):
         """Get choices for Product Option fields."""
-        self.option_data = kwargs.pop(
-            'option_data', CCAPI.get_product_options())
+        self.option_data = kwargs.pop("option_data", CCAPI.get_product_options())
         super().__init__(*args, **kwargs)
         self._get_fields()
 
     def _get_options(self):
         return [
-            (option.option_name, [value.value for value in option]) for option
-            in self.option_data if option.exclusions['tesco'] is False]
+            (option.option_name, [value.value for value in option])
+            for option in self.option_data
+            if option.exclusions["tesco"] is False
+        ]
 
     def _get_choice_values(self, option_name, values):
         if option_name in self.initial:
-            new_values = [
-                v for v in self.initial[option_name] if v not in values]
+            new_values = [v for v in self.initial[option_name] if v not in values]
             values += new_values
         return values
 
     def _get_fields(self):
         for option_name, values in self._get_options():
-            choices = [('', '')] + [
-                (v, v) for v in self._get_choice_values(option_name, values)]
+            choices = [("", "")] + [
+                (v, v) for v in self._get_choice_values(option_name, values)
+            ]
             self.fields[option_name] = self.field_class(
-                label=option_name, choices=choices)
+                label=option_name, choices=choices
+            )
 
 
 class VariationOptions(BaseOptionsForm):
@@ -103,13 +109,13 @@ class VariationOptions(BaseOptionsForm):
         cleaned_data = super().clean()
         cleaned_data = cleaned_data.copy()
         if all([len(v) == 0 for k, v in cleaned_data.items()]):
-            self.add_error(None, 'At least one variation option must be used.')
+            self.add_error(None, "At least one variation option must be used.")
         for key, value in cleaned_data.items():
             if len(value) == 1:
                 self.add_error(
-                    key, (
-                        'At least two values must be supplied '
-                        'for any used option.'))
+                    key,
+                    ("At least two values must be supplied " "for any used option."),
+                )
         return cleaned_data
 
 
@@ -124,8 +130,8 @@ class BaseVariationForm(ProductForm):
 
     def __init__(self, *args, **kwargs):
         """Set initial data and create fields."""
-        self.variation_options = kwargs.pop('variation_options')
-        self.existing_data = kwargs.pop('existing_data')
+        self.variation_options = kwargs.pop("variation_options")
+        self.existing_data = kwargs.pop("existing_data")
         super().__init__(*args, **kwargs)
         self._update_initial()
         self.get_fields()
@@ -134,9 +140,12 @@ class BaseVariationForm(ProductForm):
     def _update_initial(self):
         if self.existing_data is not None:
             for variation in self.existing_data:
-                correct_form = all([
-                    variation.get(key) == self.variation_options.get(key)
-                    for key in self.variation_options])
+                correct_form = all(
+                    [
+                        variation.get(key) == self.variation_options.get(key)
+                        for key in self.variation_options
+                    ]
+                )
                 if correct_form:
                     self.initial.update(variation)
 
@@ -152,13 +161,14 @@ class UnusedVariations(BaseVariationForm):
 
     def get_fields(self):
         """Set form fields."""
-        self.fields[self.USED] = forms.BooleanField(
-            initial=True, required=False)
+        self.fields[self.USED] = forms.BooleanField(initial=True, required=False)
         self.fields[self.PRODUCT_ID] = forms.CharField(
-            widget=forms.HiddenInput(), required=False)
+            widget=forms.HiddenInput(), required=False
+        )
         for option_name, value in self.variation_options.items():
             self.fields[option_name] = forms.CharField(
-                max_length=255, initial=value, widget=forms.HiddenInput())
+                max_length=255, initial=value, widget=forms.HiddenInput()
+            )
 
     def clean(self):
         """Ensure existing products are not marked unused."""
@@ -173,10 +183,10 @@ class VariationInfo(BaseVariationForm):
 
     def __init__(self, *args, **kwargs):
         """Set choices for choice fields."""
-        choices = kwargs.pop('choices')
-        self.supplier_choices = choices['supplier']
-        self.package_type_choices = choices['package_type']
-        self.options = kwargs.pop('options')
+        choices = kwargs.pop("choices")
+        self.supplier_choices = choices["supplier"]
+        self.package_type_choices = choices["package_type"]
+        self.options = kwargs.pop("options")
         super().__init__(*args, **kwargs)
 
     def get_fields(self):
@@ -184,7 +194,8 @@ class VariationInfo(BaseVariationForm):
         ProductInfo.get_fields(self)
         for option_name, value in self.variation_options.items():
             self.fields[option_name] = forms.CharField(
-                max_length=255, initial=value, widget=forms.HiddenInput())
+                max_length=255, initial=value, widget=forms.HiddenInput()
+            )
 
 
 class VariationListingOptions(BaseVariationForm):
@@ -192,21 +203,23 @@ class VariationListingOptions(BaseVariationForm):
 
     def __init__(self, *args, **kwargs):
         """Get option values."""
-        self.option_values = kwargs.pop('option_values')
+        self.option_values = kwargs.pop("option_values")
         super().__init__(*args, **kwargs)
 
     def get_fields(self):
         """Set form fields."""
         for option_name, value in self.variation_options.items():
             self.fields[option_name] = forms.CharField(
-                max_length=255, initial=value, widget=forms.HiddenInput())
+                max_length=255, initial=value, widget=forms.HiddenInput()
+            )
         for option_name, values in self.option_values.items():
             if option_name not in self.variation_options:
-                choices = [('', '')] + [
-                    (v, v) for v in self._get_choice_values(
-                        option_name, values)]
+                choices = [("", "")] + [
+                    (v, v) for v in self._get_choice_values(option_name, values)
+                ]
                 self.fields[option_name] = fields.ListingOption(
-                    choices=choices, label=option_name)
+                    choices=choices, label=option_name
+                )
 
 
 class BaseVariationFormSet(KwargFormSet):
@@ -216,7 +229,7 @@ class BaseVariationFormSet(KwargFormSet):
         """Configure kwargs for forms in formset."""
         self.kwargs = kwargs
         kwarg_update = self._update_form_kwargs()
-        for form_kwargs in kwargs['form_kwargs']:
+        for form_kwargs in kwargs["form_kwargs"]:
             form_kwargs.update(kwarg_update)
         super().__init__(*args, **kwargs)
 
@@ -237,10 +250,11 @@ class VariationInfoSet(BaseVariationFormSet):
 
     def _update_form_kwargs(self):
         choices = {
-            'supplier': fields.Supplier.get_choices(),
-            'package_type': fields.PackageType.get_choices()}
+            "supplier": fields.Supplier.get_choices(),
+            "package_type": fields.PackageType.get_choices(),
+        }
         options = CCAPI.get_product_options()
-        return {'choices': choices, 'options': options}
+        return {"choices": choices, "options": options}
 
 
 class VariationListingOptionsSet(BaseVariationFormSet):
@@ -251,6 +265,8 @@ class VariationListingOptionsSet(BaseVariationFormSet):
     def _update_form_kwargs(self):
         option_data = CCAPI.get_product_options()
         option_values = {
-            option.option_name: [value.value for value in option] for option
-            in option_data if option.exclusions['tesco'] is False}
-        return {'option_values': option_values}
+            option.option_name: [value.value for value in option]
+            for option in option_data
+            if option.exclusions["tesco"] is False
+        }
+        return {"option_values": option_values}

@@ -21,8 +21,8 @@ class ManifestOrderManager(models.Manager):
     def items(self):
         """Return items included in order."""
         from .manifest_item_model import ManifestItem
-        return ManifestItem._base_manager.filter(
-            package__order__in=self.get_queryset())
+
+        return ManifestItem._base_manager.filter(package__order__in=self.get_queryset())
 
 
 class UnManifestedManager(ManifestOrderManager):
@@ -30,8 +30,7 @@ class UnManifestedManager(ManifestOrderManager):
 
     def get_queryset(self):
         """Return queryset of orders not on any manifest."""
-        return super().get_queryset().filter(
-            manifest__isnull=True, canceled=False)
+        return super().get_queryset().filter(manifest__isnull=True, canceled=False)
 
 
 class ManifestedManager(ManifestOrderManager):
@@ -47,8 +46,7 @@ class FiledManager(ManifestedManager):
 
     def get_queryset(self):
         """Return queryset of orders on filed manifests."""
-        return super().get_queryset().filter(
-            manifest__time_filed__isnull=False)
+        return super().get_queryset().filter(manifest__time_filed__isnull=False)
 
 
 class UnFiledManager(ManifestedManager):
@@ -56,8 +54,11 @@ class UnFiledManager(ManifestedManager):
 
     def get_queryset(self):
         """Return queryset of orders on unfiled manifests."""
-        return super().get_queryset().filter(
-            manifest__time_filed__isnull=True, canceled=False)
+        return (
+            super()
+            .get_queryset()
+            .filter(manifest__time_filed__isnull=True, canceled=False)
+        )
 
 
 class CanceledOrdersManager(ManifestOrderManager):
@@ -75,12 +76,13 @@ class ManifestOrder(models.Model):
     customer_name = models.CharField(max_length=100)
     date_recieved = models.DateTimeField()
     dispatch_date = models.DateTimeField()
-    country = models.ForeignKey(
-        CloudCommerceCountryID, on_delete=models.CASCADE)
+    country = models.ForeignKey(CloudCommerceCountryID, on_delete=models.CASCADE)
     manifest = models.ForeignKey(
-        Manifest, blank=True, null=True, on_delete=models.CASCADE)
+        Manifest, blank=True, null=True, on_delete=models.CASCADE
+    )
     service = models.ForeignKey(
-        ManifestService, blank=True, null=True, on_delete=models.SET_NULL)
+        ManifestService, blank=True, null=True, on_delete=models.SET_NULL
+    )
     canceled = models.BooleanField(default=False)
 
     objects = ManifestOrderManager()
@@ -93,8 +95,8 @@ class ManifestOrder(models.Model):
     class Meta:
         """Meta class for ManifestOrder."""
 
-        verbose_name = 'Manifest Order'
-        verbose_name_plural = 'Manifest Orders'
+        verbose_name = "Manifest Order"
+        verbose_name_plural = "Manifest Orders"
 
     def __str__(self):
         return self.order_id
@@ -110,7 +112,7 @@ class ManifestOrder(models.Model):
     def localise_datetime(self, date_input):
         """Localise datetime."""
         if date_input is not None and is_naive(date_input):
-            tz = pytz.timezone('Europe/London')
+            tz = pytz.timezone("Europe/London")
             date_input = date_input.replace(tzinfo=tz)
         return date_input
 
@@ -122,11 +124,13 @@ class ManifestOrder(models.Model):
     def get_order_data(self):
         """Return information about order."""
         return CCAPI.get_orders_for_dispatch(
-            order_type=1, number_of_days=30, id_list=[self.order_id])[0]
+            order_type=1, number_of_days=30, id_list=[self.order_id]
+        )[0]
 
     def items(self):
         """Return queryset of items in order."""
         from .manifest_item_model import ManifestItem
+
         return ManifestItem._base_manager.filter(package__order=self)
 
     def get_cc_item_dict(self):
@@ -151,20 +155,23 @@ class ManifestOrder(models.Model):
     def item_quantity(self):
         """Return number of items associated with order."""
         from .manifest_item_model import ManifestItem
+
         return ManifestItem.objects.filter(package__order=self).aggregate(
-            Sum('quantity'))['quantity__sum']
+            Sum("quantity")
+        )["quantity__sum"]
 
     def update_packages(self, package_data):
         """Update package information associated with this order."""
         from .manifest_package_model import ManifestPackage
         from .manifest_item_model import ManifestItem
+
         self.clear_packages()
         for package_number, package in enumerate(package_data):
-            package_obj = ManifestPackage(
-                order=self, package_number=package_number)
+            package_obj = ManifestPackage(order=self, package_number=package_number)
             package_obj.save()
             for item_data in package:
                 item_id, quantity = item_data
                 item = ManifestItem(
-                    package=package_obj, item_id=item_id, quantity=quantity)
+                    package=package_obj, item_id=item_id, quantity=quantity
+                )
                 item.save()

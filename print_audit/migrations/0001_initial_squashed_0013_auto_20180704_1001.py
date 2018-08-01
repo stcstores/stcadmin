@@ -8,103 +8,185 @@ import django.utils.timezone
 
 class Migration(migrations.Migration):
 
-    replaces = [('print_audit', '0001_initial'), ('print_audit', '0002_auto_20170801_1303'), ('print_audit', '0003_auto_20170801_1504'), ('print_audit', '0004_auto_20170802_1526'), ('print_audit', '0005_cloudcommerceuser_cc_user'), ('print_audit', '0006_auto_20170829_1724'), ('print_audit', '0007_feedback_score'), ('print_audit', '0008_auto_20180503_1149'), ('print_audit', '0009_auto_20180514_0933'), ('print_audit', '0010_breakage'), ('print_audit', '0011_auto_20180515_1114'), ('print_audit', '0012_cloudcommerceuser_hidden'), ('print_audit', '0013_auto_20180704_1001')]
-
-    dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    replaces = [
+        ("print_audit", "0001_initial"),
+        ("print_audit", "0002_auto_20170801_1303"),
+        ("print_audit", "0003_auto_20170801_1504"),
+        ("print_audit", "0004_auto_20170802_1526"),
+        ("print_audit", "0005_cloudcommerceuser_cc_user"),
+        ("print_audit", "0006_auto_20170829_1724"),
+        ("print_audit", "0007_feedback_score"),
+        ("print_audit", "0008_auto_20180503_1149"),
+        ("print_audit", "0009_auto_20180514_0933"),
+        ("print_audit", "0010_breakage"),
+        ("print_audit", "0011_auto_20180515_1114"),
+        ("print_audit", "0012_cloudcommerceuser_hidden"),
+        ("print_audit", "0013_auto_20180704_1001"),
     ]
+
+    dependencies = [migrations.swappable_dependency(settings.AUTH_USER_MODEL)]
 
     operations = [
         migrations.CreateModel(
-            name='CloudCommerceOrder',
+            name="CloudCommerceOrder",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('order_id', models.CharField(max_length=10, unique=True)),
-                ('date_created', models.DateTimeField()),
-                ('customer_id', models.CharField(max_length=10)),
-                ('trigger_id', models.CharField(max_length=10)),
-                ('date_completed', models.DateTimeField(blank=True, null=True)),
-                ('attempts', models.IntegerField()),
-                ('customer_order_dispatch_id', models.CharField(max_length=10)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("order_id", models.CharField(max_length=10, unique=True)),
+                ("date_created", models.DateTimeField()),
+                ("customer_id", models.CharField(max_length=10)),
+                ("trigger_id", models.CharField(max_length=10)),
+                ("date_completed", models.DateTimeField(blank=True, null=True)),
+                ("attempts", models.IntegerField()),
+                ("customer_order_dispatch_id", models.CharField(max_length=10)),
             ],
         ),
         migrations.CreateModel(
-            name='CloudCommerceUser',
+            name="CloudCommerceUser",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('user_id', models.CharField(max_length=10, unique=True)),
-                ('stcadmin_user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("user_id", models.CharField(max_length=10, unique=True)),
+                (
+                    "stcadmin_user",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Cloud Commerce User',
-                'verbose_name_plural': 'Cloud Commerce Users',
+                "verbose_name": "Cloud Commerce User",
+                "verbose_name_plural": "Cloud Commerce Users",
             },
         ),
         migrations.CreateModel(
-            name='Feedback',
+            name="Feedback",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=20)),
-                ('image', models.ImageField(upload_to='')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=20)),
+                ("image", models.ImageField(upload_to="")),
             ],
         ),
         migrations.CreateModel(
-            name='UserFeedback',
+            name="UserFeedback",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('timestamp', models.DateField(default=django.utils.timezone.now)),
-                ('feedback_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='print_audit.Feedback')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='print_audit.CloudCommerceUser')),
-                ('note', models.TextField(blank=True, null=True)),
-                ('order_id', models.CharField(blank=True, max_length=10, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("timestamp", models.DateField(default=django.utils.timezone.now)),
+                (
+                    "feedback_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="print_audit.Feedback",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="print_audit.CloudCommerceUser",
+                    ),
+                ),
+                ("note", models.TextField(blank=True, null=True)),
+                ("order_id", models.CharField(blank=True, max_length=10, null=True)),
             ],
             options={
-                'verbose_name': 'User Feedback',
-                'verbose_name_plural': 'User Feedback',
+                "verbose_name": "User Feedback",
+                "verbose_name_plural": "User Feedback",
             },
         ),
         migrations.AddField(
-            model_name='cloudcommerceorder',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='print_audit.CloudCommerceUser'),
+            model_name="cloudcommerceorder",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="print_audit.CloudCommerceUser",
+            ),
         ),
         migrations.AddField(
-            model_name='feedback',
-            name='score',
-            field=models.IntegerField(default=0),
+            model_name="feedback", name="score", field=models.IntegerField(default=0)
         ),
         migrations.AlterField(
-            model_name='feedback',
-            name='image',
-            field=models.ImageField(upload_to='feedback'),
+            model_name="feedback",
+            name="image",
+            field=models.ImageField(upload_to="feedback"),
         ),
         migrations.AlterModelOptions(
-            name='cloudcommerceorder',
-            options={'verbose_name': 'Cloud Commerce Order', 'verbose_name_plural': 'Cloud Commerce Orders'},
+            name="cloudcommerceorder",
+            options={
+                "verbose_name": "Cloud Commerce Order",
+                "verbose_name_plural": "Cloud Commerce Orders",
+            },
         ),
         migrations.AlterModelOptions(
-            name='feedback',
-            options={'verbose_name': 'Feedback', 'verbose_name_plural': 'Feedback'},
+            name="feedback",
+            options={"verbose_name": "Feedback", "verbose_name_plural": "Feedback"},
         ),
         migrations.CreateModel(
-            name='Breakage',
+            name="Breakage",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('product_sku', models.CharField(max_length=20)),
-                ('order_id', models.CharField(max_length=10)),
-                ('note', models.TextField(blank=True, null=True)),
-                ('timestamp', models.DateTimeField(default=django.utils.timezone.now)),
-                ('packer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='print_audit.CloudCommerceUser')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("product_sku", models.CharField(max_length=20)),
+                ("order_id", models.CharField(max_length=10)),
+                ("note", models.TextField(blank=True, null=True)),
+                ("timestamp", models.DateTimeField(default=django.utils.timezone.now)),
+                (
+                    "packer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="print_audit.CloudCommerceUser",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Breakage',
-                'verbose_name_plural': 'Breakages',
-                'ordering': ('timestamp',),
+                "verbose_name": "Breakage",
+                "verbose_name_plural": "Breakages",
+                "ordering": ("timestamp",),
             },
         ),
         migrations.AddField(
-            model_name='cloudcommerceuser',
-            name='hidden',
+            model_name="cloudcommerceuser",
+            name="hidden",
             field=models.BooleanField(default=False),
         ),
     ]
