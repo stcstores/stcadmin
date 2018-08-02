@@ -97,8 +97,17 @@ class ManifestPackageAdmin(admin.ModelAdmin):
 class ManifestItemAdmin(admin.ModelAdmin):
     """Model admin for ManifestItem model."""
 
-    fields = ("package", "item_id", "quantity")
-    list_display = ("__str__", "package", "item_id", "quantity")
+    fields = ("name", "full_name", "package", "item_id", "weight, " "quantity")
+    list_display = (
+        "__str__",
+        "name",
+        "full_name",
+        "package",
+        "item_id",
+        "weight",
+        "quantity",
+    )
+    search_fields = ("full_name", "item_id")
 
 
 @admin.register(models.SecuredMailDestination)

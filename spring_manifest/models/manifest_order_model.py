@@ -7,8 +7,8 @@ from django.db.models import Sum
 from django.utils.timezone import is_naive
 
 from .cloud_commerce_country_id import CloudCommerceCountryID
-from .service_models import ManifestService
 from .manifest_model import Manifest
+from .service_models import ManifestService, SecuredMailService
 
 
 class ManifestOrderManager(models.Manager):
@@ -84,6 +84,8 @@ class ManifestOrder(models.Model):
         ManifestService, blank=True, null=True, on_delete=models.SET_NULL
     )
     canceled = models.BooleanField(default=False)
+
+    _packages = None
 
     objects = ManifestOrderManager()
     manifested = ManifestedManager()
@@ -175,3 +177,23 @@ class ManifestOrder(models.Model):
                     package=package_obj, item_id=item_id, quantity=quantity
                 )
                 item.save()
+
+    @property
+    def packages(self):
+        """Return all related packages."""
+        if self._packages is None:
+            self._packages = self.manifestpackage_set.all()
+        return self._packages
+
+    @property
+    def secured_mail_service(self):
+        """Return the Secured Mail service used by the order or None."""
+        try:
+            return SecuredMailService.objects.get(shipping_service=self.service)
+        except self.DoesNotExist:
+            return None
+
+    @property
+    def weight(self):
+        """Return the total weight of the order."""
+        return sum([package.weight for package in self.packages])

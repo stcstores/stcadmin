@@ -5,6 +5,7 @@ import sys
 
 from forex_python.converter import CurrencyRates
 from spring_manifest import models
+from stcadmin import settings
 
 logger = logging.getLogger("file_manifest")
 
@@ -26,6 +27,8 @@ class FileManifest:
             logger.error(
                 "Manifest Error: %s", " ".join(sys.argv), exc_info=sys.exc_info()
             )
+            if settings.DEBUG:
+                raise e
 
     def get_currency_rates(self):
         """Return dict of currency rates."""

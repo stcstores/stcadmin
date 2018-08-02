@@ -61,7 +61,12 @@ def create_order(cc_order, service):
     package = ManifestPackage._base_manager.create(order=order)
     for product in cc_order.products:
         ManifestItem._base_manager.create(
-            package=package, item_id=product.product_id, quantity=product.quantity
+            package=package,
+            name=product.product_name,
+            full_name=product.product_full_name,
+            item_id=product.product_id,
+            quantity=product.quantity,
+            weight=int(product.per_item_weight),
         )
 
 

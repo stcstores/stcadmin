@@ -9,8 +9,11 @@ from .manifest_package_model import ManifestPackage
 class ManifestItem(models.Model):
     """Model for products in orders on manifests."""
 
+    name = models.CharField(max_length=255, default="?")
+    full_name = models.CharField(max_length=255, default="?")
     package = models.ForeignKey(ManifestPackage, on_delete=models.CASCADE)
     item_id = models.PositiveIntegerField()
+    weight = models.PositiveIntegerField(default=0)
     quantity = models.PositiveIntegerField()
 
     class Meta:
