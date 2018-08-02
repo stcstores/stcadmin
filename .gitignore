@@ -1,3 +1,5 @@
+*.~lock.*
+
 reference/static/help/*
 
 *.pyo
