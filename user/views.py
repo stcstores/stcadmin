@@ -1,11 +1,9 @@
 """Views for the User app."""
 
 from django.contrib.auth import logout
-from django.contrib.auth.views import password_change
+from django.contrib.auth.views import LogoutView, PasswordChangeView
 from django.shortcuts import get_object_or_404
-from django.views import View
 from django.views.generic.base import TemplateView
-
 from home.views import UserLoginMixin
 from print_audit import models
 
@@ -36,14 +34,10 @@ class User(UserLoginMixin, TemplateView):
         return feedback_count
 
 
-class ChangePassword(UserLoginMixin, View):
+class ChangePassword(UserLoginMixin, PasswordChangeView):
     """Allow user to change their password."""
 
     template_name = "user/change_password.html"
-
-    def dispatch(self, request):
-        """Return rendered change password page."""
-        return password_change(request, self.template_name)
 
 
 class ChangePasswordDone(UserLoginMixin, TemplateView):

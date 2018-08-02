@@ -24,7 +24,7 @@ ccapi = {git = "https://github.com/stcstores/ccapi.git", ref = "master"}
 list_input = {git = "https://github.com/axevalley/list_input.git", ref = "master"}
 order_profit = {git = "https://github.com/stcstores/order_profit.git", ref = "master"}
 cc_products = {git = "https://github.com/stcstores/cc_products.git", ref = "master"}
-Django = "<2.1"
+Django = "*"
 "Jinja2" = "*"
 Pillow = "*"
 PyMySQL = "*"
