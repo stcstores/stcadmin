@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("spring_manifest", "0002_auto_20180801_1306")]
+    dependencies = [("spring_manifest", "0003_add_italy_to_secured_mail_distinations")]
 
     operations = [
         migrations.AddField(
