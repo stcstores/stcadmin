@@ -1,6 +1,7 @@
 """Manifest model."""
 
 from django.db import models
+from django.utils import timezone
 from django.utils.timezone import now
 
 from .manifest_type_model import ManifestType
@@ -83,3 +84,45 @@ class Manifest(models.Model):
     def untracked_count(self):
         """Return number of orders on manifest using Secured Mail Untracked."""
         return self.manifestorder_set.filter(service="SMIU").count()
+
+
+class ManifestUpdate(models.Model):
+    """Records of manifest updates."""
+
+    class Meta:
+        """Meta class for Manifest."""
+
+        verbose_name = "Manifest Update"
+        verbose_name_plural = "Manifest Updates"
+        ordering = ["-started"]
+
+    IN_PROGRESS = "in_progress"
+    COMPLETE = "complete"
+    FAILED = "failed"
+
+    STATUS_CHOICES = (
+        (IN_PROGRESS, "In Progress"),
+        (COMPLETE, "Complete"),
+        (FAILED, "Failed"),
+    )
+
+    started = models.DateTimeField(auto_now_add=True)
+    finished = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default=IN_PROGRESS
+    )
+
+    def __str__(self):
+        return self.started.strftime("%d-%m-%Y %H:%M:%S")
+
+    def complete(self):
+        """Mark update as complete."""
+        self.status = self.COMPLETE
+        self.finished = timezone.now()
+        self.save()
+
+    def fail(self):
+        """Mark update as failed."""
+        self.status = self.FAILED
+        self.finished = None
+        self.save()

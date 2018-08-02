@@ -3,7 +3,7 @@
 from .cloud_commerce_country_id import CloudCommerceCountryID  # NOQA
 from .cloud_commerce_shipping_rule import CloudCommerceShippingRule  # NOQA
 from .secured_mail_destination_model import SecuredMailDestination  # NOQA
-from .manifest_model import Manifest  # NOQA
+from .manifest_model import Manifest, ManifestUpdate  # NOQA
 from .manifest_order_model import ManifestOrder  # NOQA
 from .manifest_package_model import ManifestPackage  # NOQA
 from .manifest_item_model import ManifestItem  # NOQA
@@ -70,9 +70,29 @@ def create_order(cc_order, service):
         )
 
 
-@transaction.atomic
+def get_manifest_update():
+    """Return the most recent manifest update."""
+    return ManifestUpdate.objects.order_by("-started")[0]
+
+
 def update_manifest_orders(number_of_days=1):
     """Update database with new orders."""
+    update, created = ManifestUpdate.objects.get_or_create(
+        status=ManifestUpdate.IN_PROGRESS
+    )
+    if created:
+        try:
+            update_manifest_database(number_of_days)
+        except Exception as e:
+            update.fail()
+            raise e
+        else:
+            update.complete()
+
+
+@transaction.atomic
+def update_manifest_database(number_of_days):
+    """Download new orders and update the database."""
     for service in ManifestService.enabled_services.all():
         for shipping_rule in service.shipping_rules.all():
             orders = get_orders(shipping_rule.rule_id, number_of_days=number_of_days)

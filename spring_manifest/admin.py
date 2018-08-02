@@ -194,3 +194,10 @@ class ManifestTypeAdmin(admin.ModelAdmin):
     fields = ("name",)
     list_display = ("__str__", "name")
     list_editable = ("name",)
+
+
+@admin.register(models.ManifestUpdate)
+class ManifestUpdateAdmin(admin.ModelAdmin):
+    """Model admin for the ManifestUpdate model."""
+
+    list_display = ("__str__", "started", "finished", "status")
