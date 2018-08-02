@@ -278,7 +278,7 @@ class SecuredMailManifestFile:
     WEIGHT_COL = "N"
     REFERENCE_CELL = "J3"
     DATE_CELL = "O3"
-    TRACKED_ROW = "21"
+    TRACKED_ROW = "22"
 
     def __new__(self, manifest, orders):
         """Create Secured Mail Manifest file."""
