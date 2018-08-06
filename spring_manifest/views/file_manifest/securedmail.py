@@ -142,7 +142,7 @@ class SecuredMailManifestFile:
         ws[self.ITEM_COL + self.TRACKED_ROW] = len(tracked_orders)
         ws[self.WEIGHT_COL + self.TRACKED_ROW] = tracked_weight
         ws[self.REFERENCE_CELL] = str(manifest)
-        ws[self.DATE_CELL] = datetime.datetime.now().strftime("%Y/%m/%d")
+        ws[self.DATE_CELL] = datetime.datetime.now().strftime("%d/%m/%Y")
         return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
 
     def convert_weight(self, weight):
