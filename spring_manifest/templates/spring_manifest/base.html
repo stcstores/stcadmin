@@ -1,5 +1,8 @@
 {% extends "home/base.html" %}
 {% load staticfiles %}
+{% block additional_head %}{{ block.super }}
+      <link rel="stylesheet" href="{% static 'css/manifest.css' %}">
+{% endblock %}
 {% block page_title %}Manifest{% endblock %}
 {% block section_navigation %}
 {% include "spring_manifest/section_navigation.html" %}

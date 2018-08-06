@@ -1,0 +1,32 @@
+{% load manifest_extras %}
+
+<table class="update_status">
+    <tr>
+        <th>Last Manifest Update</th>
+
+        {% if update.status == update.COMPLETE %}
+        <td class="{% get_update_age update %}">
+            {% humanize_time update.time_since_update %}
+        </td>
+        {% elif update.status == update.IN_PROGRESS %}
+        <td class="in_progress">Update In Progress</td>
+        {% else %}
+        <td class="Failed">Failed</td>
+        {% endif %}
+
+        {% ifequal update.status update.COMPLETE %}
+        <form action="{% url 'spring_manifest:update_manifest' %}" method="GET">
+            <input hidden name="return" type="text" value="{{ request.get_full_path }}">
+            <td><button>Update Manifest Orders</button></td>
+        </form>
+        {% endifequal %}
+    </tr>
+</table>
+
+<script>
+    $(document).ready(function () {
+        setTimeout(function(){
+           window.location.reload(1);
+       }, 15000);
+   });
+</script>

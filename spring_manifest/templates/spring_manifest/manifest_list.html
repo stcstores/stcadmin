@@ -9,6 +9,7 @@
 <input type="text" name="order_id" id="go_to_order_input">
 <button id="go_to_order">Go</button>
 <br><br>
+{% include 'spring_manifest/update_status.html' %}
 {% if unmanifested_orders %}
 <h3>Orders Not on Manifests</h3>
 <table>

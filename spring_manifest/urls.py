@@ -1,7 +1,6 @@
 """URL patters for manifest app."""
 
 from django.urls import path
-
 from spring_manifest import views
 
 app_name = "spring_manifest"
@@ -29,4 +28,5 @@ urlpatterns = [
         "canceled_orders/", views.CanceledOrdersView.as_view(), name="canceled_orders"
     ),
     path("order_exists/", views.OrderExists.as_view(), name="order_exists"),
+    path("update_manifest/", views.UpdateManifest.as_view(), name="update_manifest"),
 ]

@@ -1,0 +1,23 @@
+.update_status th, .update_status td {
+  padding: 1em;
+}
+
+.update_status td {
+  font-weight: bold;
+}
+
+.in_progress {
+  background: #3865a3;
+}
+
+.failed, .old {
+  background: #e03b24;
+}
+
+.recent {
+  background: #64a338;
+}
+
+.not_recent {
+  background: #ffcc00;
+}

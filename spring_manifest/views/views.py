@@ -1,12 +1,15 @@
 """Views for manifest app."""
 
+import threading
+import time
+
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.base import TemplateView, View
+from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import FormView
 from home.views import UserInGroupMixin
 from spring_manifest import forms, models
@@ -87,10 +90,10 @@ class ManifestListView(SpringUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
-        models.update_manifest_orders()
         context["current_manifests"] = models.Manifest.unfiled.all()
         context["previous_manifests"] = models.Manifest.filed.all()[:50]
         context["unmanifested_orders"] = models.ManifestOrder.unmanifested.all()
+        context["update"] = models.get_manifest_update()
         return context
 
 
@@ -104,8 +107,6 @@ class ManifestView(SpringUserMixin, TemplateView):
         context = super().get_context_data(*args, **kwargs)
         manifest_id = self.kwargs["manifest_id"]
         manifest = get_object_or_404(models.Manifest, id=manifest_id)
-        if manifest.status == manifest.UNFILED:
-            models.update_manifest_orders()
         orders = manifest.manifestorder_set.all().order_by("dispatch_date")
         context["manifest"] = manifest
         context["orders"] = orders
@@ -113,6 +114,7 @@ class ManifestView(SpringUserMixin, TemplateView):
             service.name: len([order for order in orders if order.service == service])
             for service in models.ManifestService.enabled_services.all()
         }
+        context["update"] = models.get_manifest_update()
         return context
 
 
@@ -196,3 +198,17 @@ class OrderExists(SpringUserMixin, View):
                     "spring_manifest:update_order", kwargs={"order_pk": order.pk}
                 )
             )
+
+
+class UpdateManifest(SpringUserMixin, RedirectView):
+    """Trigger a manifest update and return to the previous page."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        self.update_manifest()
+        time.sleep(1)
+        return self.request.GET.get("return")
+
+    def update_manifest(self):
+        t = threading.Thread(target=models.update_manifest_orders)
+        t.setDaemon(True)
+        t.start()

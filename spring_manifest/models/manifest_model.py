@@ -126,3 +126,10 @@ class ManifestUpdate(models.Model):
         self.status = self.FAILED
         self.finished = None
         self.save()
+
+    def time_since_update(self):
+        """Return timedelta between update and the current server time."""
+        if self.finished is not None:
+            return timezone.now() - self.finished
+        else:
+            return None

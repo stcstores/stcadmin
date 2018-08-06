@@ -5,6 +5,10 @@
 
 {% block content %}
 
+{% ifequal manifest.status manifest.UNFILED %}
+    {% include 'spring_manifest/update_status.html' %}
+{% endifequal %}
+
 <h3>{{ manifest }}</h3>
 {% if manifest.manifest_file and manifest.status == manifest.FILED %}
     <h3 class="success">Manifest Filed</h3>
@@ -18,10 +22,14 @@
         <a href="{{ manifest.docket_file.url }}"><button>Download Docket File</button></a>
     {% endif %}
 {% elif manifest.status == manifest.UNFILED %}
-    <a href="{% url 'spring_manifest:file_manifest' manifest.id %}"><button>File Manifest</button></a>
+    <a href="{% url 'spring_manifest:file_manifest' manifest.id %}">
+        <button{% ifnotequal update.status update.COMPLETE %} disabled{% endifnotequal %}>File Manifest</button>
+    </a>
 {% elif manifest.status == manifest.FAILED %}
     <h3 class="error">Error Creating Manifest</h3>
-    <a href="{% url 'spring_manifest:file_manifest' manifest.id %}"><button>Retry File Manifest</button></a>
+    <a href="{% url 'spring_manifest:file_manifest' manifest.id %}">
+        <button{% ifnotequal update.status update.COMPLETE %} disabled{% endifnotequal %}>Retry File Manifest</button>
+    </a>
 {% elif manifest.status == manifest.IN_PROGRESS %}
     <h3>IN PROGRESS</h3>
     <p>This manifest is currently being processed.</p>
@@ -43,9 +51,7 @@
             <th>Filed</th>
         {% endif %}
         <th>Orders</th>
-        {% for service, order_count in services.items %}
-            <th>{{ service }}</th>
-        {% endfor %}
+
     </tr>
     <tr>
         <th>{{ manifest }}</th>
@@ -54,10 +60,16 @@
             <td class="date">{{ manifest.time_filed|date:'D jS N h:iA' }}</td>
         {% endif %}
         <td>{{ manifest.manifestorder_set.count }}</td>
-        {% for service, order_count in services.items %}
-            <td>{{ order_count }}</td>
-        {% endfor %}
+
     </tr>
+</table>
+<table>
+    {% for service, order_count in services.items %}
+    <tr>
+        <th>{{ service }}</th>
+        <td>{{ order_count }}</td>
+    </tr>
+    {% endfor %}
 </table>
 <table>
     <tr>
