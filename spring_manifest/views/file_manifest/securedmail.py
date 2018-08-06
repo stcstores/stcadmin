@@ -107,16 +107,14 @@ class SecuredMailManifestFile:
 
     def __new__(self, manifest, orders):
         """Create Secured Mail Manifest file."""
-        untracked_orders = [
-            order
-            for order in orders
-            if order.service.name == "Secured Mail International Untracked"
-        ]
-        tracked_orders = [
-            order
-            for order in orders
-            if order.service.name == "Secured Mail International Tracked"
-        ]
+        untracked_service = models.ManifestService.objects.get(
+            name="Secured Mail International Untracked"
+        )
+        tracked_service = models.ManifestService.objects.get(
+            name="Secured Mail International Tracked"
+        )
+        untracked_orders = [_ for _ in orders if _.service == untracked_service]
+        tracked_orders = [_ for _ in orders if _.service == tracked_service]
         tracked_weight = self.convert_weight(
             self, sum([o.weight for o in tracked_orders])
         )
@@ -174,7 +172,7 @@ class SecuredMailDocketFile:
     CLIENT_TO_BE_BILLED_CELL = "D10"
     PRINTED_NAME_CELL = "C34"
     SIGN_DATE_FIELD = "C36"
-    TABLE_START_ROW = "16"
+    TABLE_START_ROW = 16
     JOB_NAME_COL = "B"
     SERVICE_COL = "C"
     FORMAT_COL = "E"
@@ -185,8 +183,22 @@ class SecuredMailDocketFile:
 
     def __new__(self, manifest, packages):
         """Create Secured Docket file."""
-        wb = openpyxl.load_workbook(filename=self.TEMPLATE_PATH)
-        ws = wb.active
+        self.workbook = openpyxl.load_workbook(filename=self.TEMPLATE_PATH)
+        self.worksheet = self.workbook.active
+        self.packages = packages
+        self.write_worksheet(self)
+        return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(self.workbook))
+
+    def write_worksheet(self):
+        """Write data to the worksheet."""
+        self.fill_form(self)
+        services = models.SecuredMailService.objects.filter(on_docket=True)
+        for row_number, service in enumerate(services):
+            self.write_service_row(self, row_number, service)
+
+    def fill_form(self):
+        """Fill out form fields in the worksheet."""
+        ws = self.worksheet
         ws[self.COLLECTION_SITE_CELL] = self.COLLECTION_SITE_NAME
         ws[self.DOCKET_NUMBER_CELL] = self.get_docket_number(self)
         ws[self.CONTACT_NAME_CELL] = self.CONTACT_NAME
@@ -196,29 +208,28 @@ class SecuredMailDocketFile:
         ws[self.CLIENT_TO_BE_BILLED_CELL] = self.CLIENT_TO_BE_BILLED
         ws[self.PRINTED_NAME_CELL] = self.PRINTED_NAME
         ws[self.SIGN_DATE_FIELD] = self.get_date()
-        row = self.TABLE_START_ROW
-        for service in models.SecuredMailService.objects.filter(on_docket=True):
-            service_packages = [
-                package
-                for package in packages
-                if package.order.secured_mail_service == service
-            ]
-            if len(service_packages) == 0:
-                continue
-            weights = [package.weight for package in service_packages]
-            ws[self.JOB_NAME_COL + row] = self.JOB_NAME
-            ws[self.SERVICE_COL + row] = service.docket_service
-            ws[self.FORMAT_COL + row] = service.format
-            ws[self.ITEM_WEIGHT_COL + row] = int(sum(weights) / len(weights))
-            ws[self.QUANTITY_MAILED_COL + row] = len(weights)
-            row = str(int(row) + 1)
-        return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
+
+    def write_service_row(self, row_number, service):
+        """Add a service row to the worksheet."""
+        ws = self.worksheet
+        sheet_row = str(self.TABLE_START_ROW + row_number)
+        packages = [_ for _ in self.packages if _.order.secured_mail_service == service]
+        if len(packages) == 0:
+            return
+        weights = [
+            _.weight for _ in self.packages if _.order.secured_mail_service == service
+        ]
+        ws[self.JOB_NAME_COL + sheet_row] = self.JOB_NAME
+        ws[self.SERVICE_COL + sheet_row] = service.docket_service
+        ws[self.FORMAT_COL + sheet_row] = service.format
+        ws[self.ITEM_WEIGHT_COL + sheet_row] = int(sum(weights) / len(weights))
+        ws[self.QUANTITY_MAILED_COL + sheet_row] = len(weights)
 
     def get_docket_number(self):
         """Return current docket number."""
         counter = models.Counter.objects.get(name="Secured Mail Docket Number")
         docket_number = counter.count
-        return "{}{}{}".format(self.INITIALS, self.INITIALS, docket_number)
+        return f"{self.INITIALS}{self.INITIALS}{docket_number}"
 
     @staticmethod
     def get_date():
