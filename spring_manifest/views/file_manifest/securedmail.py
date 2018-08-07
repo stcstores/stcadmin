@@ -47,7 +47,9 @@ class FileSecuredMailManifest(FileManifest):
 
     def save_manifest_file(self):
         """Create Manifest file and save to database."""
-        manifest_file = SecuredMailManifestFile(self.manifest, self.orders)
+        manifest_file = SecuredMailManifestFile.create_manifest(
+            self.manifest, self.orders
+        )
         self.manifest.manifest_file.save(
             str(self.manifest) + "_manifest.xlsx", File(manifest_file)
         )
@@ -103,9 +105,11 @@ class SecuredMailManifestFile:
     WEIGHT_COL = "N"
     REFERENCE_CELL = "J3"
     DATE_CELL = "O3"
+    BAG_CELL = "O4"
     TRACKED_ROW = "22"
 
-    def __new__(self, manifest, orders):
+    @classmethod
+    def create_manifest(cls, manifest, orders):
         """Create Secured Mail Manifest file."""
         untracked_service = models.ManifestService.objects.get(
             name="Secured Mail International Untracked"
@@ -115,11 +119,9 @@ class SecuredMailManifestFile:
         )
         untracked_orders = [_ for _ in orders if _.service == untracked_service]
         tracked_orders = [_ for _ in orders if _.service == tracked_service]
-        tracked_weight = self.convert_weight(
-            self, sum([o.weight for o in tracked_orders])
-        )
+        tracked_weight = cls.convert_weight(sum([o.weight for o in tracked_orders]))
         destinations = models.SecuredMailDestination.objects.all()
-        wb = openpyxl.load_workbook(filename=self.TEMPLATE_PATH)
+        wb = openpyxl.load_workbook(filename=cls.TEMPLATE_PATH)
         ws = wb.active
         total_items = 0
         total_weight = 0
@@ -129,21 +131,33 @@ class SecuredMailManifestFile:
                 for order in untracked_orders
                 if order.country.secured_mail_destination == destination
             ]
-            weight_for_destination = self.convert_weight(
-                self, sum([o.weight for o in orders_for_destination])
+            weight_for_destination = cls.convert_weight(
+                sum([o.weight for o in orders_for_destination])
             )
             total_items += len(orders_for_destination)
             total_weight += weight_for_destination
             row = str(destination.manifest_row_number)
-            ws[self.ITEM_COL + row] = len(orders_for_destination)
-            ws[self.WEIGHT_COL + row] = weight_for_destination
-        ws[self.ITEM_COL + self.TRACKED_ROW] = len(tracked_orders)
-        ws[self.WEIGHT_COL + self.TRACKED_ROW] = tracked_weight
-        ws[self.REFERENCE_CELL] = str(manifest)
-        ws[self.DATE_CELL] = datetime.datetime.now().strftime("%d/%m/%Y")
+            ws[cls.ITEM_COL + row] = len(orders_for_destination)
+            ws[cls.WEIGHT_COL + row] = weight_for_destination
+        ws[cls.ITEM_COL + cls.TRACKED_ROW] = len(tracked_orders)
+        ws[cls.WEIGHT_COL + cls.TRACKED_ROW] = tracked_weight
+        ws[cls.REFERENCE_CELL] = str(manifest)
+        ws[cls.DATE_CELL] = datetime.datetime.now().strftime("%d/%m/%Y")
         return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
 
-    def convert_weight(self, weight):
+    @classmethod
+    def add_bag_number(cls, manifest, number_of_bags):
+        manifest_file = manifest.manifest_file
+        wb = openpyxl.load_workbook(manifest_file)
+        ws = wb.active
+        ws[cls.BAG_CELL] = number_of_bags
+        manifest_file = io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
+        manifest.manifest_file.save(
+            str(manifest) + "_manifest.xlsx", File(manifest_file)
+        )
+
+    @classmethod
+    def convert_weight(cls, weight):
         """Return a gram weight as kilograms."""
         return round(weight / 1000, 2)
 

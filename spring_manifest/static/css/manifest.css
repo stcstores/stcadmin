@@ -6,18 +6,27 @@
   font-weight: bold;
 }
 
-.in_progress {
+.in_progress, .in_progress p {
   background: #3865a3;
+  border-radius: 0.25em;
+  color: white;
+  padding: 1em;
 }
 
 .failed, .old {
   background: #e03b24;
+  border-radius: 0.25em;
+  padding: 1em;
 }
 
 .recent {
   background: #64a338;
+  border-radius: 0.25em;
+  padding: 1em;
 }
 
 .not_recent {
   background: #ffcc00;
+  border-radius: 0.25em;
+  padding: 1em;
 }

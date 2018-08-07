@@ -49,6 +49,7 @@ class Manifest(models.Model):
     docket_file = models.FileField(upload_to="docket", blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=UNFILED)
     closed = models.BooleanField(default=False)
+    files_sent = models.BooleanField(default=False)
     errors = models.TextField(blank=True, null=True)
 
     objects = models.Manager()

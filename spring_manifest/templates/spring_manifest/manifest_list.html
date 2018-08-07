@@ -69,6 +69,7 @@
         <th>Orders</th>
         <th>Manifested</th>
         <th>Status</th>
+        <th>Files Sent</th>
     </tr>
     {% for manifest in previous_manifests %}
         <tr>
@@ -77,6 +78,7 @@
             <td>{{ manifest.manifestorder_set.count }}</td>
             <td class="date">{{ manifest.time_filed|date:'D jS N h:iA' }}</td>
             <td>{{ manifest.get_status_display }}</td>
+            <td>{{ manifest.files_sent }}</td>
         </tr>
     {% endfor %}
 </table>

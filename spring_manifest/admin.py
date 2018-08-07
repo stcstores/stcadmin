@@ -37,6 +37,7 @@ class ManifestAdmin(admin.ModelAdmin):
         "status",
         "errors",
         "closed",
+        "files_sent",
     )
     list_display = (
         "id",
@@ -48,6 +49,7 @@ class ManifestAdmin(admin.ModelAdmin):
         "item_advice_file",
         "status",
         "closed",
+        "files_sent",
     )
     list_display_links = ("__str__",)
     list_editable = ("manifest_type", "status")

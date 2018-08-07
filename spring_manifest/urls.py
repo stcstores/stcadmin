@@ -29,4 +29,9 @@ urlpatterns = [
     ),
     path("order_exists/", views.OrderExists.as_view(), name="order_exists"),
     path("update_manifest/", views.UpdateManifest.as_view(), name="update_manifest"),
+    path(
+        "send_secured_mail_manifest_files",
+        views.SendSecuredMailManifest.as_view(),
+        name="send_secured_mail_manifest_files",
+    ),
 ]

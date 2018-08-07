@@ -1,9 +1,11 @@
 """Views for manifest app."""
 
+import os
 import threading
 import time
 
 from django.contrib import messages
+from django.core.mail import EmailMessage
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -13,6 +15,7 @@ from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import FormView
 from home.views import UserInGroupMixin
 from spring_manifest import forms, models
+from stcadmin import settings
 
 
 class SpringUserMixin(UserInGroupMixin):
@@ -204,11 +207,64 @@ class UpdateManifest(SpringUserMixin, RedirectView):
     """Trigger a manifest update and return to the previous page."""
 
     def get_redirect_url(self, *args, **kwargs):
+        """Redirect to the provided URL."""
         self.update_manifest()
         time.sleep(1)
         return self.request.GET.get("return")
 
     def update_manifest(self):
+        """Trigger an update of the manifest orders."""
         t = threading.Thread(target=models.update_manifest_orders)
         t.setDaemon(True)
         t.start()
+
+
+class SendSecuredMailManifest(SpringUserMixin, RedirectView):
+    """Send the Secured Mail manifest files to Secured Mail."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Email files and return redirect to the manifest page."""
+        self.send_manifest_files()
+        return reverse_lazy(
+            "spring_manifest:manifest",
+            kwargs={"manifest_id": self.request.POST.get("manifest_id")},
+        )
+
+    def send_manifest_files(self):
+        """Send the Secured Mail manifest files to Secured Mail."""
+        from .file_manifest.securedmail import SecuredMailManifestFile
+
+        number_of_bags = self.request.POST.get("number_of_bags")
+        manifest = models.Manifest.objects.get(id=self.request.POST.get("manifest_id"))
+        SecuredMailManifestFile.add_bag_number(manifest, number_of_bags)
+        manifest_email = EmailMessage(
+            f"Seaton Trading Company Manifest {manifest}",
+            "",
+            "error_logging@stcstores.co.uk",
+            [settings.SECURED_MAIL_MANIFEST_EMAIL_ADDRESS],
+            reply_to=["info@stcstores.co.uk"],
+            attachments=[
+                (
+                    os.path.basename(manifest.manifest_file.name),
+                    manifest.manifest_file.open(mode="rb").read(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            ],
+        )
+        docket_email = EmailMessage(
+            f"Seaton Trading Company Docket {manifest}",
+            "",
+            "error_logging@stcstores.co.uk",
+            [settings.SECURED_MAIL_DOCKET_EMAIL_ADDRESS],
+            attachments=[
+                (
+                    os.path.basename(manifest.docket_file.name),
+                    manifest.docket_file.open(mode="rb").read(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            ],
+        )
+        manifest_email.send()
+        docket_email.send()
+        manifest.files_sent = True
+        manifest.save()

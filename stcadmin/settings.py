@@ -24,6 +24,8 @@ CC_DOMAIN = local_settings.CC_DOMAIN
 CC_USERNAME = local_settings.CC_USERNAME
 CC_PWD = local_settings.CC_PWD
 SCAYT_CUSTOMER_ID = local_settings.SCAYT_CUSTOMER_ID
+SECURED_MAIL_MANIFEST_EMAIL_ADDRESS = local_settings.SECURED_MAIL_MANIFEST_EMAIL_ADDRESS
+SECURED_MAIL_DOCKET_EMAIL_ADDRESS = local_settings.SECURED_MAIL_DOCKET_EMAIL_ADDRESS
 
 # This Security Key must be overriden in production.
 SECRET_KEY = "@cy+o@khyz!qttree+#md!1hl#c7w3qf_0^cy-r5%)5f5#2^zt"
