@@ -11,15 +11,15 @@
         {% elif update.status == update.IN_PROGRESS %}
         <td class="in_progress">Update In Progress</td>
         {% else %}
-        <td class="Failed">Failed</td>
+        <td class="failed">Failed</td>
         {% endif %}
 
-        {% ifequal update.status update.COMPLETE %}
+        {% if update.status == update.COMPLETE or update.status == update.FAILED %}
         <form action="{% url 'spring_manifest:update_manifest' %}" method="GET">
             <input hidden name="return" type="text" value="{{ request.get_full_path }}">
             <td><button>Update Manifest Orders</button></td>
         </form>
-        {% endifequal %}
+        {% endif %}
     </tr>
 </table>
 

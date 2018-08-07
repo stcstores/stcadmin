@@ -1,6 +1,7 @@
 """FileManifestView class."""
 
 import threading
+import time
 
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
@@ -37,12 +38,8 @@ class FileManifestView(SpringUserMixin, RedirectView):
 
     def process_manifest(self):
         """Set manifest as in progress and start thread to file it."""
-        models.update_manifest_orders()
         manifest = self.get_manifest()
         if manifest is not None:
-            manifest.status = manifest.IN_PROGRESS
-            manifest.errors = ""
-            manifest.save()
             t = threading.Thread(target=file_manifest, args=[manifest])
             t.setDaemon(True)
             t.start()
@@ -54,6 +51,7 @@ class FileManifestView(SpringUserMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         """Return URL to redirect to after manifest process starts."""
         self.process_manifest()
+        time.sleep(3)
         return reverse_lazy(
             "spring_manifest:manifest",
             kwargs={"manifest_id": self.kwargs["manifest_id"]},

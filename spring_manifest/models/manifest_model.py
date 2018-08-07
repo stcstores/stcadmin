@@ -27,11 +27,13 @@ class Manifest(models.Model):
     """Model for manifests."""
 
     UNFILED = "unfiled"
+    CLOSING = "closing"
     IN_PROGRESS = "in_progress"
     FILED = "filed"
     FAILED = "failed"
     STATUS_CHOICES = (
         (UNFILED, "Unfiled"),
+        (CLOSING, "Closing"),
         (IN_PROGRESS, "In Progress"),
         (FILED, "Filed"),
         (FAILED, "Failed"),
@@ -45,7 +47,8 @@ class Manifest(models.Model):
     manifest_file = models.FileField(upload_to="manifests", blank=True, null=True)
     item_advice_file = models.FileField(upload_to="item_advice", blank=True, null=True)
     docket_file = models.FileField(upload_to="docket", blank=True, null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=FILED)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=UNFILED)
+    closed = models.BooleanField(default=False)
     errors = models.TextField(blank=True, null=True)
 
     objects = models.Manager()

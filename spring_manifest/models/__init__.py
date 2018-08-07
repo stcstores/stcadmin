@@ -18,11 +18,14 @@ def get_manifest(manifest_type):
     """Return current manifest matching manfiest_type."""
     try:
         manifest = Manifest.unfiled.get(
-            status=Manifest.UNFILED, manifest_type=manifest_type
+            closed=False,
+            status__in=(Manifest.UNFILED, Manifest.CLOSING),
+            manifest_type=manifest_type,
         )
     except Manifest.DoesNotExist:
-        manifest = Manifest(manifest_type=manifest_type, status=Manifest.UNFILED)
-        manifest.save()
+        manifest = Manifest.objects.create(
+            manifest_type=manifest_type, closed=False, status=Manifest.UNFILED
+        )
     except Manifest.MultipleObjectsReturned as e:
         raise e
     return manifest
@@ -43,6 +46,17 @@ def get_orders(courier_rule_id, number_of_days=1):
     return CCAPI.get_orders_for_dispatch(
         order_type=1, number_of_days=number_of_days, courier_rule_id=courier_rule_id
     )
+
+
+def close_manifest(manifest):
+    """Close manifest if not already closed."""
+    if manifest.closed is False:
+        manifest.status = Manifest.CLOSING
+        manifest.save()
+        update_manifest_orders()
+        manifest.closed = True
+        manifest.status = Manifest.UNFILED
+        manifest.save()
 
 
 def create_order(cc_order, service):

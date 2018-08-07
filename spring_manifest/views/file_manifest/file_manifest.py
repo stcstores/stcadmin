@@ -17,6 +17,16 @@ class FileManifest:
         """File manifest."""
         self.currency_rates = self.get_currency_rates()
         self.manifest = manifest
+        try:
+            models.close_manifest(self.manifest)
+            if self.manifest.closed is False:
+                raise Exception
+        except Exception as e:
+            logger.error(
+                "Manifest Error: %s", " ".join(sys.argv), exc_info=sys.exc_info()
+            )
+            self.manifest.errors = "Manifest did not close."
+            raise e
         self.manifest.status = manifest.IN_PROGRESS
         self.manifest.errors = ""
         self.manifest.save()

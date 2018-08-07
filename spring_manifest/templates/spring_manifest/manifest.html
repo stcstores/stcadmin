@@ -5,9 +5,9 @@
 
 {% block content %}
 
-{% ifequal manifest.status manifest.UNFILED %}
+{% if manifest.status != manifest.FILED %}
     {% include 'spring_manifest/update_status.html' %}
-{% endifequal %}
+{% endif %}
 
 <h3>{{ manifest }}</h3>
 {% if manifest.manifest_file and manifest.status == manifest.FILED %}
@@ -33,6 +33,9 @@
 {% elif manifest.status == manifest.IN_PROGRESS %}
     <h3>IN PROGRESS</h3>
     <p>This manifest is currently being processed.</p>
+{% elif manifest.status == manifest.CLOSING %}
+    <h3>CLOSING</h3>
+    <p>The manifest is being closed. Please ensure no new orders are created that could be added to this manifest.</p>
 {% endif %}
 <br><br>
 <input type="text" value="{{ manifest }}" readonly>
