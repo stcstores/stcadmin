@@ -4,6 +4,7 @@ from .stock_check import Product, ProductBay  # NOQA
 from inventory.models import Bay, Warehouse  # NOQA
 from ccapi import CCAPI
 import cc_products
+import sys
 
 
 API_ATTEMPTS = 500
@@ -41,14 +42,14 @@ def update_products(inventory_table):
 
     Add new products and delete any no longer in the inventory export.
     """
-    print("Updating Products...")
+    print("Updating Products...", file=sys.stderr)
     table_skus = [sku for sku in inventory_table.get_column("VAR_SKU") if sku]
     db_skus = [p.sku for p in Product.objects.all()]
     new_skus = [sku for sku in table_skus if sku not in db_skus]
     missing_skus = [sku for sku in db_skus if sku not in table_skus]
     for sku in missing_skus:
         Product.objects.filter(sku__in=missing_skus).delete()
-    print("Deleted {} products.".format(len(missing_skus)))
+    print(f"Deleted {len(missing_skus)} products.", file=sys.stderr)
     new_products = []
     for sku in new_skus:
         cc_product = get_cc_product_by_sku(sku)
@@ -57,7 +58,7 @@ def update_products(inventory_table):
         )
         new_products.append(new_product)
     Product.objects.bulk_create(new_products)
-    print("Added {} products".format(len(new_products)))
+    print(f"Added {len(new_products)} products", file=sys.stderr)
 
 
 def update_product_bays(inventory_table):
@@ -66,11 +67,11 @@ def update_product_bays(inventory_table):
 
     Add new Warehouses and delete any that no longer exist.
     """
-    print("Updating product bay mapping...")
+    print("Updating product bay mapping...", file=sys.stderr)
     ProductBay.objects.all().delete()
     product_bays = []
     for row in inventory_table:
-        if len(row["VAR_Bays"]) == 0:
+        if row["VAR_Bays"] is None or len(row["VAR_Bays"]) == 0:
             continue
         product = Product.objects.get(sku=row["VAR_SKU"])
         bay_names = row["VAR_Bays"].split(";")
@@ -78,11 +79,13 @@ def update_product_bays(inventory_table):
             bays = [Bay.objects.get(name=name) for name in bay_names]
         except Bay.DoesNotExist:
             raise Exception("Bay not found: {}".format(", ".join(bay_names)))
-        stock_level = int(row["VAR_Stock"])
         for bay in bays:
             product_bays.append(ProductBay(product=product, bay=bay))
     ProductBay.objects.bulk_create(product_bays)
-    print("Created {} product bay links.".format(ProductBay.objects.all().count()))
+    print(
+        f"Created {ProductBay.objects.all().count()} product bay links.",
+        file=sys.stderr,
+    )
 
 
 def update_stock_check(inventory_table):
