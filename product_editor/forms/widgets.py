@@ -4,7 +4,6 @@ import json
 
 from django import forms
 from django.utils.safestring import mark_safe
-
 from product_editor.editor_manager import ProductEditorBase
 
 
@@ -43,7 +42,6 @@ class SingleSelectizeWidget(BaseSelectizeWidget, forms.Select):
     def __init__(self, *args, **kwargs):
         """Set selectize options."""
         self.selectize_options = kwargs.pop("selectize_options", {})
-        self.selectize_options["maxItems"] = 1
         super().__init__(*args, **kwargs)
 
     def get_context(self, *args, **kwargs):

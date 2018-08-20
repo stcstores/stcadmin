@@ -462,6 +462,7 @@ class OptionField(FormField):
 
     def __init__(self, *args, **kwargs):
         """Set options for selectize."""
+        self.selectize_options = self.selectize_options.copy()
         self.selectize_options["create"] = True
         if kwargs.get("label") in self.option_allowed_characters:
             self.allowed_characters = self.option_allowed_characters[
