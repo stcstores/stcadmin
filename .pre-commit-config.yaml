@@ -4,3 +4,11 @@ repos:
     hooks:
     - id: black
       language_version: python3.7
+-   repo: git://github.com/pre-commit/pre-commit-hooks
+    sha: v1.1.1
+    hooks:
+    -   id: flake8
+-   repo: git://github.com/chewse/pre-commit-mirrors-pydocstyle
+    rev: master
+    hooks:
+    -   id: pydocstyle
