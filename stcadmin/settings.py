@@ -129,6 +129,8 @@ LOGGING = {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": "ccapi.log",
             "maxBytes": 1024,
+            "filters": ["add_user_to_log_record"],
+            "formatter": "default_formatter",
         },
         "error_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
@@ -174,8 +176,11 @@ LOGGING = {
     },
     "formatters": {
         "default_formatter": {
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        },
+        "user_formatter": {
             "format": "%(asctime)s - %(name)s - %(levelname)s - User: %(user)s - %(message)s"
-        }
+        },
     },
 }
 
