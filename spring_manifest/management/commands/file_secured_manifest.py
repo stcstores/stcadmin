@@ -1,10 +1,13 @@
 """Management command to file the Secured Mail manifest."""
 
+import logging
 import sys
 
 from django.core.management.base import BaseCommand
 from spring_manifest import models
 from spring_manifest.views.file_manifest import FileSecuredMailManifest
+
+logger = logging.getLogger("management_commands")
 
 
 class Command(BaseCommand):
@@ -19,15 +22,19 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """File the Secured Mail manifest."""
-        print("Updating Orders...", file=sys.stderr)
-        models.update_manifest_orders()
-        manifest = models.get_manifest(models.Manifest.SECURED_MAIL)
-        print(f"Filing Manifest {manifest}...", file=sys.stderr)
-        FileSecuredMailManifest(manifest)
-        print(
-            (
-                f"{manifest.manifestorder_set.count()} orders filed for "
-                "{manifest} at {manifest.time_filed}"
-            ),
-            file=sys.stderr,
-        )
+        try:
+            print("Updating Orders...", file=sys.stderr)
+            models.update_manifest_orders()
+            manifest = models.get_manifest(models.Manifest.SECURED_MAIL)
+            print(f"Filing Manifest {manifest}...", file=sys.stderr)
+            FileSecuredMailManifest(manifest)
+            print(
+                (
+                    f"{manifest.manifestorder_set.count()} orders filed for "
+                    "{manifest} at {manifest.time_filed}"
+                ),
+                file=sys.stderr,
+            )
+        except Exception as e:
+            logger.exception("Update Manifest Error.")
+            raise e

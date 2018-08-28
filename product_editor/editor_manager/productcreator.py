@@ -2,9 +2,7 @@
 
 import datetime
 import logging
-import sys
 import threading
-from pprint import pprint
 
 import cc_products
 from inventory import models
@@ -18,10 +16,10 @@ logger = logging.getLogger("product_creation")
 class ProductSaver(ProductEditorBase):
     """Create new Cloud Commerce Product from data in session."""
 
-    def __new__(self, product_data):
+    def __new__(self, product_data, user):
         """Create new product and return it's range ID."""
         self.product_data = product_data
-        pprint(self.product_data)
+        self.user = user
         self.product_range = self.get_product_range(self)
         self.product_range.options[self.INCOMPLETE].selected = True
         t = threading.Thread(target=self.create_product, args=[self])
@@ -41,14 +39,10 @@ class ProductSaver(ProductEditorBase):
             elif self.product_data[self.TYPE] == self.VARIATION:
                 self.create_variation_product(self)
             self.product_range.options[self.INCOMPLETE].selected = False
-        except Exception as exception:
-            logger.error(
-                "Product Creation Error: %s",
-                " ".join(sys.argv),
-                exc_info=sys.exc_info(),
-            )
+        except Exception as e:
+            logger.exception(f"Error creating product.", extra={"user": self.user})
             self.handle_error(self)
-            raise exception
+            raise e
 
     def create_single_product(self):
         """Create a single (non variation) product."""
@@ -131,7 +125,7 @@ class ProductSaver(ProductEditorBase):
         )
 
     def handle_error(self):
-        """Called after an error saving the product."""
+        """Is called after an error saving the product."""
         pass
 
     def update_product(self, product, **kwargs):

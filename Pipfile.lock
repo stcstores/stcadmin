@@ -43,14 +43,14 @@
         },
         "ccapi": {
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "8f2ef3ae55a3859ddf77cf5cfb66d860d8fbc92c"
+            "ref": "d4ee4f150ea49e4f6b569cff6de769c3462d7266"
         },
         "certifi": {
             "hashes": [
-                "sha256:4c1d68a1408dd090d2f3a869aa94c3947cc1d967821d1ed303208c9f41f0f2f4",
-                "sha256:b6e8b28b2b7e771a41ecdd12d4d43262ecab52adebbafa42c77d6b57fb6ad3a4"
+                "sha256:376690d6f16d32f9d1fe8932551d80b23e9d393a8578c5633a2ed39a64861638",
+                "sha256:456048c7e371c089d0a77a5212fb37a2c2dce1e24146e3b7e0261736aaeaa22a"
             ],
-            "version": "==2018.8.13"
+            "version": "==2018.8.24"
         },
         "cffi": {
             "hashes": [
@@ -325,6 +325,7 @@
                 "sha256:2316dc177fc7b3d8848b49365498de0c385b4c9bba511edddd24c34fbe3d37a4",
                 "sha256:3398bfb533482bf21974cecf28224dd23784ad4e4848be582903f7a2436ec12e",
                 "sha256:3477cb1e1061b34210acc43d20050be8444478ff50b8adfac5fe2b45fc97df01",
+                "sha256:3cc06333b8264428d02231804e2e726b902e9161dc16f573183dee6cb7ef621f",
                 "sha256:4259ea7cb2c238355ee13275eddd261d869cefbdeb18a65f35459589d6d17def",
                 "sha256:4addcf93234b6122f530f90f485fd3d00d158911fbc1ed24db3fa66cd49fe565",
                 "sha256:50c0e24bcbce9c54346f4a2f4e97b0ed111f0413ac3fe9954061ae1c8aa7021f",
@@ -667,11 +668,11 @@
         },
         "xlsxwriter": {
             "hashes": [
-                "sha256:1224b971c174f33b954f9a1906679d0049399bd6a5a8c78bbae2d6c2c4facebd",
-                "sha256:8b579aa9d45030e55e41c8e6f5ef5696fab8cbb25c9e9b49dc06948a994fc534"
+                "sha256:619f3e2653707b24aa4540c67a04ac68c1267e5d22e12a53e7fd2d4157313870",
+                "sha256:98a94b32d4929d3e34595b4654b8e7f951182f540056b9cb734c88899912f729"
             ],
             "index": "pypi",
-            "version": "==1.0.7"
+            "version": "==1.0.9"
         }
     },
     "develop": {

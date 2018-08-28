@@ -29,7 +29,5 @@ class Command(BaseCommand):
                     new_order_count += 1
             print(new_order_count, file=sys.stderr)
         except Exception as e:
-            logger.error(
-                "Admin Command Error: %s", " ".join(sys.argv), exc_info=sys.exc_info()
-            )
+            logger.exception("Error updating print audit.")
             raise e

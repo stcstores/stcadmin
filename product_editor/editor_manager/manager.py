@@ -26,6 +26,7 @@ class BaseProductManager(ProductEditorBase):
     def __init__(self, request):
         """Set object properties."""
         self.request = request
+        self.user = request.user
         self.session = self.request.session
         self.get_data_from_session()
         self.set_pages()
@@ -151,14 +152,15 @@ class BaseProductManager(ProductEditorBase):
         return json.dump(data, outfile, indent=4, sort_keys=True)
 
     def save_product(self):
-        """Complete product creation or editing."""
-        raise NotImplementedError()
+        """Update Cloud Commerce with product data."""
+        return self.action_class(self.product_data, self.user)
 
 
 class NewProductManager(BaseProductManager):
     """Product manager for creating new products."""
 
     SESSION_KEY = "new_product"
+    action_class = ProductCreator
 
     def get_data_from_session(self):
         """Retrive data from session."""
@@ -193,15 +195,12 @@ class NewProductManager(BaseProductManager):
         """Return URL of the first page to be displaid."""
         return reverse("product_editor:{}".format(cls.BASIC))
 
-    def save_product(self):
-        """Save new product."""
-        return ProductCreator(self.product_data)
-
 
 class EditProductManager(BaseProductManager):
     """Product Manager for editing existing products."""
 
     SESSION_KEY = "edit_product"
+    action_class = ProductEditor
 
     def __init__(self, request, range_id):
         """Get Range ID for product range being edited."""
@@ -245,6 +244,5 @@ class EditProductManager(BaseProductManager):
 
     def save_product(self):
         """Update product."""
-        data = self.product_data
+        super().save_product()
         self.clear_session()
-        return ProductEditor(data)

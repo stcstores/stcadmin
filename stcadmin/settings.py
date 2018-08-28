@@ -97,33 +97,85 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+
+def add_user_to_log_record(record):
+    """Add the user that originated a logging record if possible."""
+    if not hasattr(record, "user"):
+        try:
+            record.user = record.request.user.username
+        except AttributeError:
+            record.user = None
+    return True
+
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "filters": {
+        "add_user_to_log_record": {
+            "()": "django.utils.log.CallbackFilter",
+            "callback": add_user_to_log_record,
+        }
+    },
     "handlers": {
-        "mail_admins": {"level": "ERROR", "class": "django.utils.log.AdminEmailHandler"}
+        "mail_admins": {
+            "level": "ERROR",
+            "class": "django.utils.log.AdminEmailHandler",
+            "filters": ["add_user_to_log_record"],
+            "formatter": "default_formatter",
+            "include_html": False,
+        },
+        "ccapi_file_handler": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "ccapi.log",
+            "maxBytes": 1024,
+        },
+        "error_file_handler": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "stcadmin_error.log",
+            "maxBytes": 1024,
+            "level": "ERROR",
+            "filters": ["add_user_to_log_record"],
+            "formatter": "default_formatter",
+        },
+        "stdout": {"class": "logging.StreamHandler", "level": "INFO"},
     },
     "loggers": {
-        "django.request": {
-            "handlers": ["mail_admins"],
-            "level": "ERROR",
-            "propagate": True,
+        "django": {
+            "handlers": ["error_file_handler", "mail_admins"],
+            "level": "WARNING",
+            "propagate": False,
         },
         "management_commands": {
-            "handlers": ["mail_admins"],
+            "handlers": ["error_file_handler", "mail_admins"],
             "level": "ERROR",
-            "propagate": True,
+            "propagate": False,
         },
         "product_creation": {
-            "handlers": ["mail_admins"],
+            "handlers": ["error_file_handler", "mail_admins"],
             "level": "ERROR",
-            "propagate": True,
+            "propagate": False,
         },
         "file_manifest": {
-            "handlers": ["mail_admins"],
+            "handlers": ["error_file_handler", "mail_admins"],
             "level": "ERROR",
-            "propagate": True,
+            "propagate": False,
         },
+        "ccapi.requests.ccapisession": {
+            "handlers": ["stdout", "ccapi_file_handler"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "ccapi_errors": {
+            "handlers": ["mail_admins", "error_file_handler"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+    },
+    "formatters": {
+        "default_formatter": {
+            "format": "%(asctime)s - %(name)s - %(levelname)s - User: %(user)s - %(message)s"
+        }
     },
 }
 

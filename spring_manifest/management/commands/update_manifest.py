@@ -1,8 +1,11 @@
 """Management command to update manifest orders."""
 
-from django.core.management.base import BaseCommand
+import logging
 
+from django.core.management.base import BaseCommand
 from spring_manifest.models import update_manifest_orders
+
+logger = logging.getLogger("management_commands")
 
 
 class Command(BaseCommand):
@@ -17,4 +20,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Update manifests."""
-        update_manifest_orders()
+        try:
+            update_manifest_orders()
+        except Exception as e:
+            logger.exception("Update Manifest Error.")
+            raise e

@@ -12,6 +12,9 @@ from .counter_model import Counter  # NOQA
 from .manifest_type_model import ManifestType  # NOQA
 from django.db import transaction
 from ccapi import CCAPI
+import logging
+
+logger = logging.getLogger("file_manifest")
 
 
 def get_manifest(manifest_type):
@@ -94,14 +97,18 @@ def update_manifest_orders(number_of_days=1):
     update, created = ManifestUpdate.objects.get_or_create(
         status=ManifestUpdate.IN_PROGRESS
     )
-    if created:
+    update_already_in_progress = not created
+    if not update_already_in_progress:
         try:
             update_manifest_database(number_of_days)
         except Exception as e:
+            logger.exception(f"Manifest update raised an exception.")
             update.fail()
             raise e
         else:
             update.complete()
+    else:
+        logger.info("Manifest update already in progress.")
 
 
 @transaction.atomic
