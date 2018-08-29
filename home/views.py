@@ -3,7 +3,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.base import TemplateView
 
-from stcadmin import settings
+from django.conf import settings
 
 
 class UserLoginMixin(LoginRequiredMixin):

@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.timezone import now
 
-from stcadmin import settings
+from django.conf import settings
 
 register = template.Library()
 

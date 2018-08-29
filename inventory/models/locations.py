@@ -6,7 +6,7 @@ from ccapi import CCAPI
 from django.db import models
 from tabler import Table
 
-from stcadmin import settings
+from django.conf import settings
 
 
 class UsedWarehouseManager(models.Manager):

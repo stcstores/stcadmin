@@ -8,7 +8,7 @@ from django import forms
 from django.utils import timezone
 
 from print_audit import models
-from stcadmin import settings
+from django.conf import settings
 
 
 class FeedbackSearchForm(forms.Form):

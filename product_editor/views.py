@@ -8,7 +8,7 @@ from django.views.generic.edit import FormView, View
 
 from inventory.views import InventoryUserMixin
 from product_editor import editor_manager, forms
-from stcadmin import settings
+from django.conf import settings
 
 
 class BaseProductView(InventoryUserMixin, editor_manager.ProductEditorBase, FormView):

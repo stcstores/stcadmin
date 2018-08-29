@@ -4,6 +4,7 @@ import os
 import threading
 import time
 
+from django.conf import settings
 from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.http import HttpResponse
@@ -15,7 +16,6 @@ from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import FormView
 from home.views import UserInGroupMixin
 from spring_manifest import forms, models
-from stcadmin import settings
 
 
 class SpringUserMixin(UserInGroupMixin):

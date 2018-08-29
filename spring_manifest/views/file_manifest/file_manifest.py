@@ -5,7 +5,7 @@ import sys
 
 from forex_python.converter import CurrencyRates
 from spring_manifest import models
-from stcadmin import settings
+from django.conf import settings
 
 logger = logging.getLogger("file_manifest")
 

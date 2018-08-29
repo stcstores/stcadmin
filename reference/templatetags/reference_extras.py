@@ -1,7 +1,7 @@
 """Template tags for the Reference app."""
 
 from django import template
-from stcadmin import settings
+from django.conf import settings
 from django.utils.safestring import mark_safe
 
 register = template.Library()
