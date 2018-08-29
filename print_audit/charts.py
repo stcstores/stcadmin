@@ -4,7 +4,6 @@ import datetime
 
 from jchart import Chart
 from jchart.config import Axes, DataSet
-
 from print_audit import models
 
 
@@ -58,6 +57,12 @@ class OrdersByWeek(Chart):
 
     def __init__(self, *args, **kwargs):
         """Get weeks in range."""
+        years = [
+            d.year
+            for d in models.CloudCommerceOrder.objects.all().datetimes(
+                "date_created", "year"
+            )
+        ]
 
         class Week:
             def __init__(self, year, number):
@@ -68,12 +73,6 @@ class OrdersByWeek(Chart):
                     date_created__year=year, date_created__week=number
                 ).count()
 
-        years = [
-            d.year
-            for d in models.CloudCommerceOrder.objects.all().datetimes(
-                "date_created", "year"
-            )
-        ]
         weeks_numbers = list(range(1, self.WEEKS_TO_DISPLAY + 1))
         self.weeks = []
         self.now = datetime.datetime.now()

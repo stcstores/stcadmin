@@ -1,7 +1,7 @@
 """Views for the User app."""
 
 from django.contrib.auth import logout
-from django.contrib.auth.views import LogoutView, PasswordChangeView
+from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
 from home.views import UserLoginMixin

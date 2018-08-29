@@ -147,6 +147,7 @@ class SecuredMailManifestFile:
 
     @classmethod
     def add_bag_number(cls, manifest, number_of_bags):
+        """Add the number of bags sent to the manifest file."""
         manifest_file = manifest.manifest_file
         wb = openpyxl.load_workbook(manifest_file)
         ws = wb.active

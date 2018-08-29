@@ -4,8 +4,6 @@ from ccapi import CCAPI
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-
-from home.views import error_page
 from inventory import forms
 
 from .views import InventoryUserMixin
