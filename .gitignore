@@ -1,5 +1,7 @@
 *.~lock.*
 
+*.swp
+*secret_key.toml
 reference/static/help/*
 
 *.pyo

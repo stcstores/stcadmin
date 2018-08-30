@@ -1,12 +1,12 @@
 """Fabfile."""
 
-import os
+import posixpath
 import random
 import sys
 
-from fabric.api import env, local, put, run
+from fabric.api import env, local, run
 from fabric.context_managers import cd
-from fabric.contrib.files import append, exists, sed
+from fabric.contrib.files import append, exists
 from fabric.operations import sudo
 
 env.shell = "/bin/bash -l -i -c"  # Use path from .bashrc
@@ -29,7 +29,6 @@ class Deploy:
         self.create_directory_structure()
         self.get_latest_source()
         self.update_settings()
-        self.add_server_settings()
         self.update_virtualenv()
         self.update_docs()
         self.update_static_files()
@@ -40,19 +39,20 @@ class Deploy:
         """Set class atributes."""
         self.user = env.user
         self.host = env.host
-        self.site_folder = "/home/{}/sites/{}/".format(env.user, env.host)
-        self.source_folder = "{}/{}".format(self.site_folder, self.SOURCE)
-        self.virtualenv_folder = "{}/{}".format(self.site_folder, self.VIRTUALENV)
-        self.static_folder = "{}/{}".format(self.site_folder, self.STATIC)
-        self.media_folder = "{}/{}".format(self.site_folder, self.MEDIA)
-        self.python_executable = "{}/bin/python".format(self.virtualenv_folder)
-        self.activate_virtual_env = "source {}/bin/activate".format(
-            self.virtualenv_folder
-        )
+        self.site_folder = posixpath.join("/home", env.user, "sites", env.host)
+        self.source_folder = posixpath.join(self.site_folder, self.SOURCE)
+        self.virtualenv_folder = posixpath.join(self.site_folder, self.VIRTUALENV)
+        self.static_folder = posixpath.join(self.site_folder, self.STATIC)
+        self.media_folder = posixpath.join(self.site_folder, self.MEDIA)
+        self.log_folder = posixpath.join(self.site_folder, "logs")
+        self.system_python = f"python{sys.version_info.major}.{sys.version_info.minor}"
+        self.venv_python = posixpath.join(self.virtualenv_folder, "bin", "python")
+        venv_activate_script = posixpath.join(self.virtualenv_folder, "bin", "activate")
+        self.activate_virtual_env_command = f"source {venv_activate_script}"
 
     def venv_run(self, command):
         """Run command in virtual environment."""
-        run("source {}/bin/activate && {}".format(self.virtualenv_folder, command))
+        run(f"{self.activate_virtual_env_command} && {command}")
 
     def create_directory_structure(self):
         """Create necessary directories if necessary."""
@@ -61,50 +61,32 @@ class Deploy:
             self.virtualenv_folder,
             self.static_folder,
             self.media_folder,
+            self.log_folder,
         ]
         for subfolder in folders:
-            run("mkdir -p {}".format(subfolder))
+            run(f"mkdir -p {subfolder}")
 
     def get_latest_source(self):
         """Clone and/or update git repo."""
-        if exists("".join([self.source_folder, "/.git"])):
-            run("cd {} && git fetch".format(self.source_folder))
+        if exists(posixpath.join(self.source_folder, ".git")):
+            run(f"cd {self.source_folder} && git fetch")
         else:
             run("git clone {} {}".format(self.REPO_URL, self.source_folder))
         current_commit = local("git log -n 1 --format=%H", capture=True)
-        run("cd {} && git reset --hard {}".format(self.source_folder, current_commit))
+        run(f"cd {self.source_folder} && git reset --hard {current_commit}")
 
     def update_settings(self):
         """Configure settings.py and secret key."""
-        settings_path = self.source_folder + "/stcadmin/settings.py"
-        sed(settings_path, "DEBUG = True", "DEBUG = False")
-        sed(
-            settings_path,
-            "ALLOWED_HOSTS =.+$",
-            'ALLOWED_HOSTS = ["{}"]'.format(self.host),
-        )
-        secret_key_file = self.source_folder + "/stcadmin/secret_key.py"
+        secret_key_file = posixpath.join(self.site_folder, "secret_key.toml")
         if not exists(secret_key_file):
-            chars = 'abcdefghijklmnopqrstuvwxyz0123456789!"@#$%^&*"'
+            chars = 'abcdefghijklmnopqrstuvwxyz0123456789!"@#$^&*"'
             key = "".join([random.SystemRandom().choice(chars) for _ in range(50)])
-            append(secret_key_file, "SECRET_KEY = '{}'".format(key))
-        append(settings_path, "\nfrom . secret_key import SECRET_KEY")
-
-    def add_server_settings(self):
-        """Copy server settings file to server."""
-        server_settings = "{}/stcadmin/local_settings.py".format(self.source_folder)
-        local_server_settings = os.path.join(
-            os.path.dirname(__file__), "server_settings.py"
-        )
-        put(local_server_settings, server_settings)
+            append(secret_key_file, f'SECRET_KEY = "{key}"')
 
     def update_virtualenv(self):
         """Create virtualenv and install packages."""
         run("rm -rf {}".format(self.virtualenv_folder))
-        python_executable = "python{}.{}".format(
-            sys.version_info.major, sys.version_info.minor
-        )
-        run("{} -m venv {}".format(python_executable, self.virtualenv_folder))
+        run(f"{self.system_python} -m venv {self.virtualenv_folder}")
         self.venv_run("pip install pip -U")
         self.venv_run("pip install pipenv --upgrade")
         with cd(self.source_folder):
@@ -112,7 +94,7 @@ class Deploy:
 
     def update_docs(self):
         """Build documentation."""
-        with cd("{}/reference/help".format(self.source_folder)):
+        with cd(f"{self.source_folder}/reference/help"):
             self.venv_run("make html")
 
     def update_static_files(self):
@@ -127,7 +109,7 @@ class Deploy:
 
     def restart_server(self):
         """Restart server process."""
-        sudo("systemctl restart gunicorn-{}".format(self.host))
+        sudo(f"systemctl restart gunicorn-{self.host}")
 
 
 def deploy():

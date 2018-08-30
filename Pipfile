@@ -33,6 +33,7 @@ sphinx_rtd_theme = "*"
 Unidecode = "*"
 XlsxWriter = "*"
 humanize = "*"
+toml = "*"
 
 [dev-packages]
 "Fabric3" = "*"

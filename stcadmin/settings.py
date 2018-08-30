@@ -2,33 +2,68 @@
 
 import os
 
+import toml
+
 from ccapi import CCAPI
+from django.core.exceptions import ImproperlyConfigured
 
-from . import local_settings
+SOURCE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+BASE_DIR = os.path.dirname(SOURCE_DIR)
 
-PROJECT_DIR = local_settings.PROJECT_DIR
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CONFIG_PATH = os.path.join(BASE_DIR, "config.toml")
 
-DEBUG = local_settings.DEBUG
-DATABASES = local_settings.DATABASES
-ALLOWED_HOSTS = local_settings.ALLOWED_HOSTS
-ADMINS = local_settings.ADMINS
-EMAIL_HOST = local_settings.EMAIL_HOST
-EMAIL_HOST_USER = local_settings.EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD = local_settings.EMAIL_HOST_PASSWORD
-EMAIL_PORT = local_settings.EMAIL_PORT
-EMAIL_USE_TLS = local_settings.EMAIL_USE_TLS
-SERVER_EMAIL = local_settings.SERVER_EMAIL
-DEFAULT_FROM_EMAIL = local_settings.DEFAULT_FROM_EMAIL
-CC_DOMAIN = local_settings.CC_DOMAIN
-CC_USERNAME = local_settings.CC_USERNAME
-CC_PWD = local_settings.CC_PWD
-SCAYT_CUSTOMER_ID = local_settings.SCAYT_CUSTOMER_ID
-SECURED_MAIL_MANIFEST_EMAIL_ADDRESS = local_settings.SECURED_MAIL_MANIFEST_EMAIL_ADDRESS
-SECURED_MAIL_DOCKET_EMAIL_ADDRESS = local_settings.SECURED_MAIL_DOCKET_EMAIL_ADDRESS
+try:
+    with open(CONFIG_PATH, "r") as config_file:
+        CONFIG = toml.load(config_file)
+except Exception:
+    raise ImproperlyConfigured("Config file not found.")
 
-# This Security Key must be overriden in production.
-SECRET_KEY = "@cy+o@khyz!qttree+#md!1hl#c7w3qf_0^cy-r5%)5f5#2^zt"
+
+def get_config(key):
+    """Return the associated value for key from the config file."""
+    value = CONFIG.get(key)
+    if value is None:
+        raise ImproperlyConfigured(f"Config value '{key}' is not set.")
+    else:
+        return value
+
+
+# Secret Key
+secret_key_path = os.path.join(BASE_DIR, "secret_key.toml")
+try:
+    with open(secret_key_path, "r") as secret_key_file:
+        SECRET_KEY = toml.load(secret_key_file)["SECRET_KEY"]
+except Exception:
+    raise ImproperlyConfigured("A secret key must be set in stcadmin/secret_key.toml")
+
+
+DEBUG = get_config("DEBUG")
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": get_config("DATABASE_HOST"),
+        "NAME": get_config("DATABASE_NAME"),
+        "USER": get_config("DATABASE_USER"),
+        "PASSWORD": get_config("DATABASE_PASSWORD"),
+        "PORT": get_config("DATABASE_PORT"),
+        "TEST": {"NAME": get_config("TEST_DATABASE_NAME")},
+    }
+}
+ALLOWED_HOSTS = get_config("ALLOWED_HOSTS")
+ADMINS = get_config("ADMINS")
+EMAIL_HOST = get_config("EMAIL_HOST")
+EMAIL_HOST_USER = get_config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = get_config("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = get_config("EMAIL_PORT")
+EMAIL_USE_TLS = get_config("EMAIL_USE_TLS")
+SERVER_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+CC_DOMAIN = get_config("CC_DOMAIN_SECRET")
+CC_USERNAME = get_config("CC_USERNAME_SECRET")
+CC_PWD = get_config("CC_PASS")
+SCAYT_CUSTOMER_ID = get_config("SCAYT_CUSTOMER_ID_TOKEN")
+SECURED_MAIL_MANIFEST_EMAIL_ADDRESS = get_config("SECURED_MAIL_MANIFEST_EMAIL_ADDRESS")
+SECURED_MAIL_DOCKET_EMAIL_ADDRESS = get_config("SECURED_MAIL_DOCKET_EMAIL_ADDRESS")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -86,7 +121,7 @@ TEMPLATES = [
     }
 ]
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "stcadmin/static")]
+STATICFILES_DIRS = [os.path.join(SOURCE_DIR, "stcadmin", "static")]
 
 WSGI_APPLICATION = "stcadmin.wsgi.application"
 
@@ -127,14 +162,14 @@ LOGGING = {
         },
         "ccapi_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": "ccapi.log",
+            "filename": os.path.join(BASE_DIR, "logs", "ccapi.log"),
             "maxBytes": 1024,
             "filters": ["add_user_to_log_record"],
             "formatter": "default_formatter",
         },
         "error_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": "stcadmin_error.log",
+            "filename": os.path.join(BASE_DIR, "logs", "stcadmin_error.log"),
             "maxBytes": 1024,
             "level": "ERROR",
             "filters": ["add_user_to_log_record"],
@@ -191,12 +226,12 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(os.path.abspath(os.path.dirname(BASE_DIR)), "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(os.path.abspath(os.path.dirname(BASE_DIR)), "media")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-DOCS_ROOT = os.path.join(BASE_DIR, "docs", "build", "html")
+DOCS_ROOT = os.path.join(SOURCE_DIR, "docs", "build", "html")
 
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "home:index"
