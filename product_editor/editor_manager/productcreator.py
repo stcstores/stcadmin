@@ -44,6 +44,10 @@ class ProductSaver(ProductEditorBase):
             self.handle_error(self)
             raise e
 
+    def update_range(self, **kwargs):
+        """Perform updates to the Product Range."""
+        pass
+
     def create_single_product(self):
         """Create a single (non variation) product."""
         data = DataSanitizer(
@@ -51,6 +55,7 @@ class ProductSaver(ProductEditorBase):
         )
         option_data = self.product_data[self.LISTING_OPTIONS]
         data[self.OPTIONS] = {k: v for k, v in option_data.items() if v}
+        self.update_range(self, **data)
         self.add_variation(self, **data)
 
     def create_variation_product(self):
@@ -202,6 +207,11 @@ class ProductEditor(ProductSaver):
     def get_product_range(self):
         """Return Product Range to be updated."""
         return cc_products.get_range(self.product_data[self.RANGE_ID])
+
+    def update_range(self, **kwargs):
+        """Perform updates to the Product Range."""
+        if self.product_range.name != kwargs[self.TITLE]:
+            self.product_range.name = kwargs[self.TITLE]
 
     def add_variation(self, **kwargs):
         """Add single variation to Range."""
