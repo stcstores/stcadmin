@@ -1,9 +1,6 @@
 """The ProductLoader class."""
 
-from pprint import pprint
-
 import cc_products
-
 from inventory import models
 from product_editor import exceptions
 
@@ -38,7 +35,6 @@ class ProductLoader(ProductEditorBase):
             self.data[
                 self.VARIATION_LISTING_OPTIONS
             ] = self.get_variation_listing_options(self, self.product_range)
-        pprint(self.data)
         return self.data
 
     def variations_combinations(self):

@@ -130,7 +130,7 @@ class BaseProductManager(ProductEditorBase):
         try:
             return self.get_page(page_identifier).url
         except KeyError:
-            print('Page not found: "{}"'.format(page_identifier))
+            raise Exception('Page not found: "{}"'.format(page_identifier))
             return self.current_pages[0].url
 
     def get_redirect(self, page, post_data):
@@ -244,5 +244,6 @@ class EditProductManager(BaseProductManager):
 
     def save_product(self):
         """Update product."""
-        super().save_product()
+        range_id = super().save_product()
         self.clear_session()
+        return range_id
