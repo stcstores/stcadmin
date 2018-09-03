@@ -143,6 +143,12 @@ def add_user_to_log_record(record):
     return True
 
 
+def replace_newlines(record):
+    """Format log with escaped newlines."""
+    record.msg = record.msg.strip().replace("\n", "\\n")
+    return True
+
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -150,7 +156,11 @@ LOGGING = {
         "add_user_to_log_record": {
             "()": "django.utils.log.CallbackFilter",
             "callback": add_user_to_log_record,
-        }
+        },
+        "replace_newlines": {
+            "()": "django.utils.log.CallbackFilter",
+            "callback": replace_newlines,
+        },
     },
     "handlers": {
         "mail_admins": {
@@ -163,15 +173,15 @@ LOGGING = {
         "ccapi_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": os.path.join(BASE_DIR, "logs", "ccapi.log"),
-            "maxBytes": 1024,
+            "maxBytes": 102400,
             "backupCount": 2,
-            "filters": ["add_user_to_log_record"],
+            "filters": ["add_user_to_log_record", "replace_newlines"],
             "formatter": "default_formatter",
         },
         "error_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": os.path.join(BASE_DIR, "logs", "stcadmin_error.log"),
-            "maxBytes": 1024,
+            "maxBytes": 102400,
             "backupCount": 2,
             "level": "ERROR",
             "filters": ["add_user_to_log_record"],
