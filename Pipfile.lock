@@ -130,11 +130,11 @@
         },
         "django": {
             "hashes": [
-                "sha256:7f246078d5a546f63c28fc03ce71f4d7a23677ce42109219c24c9ffb28416137",
-                "sha256:ea50d85709708621d956187c6b61d9f9ce155007b496dd914fdb35db8d790aec"
+                "sha256:04f2e423f2e60943c02bd2959174b844f7d1bcd19eabb7f8e4282999958021fd",
+                "sha256:e1cc1cd6b658aa4e052f5f2b148bfda08091d7c3558529708342e37e4e33f72c"
             ],
             "index": "pypi",
-            "version": "==2.1"
+            "version": "==2.1.1"
         },
         "django-formtools": {
             "hashes": [
@@ -212,10 +212,11 @@
         },
         "imagesize": {
             "hashes": [
-                "sha256:3620cc0cadba3f7475f9940d22431fc4d407269f1be59ec9b8edcca26440cf18",
-                "sha256:5b326e4678b6925158ccc66a9fa3122b6106d7c876ee32d7de6ce59385b96315"
+                "sha256:3f349de3eb99145973fefb7dbe38554414e5c30abd0c8e4b970a7c9d09f3a1d8",
+                "sha256:f3832918bc3c66617f92e35f5d70729187676313caa60c187eb0f28b8fe5e3b5"
             ],
-            "version": "==1.0.0"
+            "markers": "python_version >= '2.7' and python_version != '3.2.*' and python_version != '3.1.*' and python_version != '3.0.*' and python_version != '3.3.*'",
+            "version": "==1.1.0"
         },
         "jdcal": {
             "hashes": [
@@ -405,7 +406,7 @@
         },
         "order-profit": {
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "ad6abfaae1c389f9ecb306c467394018d4ce7d93"
+            "ref": "e9b4f698277c54110fe8da07b5bd79943f9f2254"
         },
         "packaging": {
             "hashes": [
@@ -675,11 +676,11 @@
         },
         "xlsxwriter": {
             "hashes": [
-                "sha256:619f3e2653707b24aa4540c67a04ac68c1267e5d22e12a53e7fd2d4157313870",
-                "sha256:98a94b32d4929d3e34595b4654b8e7f951182f540056b9cb734c88899912f729"
+                "sha256:18716ac3d8cd1f8c73af2a674df954bf4c1ae7a8b5944e1d6ca66815ece9518e",
+                "sha256:b2c7cbe246d1e1d113b4d014a71d1d9bb258f28625512f8df290352d1685be13"
             ],
             "index": "pypi",
-            "version": "==1.0.9"
+            "version": "==1.1.0"
         }
     },
     "develop": {
