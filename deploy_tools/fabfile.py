@@ -79,7 +79,7 @@ class Deploy:
         """Configure settings.py and secret key."""
         secret_key_file = posixpath.join(self.site_folder, "secret_key.toml")
         if not exists(secret_key_file):
-            chars = 'abcdefghijklmnopqrstuvwxyz0123456789!"@#$^&*"'
+            chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$^&*"
             key = "".join([random.SystemRandom().choice(chars) for _ in range(50)])
             append(secret_key_file, f'SECRET_KEY = "{key}"')
 
