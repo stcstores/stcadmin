@@ -1,12 +1,12 @@
 """Models for storing Warehouse Bay Locations."""
 
 import os
+import sys
 
 from ccapi import CCAPI
+from django.conf import settings
 from django.db import models
 from tabler import Table
-
-from django.conf import settings
 
 
 class UsedWarehouseManager(models.Manager):
@@ -130,10 +130,16 @@ class LocationIntegrityCheck:
         self.missing_bays()
         self.excess_bays()
         self.incorrect_bays()
-        print("Duplicate Bays: {}".format(len(self.duplicate_bays)))
-        print("Bays missing from Database: {}".format(len(self.missing_bays)))
-        print("Bays missing from Cloud Commerce: {}".format(len(self.excess_bays)))
-        print("Bays with non matching information: {}".format(len(self.incorrect_bays)))
+        print(f"Duplicate Bays: {len(self.duplicate_bays)}", file=sys.stderr)
+        print(f"Bays missing from Database: {len(self.missing_bays)}", file=sys.stderr)
+        print(
+            f"Bays missing from Cloud Commerce: {len(self.excess_bays)}",
+            file=sys.stderr,
+        )
+        print(
+            f"Bays with non matching information: {len(self.incorrect_bays)}",
+            file=sys.stderr,
+        )
 
     def get_bays(self):
         """Return list of bays present in Cloud Commerce."""
