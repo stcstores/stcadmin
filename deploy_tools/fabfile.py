@@ -45,6 +45,7 @@ class Deploy:
         self.static_folder = posixpath.join(self.site_folder, self.STATIC)
         self.media_folder = posixpath.join(self.site_folder, self.MEDIA)
         self.log_folder = posixpath.join(self.site_folder, "logs")
+        self.config_folder = posixpath.join(self.site_folder, "config")
         self.system_python = f"python{sys.version_info.major}.{sys.version_info.minor}"
         self.venv_python = posixpath.join(self.virtualenv_folder, "bin", "python")
         venv_activate_script = posixpath.join(self.virtualenv_folder, "bin", "activate")
@@ -62,6 +63,7 @@ class Deploy:
             self.static_folder,
             self.media_folder,
             self.log_folder,
+            self.config_folder,
         ]
         for subfolder in folders:
             run(f"mkdir -p {subfolder}")
@@ -77,7 +79,7 @@ class Deploy:
 
     def update_settings(self):
         """Configure settings.py and secret key."""
-        secret_key_file = posixpath.join(self.site_folder, "secret_key.toml")
+        secret_key_file = posixpath.join(self.config_folder, "secret_key.toml")
         if not exists(secret_key_file):
             chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$^&*"
             key = "".join([random.SystemRandom().choice(chars) for _ in range(50)])

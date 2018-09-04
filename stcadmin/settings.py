@@ -9,8 +9,9 @@ from django.core.exceptions import ImproperlyConfigured
 
 SOURCE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 BASE_DIR = os.path.dirname(SOURCE_DIR)
+CONFIG_DIR = os.path.join(BASE_DIR, "config")
 
-CONFIG_PATH = os.path.join(BASE_DIR, "config.toml")
+CONFIG_PATH = os.path.join(CONFIG_DIR, "config.toml")
 
 try:
     with open(CONFIG_PATH, "r") as config_file:
@@ -29,7 +30,7 @@ def get_config(key):
 
 
 # Secret Key
-secret_key_path = os.path.join(BASE_DIR, "secret_key.toml")
+secret_key_path = os.path.join(CONFIG_DIR, "secret_key.toml")
 try:
     with open(secret_key_path, "r") as secret_key_file:
         SECRET_KEY = toml.load(secret_key_file)["SECRET_KEY"]
