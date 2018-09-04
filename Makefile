@@ -19,3 +19,6 @@ docs:
 
 lock:
 	pipenv lock -d
+
+test:
+	pipenv run python manage.py test
