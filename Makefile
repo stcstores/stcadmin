@@ -15,7 +15,7 @@ staging-deploy:
 	cd deploy_tools && pipenv run fab deploy:host=stcstores@staging.stcadmin.stcstores.co.uk
 
 docs:
-	cd docs && pipenv run make html
+	cd reference/help && pipenv run make html
 
 lock:
 	pipenv lock -d
