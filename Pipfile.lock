@@ -406,7 +406,7 @@
         },
         "order-profit": {
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "e9b4f698277c54110fe8da07b5bd79943f9f2254"
+            "ref": "6e0e046e347995da68aacaaa08673a09ebac5678"
         },
         "packaging": {
             "hashes": [
