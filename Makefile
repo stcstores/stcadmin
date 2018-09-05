@@ -5,7 +5,7 @@ init:
 	pipenv install --dev --skip-lock
 
 re-init:
-	pipenv --rm
+	pipenv --rm | true
 	make init
 
 deploy:
