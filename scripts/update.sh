@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source env.sh
+source "$(dirname "$(realpath "$0")")/env.sh"
 
 PROJECT_DIR="/home/stcstores/sites/$DOMAIN"
 SOURCE_DIR="$PROJECT_DIR/source"
@@ -28,9 +28,8 @@ export PIPENV_VENV_IN_PROJECT=true
 cd $SOURCE_DIR || exit 1
 echo "Updating $DOMAIN..."
 echo "Checking out branch $BRANCH..."
-git reset --hard HEAD
+git fetch
 git checkout -f $BRANCH
-git pull
 NEW_COMMIT=`git log -n 1 --pretty=format:'%h %s'`
 echo "Updated to commit $NEW_COMMIT"
 echo "Building environment..."
@@ -55,9 +54,6 @@ pipenv run python manage.py collectstatic --noinput
 
 echo "Migrating database..."
 pipenv run python manage.py migrate --noinput
-
-echo "Updating scripts..."
-cp $SOURCE_DIR/scripts/* $SCRIPTS_DIR
 
 echo "Restarting service..."
 $SCRIPTS_DIR/restart.sh
