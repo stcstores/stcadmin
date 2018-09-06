@@ -16,7 +16,7 @@ SECRET_KEY_FILE="$CONFIG_DIR/secret_key.toml"
 
 # If a branch not matching $BRANCH is specified quit.
 if [ ! -z "$1" ]; then
-  if [ ! $1 = $BRANCH ]; then
+  if [ ! $1 == $BRANCH ]; then
     exit 0
   fi
 fi
@@ -26,10 +26,13 @@ NEW_COMMIT="$2"
 # Create log file. This is done after the branch check so an empty file is not written
 # if a non matching branch is specified.
 DATE=`date '+%Y-%m-%d %H:%M:%S'`
-echo "$DATE" > $LOGFILE
+echo "$DATE" > $LOGFILE #  Clear log file and add the current time and date.
 exec 3>&1 4>&2
 trap 'exec 2>&4 1>&3' 0 1 2 3
-exec 1>>$LOGFILE 2>&1
+exec 1>>$LOGFILE 2>&1  # Redirect stdout and stder to log file.
+
+echo "Branch argument: '$1'"
+echo "Commit argument: '$2'"
 
 # Ensure the environment is built with a predictable path.
 export PIPENV_VENV_IN_PROJECT=true
