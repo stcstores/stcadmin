@@ -2,7 +2,7 @@
 
 init:
 	pip install pipenv --upgrade
-	pipenv install --dev --ignore-pipfile
+	pipenv sync --dev
 
 clear-environment:
 	pipenv --rm | true
@@ -13,13 +13,12 @@ re-init:
 
 production-init:
 	make clear-environment
-	pip install pipenv --upgrade
-	pipenv run pip install --upgrade pip
-	pipenv install --ignore-pipfile
+	make update-environment
+	pipenv sync
 
 update-environment:
-	make clear-environment
-	pip install --dev --skip-lock
+	pip install pipenv --upgrade
+	pipenv run pip install --upgrade pip
 
 deploy:
 	cd deploy_tools && pipenv run fab deploy:host=stcstores@stcadmin.stcstores.co.uk
