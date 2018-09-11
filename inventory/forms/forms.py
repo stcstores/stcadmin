@@ -154,6 +154,9 @@ class ProductForm(ProductEditorBase, forms.Form):
         "Linn SKU",
         "Linn Title",
         "Retail Price",
+        "Height MM",
+        "Length MM",
+        "Width MM",
     ]
 
     def __init__(self, *args, **kwargs):

@@ -39,7 +39,7 @@
         },
         "cc-products": {
             "git": "https://github.com/stcstores/cc_products.git",
-            "ref": "8bc6cf3bd4dbde31d2de043b3a3bbddef9064aa1"
+            "ref": "ba09547cc7635cc7e44c7e651be20b79f81486bd"
         },
         "ccapi": {
             "git": "https://github.com/stcstores/ccapi.git",
