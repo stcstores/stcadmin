@@ -2,37 +2,13 @@
 {% load staticfiles %}
 
 {% block content %}
-    <div id="label_form" class="label_form">
-        <label for="size_chart">Supplier</label>
-        <select name="size_chart" id="select_size_chart" autofocus size="{{ size_charts|length|add:2 }}">
-            <option value="none" selected="selected">None</option>
-            <option value="add">Add...</option>
-            {% for size_chart in size_charts %}<option value="{{size_chart.id}}">{{size_chart.name}}</option>{% endfor %}
-        </select>
-        <button id="size_chart_go">Go</button>
-    </div>
-{% endblock %}
-{% block script %}
-    <script>
-        $( document ).ready(function() {
-            var size_chart_urls = {
-                {% for size_chart in size_charts %}
-                '{{ size_chart.id }}': '{% url 'labelmaker:label_form' size_chart.id %}',
-                {% endfor %}
-            };
 
-            $('#size_chart_go').click(function() {
-                var selected_size_chart = $('#select_size_chart').val();
-                if (selected_size_chart === "none") {
-                    window.location = "{% url 'labelmaker:label_form' %}"
-                } else if (selected_size_chart === "add") {
-                    window.location = "{% url 'labelmaker:create_size_chart_form' %}"
-                } else {
-                    window.location = size_chart_urls[selected_size_chart]
-                }
-            });
+<h1>Labelmaker</h1>
+<h2>Create printable labels</h2>
 
-            var form = LabelForm($('#label_form'));
-        });
-    </script>
+<ul>
+    <li><a href="{% url 'labelmaker:product_labels' %}">Product Labels</a></li>
+    <li><a href="">Address Labels</a></li>
+</ul>
+
 {% endblock %}

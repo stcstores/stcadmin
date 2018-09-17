@@ -9,7 +9,6 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import DeleteView, FormView
-
 from home.views import UserInGroupMixin
 from labelmaker import forms
 from labelmaker.models import SizeChart, SizeChartSize
@@ -22,9 +21,15 @@ class LabelmakerUserMixin(UserInGroupMixin):
 
 
 class Index(LabelmakerUserMixin, TemplateView):
-    """View for labelmaker homepage."""
+    """View for the labelmaker landing page."""
 
     template_name = "labelmaker/index.html"
+
+
+class ProductLabels(LabelmakerUserMixin, TemplateView):
+    """View for creating product labels."""
+
+    template_name = "labelmaker/product_labels.html"
 
     def get_context_data(self, *args, **kwargs):
         """Return context for template."""
@@ -88,10 +93,10 @@ class SizeCharts(LabelmakerUserMixin, TemplateView):
         return context_data
 
 
-class LabelFormSizeChart(LabelmakerUserMixin, TemplateView):
+class ProductLabelFormSizeChart(LabelmakerUserMixin, TemplateView):
     """View for label form when using a size chart."""
 
-    template_name = "labelmaker/label_form.html"
+    template_name = "labelmaker/product_label_form.html"
 
     def get_context_data(self, *args, **kwargs):
         """Return context data for template."""
@@ -102,26 +107,53 @@ class LabelFormSizeChart(LabelmakerUserMixin, TemplateView):
         return context_data
 
 
-class LabelFormNoSizeChart(LabelmakerUserMixin, TemplateView):
+class ProductLabelFormNoSizeChart(LabelmakerUserMixin, TemplateView):
     """View for label form when not using a size chart."""
 
-    template_name = "labelmaker/label_form.html"
+    template_name = "labelmaker/product_label_form.html"
 
 
-class PDFLabelView(LabelmakerUserMixin, View):
-    """PDF document view for generated labels."""
+class BasePDFLabelView(LabelmakerUserMixin, View):
+    """Base class for views for printable label PDFs."""
 
-    @staticmethod
-    def generate_pdf_response(data):
+    def dispatch(self, *args, **kwargs):
         """Create HTTP response."""
         response = HttpResponse(content_type="application/pdf")
         response["Content-Disposition"] = 'filename="labels.pdf"'
-        label_format = labeler.DefaultLabelFormat
-        sheet = labeler.STW046025PO(label_format=label_format)
+        sheet = self.get_label_sheet(*args, **kwargs)
+        data = self.get_label_data(*args, **kwargs)
         canvas = sheet.generate_PDF_from_data(data)
         canvas._filename = response
         canvas.save()
         return response
+
+    def get_label_sheet(self, *args, **kwargs):
+        """Return a formatted label sheet."""
+        return self.label_sheet(label_format=self.label_format)
+
+
+class BaseProductPDFLabelView(BasePDFLabelView):
+    """Base view for product PDF labels."""
+
+    label_format = labeler.DefaultLabelFormat
+    label_sheet = labeler.STW046025PO
+
+
+class ProductLabelsPDFNoSizeChart(BaseProductPDFLabelView):
+    """View for product labels created without a size chart."""
+
+    def get_label_data(self, *args, **kwargs):
+        """Return list containing lists of lines of text for each label."""
+        self.product_code = self.request.POST["product_code"]
+        data = []
+        for item in json.loads(self.request.POST["data"]):
+            for number in range(int(item["quantity"])):
+                data.append([item["size"], item["colour"], self.product_code])
+        return data
+
+
+class ProductLabelsPDFFromSizeChart(BaseProductPDFLabelView):
+    """View for product labels created with a size chart."""
 
     @staticmethod
     def split_list(li, n):
@@ -132,6 +164,17 @@ class PDFLabelView(LabelmakerUserMixin, View):
         ]
         split_list.append(li[(n - 1) * int(num) :])
         return split_list
+
+    def get_label_data(self, *args, **kwargs):
+        """Return list containing lists of lines of text for each label."""
+        self.product_code = self.request.POST["product_code"]
+        size_chart_id = self.kwargs.get("size_chart_id") or None
+        data = json.loads(self.request.POST["data"])
+
+        label_data = self.get_label_data_for_size_chart(
+            self.product_code, data, size_chart_id
+        )
+        return label_data
 
     def get_label_data_for_size_chart(self, product_code, json_data, size_chart_id):
         """Return text lines for labels generated from a size chart."""
@@ -160,10 +203,10 @@ class PDFLabelView(LabelmakerUserMixin, View):
         return label_data
 
 
-class TestPDFLabel(PDFLabelView):
+class TestProductPDFLabel(BaseProductPDFLabelView):
     """View to create a PDF of labels generated from test data."""
 
-    def dispatch(self, *args, **kwargs):
+    def get_label_data(self, *args, **kwargs):
         """Create PDF labels using test data."""
         data = [
             ["UK 12", "Pink Cat Slipper", "FW987"],
@@ -175,36 +218,7 @@ class TestPDFLabel(PDFLabelView):
             ['38" Regular Tall', "Grey Shoulders, Blue Body", "45632"],
             ["Medium", "Grey", "64535"],
         ]
-        return self.generate_pdf_response(data)
-
-
-class LabelPDF(PDFLabelView):
-    """View for returning a .PDF document of generated labels."""
-
-    def dispatch(self, *args, **kwargs):
-        """Create label PDF."""
-        size_chart_id = self.kwargs.get("size_chart_id") or None
-        if size_chart_id is None:
-            return self.no_size_chart()
-        return self.with_size_chart(size_chart_id)
-
-    def no_size_chart(self):
-        """Create label PDF without a size chart."""
-        product_code = self.request.POST["product_code"]
-        data = []
-        for item in json.loads(self.request.POST["data"]):
-            for number in range(int(item["quantity"])):
-                data.append([item["size"], item["colour"], product_code])
-        return self.generate_pdf_response(data)
-
-    def with_size_chart(self, size_chart_id):
-        """Create a label PDF using a size chart."""
-        data = json.loads(self.request.POST["data"])
-        product_code = self.request.POST["product_code"]
-        label_data = self.get_label_data_for_size_chart(
-            product_code, data, size_chart_id
-        )
-        return self.generate_pdf_response(label_data)
+        return data
 
 
 class DeleteSizeChart(LabelmakerUserMixin, DeleteView):
