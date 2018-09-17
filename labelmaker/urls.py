@@ -41,4 +41,8 @@ urlpatterns = [
     ),
     path("product_labels/", views.ProductLabels.as_view(), name="product_labels"),
     path("", views.Index.as_view(), name="index"),
+    path("address_labels", views.AddressLabelForm.as_view(), name="address_labels"),
+    path(
+        "address_label_pdf", views.AddressLabelPDF.as_view(), name="address_label_pdf"
+    ),
 ]

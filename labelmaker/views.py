@@ -124,12 +124,17 @@ class BasePDFLabelView(LabelmakerUserMixin, View):
         data = self.get_label_data(*args, **kwargs)
         canvas = sheet.generate_PDF_from_data(data)
         canvas._filename = response
+        self.edit_canvas(canvas)
         canvas.save()
         return response
 
     def get_label_sheet(self, *args, **kwargs):
         """Return a formatted label sheet."""
         return self.label_sheet(label_format=self.label_format)
+
+    def edit_canvas(self, canvas):
+        """Make changes to the canvas after label generation."""
+        pass
 
 
 class BaseProductPDFLabelView(BasePDFLabelView):
@@ -230,3 +235,21 @@ class DeleteSizeChart(LabelmakerUserMixin, DeleteView):
     def get_object(self, *args, **kwargs):
         """Return object to delete."""
         return get_object_or_404(SizeChart, pk=self.kwargs.get("size_chart_id"))
+
+
+class AddressLabelForm(TemplateView, LabelmakerUserMixin):
+    """View for the address label creation form."""
+
+    template_name = "labelmaker/address_label_form.html"
+
+
+class AddressLabelPDF(BasePDFLabelView):
+    """View for address label PDF creation."""
+
+    label_format = labeler.AddressLabelFormat
+    label_sheet = labeler.ThermalAddressLabel4x6Sheet
+
+    def get_label_data(self, *args, **kwargs):
+        """Return list containing lists of lines of text for each label."""
+        text = self.request.POST.get("label_text")
+        return [text.split("\r\n")]
