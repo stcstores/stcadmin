@@ -43,7 +43,7 @@
         },
         "ccapi": {
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "819a69c61cb4044d3a97914f349083a7c9b12593"
+            "ref": "122289067b6d3400ee117b93b82bdd3bb1a3e8b3"
         },
         "certifi": {
             "hashes": [
@@ -270,7 +270,7 @@
         },
         "labeler": {
             "git": "https://github.com/axevalley/labeler.git",
-            "ref": "f6fd26cb1c5d239cae50d5994c4b13c23da222de"
+            "ref": "6c18a66b74a000b619d06e6042b33b72dadd5cac"
         },
         "list-input": {
             "git": "https://github.com/axevalley/list_input.git",
@@ -401,9 +401,9 @@
         },
         "openpyxl": {
             "hashes": [
-                "sha256:04091e034911a0afc531c3a15e5ae0b1b6a43654dbf63c187f47d20cdfefac1c"
+                "sha256:d3da4d6a78077d6f9fb1a1ec12d4aa500f7caa4661b8528538503b24ed72d632"
             ],
-            "version": "==2.5.6"
+            "version": "==2.5.7"
         },
         "order-profit": {
             "git": "https://github.com/stcstores/order_profit.git",
@@ -623,11 +623,12 @@
         },
         "sphinx": {
             "hashes": [
-                "sha256:217a7705adcb573da5bbe1e0f5cab4fa0bd89fd9342c9159121746f593c2d5a4",
-                "sha256:a602513f385f1d5785ff1ca420d9c7eb1a1b63381733b2f0ea8188a391314a86"
+                "sha256:95acd6648902333647a0e0564abdb28a74b0a76d2333148aa35e5ed1f56d3c4b",
+                "sha256:c091dbdd5cc5aac6eb95d591a819fd18bccec90ffb048ec465b165a48b839b45"
             ],
             "index": "pypi",
-            "version": "==1.7.9"
+            "markers": "python_version != '3.2.*' and python_version < '4' and python_version != '3.1.*' and python_version != '3.0.*' and python_version != '3.3.*' and python_version >= '2.6'",
+            "version": "==1.8.0"
         },
         "sphinx-rtd-theme": {
             "hashes": [
