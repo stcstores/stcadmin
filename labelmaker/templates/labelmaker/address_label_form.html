@@ -1,0 +1,25 @@
+{% extends "labelmaker/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+<h1>Address Labels</h1>
+<h2>Create labels using address label paper</h2>
+
+<form action="address_label_pdf" method="POST" target="_blank">{% csrf_token %}
+    <table>
+        <tr>
+            <th>Label text</th>
+            <td>
+                <textarea name="label_text" id="label_text_input" cols="20" rows="5" style="text-align: center;"></textarea>
+            </td>
+
+        </tr>
+        <tr>
+            <th colspan="2"><button type="submit">Generate Label</button></th>
+        </tr>
+    </table>
+    <br>
+</form>
+
+{% endblock %}
