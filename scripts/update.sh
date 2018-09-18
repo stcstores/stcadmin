@@ -54,6 +54,7 @@ printf "Updating $DOMAIN source to commit $REF\n"
 git checkout -f $REF
 
 UPDATED_COMMIT=`git log -n 1 --pretty=format:'%h %s'`
+FULL_COMMIT=`git log -n 1 --pretty=full`
 printf "\nUpdated to commit $UPDATED_COMMIT\n"
 
 #Set up python environment.
@@ -91,3 +92,4 @@ printf "\nRestarting service...\n"
 $SCRIPTS_DIR/restart.sh
 
 printf "\nComplete. $DOMAIN is new using commit $UPDATED_COMMIT\n"
+echo "$FULL_COMMIT"
