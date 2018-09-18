@@ -54,7 +54,7 @@ printf "Updating $DOMAIN source to commit $REF\n"
 git checkout -f $REF
 
 UPDATED_COMMIT=`git log -n 1 --pretty=format:'%h %s'`
-FULL_COMMIT=`git log -n 1 --pretty=full`
+FULL_COMMIT=`git log -n 1 --pretty=full --no-color`
 printf "\nUpdated to commit $UPDATED_COMMIT\n"
 
 #Set up python environment.
