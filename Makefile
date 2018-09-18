@@ -5,7 +5,7 @@ init:
 	pipenv sync --dev
 
 clear-environment:
-	pipenv --rm | true
+	pipenv --rm || true
 
 re-init:
 	make clear-environment
