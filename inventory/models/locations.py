@@ -245,3 +245,44 @@ def check_location_integrity():
     integrity_check = LocationIntegrityCheck()
     integrity_check.create_output()
     return integrity_check
+
+
+def create_backup_bay(*, bay_name, department_warehouse, backup_location):
+    """
+    Create a backup bay in the database and in Cloud Commerce.
+
+    Kwargs:
+        bay_name (str): The name of the new bay.
+        deparment_warehouse (inventory.models.Warehouse): The warehouse for which the bay
+            serves as backup.
+        backup_location (inventory.models.Warehouse): The warehouse in which the bay is
+            located.
+
+    Returns:
+        inventory.models.Bay
+
+    """
+    backup_bay_name = (
+        f"{department_warehouse.abriviation} Backup {backup_location.name} {bay_name}"
+    )
+    return create_bay(bay_name=backup_bay_name, warehouse=department_warehouse)
+
+
+def create_bay(*, bay_name, warehouse):
+    """
+    Create a warehouse bay in the database and Cloud Commerce.
+
+    Kwargs:
+        bay_name (str): The name of the new bay.
+        warehouse (inventory.models.Warehouse): The warehouse containing the bay.
+
+    Returns:
+        inventory.models.Bay
+
+    """
+    if Bay.objects.filter(name=bay_name).exists():
+        raise ValueError(f"Bay name {bay_name} already is in use.")
+    bay_id = CCAPI.get_bay_id(bay_name, warehouse.name, create=True)
+    bay = Bay(bay_id=bay_id, warehouse=warehouse, name=bay_name)
+    bay.save()
+    return bay

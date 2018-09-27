@@ -2,7 +2,6 @@
 
 from ccapi import CCAPI
 from django import forms
-
 from inventory import models
 from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms import fields
@@ -83,33 +82,33 @@ class CreateBayForm(forms.Form):
     def clean(self, *args, **kwargs):
         """Create correct name for bay and ensure it does not already exist."""
         data = super().clean(*args, **kwargs)
+        data["warehouse"] = models.Warehouse.objects.get(
+            warehouse_id=data["department"]
+        )
         if data["bay_type"] == self.BACKUP:
             if not data["location"]:
                 self.add_error("location", "Location is required for backup bays.")
                 return
-        if data["bay_type"] == self.PRIMARY:
-            warehouse = models.Warehouse.objects.get(warehouse_id=data["department"])
-            data["bay_name"] = data["name"]
-        else:
-            warehouse = models.Warehouse.objects.get(warehouse_id=data["department"])
-            location = models.Warehouse.objects.get(warehouse_id=data["location"])
-            data["bay_name"] = "{} Backup {} {}".format(
-                warehouse.abriviation, location.name, data["name"]
+            data["backup_location"] = models.Warehouse.objects.get(
+                warehouse_id=data["location"]
             )
-        data["warehouse_id"] = warehouse.warehouse_id
-        data["warehouse_name"] = warehouse.name
-        if models.Bay.objects.filter(name=data["bay_name"]).exists():
+        if models.Bay.objects.filter(name=data["name"]).exists():
             self.add_error("name", "Bay name already exists.")
         return data
 
     def save(self):
         """Create Warehouse Bay."""
-        warehouse_id = self.cleaned_data["warehouse_id"]
-        warehouse = models.Warehouse.objects.get(warehouse_id=warehouse_id)
-        bay_name = self.cleaned_data["bay_name"]
-        bay_id = CCAPI.get_bay_id(bay_name, warehouse.name, create=True)
-        self.bay = models.Bay(bay_id=bay_id, warehouse=warehouse, name=bay_name)
-        self.bay.save()
+        warehouse = self.cleaned_data["warehouse"]
+        bay_name = self.cleaned_data["name"]
+        if self.cleaned_data["bay_type"] == self.BACKUP:
+            location = self.cleaned_data["backup_location"]
+            self.bay = models.create_backup_bay(
+                bay_name=bay_name,
+                department_warehouse=warehouse,
+                backup_location=location,
+            )
+        else:
+            self.bay = models.create_bay(bay_name=bay_name, warehouse=warehouse)
 
 
 class ImagesForm(forms.Form):
