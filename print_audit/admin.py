@@ -1,7 +1,6 @@
 """Model admin for print_audit."""
 
 from django.contrib import admin
-
 from print_audit import models
 
 

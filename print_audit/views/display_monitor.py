@@ -6,7 +6,6 @@ from django.http import HttpResponse
 from django.utils.timezone import now
 from django.views import View
 from django.views.generic.base import TemplateView
-
 from print_audit import models
 
 

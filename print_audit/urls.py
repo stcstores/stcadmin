@@ -1,7 +1,6 @@
 """URLs for print audit app."""
 
 from django.urls import path
-
 from print_audit import views
 
 app_name = "print_audit"

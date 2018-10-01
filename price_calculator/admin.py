@@ -1,7 +1,6 @@
 """Model admin for price_calculator app."""
 
 from django.contrib import admin
-
 from price_calculator import models
 
 

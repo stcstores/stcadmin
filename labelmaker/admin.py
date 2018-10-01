@@ -1,7 +1,6 @@
 """Model admin for labelmaker app."""
 
 from django.contrib import admin
-
 from labelmaker import models
 
 

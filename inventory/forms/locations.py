@@ -2,7 +2,6 @@
 
 import cc_products
 from django import forms
-
 from inventory import models
 from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms.fields import Department, WarehouseBayField

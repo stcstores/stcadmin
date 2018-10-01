@@ -2,7 +2,6 @@
 
 from ccapi import CCAPI
 from django import forms
-
 from product_editor.editor_manager import ProductEditorBase
 from stcadmin.forms import KwargFormSet
 

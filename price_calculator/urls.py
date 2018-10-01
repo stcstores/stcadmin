@@ -1,7 +1,6 @@
 """URLs for price_calculator."""
 
 from django.urls import path
-
 from price_calculator import views
 
 app_name = "price_calculator"

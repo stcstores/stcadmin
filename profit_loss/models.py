@@ -4,7 +4,6 @@ import pytz
 from django.db import models, transaction
 from django.utils.timezone import is_naive
 from order_profit import OrderProfit
-
 from spring_manifest.models import CloudCommerceCountryID
 
 

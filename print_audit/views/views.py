@@ -1,7 +1,6 @@
 """Miscellaneous views for print audit app."""
 
 from django.views.generic.base import TemplateView
-
 from home.views import UserInGroupMixin
 from print_audit import charts
 
