@@ -1,11 +1,10 @@
 """Template tags for STCAdmin."""
 
 from django import template
+from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.timezone import now
-
-from django.conf import settings
 
 register = template.Library()
 

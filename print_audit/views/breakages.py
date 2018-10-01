@@ -3,7 +3,6 @@
 from django.shortcuts import reverse
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-
 from print_audit import models
 
 from .views import PrintAuditUserMixin

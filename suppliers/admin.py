@@ -1,7 +1,6 @@
 """Model admin for Suppliers app."""
 
 from django.contrib import admin
-
 from suppliers import models
 
 

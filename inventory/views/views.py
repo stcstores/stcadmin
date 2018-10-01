@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-
 from home.views import UserInGroupMixin
 from inventory import forms
 

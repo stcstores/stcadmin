@@ -13,3 +13,7 @@ repos:
     hooks:
     -   id: pydocstyle
         exclude: migrations
+-   repo: https://github.com/pre-commit/mirrors-isort
+    rev: master
+    hooks:
+    -   id: isort

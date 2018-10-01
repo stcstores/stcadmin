@@ -5,7 +5,6 @@ from ccapi import CCAPI
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
-
 from inventory import forms, models
 
 from .views import InventoryUserMixin
