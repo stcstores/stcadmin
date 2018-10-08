@@ -252,6 +252,6 @@ LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "home:index"
 
 CCAPI.create_session(domain=CC_DOMAIN, username=CC_USERNAME, password=CC_PWD)
-pywowcher.session.WowcherAPISession.set_credentials(
-    key=WOWCHER_KEY, secret_token=WOWCHER_SECRET_TOKEN
+pywowcher.session.set_credentials(
+    live_key=WOWCHER_KEY, live_secret_token=WOWCHER_SECRET_TOKEN, use_staging=False
 )
