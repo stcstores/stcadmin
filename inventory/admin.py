@@ -1,6 +1,7 @@
 """ModelAdmin classes for the inventory app."""
 
 from django.contrib import admin
+
 from inventory import models
 
 
@@ -47,3 +48,35 @@ class BayAdmin(admin.ModelAdmin):
     list_display = ("bay_id", "__str__", "name", "warehouse")
     search_fields = ("name",)
     list_filter = ("warehouse",)
+
+
+@admin.register(models.StockChange)
+class StockChangeAdmin(admin.ModelAdmin):
+    """Model admin for the Stock Change model."""
+
+    fields = (
+        "user",
+        "timestamp",
+        "product_sku",
+        "product_id",
+        "stock_before",
+        "stock_after",
+    )
+    list_display = (
+        "__str__",
+        "get_user_name",
+        "timestamp",
+        "product_sku",
+        "product_id",
+        "stock_before",
+        "stock_after",
+    )
+    search_fields = (
+        "product_sku",
+        "product_sku",
+        "user__first_name",
+        "user__last_name",
+        "user__username",
+    )
+    list_filter = ("user",)
+    date_hierarchy = "timestamp"

@@ -19,3 +19,16 @@ class StockChange(models.Model):
 
         verbose_name = "Stock Change"
         verbose_name_plural = "Stock Changes"
+
+    def __repr__(self):
+        return (
+            f"Stock for {self.product_sku} changed by {self.user} at "
+            f"{self.timestamp.strftime('%H:%M %d-%m-%Y')}"
+        )
+
+    def __str__(self):
+        return self.__repr__()
+
+    def get_user_name(self):
+        """Return the name of the user who made the stock change."""
+        return self.user.get_full_name()
