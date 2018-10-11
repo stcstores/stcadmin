@@ -79,7 +79,6 @@ INSTALLED_APPS = [
     "labelmaker",
     "reference",
     "user",
-    "epos",
     "inventory",
     "list_input",
     "print_audit",
