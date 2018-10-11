@@ -93,9 +93,12 @@
         error_image = "{% static 'images/error.jpg' %}"
         update_stock_url = "{% url 'inventory:update_stock_level' %}";
         product_details = {
-            {% for product in product_range.products %}
-                '{{ product.id }}': {'stock_level': {{ product.stock_level }}},
-            {% endfor %}
+          {% for product in product_range.products %}
+              '{{ product.id }}': {
+                'stock_level': {{ product.stock_level }},
+                'sku': '{{product.sku}}'
+              },
+          {% endfor %}
         }
 
         {% if 'Incomplete' in  product_range.options.option_names %}

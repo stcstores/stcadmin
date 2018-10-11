@@ -53,15 +53,19 @@ $(document).ready(function() {
 
     function update_stock_button(product_id) {
         return function (event) {
-            var stock_input = $('#stock_' + product_id);
-            if (stock_input.val() != product_details[product_id].stock_level) {
-                update_stock(product_id);
-            }
+          update_stock(product_id);
         }
     }
 
     function update_stock(product_id) {
         var stock_input = $('#stock_' + product_id);
+        var new_stock_level = stock_input.val();
+        var current_stock_level = product_details[product_id].stock_level
+        var sku = product_details[product_id].sku
+        console.log(product_details[product_id]);
+        if (new_stock_level == current_stock_level) {
+          return;
+        }
         $('#update_' + product_id).prop('disabled', true);
         var status = $('#status_' + product_id);
         status.attr('src', loading_image);
@@ -70,6 +74,7 @@ $(document).ready(function() {
             url: update_stock_url,
             data: JSON.stringify({
                 'product_id': product_id,
+                'sku': sku,
                 'new_stock_level': stock_input.val(),
                 'old_stock_level': product_details[product_id].stock_level,
             }),

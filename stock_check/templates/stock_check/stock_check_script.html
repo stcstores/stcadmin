@@ -6,7 +6,10 @@
     update_stock_url = "{% url 'inventory:update_stock_level' %}";
     product_details = {
         {% for product in products %}
-            '{{ product.cc_product.id }}': {'stock_level': {{ product.cc_product.stock_level }}},
+            '{{ product.cc_product.id }}': {
+              'stock_level': {{ product.cc_product.stock_level }},
+              'sku': '{{ product.cc_product.sku }}'
+            },
         {% endfor %}
     }
     update_stock_check_url = "{% url 'stock_check:update_stock_check_level' %}";
