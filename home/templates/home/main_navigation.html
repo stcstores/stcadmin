@@ -6,7 +6,6 @@
         <li><a href="{% url 'home:index' %}">Home</a></li>
         <li><a href="{% url 'reference:index' %}">Reference</a></li>
         {% for group in request.user.groups.all %}{% if group.name == 'inventory' %}<li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>{% endif %}{% endfor %}
-        {% for group in request.user.groups.all %}{% if group.name == 'epos' %}<li><a href="{% url 'epos:index' %}">EPOS</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'labelmaker' %}<li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'suppliers' %}<li><a href="{% url 'suppliers:supplier_search' %}">Suppliers</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'print_audit' %}<li><a href="{% url 'print_audit:index' %}">Print Audit</a></li>{% endif %}{% endfor %}
