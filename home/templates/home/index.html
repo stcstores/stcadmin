@@ -25,10 +25,6 @@
                     <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
                 </ul>
             {% endif %}{% endfor %}
-            {% for group in request.user.groups.all %}{% if group.name == 'epos' %}
-                <li><a href="{% url 'epos:index' %}">EPOS</a></li>
-                <p>Access the EPOS.</p>
-            {% endif %}{% endfor %}
             {% for group in request.user.groups.all %}{% if group.name == 'suppliers' %}
                 <li><a href="{% url 'suppliers:index' %}">Suppliers</a></li>
                 <p>Manage supplier lists.</p>
