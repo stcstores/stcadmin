@@ -14,7 +14,6 @@ urlpatterns = [
     path("user/", include("user.urls", namespace="user")),
     path("suppliers/", include("suppliers.urls", namespace="suppliers")),
     path("labelmaker/", include("labelmaker.urls", namespace="labelmaker")),
-    path("epos/", include("epos.urls", namespace="epos")),
     path("reference/", include("reference.urls", namespace="reference")),
     path("inventory/", include("inventory.urls", namespace="inventory")),
     path("stock_check/", include("stock_check.urls", namespace="stock_check")),
