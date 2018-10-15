@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECT_DIR="$(realpath "$(dirname "$(dirname "$0")")")"
+PROJECT_DIR="$(dirname "$(dirname "$(realpath "$0")")")"
 DOMAIN="$(basename $PROJECT_DIR)"  # The domain of the site. Used in file paths.
 export BRANCH
 export PROJECT_DIR
