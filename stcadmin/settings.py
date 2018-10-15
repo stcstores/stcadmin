@@ -190,7 +190,7 @@ LOGGING = {
     },
     "loggers": {
         "django": {
-            "handlers": ["error_file_handler", "mail_admins"],
+            "handlers": ["stdout", "error_file_handler", "mail_admins"],
             "level": "WARNING",
             "propagate": False,
         },
