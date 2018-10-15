@@ -4,7 +4,6 @@ import cc_products
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
-
 from inventory import forms
 
 from .views import InventoryUserMixin

@@ -2,6 +2,7 @@
 
 import json
 
+import cc_products
 from ccapi import CCAPI
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -9,10 +10,8 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
-
 from home.views import UserInGroupMixin
 from stock_check import models
-import cc_products
 
 
 class StockCheckUserMixin(UserInGroupMixin):

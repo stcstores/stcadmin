@@ -5,7 +5,6 @@ import json
 from ccapi import URLs
 from django import template
 from django.utils.safestring import mark_safe
-
 from inventory import models
 
 register = template.Library()

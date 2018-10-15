@@ -9,7 +9,6 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
-
 from inventory.views.views import InventoryUserMixin
 from price_calculator import models
 

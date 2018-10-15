@@ -1,7 +1,6 @@
 """URL patterns for the Stock Check app."""
 
 from django.urls import path
-
 from stock_check import views
 
 app_name = "stock_check"

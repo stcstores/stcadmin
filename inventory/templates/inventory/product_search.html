@@ -92,7 +92,10 @@
         product_details = {
             {% for range in product_ranges %}
             {% for product in range.products %}
-                '{{ product.id }}': {'stock_level': {{ product.stock_level }}},
+                '{{ product.id }}': {
+                  'stock_level': {{ product.stock_level }},
+                  'sku': '{{product.sku}}'
+                },
             {% endfor %}
             {% endfor %}
         }

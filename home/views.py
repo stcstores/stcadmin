@@ -1,9 +1,8 @@
 """Views for home app."""
 
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.base import TemplateView
-
-from django.conf import settings
 
 
 class UserLoginMixin(LoginRequiredMixin):

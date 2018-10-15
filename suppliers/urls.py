@@ -1,7 +1,6 @@
 """URL patterns for the Suppliers app."""
 
 from django.urls import path
-
 from suppliers import views
 
 app_name = "suppliers"

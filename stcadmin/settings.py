@@ -3,7 +3,6 @@
 import os
 
 import toml
-
 from ccapi import CCAPI
 from django.core.exceptions import ImproperlyConfigured
 
@@ -80,7 +79,6 @@ INSTALLED_APPS = [
     "labelmaker",
     "reference",
     "user",
-    "epos",
     "inventory",
     "list_input",
     "print_audit",
@@ -174,7 +172,7 @@ LOGGING = {
         "ccapi_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": os.path.join(BASE_DIR, "logs", "ccapi.log"),
-            "maxBytes": 1048576,
+            "maxBytes": 1_048_576,
             "backupCount": 2,
             "filters": ["add_user_to_log_record", "replace_newlines"],
             "formatter": "default_formatter",
@@ -182,7 +180,7 @@ LOGGING = {
         "error_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": os.path.join(BASE_DIR, "logs", "stcadmin_error.log"),
-            "maxBytes": 1048576,
+            "maxBytes": 1_048_576,
             "backupCount": 2,
             "level": "ERROR",
             "filters": ["add_user_to_log_record"],

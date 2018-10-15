@@ -8,6 +8,8 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
+from inventory import models
+
 from .views import InventoryUserMixin
 
 
@@ -61,8 +63,16 @@ class UpdateStockLevelView(InventoryUserMixin, View):
         """Process HTTP request."""
         request_data = json.loads(self.request.body)
         product_id = request_data["product_id"]
+        product_sku = request_data["sku"]
         new_stock_level = request_data["new_stock_level"]
         old_stock_level = request_data["old_stock_level"]
+        models.StockChange(
+            product_id=product_id,
+            product_sku=product_sku,
+            stock_before=new_stock_level,
+            stock_after=old_stock_level,
+            user=self.request.user,
+        ).save()
         CCAPI.update_product_stock_level(
             product_id=product_id,
             new_stock_level=new_stock_level,

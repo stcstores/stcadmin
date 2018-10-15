@@ -1,7 +1,6 @@
 """URLs for the product_editor app."""
 
 from django.urls import path
-
 from product_editor import views
 
 app_name = "product_editor"

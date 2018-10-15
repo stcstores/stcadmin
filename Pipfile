@@ -4,36 +4,25 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+Django = "*"
 django-formtools = "*"
-django-jchart = "*"
 django-markup = "*"
-docutils = "*"
+django-jchart = "*"
 forex-python = "*"
 gunicorn = "*"
-matplotlib = "*"
-"mpld3" = "*"
-mysqlclient = "*"
-pycountry = "*"
-pylabels = "*"
-pytz = "*"
+humanize = "*"
 "psycopg2-binary" = "*"
-reportlab = "*"
-tabler = "*"
-labeler = {git = "https://github.com/axevalley/labeler.git", ref = "master"}
-ccapi = {git = "https://github.com/stcstores/ccapi.git", ref = "master"}
-list_input = {git = "https://github.com/axevalley/list_input.git", ref = "master"}
-order_profit = {git = "https://github.com/stcstores/order_profit.git", ref = "master"}
-cc_products = {git = "https://github.com/stcstores/cc_products.git", ref = "master"}
-Django = "*"
-"Jinja2" = "*"
-Pillow = "*"
-PyMySQL = "*"
+pytz = "*"
 Sphinx = "*"
 sphinx_rtd_theme = "*"
-Unidecode = "*"
-XlsxWriter = "*"
-humanize = "*"
+tabler = "*"
 toml = "*"
+XlsxWriter = "*"
+ccapi = {git = "https://github.com/stcstores/ccapi.git", ref = "master", editable = true}
+cc_products = {git = "https://github.com/stcstores/cc_products.git", ref = "master", editable = true}
+labeler = {git = "https://github.com/axevalley/labeler.git", ref = "master", editable = true}
+list_input = {git = "https://github.com/axevalley/list_input.git", ref = "master", editable = true}
+order_profit = {git = "https://github.com/stcstores/order_profit.git", ref = "master", editable = true}
 
 [dev-packages]
 "Fabric3" = "*"

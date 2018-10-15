@@ -1,7 +1,6 @@
 """Variation Formset."""
 
 from django import forms
-
 from product_editor.forms import fields
 from stcadmin.forms import KwargFormSet
 
