@@ -7,6 +7,7 @@ import os
 import openpyxl
 from django.contrib import messages
 from django.core.files import File
+
 from spring_manifest import models
 
 from .file_manifest import FileManifest
@@ -28,6 +29,7 @@ class FileSecuredMailManifest(FileManifest):
             self.save_docket_file()
         if self.valid():
             self.manifest.status = self.manifest.FILED
+            self.manifest.file_manifest()
             self.manifest.save()
             self.cleanup()
         else:
@@ -64,7 +66,6 @@ class FileSecuredMailManifest(FileManifest):
         self.manifest.docket_file.save(
             str(self.manifest) + "_docket.xlsx", File(docket_file)
         )
-        self.manifest.file_manifest()
 
     def get_date_string(self):
         """Return currenct date as string."""
