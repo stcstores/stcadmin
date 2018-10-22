@@ -1,6 +1,7 @@
 """Views for home app."""
 
 import subprocess
+import sys
 
 from django import get_version as get_django_version
 from django.conf import settings
@@ -76,6 +77,7 @@ class Version(TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return the context for the rendered template."""
         context = super().get_context_data(*args, **kwargs)
+        context["python_version"] = sys.version
         context["django_version"] = get_django_version()
         context["pip_list"] = self.get_pip_packages()
         context["commit_hash"] = self.get_current_commit_hash()
