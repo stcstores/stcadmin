@@ -53,7 +53,7 @@ class Version(TemplateView):
 
     def get_pip_packages(self):
         """Return a list of installed pip packages."""
-        packages = self.get_command_response("pip freeze").split("\n")
+        packages = self.get_command_response("pipenv run pip freeze").split("\n")
         return [self.parse_package(package) for package in packages if package]
 
     def parse_package(self, package_string):
