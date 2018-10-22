@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>STCAdmin Version</title>
+  <style>
+    table, th, td {
+      border: solid black 1px;
+      border-collapse: collapse;
+      padding: 0.5em;
+    }
+    table {
+      margin: 1em;
+    }
+  </style>
+</head>
+<body>
+
+<h1>STCAdmin Version</h1>
+
+<table>
+  <tr>
+    <th>Django Version</th>
+    <td>{{ django_version }}</td>
+  </tr>
+  <tr>
+    <th>Commit Hash</th>
+    <td>{{ commit_hash }}</td>
+  </tr>
+  <tr>
+    <th>Commit Message</th>
+    <td>{{ commit_message }}</td>
+  </tr>
+  <tr>
+    <th>Site</th>
+    <td>{{ request.META.HTTP_HOST }}</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan="2">Installed Packages</th>
+  </tr>
+  {% for package in pip_list %}
+    <tr>
+      <th>{{ package.name }}</th>
+      <td>{{ package.version }}</td>
+    </tr>
+  {% endfor %}
+</table>
+</body>
+</html>
