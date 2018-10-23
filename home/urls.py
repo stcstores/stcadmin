@@ -3,6 +3,7 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 from django.views.generic import TemplateView
+
 from home import views
 
 app_name = "home"
@@ -24,4 +25,5 @@ urlpatterns = [
             template_name="home/robots.txt", content_type="text/plain"
         ),
     ),
+    path("version/", views.Version.as_view(), name="version"),
 ]
