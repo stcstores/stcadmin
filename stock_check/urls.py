@@ -1,6 +1,7 @@
 """URL patterns for the Stock Check app."""
 
 from django.urls import path
+
 from stock_check import views
 
 app_name = "stock_check"
@@ -14,5 +15,8 @@ urlpatterns = [
         "update_stock_check_level/",
         views.UpdateStockCheckLevel.as_view(),
         name="update_stock_check_level",
+    ),
+    path(
+        "open_orders/<int:bay_id>/", views.AjaxOpenOrders.as_view(), name="open_orders"
     ),
 ]

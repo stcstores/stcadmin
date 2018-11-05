@@ -25,4 +25,10 @@ $(document).ready(function() {
             dataType: 'json'
         });
     });
+
+    $.getJSON(open_orders_url, function(data) {
+      $.each(data, function(product_id, in_open_orders) {
+        $('#open_orders_' + product_id).text(in_open_orders);
+      });
+    });
 });
