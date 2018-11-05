@@ -11,9 +11,13 @@
 {% block content %}{{ block.super }}
 
 <h1>{{ bay }}</h1>
+<a href="{% url 'stock_check:warehouse' bay.warehouse.warehouse_id %}">Back to {{ bay.warehouse.name }}</a>
 {% include 'stock_check/product_list.html' %}
 {% endblock %}
 
 {% block script %}{{ block.super }}
+<script>
+  open_orders_url = "{% url 'stock_check:open_orders' bay_id %}"
+</script>
 {% include "stock_check/stock_check_script.html" %}
 {% endblock %}
