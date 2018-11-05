@@ -10,6 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
+
 from home.views import UserInGroupMixin
 from stock_check import models
 
@@ -95,7 +96,9 @@ class Warehouse(StockCheckUserMixin, TemplateView):
         warehouse_id = self.kwargs.get("warehouse_id")
         warehouse = get_object_or_404(models.Warehouse, warehouse_id=warehouse_id)
         context["warehouse"] = warehouse
-        context["bays"] = list(models.Bay.non_default.filter(warehouse=warehouse).all())
+        context["bays"] = list(
+            models.Bay.non_default.filter(warehouse=warehouse).all().order_by("name")
+        )
         context["bays"].insert(0, warehouse.default_bay)
         return context
 
