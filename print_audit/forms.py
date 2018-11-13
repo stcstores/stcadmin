@@ -73,9 +73,9 @@ class FeedbackDateFilterForm(forms.Form):
 
     def get_month_range(self, year, month):
         """Return first and last day for month."""
-        last_day = calendar.monthrange(year, month)[1]
+        days_in_month = calendar.monthrange(year, month)[1]
         date_from = datetime.datetime(year=year, month=month, day=1)
-        date_to = datetime.datetime(year=year, month=month, day=last_day)
+        date_to = date_from + datetime.timedelta(days_in_month)
         return (date_from, date_to)
 
     def today(self):
@@ -94,7 +94,7 @@ class FeedbackDateFilterForm(forms.Form):
         """Return start and end dates for the current week."""
         today = timezone.now().date()
         date_from = today - datetime.timedelta(days=today.weekday())
-        date_to = date_from + datetime.timedelta(days=6)
+        date_to = date_from + datetime.timedelta(days=7)
         return (date_from, date_to)
 
     def this_month(self):
@@ -106,15 +106,17 @@ class FeedbackDateFilterForm(forms.Form):
         """Return start and end dates for the previous month."""
         now = timezone.now()
         month = now.month - 1
+        year = now.year
         if month == 0:
             month = 1
-        return self.get_month_range(now.year, month)
+            year -= 1
+        return self.get_month_range(year, month)
 
     def this_year(self):
         """Return start and end dates for the current year."""
         today = timezone.now()
         date_from = datetime.datetime(year=today.year, month=1, day=1)
-        date_to = datetime.datetime(year=today.year, month=12, day=31)
+        date_to = datetime.datetime(year=today.year + 1, month=1, day=1)
         return (date_from, date_to)
 
     def clean(self):
