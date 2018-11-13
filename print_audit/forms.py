@@ -7,6 +7,7 @@ import pytz
 from django import forms
 from django.conf import settings
 from django.utils import timezone
+
 from print_audit import models
 
 
@@ -80,13 +81,13 @@ class FeedbackDateFilterForm(forms.Form):
     def today(self):
         """Return start and end dates for the current day."""
         date_from = timezone.now().date()
-        date_to = date_from
+        date_to = date_from + datetime.timedelta(days=1)
         return (date_from, date_to)
 
     def yesterday(self):
         """Return start and end dates for the previous day."""
-        date_to = timezone.now().date() - self.day
-        date_from = date_to
+        date_to = timezone.now().date()
+        date_from = date_to - datetime.timedelta(days=1)
         return (date_from, date_to)
 
     def this_week(self):
