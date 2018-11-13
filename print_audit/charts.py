@@ -4,6 +4,7 @@ import datetime
 
 from jchart import Chart
 from jchart.config import Axes, DataSet
+
 from print_audit import models
 
 
@@ -68,7 +69,10 @@ class OrdersByWeek(Chart):
             def __init__(self, year, number):
                 self.year = year
                 self.number = number
-                self.name = "{} - {}".format(self.year, self.number)
+                self.monday = datetime.datetime.strptime(
+                    f"{self.year}-W{self.number}-1", "%Y-W%W-%w"
+                )
+                self.name = self.monday.strftime("%d-%b-%Y")
                 self.value = models.CloudCommerceOrder.objects.filter(
                     date_created__year=year, date_created__week=number
                 ).count()
