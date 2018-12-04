@@ -6,7 +6,7 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand
 
-from inventory.models import GetProductExport
+from inventory.models import CCProductExport
 
 logger = logging.getLogger("management_commands")
 
@@ -25,7 +25,7 @@ class Command(BaseCommand):
         try:
             path = Path(options.get("path")).absolute()
             print(f"Saving product export to {path}", file=sys.stderr)
-            GetProductExport(path=path)
+            CCProductExport.save_new_export(path=path)
         except Exception as e:
             logger.exception("Error retriving product export.")
             raise e

@@ -6,59 +6,71 @@ from pathlib import Path
 from ccapi import CCAPI
 
 
-class GetProductExport:
+class CCProductExport:
     """Create, download and save a Cloud Commerce Pro product export."""
 
-    def __init__(self, path=None):
+    @classmethod
+    def save_new_export(cls, path):
         """Create, download and save a Cloud Commerce Pro product export.
 
         Args:
             path (pathlib.Path): The path to save the export. If it is a directory the
                 export name will be used as a file name.
         """
-        self.path = path
-        self.existing_export_IDs = self.get_existing_export_IDs()
-        self.new_export_ID = self.trigger_export()
-        self.export = self.get_export_info()
-        self.path = self.sanitise_path()
-        CCAPI.save_product_export_file(self.export.file_name, self.path)
+        export_info = cls._new_export()
+        cls._save_export_file(export_info, path)
 
-    def get_existing_export_IDs(self):
+    @staticmethod
+    def _get_existing_export_IDs():
         """Return the IDs of all existing product exports."""
         existing_exports = CCAPI.get_product_exports().product_exports
         return [export.export_ID for export in existing_exports]
 
-    def sanitise_path(self):
+    @staticmethod
+    def _sanitise_path(path, default_file_name="Product_Export.xlsx"):
         """Return a corrected path file path for saving the export.
 
         If the path is None, replace it with the current working directory.
         If the path is a directory append a file name based on the product name.
         """
-        path = self.path
         if path is None:
             path = Path.cwd()
         if path.is_dir():
-            path = path / self.export.file_name
+            path = path / default_file_name
         return path
 
-    def trigger_export(self):
-        """Create a new product export and return it's ID."""
-        CCAPI.export_products()
-        exports = CCAPI.get_product_exports().product_exports
-        time.sleep(5)
+    @staticmethod
+    def _get_new_export_ID(product_exports, existing_export_IDs):
+        """Return the ID of the export whos ID is not in existing_export_IDs."""
         new_export_ID = [
             export
-            for export in exports
-            if export.export_ID not in self.existing_export_IDs
+            for export in product_exports
+            if export.export_ID not in existing_export_IDs
         ][0].export_ID
         return new_export_ID
 
-    def get_export_info(self):
+    @classmethod
+    def _new_export(cls):
+        """Return the export info for a newly created product export."""
+        existing_export_IDs = cls._get_existing_export_IDs()
+        CCAPI.export_products()
+        time.sleep(5)
+        product_exports = CCAPI.get_product_exports().product_exports
+        export_ID = cls._get_new_export_ID(product_exports, existing_export_IDs)
+        export_info = cls._get_export_info(export_ID)
+        return export_info
+
+    @classmethod
+    def _save_export_file(cls, export_info, path):
+        """Save a product export file."""
+        path = cls._sanitise_path(path, default_file_name=export_info.file_name)
+        CCAPI.save_product_export_file(export_info.file_name, path)
+
+    @staticmethod
+    def _get_export_info(export_ID):
         """Return information about the new export once available."""
         for _ in range(1000):
-            export = CCAPI.get_product_exports().product_exports.get_by_ID(
-                self.new_export_ID
-            )
+            export = CCAPI.get_product_exports().product_exports.get_by_ID(export_ID)
             if export.failed:
                 raise Exception("Failed product export.")
             if export.complete:
