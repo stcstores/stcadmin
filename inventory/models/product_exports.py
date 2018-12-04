@@ -1,16 +1,52 @@
 """Create, download and save a Cloud Commerce Pro product export."""
 
+import tempfile
 import time
 from pathlib import Path
 
+import pytz
 from ccapi import CCAPI
+from django.core.files import File
+from django.db import models
+from tabler import Table
 
 
-class CCProductExport:
-    """Create, download and save a Cloud Commerce Pro product export."""
+def export_file_path(instance, filename):
+    """Return the path at which to save product export files."""
+    timestamp = instance.timestamp
+    filename = instance.name + ".xlsx"
+    return Path("product_exports").joinpath(
+        timestamp.strftime("%Y"),
+        timestamp.strftime("%B"),
+        timestamp.strftime("%d"),
+        timestamp.strftime("%H:%M"),
+        filename,
+    )
+
+
+class ProductExport(models.Model):
+    """Model for Cloud Commerce product export files."""
+
+    name = models.CharField(max_length=100, unique=True)
+    timestamp = models.DateTimeField()
+    export_file = models.FileField(upload_to=export_file_path)
+
+    class Meta:
+        """Meta class for ProductExport."""
+
+        verbose_name = "Product Export"
+        verbose_name_plural = "Product Exports"
+        ordering = ("timestamp",)
+
+    def __str__(self):
+        return f"Product Export {self.timestamp.strftime('%Y-%m-%d %H-%M')}"
+
+    def as_table(self):
+        """Return the export file as a tabler.Table instance."""
+        return Table(self.export_file.path)
 
     @classmethod
-    def save_new_export(cls, path):
+    def save_new_export(cls, path=None):
         """Create, download and save a Cloud Commerce Pro product export.
 
         Args:
@@ -19,6 +55,30 @@ class CCProductExport:
         """
         export_info = cls._new_export()
         cls._save_export_file(export_info, path)
+        return export_info
+
+    @classmethod
+    def add_new_export_to_database(cls):
+        """Create a new export and add it to the database."""
+        directory = tempfile.TemporaryDirectory()
+        export_path = Path(directory.name)
+        export_info = cls.save_new_export(export_path)
+        export_file = export_path / (export_info.file_name + ".xlsx")
+        cls._save_to_database(export_file, export_info)
+        directory.cleanup()
+
+    @classmethod
+    def _save_to_database(cls, path_to_file, export_info):
+        """Add an export to the database."""
+        tz = pytz.timezone("Europe/London")
+        with open(path_to_file, "rb") as f:
+            export = cls(
+                name=export_info.file_name,
+                timestamp=export_info.date_started.replace(tzinfo=tz),
+                export_file=f,
+            )
+            export.export_file = File(f)
+            export.save()
 
     @staticmethod
     def _get_existing_export_IDs():
@@ -63,7 +123,8 @@ class CCProductExport:
     @classmethod
     def _save_export_file(cls, export_info, path):
         """Save a product export file."""
-        path = cls._sanitise_path(path, default_file_name=export_info.file_name)
+        filename = export_info.file_name + ".xlsx"
+        path = cls._sanitise_path(path, default_file_name=filename)
         CCAPI.save_product_export_file(export_info.file_name, path)
 
     @staticmethod
