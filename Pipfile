@@ -4,29 +4,29 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-Django = "*"
-django-formtools = "*"
-django-markup = "*"
+Django = "<2.2"
+django-formtools = "<3.0"
+django-markup = "<2.0"
 django-jchart = "*"
-forex-python = "*"
-gunicorn = "*"
+forex-python = "<2.0"
+gunicorn = "<20.0"
 humanize = "*"
-"psycopg2-binary" = "*"
+"psycopg2-binary" = "<3.0"
 pytz = "*"
-Sphinx = "*"
+Sphinx = "<2.0"
 sphinx_rtd_theme = "*"
-tabler = "*"
+tabler = "<3.0"
 toml = "*"
-XlsxWriter = "*"
+XlsxWriter = "<2.0"
 ccapi = {git = "https://github.com/stcstores/ccapi.git", ref = "master", editable = true}
 cc_products = {git = "https://github.com/stcstores/cc_products.git", ref = "master", editable = true}
 labeler = {git = "https://github.com/axevalley/labeler.git", ref = "master", editable = true}
 list_input = {git = "https://github.com/axevalley/list_input.git", ref = "master", editable = true}
 order_profit = {git = "https://github.com/stcstores/order_profit.git", ref = "master", editable = true}
-openpyxl = "==2.5.8"
+openpyxl = "<3.0"
 
 [dev-packages]
-"Fabric3" = "*"
+"Fabric3" = "<2.0"
 
 [requires]
 python_version = "3.7"
