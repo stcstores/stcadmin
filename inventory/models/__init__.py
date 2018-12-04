@@ -10,4 +10,4 @@ from .locations import (  # NOQA
     create_backup_bay,
 )
 from .stock_change import StockChange  # NOQA
-from .product_exports import GetProductExport  # NOQA
+from .product_exports import ProductExport  # NOQA

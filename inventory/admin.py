@@ -80,3 +80,12 @@ class StockChangeAdmin(admin.ModelAdmin):
     )
     list_filter = ("user",)
     date_hierarchy = "timestamp"
+
+
+@admin.register(models.ProductExport)
+class ProductExportAdmin(admin.ModelAdmin):
+    """Model admin for the Product Export model."""
+
+    fields = ("name", "timestamp", "export_file")
+    list_display = ("__str__", "name", "timestamp", "export_file")
+    date_hierarchy = "timestamp"
