@@ -36,7 +36,7 @@ class ProductExport(models.Model):
 
         verbose_name = "Product Export"
         verbose_name_plural = "Product Exports"
-        ordering = ("timestamp",)
+        ordering = ("-timestamp",)
 
     def __str__(self):
         return f"Product Export {self.timestamp.strftime('%Y-%m-%d %H-%M')}"
