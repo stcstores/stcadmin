@@ -14,7 +14,7 @@ def move_export_files(apps, schema_editor):
     ProductExport = apps.get_model("inventory", "ProductExport")
     for export in ProductExport.objects.all():
         media_root = Path(settings.MEDIA_ROOT)
-        old_path = export.export_file.path
+        old_path = Path(export.export_file.path)
         new_name = Path(export_file_path(export, None))
         new_path = media_root / new_name
         new_path.parent.mkdir(parents=True, exist_ok=True)
