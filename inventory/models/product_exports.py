@@ -17,9 +17,9 @@ def export_file_path(instance, filename):
     filename = instance.name + ".xlsx"
     return Path("product_exports").joinpath(
         timestamp.strftime("%Y"),
-        timestamp.strftime("%B"),
+        timestamp.strftime("%m"),
         timestamp.strftime("%d"),
-        timestamp.strftime("%H:%M"),
+        timestamp.strftime("%H_%M"),
         filename,
     )
 
