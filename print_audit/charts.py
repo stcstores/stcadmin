@@ -2,6 +2,7 @@
 
 import datetime
 
+from isoweek import Week
 from jchart import Chart
 from jchart.config import Axes, DataSet
 
@@ -60,57 +61,26 @@ class OrdersByWeek(Chart):
         self.number_of_weeks = number_of_weeks
         self.now = datetime.datetime.now()
         self.weeks = self.get_weeks()
-        self.order_counts = [self.order_count_for_week(*_) for _ in self.weeks]
-        self.labels = [self.label_for_week(*_) for _ in self.weeks]
+        self.order_counts = [self.order_count_for_week(week) for week in self.weeks]
+        self.labels = [week.monday().strftime("%d-%b-%Y") for week in self.weeks]
         super().__init__()
 
     def get_weeks(self):
         """Return a list of weeks to display as tuples of year and week number."""
         weeks = []
-        initial_date = self.now - datetime.timedelta(weeks=self.number_of_weeks)
-        start_year = self.calendar_year(initial_date)
-        first_week = self.week_number(initial_date)
-        for year in range(start_year, self.calendar_year(self.now) + 1):
-            if year != start_year:
-                first_week = 1
-            if year == self.calendar_year(self.now):
-                last_week = self.week_number(self.now)
-            else:
-                last_week = self.last_week(year)
-            for week_number in range(first_week, last_week + 1):
-                if week_number == self.week_number(self.now):
-                    continue
-                weeks.append((year, week_number))
+        last_week = Week.thisweek() - 1
+        week = last_week - self.number_of_weeks
+        while week <= last_week:
+            weeks.append(week)
+            week += 1
         return weeks
 
-    def last_week(self, year):
-        """Return the last week number for a year."""
-        return self.week_number(datetime.datetime(year, 12, 28))
-
-    def week_number(self, date):
-        """Return week number for date."""
-        return date.isocalendar()[1]
-
     @staticmethod
-    def order_count_for_week(year, week_number):
+    def order_count_for_week(week):
         """Return the number of orders processed for a week."""
         return models.CloudCommerceOrder.objects.filter(
-            date_created__year=year, date_created__week=week_number
+            date_created__year=week.year, date_created__week=week.week
         ).count()
-
-    @staticmethod
-    def label_for_week(year, week_number):
-        """Return the start date for a week as a string."""
-        monday = datetime.datetime.strptime(f"{year}-W{week_number}-1", "%Y-W%W-%w")
-        return monday.strftime("%d-%b-%Y")
-
-    def calendar_year(self, date):
-        """Return the calendar year for a given date.
-
-        Use this instead of date.year to prevent errors on weeks including the first day
-        of the year.
-        """
-        return date.isocalendar()[0]
 
     def get_labels(self):
         """Return axis labels for weeks."""

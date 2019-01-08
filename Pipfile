@@ -18,12 +18,13 @@ sphinx_rtd_theme = "*"
 tabler = "<3.0"
 toml = "*"
 XlsxWriter = "<2.0"
-ccapi = {git = "https://github.com/stcstores/ccapi.git", ref = "master", editable = true}
-cc_products = {git = "https://github.com/stcstores/cc_products.git", ref = "master", editable = true}
-labeler = {git = "https://github.com/axevalley/labeler.git", ref = "master", editable = true}
-list_input = {git = "https://github.com/axevalley/list_input.git", ref = "master", editable = true}
-order_profit = {git = "https://github.com/stcstores/order_profit.git", ref = "master", editable = true}
+ccapi = {git = "https://github.com/stcstores/ccapi.git",ref = "master",editable = true}
+cc_products = {git = "https://github.com/stcstores/cc_products.git",ref = "master",editable = true}
+labeler = {git = "https://github.com/axevalley/labeler.git",ref = "master",editable = true}
+list_input = {git = "https://github.com/axevalley/list_input.git",ref = "master",editable = true}
+order_profit = {git = "https://github.com/stcstores/order_profit.git",ref = "master",editable = true}
 openpyxl = "<3.0"
+isoweek = "*"
 
 [dev-packages]
 "Fabric3" = "<2.0"
