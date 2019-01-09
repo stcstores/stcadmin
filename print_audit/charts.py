@@ -2,6 +2,7 @@
 
 import datetime
 
+from isoweek import Week
 from jchart import Chart
 from jchart.config import Axes, DataSet
 
@@ -54,62 +55,37 @@ class OrdersByWeek(Chart):
     scales = {"yAxes": [Axes(ticks={"beginAtZero": True})]}
     legend = {"display": False}
     title = {"display": True, "text": "Orders by Week"}
-    WEEKS_TO_DISPLAY = 52
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, number_of_weeks):
         """Get weeks in range."""
-        years = [
-            d.year
-            for d in models.CloudCommerceOrder.objects.all().datetimes(
-                "date_created", "year"
-            )
-        ]
-
-        class Week:
-            def __init__(self, year, number):
-                self.year = year
-                self.number = number
-                self.monday = datetime.datetime.strptime(
-                    f"{self.year}-W{self.number}-1", "%Y-W%W-%w"
-                )
-                self.name = self.monday.strftime("%d-%b-%Y")
-                self.value = models.CloudCommerceOrder.objects.filter(
-                    date_created__year=year, date_created__week=number
-                ).count()
-
-        weeks_numbers = list(range(1, self.WEEKS_TO_DISPLAY + 1))
-        self.weeks = []
+        self.number_of_weeks = number_of_weeks
         self.now = datetime.datetime.now()
-        self.first_order_date = (
-            models.CloudCommerceOrder.objects.order_by("date_created")
-            .all()[0]
-            .date_created
-        )
-        for year in years:
-            for week in weeks_numbers:
-                if self.week_required(year, week):
-                    self.weeks.append(Week(year, week))
-        super().__init__(*args, **kwargs)
+        self.weeks = self.get_weeks()
+        self.order_counts = [self.order_count_for_week(week) for week in self.weeks]
+        self.labels = [week.monday().strftime("%d-%b-%Y") for week in self.weeks]
+        super().__init__()
 
-    def week_required(self, year, week):
-        """Return True if week is in required range."""
-        if year == self.now.year and week > self.get_week(self.now) - 1:
-            return False
-        first_week = self.get_week(self.first_order_date)
-        first_year = self.first_order_date.year
-        if year == first_year and week < first_week + 1:
-            return False
-        return True
+    def get_weeks(self):
+        """Return a list of weeks to display as tuples of year and week number."""
+        weeks = []
+        last_week = Week.thisweek() - 1
+        week = last_week - self.number_of_weeks
+        while week <= last_week:
+            weeks.append(week)
+            week += 1
+        return weeks
 
-    def get_week(self, date):
-        """Return week number for date."""
-        return date.isocalendar()[1]
+    @staticmethod
+    def order_count_for_week(week):
+        """Return the number of orders processed for a week."""
+        return models.CloudCommerceOrder.objects.filter(
+            date_created__year=week.year, date_created__week=week.week
+        ).count()
 
     def get_labels(self):
         """Return axis labels for weeks."""
-        return [w.name for w in self.weeks]
+        return self.labels
 
     def get_datasets(self, **kwargs):
         """Return datasets for chart."""
-        data = [w.value for w in self.weeks]
-        return [DataSet(data=data, color=(85, 79, 255))]
+        return [DataSet(data=self.order_counts, color=(85, 79, 255))]

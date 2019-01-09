@@ -74,7 +74,7 @@ def update_product_bays(inventory_table):
         if row["VAR_Bays"] is None or len(row["VAR_Bays"]) == 0:
             continue
         product = Product.objects.get(sku=row["VAR_SKU"])
-        bay_names = row["VAR_Bays"].split(";")
+        bay_names = list(set(row["VAR_Bays"].split(";")))
         try:
             bays = [Bay.objects.get(name=name) for name in bay_names]
         except Bay.DoesNotExist:
