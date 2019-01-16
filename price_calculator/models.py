@@ -11,12 +11,14 @@ class DestinationCountry(models.Model):
     name = models.CharField(max_length=50, unique=True)
     currency_code = models.CharField(max_length=4, default="GBP")
     min_channel_fee = models.IntegerField(null=True, blank=True)
+    sort_order = models.IntegerField(default=0)
 
     class Meta:
         """Meta class for DestinationCountry."""
 
         verbose_name = "Destination Country"
         verbose_name_plural = "Destination Countries"
+        ordering = ("sort_order",)
 
     def __str__(self):
         return self.name
