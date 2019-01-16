@@ -1,6 +1,7 @@
 """Model admin for price_calculator app."""
 
 from django.contrib import admin
+
 from price_calculator import models
 
 
@@ -8,9 +9,9 @@ from price_calculator import models
 class DestinationCountryAdmin(admin.ModelAdmin):
     """Model admin for DestinationCountry model."""
 
-    fields = ("name", "currency_code", "min_channel_fee")
-    list_display = ("name", "currency_code", "min_channel_fee")
-    list_editable = ("currency_code", "min_channel_fee")
+    fields = ("name", "currency_code", "min_channel_fee", "sort_order")
+    list_display = ("name", "currency_code", "min_channel_fee", "sort_order")
+    list_editable = ("currency_code", "min_channel_fee", "sort_order")
     search_fields = ("name",)
 
 
