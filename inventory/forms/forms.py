@@ -93,31 +93,20 @@ class CreateBayForm(forms.Form):
             data["backup_location"] = models.Warehouse.objects.get(
                 warehouse_id=data["location"]
             )
-            backup_name = models.Bay.backup_bay_name(
-                bay_name=data["name"],
+            self.new_bay = models.Bay.new_backup_bay(
+                name=data["name"],
                 department=data["warehouse"],
                 backup_location=data["backup_location"],
             )
-            if models.Bay.objects.filter(name=backup_name).exists():
-                self.add_error("name", "Bay name already exists")
         else:
-            if models.Bay.objects.filter(name=data["name"]).exists():
-                self.add_error("name", "Bay name already exists")
+            self.new_bay = models.Bay(name=data["name"], warehouse=data["warehouse"])
+        self.new_bay.clean()
+        self.new_bay.validate_unique()
         return data
 
     def save(self):
         """Create Warehouse Bay."""
-        warehouse = self.cleaned_data["warehouse"]
-        bay_name = self.cleaned_data["name"]
-        if self.cleaned_data["bay_type"] == self.BACKUP:
-            location = self.cleaned_data["backup_location"]
-            self.bay = models.create_backup_bay(
-                bay_name=bay_name,
-                department_warehouse=warehouse,
-                backup_location=location,
-            )
-        else:
-            self.bay = models.create_bay(bay_name=bay_name, warehouse=warehouse)
+        self.new_bay.save()
 
 
 class ImagesForm(forms.Form):
