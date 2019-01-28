@@ -101,6 +101,11 @@ class Bay(models.Model):
         """Return True if the bay is the default bay for it's warehouse."""
         return self.name == self.warehouse.name
 
+    @staticmethod
+    def backup_bay_name(*, bay_name, department, backup_location):
+        """Return the name for a backup bay."""
+        return f"{department.abriviation} Backup {backup_location.name} {bay_name}"
+
 
 class LocationIntegrityCheck:
     """
@@ -262,8 +267,10 @@ def create_backup_bay(*, bay_name, department_warehouse, backup_location):
         inventory.models.Bay
 
     """
-    backup_bay_name = (
-        f"{department_warehouse.abriviation} Backup {backup_location.name} {bay_name}"
+    backup_bay_name = Bay.backup_bay_name(
+        bay_name=bay_name,
+        department=department_warehouse,
+        backup_location=backup_location,
     )
     return create_bay(bay_name=backup_bay_name, warehouse=department_warehouse)
 

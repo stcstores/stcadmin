@@ -2,6 +2,7 @@
 
 from ccapi import CCAPI
 from django import forms
+
 from inventory import models
 from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms import fields
@@ -92,8 +93,16 @@ class CreateBayForm(forms.Form):
             data["backup_location"] = models.Warehouse.objects.get(
                 warehouse_id=data["location"]
             )
-        if models.Bay.objects.filter(name=data["name"]).exists():
-            self.add_error("name", "Bay name already exists.")
+            backup_name = models.Bay.backup_bay_name(
+                bay_name=data["name"],
+                department=data["warehouse"],
+                backup_location=data["backup_location"],
+            )
+            if models.Bay.objects.filter(name=backup_name).exists():
+                self.add_error("name", "Bay name already exists")
+        else:
+            if models.Bay.objects.filter(name=data["name"]).exists():
+                self.add_error("name", "Bay name already exists")
         return data
 
     def save(self):
