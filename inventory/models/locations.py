@@ -106,6 +106,28 @@ class Bay(models.Model):
         """Return the name for a backup bay."""
         return f"{department.abriviation} Backup {backup_location.name} {bay_name}"
 
+    @classmethod
+    def new_backup_bay(cls, name, department, backup_location):
+        """Return a new Bay instance named as a backup bay."""
+        backup_name = cls.backup_bay_name(
+            bay_name=name, department=department, backup_location=backup_location
+        )
+        return cls(name=backup_name, warehouse=department)
+
+    def save(self, *args, **kwargs):
+        """Create the bay in Cloud Commerce if it has no ID."""
+        if self.bay_id is None:
+            self.bay_id = self.get_CC_ID()
+        super().save(*args, **kwargs)
+
+    def get_CC_ID(self):
+        """
+        Return the Cloud Commerce ID for this bay.
+
+        If it does not exist in Cloud Commerce it will be created.
+        """
+        return CCAPI.get_bay_id(self.name, self.warehouse.name, create=True)
+
 
 class LocationIntegrityCheck:
     """
@@ -250,46 +272,3 @@ def check_location_integrity():
     integrity_check = LocationIntegrityCheck()
     integrity_check.create_output()
     return integrity_check
-
-
-def create_backup_bay(*, bay_name, department_warehouse, backup_location):
-    """
-    Create a backup bay in the database and in Cloud Commerce.
-
-    Kwargs:
-        bay_name (str): The name of the new bay.
-        deparment_warehouse (inventory.models.Warehouse): The warehouse for which the bay
-            serves as backup.
-        backup_location (inventory.models.Warehouse): The warehouse in which the bay is
-            located.
-
-    Returns:
-        inventory.models.Bay
-
-    """
-    backup_bay_name = Bay.backup_bay_name(
-        bay_name=bay_name,
-        department=department_warehouse,
-        backup_location=backup_location,
-    )
-    return create_bay(bay_name=backup_bay_name, warehouse=department_warehouse)
-
-
-def create_bay(*, bay_name, warehouse):
-    """
-    Create a warehouse bay in the database and Cloud Commerce.
-
-    Kwargs:
-        bay_name (str): The name of the new bay.
-        warehouse (inventory.models.Warehouse): The warehouse containing the bay.
-
-    Returns:
-        inventory.models.Bay
-
-    """
-    if Bay.objects.filter(name=bay_name).exists():
-        raise ValueError(f"Bay name {bay_name} already is in use.")
-    bay_id = CCAPI.get_bay_id(bay_name, warehouse.name, create=True)
-    bay = Bay(bay_id=bay_id, warehouse=warehouse, name=bay_name)
-    bay.save()
-    return bay

@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+
 from home.views import UserInGroupMixin
 from inventory import forms
 
@@ -47,6 +48,6 @@ class CreateBayView(InventoryUserMixin, FormView):
         """Process form request and return HttpResponse."""
         form.save()
         messages.add_message(
-            self.request, messages.SUCCESS, "Created bay {}".format(form.bay)
+            self.request, messages.SUCCESS, "Created bay {}".format(form.new_bay)
         )
         return redirect("inventory:create_warehouse_bay")
