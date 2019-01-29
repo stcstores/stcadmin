@@ -1,6 +1,7 @@
 """URLs for the inventory app."""
 
 from django.urls import path
+
 from inventory import views
 
 app_name = "inventory"
@@ -39,8 +40,32 @@ inventory_urlpatterns = [
         views.CreateBayView.as_view(),
         name="create_warehouse_bay",
     ),
+    path("suppliers/suppliers", views.Suppliers.as_view(), name="suppliers"),
+    path("suppliers/<int:pk>/", views.Supplier.as_view(), name="supplier"),
     path(
-        "create_supplier/", views.CreateSupplierView.as_view(), name="create_supplier"
+        "suppliers/create_supplier/",
+        views.CreateSupplier.as_view(),
+        name="create_supplier",
+    ),
+    path(
+        "suppliers/create_contact/<int:supplier_pk>/",
+        views.CreateSupplierContact.as_view(),
+        name="create_supplier_contact",
+    ),
+    path(
+        "suppliers/update_contact/<int:pk>/",
+        views.UpdateSupplierContact.as_view(),
+        name="update_supplier_contact",
+    ),
+    path(
+        "suppliers/delete_contact/<int:pk>/",
+        views.DeleteSupplierContact.as_view(),
+        name="delete_supplier_contact",
+    ),
+    path(
+        "toggle_supplier_active/<int:pk>/",
+        views.ToggleSupplierActive.as_view(),
+        name="toggle_supplier_active",
     ),
 ]
 
