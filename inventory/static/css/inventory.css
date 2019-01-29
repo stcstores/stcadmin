@@ -125,3 +125,8 @@ table.new_product {
     display: inline-block;
     vertical-align: middle;
 }
+
+.supplier_list {
+  float: left;
+  margin: 1em;
+}

@@ -9,3 +9,12 @@ from .print_barcodes import PrintBarcodeLabels, BarcodePDF  # NOQA
 from .product import ProductView  # NOQA
 from .productrange import ProductRangeView  # NOQA
 from .productsearch import ProductSearchView  # NOQA
+from .suppliers import (  # NOQA
+    Suppliers,
+    Supplier,
+    CreateSupplier,
+    ToggleSupplierActive,
+    UpdateSupplierContact,
+    CreateSupplierContact,
+    DeleteSupplierContact,
+)
