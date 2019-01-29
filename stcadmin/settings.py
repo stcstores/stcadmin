@@ -75,7 +75,6 @@ INSTALLED_APPS = [
     "formtools",
     "stcadmin",
     "home",
-    "suppliers",
     "labelmaker",
     "reference",
     "user",

@@ -12,7 +12,6 @@ app_name = "stcadmin"
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("user/", include("user.urls", namespace="user")),
-    path("suppliers/", include("suppliers.urls", namespace="suppliers")),
     path("labelmaker/", include("labelmaker.urls", namespace="labelmaker")),
     path("reference/", include("reference.urls", namespace="reference")),
     path("inventory/", include("inventory.urls", namespace="inventory")),
