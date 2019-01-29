@@ -89,3 +89,24 @@ class ProductExportAdmin(admin.ModelAdmin):
     fields = ("name", "timestamp", "export_file")
     list_display = ("__str__", "name", "timestamp", "export_file")
     date_hierarchy = "timestamp"
+
+
+@admin.register(models.Supplier)
+class SupplierAdmin(admin.ModelAdmin):
+    """Model admin for the Supplier model."""
+
+    fields = ("name", "product_option_ID", "factory_ID", "inactive")
+    list_display = ("__str__", "name", "product_option_ID", "factory_ID", "inactive")
+    list_editable = ("name", "product_option_ID", "factory_ID", "inactive")
+    search_fields = ("name",)
+
+
+@admin.register(models.SupplierContact)
+class SupplierContactAdmin(admin.ModelAdmin):
+    """Model admin for the SupplierContact model."""
+
+    fields = ("supplier", "name", "phone", "email", "notes")
+    list_display = ("__str__", "supplier", "name", "phone", "email", "notes")
+    list_editable = ("supplier", "name", "phone", "email", "notes")
+    search_fields = ("name", "phone", "email")
+    list_filter = ("supplier",)
