@@ -1,3 +1,3 @@
 """Inventory validators."""
 
-from .suppliers import SupplierModelValidator  # NOQA
+from .suppliers import SupplierValidationRunner  # NOQA

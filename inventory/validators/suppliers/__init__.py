@@ -1,2 +1,2 @@
 """Validators for suppliers."""
-from .model_validators import SupplierModelValidator  # NOQA
+from .validation_runners import SupplierValidationRunner  # NOQA

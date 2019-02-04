@@ -5,11 +5,24 @@ class BaseValidationCheck:
     """Base class for validation checks."""
 
     name = ""
+    level = None
 
-    def __init__(self, validator, validation_runner):
+    def __init__(self, validator, validation_runner, validation_object):
         """Set the validation runner."""
         self.validator = validator
         self.validation_runner = validation_runner
+        self.validation_object = validation_object
+        self.error_message = ""
+        self.validate(validation_object)
+
+    def __repr__(self):
+        return f"Validation Check: {self.name}"
+
+    def __str__(self):
+        return f"{self.level}: {self.error_message}"
+
+    def __lt__(self, other):
+        return self.level > other.level
 
     def get_test_data(self, test_object):
         """Return dict of validation test variables."""
@@ -17,10 +30,11 @@ class BaseValidationCheck:
 
     def validate(self, validation_object):
         """Validate an object."""
-        test_data = self.get_test_data(validation_object)
+        self.validation_object = validation_object
+        test_data = self.get_test_data(self.validation_object)
         if not self.is_valid(**test_data):
-            self.validator.error_messages.append(self.format_error_message(**test_data))
-            self.validator.invalid_objects.append(validation_object)
+            self.error_message = self.format_error_message(**test_data)
+            self.validation_runner.add_failed_validation(self)
 
     def is_valid(self, object, validation_runner):
         """Return True if the object passes the validation tests, otherwise False."""
@@ -29,3 +43,7 @@ class BaseValidationCheck:
     def format_error_message(self, test_data):
         """Return a string describing the failed validation."""
         raise NotImplementedError()
+
+    def contains_whitespace(self, text):
+        """Return True if text contains whitespace, otherwise return False."""
+        return str(text) != str(text).strip()

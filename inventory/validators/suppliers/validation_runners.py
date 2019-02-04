@@ -1,14 +1,14 @@
 """Supplier model validators."""
 
 from inventory import models
-from validators import ModelValidator
+from validators import ModelValidationRunner
 
 from .factory import FactoryValidator
-from .supplier_model_objects import SupplierModelObjectValidator
-from .supplier_product_options import SupplierProductOptionValidator
+from .model_objects import SupplierModelObjectValidator
+from .product_option import SupplierProductOptionValidator
 
 
-class SupplierModelValidator(ModelValidator):
+class SupplierValidationRunner(ModelValidationRunner):
     """Validator for the Supplier model."""
 
     model = models.Supplier

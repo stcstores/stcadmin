@@ -1,6 +1,6 @@
 """Validate the Cloud Commerce Supplier Product Options."""
 
-from validators import BaseObjectValidator, BaseValidationCheck
+from validators import BaseObjectValidator, BaseValidationCheck, Levels
 
 
 class SupplierProductOptionValidationCheck(BaseValidationCheck):
@@ -28,17 +28,16 @@ class SupplierProductOptionValidator(BaseObjectValidator):
     name = "supplier_product_options"
     validation_check_class = SupplierProductOptionValidationCheck
 
-    def validate_all(self):
-        """Run validation for all Factories."""
-        for product_option in self.validation_runner.product_options:
-            for validator in self.validators:
-                validator.validate(product_option)
+    def get_test_objects(self, validation_runner):
+        """Return a list of objects to validate."""
+        return validation_runner.product_options
 
 
 class SupplierProductOptionInDB(SupplierProductOptionValidationCheck):
     """Check a Supplier Product Option exists the the Supplier database model."""
 
     name = "Supplier Product Option Missing From Database"
+    level = Levels.ERROR
 
     def is_valid(self, *args, **kwargs):
         """Check a Supplier Product Option exists the the Supplier database model."""
@@ -57,6 +56,7 @@ class SupplierProductOptionIDMatches(SupplierProductOptionValidationCheck):
     """Check a Supplier Product Option's ID matches the Supplier database model."""
 
     name = "Supplier Product Option ID does not match database."
+    level = Levels.ERROR
 
     def get_test_data(self, *args, **kwargs):
         """Return dict of validation test variables."""

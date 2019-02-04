@@ -1,6 +1,6 @@
 """Validate Cloud Commerce Factories."""
 
-from validators import BaseObjectValidator, BaseValidationCheck
+from validators import BaseObjectValidator, BaseValidationCheck, Levels
 
 
 class FactoryValidationCheck(BaseValidationCheck):
@@ -23,17 +23,16 @@ class FactoryValidator(BaseObjectValidator):
     name = "factories"
     validation_check_class = FactoryValidationCheck
 
-    def validate_all(self):
-        """Run validation for all Factories."""
-        for factory in self.validation_runner.factories:
-            for validator in self.validators:
-                validator.validate(factory)
+    def get_test_objects(self, validation_runner):
+        """Return a list of objects to validate."""
+        return validation_runner.factories
 
 
 class FactoryInDB(FactoryValidationCheck):
     """Check a factory exists in the supplier database model."""
 
     name = "Factory missing from Database"
+    level = Levels.ERROR
 
     def is_valid(self, *args, **kwargs):
         """Check a factory exists in the supplier database model."""
@@ -52,6 +51,7 @@ class FactoryIDMatches(FactoryValidationCheck):
     """Check that the ID of a factory matches the factory_ID in the database."""
 
     name = "Factory ID does not match database."
+    level = Levels.ERROR
 
     def get_test_data(self, *args, **kwargs):
         """Return dict of validation test variables."""

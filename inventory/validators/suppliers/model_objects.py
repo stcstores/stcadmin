@@ -1,6 +1,6 @@
 """Validate inventory.Supplier model objects."""
 
-from validators import BaseObjectValidator, BaseValidationCheck
+from validators import BaseObjectValidator, BaseValidationCheck, Levels
 
 
 class SupplierObjectValidationCheck(BaseValidationCheck):
@@ -33,17 +33,16 @@ class SupplierModelObjectValidator(BaseObjectValidator):
     name = "supplier model objects"
     validation_check_class = SupplierObjectValidationCheck
 
-    def validate_all(self):
+    def get_test_objects(self, validation_runner):
         """Run validation for all Supplier Model Objects."""
-        for model_object in self.validation_runner.model_objects:
-            for validator in self.validators:
-                validator.validate(model_object)
+        return validation_runner.model_objects
 
 
 class SupplierProductOptionExists(SupplierObjectValidationCheck):
     """Check a Supplier Product Option with the same name as the model object exists."""
 
     name = "Supplier Product Option missing from Cloud Commerce"
+    level = Levels.ERROR
 
     def is_valid(self, *args, **kwargs):
         """Check a Supplier Product Option with the same name as the model object exists."""
@@ -64,6 +63,7 @@ class SupplierProductOptionIDMatches(SupplierObjectValidationCheck):
     """Check the supplier option ID matches the one in Cloud Commerce."""
 
     name = "Supplier Product Option ID does not match"
+    level = Levels.ERROR
 
     def get_test_data(self, *args, **kwargs):
         """Return dict of validation test variables."""
@@ -97,6 +97,7 @@ class FactoryExists(SupplierObjectValidationCheck):
     """Check a Factory with the same name as the model object exists."""
 
     name = "Factory missing from Cloud Commerce"
+    level = Levels.ERROR
 
     def is_valid(self, *args, **kwargs):
         """Check a Factory with the same name as the model object exists."""
@@ -114,6 +115,7 @@ class FactoryIDMatches(SupplierObjectValidationCheck):
     """Check the Factory ID matches the one in Cloud Commerce."""
 
     name = "Factory ID does not match"
+    level = Levels.ERROR
 
     def get_test_data(self, *args, **kwargs):
         """Return dict of validation test variables."""
@@ -139,3 +141,18 @@ class FactoryIDMatches(SupplierObjectValidationCheck):
             f'Factory "{factory.name}"\'s ID "{factory.id}" does not '
             f'match database value "{kwargs["test_object"].factory_ID}".'
         )
+
+
+class NameDoesNotContainWhitespace(SupplierObjectValidationCheck):
+    """Check the supplier name does not contain whitespace."""
+
+    name = "Name contains whitespace"
+    level = Levels.FORMATTING
+
+    def is_valid(self, *args, **kwargs):
+        """Return False if the supplier name contains whitespace, otherwise True."""
+        return not self.contains_whitespace(kwargs["test_object"].name)
+
+    def format_error_message(self, *args, **kwargs):
+        """Return a string describing the failed validation."""
+        return f'Supplier "{kwargs["test_object"]}" name cointains whitespace.'
