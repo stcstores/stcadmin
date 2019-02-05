@@ -25,7 +25,7 @@ class SupplierProductOptionValidationCheck(BaseValidationCheck):
 class SupplierProductOptionValidator(BaseObjectValidator):
     """Validate the Cloud Commerce Supplier Product Options."""
 
-    name = "supplier_product_options"
+    name = "Supplier Product Option"
     validation_check_class = SupplierProductOptionValidationCheck
 
     def get_test_objects(self, validation_runner):

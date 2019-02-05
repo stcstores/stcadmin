@@ -50,6 +50,21 @@ class ModelValidationRunner(ValidationRunner):
         self.model_objects = self.model.objects.all()
         self.load_cloud_commerce_data()
 
+    @property
+    def app_name(self):
+        """Return the name of the app the runner's model belongs to."""
+        return str(self.model).split("'")[1].split(".")[0]
+
+    @property
+    def model_name(self):
+        """Return the name of the runner's model as a string."""
+        return str(self.model).split("'")[1].split(".")[-1]
+
+    @classmethod
+    def get_instances(cls):
+        """Return an instance of all ModelValidationRunner subclasses."""
+        return [_() for _ in cls.__subclasses__()]
+
     def load_cloud_commerce_data(self):
         """Load relevent objects from Cloud Commerce."""
         raise NotImplementedError

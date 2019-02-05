@@ -20,7 +20,7 @@ class FactoryValidationCheck(BaseValidationCheck):
 class FactoryValidator(BaseObjectValidator):
     """Validate Cloud Commerce Factories."""
 
-    name = "factories"
+    name = "Factory"
     validation_check_class = FactoryValidationCheck
 
     def get_test_objects(self, validation_runner):
