@@ -30,7 +30,7 @@ class SupplierObjectValidationCheck(BaseValidationCheck):
 class SupplierModelObjectValidator(BaseObjectValidator):
     """Validate Cloud Commerce Factories."""
 
-    name = "supplier model objects"
+    name = "Supplier Model"
     validation_check_class = SupplierObjectValidationCheck
 
     def get_test_objects(self, validation_runner):

@@ -7,10 +7,10 @@ class BaseValidationCheck:
     name = ""
     level = None
 
-    def __init__(self, validator, validation_runner, validation_object):
+    def __init__(self, object_validator, validation_runner, validation_object):
         """Set the validation runner."""
-        self.validator = validator
         self.validation_runner = validation_runner
+        self.object_validator = object_validator
         self.validation_object = validation_object
         self.error_message = ""
         self.validate(validation_object)
