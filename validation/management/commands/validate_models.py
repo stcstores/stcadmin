@@ -4,7 +4,7 @@ import logging
 
 from django.core.management.base import BaseCommand
 
-from validators.run_validation import RunModelValidation
+from validation.run_validation import RunModelValidation
 
 logger = logging.getLogger("management_commands")
 

@@ -1,6 +1,6 @@
 """Validate Cloud Commerce Factories."""
 
-from validators import BaseObjectValidator, BaseValidationCheck, Levels
+from validation import BaseObjectValidator, BaseValidationCheck, Levels
 
 
 class FactoryValidationCheck(BaseValidationCheck):

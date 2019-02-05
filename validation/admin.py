@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 
-from validators import models
+from validation import models
 
 
 @admin.register(models.ModelValidationLog)

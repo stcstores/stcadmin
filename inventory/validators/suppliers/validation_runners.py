@@ -1,7 +1,7 @@
 """Supplier model validators."""
 
 from inventory import models
-from validators import ModelValidationRunner
+from validation import ModelValidationRunner
 
 from .factory import FactoryValidator
 from .model_objects import SupplierModelObjectValidator
