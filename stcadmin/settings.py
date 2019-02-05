@@ -72,7 +72,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "validators",
+    "validation",
     "formtools",
     "stcadmin",
     "home",

@@ -1,6 +1,6 @@
 """Validate inventory.Supplier model objects."""
 
-from validators import BaseObjectValidator, BaseValidationCheck, Levels
+from validation import BaseObjectValidator, BaseValidationCheck, Levels
 
 
 class SupplierObjectValidationCheck(BaseValidationCheck):

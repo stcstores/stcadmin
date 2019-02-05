@@ -1,6 +1,6 @@
 """Validate the Cloud Commerce Supplier Product Options."""
 
-from validators import BaseObjectValidator, BaseValidationCheck, Levels
+from validation import BaseObjectValidator, BaseValidationCheck, Levels
 
 
 class SupplierProductOptionValidationCheck(BaseValidationCheck):
