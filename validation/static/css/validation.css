@@ -1,0 +1,20 @@
+.critical {
+  background: red;
+  color: white;
+}
+
+.formatting {
+  color: green;
+}
+
+.warning {
+  color: #896000;
+}
+
+.validation_header {
+  text-align: left;
+}
+
+.validation_stats {
+  margin: 0;
+}

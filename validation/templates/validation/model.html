@@ -1,0 +1,14 @@
+{% extends 'validation/base.html' %}
+
+{% load validation_extras %}
+
+{% block content %}
+  <h1>
+    <a href="{% url 'validation:app' app %}">{{ app }}</a>.{{ model }}
+  </h1>
+  <table>
+    {% for group, data in errors.items %}
+      {% validation_table_group group data.stats data.errors %}
+    {% endfor %}
+  </table>
+{% endblock %}

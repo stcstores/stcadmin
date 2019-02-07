@@ -1,0 +1,13 @@
+{% extends 'validation/base.html' %}
+
+{% load validation_extras %}
+
+{% block content %}
+  <h1>Validation - {{ app }}</h1>
+  <table>
+  {% for group, data in errors.items %}
+    {% app_group_name app group as group_name %}
+    {% validation_table_group group_name data.stats data.errors %}
+  {% endfor %}
+  </table>
+{% endblock %}

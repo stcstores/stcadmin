@@ -1,0 +1,10 @@
+{% load validation_extras %}
+
+<tr>
+  <th>{{ group_name }}</th>
+  <th>{% validation_stats stats %}</th>
+</tr>
+
+{% for error in errors %}
+  {% validation_error_row error %}
+{% endfor %}
