@@ -1,13 +1,12 @@
-{% extends 'validation/base.html' %}
+{% extends 'validation/base_validation_results.html' %}
 
 {% load validation_extras %}
 
-{% block content %}
-  <h1>Validation - {{ app }}</h1>
-  <table>
+{% block title %}Validation - {{ app|title }}{% endblock %}
+
+{% block table_contents %}
   {% for group, data in errors.items %}
-    {% app_group_name app group as group_name %}
-    {% validation_table_group group_name data.stats data.errors %}
+    {% url 'validation:model' app group as group_name_url %}
+    {% validation_table_group group data.stats data.errors group_name_url %}
   {% endfor %}
-  </table>
 {% endblock %}

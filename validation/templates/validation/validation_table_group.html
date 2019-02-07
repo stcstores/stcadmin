@@ -1,10 +1,37 @@
 {% load validation_extras %}
 
-<tr>
-  <th>{{ group_name }}</th>
+{% with "group-"|add:group_name|slugify as group_id %}
+<tr class="group_header">
+  <th>
+    {% if group_name_url %}
+      <a href="{{ group_name_url }}">{{ group_name }}</a>
+    {% else %}
+      {{ group_name }}
+    {% endif %}
+  </th>
   <th>{% validation_stats stats %}</th>
+  <th>
+    <button id="hide-{{ group_id }}" class="hide_button" hidden>Hide</button>
+    <button id="show-{{ group_id }}" class="show_button">Show</button>
+  </th>
 </tr>
-
 {% for error in errors %}
-  {% validation_error_row error %}
+  <tr class="{{ error.level.html_class }} {{ group_id }}" hidden>
+    {% validation_error_row error %}
+  </tr>
 {% endfor %}
+
+<script>
+  $('#hide-{{ group_id }}').click(function() {
+    $('.{{ group_id }}').hide();
+    $(this).hide();
+    $('#show-{{ group_id }}').show();
+  });
+  $('#show-{{ group_id }}').click(function() {
+    $('.{{ group_id }}').show();
+    $(this).hide();
+    $('#hide-{{ group_id }}').show();
+  });
+</script>
+
+{% endwith %}

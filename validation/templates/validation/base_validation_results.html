@@ -1,0 +1,27 @@
+{% extends 'validation/base.html' %}
+
+{% block content %}
+  <h1>{% block title %}{% endblock %}</h1>
+  <br>
+  <button id="hide_all" hidden>Hide All</button>
+  <button id="show_all">Show All</button>
+  <table class="valdiation_error_table">
+    {% block table_contents %}{% endblock %}
+  </table>
+{% endblock %}
+
+{% block script %}
+  {{ block.super }}
+  <script>
+    $('#hide_all').click(function() {
+      $('.hide_button').click();
+      $('#hide_all').hide();
+      $('#show_all').show();
+    });
+    $('#show_all').click(function() {
+      $('.show_button').click();
+      $('#show_all').hide();
+      $('#hide_all').show();
+    });
+  </script>
+{% endblock %}

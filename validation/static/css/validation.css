@@ -16,5 +16,15 @@
 }
 
 .validation_stats {
+  display: inline-block;
   margin: 0;
+  padding: 0;
+}
+
+.error_level {
+  text-align: right;
+}
+
+.group_header {
+  background: #ddd;
 }
