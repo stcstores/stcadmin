@@ -1,0 +1,27 @@
+<div class="filter_selectors">
+  <div>
+    <label>Level Filter:</label>
+    {% for level in levels reversed %}
+    <button class="error_filter" id="filter-{{ level.html_class }}">
+      {{ level }}
+    </button>
+    {% endfor %}
+  </div>
+  <div>
+    <label>Collapse:</label>
+    <button id="hide_all" hidden>All</button>
+    <button id="show_all">None</button>
+  </div>
+</div>
+
+<script>
+  error_levels = [{% for level in levels %}"{{ level.html_class }}",{% endfor %}];
+  error_level = error_levels[0]
+
+  {% for level in levels %}
+  $('#filter-{{ level.html_class }}').click(function () {
+    error_level = $(this).attr('id').replace('filter-', '');
+    filter_level();
+  });
+  {% endfor %}
+</script>

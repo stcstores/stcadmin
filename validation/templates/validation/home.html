@@ -1,0 +1,12 @@
+{% extends 'validation/base_validation_results.html' %}
+
+{% load validation_extras %}
+
+{% block title %}Validation{% endblock %}
+
+{% block table_contents %}
+  {% for app, app_data in errors.items %}
+      {% url 'validation:app' app as group_name_url %}
+      {% validation_table_group app|title app_data.stats app_data.errors group_name_url %}
+  {% endfor %}
+{% endblock %}

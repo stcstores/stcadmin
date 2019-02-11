@@ -1,0 +1,15 @@
+{% extends "home/base.html" %}
+{% load staticfiles %}
+
+{% block additional_head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/validation.css' %}">
+{% endblock %}
+
+{% block page_title %}Validation{% endblock %}
+
+{% block section_navigation %}
+{% include "validation/section_navigation.html" %}
+{% endblock %}
+
+{% block content %}{% endblock %}
