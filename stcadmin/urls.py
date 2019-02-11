@@ -17,6 +17,7 @@ urlpatterns = [
     path("inventory/", include("inventory.urls", namespace="inventory")),
     path("stock_check/", include("stock_check.urls", namespace="stock_check")),
     path("product_editor/", include("product_editor.urls", namespace="product_editor")),
+    path("validation/", include("validation.urls", namespace="validation")),
     path(
         "price_calculator/",
         include("price_calculator.urls", namespace="price_calculator"),

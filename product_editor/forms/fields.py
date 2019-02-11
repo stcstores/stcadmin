@@ -5,8 +5,9 @@ import re
 
 from ccapi import CCAPI
 from django import forms
-from inventory import models
 from list_input import ListInput
+
+from inventory import models
 from product_editor.editor_manager import ProductEditorBase
 
 from . import fieldtypes, widgets
@@ -194,9 +195,9 @@ class Supplier(fieldtypes.SingleSelectize):
     @staticmethod
     def get_choices():
         """Return field choices."""
-        factories = CCAPI.get_factories()
-        suppliers = [(f.name, f.name) for f in factories]
-        suppliers.sort(key=lambda x: x[1])
+        suppliers = [
+            (s.name, s.name) for s in models.Supplier.objects.filter(inactive=False)
+        ]
         return [("", "")] + suppliers
 
 
