@@ -2,7 +2,7 @@
   <tr>
     {% for level, count in stats.levels.items %}
       {% if count > 0 %}
-        <td class="{{ level.html_class }}">{{ level }} : {{ count }}</td>
+        <td class="level-{{ level.html_class }}">{{ level }} : {{ count }}</td>
       {% endif %}
     {% endfor %}
     <td>Total : {{ stats.total }}</td>

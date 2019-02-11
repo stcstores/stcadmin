@@ -2,6 +2,8 @@
 from django import template
 from django.template import loader
 
+from validation.levels import Levels
+
 register = template.Library()
 
 
@@ -31,3 +33,10 @@ def validation_stats(stats):
     """Render the stats for a group of validation errors."""
     t = loader.get_template("validation/validation_stats.html")
     return t.render({"stats": stats})
+
+
+@register.simple_tag(takes_context=False)
+def error_level_filter():
+    """Render error level filter."""
+    t = loader.get_template("validation/level_filter.html")
+    return t.render({"levels": Levels.all()})

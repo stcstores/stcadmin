@@ -52,7 +52,7 @@ class Levels:
     @classmethod
     def all(cls):
         """Return all levels."""
-        return cls.levels
+        return sorted(cls.levels)
 
     @classmethod
     def filter(cls, objects, level):

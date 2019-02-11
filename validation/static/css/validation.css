@@ -1,14 +1,18 @@
-.critical {
+.level-critical {
   background: red;
   color: white;
 }
 
-.formatting {
+.level-formatting {
   color: green;
 }
 
-.warning {
+.level-warning {
   color: #896000;
+}
+
+.level-error {
+  color: red;
 }
 
 .validation_header {
@@ -27,4 +31,45 @@
 
 .group_header {
   background: #ddd;
+}
+
+.filter_selectors {
+  background: #ddd;
+  border-radius: 2em;
+  display: inline-block;
+  margin: 1em;
+  padding: 1em;
+}
+
+.filter_selectors label {
+  font-size: 1.25em;
+}
+
+.filter_selectors div {
+  padding: 0.5em;
+}
+
+.filter_hidden {
+  display: none;
+}
+
+.collapsed {
+  display: none;
+}
+
+.error_filter {
+  color: white;
+  padding: 10px 15px;
+}
+
+.error_filter.current {
+  background: green;
+}
+
+.error_filter.show {
+	background: #4479BA;
+}
+
+.error_filter.hide {
+	background: #555;
 }

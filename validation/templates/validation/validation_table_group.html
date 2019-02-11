@@ -11,26 +11,28 @@
   </th>
   <th>{% validation_stats stats %}</th>
   <th>
-    <button id="hide-{{ group_id }}" class="hide_button" hidden>Hide</button>
-    <button id="show-{{ group_id }}" class="show_button">Show</button>
+    <button id="hide-{{ group_id }}" class="hide_button" hidden>Collapse</button>
+    <button id="show-{{ group_id }}" class="show_button">Expand</button>
   </th>
 </tr>
 {% for error in errors %}
-  <tr class="{{ error.level.html_class }} {{ group_id }}" hidden>
+  <tr class="error_row level-{{ error.level.html_class }} {{ group_id }} collapsed">
     {% validation_error_row error %}
   </tr>
 {% endfor %}
 
 <script>
   $('#hide-{{ group_id }}').click(function() {
-    $('.{{ group_id }}').hide();
+    $('.{{ group_id }}').addClass('collapsed');
     $(this).hide();
-    $('#show-{{ group_id }}').show();
+    $('#show-{{ group_id }}').show()
+    filter_level();
   });
   $('#show-{{ group_id }}').click(function() {
-    $('.{{ group_id }}').show();
+    $('.{{ group_id }}').removeClass('collapsed');
     $(this).hide();
     $('#hide-{{ group_id }}').show();
+    filter_level();
   });
 </script>
 
