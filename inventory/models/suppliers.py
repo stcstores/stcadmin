@@ -46,6 +46,16 @@ class Supplier(models.Model):
             self.factory_ID = self.create_factory(self.name)
         super().save(*args, **kwargs)
 
+    @staticmethod
+    def get_factories():
+        """Return all Cloud Commerce factories."""
+        return CCAPI.get_factories()
+
+    @staticmethod
+    def get_supplier_product_options():
+        """Return all Cloud Commerce Supplier Product Options."""
+        return CCAPI.get_product_options()["Supplier"]
+
     @classmethod
     def create_product_option(cls, name):
         """
@@ -62,7 +72,7 @@ class Supplier(models.Model):
 
         If it does not exist it will be created.
         """
-        factories = CCAPI.get_factories()
+        factories = cls.get_factories()
         for factory in factories:
             if factory.name == name:
                 return factory.id
