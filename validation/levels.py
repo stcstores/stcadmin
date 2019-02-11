@@ -33,6 +33,10 @@ class _Level:
     def __hash__(self):
         return hash((self.name, self.level))
 
+    @property
+    def html_class(self):
+        return self.name.lower()
+
 
 class Levels:
     """Manage validation error levels."""
@@ -44,6 +48,11 @@ class Levels:
     levels = [CRITICAL, ERROR, WARNING, FORMATTING]
     names = {_.name.lower(): _ for _ in levels}
     numeric = {_.level: _ for _ in levels}
+
+    @classmethod
+    def all(cls):
+        """Return all levels."""
+        return sorted(cls.levels)
 
     @classmethod
     def filter(cls, objects, level):

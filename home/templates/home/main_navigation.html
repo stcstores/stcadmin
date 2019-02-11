@@ -11,6 +11,7 @@
         {% for group in request.user.groups.all %}{% if group.name == 'manifests' %}<li><a href="{% url 'spring_manifest:manifest_list' %}">Manifests</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'stock_check' %}<li><a href="{% url 'stock_check:warehouses' %}">Stock Check</a></li>{% endif %}{% endfor %}
         {% for group in request.user.groups.all %}{% if group.name == 'profit_loss' %}<li><a href="{% url 'profit_loss:orders' %}">Profit Loss</a></li>{% endif %}{% endfor %}
+        {% for group in request.user.groups.all %}{% if group.name == 'validation' %}<li><a href="{% url 'validation:home' %}">Validation</a></li>{% endif %}{% endfor %}
         <li><a href="{% help_url %}">Help</a></li>
         {% for group in request.user.groups.all %}{% if group.name == 'admin' %}<li><a href="/admin/">Admin</a></li>{% endif %}{% endfor %}
     </ul>
