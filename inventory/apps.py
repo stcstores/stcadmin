@@ -12,4 +12,4 @@ class InventoryConfig(AppConfig):
 
     def ready(self):
         """Load validation classes."""
-        from .validators import SupplierValidationRunner  # NOQA
+        from . import validators  # NOQA

@@ -37,6 +37,11 @@ class Warehouse(models.Model):
     def __str__(self):
         return self.name
 
+    @staticmethod
+    def get_cc_warehouses():
+        """Return the Cloud Commerce Warehouses."""
+        return CCAPI.get_warehouses()
+
     @property
     def id(self):
         """
