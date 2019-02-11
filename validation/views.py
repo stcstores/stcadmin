@@ -62,7 +62,9 @@ class Home(BaseValidationList):
 
     def errors(self):
         """Return applicable validation errors."""
-        return models.ModelValidationLog.objects.all()
+        return models.ModelValidationLog.objects.order_by(
+            "-error_level", "validation_check", "error_message"
+        ).all()
 
 
 class App(BaseValidationList):
