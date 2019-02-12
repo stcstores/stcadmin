@@ -2,6 +2,7 @@ class PriceCalculator {
     constructor(data) {
         this.exchange_rate = 1;
         this.currency_code = 'GBP';
+        this.currency_symbol = '£';
         this.sale_price = this.to_pence(data.sale_price);
         this.postage_price = this.to_pence(data.postage_price);
         this.purchase_price = this.to_pence(data.purchase_price);
@@ -145,9 +146,29 @@ function get_postage_price(calculator, country, package_type, weight, price){
             calculator.set_postage_price(parseInt(data['price']) / 100);
             calculator.set_exchange_rate(parseFloat(data['exchange_rate']));
             calculator.currency_code = data['currency_code'];
+            calculator.currency_symbol = data['currency_symbol'];
             calculator.min_channel_fee = parseInt(data['min_channel_fee']);
             calculator.recalculate();
             calculator.change();
         },
     ).error(function() {alert('No valid shipping service found.');});
+}
+
+function format_percentage(element, format) {
+  if (format === 'high') {
+    element.removeClass('low_percentage').removeClass('warning_percentage').addClass('good_percentage');
+  } else if (format === 'warning') {
+    element.removeClass('low_percentage').removeClass('good_percentage').addClass('warning_percentage');
+  } else if (format === 'low') {
+    element.removeClass('warning_percentage').removeClass('good_percentage').addClass('low_percentage');
+  }
+}
+
+function fixed_decimal(element) {
+  var value = parseFloat(element.val());
+  if (isNaN(value)) {
+    element.val(0);
+  } else {
+    element.val(parseFloat(element.val()).toFixed(2));
+  }
 }

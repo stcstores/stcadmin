@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
+
 from inventory.views.views import InventoryUserMixin
 from price_calculator import models
 
@@ -22,7 +23,7 @@ class GetShippingPriceView(InventoryUserMixin, View):
         try:
             shipping_price_details = self.get_shipping_price_details()
             json_data = json.dumps(shipping_price_details)
-        except Exception as e:
+        except Exception:
             return HttpResponse(status=500)
         return HttpResponse(json_data)
 
@@ -47,7 +48,8 @@ class GetShippingPriceView(InventoryUserMixin, View):
             "price_name": postage_price.name,
             "vat_rates": vat_rates,
             "exchange_rate": exchange_rate,
-            "currency_code": str(country.currency_code),
+            "currency_code": country.currency_code,
+            "currency_symbol": country.currency_symbol,
             "min_channel_fee": min_channel_fee,
         }
         return data
@@ -67,6 +69,7 @@ class RangePriceCalculatorView(InventoryUserMixin, TemplateView):
         ]
         context_data["product_range"] = product_range
         context_data["countries"] = models.DestinationCountry.objects.all()
+        context_data["channel_fees"] = models.ChannelFee.objects.all()
         return context_data
 
 
@@ -80,4 +83,5 @@ class PriceCalculator(InventoryUserMixin, TemplateView):
         context_data = super().get_context_data(*args, **kwargs)
         context_data["countries"] = models.DestinationCountry.objects.all()
         context_data["package_types"] = models.PackageType.objects.all()
+        context_data["channel_fees"] = models.ChannelFee.objects.all()
         return context_data
