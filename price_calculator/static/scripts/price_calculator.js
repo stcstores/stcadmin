@@ -128,30 +128,32 @@ function format_price(price) {
     return span;
 }
 
-function get_postage_price(calculator, country, package_type, weight, price){
-    var data = {
-        'country': country,
-        'package_type': package_type,
-        'weight': weight,
-        'price': price,
-    }
-    console.log(data);
-    $.post(
-        get_postage_price_url,
-        data,
-        function(response) {
-            data = $.parseJSON(response);
-            console.log(data);
-            update_vat_rates(data['vat_rates'], calculator);
-            calculator.set_postage_price(parseInt(data['price']) / 100);
-            calculator.set_exchange_rate(parseFloat(data['exchange_rate']));
-            calculator.currency_code = data['currency_code'];
-            calculator.currency_symbol = data['currency_symbol'];
-            calculator.min_channel_fee = parseInt(data['min_channel_fee']);
-            calculator.recalculate();
-            calculator.change();
-        },
-    ).error(function() {alert('No valid shipping service found.');});
+function get_postage_price(
+    calculator, country, package_type, international_shipping, weight, price) {
+  var data = {
+    'country': country,
+    'package_type': package_type,
+    'international_shipping': international_shipping,
+    'weight': weight,
+    'price': price,
+  }
+  console.log(data);
+  $.post(
+    get_postage_price_url,
+    data,
+    function(response) {
+      data = $.parseJSON(response);
+      console.log(data);
+      update_vat_rates(data['vat_rates'], calculator);
+      calculator.set_postage_price(parseInt(data['price']) / 100);
+      calculator.set_exchange_rate(parseFloat(data['exchange_rate']));
+      calculator.currency_code = data['currency_code'];
+      calculator.currency_symbol = data['currency_symbol'];
+      calculator.min_channel_fee = parseInt(data['min_channel_fee']);
+      calculator.recalculate();
+      calculator.change();
+    },
+  ).error(function() {alert('No valid shipping service found.');});
 }
 
 function format_percentage(element, format) {

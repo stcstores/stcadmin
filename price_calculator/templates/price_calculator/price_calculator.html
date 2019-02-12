@@ -180,7 +180,7 @@
             var weight = $('#weight').val();
             var package_type = $('#shipping_method').val();
             var price = calculator.sale_price;
-            get_postage_price(calculator, country, package_type, weight, price);
+            get_postage_price(calculator, country, package_type, null, weight, price);
         };
 
         $('#country').change(function() {update_postage_price(calculator)});

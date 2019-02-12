@@ -101,21 +101,11 @@
 
     $(document).ready(function() {
         calcs = {};
-        var options = {
-            {% for product in product_range.products %}
-                '{{ product.id }}': {},
-            {% endfor %}
-        }
         {% for product in product_range.products %}
-        var ex_vat_price = {{ product.base_price }};
+        var ex_vat_price = {{ product.price }};
         var vat_rate = 20;
-        options['{{ product.id }}'] = {
-            {% for option in product.options %}
-                '{{ option.option_name }}': '{{ option.value }}',
-            {% endfor %}
-        }
-        var purchase_price = options['{{ product.id }}']['Purchase Price'];
-        var package_type = options['{{ product.id }}']['Package Type'];
+        var purchase_price = {{ product.purchase_price }};
+        var package_type = "{{ product.package_type }}";
         var postage_price = 10;
         var channel_fee = $('#channel_fee_input').val();
         var data = {
@@ -185,11 +175,14 @@
         $('#country').change(function() {
             {% for product in product_range.products %}
             var country = $(this).val();
-            var package_type = options['{{ product.id }}']['Package Type'];
             var price = calcs['{{ product.id }}'].sale_price;
             get_postage_price(
-                calcs['{{ product.id}}'], country, package_type,
-                {{ product.weight }}, price);
+                calcs['{{ product.id}}'],
+                country,
+                "{{ product.package_type }}",
+                "{{ product.international_shipping }}",
+                {{ product.weight }},
+                price);
             {% endfor %}
         });
         {% for product in product_range.products %}
