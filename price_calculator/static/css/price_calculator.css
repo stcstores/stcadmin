@@ -3,13 +3,13 @@
 }
 
 .listing_price input, .listing_price span {
+  color: black;
   font-size: 1.25em;
   font-weight: bold;
-  color: black;
 }
 
-#profit, #profit_percentage {
-    font-size: 1.2em;
+#profit, #profit_percentage, .profit_percentage, .profit {
+    font-size: 1.5em;
     font-weight: bold;
 }
 
@@ -18,33 +18,122 @@
 }
 
 .warning_percentage {
-  color: red;
+  color: #a37400;
 }
 
 .low_percentage {
-  color: orange;
+  color: red;
 }
 
 .loss {
   color: red;
 }
 
-#weight {
-  /* text-align: right; */
+.price_calculator {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  margin: 2em;
 }
 
 .price_calculator_input {
+  align-items:flex-start;
   display: flex;
+  flex-direction: column;
   flex-shrink: 0;
-  flex-direction: row;
   flex-wrap: wrap;
-  align-items: center;
 }
 
 .price_calculator_input .InputAddOn {
+  margin: 0;
   padding: 0.5em;
 }
 
-td .InputAddOn {
+.price_calculator_output {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.price_calculator_output div {
+  background: #eeeeee;
+  border: 1px #999 solid;
+  border-radius: 1em;
+  margin: 0.25em;
+  padding: 1em;
+}
+
+.price_calculator_output .value {
+  font-weight: bold;
+  margin: 0.25em;
+}
+
+.range {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.product {
+  align-items: flex-start;
+  background: #fafafa;
+  border: 1px #888 solid;
+  border-radius: 1em;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  margin: 0.5em;
+  padding: 1em;
+}
+
+.product_row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.product_row.input {
+  align-items: center;
+}
+
+.product .info div {
+  background: #eee;
+  border: 1px #999 solid;
+  border-radius: 0.25em;
+  margin: 0.1em;
+  padding: 0.25em;
+}
+
+.product .value {
+  font-weight: bold;
+  margin: 0.25em;
+}
+
+.sku {
+  font-weight: bold;
+}
+
+.title {
+  font-size: 1.5em;
+}
+
+.product .input div {
+  margin: 1em;
+}
+
+.product .critical {
+  background: #eee;
+  border: 1px #999 solid;
+  border-radius: 1em;
+  margin: 0.25em;
+  padding: 0.5em;
+}
+
+.product .InputAddOn {
   margin-bottom: 0;
+  padding: 0.15em;
 }

@@ -1,5 +1,7 @@
 {% extends "inventory/base.html" %}
 {% load staticfiles %}
+
+{% load stcadmin_extras %}
 {% load inventory_extras %}
 {% load reference_extras %}
 
@@ -13,89 +15,114 @@
 {% block page_title %}Price Calculator{% endblock %}
 
 {% block content %}{{ block.super }}
-    <h1 class="page_title">Price Calculator</h1>
-    {% help_button 'inventory_help' 'inventory-price_calculator' %}
+<h1 class="page_title">Price Calculator</h1>
+{% help_button 'inventory_help' 'inventory-price_calculator' %}
 
-    <div class="price_calculator_input">
-      <div class="InputAddOn">
-        <label for="country" class="InputAddOn-item">Country</label>
-        <select name="country" id="country">
-            {% for country in countries %}
-                <option value="{{ country }}">{{ country }}</option>
-            {% endfor %}
-        </select>
-      </div>
+<div class="price_calculator">
 
-      <div class="InputAddOn">
-        <span class="InputAddOn-item">Shipping Method</span>
-        <select name="shipping_method" id="shipping_method">
-            {% for package_type in package_types %}
-                <option value="{{ package_type }}">{{ package_type }}</option>
-            {% endfor %}
-        </select>
-      </div>
+  <div class="price_calculator_input">
 
-      <div class="InputAddOn">
-        <span class="InputAddOn-item">Weight</span>
-        <input class="InputAddOn-field" id="weight" value="50" size="1" />
-        <span class="InputAddOn-item">g</span>
-      </div>
-
-      <div class="InputAddOn">
-        <label for="purchase_price" class="InputAddOn-item">Purchase Price</label>
-        <span class="InputAddOn-item">&pound;</span>
-        <input class="currency_input InputAddOn-field" id="purchase_price" value="5.00" size="2" />
-      </div>
-
-      <div class="InputAddOn">
-        <label for="vat_rate" class="InputAddOn-item">VAT Rate</label>
-          <select name="vat_rate" id="vat_rate"></select>
-      </div>
-
-      <div class="InputAddOn">
-        <label for="channel_fee" class="InputAddOn-item">Channel Fee</label>
-        <select name="channel_fee" id="channel_fee_input" size="{{ channel_fees|length }}">
-          {% for fee in channel_fees %}
-          <option value="{{ fee.fee_percentage }}"{% if forloop.first %} selected{% endif %}>{{ fee.name }}: {{ fee.fee_percentage }}%</option>
-          {% endfor %}
-        </select>
-      </div>
+    <div class="InputAddOn">
+      <label for="country" class="InputAddOn-item">Country</label>
+      <select name="country" id="country">
+        {% for country in countries %}
+        <option value="{{ country }}">{{ country }}</option>
+        {% endfor %}
+      </select>
     </div>
 
-    <div class="price_calculator_input">
-      <div class="InputAddOn">
-        <label for="sale_price" class="InputAddOn-item">Price (GBP)</label>
-        <span class="InputAddOn-item">&pound;</span>
-        <input class="currency_input InputAddOn-field" id="sale_price" value="15.50" size="2" />
-      </div>
-
-      <div class="InputAddOn listing_price">
-        <label for="foreign_sale_price" id="currency_code" class="InputAddOn-item"></label>
-        <span id="currency_symbol" class="InputAddOn-item"></span>
-        <input id="foriegn_sale_price" class="currency_input InputAddOn-field" size="2" />
-      </div>
+    <div class="InputAddOn">
+      <span class="InputAddOn-item">Shipping Method</span>
+      <select name="shipping_method" id="shipping_method">
+        {% for package_type in package_types %}
+        <option value="{{ package_type }}">{{ package_type }}</option>
+        {% endfor %}
+      </select>
     </div>
 
-    <table class="price_calculator">
-        <tr>
-            <th>Ex VAT Price</th>
-            <th>VAT</th>
-            <th>Postage</th>
-            <th>Channel Fee</th>
-            <th>Profit</th>
-            <th>Profit Percentage</th>
-        </tr>
-        <tr>
-            <td id="ex_vat_price"></td>
-            <td id="vat"></td>
-            <td id="postage"></td>
-            <td id="channel_fee"></td>
-            <td id="profit"></td>
-            <td id="profit_percentage"></td>
-        </tr>
-    </table>
+    <div class="InputAddOn">
+      <span class="InputAddOn-item">Weight</span>
+      <input class="InputAddOn-field" id="weight" value="50" size="1" />
+      <span class="InputAddOn-item">g</span>
+    </div>
 
+    <div class="InputAddOn">
+      <label for="purchase_price" class="InputAddOn-item">Purchase Price</label>
+      <span class="InputAddOn-item">&pound;</span>
+      <input class="currency_input InputAddOn-field" id="purchase_price" value="5.00" size="2" />
+    </div>
 
+    <div class="InputAddOn">
+      <label for="vat_rate" class="InputAddOn-item">VAT Rate</label>
+        <select name="vat_rate" id="vat_rate"></select>
+    </div>
+
+    <div class="InputAddOn">
+      <label for="channel_fee" class="InputAddOn-item">Channel Fee</label>
+      <select name="channel_fee" id="channel_fee_input" size="{{ channel_fees|length }}">
+        {% for fee in channel_fees %}
+        <option value="{{ fee.fee_percentage }}"{% if forloop.first %} selected{% endif %}>{{ fee.name }}: {{ fee.fee_percentage }}%</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="InputAddOn">
+      <label for="sale_price" class="InputAddOn-item">Price (GBP)</label>
+      <span class="InputAddOn-item">&pound;</span>
+      <input class="currency_input InputAddOn-field" id="sale_price" value="15.50" size="2" />
+    </div>
+
+    <div class="InputAddOn">
+      <label for="foreign_sale_price" id="currency_code" class="InputAddOn-item"></label>
+      <span id="currency_symbol" class="InputAddOn-item"></span>
+      <input id="foreign_sale_price" class="currency_input InputAddOn-field" size="2" />
+    </div>
+  </div>
+
+  <div class="price_calculator_output critical">
+
+    <div class="profit tooltip" tooltiptitle="Profit" tooltiptext="Amout of profit per sale.">
+      <span class="name">Profit</span>
+      <span class="value" id="profit"></span>
+    </div>
+
+    <div class="profit_percentage tooltip" tooltiptitle="Profit Percentage" tooltiptext="Percentage of sale price returned in profit.">
+      <span class="name">Profit Percentage</span>
+      <span class="value" id="profit_percentage"></span>
+    </div>
+
+  </div>
+
+  <div class="price_calculator_output info">
+
+    <div class="ex_vat_price tooltip" tooltiptitle="Ex Vat Price" tooltiptext="The sale price before VAT.">
+      <span class="name">Ex VAT Price</span>
+      <span class="value" id="ex_vat_price"></span>
+    </div>
+
+    <div class="vat tooltip" tooltiptitle="VAT" tooltiptext="Amount paid for VAT.">
+      <span class="name">VAT</span>
+      <span class="value" id="vat"></span>
+    </div>
+
+    <div class="postage tooltip" tooltiptitle="Postage" tooltiptext="Amount paid for postage.">
+      <span class="name">Postage</span>
+      <span class="value" id="postage"></span>
+    </div>
+
+    <div class="channel_fee tooltip" tooltiptitle="Channel Fee" tooltiptext="Amount paid to the selling channel.">
+      <span class="name">Channel Fee</span>
+      <span class="value" id="channel_fee"></span>
+    </div>
+
+    <div class="return tooltip" tooltiptitle="Return" tooltiptext="Percentage of purchase price returned in profit.">
+      <span class="name">Return</span>
+      <span class="value" id="return"></span>
+    </div>
+
+  </div>
+
+</div>
 {% endblock %}
 
 {% block script %}
@@ -137,26 +164,28 @@
 
             // Format Percentage
             var profit_percentage = parseInt(calculator.get_profit_percentage());
+            var return_percentage = parseInt(calculator.get_return_percentage());
             $('#profit_percentage').html(profit_percentage + '%');
-            if (profit_percentage > 20) {
-                format_percentage($('#profit_percentage'), 'high');
-            } else if (profit_percentage < 10) {
-                format_percentage($('#profit_percentage'), 'warning');
+            $('#return').html(return_percentage + '%');
+            format_percentage($('#profit_percentage'), profit_percentage, 20, 10);
+            if (return_percentage <= 0) {
+              $('#return').addClass('loss');
             } else {
-                format_percentage($('#profit_percentage'), 'low');
+              $('#return').removeClass('loss');
             }
 
             // Format Price
             if (calculator.currency_code == 'GBP') {
-                $('#currency_code').parent().hide();
-                $('#foriegn_sale_price').parent().hide();
+                $('#currency_code').html("Foreign Price");
+                $('#foreign_sale_price').val("0.00");
                 $('#sale_price').parent().addClass('listing_price');
+                $('#foreign_sale_price').parent().removeClass('listing_price');
+                $('#currency_symbol').text("");
             } else {
                 $('#currency_code').text('Price (' + calculator.currency_code + ')');
                 $('#currency_symbol').text(calculator.currency_symbol);
-                $('#foriegn_sale_price').val(calculator.get_foriegn_sale_price());
-                $('#currency_code').parent().show();
-                $('#foriegn_sale_price').parent().show();
+                $('#foreign_sale_price').val(calculator.get_foreign_sale_price());
+                $('#foreign_sale_price').parent().addClass('listing_price');
                 $('#sale_price').parent().removeClass('listing_price');
             }
         };
@@ -190,7 +219,7 @@
             calculator.set_sale_price($(this).val());
             update_postage_price(calculator);
         });
-        $('#foriegn_sale_price').change(function() {
+        $('#foreign_sale_price').change(function() {
             var foreign_price = $(this).val();
             var exchange_rate = calculator.exchange_rate;
             var sale_price = parseFloat(foreign_price * exchange_rate).toFixed(2);
