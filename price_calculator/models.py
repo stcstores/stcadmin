@@ -5,12 +5,32 @@ from django.db.models import Q
 from forex_python.converter import CurrencyRates
 
 
+class ShippingRegion(models.Model):
+    """Model for shipping regions."""
+
+    name = models.CharField(max_length=50)
+
+    class Meta:
+        """Meta class for ShippingRegion."""
+
+        verbose_name = "Shipping Region"
+        verbose_name_plural = "Shipping Regions"
+        ordering = ("name",)
+
+    def __str__(self):
+        return self.name
+
+
 class DestinationCountry(models.Model):
     """Model for countries to ship to."""
 
     name = models.CharField(max_length=50, unique=True)
     currency_code = models.CharField(max_length=4, default="GBP")
+    currency_symbol = models.CharField(max_length=1, default="£")
     min_channel_fee = models.IntegerField(null=True, blank=True)
+    shipping_region = models.ForeignKey(
+        ShippingRegion, on_delete=models.CASCADE, null=True, blank=True
+    )
     sort_order = models.IntegerField(default=0)
 
     class Meta:
@@ -143,3 +163,21 @@ class ShippingPrice(models.Model):
     def package_type_string(self):
         """Return package type as a string."""
         return ", ".join([x.name for x in self.package_type.all()])
+
+
+class ChannelFee(models.Model):
+    """Model for channel fees."""
+
+    name = models.CharField(max_length=50, unique=True)
+    fee_percentage = models.PositiveSmallIntegerField()
+    ordering = models.PositiveSmallIntegerField(default=100)
+
+    class Meta:
+        """Meta class for ChannelFee."""
+
+        verbose_name = "Channel Fee"
+        verbose_name_plural = "Channel Fees"
+        ordering = ("ordering",)
+
+    def __str__(self):
+        return self.name

@@ -2,6 +2,7 @@ class PriceCalculator {
     constructor(data) {
         this.exchange_rate = 1;
         this.currency_code = 'GBP';
+        this.currency_symbol = '£';
         this.sale_price = this.to_pence(data.sale_price);
         this.postage_price = this.to_pence(data.postage_price);
         this.purchase_price = this.to_pence(data.purchase_price);
@@ -14,6 +15,7 @@ class PriceCalculator {
         this.calculate_channel_fee();
         this.calculate_profit();
         this.calculate_profit_percentage();
+        this.calculate_return_percentage();
         this.foreign_sale_price = this.sale_price / this.exchange_rate;
         this.change();
     }
@@ -31,14 +33,14 @@ class PriceCalculator {
         this.exchange_rate = exchange_rate;
         this.recalculate();
     }
-    set_foriegn_sale_price(foreign_sale_price_pounds) {
-        this.foriegn_sale_price = this.to_pence(foreign_sale_price_pounds);
-        this.set_sale_price(this.foriegn_sale_price * this.exchange_rate);
+    set_foreign_sale_price(foreign_sale_price_pounds) {
+        this.foreign_sale_price = this.to_pence(foreign_sale_price_pounds);
+        this.set_sale_price(this.foreign_sale_price * this.exchange_rate);
     }
     get_sale_price() {
         return this.to_pounds(this.sale_price_pence);
     }
-    get_foriegn_sale_price() {
+    get_foreign_sale_price() {
         return this.to_pounds(this.foreign_sale_price);
     }
     set_postage_price(postage_price_pounds) {
@@ -81,6 +83,9 @@ class PriceCalculator {
     get_profit_percentage() {
         return this.profit_percentage;
     }
+    get_return_percentage() {
+        return this.return_percentage;
+    }
     calculate_ex_vat() {
         this.ex_vat = parseInt(this.sale_price / (1 + (this.vat_rate / 100)));
     }
@@ -101,7 +106,10 @@ class PriceCalculator {
         this.profit = this.sale_price - this.vat - this.postage_price - this.channel_fee - this.purchase_price;
     }
     calculate_profit_percentage() {
-        this.profit_percentage = parseFloat((this.profit / this.sale_price) * 100).toFixed(2);
+        this.profit_percentage = percentage(this.profit, this.sale_price).toFixed(2);
+    }
+    calculate_return_percentage() {
+      this.return_percentage = percentage(this.profit, this.purchase_price).toFixed(2);
     }
     change() {
         console.log(this.profit);
@@ -127,27 +135,53 @@ function format_price(price) {
     return span;
 }
 
-function get_postage_price(calculator, country, package_type, weight, price){
-    var data = {
-        'country': country,
-        'package_type': package_type,
-        'weight': weight,
-        'price': price,
-    }
-    console.log(data);
-    $.post(
-        get_postage_price_url,
-        data,
-        function(response) {
-            data = $.parseJSON(response);
-            console.log(data);
-            update_vat_rates(data['vat_rates'], calculator);
-            calculator.set_postage_price(parseInt(data['price']) / 100);
-            calculator.set_exchange_rate(parseFloat(data['exchange_rate']));
-            calculator.currency_code = data['currency_code'];
-            calculator.min_channel_fee = parseInt(data['min_channel_fee']);
-            calculator.recalculate();
-            calculator.change();
-        },
-    ).error(function() {alert('No valid shipping service found.');});
+function get_postage_price(
+    calculator, country, package_type, international_shipping, weight, price) {
+  var data = {
+    'country': country,
+    'package_type': package_type,
+    'international_shipping': international_shipping,
+    'weight': weight,
+    'price': price,
+  }
+  console.log(data);
+  $.post(
+    get_postage_price_url,
+    data,
+    function(response) {
+      data = $.parseJSON(response);
+      console.log(data);
+      update_vat_rates(data['vat_rates'], calculator);
+      calculator.set_postage_price(parseInt(data['price']) / 100);
+      calculator.set_exchange_rate(parseFloat(data['exchange_rate']));
+      calculator.currency_code = data['currency_code'];
+      calculator.currency_symbol = data['currency_symbol'];
+      calculator.min_channel_fee = parseInt(data['min_channel_fee']);
+      calculator.recalculate();
+      calculator.change();
+    },
+  ).error(function() {alert('No valid shipping service found.');});
+}
+
+function format_percentage(element, value, high, warn) {
+  if (value >= high) {
+    element.removeClass('low_percentage').removeClass('warning_percentage').addClass('good_percentage');
+  } else if (value < warn) {
+    element.removeClass('warning_percentage').removeClass('good_percentage').addClass('low_percentage');
+  } else {
+    element.removeClass('low_percentage').removeClass('good_percentage').addClass('warning_percentage');
+  }
+}
+
+function fixed_decimal(element) {
+  var value = parseFloat(element.val());
+  if (isNaN(value)) {
+    element.val(0);
+  } else {
+    element.val(parseFloat(element.val()).toFixed(2));
+  }
+}
+
+function percentage(whole, part) {
+  return parseFloat((whole / part) * 100);
 }
