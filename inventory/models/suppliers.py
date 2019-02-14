@@ -5,35 +5,27 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 
+from .product_options import ProductOptionModel
 
-class Supplier(models.Model):
+
+class Supplier(ProductOptionModel):
     """Model for suppliers."""
 
-    SUPPLIER_OPTION_ID = 35131
+    PRODUCT_OPTION_ID = 35131
+    PRODUCT_OPTION_NAME = "Supplier"
 
-    name = models.CharField(max_length=200, unique=True)
-    product_option_ID = models.CharField(max_length=20, unique=True)
     factory_ID = models.CharField(max_length=20, unique=True)
     inactive = models.BooleanField(default=False)
 
-    class Meta:
+    class Meta(ProductOptionModel.Meta):
         """Meta class for Supplier."""
 
         verbose_name = "Supplier"
         verbose_name_plural = "Suppliers"
-        ordering = ("name",)
-
-    def __str__(self):
-        return self.name
 
     def get_absolute_url(self):
         """Return the absolute URL for the supplier instance."""
         return reverse("inventory:supplier", kwargs={"pk": self.pk})
-
-    @property
-    def active(self):
-        """Return True if the supplier is active, otherwise return False."""
-        return not self.inactive
 
     def save(self, *args, **kwargs):
         """
@@ -50,20 +42,6 @@ class Supplier(models.Model):
     def get_factories():
         """Return all Cloud Commerce factories."""
         return CCAPI.get_factories()
-
-    @staticmethod
-    def get_supplier_product_options():
-        """Return all Cloud Commerce Supplier Product Options."""
-        return CCAPI.get_product_options()["Supplier"]
-
-    @classmethod
-    def create_product_option(cls, name):
-        """
-        Return the ID of the Supplier Product Option matching name.
-
-        If it does not exist it will be created.
-        """
-        return CCAPI.get_option_value_id(cls.SUPPLIER_OPTION_ID, name, create=True)
 
     @classmethod
     def create_factory(cls, name):

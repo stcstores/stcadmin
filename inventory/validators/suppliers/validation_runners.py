@@ -21,4 +21,4 @@ class SupplierValidationRunner(ModelValidationRunner):
     def load_cloud_commerce_data(self):
         """Load relevent objects from Cloud Commerce."""
         self.factories = self.model.get_factories()
-        self.product_options = self.model.get_supplier_product_options()
+        self.product_options = self.model.get_product_options()
