@@ -1,6 +1,7 @@
 """ModelAdmin classes for the inventory app."""
 
 from django.contrib import admin
+from orderable.admin import OrderableAdmin
 
 from inventory import models
 
@@ -83,7 +84,7 @@ class StockChangeAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.ProductExport)
-class ProductExportAdmin(admin.ModelAdmin):
+class ProductOptionAdminProductExportAdmin(admin.ModelAdmin):
     """Model admin for the Product Export model."""
 
     fields = ("name", "timestamp", "export_file")
@@ -110,3 +111,42 @@ class SupplierContactAdmin(admin.ModelAdmin):
     list_editable = ("supplier", "name", "phone", "email", "notes")
     search_fields = ("name", "phone", "email")
     list_filter = ("supplier",)
+
+
+class ProductOptionAdmin(admin.ModelAdmin):
+    """Model admin for the ProductOptionModel abstract model."""
+
+    fields = ("name", "product_option_ID", "inactive")
+    list_display = ("__str__", "name", "product_option_ID", "inactive")
+    list_editable = ("name", "product_option_ID", "inactive")
+    search_fields = ("name", "product_option_ID")
+
+
+class OrderableProductOptionAdmin(OrderableAdmin, ProductOptionAdmin):
+    """Model admin for orderable product options."""
+
+    list_display = ProductOptionAdmin.list_display + ("sort_order_display",)
+
+
+@admin.register(models.Department)
+class DepartmentAdmin(ProductOptionAdmin):
+    """Model admin for the Department model."""
+
+    fields = ("name", "abriviation", "product_option_ID", "inactive")
+    list_display = ("__str__", "name", "abriviation", "product_option_ID", "inactive")
+    list_editable = ("name", "name", "abriviation", "product_option_ID", "inactive")
+    search_fields = ("name", "abriviation", "product_option_ID")
+
+
+@admin.register(models.PackageType)
+class PackageTypeAdmin(OrderableProductOptionAdmin):
+    """Model admin for the PackageType model."""
+
+    pass
+
+
+@admin.register(models.InternationalShipping)
+class InternationalShippingAdmin(OrderableProductOptionAdmin):
+    """Model admin for the InternationalShipping model."""
+
+    pass

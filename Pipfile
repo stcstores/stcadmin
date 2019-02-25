@@ -26,6 +26,7 @@ order_profit = {git = "https://github.com/stcstores/order_profit.git",ref = "mas
 openpyxl = "<3.0"
 pyyaml = "==4.2b1"  # CVE-2017-18342 Remove after pyyaml release >4.2
 isoweek = "*"
+django-orderable = "*"
 
 [dev-packages]
 "Fabric3" = "<2.0"
