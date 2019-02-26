@@ -20,9 +20,9 @@ class UsedWarehouseManager(models.Manager):
 class Warehouse(models.Model):
     """Model for Warehouses."""
 
-    warehouse_id = models.PositiveIntegerField(primary_key=True)
+    warehouse_id = models.PositiveIntegerField()
     name = models.CharField(max_length=255, unique=True)
-    abriviation = models.CharField(max_length=4, null=True, blank=True)
+    abriviation = models.CharField(max_length=4, null=True, blank=True, unique=True)
 
     objects = models.Manager()
     used_warehouses = UsedWarehouseManager()
@@ -41,16 +41,6 @@ class Warehouse(models.Model):
     def get_cc_warehouses():
         """Return the Cloud Commerce Warehouses."""
         return CCAPI.get_warehouses()
-
-    @property
-    def id(self):
-        """
-        Return warehouse_id attribute.
-
-        Prevents errors when the primary key is accessed by the usual id
-        attribute.
-        """
-        return self.warehouse_id
 
     @property
     def bays(self):
@@ -75,7 +65,7 @@ class NonDefaultBaysManager(models.Manager):
 class Bay(models.Model):
     """Model for Warehouse Bays."""
 
-    bay_id = models.PositiveIntegerField(primary_key=True)
+    bay_id = models.PositiveIntegerField()
     name = models.CharField(max_length=255, unique=True)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
 
@@ -90,16 +80,6 @@ class Bay(models.Model):
 
     def __str__(self):
         return "{} - {}".format(self.warehouse, self.name)
-
-    @property
-    def id(self):
-        """
-        Return bay_id attribute.
-
-        Prevents errors when the primary key is accessed by the usual id
-        attribute.
-        """
-        return self.bay_id
 
     @property
     def default(self):
