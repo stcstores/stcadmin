@@ -366,7 +366,10 @@ class Location(fieldtypes.SelectizeField):
             options = [["", ""]]
             for warehouse in warehouses:
                 options.append(
-                    [warehouse.name, [[bay.id, bay] for bay in warehouse.bay_set.all()]]
+                    [
+                        warehouse.name,
+                        [[bay.bay_id, bay] for bay in warehouse.bay_set.all()],
+                    ]
                 )
             return options
         else:
@@ -375,7 +378,7 @@ class Location(fieldtypes.SelectizeField):
             except models.Warehouse.DoesNotExist:
                 return [("", "")]
             else:
-                return [(bay.id, bay.name) for bay in warehouse.bay_set.all()]
+                return [(bay.bay_id, bay.name) for bay in warehouse.bay_set.all()]
 
     def get_warehouse(self):
         """Return Warehouse object matching the field's department."""
@@ -399,9 +402,9 @@ class Location(fieldtypes.SelectizeField):
         bays = [b for b in bays if not b.default]
         if len(set([bay.warehouse for bay in bays])) > 1:
             raise forms.ValidationError("Bays from multiple warehouses selected.")
-        value = [b.id for b in bays]
+        value = [b.bay_id for b in bays]
         if self.department is not None and len(value) == 0:
-            value = [self.get_warehouse().default_bay.id]
+            value = [self.get_warehouse().default_bay.bay_id]
         return value
 
 
@@ -447,7 +450,7 @@ class WarehouseBayField(fieldtypes.CombinationField):
         )
         value[self.WAREHOUSE] = warehouse.id
         if len(value[self.BAYS]) == 0:
-            value[self.BAYS] = [warehouse.default_bay.id]
+            value[self.BAYS] = [warehouse.default_bay.bay_id]
         return value
 
 

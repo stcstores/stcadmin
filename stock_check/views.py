@@ -38,7 +38,7 @@ class AjaxOpenOrders(StockCheckUserMixin, View):
 
     def product_ids(self, bay_id):
         """Return a list of IDs of products in the bay with ID bay_id."""
-        bay = models.Bay.objects.get(bay_id=bay_id)
+        bay = models.Bay.objects.get(id=bay_id)
         products = bay.product_set.all()
         product_ids = [product.product_id for product in products]
         return product_ids
@@ -101,7 +101,7 @@ class Warehouse(StockCheckUserMixin, TemplateView):
         """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
         warehouse_id = self.kwargs.get("warehouse_id")
-        warehouse = get_object_or_404(models.Warehouse, warehouse_id=warehouse_id)
+        warehouse = get_object_or_404(models.Warehouse, id=warehouse_id)
         context["warehouse"] = warehouse
         context["bays"] = list(
             models.Bay.non_default.filter(warehouse=warehouse).all().order_by("name")
@@ -119,7 +119,7 @@ class Bay(TemplateView):
         """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
         bay_id = self.kwargs.get("bay_id")
-        context["bay"] = get_object_or_404(models.Bay, bay_id=bay_id)
+        context["bay"] = get_object_or_404(models.Bay, id=bay_id)
         products = context["bay"].product_set.all()
         context["products"] = []
         for product in products:

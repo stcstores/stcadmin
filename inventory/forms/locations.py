@@ -2,6 +2,7 @@
 
 import cc_products
 from django import forms
+
 from inventory import models
 from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms.fields import Department, WarehouseBayField
@@ -86,7 +87,7 @@ class LocationsForm(forms.Form):
         elif len(warehouses) == 1:
             initial[self.LOCATIONS] = {
                 self.WAREHOUSE: warehouses[0].warehouse_id,
-                self.BAYS: [bay.id for bay in bays],
+                self.BAYS: [bay.bay_id for bay in bays],
             }
         return initial
 

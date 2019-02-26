@@ -176,7 +176,7 @@ class ProductForm(ProductEditorBase, forms.Form):
         elif len(warehouses) == 1:
             initial[self.LOCATION] = {
                 self.WAREHOUSE: warehouses[0].warehouse_id,
-                self.BAYS: [bay.id for bay in bays],
+                self.BAYS: [bay.bay_id for bay in bays],
             }
         initial[self.DIMENSIONS] = {
             self.WIDTH: self.product.width,
