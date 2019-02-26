@@ -37,7 +37,7 @@ class CCBayInDb(CCBayValidationCheck):
     def is_valid(self, *args, **kwargs):
         """Check a Cloud Commerce Bay exists in the Bay database model."""
         model_object_IDs = [o.bay_ID for o in kwargs["validation_runner"].model_objects]
-        if int(kwargs["test_object"].id) not in model_object_IDs:
+        if str(kwargs["test_object"].id) not in model_object_IDs:
             return False
         else:
             return True

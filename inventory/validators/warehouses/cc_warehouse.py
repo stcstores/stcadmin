@@ -39,7 +39,7 @@ class CCWarehouseInDB(CCWarehouseValidationCheck):
         model_object_IDs = [
             o.warehouse_ID for o in kwargs["validation_runner"].model_objects
         ]
-        if kwargs["test_object"].id not in model_object_IDs:
+        if str(kwargs["test_object"].id) not in model_object_IDs:
             return False
         else:
             return True

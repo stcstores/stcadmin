@@ -20,7 +20,7 @@ class UsedWarehouseManager(models.Manager):
 class Warehouse(models.Model):
     """Model for Warehouses."""
 
-    warehouse_ID = models.PositiveIntegerField()
+    warehouse_ID = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255, unique=True)
     abriviation = models.CharField(max_length=4, null=True, blank=True, unique=True)
 
@@ -65,7 +65,7 @@ class NonDefaultBaysManager(models.Manager):
 class Bay(models.Model):
     """Model for Warehouse Bays."""
 
-    bay_ID = models.PositiveIntegerField()
+    bay_ID = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255, unique=True)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
 

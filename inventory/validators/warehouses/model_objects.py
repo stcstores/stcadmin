@@ -14,7 +14,7 @@ class WarehouseObjectValidationCheck(BaseValidationCheck):
         Return None if no matching warehouse exists.
         """
         for warehouse in self.validation_runner.cc_warehouses:
-            if warehouse.id == model_object.warehouse_ID:
+            if str(warehouse.id) == model_object.warehouse_ID:
                 return warehouse
         return None
 
