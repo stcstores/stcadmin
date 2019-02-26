@@ -5,6 +5,7 @@ import logging
 import threading
 
 import cc_products
+
 from inventory import models
 from product_editor import exceptions
 
@@ -284,7 +285,7 @@ class DataSanitizer(ProductEditorBase):
     def set_location_data(self, product_data, data):
         """Set location and department data."""
         data[self.DEPARTMENT] = models.Warehouse.objects.get(
-            warehouse_id=product_data[self.DEPARTMENT]
+            warehouse_ID=product_data[self.DEPARTMENT]
         ).name
         data[self.BAYS] = product_data[self.LOCATION][self.BAYS]
 

@@ -62,14 +62,14 @@ class CreateBayForm(forms.Form):
         """Create correct name for bay and ensure it does not already exist."""
         data = super().clean(*args, **kwargs)
         data["warehouse"] = models.Warehouse.objects.get(
-            warehouse_id=data["department"]
+            warehouse_ID=data["department"]
         )
         if data["bay_type"] == self.BACKUP:
             if not data["location"]:
                 self.add_error("location", "Location is required for backup bays.")
                 return
             data["backup_location"] = models.Warehouse.objects.get(
-                warehouse_id=data["location"]
+                warehouse_ID=data["location"]
             )
             self.new_bay = models.Bay.new_backup_bay(
                 name=data["name"],
@@ -169,14 +169,14 @@ class ProductForm(ProductEditorBase, forms.Form):
             self.EX_VAT: self.product.price,
             "with_vat_price": None,
         }
-        bays = [bay for bay in models.Bay.objects.filter(bay_id__in=self.product.bays)]
+        bays = [bay for bay in models.Bay.objects.filter(bay_ID__in=self.product.bays)]
         warehouses = list(set([bay.warehouse for bay in bays]))
         if len(warehouses) > 1:
             self.add_error(self.LOCATIONS, "Mixed warehouses.")
         elif len(warehouses) == 1:
             initial[self.LOCATION] = {
-                self.WAREHOUSE: warehouses[0].warehouse_id,
-                self.BAYS: [bay.bay_id for bay in bays],
+                self.WAREHOUSE: warehouses[0].warehouse_ID,
+                self.BAYS: [bay.bay_ID for bay in bays],
             }
         initial[self.DIMENSIONS] = {
             self.WIDTH: self.product.width,

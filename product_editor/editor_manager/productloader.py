@@ -1,6 +1,7 @@
 """The ProductLoader class."""
 
 import cc_products
+
 from inventory import models
 from product_editor import exceptions
 
@@ -46,9 +47,9 @@ class ProductLoader(ProductEditorBase):
         ]
         return combinations
 
-    def get_warehouse_id(self, warehouse_name):
+    def get_warehouse_ID(self, warehouse_name):
         """Return the ID of a warehouse by name."""
-        return models.Warehouse.objects.get(name=warehouse_name).warehouse_id
+        return models.Warehouse.objects.get(name=warehouse_name).warehouse_ID
 
     def get_dimension_data(self, product):
         """Return form data for the dimensions field."""
@@ -60,11 +61,11 @@ class ProductLoader(ProductEditorBase):
 
     def get_location_data(self, product):
         """Return form data for the location field."""
-        bay_ids = product.bays
-        bays = models.Bay.objects.filter(bay_id__in=bay_ids)
+        bay_IDs = product.bays
+        bays = models.Bay.objects.filter(bay_ID__in=bay_IDs)
         if len(bays) > 0:
-            warehouse_id = bays[0].warehouse.warehouse_id
-            return {self.WAREHOUSE: warehouse_id, self.BAYS: bay_ids}
+            warehouse_ID = bays[0].warehouse.warehouse_ID
+            return {self.WAREHOUSE: warehouse_ID, self.BAYS: bay_IDs}
         return {self.WAREHOUSE: "", self.BAYS: []}
 
     def get_product_type(self, product_range):
@@ -79,7 +80,7 @@ class ProductLoader(ProductEditorBase):
         data = {
             self.TITLE: product_range.name,
             self.DESCRIPTION: product_range.description,
-            self.DEPARTMENT: self.get_warehouse_id(self, product_range.department),
+            self.DEPARTMENT: self.get_warehouse_ID(self, product_range.department),
             self.AMAZON_BULLET_POINTS: product_range.products[0].amazon_bullets,
             self.AMAZON_SEARCH_TERMS: product_range.products[0].amazon_search_terms,
         }

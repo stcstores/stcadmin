@@ -36,8 +36,8 @@ class BarcodeAdmin(admin.ModelAdmin):
 class WarehouseAdmin(admin.ModelAdmin):
     """ModelAdmin for the Warehouse model."""
 
-    fields = ("warehouse_id", "name", "abriviation")
-    list_display = ("warehouse_id", "name", "abriviation")
+    fields = ("warehouse_ID", "name", "abriviation")
+    list_display = ("warehouse_ID", "name", "abriviation")
     search_fields = ("name", "abriviation")
 
 
@@ -45,8 +45,8 @@ class WarehouseAdmin(admin.ModelAdmin):
 class BayAdmin(admin.ModelAdmin):
     """ModelAdmin for the Bay model."""
 
-    fields = ("bay_id", "name", "warehouse")
-    list_display = ("bay_id", "__str__", "name", "warehouse")
+    fields = ("bay_ID", "name", "warehouse")
+    list_display = ("bay_ID", "__str__", "name", "warehouse")
     search_fields = ("name",)
     list_filter = ("warehouse",)
 
