@@ -25,20 +25,20 @@ class AjaxOpenOrders(StockCheckUserMixin, View):
     """Return the number of open orders for all products in a bay."""
 
     @method_decorator(csrf_exempt)
-    def dispatch(self, request, bay_id):
+    def dispatch(self, request, bay_ID):
         """Return HTTP response.
 
         Return the number of open orders for products in a bay as JSON.
         """
-        product_ids = self.product_ids(bay_id)
+        product_ids = self.product_ids(bay_ID)
         orders = self.orders()
         order_count = self.count_products(product_ids, orders)
         response_text = json.dumps(order_count)
         return HttpResponse(response_text)
 
-    def product_ids(self, bay_id):
-        """Return a list of IDs of products in the bay with ID bay_id."""
-        bay = models.Bay.objects.get(bay_id=bay_id)
+    def product_ids(self, bay_ID):
+        """Return a list of IDs of products in the bay with ID bay_ID."""
+        bay = models.Bay.objects.get(id=bay_ID)
         products = bay.product_set.all()
         product_ids = [product.product_id for product in products]
         return product_ids
@@ -100,8 +100,8 @@ class Warehouse(StockCheckUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
-        warehouse_id = self.kwargs.get("warehouse_id")
-        warehouse = get_object_or_404(models.Warehouse, warehouse_id=warehouse_id)
+        warehouse_ID = self.kwargs.get("warehouse_ID")
+        warehouse = get_object_or_404(models.Warehouse, id=warehouse_ID)
         context["warehouse"] = warehouse
         context["bays"] = list(
             models.Bay.non_default.filter(warehouse=warehouse).all().order_by("name")
@@ -118,8 +118,8 @@ class Bay(TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
-        bay_id = self.kwargs.get("bay_id")
-        context["bay"] = get_object_or_404(models.Bay, bay_id=bay_id)
+        bay_ID = self.kwargs.get("bay_ID")
+        context["bay"] = get_object_or_404(models.Bay, id=bay_ID)
         products = context["bay"].product_set.all()
         context["products"] = []
         for product in products:
@@ -137,10 +137,10 @@ class UpdateStockCheckLevel(StockCheckUserMixin, View):
         """Update ProductBay model with new stock number."""
         request_data = json.loads(self.request.body)
         product_id = int(request_data["product_id"])
-        bay_id = int(request_data["bay_id"])
+        bay_ID = int(request_data["bay_ID"])
         level = int(request_data["level"]) if request_data["level"] else None
         product_bay = get_object_or_404(
-            models.ProductBay, product__id=product_id, bay__id=bay_id
+            models.ProductBay, product__id=product_id, bay__id=bay_ID
         )
         product_bay.stock_level = level
         product_bay.save()

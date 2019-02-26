@@ -1,6 +1,5 @@
 """Forms for inventory app."""
 
-from ccapi import CCAPI
 from django import forms
 
 from inventory import models
@@ -28,27 +27,6 @@ class DescriptionForm(forms.Form):
     description = Description()
     amazon_bullets = fields.AmazonBulletPoints()
     search_terms = fields.AmazonSearchTerms()
-
-
-class CreateSupplierForm(forms.Form):
-    """Form for creating new suppliers."""
-
-    supplier_name = forms.CharField(max_length=255)
-    SUPPLIER_OPTION_ID = 35131
-
-    def clean(self):
-        """Verify supplier does not already exist."""
-        cleaned_data = super().clean()
-        factories = CCAPI.get_factories()
-        factory_names = [f.name for f in factories]
-        if cleaned_data["supplier_name"] in factory_names:
-            self.add_error("supplier_name", "Supplier already exists.")
-
-    def save(self):
-        """Create new supplier."""
-        name = self.cleaned_data["supplier_name"]
-        CCAPI.create_factory(name)
-        CCAPI.get_option_value_id(self.SUPPLIER_OPTION_ID, name, create=True)
 
 
 class CreateBayForm(forms.Form):
@@ -84,14 +62,14 @@ class CreateBayForm(forms.Form):
         """Create correct name for bay and ensure it does not already exist."""
         data = super().clean(*args, **kwargs)
         data["warehouse"] = models.Warehouse.objects.get(
-            warehouse_id=data["department"]
+            warehouse_ID=data["department"]
         )
         if data["bay_type"] == self.BACKUP:
             if not data["location"]:
                 self.add_error("location", "Location is required for backup bays.")
                 return
             data["backup_location"] = models.Warehouse.objects.get(
-                warehouse_id=data["location"]
+                warehouse_ID=data["location"]
             )
             self.new_bay = models.Bay.new_backup_bay(
                 name=data["name"],
@@ -191,14 +169,14 @@ class ProductForm(ProductEditorBase, forms.Form):
             self.EX_VAT: self.product.price,
             "with_vat_price": None,
         }
-        bays = [bay for bay in models.Bay.objects.filter(bay_id__in=self.product.bays)]
+        bays = [bay for bay in models.Bay.objects.filter(bay_ID__in=self.product.bays)]
         warehouses = list(set([bay.warehouse for bay in bays]))
         if len(warehouses) > 1:
             self.add_error(self.LOCATIONS, "Mixed warehouses.")
         elif len(warehouses) == 1:
             initial[self.LOCATION] = {
-                self.WAREHOUSE: warehouses[0].warehouse_id,
-                self.BAYS: [bay.id for bay in bays],
+                self.WAREHOUSE: warehouses[0].warehouse_ID,
+                self.BAYS: [bay.bay_ID for bay in bays],
             }
         initial[self.DIMENSIONS] = {
             self.WIDTH: self.product.width,

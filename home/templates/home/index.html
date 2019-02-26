@@ -25,10 +25,6 @@
                     <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
                 </ul>
             {% endif %}{% endfor %}
-            {% for group in request.user.groups.all %}{% if group.name == 'suppliers' %}
-                <li><a href="{% url 'suppliers:index' %}">Suppliers</a></li>
-                <p>Manage supplier lists.</p>
-            {% endif %}{% endfor %}
             {% for group in request.user.groups.all %}{% if group.name == 'labelmaker' %}
                 <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
                 <p>Make printable product labels.</p>

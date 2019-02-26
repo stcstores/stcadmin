@@ -5,8 +5,9 @@ import re
 
 from ccapi import CCAPI
 from django import forms
-from inventory import models
 from list_input import ListInput
+
+from inventory import models
 from product_editor.editor_manager import ProductEditorBase
 
 from . import fieldtypes, widgets
@@ -194,9 +195,9 @@ class Supplier(fieldtypes.SingleSelectize):
     @staticmethod
     def get_choices():
         """Return field choices."""
-        factories = CCAPI.get_factories()
-        suppliers = [(f.name, f.name) for f in factories]
-        suppliers.sort(key=lambda x: x[1])
+        suppliers = [
+            (s.name, s.name) for s in models.Supplier.objects.filter(inactive=False)
+        ]
         return [("", "")] + suppliers
 
 
@@ -312,7 +313,7 @@ class Department(fieldtypes.SingleSelectize):
     def get_choices():
         """Get choice options for field."""
         departments = [
-            (w.warehouse_id, w.name) for w in models.Warehouse.used_warehouses.all()
+            (w.warehouse_ID, w.name) for w in models.Warehouse.used_warehouses.all()
         ]
         departments.sort(key=lambda x: x[1])
         return [("", "")] + departments
@@ -324,8 +325,8 @@ class Department(fieldtypes.SingleSelectize):
             return None
         try:
             department = models.Warehouse.used_warehouses.get(
-                warehouse_id=int(value)
-            ).warehouse_id
+                warehouse_ID=int(value)
+            ).warehouse_ID
         except models.Warehouse.DoesNotExist:
             raise forms.ValidationError("Deparment not recognised")
         return department
@@ -365,7 +366,10 @@ class Location(fieldtypes.SelectizeField):
             options = [["", ""]]
             for warehouse in warehouses:
                 options.append(
-                    [warehouse.name, [[bay.id, bay] for bay in warehouse.bay_set.all()]]
+                    [
+                        warehouse.name,
+                        [[bay.bay_ID, bay] for bay in warehouse.bay_set.all()],
+                    ]
                 )
             return options
         else:
@@ -374,12 +378,12 @@ class Location(fieldtypes.SelectizeField):
             except models.Warehouse.DoesNotExist:
                 return [("", "")]
             else:
-                return [(bay.id, bay.name) for bay in warehouse.bay_set.all()]
+                return [(bay.bay_ID, bay.name) for bay in warehouse.bay_set.all()]
 
     def get_warehouse(self):
         """Return Warehouse object matching the field's department."""
         if isinstance(self.department, int):
-            return models.Warehouse.objects.get(warehouse_id=self.department)
+            return models.Warehouse.objects.get(warehouse_ID=self.department)
         return models.Warehouse.objects.get(name=self.department)
 
     def to_python(self, *args, **kwargs):
@@ -390,17 +394,17 @@ class Location(fieldtypes.SelectizeField):
         """Validate bay selection."""
         value = super().clean(value)
         bays = []
-        for bay_id in value:
+        for bay_ID in value:
             try:
-                bays.append(models.Bay.objects.get(bay_id=bay_id))
+                bays.append(models.Bay.objects.get(bay_ID=bay_ID))
             except models.DoesNotExist:
                 raise forms.ValidationError("Bay not recognised")
         bays = [b for b in bays if not b.default]
         if len(set([bay.warehouse for bay in bays])) > 1:
             raise forms.ValidationError("Bays from multiple warehouses selected.")
-        value = [b.id for b in bays]
+        value = [b.bay_ID for b in bays]
         if self.department is not None and len(value) == 0:
-            value = [self.get_warehouse().default_bay.id]
+            value = [self.get_warehouse().default_bay.bay_ID]
         return value
 
 
@@ -442,11 +446,11 @@ class WarehouseBayField(fieldtypes.CombinationField):
         """Validate submitted values."""
         value = super().clean(value)
         warehouse = models.Warehouse.used_warehouses.get(
-            warehouse_id=value[self.WAREHOUSE]
+            warehouse_ID=value[self.WAREHOUSE]
         )
         value[self.WAREHOUSE] = warehouse.id
         if len(value[self.BAYS]) == 0:
-            value[self.BAYS] = [warehouse.default_bay.id]
+            value[self.BAYS] = [warehouse.default_bay.bay_ID]
         return value
 
 
