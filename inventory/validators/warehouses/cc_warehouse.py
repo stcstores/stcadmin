@@ -12,7 +12,7 @@ class CCWarehouseValidationCheck(BaseValidationCheck):
         Return None if no database object matches the warehouse.
         """
         for model_object in self.validation_runner.model_objects:
-            if model_object.warehouse_id == object.id:
+            if model_object.warehouse_ID == object.id:
                 return model_object
         return None
 
@@ -37,9 +37,9 @@ class CCWarehouseInDB(CCWarehouseValidationCheck):
     def is_valid(self, *args, **kwargs):
         """Check a Cloud Commerce Warehouse exists in the Warehouse database model."""
         model_object_IDs = [
-            o.warehouse_id for o in kwargs["validation_runner"].model_objects
+            o.warehouse_ID for o in kwargs["validation_runner"].model_objects
         ]
-        if kwargs["test_object"].id not in model_object_IDs:
+        if str(kwargs["test_object"].id) not in model_object_IDs:
             return False
         else:
             return True

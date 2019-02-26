@@ -14,7 +14,7 @@ class BayObjectValidationCheck(BaseValidationCheck):
         Return None if no matching warehouse exists.
         """
         for bay in self.validation_runner.cc_bays:
-            if int(bay.id) == model_object.bay_id:
+            if str(bay.id) == model_object.bay_ID:
                 return bay
         return None
 
@@ -47,7 +47,7 @@ class BayExists(BayObjectValidationCheck):
         """Return a string describing the failed validation."""
         return (
             f'No Bay with the ID of "{kwargs["test_object"]}" '
-            f'("{kwargs["test_object"].bay_id}") exists in Cloud Commerce.'
+            f'("{kwargs["test_object"].bay_ID}") exists in Cloud Commerce.'
         )
 
 
@@ -69,7 +69,7 @@ class BayInCorrectWarehouse(BayObjectValidationCheck):
             return True
         db_warehouse = kwargs["test_object"].warehouse
         cc_warehouse = kwargs["cc_bay"].warehouse
-        if db_warehouse.warehouse_id != int(cc_warehouse.id):
+        if db_warehouse.warehouse_ID != str(cc_warehouse.id):
             return False
         else:
             return True
@@ -113,7 +113,7 @@ class BayNameMatches(BayObjectValidationCheck):
         return (
             f'Bay "{db_bay}" does not match the Cloud Commerce name '
             f'"{cc_bay.name}" for the bay with ID '
-            f'"{db_bay.bay_id}".'
+            f'"{db_bay.bay_ID}".'
         )
 
 

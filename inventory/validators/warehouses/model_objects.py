@@ -14,7 +14,7 @@ class WarehouseObjectValidationCheck(BaseValidationCheck):
         Return None if no matching warehouse exists.
         """
         for warehouse in self.validation_runner.cc_warehouses:
-            if warehouse.id == model_object.warehouse_id:
+            if str(warehouse.id) == model_object.warehouse_ID:
                 return warehouse
         return None
 
@@ -47,7 +47,7 @@ class WarehouseExists(WarehouseObjectValidationCheck):
         """Return a string describing the failed validation."""
         return (
             f'No Warehouse with the ID of "{kwargs["test_object"].name}" '
-            f'("{kwargs["test_object"].warehouse_id}") exists in Cloud Commerce.'
+            f'("{kwargs["test_object"].warehouse_ID}") exists in Cloud Commerce.'
         )
 
 
@@ -82,7 +82,7 @@ class WarehouseNameMatches(WarehouseObjectValidationCheck):
         return (
             f'Database Warehouse "{db_warehouse.name}" does not match the Cloud '
             f'Commerce name "{cc_warehouse.name}" for the warehouse with ID '
-            f'"{db_warehouse.warehouse_id}".'
+            f'"{db_warehouse.warehouse_ID}".'
         )
 
 

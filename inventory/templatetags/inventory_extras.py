@@ -5,6 +5,7 @@ import json
 from ccapi import URLs
 from django import template
 from django.utils.safestring import mark_safe
+
 from inventory import models
 
 register = template.Library()
@@ -35,8 +36,8 @@ def warehouses():
     warehouses = models.Warehouse.used_warehouses.all()
     data = {}
     for w in warehouses:
-        data[w.warehouse_id] = [
-            {"value": b.bay_id, "text": b.name} for b in w.bay_set.all()
+        data[w.warehouse_ID] = [
+            {"value": b.bay_ID, "text": b.name} for b in w.bay_set.all()
         ]
     return mark_safe(json.dumps(data))
 
