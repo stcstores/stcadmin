@@ -448,7 +448,7 @@ class WarehouseBayField(fieldtypes.CombinationField):
         warehouse = models.Warehouse.used_warehouses.get(
             warehouse_ID=value[self.WAREHOUSE]
         )
-        value[self.WAREHOUSE] = warehouse.id
+        value[self.WAREHOUSE] = warehouse.warehouse_ID
         if len(value[self.BAYS]) == 0:
             value[self.BAYS] = [warehouse.default_bay.bay_ID]
         return value
