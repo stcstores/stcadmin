@@ -150,3 +150,22 @@ class InternationalShippingAdmin(OrderableProductOptionAdmin):
     """Model admin for the InternationalShipping model."""
 
     pass
+
+
+@admin.register(models.ProductRange)
+class ProductRangeAdmin(admin.ModelAdmin):
+    """Model admin for the Product Range model."""
+
+    fields = ("range_ID", "SKU", "name", "department", "end_of_line", "hidden")
+    list_display = (
+        "__str__",
+        "range_ID",
+        "SKU",
+        "name",
+        "department",
+        "end_of_line",
+        "hidden",
+    )
+    list_editable = ("range_ID", "SKU", "name", "department", "end_of_line", "hidden")
+    search_fields = ("range_ID", "SKU", "name")
+    list_filter = ("department", "end_of_line", "hidden")

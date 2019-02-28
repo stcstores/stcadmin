@@ -7,3 +7,4 @@ from .stock_change import StockChange  # NOQA
 from .product_exports import ProductExport  # NOQA
 from .suppliers import Supplier, SupplierContact  # NOQA
 from .product_options import Department, PackageType, InternationalShipping  # NOQA
+from .products import ProductRange  # NOQA
