@@ -101,7 +101,7 @@ class Bay(models.Model):
 
     def save(self, *args, **kwargs):
         """Create the bay in Cloud Commerce if it has no ID."""
-        if self.bay_ID is None:
+        if not self.bay_ID:
             self.bay_ID = self.get_CC_ID()
         super().save(*args, **kwargs)
 
@@ -111,7 +111,11 @@ class Bay(models.Model):
 
         If it does not exist in Cloud Commerce it will be created.
         """
-        return CCAPI.get_bay_id(self.name, self.warehouse.name, create=True)
+        bay_ID = CCAPI.get_bay_id(self.name, self.warehouse.name, create=True)
+        if bay_ID:
+            return bay_ID
+        else:
+            raise Exception("Error creating new bay in Cloud Commerce")
 
 
 class LocationIntegrityCheck:
