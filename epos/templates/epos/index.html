@@ -1,0 +1,32 @@
+{% extends "epos/base.html" %}
+{% load staticfiles %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/epos.js' %}"></script>
+<script src="{% static 'scripts/accounting.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="epos">
+    <div class="search">
+        <input type="text" name="barcode_search" id="barcode_search">
+        <button id="barcode_search_button">Search</button>
+    </div>
+    <div id="product_list" class="product_list">
+
+    </div>
+    <div id="epos_footer">
+        <p id="order_total"></p>
+        <button id="complete_order">Complete</button>
+        <button id="cancel_order">Cancel</button>
+    </div>
+</div>
+
+{% endblock %}
+{% block script %}
+ <script>
+    search_url = '{% url 'epos:barcode_search' %}';
+    complete_url = '{% url 'epos:epos_order' %}';
+ </script>
+{% endblock %}

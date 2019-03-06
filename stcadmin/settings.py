@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     "jchart",
     "profit_loss",
     "product_editor",
+    "epos",
 ]
 
 MIDDLEWARE = [
