@@ -19,14 +19,18 @@
         <tr>
             <th colspan="3">
                 {% ifequal manager.product_type manager.VARIATION %}
+                  {% if manager.range_id is None %}
                     <input value="Change to Single Product" class="continue_button change_type" type="submit" name="single"/>
-                    <input value="Continue" class="continue_button" type="submit" name="variations"/>
+                  {% endif %}
+                  <input value="Continue" class="continue_button" type="submit" name="variations"/>
                 {% else %}{% ifequal manager.product_type manager.SINGLE %}
-                    <input value="Change to Variation Product" class="continue_button change_type" type="submit" name="variations"/>
-                    <input value="Continue" class="continue_button" type="submit" name="single"/>
+                  {% if manager.range_id is None %}
+                  <input value="Change to Variation Product" class="continue_button change_type" type="submit" name="variations"/>
+                  {% endif %}
+                  <input value="Continue" class="continue_button" type="submit" name="single"/>
                 {% else %}
-                    <input value="Create Single Product" class="continue_button" type="submit" name="single"/>
-                    <input value="Create Variation Product" class="continue_button" type="submit" name="variations"/>
+                  <input value="Create Single Product" class="continue_button" type="submit" name="single"/>
+                  <input value="Create Variation Product" class="continue_button" type="submit" name="variations"/>
                 {% endifequal %}
                 {% endifequal %}
             </th>
