@@ -37,7 +37,7 @@ def unique_SKU(existing_SKUs, SKU_function):
 class ProductRange(models.Model):
     """Model for Product Ranges."""
 
-    range_ID = models.CharField(max_length=50, db_index=True)
+    range_ID = models.CharField(max_length=50, db_index=True, unique=True)
     SKU = models.CharField(max_length=15, unique=True, db_index=True)
     name = models.CharField(max_length=255)
     department = models.ForeignKey(Department, on_delete=models.PROTECT)
