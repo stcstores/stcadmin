@@ -209,7 +209,7 @@
             get_postage_price(
                 calcs['{{ product.id}}'],
                 country,
-                "{{ product.package_type }}",
+                "{{ product.package_type }}".replace(' (Single)', ''),
                 "{{ product.international_shipping }}",
                 {{ product.weight }},
                 price);
