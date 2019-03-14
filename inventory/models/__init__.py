@@ -6,5 +6,10 @@ from .locations import Warehouse, Bay, check_location_integrity  # NOQA
 from .stock_change import StockChange  # NOQA
 from .product_exports import ProductExport  # NOQA
 from .suppliers import Supplier, SupplierContact  # NOQA
-from .product_options import Department, PackageType, InternationalShipping  # NOQA
+from .product_options import (  # NOQA
+    Department,
+    PackageType,
+    InternationalShipping,
+    ProductOption,
+)
 from .products import ProductRange  # NOQA

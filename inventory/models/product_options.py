@@ -7,6 +7,32 @@ from orderable.models import Orderable
 from .locations import Bay, Warehouse
 
 
+class ProductOption(Orderable):
+    """Model for variation and listing product options."""
+
+    name = models.CharField(max_length=50, unique=True)
+    product_option_ID = models.CharField(max_length=20, unique=True)
+    inactive = models.BooleanField(default=False)
+
+    class Meta(Orderable.Meta):
+        """Meta class for the ProductOption model."""
+
+        verbose_name = "Product Option"
+        verbose_name_plural = "Product Options"
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def active(self):
+        """Return True if the department is active, otherwise return False."""
+        return not self.inactive
+
+    def cc_product_option_values(self):
+        """Return all Cloud Commerce Product Options for this model."""
+        return CCAPI.get_product_options()[self.name]
+
+
 class BaseProductOptionModel(models.Model):
     """Abstract model for Cloud Commerce Product Options."""
 
