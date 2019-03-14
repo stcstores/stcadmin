@@ -24,7 +24,6 @@ labeler = {git = "https://github.com/axevalley/labeler.git",ref = "master",edita
 list_input = {git = "https://github.com/axevalley/list_input.git",ref = "master",editable = true}
 order_profit = {git = "https://github.com/stcstores/order_profit.git",ref = "master",editable = true}
 openpyxl = "<3.0"
-pyyaml = "==4.2b1"  # CVE-2017-18342 Remove after pyyaml release >4.2
 isoweek = "*"
 django-orderable = "*"
 
