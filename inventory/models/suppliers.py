@@ -33,8 +33,8 @@ class Supplier(BaseProductOptionModel):
 
         Create a Product Option and Factory in Cloud Commerce if neither exist.
         """
-        if self.product_option_ID == "" or self.factory_ID == "":
-            self.product_option_ID = self.create_product_option(self.name)
+        if self.product_option_value_ID == "" or self.factory_ID == "":
+            self.product_option_value_ID = self.create_product_option(self.name)
             self.factory_ID = self.create_factory(self.name)
         super().save(*args, **kwargs)
 

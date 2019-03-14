@@ -14,7 +14,7 @@ class BaseProductOptionModel(models.Model):
     PRODUCT_OPTION_NAME = None
 
     name = models.CharField(max_length=50, unique=True)
-    product_option_ID = models.CharField(max_length=20, unique=True)
+    product_option_value_ID = models.CharField(max_length=20, unique=True)
     inactive = models.BooleanField(default=False)
 
     class Meta:
@@ -34,10 +34,10 @@ class BaseProductOptionModel(models.Model):
     def save(self, *args, **kwargs):
         """Create or update the Department object.
 
-        Create a Product Option in Cloud Commerce if self.product_option_ID is empty.
+        Create a Product Option in Cloud Commerce if self.product_option_value_ID is empty.
         """
-        if self.product_option_ID == "":
-            self.product_option_ID = self.create_product_option(self.name)
+        if self.product_option_value_ID == "":
+            self.product_option_value_ID = self.create_product_option(self.name)
         super().save(*args, **kwargs)
 
     @classmethod

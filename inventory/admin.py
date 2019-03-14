@@ -96,9 +96,15 @@ class ProductOptionAdminProductExportAdmin(admin.ModelAdmin):
 class SupplierAdmin(admin.ModelAdmin):
     """Model admin for the Supplier model."""
 
-    fields = ("name", "product_option_ID", "factory_ID", "inactive")
-    list_display = ("__str__", "name", "product_option_ID", "factory_ID", "inactive")
-    list_editable = ("name", "product_option_ID", "factory_ID", "inactive")
+    fields = ("name", "product_option_value_ID", "factory_ID", "inactive")
+    list_display = (
+        "__str__",
+        "name",
+        "product_option_value_ID",
+        "factory_ID",
+        "inactive",
+    )
+    list_editable = ("name", "product_option_value_ID", "factory_ID", "inactive")
     search_fields = ("name",)
 
 
@@ -116,10 +122,10 @@ class SupplierContactAdmin(admin.ModelAdmin):
 class ProductOptionAdmin(admin.ModelAdmin):
     """Model admin for the ProductOptionModel abstract model."""
 
-    fields = ("name", "product_option_ID", "inactive")
-    list_display = ("__str__", "name", "product_option_ID", "inactive")
-    list_editable = ("name", "product_option_ID", "inactive")
-    search_fields = ("name", "product_option_ID")
+    fields = ("name", "product_option_value_ID", "inactive")
+    list_display = ("__str__", "name", "product_option_value_ID", "inactive")
+    list_editable = ("name", "product_option_value_ID", "inactive")
+    search_fields = ("name", "product_option_value_ID")
 
 
 class OrderableProductOptionAdmin(OrderableAdmin, ProductOptionAdmin):
@@ -132,10 +138,22 @@ class OrderableProductOptionAdmin(OrderableAdmin, ProductOptionAdmin):
 class DepartmentAdmin(ProductOptionAdmin):
     """Model admin for the Department model."""
 
-    fields = ("name", "abriviation", "product_option_ID", "inactive")
-    list_display = ("__str__", "name", "abriviation", "product_option_ID", "inactive")
-    list_editable = ("name", "name", "abriviation", "product_option_ID", "inactive")
-    search_fields = ("name", "abriviation", "product_option_ID")
+    fields = ("name", "abriviation", "product_option_value_ID", "inactive")
+    list_display = (
+        "__str__",
+        "name",
+        "abriviation",
+        "product_option_value_ID",
+        "inactive",
+    )
+    list_editable = (
+        "name",
+        "name",
+        "abriviation",
+        "product_option_value_ID",
+        "inactive",
+    )
+    search_fields = ("name", "abriviation", "product_option_value_ID")
 
 
 @admin.register(models.PackageType)
