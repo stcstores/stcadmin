@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "caeea6ecf4bda05fe57e398a10215ff0892984d42a9e2c71f477d112838d36cb"
+            "sha256": "b228b74595d50cff6c1b41de9400c929fec0b4ff7ed3af8fb4ba14e5cda6e8f0"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -46,7 +46,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "c1b3760ebac463bf0ac3d062a03a29c0da841c50"
+            "ref": "654536b8a7a32432290a9397d7fc4b19e79bada7"
         },
         "certifi": {
             "hashes": [
@@ -401,7 +401,6 @@
                 "sha256:c68ea4d3ba1705da1e0d85da6684ac657912679a649e8868bd850d2c299cce13",
                 "sha256:e23d0cc5299223dcc37885dae624f382297717e459ea24053709675a976a3e19"
             ],
-            "index": "pypi",
             "version": "==5.1"
         },
         "reportlab": {
