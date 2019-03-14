@@ -7,7 +7,7 @@ from orderable.models import Orderable
 from .locations import Bay, Warehouse
 
 
-class ProductOptionModel(models.Model):
+class BaseProductOptionModel(models.Model):
     """Abstract model for Cloud Commerce Product Options."""
 
     PRODUCT_OPTION_ID = None
@@ -18,7 +18,7 @@ class ProductOptionModel(models.Model):
     inactive = models.BooleanField(default=False)
 
     class Meta:
-        """Meta class for the ProductOptionModel abstract model."""
+        """Meta class for the BaseProductOptionModel abstract model."""
 
         abstract = True
         ordering = ("inactive", "name")
@@ -55,16 +55,16 @@ class ProductOptionModel(models.Model):
         return CCAPI.get_option_value_id(cls.PRODUCT_OPTION_ID, name, create=True)
 
 
-class OrderableProductOptionModel(Orderable, ProductOptionModel):
+class OrderableProductOptionModel(Orderable, BaseProductOptionModel):
     """Orderable abstract model for product options."""
 
-    class Meta(Orderable.Meta, ProductOptionModel.Meta):
+    class Meta(Orderable.Meta, BaseProductOptionModel.Meta):
         """Meata class for OrderableProductOptionModel."""
 
         abstract = True
 
 
-class Department(ProductOptionModel):
+class Department(BaseProductOptionModel):
     """Model for departments."""
 
     PRODUCT_OPTION_ID = 34325
@@ -72,7 +72,7 @@ class Department(ProductOptionModel):
 
     abriviation = models.CharField(max_length=3, blank=True, null=True)
 
-    class Meta(ProductOptionModel.Meta):
+    class Meta(BaseProductOptionModel.Meta):
         """Meta class for Department."""
 
         verbose_name = "Department"
