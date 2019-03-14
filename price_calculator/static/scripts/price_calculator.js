@@ -9,6 +9,8 @@ class PriceCalculator {
         this.min_channel_fee = data.min_channel_fee
         this.vat_rate = data.vat_rate;
         this.channel_fee_percentage = data.channel_fee_percentage;
+        this.shipping_service = 'No Shipping Service'
+        this.valid = true;
     }
     recalculate() {
         this.calculate_vat();
@@ -103,13 +105,25 @@ class PriceCalculator {
 
     }
     calculate_profit() {
+      if (!this.valid) {
+        this.profit = 0;
+      } else {
         this.profit = this.sale_price - this.vat - this.postage_price - this.channel_fee - this.purchase_price;
+      }
     }
     calculate_profit_percentage() {
+      if (!this.valid) {
+        this.profit_percentage = 0;
+      } else {
         this.profit_percentage = percentage(this.profit, this.sale_price).toFixed(2);
+      }
     }
     calculate_return_percentage() {
-      this.return_percentage = percentage(this.profit, this.purchase_price).toFixed(2);
+      if (!this.valid) {
+        this.return_percentage = 0;
+      } else {
+        this.return_percentage = percentage(this.profit, this.purchase_price).toFixed(2);
+      }
     }
     change() {
         console.log(this.profit);
@@ -148,19 +162,26 @@ function get_postage_price(
   $.post(
     get_postage_price_url,
     data,
+
     function(response) {
       data = $.parseJSON(response);
       console.log(data);
+      console.log(data['vat_rates']);
       update_vat_rates(data['vat_rates'], calculator);
       calculator.set_postage_price(parseInt(data['price']) / 100);
       calculator.set_exchange_rate(parseFloat(data['exchange_rate']));
       calculator.currency_code = data['currency_code'];
       calculator.currency_symbol = data['currency_symbol'];
       calculator.min_channel_fee = parseInt(data['min_channel_fee']);
+      calculator.shipping_service = data['price_name'];
+      calculator.valid = data['success'];
       calculator.recalculate();
       calculator.change();
+      $(document).trigger('calculator_update');
     },
-  ).error(function() {alert('No valid shipping service found.');});
+  ).error(function() {
+    alert('Error finding shipping service.');
+  });
 }
 
 function format_percentage(element, value, high, warn) {

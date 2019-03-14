@@ -41,7 +41,7 @@
 
 <div class="range">
   {% for product in product_range.products %}
-  <div class="product">
+  <div class="product" id="product_{{ product.id }}">
     <div class="product_row title">
       <span class="sku">{{ product.sku }}</span>&nbsp;-&nbsp;<span class="name">{{ product.full_name }}</span>
     </div>
@@ -67,6 +67,11 @@
       <div class="profit_percentage tooltip critical" tooltiptitle="Profit Percentage" tooltiptext="Percentage of sale price returned in profit.">
         <span class="name">Profit Percentage</span>
         <span class="value" id="{{ product.id }}_profit_percentage"></span>
+      </div>
+
+      <div class="shipping_service tooltip critical" tooltiptitle="Shipping Service" tooltiptext="The shipping service used to calculate the postage price.">
+        <span class="name">Shipping Service</span>
+        <span class="value" id="{{ product.id }}_shipping_service"></span>
       </div>
     </div>
 
@@ -143,6 +148,16 @@
             'min_channel_fee': 0,
         }
         calcs['{{ product.id }}'] = new PriceCalculator(data)
+
+        $(document).on('calculator_update', function() {
+          $('#{{ product.id }}_shipping_service').html(calcs['{{ product.id }}'].shipping_service);
+          console.log($('#product_{{ product.id }}'));
+          if (!calcs['{{ product.id }}'].valid) {
+            $('#product_{{ product.id }}').addClass('invalid');
+          } else {
+            $('#product_{{ product.id }}').removeClass('invalid');
+          }
+        });
 
         calcs['{{ product.id }}'].change = function() {
             // Format Price

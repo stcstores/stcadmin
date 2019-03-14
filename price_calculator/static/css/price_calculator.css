@@ -8,7 +8,7 @@
   font-weight: bold;
 }
 
-#profit, #profit_percentage, .profit_percentage, .profit {
+#profit, #profit_percentage, #shipping_service, .profit_percentage, .profit, .shipping_service {
     font-size: 1.5em;
     font-weight: bold;
 }
@@ -30,11 +30,13 @@
 }
 
 .price_calculator {
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
   flex-shrink: 0;
   flex-wrap: wrap;
-  margin: 2em;
+  margin: 1em;
+  padding: 1em;
+  border-radius: 2em;
 }
 
 .price_calculator_input {
@@ -68,6 +70,10 @@
 .price_calculator_output .value {
   font-weight: bold;
   margin: 0.25em;
+}
+
+.critical div {
+  width: 15em;
 }
 
 .range {
@@ -131,9 +137,14 @@
   border-radius: 1em;
   margin: 0.25em;
   padding: 0.5em;
+  width: 20em;
 }
 
 .product .InputAddOn {
   margin-bottom: 0;
   padding: 0.15em;
+}
+
+.invalid {
+  background: #fc3c3c;
 }

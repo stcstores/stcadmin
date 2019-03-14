@@ -17,49 +17,97 @@ from price_calculator import models
 class GetShippingPriceView(InventoryUserMixin, View):
     """View for AJAX requests for shipping prices."""
 
+    SUCCESS = "success"
+    PRICE = "price"
+    PRICE_NAME = "price_name"
+    VAT_RATES = "vat_rates"
+    EXCHANGE_RATE = "exchange_rate"
+    CURRENCY_CODE = "currency_code"
+    CURRENCY_SYMBOL = "currency_symbol"
+    MIN_CHANNEL_FEE = "min_channel_fee"
+
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
         """Return shipping prices as JSON or return server error."""
         try:
-            shipping_price_details = self.get_shipping_price_details()
-            json_data = json.dumps(shipping_price_details)
+            json_data = self.get_shipping_price_details()
         except Exception:
-            return HttpResponse(status=500)
+            json_data = self.no_shipping_price_response()
         return HttpResponse(json_data)
 
-    def get_shipping_price_details(self):
-        """Return details of shipping price as dict."""
-        country = get_object_or_404(
-            models.DestinationCountry, name=self.request.POST["country"]
-        )
+    def package_type_name(self):
+        """Return the package type name."""
         int_shipping = self.request.POST["international_shipping"]
-        if country.shipping_region.name != "Domestic" and int_shipping == "Express":
+        if (
+            self.country.shipping_region.name != "Domestic"
+            and int_shipping == "Express"
+        ):
             package_type_name = int_shipping
         else:
             package_type_name = self.request.POST["package_type"]
-        weight = int(self.request.POST["weight"])
-        price = int(self.request.POST["price"])
+        return package_type_name
 
-        exchange_rate = country.current_rate()
-        postage_price = models.ShippingPrice.objects.get_price(
-            country.name, package_type_name, weight, price
-        )
-        vat_rates = list(postage_price.vat_rates.values())
-        if country.min_channel_fee is None:
+    def min_channel_fee(self):
+        """Return the minimum channel fee."""
+        if self.country.min_channel_fee is None:
             min_channel_fee = 0
         else:
-            min_channel_fee = int(country.min_channel_fee * exchange_rate)
+            min_channel_fee = int(self.country.min_channel_fee * self.exchange_rate)
+        return min_channel_fee
 
+    def get_shipping_price_details(self):
+        """Return details of shipping price as dict."""
+        self.country = get_object_or_404(
+            models.DestinationCountry, name=self.request.POST["country"]
+        )
+        weight = int(self.request.POST["weight"])
+        price = int(self.request.POST["price"])
+        self.exchange_rate = self.country.current_rate()
+        postage_price = models.ShippingPrice.objects.get_price(
+            self.country.name, self.package_type_name(), weight, price
+        )
+        vat_rates = list(postage_price.vat_rates.values())
+
+        return self.format_response(
+            success=True,
+            price=postage_price.calculate(weight),
+            price_name=postage_price.name,
+            vat_rates=vat_rates,
+            exchange_rate=self.exchange_rate,
+            currency_code=self.country.currency_code,
+            currency_symbol=self.country.currency_symbol,
+            min_channel_fee=self.min_channel_fee(),
+        )
+
+    def no_shipping_price_response(self):
+        """Return an invalid shipping service response as a JSON string."""
+        return self.format_response(
+            success=False, price_name="No Shipping Service Found"
+        )
+
+    def format_response(
+        self,
+        success=True,
+        price=0,
+        price_name="",
+        vat_rates=[],
+        exchange_rate=0,
+        currency_code="GBP",
+        currency_symbol="£",
+        min_channel_fee=0,
+    ):
+        """Return shipping service information as a JSON string."""
         data = {
-            "price": postage_price.calculate(weight),
-            "price_name": postage_price.name,
-            "vat_rates": vat_rates,
-            "exchange_rate": exchange_rate,
-            "currency_code": country.currency_code,
-            "currency_symbol": country.currency_symbol,
-            "min_channel_fee": min_channel_fee,
+            self.SUCCESS: success,
+            self.PRICE: price,
+            self.PRICE_NAME: price_name,
+            self.VAT_RATES: vat_rates,
+            self.EXCHANGE_RATE: exchange_rate,
+            self.CURRENCY_CODE: currency_code,
+            self.CURRENCY_SYMBOL: currency_symbol,
+            self.MIN_CHANNEL_FEE: min_channel_fee,
         }
-        return data
+        return json.dumps(data)
 
 
 class RangePriceCalculatorView(InventoryUserMixin, TemplateView):
