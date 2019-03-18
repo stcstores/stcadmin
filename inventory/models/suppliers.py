@@ -5,10 +5,10 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 
-from .product_options import BaseProductOptionModel
+from .product_options import BaseNonListingProductOptionModel
 
 
-class Supplier(BaseProductOptionModel):
+class Supplier(BaseNonListingProductOptionModel):
     """Model for suppliers."""
 
     PRODUCT_OPTION_ID = 35131
@@ -17,7 +17,7 @@ class Supplier(BaseProductOptionModel):
     factory_ID = models.CharField(max_length=20, unique=True)
     inactive = models.BooleanField(default=False)
 
-    class Meta(BaseProductOptionModel.Meta):
+    class Meta(BaseNonListingProductOptionModel.Meta):
         """Meta class for Supplier."""
 
         verbose_name = "Supplier"

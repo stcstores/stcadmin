@@ -33,14 +33,62 @@ class ProductOption(Orderable):
         return CCAPI.get_product_options()[self.name]
 
 
-class BaseProductOptionModel(models.Model):
+class BaseProductOptionValueModel(models.Model):
+    """Abstract model for Cloud Commerce Product Option Values."""
+
+    product_option_value_ID = models.CharField(max_length=20, unique=True)
+
+    class Meta:
+        """Meta class for the BaseProductOptionModel abstract model."""
+
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        """Create or update the Department object.
+
+        Create a Product Option in Cloud Commerce if self.product_option_value_ID is empty.
+        """
+        if self.product_option_value_ID == "":
+            self.product_option_value_ID = self.create_CC_product_option(self.value)
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_product_options(cls):
+        """Return all Cloud Commerce Product Options for this model."""
+        return CCAPI.get_product_options()[cls.PRODUCT_OPTION_NAME]
+
+
+class ProductOptionValue(BaseProductOptionValueModel):
+    """Model for Cloud Commerce Product Option Values."""
+
+    product_option = models.ForeignKey(ProductOption, on_delete=models.PROTECT)
+    value = models.CharField(max_length=255)
+
+    class Meta(BaseProductOptionValueModel.Meta):
+        """Meta class for Department."""
+
+        verbose_name = "Product Option Value"
+        verbose_name_plural = "Product Option Values"
+
+    def __str__(self):
+        return f"{self.product_option.name}: {self.value}"
+
+    def create_CC_product_option(self, value):
+        """
+        Return the ID of the Department Product Option matching name.
+
+        If it does not exist it will be created.
+        """
+        return CCAPI.create_option_value(self.product_option.product_option_ID, value)
+
+
+class BaseNonListingProductOptionModel(BaseProductOptionValueModel):
     """Abstract model for Cloud Commerce Product Options."""
 
     PRODUCT_OPTION_ID = None
     PRODUCT_OPTION_NAME = None
 
     name = models.CharField(max_length=50, unique=True)
-    product_option_value_ID = models.CharField(max_length=20, unique=True)
     inactive = models.BooleanField(default=False)
 
     class Meta:
@@ -57,40 +105,31 @@ class BaseProductOptionModel(models.Model):
         """Return True if the department is active, otherwise return False."""
         return not self.inactive
 
-    def save(self, *args, **kwargs):
-        """Create or update the Department object.
-
-        Create a Product Option in Cloud Commerce if self.product_option_value_ID is empty.
-        """
-        if self.product_option_value_ID == "":
-            self.product_option_value_ID = self.create_product_option(self.name)
-        super().save(*args, **kwargs)
+    @property
+    def value(self):
+        """Return self.name for compatibility with BaseProductOptionValueModel."""
+        return self.name
 
     @classmethod
-    def get_product_options(cls):
-        """Return all Cloud Commerce Product Options for this model."""
-        return CCAPI.get_product_options()[cls.PRODUCT_OPTION_NAME]
-
-    @classmethod
-    def create_product_option(cls, name):
+    def create_CC_product_option(cls, value):
         """
         Return the ID of the Department Product Option matching name.
 
         If it does not exist it will be created.
         """
-        return CCAPI.get_option_value_id(cls.PRODUCT_OPTION_ID, name, create=True)
+        return CCAPI.create_option_value(cls.PRODUCT_OPTION_ID, value)
 
 
-class OrderableProductOptionModel(Orderable, BaseProductOptionModel):
+class OrderableProductOptionModel(Orderable, BaseNonListingProductOptionModel):
     """Orderable abstract model for product options."""
 
-    class Meta(Orderable.Meta, BaseProductOptionModel.Meta):
+    class Meta(Orderable.Meta, BaseNonListingProductOptionModel.Meta):
         """Meata class for OrderableProductOptionModel."""
 
         abstract = True
 
 
-class Department(BaseProductOptionModel):
+class Department(BaseNonListingProductOptionModel):
     """Model for departments."""
 
     PRODUCT_OPTION_ID = 34325
@@ -98,7 +137,7 @@ class Department(BaseProductOptionModel):
 
     abriviation = models.CharField(max_length=3, blank=True, null=True)
 
-    class Meta(BaseProductOptionModel.Meta):
+    class Meta(BaseNonListingProductOptionModel.Meta):
         """Meta class for Department."""
 
         verbose_name = "Department"
