@@ -172,6 +172,20 @@ class InternationalShippingAdmin(OrderableProductOptionAdmin):
     pass
 
 
+@admin.register(models.Brand)
+class BrandAdmin(BaseNonListingProductOptionModel):
+    """Model admin for the Brand model."""
+
+    pass
+
+
+@admin.register(models.Manufacturer)
+class ManufacturerAdmin(BaseNonListingProductOptionModel):
+    """Model admin for the Manufacturer model."""
+
+    pass
+
+
 @admin.register(models.ProductRange)
 class ProductRangeAdmin(admin.ModelAdmin):
     """Model admin for the Product Range model."""

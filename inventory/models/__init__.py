@@ -12,5 +12,7 @@ from .product_options import (  # NOQA
     InternationalShipping,
     ProductOption,
     ProductOptionValue,
+    Brand,
+    Manufacturer,
 )
 from .products import ProductRange  # NOQA

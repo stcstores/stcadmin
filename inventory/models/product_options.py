@@ -182,3 +182,29 @@ class InternationalShipping(OrderableProductOptionModel):
 
         verbose_name = "International Shipping"
         verbose_name_plural = "International Shipping"
+
+
+class Brand(BaseNonListingProductOptionModel):
+    """Model for international shipping."""
+
+    PRODUCT_OPTION_ID = 37272
+    PRODUCT_OPTION_NAME = "Brand"
+
+    class Meta(BaseNonListingProductOptionModel.Meta):
+        """Meta class for InternationalShipping."""
+
+        verbose_name = "34321"
+        verbose_name_plural = "Brands"
+
+
+class Manufacturer(BaseNonListingProductOptionModel):
+    """Model for international shipping."""
+
+    PRODUCT_OPTION_ID = 34322
+    PRODUCT_OPTION_NAME = "Manufacturer"
+
+    class Meta(BaseNonListingProductOptionModel.Meta):
+        """Meta class for InternationalShipping."""
+
+        verbose_name = "Manufacturer"
+        verbose_name_plural = "Manufacturers"
