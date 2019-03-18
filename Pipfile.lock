@@ -88,11 +88,11 @@
         },
         "django-markup": {
             "hashes": [
-                "sha256:3c8d5ba7edbaa214e9985ccee2bb593fa9cb4f749a476220b8c404c4ec935be5",
-                "sha256:825e6a64c2fd016485bc8fe8c288cd4e08022af8e01b3cd0f8871d89daf9a465"
+                "sha256:6edfadaa56d139f8dab3496a99f3bb54972057317a53099ecaefa76f9264bfa1",
+                "sha256:bd2ca1c61555d92d329bd5e8c237c938ffe8eabea02fe0ebbba093d4ec524f67"
             ],
             "index": "pypi",
-            "version": "==1.3"
+            "version": "==1.4.1"
         },
         "django-orderable": {
             "hashes": [
