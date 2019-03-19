@@ -231,3 +231,18 @@ class ProductOptionValueAdmin(admin.ModelAdmin):
     list_editable = ("value", "product_option", "product_option_value_ID")
     list_filter = ("product_option",)
     search_fields = ("value",)
+
+
+@admin.register(models.VATRate)
+class VATRateAdmin(OrderableAdmin):
+    """Model admin for the VATRate model."""
+
+    fields = ("VAT_rate_ID", "name", "percentage")
+    list_display = (
+        "__str__",
+        "VAT_rate_ID",
+        "name",
+        "percentage",
+        "sort_order_display",
+    )
+    list_editable = ("VAT_rate_ID", "name", "percentage")

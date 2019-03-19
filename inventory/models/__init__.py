@@ -16,3 +16,4 @@ from .product_options import (  # NOQA
     Manufacturer,
 )
 from .products import ProductRange  # NOQA
+from .vat_rates import VATRate  # NOQA
