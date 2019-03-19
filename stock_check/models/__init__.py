@@ -1,6 +1,6 @@
 """Models for the Stock Check app."""
 
-from .stock_check import Product, ProductBay  # NOQA
+from .stock_check import StockCheckProduct, ProductBay  # NOQA
 from inventory.models import Bay, Warehouse  # NOQA
 from ccapi import CCAPI
 import cc_products
@@ -44,20 +44,20 @@ def update_products(inventory_table):
     """
     print("Updating Products...", file=sys.stderr)
     table_skus = [sku for sku in inventory_table.get_column("VAR_SKU") if sku]
-    db_skus = [p.sku for p in Product.objects.all()]
+    db_skus = [p.sku for p in StockCheckProduct.objects.all()]
     new_skus = [sku for sku in table_skus if sku not in db_skus]
     missing_skus = [sku for sku in db_skus if sku not in table_skus]
     for sku in missing_skus:
-        Product.objects.filter(sku__in=missing_skus).delete()
+        StockCheckProduct.objects.filter(sku__in=missing_skus).delete()
     print(f"Deleted {len(missing_skus)} products.", file=sys.stderr)
     new_products = []
     for sku in new_skus:
         cc_product = get_cc_product_by_sku(sku)
-        new_product = Product(
+        new_product = StockCheckProduct(
             range_id=cc_product.range_id, product_id=cc_product.id, sku=cc_product.sku
         )
         new_products.append(new_product)
-    Product.objects.bulk_create(new_products)
+    StockCheckProduct.objects.bulk_create(new_products)
     print(f"Added {len(new_products)} products", file=sys.stderr)
 
 
@@ -73,7 +73,7 @@ def update_product_bays(inventory_table):
     for row in inventory_table:
         if row["VAR_Bays"] is None or len(row["VAR_Bays"]) == 0:
             continue
-        product = Product.objects.get(sku=row["VAR_SKU"])
+        product = StockCheckProduct.objects.get(sku=row["VAR_SKU"])
         bay_names = list(set(row["VAR_Bays"].split(";")))
         try:
             bays = [Bay.objects.get(name=name) for name in bay_names]
