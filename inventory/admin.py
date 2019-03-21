@@ -190,7 +190,15 @@ class ManufacturerAdmin(BaseNonListingProductOptionModel):
 class ProductRangeAdmin(admin.ModelAdmin):
     """Model admin for the Product Range model."""
 
-    fields = ("range_ID", "SKU", "name", "department", "end_of_line", "hidden")
+    fields = (
+        "range_ID",
+        "SKU",
+        "name",
+        "department",
+        "variation_options",
+        "end_of_line",
+        "hidden",
+    )
     list_display = (
         "__str__",
         "range_ID",

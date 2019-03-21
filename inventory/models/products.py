@@ -6,7 +6,7 @@ import string
 from ccapi import CCAPI
 from django.db import models
 
-from .product_options import Department
+from .product_options import Department, ProductOption
 
 UNIQUE_SKU_ATTEMPTS = 100
 
@@ -41,6 +41,7 @@ class ProductRange(models.Model):
     SKU = models.CharField(max_length=15, unique=True, db_index=True)
     name = models.CharField(max_length=255)
     department = models.ForeignKey(Department, on_delete=models.PROTECT)
+    variation_options = models.ManyToManyField(ProductOption, blank=True)
     end_of_line = models.BooleanField(default=False)
     hidden = models.BooleanField(default=False)
 
@@ -75,3 +76,26 @@ class ProductRange(models.Model):
     def create_CC_range(self):
         """Create a new Product Range in Cloud Commerce."""
         return CCAPI.create_range(self.name, sku=self.SKU)
+
+    def set_product_option_variable(self, option):
+        """Set a Product Option as variable.
+
+        Args:
+            option: inventory.product_options.ProductOption or str(ProductOption.name).
+        """
+        if isinstance(option, str):
+            option = ProductOption.objects.get(name=option)
+        self.variation_options.add(option)
+
+    def set_variable_options(self, options):
+        """Replace the variable product options.
+
+        Args:
+            options: list(ProductOption or str(ProductOption.name))
+        """
+        set_options = []
+        for option in options:
+            if isinstance(option, str):
+                option = ProductOption.objects.get(name=option)
+            set_options.append(option)
+        self.variation_options.set(set_options)
