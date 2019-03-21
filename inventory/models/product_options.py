@@ -69,6 +69,7 @@ class ProductOptionValue(BaseProductOptionValueModel):
 
         verbose_name = "Product Option Value"
         verbose_name_plural = "Product Option Values"
+        unique_together = ("product_option", "value")
 
     def __str__(self):
         return f"{self.product_option.name}: {self.value}"
