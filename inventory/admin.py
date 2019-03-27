@@ -205,6 +205,7 @@ class ProductRangeAdmin(admin.ModelAdmin):
         "SKU",
         "name",
         "department",
+        "product_count",
         "end_of_line",
         "hidden",
     )
@@ -254,3 +255,52 @@ class VATRateAdmin(OrderableAdmin):
         "sort_order_display",
     )
     list_editable = ("VAT_rate_ID", "name", "percentage")
+
+
+@admin.register(models.Product)
+class ProductAdmin(admin.ModelAdmin):
+    """Model admin for the Product model."""
+
+    fields = (
+        "product_ID",
+        "product_range",
+        "SKU",
+        "name",
+        "supplier",
+        "supplier_SKU",
+        "barcode",
+        "purchase_price",
+        "VAT_rate",
+        "price",
+        "retail_price",
+        "brand",
+        "manufacturer",
+        "description",
+        "package_type",
+        "international_shipping",
+        "bays",
+        "weight_grams",
+        "length_mm",
+        "height_mm",
+        "width_mm",
+        "amazon_search_terms",
+        "amazon_bullet_points",
+        "product_options",
+        "multipack",
+        "end_of_line",
+        "status",
+    )
+    list_display = (
+        "range_SKU",
+        "SKU",
+        "name",
+        "department",
+        "multipack",
+        "date_created",
+        "last_modified",
+        "status",
+        "end_of_line",
+    )
+    list_display_links = ("SKU", "name")
+    list_filter = ("product_range__department", "end_of_line")
+    search_fields = ("SKU", "name", "supplier_SKU", "product_range__SKU")
