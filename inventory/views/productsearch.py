@@ -2,6 +2,7 @@
 
 from django.shortcuts import render
 from django.views.generic.edit import FormView
+
 from inventory.forms import ProductSearchForm
 
 from .views import InventoryUserMixin
@@ -13,8 +14,26 @@ class ProductSearchView(InventoryUserMixin, FormView):
     template_name = "inventory/product_search.html"
     form_class = ProductSearchForm
 
+    def get_form_kwargs(self, *args, **kwargs):
+        """Return the kwargs to be passed to the form."""
+        kwargs = super().get_form_kwargs(*args, **kwargs)
+        if "data" in kwargs:
+            kwargs["data"] = kwargs["data"].copy()
+            for key, value in kwargs["initial"].items():
+                if key not in kwargs["data"]:
+                    kwargs["data"][key] = value
+        return kwargs
+
+    def get_initial(self):
+        """Return the initial values for the product search form."""
+        initial = super().get_initial()
+        initial["end_of_line"] = self.form_class.END_OF_LINE_DEFAULT
+        initial["show_hidden"] = False
+        return initial
+
     def form_valid(self, form):
         """Process form request and return HttpResponse."""
+        form.save()
         return render(
             self.request,
             "inventory/product_search.html",

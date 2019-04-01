@@ -3,7 +3,9 @@
 
 {% block additional_head %}
 {{ block.super }}
+<link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <link rel="stylesheet" href="{% static 'css/inventory.css' %}">
+<script src="{% static 'scripts/selectize/selectize.js' %}"></script>
 {% endblock %}
 
 {% block page_title %}Inventory{% endblock %}

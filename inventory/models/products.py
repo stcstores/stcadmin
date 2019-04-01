@@ -180,6 +180,13 @@ class Product(models.Model):
             self.product_ID = self.CC_create_product()
         super().save(*args, **kwargs)
 
+    def variation(self):
+        """Return the product's variation product options as a dict."""
+        return {
+            option.product_option.name: option.value
+            for option in self.variable_options()
+        }
+
     @property
     def full_name(self):
         """Return the product name with any extensions."""

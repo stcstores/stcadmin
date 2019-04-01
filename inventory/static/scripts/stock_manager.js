@@ -37,14 +37,14 @@ $(document).ready(function() {
         var range_id = table.attr('id').replace('products_table_', '');
         var show_hide = $('#show_hide_products_' + range_id);
         table.css('display', 'block');
-        show_hide.text('[[ hide ]]');
+        show_hide.text('Hide');
     }
 
     function hide_table(table) {
         var range_id = table.attr('id').replace('products_table_', '');
         var show_hide = $('#show_hide_products_' + range_id);
         table.css('display', 'none');
-        show_hide.text('[[ show ]]');
+        show_hide.text('Show');
     }
 
     function change_stock_level(variation_id, stock_level) {

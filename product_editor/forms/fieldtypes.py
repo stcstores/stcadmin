@@ -172,7 +172,7 @@ class BaseSelectizeField(FormField):
             self.label = kwargs.pop("label")
         kwargs = super().__init__(*args, **kwargs)
 
-    def get_widget(self):
+    def get_widget(self, choices=None):
         """Return widget for field."""
         attrs = {}
         if self.placeholder is not None:
@@ -211,6 +211,18 @@ class SingleSelectize(BaseSelectizeField, forms.ChoiceField):
         if isinstance(value, list):
             return value[0]
         return value
+
+
+class SelectizeModelChoiceField(forms.ModelChoiceField, SingleSelectize):
+    """Field allowing model objects to be selected with a Selectize widget."""
+
+    def __init__(self, *args, **kwargs):
+        """Create a ModelChoiceField with a Selectize widget."""
+        kwargs["empty_label"] = ""
+        super().__init__(kwargs.pop("queryset"), **kwargs)
+        self.choices = list(self._get_choices())[1:]
+        self.choices.insert(0, ("", ""))
+        self.widget = super(SingleSelectize, self).get_widget()
 
 
 class NumberField(FormField, forms.IntegerField):
