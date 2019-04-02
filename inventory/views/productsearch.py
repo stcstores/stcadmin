@@ -11,7 +11,7 @@ from .views import InventoryUserMixin
 class ProductSearchView(InventoryUserMixin, FormView):
     """View for product search page."""
 
-    template_name = "inventory/product_search.html"
+    template_name = "inventory/product_search/search_page.html"
     form_class = ProductSearchForm
 
     def get_form_kwargs(self, *args, **kwargs):
@@ -36,6 +36,6 @@ class ProductSearchView(InventoryUserMixin, FormView):
         form.save()
         return render(
             self.request,
-            "inventory/product_search.html",
+            self.template_name,
             {"form": form, "product_ranges": form.ranges},
         )

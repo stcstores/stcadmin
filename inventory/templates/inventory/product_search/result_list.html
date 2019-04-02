@@ -1,0 +1,25 @@
+{% load inventory_extras %}
+{% load stcadmin_extras %}
+
+Found {{ product_ranges.count }} product ranges.
+
+<table id="stock_search_result">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th></th>
+      <th colspan="2">Variations <button id="show_hide_all">Show/Hide all</button></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for range in product_ranges %}
+
+    {% if false and 'Incomplete' in range.options.option_names %}
+      {% include 'inventory/product_search/result_incomplete.html' %}
+    {% else %}
+      {% include 'inventory/product_search/result_range.html' %}
+    {% endif %}
+
+  {% endfor %}
+  </tbody>
+</table>

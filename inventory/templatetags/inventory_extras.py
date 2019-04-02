@@ -55,7 +55,7 @@ def product_options(option=None):
 
 
 @register.simple_tag
-def format_variation(variation):
+def format_variation_name(variation):
     """Format the variation identification for the product search results."""
-    t = loader.get_template("inventory/product_search_variation.html")
+    t = loader.get_template("inventory/product_search/format_variation_name.html")
     return t.render({"variation": variation})

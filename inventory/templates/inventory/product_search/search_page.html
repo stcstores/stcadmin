@@ -1,0 +1,41 @@
+{% extends "inventory/base.html" %}
+{% load staticfiles %}
+{% load stcadmin_extras %}
+{% load reference_extras %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+{% endblock %}
+
+{% block page_title %}CCP Stock Manager{% endblock %}
+
+{% block content %}
+<h1 class="page_title">Product Search</h1>
+{% help_button 'inventory_help' 'inventory-product_search' %}
+
+<form method="POST" action="">{% csrf_token %}
+  <div class="error">{{ form.non_field_errors }}</div>
+
+  <table id="basic_search">
+    {% for field in form %}
+    <tr class="{% ifequal field.name|slice:" 0:6" 'basic_' %}basic_search_row{% else %}{% ifequal field.name|slice:"0:9" 'advanced_' %}advanced_search_row{% endifequal %}{% endifequal %}">
+      <td>{{ field.label }}</td>
+      <td>{{ field }}</td>
+      <td>{% tooltip_help_text field %}</td>
+      {% if field.errors %}
+      <td class="error">{{ field.errors }}</td>
+      {% else %}
+      <td></td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </table>
+  <input type="submit" value="Search">
+</form>
+
+{% if product_ranges %}
+  {% include "inventory/product_search/result_list.html" %}
+{% endif %}
+
+{% endblock %}

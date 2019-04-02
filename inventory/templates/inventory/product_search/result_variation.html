@@ -1,0 +1,15 @@
+{% load inventory_extras %}
+
+<td class="products_box">
+  <table id="products_table_{{ range.range_ID }}" class="products_table">
+    {% for product in range.product_set.all %}
+    <tr>
+      <td><a href="{% url 'inventory:product' product.product_ID %}"><span class="sku">{{ product.SKU }}</span></a></td>
+      <td nowrap>{% format_variation_name product.variation %}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <td class="show_hide_field" nowrap>
+    <a id="show_hide_products_{{ range.range_ID }}" class="show_hide_products">Show</a> {{ range.product_set.count }} variations
+  </td>
+</td>

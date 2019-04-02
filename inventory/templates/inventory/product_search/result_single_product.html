@@ -1,0 +1,6 @@
+{% with range.product_set.all.0 as product %}
+ <td>
+   <a href="{% url 'inventory:product' product.product_ID %}"><span class="sku">{{ product.SKU }}</span></a>&nbsp;
+ </td>
+ <td>Single Product</td>
+{% endwith %}
