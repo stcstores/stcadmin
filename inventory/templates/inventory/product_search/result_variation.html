@@ -1,15 +1,69 @@
 {% load inventory_extras %}
 
-<td class="products_box">
-  <table id="products_table_{{ range.range_ID }}" class="products_table">
+<div class="collapsed" id="collapsed_{{ range.range_ID }}">
+  <button class="expand_variations" id="expand_{{ range.range_ID }}">
+    Show {{ range.product_set.count }} Variations &#9660;
+  </button>
+</div>
+
+<div class="expanded" id="expanded_{{ range.range_ID }}" hidden>
+  <button class="collapse_variations" id="collapse_{{ range.range_ID }}">
+    Hide {{ range.product_set.count }} Variations &#9650;
+  </button>
+  <div class="variation_table">
+    <div class="row">
+      <div class="column header"></div>
+      {% for option in range.product_set.all.0.variation.keys %}
+      <div class="column">
+        <div class="header">{{ option }}</div>
+      </div>
+      {% endfor %}
+      <div class="column header"></div>
+    </div>
     {% for product in range.product_set.all %}
+    <div class="row">
+      <div class="column">
+        <div class="sku">{{ product.SKU }}</div>
+      </div>
+      {% for option, value in product.variation.items %}
+      <div class="column">
+        <div>{{ value }}</div>
+      </div>
+      {% endfor %}
+      <div class="column">
+        <div>
+          <a href="{% url 'inventory:product' product.product_ID %}">
+            <button>View</button>
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+  {% comment %}
+  <table>
     <tr>
-      <td><a href="{% url 'inventory:product' product.product_ID %}"><span class="sku">{{ product.SKU }}</span></a></td>
-      <td nowrap>{% format_variation_name product.variation %}</td>
+      <th>
+        <button class="collapse_variations" id="collapse_{{ range.range_ID }}">
+          Hide &#9650;
+        </button>
+      </th>
+      {% for option in range.product_set.all.0.variation.keys %}
+        <th>{{ option }}</th>
+      {% endfor %}
     </tr>
+    {% for product in range.product_set.all %}
+      <tr>
+        <td class="sku">{{ product.SKU }}</td>
+        {% for value in product.variation.values %}
+          <td>{{ value }}</td>
+        {% endfor %}
+        <td>
+          <a href="{% url 'inventory:product' product.product_ID %}"><button>View</button></a>
+        </td>
+      </tr>
     {% endfor %}
   </table>
-  <td class="show_hide_field" nowrap>
-    <a id="show_hide_products_{{ range.range_ID }}" class="show_hide_products">Show</a> {{ range.product_set.count }} variations
-  </td>
-</td>
+  {% endcomment %}
+</div>

@@ -55,3 +55,11 @@ def feedback_badges(user):
         html.append("&nbsp;{}</td>".format(count))
     html.append("</table>")
     return mark_safe("\n".join(html))
+
+
+@register.filter
+def add_class(field, css_class):
+    """Add a CSS class to a form field."""
+    classes = field.field.widget.attrs.get("class", "")
+    field.field.widget.attrs["class"] = " ".join((classes, css_class)).strip()
+    return field

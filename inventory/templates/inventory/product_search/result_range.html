@@ -1,17 +1,39 @@
 {% load product_editor_extras %}
 
-<tr {% if range.end_of_line or range.hidden %} class="end_of_line" {% endif %}>
-  <td><a href="{% url 'inventory:product_range' range.range_ID %}">{{ range.name }}</a> </td>
-  <td>
-    <a title="Descriptions" href="{% url 'inventory:descriptions' range.range_ID %}" target="_blank"><button>D</button></a>
-    <a title="Edit" href="{% edit_product_url range.range_ID %}" target="_blank"><button>E</button></a>
-    <a title="Images" href="{% url 'inventory:images' range.range_ID %}" target="_blank"><button>I</button></a>
-    <a title="Locations" href="{% url 'inventory:locations' range.range_ID %}" target="_blank"><button>L</button></a>
-    <a title="Price Calulator" href="{% url 'price_calculator:range_price_calculator' range.range_ID %}" target="_blank"><button>P</button></a>
-  </td>
-  {% if range.product_set.count > 1 %}
-    {% include "inventory/product_search/result_variation.html" %}
-  {% else %}
-    {% include "inventory/product_search/result_single_product.html" %}
-  {% endif %}
-  </tr>
+<div class="product_search_result_range {% if range.end_of_line or range.hidden %} end_of_line{% endif %}">
+  <div class="range_details">
+    <div class="range_identification">
+      <div class="sku">{{ range.SKU }}</div>
+      <div class="name">
+        <a title="View product range" href="{% url 'inventory:product_range' range.range_ID %}">
+          {{ range.name }}
+        </a>
+      </div>
+    </div>
+    <div class="range_links">
+      <ul>
+        <li><a title="Descriptions" href="{% url 'inventory:descriptions' range.range_ID %}" target="_blank"><button>D</button></a></li>
+        <li><a title="Edit" href="{% edit_product_url range.range_ID %}" target="_blank"><button>E</button></a></li>
+        <li><a title="Images" href="{% url 'inventory:images' range.range_ID %}" target="_blank"><button>I</button></a></li>
+        <li><a title="Locations" href="{% url 'inventory:locations' range.range_ID %}" target="_blank"><button>L</button></a></li>
+        <li><a title="Price Calulator" href="{% url 'price_calculator:range_price_calculator' range.range_ID %}" target="_blank"><button>P</button></a></li>
+        {% if not range.end_of_line %}
+        <li><button title="Mark the range as End of Line" class="EOL_range" id="EOL_{{ range.range_ID }}">End of Line</button></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="product_details">
+    <div class="product">
+    {% if range.product_set.count > 1 %}
+      {% include "inventory/product_search/result_variation.html" %}
+    {% else %}
+      {% include "inventory/product_search/result_single_product.html" %}
+    {% endif %}
+    </div>
+  </div>
+  <div class="range_status">
+    {% if range.end_of_line %}<div class="error">End of Line</div>{% endif %}
+  </div>
+</div>

@@ -5,37 +5,83 @@
 
 {% block additional_head %}
 {{ block.super }}
-<script src="{% static 'scripts/stock_manager.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/input-add-on.css' %}">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Code+Pro" rel="stylesheet">
 {% endblock %}
 
-{% block page_title %}CCP Stock Manager{% endblock %}
+{% block page_title %}Product Search{% endblock %}
 
 {% block content %}
-<h1 class="page_title">Product Search</h1>
 {% help_button 'inventory_help' 'inventory-product_search' %}
 
 <form method="POST" action="">{% csrf_token %}
+  <div class="product_search_options">
   <div class="error">{{ form.non_field_errors }}</div>
 
-  <table id="basic_search">
-    {% for field in form %}
-    <tr class="{% ifequal field.name|slice:" 0:6" 'basic_' %}basic_search_row{% else %}{% ifequal field.name|slice:"0:9" 'advanced_' %}advanced_search_row{% endifequal %}{% endifequal %}">
-      <td>{{ field.label }}</td>
-      <td>{{ field }}</td>
-      <td>{% tooltip_help_text field %}</td>
-      {% if field.errors %}
-      <td class="error">{{ field.errors }}</td>
+  {% for field in form %}
+    <div class="InputAddOn">
+      {% if forloop.first %}
+      {{ field|add_class:"InputAddOon-field" }}
+      <input type="submit" class="InputAddOn-item" value="Search">
       {% else %}
-      <td></td>
+      <label for="{{ field.name }}" class="InputAddOn-item">{{ field.label }}</label>
+      {{ field|add_class:"InputAddOon-field" }}
       {% endif %}
-    </tr>
-    {% endfor %}
-  </table>
-  <input type="submit" value="Search">
+      {% if field.errors %}
+      <span class="error InputAddOn-item">{{ field.errors }}</span>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+
+</div>
 </form>
 
 {% if product_ranges %}
   {% include "inventory/product_search/result_list.html" %}
 {% endif %}
 
+{% endblock %}
+
+{% block script %}
+  <script>
+
+  function end_of_line_range(range_id) {
+    alert('End of Lined ' + range_id);
+  }
+
+  $(document).ready(function() {
+
+    $('.EOL_range').click(function() {
+      var range_id = this.id.replace('EOL_', '');
+      if (window.confirm("Are you sure?\n\nThis will mark the range as End of Line.\nIt will no longer appear by default in search results.")) {
+        end_of_line_range(range_id);
+      }
+    });
+
+    $('.expand_variations').click(function() {
+      var range_id = this.id.replace('expand_', '');
+      $('#collapsed_' + range_id).hide();
+      $('#expanded_' + range_id).show();
+    });
+
+    $('.collapse_variations').click(function() {
+      var range_id = this.id.replace('collapse_', '');
+      $('#expanded_' + range_id).hide();
+      $('#collapsed_' + range_id).show();
+    });
+
+    $('.hide_all').click(function() {
+      $('.expanded').hide();
+      $('.collapsed').show()
+    });
+
+    $('.show_all').click(function() {
+      $('.expanded').show();
+      $('.collapsed').hide()
+    });
+
+  });
+
+  </script>
 {% endblock %}
