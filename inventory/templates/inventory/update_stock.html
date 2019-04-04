@@ -24,10 +24,11 @@
   complete_image = "{% static 'images/complete.png' %}";
   error_image = "{% static 'images/error.png' %}";
 
+  stock_levels_to_get.push({{ product.product_ID }});
+
   $(document).ready(function() {
     $('#update_' + {{ product.product_ID }}).click(
       click_update_button({{ product.product_ID }})
     );
-    get_stock_level({{ product.product_ID }});
   });
 </script>
