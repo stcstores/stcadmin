@@ -10,7 +10,7 @@
 <script src="{% static 'scripts/stock_manager.js' %}"></script>
 {% endblock %}
 
-{% block page_title %}CCP New Product Success{% endblock %}
+{% block page_title %}Product Range{% endblock %}
 
 {% block content %}
     {% if 'Incomplete' not in  product_range.options.option_names %}
@@ -19,9 +19,9 @@
     <h1 class="page_title">Range Page</h1>
     {% help_button 'inventory_help' 'inventory-range_page' %}
     <h2>{{ product_range.name }}</h2>
-    <p>SKU: {{ product_range.sku}}</p>
-    <p>ID: {{ product_range.id }}</p>
-    <p>Department: {{ product_range.products.0.options.Department.value }}</p>
+    <p>SKU: {{ product_range.SKU}}</p>
+    <p>ID: {{ product_range.range_ID }}</p>
+    <p>Department: {{ product_range.department }}</p>
     {% if 'Incomplete' in  product_range.options.option_names %}
     <div class="message_box error">
         <h2>INCOMPLETE</h2>
@@ -66,20 +66,24 @@
         <table class="product_list">
             <tr>
                 <th>SKU</th>
-                <th>Title</th>
+                {% for option in products.0.variation.keys %}
+                <th>{{ option }}</th>
+                {% endfor %}
                 <th>Barcode</th>
                 <th colspan="3">Stock Level</th>
                 <th></th>
             </tr>
-        {% for product in product_range.products %}
+        {% for product in products %}
         <tr>
-            <td>{{ product.sku}}</td>
-            <td><a href="{% url 'inventory:product' product.id %}">{{product.full_name}}</a></td>
+            <td>{{ product.SKU}}</td>
+            {% for option, value in product.variation.items %}
+            <th>{{ value }}</th>
+            {% endfor %}
             <td>{{product.barcode}}</td>
-            <td><input id="stock_{{ product.id }}" type="text" value="{{ product.stock_level }}" size="4" /></td>
-            <td><button id="update_{{ product.id }}" class="stock_update_button">Update Stock Level</button></td>
-            <td><img id="status_{{ product.id }}" class="update_status" src=""></td>
-            <td><a href="{% ccp_product_page product_range.id product.id %}" target="_blank"><button>View Product on Cloud Commerce</button></a></td>
+            <td><input id="stock_{{ product.product_ID }}" type="text" size="4" /></td>
+            <td><button id="update_{{ product.product_ID }}" class="stock_update_button">Update Stock Level</button></td>
+            <td><img id="status_{{ product.product_ID }}" class="update_status" src=""></td>
+            <td><a href="{% url 'inventory:product' product.product_ID %}"><button>View</button></a></td>
         </tr>
         {% endfor %}
         </table>
@@ -94,7 +98,7 @@
         update_stock_url = "{% url 'inventory:update_stock_level' %}";
         product_details = {
           {% for product in product_range.products %}
-              '{{ product.id }}': {
+              '{{ product.product_ID }}': {
                 'stock_level': {{ product.stock_level }},
                 'sku': '{{product.sku}}'
               },

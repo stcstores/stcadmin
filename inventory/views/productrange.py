@@ -1,10 +1,11 @@
 """View for Product Range page."""
 
-from ccapi import CCAPI
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from inventory import forms
+
+from inventory import forms, models
 
 from .views import InventoryUserMixin
 
@@ -18,12 +19,9 @@ class ProductRangeView(InventoryUserMixin, FormView):
     def dispatch(self, *args, **kwargs):
         """Process HTTP request."""
         self.range_id = self.kwargs.get("range_id")
-        try:
-            self.product_range = CCAPI.get_range(self.range_id)
-        except Exception as e:
-            return self.range_error()
-        if self.product_range is None or self.product_range.id == 0:
-            return self.range_error()
+        self.product_range = get_object_or_404(
+            models.ProductRange, range_ID=self.kwargs["range_id"]
+        )
         return super().dispatch(*args, **kwargs)
 
     def get_initial(self):
@@ -48,6 +46,7 @@ class ProductRangeView(InventoryUserMixin, FormView):
         """Get template context data."""
         context_data = super().get_context_data(*args, **kwargs)
         context_data["product_range"] = self.product_range
+        context_data["products"] = self.product_range.product_set.all()
         return context_data
 
     def range_error(self):
