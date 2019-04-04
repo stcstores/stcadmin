@@ -1,0 +1,33 @@
+{% load staticfiles %}
+
+<div class="product_stock_level">
+  <div class="InputAddOn">
+    <span class="InputAddOn-item">Stock Level</span>
+    <input id="stock_{{ product.product_ID }}" class="InputAddOn-field stock_level_field" type="text" size="4" vaue="">
+    <div class="InputAddOn-item">
+      <button id="update_{{ product.product_ID }}" class="stock_update_button" disabled>
+        Update
+      </button>
+    </div>
+    <div class="InputAddOn-item status_container">
+      <img id="status_{{ product.product_ID }}" class="update_status" src="{% static 'images/loading.gif' %}">
+    </div>
+  </div>
+</div>
+
+<script>
+
+  get_stock_url = "{% url 'inventory:get_stock_level' %}";
+  update_stock_url = "{% url 'inventory:update_stock_level' %}";
+
+  loading_image = "{% static 'images/loading.gif' %}";
+  complete_image = "{% static 'images/complete.png' %}";
+  error_image = "{% static 'images/error.png' %}";
+
+  $(document).ready(function() {
+    $('#update_' + {{ product.product_ID }}).click(
+      click_update_button({{ product.product_ID }})
+    );
+    get_stock_level({{ product.product_ID }});
+  });
+</script>

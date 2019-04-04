@@ -207,13 +207,12 @@ class Product(models.Model):
         variable_options = self.product_range.variation_options.all()
         return self.product_options.filter(product_option__in=variable_options)
 
-    def update_stock_level(self, stock_level):
+    def update_stock_level(self, *, old, new):
         """Set the product's stock level in Cloud Commerce."""
         CCAPI.update_product_stock_level(
-            product_id=self.product_ID,
-            new_stock_level=stock_level,
-            old_stock_level=self.stock_level,
+            product_id=self.product_ID, old_stock_level=old, new_stock_level=new
         )
+        return self.stock_level()
 
     def department(self):
         """Return the Product's department."""

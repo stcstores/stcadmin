@@ -4,6 +4,7 @@ import json
 
 from ccapi import CCAPI
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -61,26 +62,26 @@ class UpdateStockLevelView(InventoryUserMixin, View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request):
         """Process HTTP request."""
-        request_data = json.loads(self.request.body)
-        product_id = request_data["product_id"]
-        product_sku = request_data["sku"]
-        new_stock_level = request_data["new_stock_level"]
-        old_stock_level = request_data["old_stock_level"]
-        models.StockChange(
-            product_id=product_id,
-            product_sku=product_sku,
-            stock_before=new_stock_level,
-            stock_after=old_stock_level,
-            user=self.request.user,
-        ).save()
-        CCAPI.update_product_stock_level(
-            product_id=product_id,
-            new_stock_level=new_stock_level,
-            old_stock_level=old_stock_level,
+        product_ID = self.request.POST["product_ID"]
+        product = get_object_or_404(models.Product, product_ID=product_ID)
+        new_stock_level = int(self.request.POST["new_stock_level"])
+        old_stock_level = int(self.request.POST["old_stock_level"])
+        updated_stock_level = product.update_stock_level(
+            old=old_stock_level, new=new_stock_level
         )
-        product = CCAPI.get_product(product_id)
-        stock_level = product.stock_level
-        return HttpResponse(stock_level)
+        return HttpResponse(updated_stock_level)
+
+
+class GetStockLevelView(InventoryUserMixin, View):
+    """Get the current stock level for a product."""
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request):
+        """Process HTTP request."""
+        product_ID = self.request.POST["product_ID"]
+        product = get_object_or_404(models.Product, product_ID=product_ID)
+        response_data = {"product_ID": product_ID, "stock_level": product.stock_level()}
+        return HttpResponse(json.dumps(response_data))
 
 
 class SetImageOrderView(InventoryUserMixin, View):

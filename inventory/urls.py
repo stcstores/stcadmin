@@ -81,6 +81,7 @@ api_urlpatterns = [
         views.GetNewRangeSKUView.as_view(),
         name="get_new_range_sku",
     ),
+    path("get_stock_level/", views.GetStockLevelView.as_view(), name="get_stock_level"),
     path(
         "update_stock_level/",
         views.UpdateStockLevelView.as_view(),

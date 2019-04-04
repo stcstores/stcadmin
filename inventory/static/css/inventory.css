@@ -29,7 +29,7 @@
 }
 
 .update_status {
-  width: 20px;
+  width: 30px;
 }
 
 .end_of_line {
@@ -135,7 +135,7 @@ table.new_product {
   font-weight: bold;
 }
 
-.product_search_results .sku {
+.sku {
   font-family: 'Source Code Pro', monospace;
   -webkit-user-select: all;  /* Chrome 49+ */
   -moz-user-select: all;     /* Firefox 43+ */
@@ -310,4 +310,9 @@ table.new_product {
   flex: 1;
   flex-direction: column;
   padding-left: 0.5em;
+}
+
+.status_container {
+  min-width: 30px;
+  min-height: 30px;
 }

@@ -3,12 +3,6 @@
 {% load stcadmin_extras %}
 {% load reference_extras %}
 
-{% block additional_head %}
-{{ block.super }}
-<link rel="stylesheet" href="{% static 'css/input-add-on.css' %}">
-<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Code+Pro" rel="stylesheet">
-{% endblock %}
-
 {% block page_title %}Product Search{% endblock %}
 
 {% block content %}
@@ -16,9 +10,9 @@
 
 <form method="POST" action="">{% csrf_token %}
   <div class="product_search_options">
-  <div class="error">{{ form.non_field_errors }}</div>
+    <div class="error">{{ form.non_field_errors }}</div>
 
-  {% for field in form %}
+    {% for field in form %}
     <div class="InputAddOn">
       {% if forloop.first %}
       {{ field|add_class:"InputAddOon-field" }}
@@ -31,10 +25,8 @@
       <span class="error InputAddOn-item">{{ field.errors }}</span>
       {% endif %}
     </div>
-  {% endfor %}
-
-
-</div>
+    {% endfor %}
+  </div>
 </form>
 
 {% if product_ranges %}

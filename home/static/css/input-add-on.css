@@ -23,7 +23,7 @@
 .InputAddOn-field,
 .InputAddOn-item {
   border: 1px solid #bbb;
-  padding: 0.5em 0.75em;
+  padding: 0.25em 0.75em;
   display: flex;
 }
 .InputAddOn-field:first-child,
@@ -33,4 +33,25 @@
 .InputAddOn-field:last-child,
 .InputAddOn-item:last-child {
   border-radius: 0 2px 2px 0;
+}
+.InputAddOn-item button {
+  font-weight: bold;
+  color: #222;
+  text-decoration: none;
+  border-radius: 4px;
+  background: #ddd;
+  padding: 0.25em 1em;
+  margin: 0;
+  box-shadow: 4px 2px #ccc;
+}
+
+.InputAddOn-item button:hover {
+  background: #ccc;
+  box-shadow: 0 0;
+}
+
+.InputAddOn-item button:disabled {
+  background: #ccc;
+  box-shadow: 0 0;
+  color: #eee;
 }
