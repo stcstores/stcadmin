@@ -31,7 +31,7 @@ class GetShippingPriceView(InventoryUserMixin, View):
         """Return shipping prices as JSON or return server error."""
         try:
             json_data = self.get_shipping_price_details()
-        except Exception:
+        except models.DestinationCountry.NoShippingService:
             json_data = self.no_shipping_price_response()
         return HttpResponse(json_data)
 
