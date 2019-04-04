@@ -4,7 +4,7 @@ import logging
 import sys
 
 from django.conf import settings
-from forex_python.converter import CurrencyRates
+
 from spring_manifest import models
 
 logger = logging.getLogger("file_manifest")
@@ -15,7 +15,6 @@ class FileManifest:
 
     def __init__(self, manifest):
         """File manifest."""
-        self.currency_rates = self.get_currency_rates()
         self.manifest = manifest
         try:
             models.close_manifest(self.manifest)
@@ -39,20 +38,6 @@ class FileManifest:
             )
             if settings.DEBUG:
                 raise e
-
-    def get_currency_rates(self):
-        """Return dict of currency rates."""
-        currency_converter = CurrencyRates()
-        currency_codes = list(
-            set(
-                [
-                    c.currency_code
-                    for c in models.CloudCommerceCountryID.objects.all()
-                    if c.currency_code is not None and c.currency_code != "GBP"
-                ]
-            )
-        )
-        return {c: currency_converter.get_rate(c, "GBP") for c in currency_codes}
 
     def file_manifest(self, manifest):
         """File manifest."""
@@ -83,14 +68,6 @@ class FileManifest:
         )
         weight_kg = weight_grams / 1000
         return weight_kg
-
-    def convert_to_GBP(self, currency, amount):
-        """Return amount converted from currency to GBP."""
-        if currency is None or currency == "GBP":
-            return round(amount, 2)
-        rate = self.currency_rates[currency]
-        converted_amount = amount * rate
-        return round(converted_amount, 2)
 
     def send_file(self, manifest):
         """Send manifest file to shipping provider."""
