@@ -1,8 +1,8 @@
 """Models for price_calculator app."""
 
+import requests
 from django.db import models
 from django.db.models import Q
-from forex_python.converter import CurrencyRates
 
 
 class ShippingRegion(models.Model):
@@ -40,15 +40,29 @@ class DestinationCountry(models.Model):
         verbose_name_plural = "Destination Countries"
         ordering = ("sort_order",)
 
+    class NoShippingService(Exception):
+        """Exception for failed attempts to find a valid shipping service."""
+
+        def __init__(self, *args, **kwargs):
+            """Raise exception."""
+            super().__init__(self, "No shipping service found.", *args, **kwargs)
+
     def __str__(self):
         return self.name
+
+    def exchange_rates(self):
+        """Return the current exchange rates for the country."""
+        URL = f"https://api.exchangerate-api.com/v4/latest/{self.currency_code}"
+        response = requests.get(URL)
+        response.raise_for_status()
+        return response.json()["rates"]
 
     def current_rate(self):
         """Return current currency conversion rate to GBP."""
         if self.currency_code == "GBP":
             return 1
-        c = CurrencyRates()
-        return c.get_rate(str(self.currency_code), "GBP")
+        rates = self.exchange_rates()
+        return rates["GBP"]
 
 
 class PackageType(models.Model):
@@ -111,7 +125,10 @@ class ShippingPriceManager(models.Manager):
         shipping_prices = shipping_prices.filter(
             Q(max_price__isnull=True) | Q(max_price__gte=price)
         )
-        return self.get(pk=shipping_prices.all()[0].id)
+        try:
+            return self.get(pk=shipping_prices.all()[0].id)
+        except IndexError:
+            raise DestinationCountry.NoShippingService()
 
     def get_calculated_price(self, country_name, package_type_name, weight, price):
         """Return price after weight caluclation."""
