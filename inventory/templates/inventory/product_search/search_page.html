@@ -3,6 +3,11 @@
 {% load stcadmin_extras %}
 {% load reference_extras %}
 
+{% block additional_head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/product_search.css' %}">
+{% endblock %}
+
 {% block page_title %}Product Search{% endblock %}
 
 {% block content %}

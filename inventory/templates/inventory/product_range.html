@@ -3,65 +3,59 @@
 {% load inventory_extras %}
 {% load product_editor_extras %}
 {% load stcadmin_extras %}
-{% load reference_extras %}
+
 
 {% block additional_head %}
 {{ block.super }}
 <script src="{% static 'scripts/stock_manager.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/range_page.css' %}">
 {% endblock %}
 
 {% block page_title %}Product Range{% endblock %}
 
 {% block content %}
-    {% if not product_range.end_of_line %}
-        {% include "inventory/product_range_nav.html" %}
-    {% endif %}
-    <h1 class="page_title">Range Page</h1>
-    {% help_button 'inventory_help' 'inventory-range_page' %}
-    <h2>{{ product_range.name }}</h2>
-    <p>SKU: {{ product_range.SKU}}</p>
-    <p>ID: {{ product_range.range_ID }}</p>
-    <p>Department: {{ product_range.department }}</p>
+{% if not product_range.end_of_line %}
+{% include "inventory/product_range_nav.html" %}
+{% endif %}
 
-    <form action="" method="POST">{% csrf_token %}
-        <table>
-            {% for field in form %}
-            <tr>
-                <td>{{ field.label }}</td>
-                <td>{{ field }}</td>
-                <td>{% tooltip_help_text field %}</td>
-                {% if field.errors %}
-                    <td class="error">{{ field.errors }}</td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-            <tr><td colspan="3"><input type="submit" value="Update"></td></tr>
-        </table>
-    </form>
+<div class="buttons">
+  <a href="{% edit_product_url product_range.range_ID %}">
+    <button>Product Editor</button>
+  </a>
+  <a href="" class="button_link">
+    <button>End-of-Line Range</button>
+  </a>
+</div>
 
-    <div class="product_list">
-        <h3>Products</h3>
-        <table class="product_list">
-            <tr>
-              <th>SKU</th>
-              {% for option in products.0.variation.keys %}
-              <th>{{ option }}</th>
-              {% endfor %}
-              <th>Barcode</th>
-              <th>Stock Level</th>
-              <th></th>
-            </tr>
-        {% for product in products %}
-        <tr>
-          <td class="sku">{{ product.SKU }}</td>
-          {% for option, value in product.variation.items %}
-          <th>{{ value }}</th>
-          {% endfor %}
-          <td>{{product.barcode}}</td>
-          <td>{% include 'inventory/update_stock.html' %}</td>
-          <td><a href="{% url 'inventory:product' product.product_ID %}"><button>View</button></a></td>
-        </tr>
-        {% endfor %}
-        </table>
-    </div>
+<div class="variations">
+  <h3>{% if product.variation %}Variations{% else %}Single Product{% endif %}</h3>
+  <table class="variation_table">
+    <tr class="row">
+      <th class="column header SKU">SKU</th>
+      <th class="column header edit"></th>
+      {% for option in product_range.product_set.all.0.variation.keys %}
+      <th class="column header option">{{ option }}</th>
+      {% endfor %}
+      <th class="column header supplier_SKU">Supplier SKU</th>
+      <th class="column header barcode">Barcode</th>
+      <th class="column header stock_level">Stock Level</th>
+    </tr>
+    {% for product in product_range.product_set.all %}
+    <tr class="row">
+      <td class="column SKU sku">{{ product.SKU }}</td>
+      <td class="column edit">
+        <a href="{% url 'inventory:product' product.product_ID %}">
+          <button>Edit</button>
+        </a>
+      </td>
+      {% for option, value in product.variation.items %}
+      <td class="column option name">{{ value }}</td>
+      {% endfor %}
+      <td class="column supplier_SKU sku">{{ product.supplier_SKU }}</td>
+      <td class="column SKU sku">{{ product.barcode }}</td>
+      <td class="column stock_level">{% include 'inventory/update_stock.html' %}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
 {% endblock %}

@@ -1,12 +1,43 @@
 {% load product_editor_extras %}
-{% load inventory_extras %}
-<div>
-    <a href="{% url 'inventory:product_range' product_range.id %}"><button>Range Page</button></a>
-    <a href="{% edit_product_url product_range.id %}"><button>Product Editor</button></a>
-    <a href="{% url 'inventory:descriptions' product_range.id %}"><button>Description Page</button></a>
-    <a href="{% url 'inventory:locations' product_range.id %}"><button>Location Page</button></a>
-    <a href="{% url 'inventory:images' product_range.id %}"><button>Images Page</button></a>
-    <a href="{% url 'price_calculator:range_price_calculator' product_range.id %}"><button>Range Price Calculator</button></a>
-    <a href="{% url 'inventory:print_barcodes' product_range.id %}"><button>Barcode Labels</button></a>
-    <a href="{% ccp_product_range_page product_range.id %}" target="_blank"><button>View Range on Cloud Commerce</button></a>
+{% load reference_extras %}
+
+<div class="range_header">
+  <div class="range_details">
+    <div class="name">
+      {{ product_range.name }}&nbsp;&nbsp;&nbsp;
+      {% help_button 'inventory_help' 'inventory-range_page' %}
+    </div>
+    <div>Range SKU: <span class="sku">{{ product_range.SKU}}</span></div>
+    <div>ID: <span class="sku">{{ product_range.range_ID }}</span></div>
+    <div>Department: {{ product_range.department }}</div>
+  </div>
+
+  {% with request.get_full_path as current_url %}
+  <div class="range_nav">
+    {% url 'inventory:product_range' product_range.range_ID as url %}
+    <div {% if current_url == url %} class="active"{% endif %}>
+      <a href="{{ url }}">Range</a>
+    </div>
+    {% url 'inventory:descriptions' product_range.range_ID as url %}
+    <div {% if current_url == url %} class="active"{% endif %}>
+      <a href="{{ url }}">Description</a>
+    </div>
+    {% url 'inventory:locations' product_range.range_ID as url %}
+    <div {% if current_url == url %} class="active"{% endif %}>
+      <a href="{{ url }}">Location</a>
+    </div>
+    {% url 'inventory:images' product_range.range_ID as url %}
+    <div {% if current_url == url %} class="active"{% endif %}>
+      <a href="{{ url }}">Images</a>
+    </div>
+    {% url 'price_calculator:range_price_calculator' product_range.range_ID as url %}
+    <div {% if current_url == url %} class="active"{% endif %}>
+      <a href="{{ url }}">Range Price Calculator</a>
+    </div>
+    <div {% if current_url == url %} class="active"{% endif %}>
+    {% url 'inventory:print_barcodes' product_range.range_ID as url %}
+      <a href="{{ url }}">Barcode Labels</a>
+    </div>
+  </div>
 </div>
+{% endwith %}

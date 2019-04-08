@@ -347,6 +347,10 @@ th {
   padding: 0.25em 0.75em;
 }
 
+.help_button:hover {
+  background-color: #439bd6;
+}
+
 .page_title {
   display: inline-block;
   padding: 0.5em;
