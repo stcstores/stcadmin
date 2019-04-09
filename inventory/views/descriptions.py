@@ -1,10 +1,11 @@
 """DescriptionsView class."""
 
-import cc_products
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
-from inventory import forms
+
+from inventory import forms, models
 
 from .views import InventoryUserMixin
 
@@ -18,17 +19,18 @@ class DescriptionsView(InventoryUserMixin, FormView):
     def dispatch(self, *args, **kwargs):
         """Process HTTP request."""
         self.range_id = self.kwargs.get("range_id")
-        self.product_range = cc_products.get_range(self.range_id)
+        self.product_range = get_object_or_404(
+            models.ProductRange, range_ID=self.range_id
+        )
         return super().dispatch(*args, **kwargs)
 
     def get_initial(self):
         """Get initial data for form."""
         initial = super().get_initial()
-        first_product = self.product_range.products[0]
         initial["title"] = self.product_range.name
         initial["description"] = self.product_range.description
-        initial["amazon_bullets"] = first_product.amazon_bullets
-        initial["search_terms"] = first_product.amazon_search_terms
+        initial["amazon_bullets"] = self.product_range.amazon_bullet_points.split("|")
+        initial["search_terms"] = self.product_range.amazon_search_terms.split("|")
         return initial
 
     def form_valid(self, form):
