@@ -1,11 +1,11 @@
 """Forms for updating product locations."""
 
-import cc_products
 from django import forms
 
 from inventory import models
 from product_editor.editor_manager import ProductEditorBase
-from product_editor.forms.fields import Department, WarehouseBayField
+from product_editor.forms.fields import WarehouseBayField
+from product_editor.forms.fieldtypes import SelectizeModelChoiceField
 from stcadmin.forms import KwargFormSet
 
 
@@ -18,26 +18,15 @@ class DepartmentForm(forms.Form):
         """Create fields for form."""
         self.product_range = kwargs.pop("product_range")
         super().__init__(*args, **kwargs)
-        self.fields[self.DEPARTMENT] = Department()
+        self.fields[self.DEPARTMENT] = SelectizeModelChoiceField(
+            queryset=models.Department.objects.filter(inactive=False)
+        )
         self.initial.update(self.get_initial())
 
     def get_initial(self):
         """Return initial values for form."""
         initial = {}
-        try:
-            department = self.product_range.department
-        except cc_products.exceptions.DepartmentError:
-            department = None
-        if department is None:
-            department_id = None
-        else:
-            try:
-                department_id = models.Warehouse.used_warehouses.get(
-                    name=department
-                ).warehouse_ID
-            except models.Warehouse.DoesNotExist:
-                department_id = None
-        initial[self.DEPARTMENT] = department_id
+        initial[self.DEPARTMENT] = self.product_range.department
         return initial
 
     def save(self):
@@ -53,7 +42,6 @@ class LocationsForm(forms.Form):
 
     PRODUCT_ID = "product_id"
     PRODUCT_NAME = "product_name"
-    STOCK_LEVEL = "stock_level"
     LOCATIONS = "locations"
     WAREHOUSE = ProductEditorBase.WAREHOUSE
     BAYS = ProductEditorBase.BAYS
@@ -64,7 +52,6 @@ class LocationsForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={"size": 200, "class": "product_title"}),
     )
-    stock_level = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Add fields to form."""
@@ -78,9 +65,8 @@ class LocationsForm(forms.Form):
         """Return initial data."""
         initial = {}
         initial[self.PRODUCT_ID] = self.product.id
-        initial[self.PRODUCT_NAME] = self.product.full_name
-        initial[self.STOCK_LEVEL] = self.product.stock_level
-        bays = [bay for bay in models.Bay.objects.filter(bay_ID__in=self.product.bays)]
+        initial[self.PRODUCT_NAME] = self.product.variation() or self.product.name
+        bays = self.product.bays.all()
         warehouses = list(set([bay.warehouse for bay in bays]))
         if len(warehouses) > 1:
             self.add_error(self.LOCATIONS, "Mixed warehouses.")

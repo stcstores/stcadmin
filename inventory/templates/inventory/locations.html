@@ -9,38 +9,51 @@
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
 <script>{% include 'product_editor/widgets/product_widgets.js' %}</script>
+<link rel="stylesheet" href="{% static 'css/range_page.css' %}">
 {% endblock %}
 
 {% block content %}{{ block.super }}
-<h1 class="page_title">Locations Page</h1>
-{% help_button 'inventory_help' 'inventory-location_page' %}
-<h2>{{ product_range.name }}</h2>
 
 <form action="" method="POST">{% csrf_token %}
-    {{ bay_formset.management_form }}
-    <table>
-        {% for field in department_form %}
-        <tr>
-            <th><label for="{{ field.name }}">{{ field.label}}</label></th>
-            <td colspan="2">{{ field }}</td>
-        </tr>
+  {{ bay_formset.management_form }}
+  <table>
+    {% for field in department_form %}
+    <tr>
+      <th><label for="{{ field.name }}">{{ field.label}}</label></th>
+      <td colspan="2">{{ field }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <th>SKU</th>
+      {% if bay_formset.0.product.variation %}
+      <th>Variation</th>
+      {% endif %}
+      <th>Supplier SKU</th>
+      <th>Bays</th>
+    </tr>
+    {% for form in bay_formset %}
+    {% with form.product as product %}
+    <tr hidden>
+      <td>{{ form.product_id }}</td>
+    </tr>
+    <tr>
+      <td class="sku">{{ product.SKU }}</td>
+      {% if product.variation %}
+      <td>
+        {% for option, value in product.variation.items %}
+          {{ option }}: <span class="name">{{ value }}</span>
         {% endfor %}
-        <tr>
-            <th>Product</th>
-            <th>Stock Level</th>
-            <th>Bays</th>
-        </tr>
-        {% for form in bay_formset %}
-        <tr hidden><td>{{ form.product_id }}</td></tr>
-        <tr>
-            <td class="title_field">{{ form.product_name.value }}</td>
-            <td class="stock_level_field">{{ form.stock_level.value }}</td>
-            <td class="location_field">{{ form.locations }}</td>
-            {% if form.errors %}<td>{% for field in form %}{{ field.errors }}{% endfor %}</td>{% endif %}
-        </tr>
-        {% endfor %}
-    </table>
-    <input type="submit" value="Update Locations" />
+      </td>
+      {% endif %}
+      <td class="sku">{{ product.supplier_SKU }}</td>
+      <td class="location_field">{{ form.locations }}</td>
+      {% if form.errors %}<td>{% for field in form %}{{ field.errors }}{% endfor %}</td>{% endif %}
+      <td>{% include "inventory/update_stock.html" %}</td>
+    </tr>
+    {% endwith %}
+    {% endfor %}
+  </table>
+  <input type="submit" value="Update Locations" />
 </form>
 
 {% endblock %}

@@ -1,10 +1,11 @@
 """View for updating Product Warehouse Bays."""
 
-import cc_products
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
+
+from inventory import models
 from inventory.forms import DepartmentForm, LocationsFormSet
 from product_editor.editor_manager import ProductEditorBase
 
@@ -22,17 +23,22 @@ class LocationFormView(InventoryUserMixin, TemplateView):
     def get(self, *args, **kwargs):
         """Process GET HTTP request."""
         self.range_id = self.kwargs.get("range_id")
-        self.product_range = cc_products.get_range(self.range_id)
+        self.product_range = get_object_or_404(
+            models.ProductRange, range_ID=self.range_id
+        )
         self.department_form = DepartmentForm(product_range=self.product_range)
         self.bay_formset = LocationsFormSet(
-            form_kwargs=[{"product": p} for p in self.product_range.products]
+            form_kwargs=[{"product": p} for p in self.product_range.product_set.all()]
         )
         return super().get(*args, **kwargs)
 
     def post(self, *args, **kwargs):
         """Process POST HTTP request."""
+        raise NotImplementedError()
         self.range_id = self.kwargs.get("range_id")
-        self.product_range = cc_products.get_range(self.range_id)
+        self.product_range = get_object_or_404(
+            models.ProductRange, range_ID=self.range_id
+        )
         self.department_form = DepartmentForm(
             self.request.POST, product_range=self.product_range
         )
