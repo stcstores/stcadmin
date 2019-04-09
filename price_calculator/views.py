@@ -2,7 +2,6 @@
 
 import json
 
-import cc_products
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -10,6 +9,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 
+from inventory.models import ProductRange
 from inventory.views.views import InventoryUserMixin
 from price_calculator import models
 
@@ -118,7 +118,8 @@ class RangePriceCalculatorView(InventoryUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Get context data for template."""
         context_data = super().get_context_data(*args, **kwargs)
-        product_range = cc_products.get_range(self.kwargs.get("range_id"))
+        range_ID = self.kwargs.get("range_id")
+        product_range = get_object_or_404(ProductRange, range_ID=range_ID)
         context_data["product_range"] = product_range
         context_data["countries"] = models.DestinationCountry.objects.all()
         context_data["channel_fees"] = models.ChannelFee.objects.all()

@@ -8,14 +8,13 @@
 <script src="{% static 'scripts/price_calculator.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/price_calculator.css' %}">
 <link rel="stylesheet" href="{% static 'css/input-add-on.css' %}">
+<link rel="stylesheet" href="{% static 'css/range_page.css' %}">
 {% endblock %}
 
 {% block page_title %}Range Price Calculator{% endblock %}
 
 {% block content %}{{ block.super }}
-<h1 class="page_title">Range Price Calculator</h1>
-{% help_button 'inventory_help' 'inventory-price_calculator' %}
-<h2>{{ product_range.name }}</h2>
+<h2 class="page_title">Range Price Calculator</h2>
 
 <div class="price_calculator_input">
 
@@ -40,10 +39,10 @@
 </div>
 
 <div class="range">
-  {% for product in product_range.products %}
+  {% for product in product_range.product_set.all %}
   <div class="product" id="product_{{ product.id }}">
     <div class="product_row title">
-      <span class="sku">{{ product.sku }}</span>&nbsp;-&nbsp;<span class="name">{{ product.full_name }}</span>
+      <span class="sku">{{ product.SKU }}</span>&nbsp;-&nbsp;<span class="name">{{ product.name }}</span>
     </div>
 
     <div class="product_row input">
@@ -119,24 +118,24 @@
 
     function update_vat_rates(vat_rates, calculator) {
         if (vat_rates.length == 0) {
-            {% for product in product_range.products %}
+            {% for product in product_range.product_set.all %}
             calcs['{{ product.id }}'].set_vat_rate(0);
             {% endfor %}
         }
         $(vat_rates).each(function() {
-            {% for product in product_range.products %}
-            calcs['{{ product.id }}'].set_vat_rate({{ product.vat_rate }});
+            {% for product in product_range.product_set.all %}
+            calcs['{{ product.id }}'].set_vat_rate(parseInt({{ product.VAT_rate.percentage }} * 100));
             {% endfor %}
         });
     }
 
     $(document).ready(function() {
         calcs = {};
-        {% for product in product_range.products %}
+        {% for product in product_range.product_set.all %}
         var ex_vat_price = {{ product.price }};
         var vat_rate = 20;
         var purchase_price = {{ product.purchase_price }};
-        var package_type = "{{ product.package_type }}";
+        var package_type = "{{ product.package_type.name }}";
         var postage_price = 10;
         var channel_fee = $('#channel_fee_input').val();
         var data = {
@@ -218,7 +217,7 @@
         $('#{{ product.id }}_sale_price').change();
         {% endfor %}
         $('#country').change(function() {
-            {% for product in product_range.products %}
+            {% for product in product_range.product_set.all %}
             var country = $(this).val();
             var price = calcs['{{ product.id }}'].sale_price;
             get_postage_price(
@@ -226,11 +225,11 @@
                 country,
                 "{{ product.package_type }}".replace(' (Single)', ''),
                 "{{ product.international_shipping }}",
-                {{ product.weight }},
+                {{ product.weight_grams }},
                 price);
             {% endfor %}
         });
-        {% for product in product_range.products %}
+        {% for product in product_range.product_set.all %}
         calcs['{{ product.id}}'].set_sale_price(
             $('#{{ product.id }}_sale_price').val());
         $('#{{ product.id }}_sale_price').change(function() {
@@ -246,7 +245,7 @@
         });
         {% endfor %}
         $('#channel_fee_input').change(function() {
-          {% for product in product_range.products %}
+          {% for product in product_range.product_set.all %}
               calcs['{{ product.id }}'].set_channel_fee_percentage($(this).val());
           {% endfor %}
         });
