@@ -47,6 +47,9 @@ class ProductRange(models.Model):
     variation_options = models.ManyToManyField(
         product_options.ProductOption, blank=True
     )
+    description = models.TextField(blank=True, default="")
+    amazon_search_terms = models.TextField(blank=True, default="")
+    amazon_bullet_points = models.TextField(blank=True, default="")
     end_of_line = models.BooleanField(default=False)
     hidden = models.BooleanField(default=False)
 
@@ -142,7 +145,6 @@ class Product(models.Model):
     manufacturer = models.ForeignKey(
         product_options.Manufacturer, on_delete=models.PROTECT
     )
-    description = models.TextField()
     package_type = models.ForeignKey(
         product_options.PackageType, on_delete=models.PROTECT
     )
@@ -154,8 +156,6 @@ class Product(models.Model):
     length_mm = models.PositiveSmallIntegerField()
     height_mm = models.PositiveSmallIntegerField()
     width_mm = models.PositiveSmallIntegerField()
-    amazon_search_terms = models.TextField()
-    amazon_bullet_points = models.TextField()
     product_options = models.ManyToManyField(
         product_options.ProductOptionValue, blank=True
     )
