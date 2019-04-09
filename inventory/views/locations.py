@@ -15,7 +15,7 @@ from .views import InventoryUserMixin
 class LocationFormView(InventoryUserMixin, TemplateView):
     """View for LocationsFormSet."""
 
-    template_name = "inventory/locations.html"
+    template_name = "inventory/product_range/locations.html"
     DEPARTMENT = ProductEditorBase.DEPARTMENT
     WAREHOUSE = ProductEditorBase.WAREHOUSE
     BAYS = ProductEditorBase.BAYS

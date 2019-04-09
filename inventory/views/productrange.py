@@ -13,7 +13,7 @@ from .views import InventoryUserMixin
 class ProductRangeView(InventoryUserMixin, FormView):
     """Product Range page view."""
 
-    template_name = "inventory/product_range.html"
+    template_name = "inventory/product_range/product_range.html"
     form_class = forms.ProductRangeForm
 
     def dispatch(self, *args, **kwargs):

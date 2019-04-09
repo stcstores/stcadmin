@@ -1,14 +1,10 @@
-{% extends "inventory/range_settings.html" %}
+{% extends "inventory/product_range/product_range_base.html" %}
 {% load staticfiles %}
-{% load inventory_extras %}
-{% load reference_extras %}
 
-{% block additional_head %}
-{{ block.super }}
+{% block additional_head %}{{ block.super }}
 <script src="{% static 'scripts/price_calculator.js' %}"></script>
 <link rel="stylesheet" href="{% static 'css/price_calculator.css' %}">
 <link rel="stylesheet" href="{% static 'css/input-add-on.css' %}">
-<link rel="stylesheet" href="{% static 'css/range_page.css' %}">
 {% endblock %}
 
 {% block page_title %}Range Price Calculator{% endblock %}

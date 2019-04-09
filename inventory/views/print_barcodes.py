@@ -16,7 +16,7 @@ from .views import InventoryUserMixin
 class PrintBarcodeLabels(InventoryUserMixin, TemplateView):
     """View for barcode label page."""
 
-    template_name = "inventory/print_barcodes.html"
+    template_name = "inventory/product_range/print_barcodes.html"
 
     def get_context_data(self, *args, **kwargs):
         """Get template context data."""

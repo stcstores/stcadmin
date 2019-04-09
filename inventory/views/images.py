@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormView
+
 from inventory.forms import ImagesForm
 from inventory.models import STCAdminImage
 
@@ -27,7 +28,7 @@ class DeleteSTCAdminImage(InventoryUserMixin, RedirectView):
 class ImageFormView(InventoryUserMixin, FormView):
     """View for ImagesForm."""
 
-    template_name = "inventory/images.html"
+    template_name = "inventory/product_range/images.html"
     form_class = ImagesForm
 
     def dispatch(self, *args, **kwargs):

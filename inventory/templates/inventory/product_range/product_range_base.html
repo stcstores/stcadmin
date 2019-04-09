@@ -1,10 +1,20 @@
-{% load product_editor_extras %}
+{% extends "inventory/base.html" %}
+{% load staticfiles %}
 {% load reference_extras %}
 
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/range_page.css' %}">
+{% endblock %}
+
+{% block page_title %}{{ product_range.name }}{% endblock %}
+
+{% block content %}
 <div class="range_header">
   <div class="range_details">
-    <div class="name">
-      {{ product_range.name }}&nbsp;&nbsp;&nbsp;
+    <div>
+      <span class="name">{{ product_range.name }}</span>&nbsp;&nbsp;&nbsp;
       {% help_button 'inventory_help' 'inventory-range_page' %}
     </div>
     <div>Range SKU: <span class="sku">{{ product_range.SKU}}</span></div>
@@ -41,3 +51,4 @@
   </div>
 </div>
 {% endwith %}
+{% endblock %}

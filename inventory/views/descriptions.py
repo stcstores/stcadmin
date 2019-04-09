@@ -14,7 +14,7 @@ class DescriptionsView(InventoryUserMixin, FormView):
     """View for DescriptionForm."""
 
     form_class = forms.DescriptionForm
-    template_name = "inventory/descriptions.html"
+    template_name = "inventory/product_range/descriptions.html"
 
     def dispatch(self, *args, **kwargs):
         """Process HTTP request."""

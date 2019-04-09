@@ -1,22 +1,8 @@
-{% extends "inventory/base.html" %}
-{% load staticfiles %}
-{% load inventory_extras %}
+{% extends "inventory/product_range/product_range_base.html" %}
+
 {% load product_editor_extras %}
-{% load stcadmin_extras %}
 
-
-{% block additional_head %}
-{{ block.super }}
-<script src="{% static 'scripts/stock_manager.js' %}"></script>
-<link rel="stylesheet" href="{% static 'css/range_page.css' %}">
-{% endblock %}
-
-{% block page_title %}Product Range{% endblock %}
-
-{% block content %}
-{% if not product_range.end_of_line %}
-{% include "inventory/product_range_nav.html" %}
-{% endif %}
+{% block content %}{{ block.super }}
 
 <div class="buttons">
   <a href="{% edit_product_url product_range.range_ID %}">

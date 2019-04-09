@@ -1,17 +1,6 @@
-{% extends "inventory/base.html" %}
-{% load staticfiles %}
-{% load inventory_extras %}
-{% load reference_extras %}
-
-{% block additional_head %}{{ block.super }}
-<link rel="stylesheet" href="{% static 'css/range_page.css' %}">
-{% endblock %}
+{% extends "inventory/product_range/product_range_base.html" %}
 
 {% block content %}{{ block.super }}
-
-{% if not product_range.end_of_line %}
-{% include "inventory/product_range_nav.html" %}
-{% endif %}
 
 <div>
   <input type="number" id="update_selected_quantity" min="0" step="1" value="0">
