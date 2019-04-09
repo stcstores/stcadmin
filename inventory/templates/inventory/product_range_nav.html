@@ -34,8 +34,8 @@
     <div {% if current_url == url %} class="active"{% endif %}>
       <a href="{{ url }}">Range Price Calculator</a>
     </div>
-    <div {% if current_url == url %} class="active"{% endif %}>
     {% url 'inventory:print_barcodes' product_range.range_ID as url %}
+    <div {% if current_url == url %} class="active"{% endif %}>
       <a href="{{ url }}">Barcode Labels</a>
     </div>
   </div>
