@@ -44,10 +44,10 @@ class ProductRange(models.Model):
     SKU = models.CharField(max_length=15, unique=True, db_index=True)
     name = models.CharField(max_length=255)
     department = models.ForeignKey(product_options.Department, on_delete=models.PROTECT)
-    variation_options = models.ManyToManyField(
-        product_options.ProductOption, blank=True
-    )
     description = models.TextField(blank=True, default="")
+    variation_options = models.ManyToManyField(
+        product_options.ProductOption, blank=True, through="ProductRangeVariableOption"
+    )
     amazon_search_terms = models.TextField(blank=True, default="")
     amazon_bullet_points = models.TextField(blank=True, default="")
     end_of_line = models.BooleanField(default=False)
@@ -157,7 +157,7 @@ class Product(models.Model):
     height_mm = models.PositiveSmallIntegerField()
     width_mm = models.PositiveSmallIntegerField()
     product_options = models.ManyToManyField(
-        product_options.ProductOptionValue, blank=True
+        product_options.ProductOptionValue, blank=True, through="ProductOptionValueLink"
     )
     multipack = models.BooleanField(default=False)
     end_of_line = models.BooleanField(default=False)
@@ -240,3 +240,37 @@ class Product(models.Model):
             description=self.description,
             vat_rate_id=int(self.VAT_rate.percentage * 100),
         )
+
+
+class ProductRangeVariableOption(models.Model):
+    """Model for linking Product Ranges to Product Options."""
+
+    product_range = models.ForeignKey(ProductRange, on_delete=models.CASCADE)
+    product_option = models.ForeignKey(
+        product_options.ProductOption, on_delete=models.CASCADE
+    )
+
+    class Meta:
+        """Meta class for ProductRangeVariableOption."""
+
+        verbose_name = "ProductRangeVariableOption"
+        verbose_name_plural = "ProductRangeVariableOptions"
+        ordering = ("product_option",)
+        unique_together = ("product_range", "product_option")
+
+
+class ProductOptionValueLink(models.Model):
+    """Meta class for ProductRangeVariableOptions."""
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product_option_value = models.ForeignKey(
+        product_options.ProductOptionValue, on_delete=models.CASCADE
+    )
+
+    class Meta:
+        """Meta class for ProductOptionValueLink."""
+
+        verbose_name = "ProductOptionValueLink"
+        verbose_name_plural = "ProductOptionValueLinks"
+        ordering = ("product_option_value__product_option",)
+        unique_together = ("product", "product_option_value")

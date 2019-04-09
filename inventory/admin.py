@@ -195,7 +195,6 @@ class ProductRangeAdmin(admin.ModelAdmin):
         "SKU",
         "name",
         "department",
-        "variation_options",
         "description",
         "amazon_bullet_points",
         "amazon_search_terms",
@@ -285,7 +284,6 @@ class ProductAdmin(admin.ModelAdmin):
         "length_mm",
         "height_mm",
         "width_mm",
-        "product_options",
         "multipack",
         "end_of_line",
         "status",
@@ -304,3 +302,19 @@ class ProductAdmin(admin.ModelAdmin):
     list_display_links = ("SKU", "name")
     list_filter = ("product_range__department", "end_of_line")
     search_fields = ("SKU", "name", "supplier_SKU", "product_range__SKU")
+
+
+@admin.register(models.ProductRangeVariableOption)
+class ProductRangeVariableOptionAdmin(admin.ModelAdmin):
+    """Model admin for the ProductRangeVariableOption model."""
+
+    fields = ("product_range", "product_option")
+    list_display = ("product_range", "product_option")
+
+
+@admin.register(models.ProductOptionValueLink)
+class ProductOptionValueLinkAdmin(admin.ModelAdmin):
+    """Model admin for the ProductOptionValueLink model."""
+
+    fields = ("product", "product_option_value")
+    list_display = ("product", "product_option_value")
