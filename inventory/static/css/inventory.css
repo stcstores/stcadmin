@@ -223,3 +223,10 @@ button:disabled {
   box-shadow: 0 0;
   color: #eee;
 }
+
+#barcode_table tr:nth-child(even) {
+    background: #CCC;
+}
+#barcode_table tr:nth-child(odd) {
+    background: #FFF;
+}
