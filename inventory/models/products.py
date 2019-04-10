@@ -258,6 +258,12 @@ class ProductRangeVariableOption(models.Model):
         ordering = ("product_option",)
         unique_together = ("product_range", "product_option")
 
+    def __str__(self):
+        return (
+            f"ProductRangeVariableOption: {self.product_range.SKU} - "
+            f"{self.product_option.name}"
+        )
+
 
 class ProductOptionValueLink(models.Model):
     """Meta class for ProductRangeVariableOptions."""
@@ -274,3 +280,9 @@ class ProductOptionValueLink(models.Model):
         verbose_name_plural = "ProductOptionValueLinks"
         ordering = ("product_option_value__product_option",)
         unique_together = ("product", "product_option_value")
+
+    def __str__(self):
+        return (
+            f"ProductOptionValueLink: {self.product.SKU} - "
+            f"{self.product_option_value.name}"
+        )
