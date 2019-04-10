@@ -304,12 +304,15 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ("SKU", "name", "supplier_SKU", "product_range__SKU")
 
 
-@admin.register(models.ProductRangeVariableOption)
-class ProductRangeVariableOptionAdmin(admin.ModelAdmin):
-    """Model admin for the ProductRangeVariableOption model."""
+@admin.register(models.ProductRangeSelectedOption)
+class ProductRangeSelectedOptionAdmin(admin.ModelAdmin):
+    """Model admin for the ProductRangeSelectedOptions model."""
 
-    fields = ("product_range", "product_option")
-    list_display = ("product_range", "product_option")
+    fields = ("product_range", "product_option", "variation")
+    list_display = ("product_range", "product_option", "variation")
+    list_editable = ("variation",)
+    list_filter = ("product_option", "variation")
+    search_fields = ("product_range__name", "product_range__SKU")
 
 
 @admin.register(models.ProductOptionValueLink)
@@ -318,3 +321,10 @@ class ProductOptionValueLinkAdmin(admin.ModelAdmin):
 
     fields = ("product", "product_option_value")
     list_display = ("product", "product_option_value")
+    list_filter = ("product_option_value__product_option",)
+    search_fields = (
+        "product__SKU",
+        "product__product_range__SKU",
+        "product__product_range__name",
+        "product_option_value__value",
+    )

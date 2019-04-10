@@ -10,7 +10,7 @@ from .product_options import Brand, Department, Manufacturer, ProductOptionValue
 from .products import (  # NOQA
     Product,
     ProductRange,
-    ProductRangeVariableOption,
+    ProductRangeSelectedOption,
     ProductOptionValueLink,
 )
 from .stcadmin_image import STCAdminImage, get_product_image_upload_to  # NOQA
@@ -18,4 +18,4 @@ from .stock_change import StockChange  # NOQA
 from .suppliers import Supplier, SupplierContact  # NOQA
 from .vat_rates import VATRate  # NOQA
 
-from .product_options import InternationalShipping  # NOQA; NOQA
+from .product_options import InternationalShipping  # NOQA

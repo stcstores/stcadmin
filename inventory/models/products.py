@@ -45,8 +45,8 @@ class ProductRange(models.Model):
     name = models.CharField(max_length=255)
     department = models.ForeignKey(product_options.Department, on_delete=models.PROTECT)
     description = models.TextField(blank=True, default="")
-    variation_options = models.ManyToManyField(
-        product_options.ProductOption, blank=True, through="ProductRangeVariableOption"
+    product_options = models.ManyToManyField(
+        product_options.ProductOption, blank=True, through="ProductRangeSelectedOption"
     )
     amazon_search_terms = models.TextField(blank=True, default="")
     amazon_bullet_points = models.TextField(blank=True, default="")
@@ -85,32 +85,23 @@ class ProductRange(models.Model):
         """Create a new Product Range in Cloud Commerce."""
         return CCAPI.create_range(self.name, sku=self.SKU)
 
-    def set_product_option_variable(self, option):
-        """Set a Product Option as variable.
-
-        Args:
-            option: inventory.product_options.ProductOption or str(ProductOption.name).
-        """
-        if isinstance(option, str):
-            option = product_options.ProductOption.objects.get(name=option)
-        self.variation_options.add(option)
-
-    def set_variable_options(self, options):
-        """Replace the variable product options.
-
-        Args:
-            options: list(ProductOption or str(ProductOption.name))
-        """
-        set_options = []
-        for option in options:
-            if isinstance(option, str):
-                option = product_options.ProductOption.objects.get(name=option)
-            set_options.append(option)
-        self.variation_options.set(set_options)
-
     def product_count(self):
         """Return the number of products in this Range."""
         return self.product_set.count()
+
+    def variation_options(self):
+        """Return the Range's variable product options."""
+        product_option_IDs = ProductRangeSelectedOption.objects.filter(
+            product_range=self, variation=True
+        ).values_list("product_option", flat=True)
+        return product_options.ProductOption.objects.filter(id__in=product_option_IDs)
+
+    def listing_options(self):
+        """Return the Range's listing product options."""
+        product_option_IDs = ProductRangeSelectedOption.objects.filter(
+            product_range=self, variation=False
+        ).values_list("product_option", flat=True)
+        return product_options.ProductOption.objects.filter(id__in=product_option_IDs)
 
 
 class Product(models.Model):
@@ -187,6 +178,13 @@ class Product(models.Model):
             for option in self.variable_options()
         }
 
+    def listing_options(self):
+        """Return the product's listing product options as a dict."""
+        return {
+            option.product_option.name: option.value
+            for option in self.selected_listing_options()
+        }
+
     @property
     def full_name(self):
         """Return the product name with any extensions."""
@@ -204,7 +202,12 @@ class Product(models.Model):
 
     def variable_options(self):
         """Return list of Product Options which are variable for the range."""
-        variable_options = self.product_range.variation_options.all()
+        variable_options = self.product_range.variation_options()
+        return self.product_options.filter(product_option__in=variable_options)
+
+    def selected_listing_options(self):
+        """Return list of Product Options which are listing options for the range."""
+        variable_options = self.product_range.listing_options()
         return self.product_options.filter(product_option__in=variable_options)
 
     def update_stock_level(self, *, old, new):
@@ -242,19 +245,20 @@ class Product(models.Model):
         )
 
 
-class ProductRangeVariableOption(models.Model):
+class ProductRangeSelectedOption(models.Model):
     """Model for linking Product Ranges to Product Options."""
 
     product_range = models.ForeignKey(ProductRange, on_delete=models.CASCADE)
     product_option = models.ForeignKey(
         product_options.ProductOption, on_delete=models.CASCADE
     )
+    variation = models.BooleanField()
 
     class Meta:
         """Meta class for ProductRangeVariableOption."""
 
-        verbose_name = "ProductRangeVariableOption"
-        verbose_name_plural = "ProductRangeVariableOptions"
+        verbose_name = "ProductRangeSelectedOption"
+        verbose_name_plural = "ProductRangeSelectedOptions"
         ordering = ("product_option",)
         unique_together = ("product_range", "product_option")
 
@@ -284,5 +288,5 @@ class ProductOptionValueLink(models.Model):
     def __str__(self):
         return (
             f"ProductOptionValueLink: {self.product.SKU} - "
-            f"{self.product_option_value.name}"
+            f"{self.product_option_value.value}"
         )

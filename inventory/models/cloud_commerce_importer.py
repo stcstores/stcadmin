@@ -7,9 +7,8 @@ from ccapi import CCAPI
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
-from . import product_options
+from . import product_options, products
 from .locations import Bay
-from .products import Product, ProductRange
 from .suppliers import Supplier
 from .vat_rates import VATRate
 
@@ -28,6 +27,7 @@ class ProductImporter:
         new_product = cls._create_product(product)
         new_product.bays.set(cls._get_bays(product))
         cls._set_date_created(product, new_product)
+        cls._set_product_options(product, new_product)
         new_product.status = new_product.COMPLETE
         new_product.save()
         return new_product
@@ -50,12 +50,12 @@ class ProductImporter:
 
     @classmethod
     def _check_new(self, product_ID):
-        if Product.objects.filter(product_ID=product_ID).exists():
+        if products.Product.objects.filter(product_ID=product_ID).exists():
             raise ValidationError("Product already exists.")
 
     @classmethod
     def _get_range(cls, product):
-        return ProductRange.objects.get(range_ID=product.range_id)
+        return products.ProductRange.objects.get(range_ID=product.range_id)
 
     @classmethod
     def _get_bays(cls, product):
@@ -74,14 +74,8 @@ class ProductImporter:
         new_product.save()
 
     @classmethod
-    def _get_amazon_list(cls, product, option_name):
-        if option_name in product.options:
-            return cls._get_option_value(product, option_name).value
-        return ""
-
-    @classmethod
     def _create_product(cls, product):
-        new_product = Product(
+        new_product = products.Product(
             product_ID=product.id,
             product_range=cls._get_range(product),
             SKU=product.sku,
@@ -97,7 +91,6 @@ class ProductImporter:
             manufacturer=cls._get_product_option_object(
                 product, product_options.Manufacturer
             ),
-            description=product.description,
             package_type=cls._get_product_option_object(
                 product, product_options.PackageType
             ),
@@ -109,45 +102,41 @@ class ProductImporter:
             height_mm=int(cls._get_option_value(product, "Height MM").value),
             width_mm=int(cls._get_option_value(product, "Width MM").value),
             multipack=bool(product.product_type),
-            amazon_search_terms=cls._get_amazon_list(product, "Amazon Search Terms"),
-            amazon_bullet_points=cls._get_amazon_list(product, "Amazon Bullets"),
-            status=Product.CREATING,
+            status=products.Product.CREATING,
         )
         new_product.save()
         return new_product
 
-        @classmethod
-        def _get_option_value_object(cls, *, product_option, value):
-            return product_options.ProductOptionValue.objects.get(
-                product_option=product_option, product_option_value_ID=value.ID
-            )
+    @classmethod
+    def _get_option_value_object(cls, *, product_option, value):
+        return product_options.ProductOptionValue.objects.get(
+            product_option=product_option, product_option_value_ID=value.ID
+        )
 
-        @classmethod
-        def _set_product_options(cls, product, new_product):
-            cls._check_variable_product_options(product, new_product)
-            option_names = set(product.options.option_names.keys())
-            options = product_options.ProductOption.objects.filter(
-                name__in=option_names
+    @classmethod
+    def _set_product_options(cls, product, new_product):
+        cls._check_variable_product_options(product, new_product)
+        option_names = set(product.options.option_names.keys())
+        options = product_options.ProductOption.objects.filter(name__in=option_names)
+        options_to_set = []
+        for product_option in options:
+            value = cls._get_option_value(product, product_option.name)
+            options_to_set.append(
+                cls._get_option_value_object(product_option=product_option, value=value)
             )
-            options_to_set = []
-            for product_option in options:
-                value = cls._get_option_value(product, product_option.name)
-                options_to_set.append(
-                    cls._get_option_value_object(product_option, value)
-                )
-            new_product.product_options.set(options_to_set)
+        new_product.product_options.set(options_to_set)
 
-        @classmethod
-        def _check_variable_product_options(cls, product, new_product):
-            variable_option_names = set(
-                _.name for _ in new_product.product_range.variable_options.all()
+    @classmethod
+    def _check_variable_product_options(cls, product, new_product):
+        variable_option_names = set(
+            _.name for _ in new_product.product_range.variation_options()
+        )
+        options_set_for_product = set(product.options.option_names.keys())
+        if not variable_option_names.issubset(options_set_for_product):
+            raise Exception(
+                f'Product "{product.sku}" is missing values for variable product '
+                "options."
             )
-            options_set_for_product = set(product.options.option_names.keys())
-            if not variable_option_names.issubset(options_set_for_product):
-                raise Exception(
-                    f'Product "{product.sku}" is missing values for variable product '
-                    "options."
-                )
 
 
 class ProductRangeImporter:
@@ -160,16 +149,24 @@ class ProductRangeImporter:
         cls._check_new(range_ID)
         product_range = CCAPI.get_range(range_ID)
         new_range = cls._create_range(product_range)
-        cls._set_variable_options(product_range, new_range)
+        cls._set_product_options(product_range, new_range)
+        cls._create_products(product_range)
         return new_range
 
     @classmethod
+    def _create_products(cls, product_range):
+        """Create the range's products in the database."""
+        product_IDs = [_.id for _ in product_range.products]
+        for product_ID in product_IDs:
+            ProductImporter.create(product_ID)
+
+    @classmethod
     def _check_new(cls, range_ID):
-        if ProductRange.objects.filter(range_ID=range_ID).exists():
+        if products.ProductRange.objects.filter(range_ID=range_ID).exists():
             raise ValidationError("Product Range already exists.")
 
     @classmethod
-    def _get_deparment(cls, product_range):
+    def _get_amazon_search_terms(cls, product_range):
         product = product_range.products[0]
         option_value = product.options[product_options.Department.PRODUCT_OPTION_NAME]
         department_ID = option_value.value.id
@@ -178,27 +175,62 @@ class ProductRangeImporter:
         )
 
     @classmethod
+    def _get_deparment(cls, product):
+        option_value = product.options[product_options.Department.PRODUCT_OPTION_NAME]
+        department_ID = option_value.value.id
+        return product_options.Department.objects.get(
+            product_option_value_ID=department_ID
+        )
+
+    @classmethod
+    def _get_amazon_list(cls, product, option_name):
+        if option_name in product.options:
+            return cls._get_option_value(product, option_name).value
+        return ""
+
+    @classmethod
     def _create_range(cls, product_range):
-        new_range = ProductRange(
+        product = product_range.products[0]
+        new_range = products.ProductRange(
             range_ID=product_range.id,
             SKU=product_range.sku,
             name=product_range.name,
-            department=cls._get_deparment(product_range),
+            department=cls._get_deparment(product),
+            description=product.description or "",
+            amazon_search_terms=cls._get_amazon_list(product, "Amazon Search Terms"),
+            amazon_bullet_points=cls._get_amazon_list(product, "Amazon Bullets"),
             end_of_line=product_range.end_of_line,
         )
         new_range.save()
         return new_range
 
     @classmethod
-    def _set_variable_options(cls, product_range, new_range):
-        variation_options_IDs = [
-            _.id for _ in product_range.options if _.is_web_shop_select
-        ]
-        options_to_set = product_options.ProductOption.objects.filter(
+    def _set_product_options(cls, product_range, new_range):
+        variation_options_IDs = []
+        listing_option_IDs = []
+        for option in product_range.options:
+            if option.is_web_shop_select:
+                variation_options_IDs.append(option.id)
+            else:
+                listing_option_IDs.append(option.id)
+        variation_options = product_options.ProductOption.objects.filter(
             product_option_ID__in=variation_options_IDs
         )
-        new_range.save()
-        new_range.set_variable_options(options_to_set)
+        listing_options = product_options.ProductOption.objects.filter(
+            product_option_ID__in=listing_option_IDs
+        )
+        options_to_create = []
+        for option in variation_options:
+            selected_option = products.ProductRangeSelectedOption(
+                product_range=new_range, product_option=option, variation=True
+            )
+            options_to_create.append(selected_option)
+        for option in listing_options:
+            selected_option = products.ProductRangeSelectedOption(
+                product_range=new_range, product_option=option, variation=False
+            )
+            options_to_create.append(selected_option)
+        products.ProductRangeSelectedOption.objects.bulk_create(options_to_create)
         return new_range
 
 

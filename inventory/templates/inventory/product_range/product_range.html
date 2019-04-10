@@ -19,7 +19,7 @@
     <tr class="row">
       <th class="column header SKU">SKU</th>
       <th class="column header edit"></th>
-      {% for option in product_range.product_set.all.0.variation.keys %}
+      {% for option in product_range.variation_options %}
       <th class="column header option">{{ option }}</th>
       {% endfor %}
       <th class="column header supplier_SKU">Supplier SKU</th>
