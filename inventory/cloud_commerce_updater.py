@@ -2,6 +2,8 @@
 
 from ccapi import CCAPI
 
+from inventory import models
+
 
 class RangeUpdater:
     """Update a Product Range in the database and in Cloud Commerce."""
@@ -27,8 +29,8 @@ class RangeUpdater:
 
     def set_name(self, name: str):
         """Set the name for the Range."""
-        self.set_DB_name(name)
-        self.set_CC_name(name)
+        self._set_DB_name(name)
+        self._set_CC_name(name)
 
     def set_department(self, department):
         """
@@ -65,6 +67,36 @@ class RangeUpdater:
         """
         self._set_DB_end_of_line(end_of_line)
         self._set_CC_end_of_line(end_of_line)
+
+    def add_variation_product_option(self, product_option):
+        """
+        Add a variation Product Option to the Range.
+
+        args:
+            product_option: inventory.models.product_options.ProductOption
+        """
+        self._add_DB_product_option(product_option, variation=True)
+        self._add_CC_product_option(product_option, variation=True)
+
+    def add_listing_product_option(self, product_option):
+        """
+        Add a listing Product Option to the Range.
+
+        args:
+            product_option: inventory.models.product_options.ProductOption
+        """
+        self._add_DB_product_option(product_option, variation=False)
+        self._add_CC_product_option(product_option, variation=False)
+
+    def remove_product_option(self, product_option):
+        """
+        Remove a Product Option from the Range.
+
+        args:
+            product_option: inventory.models.product_options.ProductOption
+        """
+        self._remove_DB_product_option(product_option)
+        self._remove_CC_product_option(product_option)
 
     def _set_DB_name(self, name):
         self.db_object.name = name
@@ -125,3 +157,30 @@ class RangeUpdater:
     def _set_CC_end_of_line(self, end_of_line):
         product_range = CCAPI.get_range(self.db_object.range_ID)
         product_range.set_end_of_line(bool(end_of_line))
+
+    def _add_DB_product_option(self, product_option, *, variation):
+        models.ProductRangeSelectedOption(
+            product_range=self.db_object,
+            product_option=product_option,
+            variation=variation,
+        ).save()
+
+    def _add_CC_product_option(self, product_option, *, variation):
+        CCAPI.add_option_to_product(
+            range_id=self.db_object.range_ID, option_id=product_option.product_option_ID
+        )
+        CCAPI.set_range_option_drop_down(
+            range_id=self.db_object.range_ID,
+            option_id=product_option.product_option_ID,
+            drop_down=variation,
+        )
+
+    def _remove_DB_product_option(self, product_option):
+        models.ProductRangeSelectedOption.objects.get(
+            product_range=self.db_object, product_option=product_option
+        ).delete()
+
+    def _remove_CC_product_option(self, product_option):
+        CCAPI.remove_option_from_product(
+            range_id=self.db_object.range_ID, option_id=product_option.product_option_ID
+        )
