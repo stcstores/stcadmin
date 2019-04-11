@@ -159,21 +159,20 @@ class RangeUpdater:
         product_range.set_end_of_line(bool(end_of_line))
 
     def _add_DB_product_option(self, product_option, *, variation):
-        models.ProductRangeSelectedOption(
+        link, created = models.ProductRangeSelectedOption.objects.get_or_create(
             product_range=self.db_object,
             product_option=product_option,
-            variation=variation,
-        ).save()
+            defaults={"variation": bool(variation)},
+        )
+        if not created and link.variation is not bool(variation):
+            link.variation = bool(variation)
+            link.save()
 
     def _add_CC_product_option(self, product_option, *, variation):
         CCAPI.add_option_to_product(
             range_id=self.db_object.range_ID, option_id=product_option.product_option_ID
         )
-        CCAPI.set_range_option_drop_down(
-            range_id=self.db_object.range_ID,
-            option_id=product_option.product_option_ID,
-            drop_down=variation,
-        )
+        self._set_CC_product_option_variation(product_option, variation)
 
     def _remove_DB_product_option(self, product_option):
         models.ProductRangeSelectedOption.objects.get(
@@ -183,4 +182,11 @@ class RangeUpdater:
     def _remove_CC_product_option(self, product_option):
         CCAPI.remove_option_from_product(
             range_id=self.db_object.range_ID, option_id=product_option.product_option_ID
+        )
+
+    def _set_CC_product_option_variation(self, product_option, variation):
+        CCAPI.set_range_option_drop_down(
+            range_id=self.db_object.range_ID,
+            option_id=product_option.product_option_ID,
+            drop_down=variation,
         )
