@@ -1,11 +1,13 @@
-"""Classes for updating inventory items in the database and Cloud Commerce."""
+"""Update Product Ranges in the database and Cloud Commerce."""
 
 from ccapi import CCAPI
 
 from inventory import models
 
+from .base_updater import BaseCloudCommerceUpdater
 
-class RangeUpdater:
+
+class RangeUpdater(BaseCloudCommerceUpdater):
     """Update a Product Range in the database and in Cloud Commerce."""
 
     AMAZON_SEARCH_TERMS_OPTION_ID = 41285
@@ -18,7 +20,7 @@ class RangeUpdater:
         args:
             db_object (inventory.models.products.ProductRange)
         """
-        self.db_object = db_object
+        super().__init__(db_object)
         self.product_IDs = [_.product_ID for _ in self.db_object.product_set.all()]
 
     def set_product_option(self, *, option_ID, value_ID):
