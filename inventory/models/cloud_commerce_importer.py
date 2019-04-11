@@ -59,7 +59,7 @@ class ProductImporter:
 
     @classmethod
     def _get_bays(cls, product):
-        bay_IDs = [_.id for _ in product.bays]
+        bay_IDs = [_.id for _ in product.bays or []]
         return Bay.objects.filter(bay_ID__in=bay_IDs)
 
     @classmethod
