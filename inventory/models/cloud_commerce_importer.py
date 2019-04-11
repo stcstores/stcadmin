@@ -79,7 +79,6 @@ class ProductImporter:
             product_ID=product.id,
             product_range=cls._get_range(product),
             SKU=product.sku,
-            name=product.name,
             supplier=cls._get_product_option_object(product, Supplier),
             supplier_SKU=cls._get_option_value(product, "Supplier SKU").value,
             barcode=product.barcode,

@@ -122,7 +122,6 @@ class Product(models.Model):
     product_ID = models.CharField(max_length=50, unique=True, db_index=True)
     product_range = models.ForeignKey(ProductRange, on_delete=models.PROTECT)
     SKU = models.CharField(max_length=255, unique=True, db_index=True)
-    name = models.CharField(max_length=255)
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT)
     supplier_SKU = models.CharField(max_length=255, null=True, blank=True)
     barcode = models.CharField(max_length=20)
@@ -165,6 +164,10 @@ class Product(models.Model):
     def __str__(self):
         return f"{self.SKU}: {self.full_name}"
 
+    def name(self):
+        """Return the product's name."""
+        return self.product_range.name
+
     def save(self, *args, **kwargs):
         """Create a new product if the product ID is not set."""
         if not self.product_ID:
@@ -188,7 +191,7 @@ class Product(models.Model):
     @property
     def full_name(self):
         """Return the product name with any extensions."""
-        return " - ".join([self.name] + self.name_extensions())
+        return " - ".join([self.product_range.name] + self.name_extensions())
 
     @staticmethod
     def generate_SKU():
@@ -236,8 +239,8 @@ class Product(models.Model):
     def CC_create_product(self):
         """Create the product in Cloud Commerce."""
         CCAPI.create_product(
-            self.range_ID,
-            self.name,
+            self.product_range.range_ID,
+            self.product_range.name,
             self.barcode,
             sku=self.SKU,
             description=self.description,
