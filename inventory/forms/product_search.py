@@ -24,7 +24,15 @@ class ProductSearchForm(forms.Form):
         (ONLY_EOL, "Only EOL"),
     )
 
-    SEARCH_FIELDS = ("product_range__name", "SKU", "supplier_SKU", "barcode")
+    SEARCH_FIELDS = (
+        "product_range__range_ID",
+        "product_range__name",
+        "product_range__SKU",
+        "product_ID",
+        "SKU",
+        "supplier_SKU",
+        "barcode",
+    )
 
     search_term = forms.CharField(required=False)
     end_of_line = forms.ChoiceField(
