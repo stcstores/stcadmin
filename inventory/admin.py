@@ -312,7 +312,12 @@ class ProductRangeSelectedOptionAdmin(admin.ModelAdmin):
     list_display = ("product_range", "product_option", "variation")
     list_editable = ("variation",)
     list_filter = ("product_option", "variation")
-    search_fields = ("product_range__name", "product_range__SKU")
+    search_fields = (
+        "product_range__name",
+        "product_range__SKU",
+        "product_range__range_ID",
+        "product_option__name",
+    )
 
 
 @admin.register(models.ProductOptionValueLink)
@@ -326,5 +331,7 @@ class ProductOptionValueLinkAdmin(admin.ModelAdmin):
         "product__SKU",
         "product__product_range__SKU",
         "product__product_range__name",
+        "product__product_range__range_ID",
         "product_option_value__value",
+        "product__product_ID",
     )

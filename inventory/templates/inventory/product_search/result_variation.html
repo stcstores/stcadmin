@@ -14,8 +14,11 @@
     <tr>
       <th>SKU</th>
       <th>Supplier SKU</th>
-      {% for option in range.product_set.all.0.variation.keys %}
+      {% for option in range.variation_options %}
       <th>{{ option }}</th>
+      {% endfor %}
+      {% for option in range.listing_options %}
+      <th class="listing_option">{{ option }}</th>
       {% endfor %}
       <th></th>
     </tr>
@@ -26,9 +29,12 @@
       {% for option, value in product.variation.items %}
       <td class="name">{{ value }}</td>
       {% endfor %}
+      {% for option, value in product.listing_options.items %}
+      <td class="listing_option name">{{ value }}</td>
+      {% endfor %}
       <td>
         <a href="{% url 'inventory:product' product.product_ID %}">
-          Edit
+          <button>Edit</button>
         </a>
       </td>
     </tr>

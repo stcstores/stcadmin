@@ -85,12 +85,8 @@
   padding: 0;
 }
 
-.product_details .expanded td {
-  font-size: 0.9em;
-}
-
-.product_details .expanded th {
-  font-size: 0.95em;
+.expanded {
+  font-size: small;
 }
 
 .range_links ul {

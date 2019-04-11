@@ -230,3 +230,8 @@ button:disabled {
 #barcode_table tr:nth-child(odd) {
     background: #FFF;
 }
+
+.listing_option {
+  font-weight: normal;
+  font-size: 0.75em;;
+}

@@ -22,6 +22,9 @@
       {% for option in product_range.variation_options %}
       <th class="column header option">{{ option }}</th>
       {% endfor %}
+      {% for option in product_range.listing_options %}
+      <th class="column header listing_option">{{ option }}</th>
+      {% endfor %}
       <th class="column header supplier_SKU">Supplier SKU</th>
       <th class="column header barcode">Barcode</th>
       <th class="column header stock_level">Stock Level</th>
@@ -36,6 +39,9 @@
       </td>
       {% for option, value in product.variation.items %}
       <td class="column option name">{{ value }}</td>
+      {% endfor %}
+      {% for option, value in product.listing_options.items %}
+      <td class="column option listing_option name">{{ value }}</td>
       {% endfor %}
       <td class="column supplier_SKU sku">{{ product.supplier_SKU }}</td>
       <td class="column SKU sku">{{ product.barcode }}</td>
