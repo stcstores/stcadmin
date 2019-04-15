@@ -273,7 +273,6 @@ class ProductAdmin(admin.ModelAdmin):
         "product_ID",
         "product_range",
         "SKU",
-        "name",
         "supplier",
         "supplier_SKU",
         "barcode",
@@ -297,7 +296,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = (
         "range_SKU",
         "SKU",
-        "name",
+        "full_name",
         "department",
         "multipack",
         "date_created",
@@ -305,9 +304,16 @@ class ProductAdmin(admin.ModelAdmin):
         "status",
         "end_of_line",
     )
-    list_display_links = ("SKU", "name")
+    list_display_links = ("SKU",)
     list_filter = ("product_range__department", "end_of_line")
-    search_fields = ("SKU", "name", "supplier_SKU", "product_range__SKU")
+    search_fields = (
+        "SKU",
+        "product_range__name",
+        "supplier_SKU",
+        "product_range__SKU",
+        "product_ID",
+        "product_range__range_ID",
+    )
 
 
 @admin.register(models.ProductRangeSelectedOption)

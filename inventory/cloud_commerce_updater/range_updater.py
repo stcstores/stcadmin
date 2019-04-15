@@ -15,7 +15,7 @@ class RangeUpdater(BaseCloudCommerceUpdater):
 
     def __init__(self, db_object):
         """
-        Instanciate the Range Updater.
+        Instantiate the Range Updater.
 
         args:
             db_object (inventory.models.products.ProductRange)
@@ -177,6 +177,9 @@ class RangeUpdater(BaseCloudCommerceUpdater):
         self._set_CC_product_option_variation(product_option, variation)
 
     def _remove_DB_product_option(self, product_option):
+        models.ProductOptionValueLink.objects.filter(
+            product__product_ID__in=self.product_IDs, product_option=product_option
+        ).delete()
         models.ProductRangeSelectedOption.objects.get(
             product_range=self.db_object, product_option=product_option
         ).delete()

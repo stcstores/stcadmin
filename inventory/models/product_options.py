@@ -190,7 +190,7 @@ class InternationalShipping(OrderableProductOptionModel):
 class Brand(BaseNonListingProductOptionModel):
     """Model for international shipping."""
 
-    PRODUCT_OPTION_ID = 37272
+    PRODUCT_OPTION_ID = 34321
     PRODUCT_OPTION_NAME = "Brand"
 
     class Meta(BaseNonListingProductOptionModel.Meta):
