@@ -14,15 +14,15 @@ class UsedWarehouseManager(models.Manager):
 
     def get_queryset(self):
         """Return queryset containing used warehouses."""
-        return super().get_queryset().exclude(warehouse_id=5610)
+        return super().get_queryset().exclude(warehouse_ID=5610)
 
 
 class Warehouse(models.Model):
     """Model for Warehouses."""
 
-    warehouse_id = models.PositiveIntegerField(primary_key=True)
+    warehouse_ID = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255, unique=True)
-    abriviation = models.CharField(max_length=4, null=True, blank=True)
+    abriviation = models.CharField(max_length=4, null=True, blank=True, unique=True)
 
     objects = models.Manager()
     used_warehouses = UsedWarehouseManager()
@@ -37,15 +37,10 @@ class Warehouse(models.Model):
     def __str__(self):
         return self.name
 
-    @property
-    def id(self):
-        """
-        Return warehouse_id attribute.
-
-        Prevents errors when the primary key is accessed by the usual id
-        attribute.
-        """
-        return self.warehouse_id
+    @staticmethod
+    def get_cc_warehouses():
+        """Return the Cloud Commerce Warehouses."""
+        return CCAPI.get_warehouses()
 
     @property
     def bays(self):
@@ -70,7 +65,7 @@ class NonDefaultBaysManager(models.Manager):
 class Bay(models.Model):
     """Model for Warehouse Bays."""
 
-    bay_id = models.PositiveIntegerField(primary_key=True)
+    bay_ID = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255, unique=True)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
 
@@ -87,19 +82,40 @@ class Bay(models.Model):
         return "{} - {}".format(self.warehouse, self.name)
 
     @property
-    def id(self):
-        """
-        Return bay_id attribute.
-
-        Prevents errors when the primary key is accessed by the usual id
-        attribute.
-        """
-        return self.bay_id
-
-    @property
     def default(self):
         """Return True if the bay is the default bay for it's warehouse."""
         return self.name == self.warehouse.name
+
+    @staticmethod
+    def backup_bay_name(*, bay_name, department, backup_location):
+        """Return the name for a backup bay."""
+        return f"{department.abriviation} Backup {backup_location.name} {bay_name}"
+
+    @classmethod
+    def new_backup_bay(cls, name, department, backup_location):
+        """Return a new Bay instance named as a backup bay."""
+        backup_name = cls.backup_bay_name(
+            bay_name=name, department=department, backup_location=backup_location
+        )
+        return cls(name=backup_name, warehouse=department)
+
+    def save(self, *args, **kwargs):
+        """Create the bay in Cloud Commerce if it has no ID."""
+        if not self.bay_ID:
+            self.bay_ID = self.get_CC_ID()
+        super().save(*args, **kwargs)
+
+    def get_CC_ID(self):
+        """
+        Return the Cloud Commerce ID for this bay.
+
+        If it does not exist in Cloud Commerce it will be created.
+        """
+        bay_ID = CCAPI.get_bay_id(self.name, self.warehouse.name, create=True)
+        if bay_ID:
+            return bay_ID
+        else:
+            raise Exception("Error creating new bay in Cloud Commerce")
 
 
 class LocationIntegrityCheck:
@@ -159,13 +175,13 @@ class LocationIntegrityCheck:
     def missing_bays(self):
         """Create list of bays existing in Cloud Commerce but not STCAdmin."""
         self.missing_bays = [
-            b for b in self.bays if not Bay.objects.filter(bay_id=b.id).exists()
+            b for b in self.bays if not Bay.objects.filter(bay_ID=b.id).exists()
         ]
 
     def excess_bays(self):
         """Create list of bays existing in STCAdmin but not Cloud Commerce."""
-        bay_ids = [int(b.id) for b in self.bays]
-        self.excess_bays = [b for b in Bay.objects.all() if b.bay_id not in bay_ids]
+        bay_IDs = [int(b.id) for b in self.bays]
+        self.excess_bays = [b for b in Bay.objects.all() if b.bay_ID not in bay_IDs]
 
     def incorrect_bays(self):
         """
@@ -187,7 +203,7 @@ class LocationIntegrityCheck:
         ]
         incorrect_bays = []
         for bay in matched_bays:
-            db_bay = Bay.objects.get(bay_id=bay.id)
+            db_bay = Bay.objects.get(bay_ID=bay.id)
             bay_invalid = any(
                 [bay.name != db_bay.name, bay.warehouse.id != bay.warehouse.id]
             )
@@ -225,8 +241,8 @@ class LocationIntegrityCheck:
         """Create Bays for Cloud Commerce Bays not yet in STCAdmin."""
         bays = []
         for bay in self.missing_bays:
-            warehouse = Warehouse.objects.get(warehouse_id=bay.warehouse.id)
-            bays.append(Bay(name=bay.name, bay_id=bay.id, warehouse=warehouse))
+            warehouse = Warehouse.objects.get(warehouse_ID=bay.warehouse.id)
+            bays.append(Bay(name=bay.name, bay_ID=bay.id, warehouse=warehouse))
         Bay.objects.bulk_create(bays)
 
     def auto_delete_from_db(self):
@@ -245,44 +261,3 @@ def check_location_integrity():
     integrity_check = LocationIntegrityCheck()
     integrity_check.create_output()
     return integrity_check
-
-
-def create_backup_bay(*, bay_name, department_warehouse, backup_location):
-    """
-    Create a backup bay in the database and in Cloud Commerce.
-
-    Kwargs:
-        bay_name (str): The name of the new bay.
-        deparment_warehouse (inventory.models.Warehouse): The warehouse for which the bay
-            serves as backup.
-        backup_location (inventory.models.Warehouse): The warehouse in which the bay is
-            located.
-
-    Returns:
-        inventory.models.Bay
-
-    """
-    backup_bay_name = (
-        f"{department_warehouse.abriviation} Backup {backup_location.name} {bay_name}"
-    )
-    return create_bay(bay_name=backup_bay_name, warehouse=department_warehouse)
-
-
-def create_bay(*, bay_name, warehouse):
-    """
-    Create a warehouse bay in the database and Cloud Commerce.
-
-    Kwargs:
-        bay_name (str): The name of the new bay.
-        warehouse (inventory.models.Warehouse): The warehouse containing the bay.
-
-    Returns:
-        inventory.models.Bay
-
-    """
-    if Bay.objects.filter(name=bay_name).exists():
-        raise ValueError(f"Bay name {bay_name} already is in use.")
-    bay_id = CCAPI.get_bay_id(bay_name, warehouse.name, create=True)
-    bay = Bay(bay_id=bay_id, warehouse=warehouse, name=bay_name)
-    bay.save()
-    return bay

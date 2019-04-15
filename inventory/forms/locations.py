@@ -2,6 +2,7 @@
 
 import cc_products
 from django import forms
+
 from inventory import models
 from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms.fields import Department, WarehouseBayField
@@ -33,7 +34,7 @@ class DepartmentForm(forms.Form):
             try:
                 department_id = models.Warehouse.used_warehouses.get(
                     name=department
-                ).warehouse_id
+                ).warehouse_ID
             except models.Warehouse.DoesNotExist:
                 department_id = None
         initial[self.DEPARTMENT] = department_id
@@ -42,7 +43,7 @@ class DepartmentForm(forms.Form):
     def save(self):
         """Update Product Range department."""
         department = models.Warehouse.objects.get(
-            warehouse_id=self.cleaned_data[self.DEPARTMENT]
+            warehouse_ID=self.cleaned_data[self.DEPARTMENT]
         )
         self.product_range.department = department.name
 
@@ -79,23 +80,23 @@ class LocationsForm(forms.Form):
         initial[self.PRODUCT_ID] = self.product.id
         initial[self.PRODUCT_NAME] = self.product.full_name
         initial[self.STOCK_LEVEL] = self.product.stock_level
-        bays = [bay for bay in models.Bay.objects.filter(bay_id__in=self.product.bays)]
+        bays = [bay for bay in models.Bay.objects.filter(bay_ID__in=self.product.bays)]
         warehouses = list(set([bay.warehouse for bay in bays]))
         if len(warehouses) > 1:
             self.add_error(self.LOCATIONS, "Mixed warehouses.")
         elif len(warehouses) == 1:
             initial[self.LOCATIONS] = {
-                self.WAREHOUSE: warehouses[0].warehouse_id,
-                self.BAYS: [bay.id for bay in bays],
+                self.WAREHOUSE: warehouses[0].warehouse_ID,
+                self.BAYS: [bay.bay_ID for bay in bays],
             }
         return initial
 
-    def get_warehouse_for_bays(self, bay_ids):
-        """Return warehouse for bay_ids."""
-        if len(bay_ids) == 0:
+    def get_warehouse_for_bays(self, bay_IDs):
+        """Return warehouse for bay_IDs."""
+        if len(bay_IDs) == 0:
             return None
         bays = models.Bay.objects.filter(
-            bay_id__in=[int(bay_id) for bay_id in bay_ids]
+            bay_ID__in=[int(bay_ID) for bay_ID in bay_IDs]
         ).all()
         if all([bay.warehouse == bays[0].warehouse for bay in bays]):
             return bays[0].warehouse
@@ -108,7 +109,7 @@ class LocationsForm(forms.Form):
         cleaned_data.pop(self.STOCK_LEVEL)
         bays = self.cleaned_data[self.LOCATIONS][self.BAYS]
         if len(bays) == 0:
-            bays = [self.warehouse.default_bay.bay_id]
+            bays = [self.warehouse.default_bay.bay_ID]
         cleaned_data[self.LOCATIONS][self.BAYS] = bays
         return cleaned_data
 
@@ -120,7 +121,7 @@ class LocationsForm(forms.Form):
         """Return cotext for template."""
         context = super().get_context_data(*args, **kwargs)
         context["bays"] = [
-            bay.name for bay in models.Bay.objects.filter(bay_id__in=self.product.bays)
+            bay.name for bay in models.Bay.objects.filter(bay_ID__in=self.product.bays)
         ]
         return context
 

@@ -10,6 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
+
 from home.views import UserInGroupMixin
 from stock_check import models
 
@@ -20,35 +21,42 @@ class StockCheckUserMixin(UserInGroupMixin):
     groups = ["stock_check"]
 
 
-class OpenOrderCheck(StockCheckUserMixin, TemplateView):
-    """Provides methods for checking products currently in orders."""
+class AjaxOpenOrders(StockCheckUserMixin, View):
+    """Return the number of open orders for all products in a bay."""
 
-    def get_order_data(self):
-        """Return details of current orders."""
-        self.orders = CCAPI.get_orders_for_dispatch(order_type=0, number_of_days=4)
-        self.orders += CCAPI.get_orders_for_dispatch(issue_orders=True)
-        self.product_lookup = {}
-        for order in self.orders:
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, bay_ID):
+        """Return HTTP response.
+
+        Return the number of open orders for products in a bay as JSON.
+        """
+        product_ids = self.product_ids(bay_ID)
+        orders = self.orders()
+        order_count = self.count_products(product_ids, orders)
+        response_text = json.dumps(order_count)
+        return HttpResponse(response_text)
+
+    def product_ids(self, bay_ID):
+        """Return a list of IDs of products in the bay with ID bay_ID."""
+        bay = models.Bay.objects.get(id=bay_ID)
+        products = bay.product_set.all()
+        product_ids = [product.product_id for product in products]
+        return product_ids
+
+    def orders(self):
+        """Return all the current open orders."""
+        open_orders = CCAPI.get_orders_for_dispatch(order_type=0, number_of_days=0)
+        issue_orders = CCAPI.get_orders_for_dispatch(issue_orders=True)
+        return open_orders + issue_orders
+
+    def count_products(self, product_ids, orders):
+        """Return a dict containing the number of open orders for product IDs."""
+        order_count = {str(product_id): 0 for product_id in product_ids}
+        for order in orders:
             for product in order.products:
-                product.pick_list_printed = order.is_pick_list_printed
-                product_id = int(product.product_id)
-                if product_id not in self.product_lookup:
-                    self.product_lookup[product_id] = []
-                self.product_lookup[product_id].append(product)
-
-    def get_open_orders_for_product(self, product):
-        """Add current order status to product."""
-        product.printed = 0
-        product.unprinted = 0
-        if int(product.id) not in self.product_lookup:
-            product.allocated = 0
-            return
-        for order_product in self.product_lookup[int(product.id)]:
-            if order_product.pick_list_printed:
-                product.printed += order_product.quantity
-            else:
-                product.unprinted += order_product.quantity
-        product.allocated = product.printed + product.unprinted
+                if str(product.product_id) in order_count:
+                    order_count[product.product_id] += product.quantity
+        return order_count
 
 
 class ProductSearch(TemplateView):
@@ -92,10 +100,12 @@ class Warehouse(StockCheckUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
-        warehouse_id = self.kwargs.get("warehouse_id")
-        warehouse = get_object_or_404(models.Warehouse, warehouse_id=warehouse_id)
+        warehouse_ID = self.kwargs.get("warehouse_ID")
+        warehouse = get_object_or_404(models.Warehouse, id=warehouse_ID)
         context["warehouse"] = warehouse
-        context["bays"] = list(models.Bay.non_default.filter(warehouse=warehouse).all())
+        context["bays"] = list(
+            models.Bay.non_default.filter(warehouse=warehouse).all().order_by("name")
+        )
         context["bays"].insert(0, warehouse.default_bay)
         return context
 
@@ -108,8 +118,8 @@ class Bay(TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return context for template."""
         context = super().get_context_data(*args, **kwargs)
-        bay_id = self.kwargs.get("bay_id")
-        context["bay"] = get_object_or_404(models.Bay, bay_id=bay_id)
+        bay_ID = self.kwargs.get("bay_ID")
+        context["bay"] = get_object_or_404(models.Bay, id=bay_ID)
         products = context["bay"].product_set.all()
         context["products"] = []
         for product in products:
@@ -127,10 +137,10 @@ class UpdateStockCheckLevel(StockCheckUserMixin, View):
         """Update ProductBay model with new stock number."""
         request_data = json.loads(self.request.body)
         product_id = int(request_data["product_id"])
-        bay_id = int(request_data["bay_id"])
+        bay_ID = int(request_data["bay_ID"])
         level = int(request_data["level"]) if request_data["level"] else None
         product_bay = get_object_or_404(
-            models.ProductBay, product__id=product_id, bay__id=bay_id
+            models.ProductBay, product__id=product_id, bay__id=bay_ID
         )
         product_bay.stock_level = level
         product_bay.save()

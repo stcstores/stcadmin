@@ -1,0 +1,27 @@
+{% extends "inventory/base.html" %}
+{% block content %}
+  <a href="{% url 'inventory:create_supplier' %}"><button>Create New Supplier</button></a>
+  <div>
+    <div class="supplier_list">
+      <h3>Active Suppliers</h3>
+      <ul>
+      {% for supplier in suppliers %}
+        {% if supplier.active %}
+          <li><a href="{% url 'inventory:supplier' supplier.id %}">{{ supplier.name }}</a></li>
+        {% endif %}
+      {% endfor %}
+      </ul>
+    </div>
+
+    <div class="supplier_list">
+      <h3>Inactive Suppliers</h3>
+      <ul>
+      {% for supplier in suppliers %}
+        {% if supplier.inactive %}
+          <li><a href="{% url 'inventory:supplier' supplier.id %}">{{ supplier.name }}</a></li>
+        {% endif %}
+      {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}

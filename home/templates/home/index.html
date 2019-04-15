@@ -20,18 +20,10 @@
                     <li><a href="{% url 'inventory:product_search' %}">Product Search</a></li>
                     <p>Find products in the Inventory</p>
                     <li><a href="{% url 'product_editor:basic_info' %}">New Product</a></li>
-                    <p>Create a new <a href="{% url 'product_editor:basic_info' %}"> product.</p>
+                    <p>Create a new <a href="{% url 'product_editor:basic_info' %}"> product</a>.</p>
                     <li><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>
                     <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
                 </ul>
-            {% endif %}{% endfor %}
-            {% for group in request.user.groups.all %}{% if group.name == 'epos' %}
-                <li><a href="{% url 'epos:index' %}">EPOS</a></li>
-                <p>Access the EPOS.</p>
-            {% endif %}{% endfor %}
-            {% for group in request.user.groups.all %}{% if group.name == 'suppliers' %}
-                <li><a href="{% url 'suppliers:index' %}">Suppliers</a></li>
-                <p>Manage supplier lists.</p>
             {% endif %}{% endfor %}
             {% for group in request.user.groups.all %}{% if group.name == 'labelmaker' %}
                 <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>

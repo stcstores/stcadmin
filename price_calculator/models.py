@@ -1,8 +1,24 @@
 """Models for price_calculator app."""
 
+import requests
 from django.db import models
 from django.db.models import Q
-from forex_python.converter import CurrencyRates
+
+
+class ShippingRegion(models.Model):
+    """Model for shipping regions."""
+
+    name = models.CharField(max_length=50)
+
+    class Meta:
+        """Meta class for ShippingRegion."""
+
+        verbose_name = "Shipping Region"
+        verbose_name_plural = "Shipping Regions"
+        ordering = ("name",)
+
+    def __str__(self):
+        return self.name
 
 
 class DestinationCountry(models.Model):
@@ -10,23 +26,43 @@ class DestinationCountry(models.Model):
 
     name = models.CharField(max_length=50, unique=True)
     currency_code = models.CharField(max_length=4, default="GBP")
+    currency_symbol = models.CharField(max_length=1, default="£")
     min_channel_fee = models.IntegerField(null=True, blank=True)
+    shipping_region = models.ForeignKey(
+        ShippingRegion, on_delete=models.CASCADE, null=True, blank=True
+    )
+    sort_order = models.IntegerField(default=0)
 
     class Meta:
         """Meta class for DestinationCountry."""
 
         verbose_name = "Destination Country"
         verbose_name_plural = "Destination Countries"
+        ordering = ("sort_order",)
+
+    class NoShippingService(Exception):
+        """Exception for failed attempts to find a valid shipping service."""
+
+        def __init__(self, *args, **kwargs):
+            """Raise exception."""
+            super().__init__(self, "No shipping service found.", *args, **kwargs)
 
     def __str__(self):
         return self.name
+
+    def exchange_rates(self):
+        """Return the current exchange rates for the country."""
+        URL = f"https://api.exchangerate-api.com/v4/latest/{self.currency_code}"
+        response = requests.get(URL)
+        response.raise_for_status()
+        return response.json()["rates"]
 
     def current_rate(self):
         """Return current currency conversion rate to GBP."""
         if self.currency_code == "GBP":
             return 1
-        c = CurrencyRates()
-        return c.get_rate(str(self.currency_code), "GBP")
+        rates = self.exchange_rates()
+        return rates["GBP"]
 
 
 class PackageType(models.Model):
@@ -89,7 +125,10 @@ class ShippingPriceManager(models.Manager):
         shipping_prices = shipping_prices.filter(
             Q(max_price__isnull=True) | Q(max_price__gte=price)
         )
-        return self.get(pk=shipping_prices.all()[0].id)
+        try:
+            return self.get(pk=shipping_prices.all()[0].id)
+        except IndexError:
+            raise DestinationCountry.NoShippingService()
 
     def get_calculated_price(self, country_name, package_type_name, weight, price):
         """Return price after weight caluclation."""
@@ -141,3 +180,21 @@ class ShippingPrice(models.Model):
     def package_type_string(self):
         """Return package type as a string."""
         return ", ".join([x.name for x in self.package_type.all()])
+
+
+class ChannelFee(models.Model):
+    """Model for channel fees."""
+
+    name = models.CharField(max_length=50, unique=True)
+    fee_percentage = models.PositiveSmallIntegerField()
+    ordering = models.PositiveSmallIntegerField(default=100)
+
+    class Meta:
+        """Meta class for ChannelFee."""
+
+        verbose_name = "Channel Fee"
+        verbose_name_plural = "Channel Fees"
+        ordering = ("ordering",)
+
+    def __str__(self):
+        return self.name
