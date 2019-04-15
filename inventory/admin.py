@@ -162,7 +162,13 @@ class DepartmentAdmin(BaseNonListingProductOptionModel):
 class PackageTypeAdmin(OrderableProductOptionAdmin):
     """Model admin for the PackageType model."""
 
-    pass
+    fields = OrderableProductOptionAdmin.fields + ("large_letter_compatible",)
+    list_display = OrderableProductOptionAdmin.list_display + (
+        "large_letter_compatible",
+    )
+    list_editable = OrderableProductOptionAdmin.list_editable + (
+        "large_letter_compatible",
+    )
 
 
 @admin.register(models.InternationalShipping)

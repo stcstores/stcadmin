@@ -165,6 +165,8 @@ class PackageType(OrderableProductOptionModel):
     PRODUCT_OPTION_ID = 33852
     PRODUCT_OPTION_NAME = "Package Type"
 
+    large_letter_compatible = models.BooleanField()
+
     class Meta(OrderableProductOptionModel.Meta):
         """Meta class for PackageType."""
 
