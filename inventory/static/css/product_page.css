@@ -1,0 +1,49 @@
+.product_header {
+  display: flex;
+  flex-direction: row;
+}
+
+.product_header div {
+  padding: 1em;
+}
+
+.variation_table tr.selected td {
+  background: #fff;
+  border-style: solid;
+  border-color: black;
+  border-width: 3px 0;
+}
+
+.variation_table tr.selected td:first-child {
+  border-width: 3px 0 3px 3px;
+}
+
+.variation_table tr.selected td:last-child {
+  border-width: 3px 3px 3px 0;
+}
+
+.variation_table tr.not_selected td {
+  cursor: pointer;
+}
+
+.page_center {
+  display: flex;
+  flex-direction: row;
+  font-family: 'Open Sans', sans-serif;
+  flex-wrap: wrap;
+}
+
+
+
+.InputAddOn {
+  margin-bottom: 1em;
+}
+
+.required {
+  font-weight: bold;
+}
+
+
+.selectize-control .option, .selectize-input .option{
+  font-family: 'Open Sans', sans-serif;
+}

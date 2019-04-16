@@ -3,6 +3,7 @@
 from django import forms
 
 from inventory import models
+from inventory.cloud_commerce_updater import ProductUpdater
 from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms import fields
 from product_editor.forms.fields import Description, Title
@@ -110,66 +111,29 @@ class ImagesForm(forms.Form):
 class ProductForm(ProductEditorBase, forms.Form):
     """Form for editing indivdual Products."""
 
-    ignore_options = [
-        "Department",
-        "Brand",
-        "Manufacturer",
-        "WooCategory1",
-        "WooCategory2",
-        "WooCategory3",
-        "International Shipping",
-        "Package Type",
-        "Supplier",
-        "Purchase Price",
-        "Date Created",
-        "Location",
-        "Supplier SKU",
-        "Amazon Bullets",
-        "Amazon Search Terms",
-        "Linn SKU",
-        "Linn Title",
-        "Retail Price",
-        "Height MM",
-        "Length MM",
-        "Width MM",
-    ]
-
     def __init__(self, *args, **kwargs):
         """Configure form fields."""
         self.product = kwargs.pop("product")
-        self.product_range = kwargs.pop("product_range")
-        options = kwargs.pop("options")
-        self.options = {
-            o: v for o, v in options.items() if o not in self.ignore_options
-        }
         super().__init__(*args, **kwargs)
-        self.fields[self.PRICE] = fields.VATPrice()
+        self.fields[self.SUPPLIER_SKU] = fields.SupplierSKU()
+        self.fields[self.SUPPLIER] = fields.Supplier()
+        self.fields[self.PURCHASE_PRICE] = fields.PurchasePrice()
+        self.fields[self.VAT_RATE] = fields.VATRate()
+        self.fields[self.PRICE] = fields.Price()
+        self.fields[self.RETAIL_PRICE] = fields.RetailPrice()
         self.fields[self.LOCATION] = fields.WarehouseBayField()
+        self.fields[self.PACKAGE_TYPE] = fields.PackageType()
+        self.fields[self.INTERNATIONAL_SHIPPING] = fields.InternationalShipping()
         self.fields[self.WEIGHT] = fields.Weight()
         self.fields[self.DIMENSIONS] = fields.Dimensions()
-        self.fields[self.PACKAGE_TYPE] = fields.PackageType()
-        self.fields[self.PURCHASE_PRICE] = fields.PurchasePrice()
-        self.fields[self.RETAIL_PRICE] = fields.RetailPrice()
-        self.fields[self.SUPPLIER] = fields.Supplier()
-        self.fields[self.SUPPLIER_SKU] = fields.SupplierSKU()
-        for option_name, values in self.options.items():
-            choices = [("", "")] + [
-                (v, v) for v in self.get_choice_values(option_name, values)
-            ]
-            self.fields["opt_" + option_name] = fields.ListingOption(
-                choices=choices, label=option_name
-            )
         self.initial = self.get_initial()
 
     def get_initial(self):
         """Get initial values for form."""
         initial = {}
-        initial[self.PRICE] = {
-            self.VAT_RATE: self.product.vat_rate,
-            self.EX_VAT: self.product.price,
-            "with_vat_price": None,
-        }
-        bays = [bay for bay in models.Bay.objects.filter(bay_ID__in=self.product.bays)]
+        initial[self.PRICE] = self.product.price
+        initial[self.VAT_RATE] = self.product.VAT_rate
+        bays = self.product.bays.all()
         warehouses = list(set([bay.warehouse for bay in bays]))
         if len(warehouses) > 1:
             self.add_error(self.LOCATIONS, "Mixed warehouses.")
@@ -179,44 +143,36 @@ class ProductForm(ProductEditorBase, forms.Form):
                 self.BAYS: [bay.bay_ID for bay in bays],
             }
         initial[self.DIMENSIONS] = {
-            self.WIDTH: self.product.width,
-            self.HEIGHT: self.product.height,
-            self.LENGTH: self.product.length,
+            self.WIDTH: self.product.width_mm,
+            self.HEIGHT: self.product.height_mm,
+            self.LENGTH: self.product.length_mm,
         }
-        initial[self.WEIGHT] = self.product.weight
+        initial[self.WEIGHT] = self.product.weight_grams
         initial[self.PURCHASE_PRICE] = self.product.purchase_price
         initial[self.RETAIL_PRICE] = self.product.retail_price
         initial[self.PACKAGE_TYPE] = self.product.package_type
         if self.product.supplier:
-            initial[self.SUPPLIER] = self.product.supplier.factory_name
-        initial[self.SUPPLIER_SKU] = self.product.supplier_sku
-        for option in self.options:
-            initial["opt_" + option] = self.product.options[option]
+            initial[self.SUPPLIER] = self.product.supplier
+        initial[self.SUPPLIER_SKU] = self.product.supplier_SKU
+        initial[self.INTERNATIONAL_SHIPPING] = self.product.international_shipping
         return initial
-
-    def get_choice_values(self, option_name, values):
-        """Return choices for option field."""
-        if option_name in self.initial:
-            if self.initial[option_name] not in values:
-                values.append(self.initial[option_name])
-        return values
 
     def save(self, *args, **kwargs):
         """Update product."""
         data = self.cleaned_data
-        self.product.vat_rate = data[self.PRICE][self.VAT_RATE]
-        self.product.price = data[self.PRICE][self.EX_VAT]
-        self.product.bays = data[self.LOCATION][self.BAYS]
-        self.product.width = data[self.DIMENSIONS][self.WIDTH]
-        self.product.height = data[self.DIMENSIONS][self.HEIGHT]
-        self.product.length = data[self.DIMENSIONS][self.LENGTH]
-        self.product.weight = data[self.WEIGHT]
-        self.product.package_type = data[self.PACKAGE_TYPE]
-        self.product.purchase_price = data[self.PURCHASE_PRICE]
-        self.product.retail_price = data[self.RETAIL_PRICE]
-        self.product.supplier = data[self.SUPPLIER]
-        self.product.supplier_sku = data[self.SUPPLIER_SKU]
-        options = [key[4:] for key in data.keys() if key[:4] == "opt_"]
-        for option in options:
-            value = data["opt_" + option]
-            self.product.options[option] = value
+        updater = ProductUpdater(self.product)
+
+        updater.set_price(data[self.PRICE])
+        updater.set_VAT_rate(data[self.VAT_RATE])
+        bays = models.Bay.objects.filter(bay_ID__in=data[self.LOCATION][self.BAYS])
+        updater.set_bays(bays)
+        updater.set_width(data[self.DIMENSIONS][self.WIDTH])
+        updater.set_height(data[self.DIMENSIONS][self.HEIGHT])
+        updater.set_length(data[self.DIMENSIONS][self.LENGTH])
+        updater.set_weight(data[self.WEIGHT])
+        updater.set_package_type(data[self.PACKAGE_TYPE])
+        updater.set_international_shipping(data[self.INTERNATIONAL_SHIPPING])
+        updater.set_purchase_price(data[self.PURCHASE_PRICE])
+        updater.set_retail_price(data[self.RETAIL_PRICE])
+        updater.set_supplier(data[self.SUPPLIER])
+        updater.set_supplier_SKU(data[self.SUPPLIER_SKU])

@@ -4,6 +4,7 @@ import json
 
 from django import forms
 from django.utils.safestring import mark_safe
+
 from product_editor.editor_manager import ProductEditorBase
 
 
@@ -102,9 +103,15 @@ class WarehouseBayWidget(forms.MultiWidget):
     BAYS = ProductEditorBase.BAYS
 
     def __init__(
-        self, attrs=None, choices=[], selectize_options=[], lock_warehouse=False
+        self,
+        attrs=None,
+        choices=[],
+        selectize_options=[],
+        lock_warehouse=False,
+        inline=False,
     ):
         """Configure sub widgets."""
+        self.inline = inline
         self.lock_warehouse = lock_warehouse
         if attrs is None:
             department_attrs = {}
@@ -137,6 +144,7 @@ class WarehouseBayWidget(forms.MultiWidget):
     def get_context(self, *args, **kwargs):
         """Return context for template."""
         context = super().get_context(*args, **kwargs)
+        context["widget"]["inline"] = self.inline
         context["widget"]["subwidgets"][1]["attrs"]["required"] = False
         context["widget"]["lock_warehouse"] = self.lock_warehouse
         return context

@@ -1,4 +1,4 @@
-{% extends "inventory/base.html" %}
+{% extends "inventory/product_range/product_range_base.html" %}
 {% load staticfiles %}
 {% load inventory_extras %}
 {% load stcadmin_extras %}
@@ -10,34 +10,108 @@
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
 <script>{% include 'product_editor/widgets/product_widgets.js' %}</script>
+<link rel="stylesheet" href="{% static 'css/product_page.css' %}">
 {% endblock %}
 
-{% block content %}
-    {% include "inventory/product_range_nav.html" %}
-    <h1 class="page_title">Product Page</h1>
-    {% help_button 'inventory_help' 'inventory-product_page' %}
-    <h2>{{ product.full_name }}</h2>
-    <p>SKU: {{ product.sku}}</p>
-    <p>ID: {{ product.id }}</p>
-    <p>Department: {{ product.department }}</p>
-    <p><a href="{% url 'inventory:product_range' product.range_id %}"><button>Back To Range</button></a></p>
-    <p><a href="{% ccp_product_page product.range_id product.id %}" target="_blank"><button>View Product on Cloud Commerce</button></a></p>
-    <p>Stock Level: {{ product.stock_level }}</p>
-    {% if linnworks_sku %}<p>Linnworks SKU: {{ linnworks_sku }}</p>{% endif %}
-    {% if linnworks_title %}<p>Linnworks Title: {{ linnworks_title }}</p>{% endif %}
-    <form action="" method="POST">{% csrf_token %}
-        <table>
-            {% for field in form %}
-            <tr>
-                <th>{{ field.label }}</th>
-                <td>{{ field }}</td>
-                <td>{% tooltip_help_text field %}</td>
-                {% if field.errors %}
-                    <td class="error">{{ field.errors }}</td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </table>
-        <input type="submit" value="Update">
+{% block content %}{{ block.super }}
+<div class="product_header">
+  <div class="details">
+    <p>SKU: <span class="sku">{{ product.SKU}}</span></p>
+    <p>ID: <span class="sku">{{ product.product_ID }}</span></p>
+  </div>
+  <div class="identification">
+    <p class="name">{{ product.product_range.name }}</p>
+    <p>
+      {% for key, value in product.variation.items %}
+      <span class="option">{{ key }}</span>: <span class="name">{{ value }}</span>
+      {% endfor %}
+    </p>
+    <p>
+      {% for key, value in product.listing_options.items %}
+      <span class="option">{{ key }}</span>: <span class="name">{{ value }}</span>
+      {% endfor %}
+    </p>
+  </div>
+</div>
+
+<div class="page_center">
+
+  <div class="product_form">
+    <form action="" method="POST" autocomplete="off">{% csrf_token %}
+        {% for field in form %}
+        <div class="InputAddOn">
+          {% if field.help_text %}
+          <span class="InputAddOn-item">{% tooltip_help_text field %}</span>
+          {% endif %}
+          <label for="{{ field.name }}" class="InputAddOn-item">{{ field.label }}</label>
+          {{ field|add_class:"InputAddOn-field" }}
+          {% if field.errors %}
+          <span class="error InputAddOn-item">{{ field.errors }}</span>
+          {% endif %}
+          <span class="InputAddOn-item required">{% if field.field.required %}*{% endif %}</span>
+        </div>
+        {% endfor %}
+      <button type="submit">Update</button>
     </form>
+  </div>
+
+  <table class="variation_table">
+    <tr>
+      <th>SKU</th>
+      {% for option in product_range.variation_options %}
+      <th>{{ option }}</th>
+      {% endfor %}
+      {% for option in product_range.listing_options %}
+      <th class="listing_option">{{ option }}</th>
+      {% endfor %}
+      <th>Supplier SKU</th>
+    </tr>
+    {% for variation in product_range.product_set.all %}
+    <tr class="{% if product == variation %}selected{% else %}not_selected{% endif %}" data-href="{% url 'inventory:product' variation.product_ID %}">
+      <td class="sku">{{ variation.SKU }}</td>
+      {% for option, value in variation.variation.items %}
+      <td class="option name">{{ value }}</td>
+      {% endfor %}
+      {% for option, value in variation.listing_options.items %}
+      <td class="option listing_option name">{{ value }}</td>
+      {% endfor %}
+      <td class="sku">{{ variation.supplier_SKU }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+
+  $(document).ready(function() {
+
+    $('#id_weight').after('<span class="InputAddOn-item">g</span>');
+
+    $('.variation_table .not_selected').hover(
+      function() {
+        $(this).find('td').css('background', '#ccfff1');
+      },
+      function() {
+        $(this).find('td').css('background', '');
+      }
+    );
+
+    $('.variation_table .not_selected').click(function() {
+      window.location = $(this).data('href');
+    });
+
+    var price_selectors = ['#id_price', '#id_purchase_price', '#id_retail_price'];
+
+    $.each(price_selectors, function(index, value) {
+      $(value).attr({type:"text"});
+      new AutoNumeric($(value)[0]).british({'unformatOnSubmit': true});
+    });
+
+
+  });
+
+</script>
 {% endblock %}

@@ -57,7 +57,7 @@ class LocationsForm(forms.Form):
         """Add fields to form."""
         self.product = kwargs.pop("product")
         super().__init__(*args, **kwargs)
-        self.fields[self.LOCATIONS] = WarehouseBayField()
+        self.fields[self.LOCATIONS] = WarehouseBayField(inline=True)
         self.cleaned_data = {}
         self.initial.update(self.get_initial())
 

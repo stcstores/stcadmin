@@ -67,7 +67,7 @@ class Barcode(fieldtypes.TextField):
     )
 
 
-class VATRate(fieldtypes.ChoiceField):
+class VATRate(fieldtypes.SelectizeModelChoiceField):
     """Field for VAT rates."""
 
     label = "VAT Rate"
@@ -78,10 +78,9 @@ class VATRate(fieldtypes.ChoiceField):
         "Please specify the appropriate <b>VAT Rate</b> for the " "product."
     )
 
-    @staticmethod
-    def get_choices():
-        """Return choice values."""
-        return [("", ""), (20, "Normal Rate 20%"), (5, "Reduced 5%"), (0, "VAT Exempt")]
+    def get_queryset(self):
+        """Return a queryset of selectable options."""
+        return models.VATRate.objects.all()
 
 
 class Price(fieldtypes.PriceField):
@@ -92,9 +91,7 @@ class Price(fieldtypes.PriceField):
     required_message = (
         "Please provide a <b>Price</b>. This cannot be blank but can be zero."
     )
-    help_text = (
-        "Price <b>without shipping</b>." "<br>Ex VAT cannot be blank but can be zero."
-    )
+    help_text = "The price at which the product is sold online."
     variable = True
 
 
@@ -155,7 +152,7 @@ class RetailPrice(fieldtypes.PriceField):
     name = "retail_price"
     variable = True
     empty_value = 0.0
-    help_text = "Price at which the item is available in shop."
+    help_text = "Price at which the item sold over the counter."
 
 
 class StockLevel(fieldtypes.NumberField):
@@ -175,7 +172,7 @@ class StockLevel(fieldtypes.NumberField):
     )
 
 
-class Supplier(fieldtypes.SingleSelectize):
+class Supplier(fieldtypes.SelectizeModelChoiceField):
     """Field for selecting the supplier of a product."""
 
     label = "Supplier"
@@ -192,13 +189,9 @@ class Supplier(fieldtypes.SingleSelectize):
         "Cloud Commerce before the product can be created."
     )
 
-    @staticmethod
-    def get_choices():
+    def get_queryset(self):
         """Return field choices."""
-        suppliers = [
-            (s.name, s.name) for s in models.Supplier.objects.filter(inactive=False)
-        ]
-        return [("", "")] + suppliers
+        return models.Supplier.objects.filter(inactive=False)
 
 
 class SupplierSKU(fieldtypes.TextField):
@@ -214,7 +207,7 @@ class SupplierSKU(fieldtypes.TextField):
 class Weight(fieldtypes.NumberField):
     """Field for the weight of the product."""
 
-    label = "Weight (Grams)"
+    label = "Weight"
     name = "weight"
     required_message = "Please supply a weight. This cannot be blank but can be zero."
     variable = True
@@ -256,7 +249,7 @@ class Width(fieldtypes.NumberField):
 class Dimensions(fieldtypes.CombinationField):
     """Combined field for height, width and lenght."""
 
-    label = "Dimensions (mm)"
+    label = "Dimensions"
     help_text = "The dimensions of the product in <b>milimeters</b> when packed.<br>"
 
     def __init__(self, *args, **kwargs):
@@ -274,7 +267,7 @@ class Dimensions(fieldtypes.CombinationField):
         return {"height": value[0], "length": value[1], "width": value[2]}
 
 
-class PackageType(fieldtypes.SingleSelectize):
+class PackageType(fieldtypes.SelectizeModelChoiceField):
     """Field for selecting the package type of a product."""
 
     label = "Package Type"
@@ -283,22 +276,31 @@ class PackageType(fieldtypes.SingleSelectize):
     required_message = "A <b>Package Type</b> must be supplied."
     help_text = (
         "The <b>Shipping Rule</b> will be selected acording to the "
-        "<b>Package Type</b>.<br>The <b>International Shipping</b> will also "
-        "be set accordingly. If the product cannot be shipped outside the UK "
-        "or the <b>International Shippping Method</b> differs, please change "
-        "the <b>International Shipping</b> option after the product has been "
-        "created."
+        "<b>Package Type</b>."
     )
     selectize_options = {"maxItems": 1}
 
-    @staticmethod
-    def get_choices():
-        """Return choices for field."""
-        package_types = [
-            (service.value, service.value)
-            for service in CCAPI.get_option_values("33852")
-        ]
-        return [("", "")] + package_types
+    def get_queryset(self):
+        """Return a queryset of selectable options."""
+        return models.PackageType.objects.filter(inactive=False)
+
+
+class InternationalShipping(fieldtypes.SelectizeModelChoiceField):
+    """Field for selecting the International Shipping class of a product."""
+
+    label = "International Shipping"
+    name = "international_shipping"
+    variable = True
+    required_message = "An <b>International Shipping type</b> must be supplied."
+    help_text = (
+        "The <b>Shipping Rule</b> will be selected acording to the "
+        "<b>International Shipping type</b>."
+    )
+    selectize_options = {"maxItems": 1}
+
+    def get_queryset(self):
+        """Return a queryset of selectable options."""
+        return models.InternationalShipping.objects.filter(inactive=False)
 
 
 class Department(fieldtypes.SingleSelectize):
@@ -435,6 +437,7 @@ class WarehouseBayField(fieldtypes.CombinationField):
             choices=choices,
             selectize_options=selectize_options,
             lock_warehouse=self.lock_warehouse,
+            inline=kwargs.pop("inline", False),
         )
         super().__init__(fields=fields, require_all_fields=False, *args, **kwargs)
 

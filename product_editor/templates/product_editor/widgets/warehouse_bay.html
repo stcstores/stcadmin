@@ -1,11 +1,26 @@
+{% if widget.inline %}
+<div class="InputAddon inline">
+    <label for="{{ widget.subwidgets.0.name }}" class="InputAddOn-item">Warehouse</label>
+    {% include widget.subwidgets.0.template_name with widget=widget.subwidgets.0 %}
+    <label for="{{ widget.subwidgets.1.name }}" class="InputAddOn-item">Bays</label>
+    {% include widget.subwidgets.1.template_name with widget=widget.subwidgets.1 %}
+</div>
+{% else %}
+<div class="multi_input_addon">
 {% if widget.lock_warehouse %}
 {% include widget.subwidgets.0.template_name with widget=widget.subwidgets.0 %}
 {% include widget.subwidgets.1.template_name with widget=widget.subwidgets.1 %}
 {% else %}
-<label for="{{ widget.subwidgets.0.name }}">Warehouse</label>
-{% include widget.subwidgets.0.template_name with widget=widget.subwidgets.0 %}
-<label for="{{ widget.subwidgets.1.name }}">Bays</label>
-{% include widget.subwidgets.1.template_name with widget=widget.subwidgets.1 %}
+<div class="InputAddOn">
+  <label for="{{ widget.subwidgets.0.name }}" class="InputAddOn-item">Warehouse</label>
+  {% include widget.subwidgets.0.template_name with widget=widget.subwidgets.0 %}
+</div>
+<div class="InputAddOn">
+  <label for="{{ widget.subwidgets.1.name }}" class="InputAddOn-item">Bays</label>
+  {% include widget.subwidgets.1.template_name with widget=widget.subwidgets.1 %}
+</div>
+{% endif %}
+</div>
 {% endif %}
 <script>
     $(document).ready(function() {

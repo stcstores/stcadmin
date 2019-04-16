@@ -90,9 +90,15 @@ class FormField(forms.Field):
 
     def __init__(self, *args, **kwargs):
         """Set field attributes."""
+        self.kwargs = self.get_field_kwargs(*args, **kwargs)
+        super().__init__(*args, **self.kwargs)
+        self.set_error_messages()
+        self.set_widget()
+
+    def get_field_kwargs(self, *args, **kwargs):
+        """Return the kwargs for the field."""
         if self.is_required:
             kwargs["required"] = True
-            self.error_messages = {"required": self.required_message}
         else:
             kwargs["required"] = False
         if "small" in kwargs:
@@ -104,12 +110,19 @@ class FormField(forms.Field):
         kwargs["validators"] = self.validators
         if self.initial is not None:
             kwargs["initial"] = self.initial
-        if "html_class" in kwargs:
-            self.html_class = kwargs.pop("html_class")
+        return kwargs
+
+    def set_widget(self):
+        """Set the field's widget."""
+        if "html_class" in self.kwargs:
+            self.html_class = self.kwargs.pop("html_class")
         if isclass(self.widget):
             self.widget = self.get_widget()
-        self.kwargs = kwargs
-        super().__init__(*args, **kwargs)
+
+    def set_error_messages(self):
+        """Set the field's error messages."""
+        if self.is_required:
+            self.error_messages["required"] = self.required_message
 
     @property
     def is_required(self):
@@ -218,8 +231,11 @@ class SelectizeModelChoiceField(forms.ModelChoiceField, SingleSelectize):
 
     def __init__(self, *args, **kwargs):
         """Create a ModelChoiceField with a Selectize widget."""
+        kwargs.update(self.get_field_kwargs(*args, **kwargs))
+        if not args and not kwargs.get("queryset"):
+            kwargs["queryset"] = self.get_queryset()
         kwargs["empty_label"] = ""
-        super().__init__(kwargs.pop("queryset"), **kwargs)
+        super().__init__(*args, **kwargs)
         self.choices = list(self._get_choices())[1:]
         self.choices.insert(0, ("", ""))
         self.widget = super(SingleSelectize, self).get_widget()

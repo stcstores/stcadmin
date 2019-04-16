@@ -362,3 +362,26 @@ th {
 .price_zero, .price_positive {
   color: black;
 }
+
+.multi_input_addon {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  border-style: none;
+  width: 100%;
+}
+
+.multi_input_addon .InputAddOn {
+  margin: 0;
+  padding: 0;
+  flex-direction: row;
+  flex-shrink: 1;
+  border-style: none;
+  overflow: visible;
+}
+
+.InputAddon.inline {
+  display: flex;
+  flex: 0;
+  flex-wrap: nowrap;
+}
