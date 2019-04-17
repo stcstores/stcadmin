@@ -116,8 +116,11 @@ class FormField(forms.Field):
         """Set the field's widget."""
         if "html_class" in self.kwargs:
             self.html_class = self.kwargs.pop("html_class")
+        attrs = self.get_widget_attrs()
         if isclass(self.widget):
-            self.widget = self.get_widget()
+            self.widget = self.widget(attrs)
+        else:
+            self.widget = self.widget.__class__(attrs)
 
     def set_error_messages(self):
         """Set the field's error messages."""
@@ -131,7 +134,7 @@ class FormField(forms.Field):
             return True
         return False
 
-    def get_widget(self):
+    def get_widget_attrs(self):
         """Return widget for field."""
         attrs = {}
         if self.placeholder is not None:
@@ -142,7 +145,7 @@ class FormField(forms.Field):
             attrs["size"] = self.size
         if self.is_required:
             attrs["required"] = "true"
-        return self.widget(attrs=attrs)
+        return attrs
 
     def validate(self, value):
         """Limit characters if disallowed_characters is set."""

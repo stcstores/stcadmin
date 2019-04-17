@@ -303,7 +303,7 @@ class InternationalShipping(fieldtypes.SelectizeModelChoiceField):
         return models.InternationalShipping.objects.filter(inactive=False)
 
 
-class Department(fieldtypes.SingleSelectize):
+class Department(fieldtypes.SelectizeModelChoiceField):
     """Field for product department."""
 
     label = "Department"
@@ -311,27 +311,22 @@ class Department(fieldtypes.SingleSelectize):
     required_message = "A <b>Department</b> must be selected."
     help_text = "The <b>Department</b> to which the product belongs."
 
-    @staticmethod
-    def get_choices():
-        """Get choice options for field."""
-        departments = [
-            (w.warehouse_ID, w.name) for w in models.Warehouse.used_warehouses.all()
-        ]
-        departments.sort(key=lambda x: x[1])
-        return [("", "")] + departments
+    def get_queryset(self):
+        """Return a queryset of selectable options."""
+        return models.Department.objects.filter(inactive=False)
 
-    def clean(self, value):
-        """Validate cleaned data."""
-        value = super().clean(value)
-        if self.required is False and value == "":
-            return None
-        try:
-            department = models.Warehouse.used_warehouses.get(
-                warehouse_ID=int(value)
-            ).warehouse_ID
-        except models.Warehouse.DoesNotExist:
-            raise forms.ValidationError("Deparment not recognised")
-        return department
+
+class Warehouse(fieldtypes.SelectizeModelChoiceField):
+    """Field for selecting a Warehouse."""
+
+    label = "Warehouse"
+    name = "warehouse"
+    required_message = "A <b>Warehouse</b> must be selected."
+    help_text = "The <b>Warehouse</b> in which the product is located."
+
+    def get_queryset(self):
+        """Return a queryset of selectable options."""
+        return models.Warehouse.objects.filter()
 
 
 class Location(fieldtypes.SelectizeField):
@@ -428,13 +423,14 @@ class WarehouseBayField(fieldtypes.CombinationField):
         """Create sub fields."""
         kwargs["label"] = "Location"
         self.lock_warehouse = kwargs.pop("lock_warehouse", False)
-        fields = (Department(), Location())
-        choices = [field.get_choices() for field in fields]
+        fields = (Warehouse(), Location())
         selectize_options = [field.selectize_options for field in fields]
         if self.lock_warehouse:
             selectize_options[0]["readOnly"] = True
+        warehouse_choices = [(_.warehouse_ID, _.name) for _ in fields[0]._queryset]
+        location_choices = fields[1].get_choices()
         kwargs["widget"] = widgets.WarehouseBayWidget(
-            choices=choices,
+            choices=[warehouse_choices, location_choices],
             selectize_options=selectize_options,
             lock_warehouse=self.lock_warehouse,
             inline=kwargs.pop("inline", False),
