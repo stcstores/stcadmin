@@ -206,12 +206,16 @@ class Product(models.Model):
     def variable_options(self):
         """Return list of Product Options which are variable for the range."""
         variable_options = self.product_range.variation_options()
-        return self.product_options.filter(product_option__in=variable_options)
+        return self.product_options.filter(
+            product_option__in=variable_options
+        ).order_by("product_option")
 
     def selected_listing_options(self):
         """Return list of Product Options which are listing options for the range."""
         variable_options = self.product_range.listing_options()
-        return self.product_options.filter(product_option__in=variable_options)
+        return self.product_options.filter(
+            product_option__in=variable_options
+        ).order_by("product_option")
 
     def update_stock_level(self, *, old, new):
         """Set the product's stock level in Cloud Commerce."""
