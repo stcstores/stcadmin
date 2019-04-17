@@ -50,7 +50,7 @@ class Warehouse(models.Model):
     @property
     def default_bay(self):
         """Return the default bay for this warehouse."""
-        return self.bay_set.get(name=self.name)
+        return self.bay_set.get(is_default=True)
 
 
 class NonDefaultBaysManager(models.Manager):
@@ -68,6 +68,7 @@ class Bay(models.Model):
     bay_ID = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255, unique=True)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
+    is_default = models.BooleanField(default=False)
 
     objects = models.Manager()
     non_default = NonDefaultBaysManager()
@@ -77,14 +78,17 @@ class Bay(models.Model):
 
         verbose_name = "Bay"
         verbose_name_plural = "Bays"
+        ordering = ("-is_default", "name")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["warehouse"],
+                condition=models.Q(is_default=True),
+                name="single_default_bay_per_warehouse",
+            )
+        ]
 
     def __str__(self):
         return "{} - {}".format(self.warehouse, self.name)
-
-    @property
-    def default(self):
-        """Return True if the bay is the default bay for it's warehouse."""
-        return self.name == self.warehouse.name
 
     @staticmethod
     def backup_bay_name(*, bay_name, department, backup_location):
