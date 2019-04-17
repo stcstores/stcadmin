@@ -46,7 +46,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "7321856e69a96dfd024a275095571b5895456df1"
+            "ref": "a434d9bf27ca9018b52ea273952b803bdc97e2e3"
         },
         "certifi": {
             "hashes": [
@@ -263,7 +263,7 @@
         "order-profit": {
             "editable": true,
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "def7846ab333ecedc1e50a5cb6d06b1a5134d6d6"
+            "ref": "a82eac8b30cf7b3fa539844a4a834d8c0d051a71"
         },
         "packaging": {
             "hashes": [
@@ -339,10 +339,10 @@
         },
         "pyaml": {
             "hashes": [
-                "sha256:39470e99cfb7a0ef79e593fee626328283cd6d1a9c23c7e30f0d3a6933f3a235",
-                "sha256:b96292cc409e0f222b6fecff96afd2e19cfab5d1f2606344907751d42301263a"
+                "sha256:a2dcbc4a8bb00b541efd1c5a064d93474d4f41ded1484fbb08bec9d236523931",
+                "sha256:c79ae98ececda136a034115ca178ee8bf3aa7df236c488c2f55d12f177b88f1e"
             ],
-            "version": "==18.11.0"
+            "version": "==19.4.1"
         },
         "pygments": {
             "hashes": [
