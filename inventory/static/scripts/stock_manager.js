@@ -2,6 +2,7 @@ var initial_stock_levels = {};
 var stock_levels_to_get = [];
 
 function get_stock_level(product_id) {
+  console.log('Getting ' + product_id)
   $.post(
     get_stock_url,
     {'product_ID': product_id},
@@ -10,7 +11,7 @@ function get_stock_level(product_id) {
       $('#stock_' + data.product_ID).val(data.stock_level);
       $('#update_' + data.product_ID).prop('disabled', false);
       $('#status_' + product_id).hide();
-      stock_levels_to_get.splice($.inArray(product_id, stock_levels_to_get), 1);
+      stock_levels_to_get.shift(0);
       get_next_stock_level()
     },
     "json"
