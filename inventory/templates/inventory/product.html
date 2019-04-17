@@ -1,10 +1,9 @@
 {% extends "inventory/product_range/product_range_base.html" %}
 {% load staticfiles %}
 {% load inventory_extras %}
-{% load stcadmin_extras %}
 {% load reference_extras %}
 
-{% block page_title %}CCP Product{% endblock %}
+{% block page_title %}{{ product_range.name }}{% endblock %}
 
 {% block additional_head %}{{ block.super }}
 <script>{% include 'product_editor/widgets/product_widgets.js' %}</script>
@@ -36,19 +35,7 @@
 
   <div class="product_form">
     <form action="" method="POST" autocomplete="off">{% csrf_token %}
-        {% for field in form %}
-        <div class="InputAddOn">
-          {% if field.help_text %}
-          <span class="InputAddOn-item">{% tooltip_help_text field %}</span>
-          {% endif %}
-          <label for="{{ field.name }}" class="InputAddOn-item">{{ field.label }}</label>
-          {{ field|add_class:"InputAddOn-field" }}
-          {% if field.errors %}
-          <span class="error InputAddOn-item">{{ field.errors }}</span>
-          {% endif %}
-          <span class="InputAddOn-item required">{% if field.field.required %}*{% endif %}</span>
-        </div>
-        {% endfor %}
+        {% include "inventory/input_add_on_form.html" %}
       <button type="submit" class="save_button" disabled>Save</button>
     </form>
   </div>
@@ -84,10 +71,10 @@
 {% block script %}{{ block.super }}
 <script>
 
-  form_changed = false;
+  var form_changed = false;
+  var price_selectors = ['#id_price', '#id_purchase_price', '#id_retail_price'];
 
-  $(document).ready(function() {
-
+  function set_variation_hover_style() {
     $('.variation_table .not_selected').hover(
       function() {
         $(this).find('td').css('background', '#ccfff1');
@@ -96,25 +83,38 @@
         $(this).find('td').css('background', '');
       }
     );
+  }
 
+  function variation_link_click() {
     $('.variation_table .not_selected').click(function() {
       if ((!form_changed) || (window.confirm("Changes not saved.\nDo you want to leave without saving your changes?"))) {
         window.location = $(this).data('href');
       }
     });
+  }
 
-    var price_selectors = ['#id_price', '#id_purchase_price', '#id_retail_price'];
-
+  function set_autoNumeric() {
     $.each(price_selectors, function(index, value) {
       $(value).attr({type:"text"});
       new AutoNumeric($(value)[0]).british({'unformatOnSubmit': true});
     });
+  }
+
+  function set_form_changed() {
+    $('.product_form input, .product_form select').change(function() {
+      form_changed = true;
+      $('.save_button').prop('disabled', false);
+    });
+  }
+
+  $(document).ready(function() {
+
+    set_variation_hover_style();
+    variation_link_click();
+    set_autoNumeric();
 
     $(document).ready(function() {  // After selectize and autoNumeric
-      $('.product_form input, .product_form select').change(function() {
-        form_changed = true;
-        $('.save_button').prop('disabled', false);
-      });
+      set_form_changed();
     });
 
   });
