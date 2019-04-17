@@ -12,7 +12,7 @@
 {% block content %}{{ block.super }}
 <h2 class="page_title">Range Price Calculator</h2>
 
-<div class="price_calculator_input">
+<div class="price_calculator_input product_form">
 
   <div class="InputAddOn">
     <label for="country" class="InputAddOn-item">Country</label>
@@ -40,6 +40,18 @@
     <div class="product_row title">
       <span class="sku">{{ product.SKU }}</span>&nbsp;-&nbsp;<span class="name">{{ product.name }}</span>
     </div>
+      <p>
+        {% for key, value in product.variation.items %}
+        <span class="option">{{ key }}</span>: <span class="name">{{ value }}</span>
+        {% endfor %}
+      </p>
+      {% if product.listing_options %}
+      <p>
+        {% for key, value in product.listing_options.items %}
+        <span class="option">{{ key }}</span>: <span class="name">{{ value }}</span>
+        {% endfor %}
+      </p>
+      {% endif %}
 
     <div class="product_row input">
       <div class="InputAddOn">
@@ -55,49 +67,49 @@
       </div>
 
       <div class="profit tooltip critical" tooltiptitle="Profit" tooltiptext="Amout of profit per sale.">
-        <span class="name">Profit</span>
+        <span>Profit</span>
         <span class="value" id="{{ product.id }}_profit"></span>
       </div>
 
       <div class="profit_percentage tooltip critical" tooltiptitle="Profit Percentage" tooltiptext="Percentage of sale price returned in profit.">
-        <span class="name">Profit Percentage</span>
+        <span>Profit Percentage</span>
         <span class="value" id="{{ product.id }}_profit_percentage"></span>
       </div>
 
       <div class="shipping_service tooltip critical" tooltiptitle="Shipping Service" tooltiptext="The shipping service used to calculate the postage price.">
-        <span class="name">Shipping Service</span>
+        <span>Shipping Service</span>
         <span class="value" id="{{ product.id }}_shipping_service"></span>
       </div>
     </div>
 
     <div class="product_row info">
       <div class="ex_vat_price tooltip" tooltiptitle="Ex Vat Price" tooltiptext="The sale price before VAT.">
-        <span class="name">Ex VAT Price</span>
+        <span>Ex VAT Price</span>
         <span class="value" id="{{ product.id }}_ex_vat_price"></span>
       </div>
 
       <div class="vat tooltip" tooltiptitle="VAT" tooltiptext="Amount paid for VAT.">
-        <span class="name">VAT</span>
+        <span>VAT</span>
         <span class="value" id="{{ product.id }}_vat"></span>
       </div>
 
       <div class="postage tooltip" tooltiptitle="Postage" tooltiptext="Amount paid for postage.">
-        <span class="name">Postage</span>
+        <span>Postage</span>
         <span class="value" id="{{ product.id }}_postage"></span>
       </div>
 
       <div class="purchase_price tooltip" tooltiptitle="Purchase Price" tooltiptext="The cost to stock the item.">
-        <span class="name">Purchase Price</span>
+        <span>Purchase Price</span>
         <span class="value" id="{{ product.id }}_purchase_price"></span>
       </div>
 
       <div class="channel_fee tooltip" tooltiptitle="Channel Fee" tooltiptext="Amount paid to the selling channel.">
-        <span class="name">Channel Fee</span>
+        <span>Channel Fee</span>
         <span class="value" id="{{ product.id }}_channel_fee"></span>
       </div>
 
       <div class="return tooltip" tooltiptitle="Return" tooltiptext="Percentage of purchase price returned in profit.">
-        <span class="name">Return</span>
+        <span>Return</span>
         <span class="value" id="{{ product.id }}_return"></span>
       </div>
     </div>
