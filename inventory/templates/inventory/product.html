@@ -7,8 +7,6 @@
 {% block page_title %}CCP Product{% endblock %}
 
 {% block additional_head %}{{ block.super }}
-<link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
-<script src="{% static 'scripts/selectize/selectize.js' %}"></script>
 <script>{% include 'product_editor/widgets/product_widgets.js' %}</script>
 <link rel="stylesheet" href="{% static 'css/product_page.css' %}">
 {% endblock %}
@@ -51,7 +49,7 @@
           <span class="InputAddOn-item required">{% if field.field.required %}*{% endif %}</span>
         </div>
         {% endfor %}
-      <button type="submit">Update</button>
+      <button type="submit" class="save_button" disabled>Save</button>
     </form>
   </div>
 
@@ -83,12 +81,12 @@
 </div>
 {% endblock %}
 
-{% block script %}
+{% block script %}{{ block.super }}
 <script>
 
-  $(document).ready(function() {
+  form_changed = false;
 
-    $('#id_weight').after('<span class="InputAddOn-item">g</span>');
+  $(document).ready(function() {
 
     $('.variation_table .not_selected').hover(
       function() {
@@ -100,7 +98,9 @@
     );
 
     $('.variation_table .not_selected').click(function() {
-      window.location = $(this).data('href');
+      if ((!form_changed) || (window.confirm("Changes not saved.\nDo you want to leave without saving your changes?"))) {
+        window.location = $(this).data('href');
+      }
     });
 
     var price_selectors = ['#id_price', '#id_purchase_price', '#id_retail_price'];
@@ -110,6 +110,12 @@
       new AutoNumeric($(value)[0]).british({'unformatOnSubmit': true});
     });
 
+    $(document).ready(function() {  // After selectize and autoNumeric
+      $('.product_form input, .product_form select').change(function() {
+        form_changed = true;
+        $('.save_button').prop('disabled', false);
+      });
+    });
 
   });
 

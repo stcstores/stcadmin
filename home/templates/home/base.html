@@ -50,7 +50,7 @@
         </div>
         {% block footer %}{% endblock %}
     </div>
-    {% block script %}{% endblock %}
+    {% block script %}
     <script>
         $(document).ready(function() {
             $('.tooltip').each(function() {
@@ -69,5 +69,7 @@
             });
         });
     </script>
+    {% endblock %}
+
 </body>
 </html>

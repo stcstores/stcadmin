@@ -72,5 +72,6 @@ function warehouse_bay(warehouse, bay, lock_warehouse) {
             warehouse.replaceWith('<input value="' + value + '" name="' + name + '" hidden/>');
             warehouse.remove();
         }
+        $('#id_weight').after('<span class="InputAddOn-item">g</span>');
     });
 }
