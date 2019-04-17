@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 
 from inventory import forms, models
+from inventory.cloud_commerce_updater import RangeUpdater
 
 from .views import InventoryUserMixin
 
@@ -28,6 +29,7 @@ class DescriptionsView(InventoryUserMixin, FormView):
         """Get initial data for form."""
         initial = super().get_initial()
         initial["title"] = self.product_range.name
+        initial["department"] = self.product_range.department
         initial["description"] = self.product_range.description
         initial["amazon_bullets"] = self.product_range.amazon_bullet_points.split("|")
         initial["search_terms"] = self.product_range.amazon_search_terms.split("|")
@@ -35,11 +37,11 @@ class DescriptionsView(InventoryUserMixin, FormView):
 
     def form_valid(self, form):
         """Process form request and return HttpResponse."""
-        self.product_range.description = form.cleaned_data["description"]
-        self.product_range.name = form.cleaned_data["title"]
-        for product in self.product_range.products:
-            product.amazon_bullets = form.cleaned_data["amazon_bullets"]
-            product.amazon_search_terms = form.cleaned_data["search_terms"]
+        updater = RangeUpdater(self.product_range)
+        updater.set_name(form.cleaned_data["title"])
+        updater.set_description(form.cleaned_data["description"])
+        updater.set_amazon_bullet_points("|".join(form.cleaned_data["amazon_bullets"]))
+        updater.set_amazon_search_terms("|".join(form.cleaned_data["search_terms"]))
         messages.add_message(self.request, messages.SUCCESS, "Description Updated")
         return super().form_valid(form)
 

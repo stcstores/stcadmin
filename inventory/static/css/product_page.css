@@ -22,35 +22,11 @@
   border-width: 3px 3px 3px 0;
 }
 
-.variation_table .not_selected td {
+.variation_table tr.not_selected td {
   cursor: pointer;
 }
 
-.page_center {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  font-family: 'Open Sans', sans-serif;
-}
-
-.InputAddOn {
-  margin-bottom: 1em;
-}
-
-.required {
-  font-weight: bold;
-}
-
-.selectize-control .option, .selectize-input .option{
-  font-family: 'Open Sans', sans-serif;
-}
-
-.save_button {
-  width: 100%;
-}
-
-.product_form {
-  background: #fbfbfb;
-  border: #dddddd 3px solid;
-  border-radius: 1em;
+.description_instructions {
+  margin: 1em;
+  width: 40%;
 }

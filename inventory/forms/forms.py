@@ -6,7 +6,6 @@ from inventory import models
 from inventory.cloud_commerce_updater import ProductUpdater
 from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms import fields
-from product_editor.forms.fields import Description, Title
 
 
 class ProductRangeForm(forms.Form):
@@ -24,8 +23,9 @@ class ProductRangeForm(forms.Form):
 class DescriptionForm(forms.Form):
     """Form for editing attributes that are the same across a range."""
 
-    title = Title()
-    description = Description()
+    title = fields.Title()
+    department = fields.Department()
+    description = fields.Description()
     amazon_bullets = fields.AmazonBulletPoints()
     search_terms = fields.AmazonSearchTerms()
 

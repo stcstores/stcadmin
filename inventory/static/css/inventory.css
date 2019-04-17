@@ -202,7 +202,7 @@ a {
   text-decoration: none;
 }
 
-button {
+button:not(.fr-box)  {
   background: #ddd;
   border-radius: 4px;
   box-shadow: 3px 2px rgba(0, 0, 0, 0.4);
@@ -234,4 +234,48 @@ button:disabled {
 .listing_option {
   font-weight: normal;
   font-size: 0.75em;;
+}
+
+.page_center {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.InputAddOn {
+  margin-bottom: 1em;
+}
+
+.required {
+  font-weight: bold;
+}
+
+.selectize-control .option, .selectize-input .option{
+  font-family: 'Open Sans', sans-serif;
+}
+
+.save_button {
+  width: 100%;
+}
+
+.product_form {
+  background: #fbfbfb;
+  border: #dddddd 3px solid;
+  border-radius: 1em;
+}
+
+.listinput {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.list_input {
+  margin: 0;
+  padding: 0;
+}
+
+.fr-box {
+  flex-direction: column;
 }
