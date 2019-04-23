@@ -46,7 +46,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "a434d9bf27ca9018b52ea273952b803bdc97e2e3"
+            "ref": "4e3594b0e08c55ef2b15da65ff221a365a55ac0e"
         },
         "certifi": {
             "hashes": [
@@ -263,7 +263,7 @@
         "order-profit": {
             "editable": true,
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "a82eac8b30cf7b3fa539844a4a834d8c0d051a71"
+            "ref": "cbc24a58126ad034b432d6b580a7b20573daf3b4"
         },
         "packaging": {
             "hashes": [
@@ -505,11 +505,11 @@
         },
         "xlsxwriter": {
             "hashes": [
-                "sha256:3a4e4a24a6753f046dc5a5e5bc5f443fce6a18988486885a258db6963eb54163",
-                "sha256:92a2ba339ca939815f0e125fcde728e94ccdb3e97e1acd3275ecf25a3cacfdc6"
+                "sha256:2a40b427dac0f640031e5b33abe97e761de6e0f12d4d346e7b2e2b67cf6ee927",
+                "sha256:431edc9ba1132eec1996939aa83fffe41885d3042ab09d47c3086f41a156c430"
             ],
             "index": "pypi",
-            "version": "==1.1.6"
+            "version": "==1.1.7"
         }
     },
     "develop": {
