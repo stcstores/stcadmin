@@ -157,6 +157,10 @@ table.new_product {
   padding: 0.5em;
 }
 
+.variation_table td .selectize-input {
+  text-align: left;
+}
+
 .variation_table td, .variation_table th {
   border-style: hidden;
   padding: 0.25em 1em;
@@ -278,4 +282,8 @@ button:disabled {
 
 .fr-box {
   flex-direction: column;
+}
+
+.locations .option, .locations .value, .locations .sku, .locations th {
+  font-size: 0.75em;
 }

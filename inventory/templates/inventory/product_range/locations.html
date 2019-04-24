@@ -11,47 +11,55 @@
 {% endblock %}
 
 {% block content %}{{ block.super }}
-
-<form action="" method="POST">{% csrf_token %}
-  {{ bay_formset.management_form }}
-  <table>
-    {% for field in department_form %}
+<form action="" method="POST" autocomplete="off">{% csrf_token %}
+  {{ formset.management_form }}
+  {{ formset.non_form_errors }}
+  <table class="variation_table locations">
     <tr>
-      <th><label for="{{ field.name }}">{{ field.label}}</label></th>
-      <td colspan="2">{{ field }}</td>
+      <th class="column header SKU">SKU</th>
+      {% for option in product_range.variation_options %}
+      <th class="column header option">{{ option }}</th>
+      {% endfor %}
+      <th class="column header supplier_SKU">Supplier SKU</th>
+      <th></th>
+      <th></th>
+      <th></th>
     </tr>
-    {% endfor %}
-    <tr>
-      <th>SKU</th>
-      {% if bay_formset.0.product.variation %}
-      <th>Variation</th>
-      {% endif %}
-      <th>Supplier SKU</th>
-      <th>Bays</th>
-    </tr>
-    {% for form in bay_formset %}
+    {% for form in formset %}
     {% with form.product as product %}
     <tr hidden>
       <td>{{ form.product_id }}</td>
     </tr>
     <tr>
-      <td class="sku">{{ product.SKU }}</td>
-      {% if product.variation %}
-      <td>
-        {% for option, value in product.variation.items %}
-          {{ option }}: <span class="name">{{ value }}</span>
-        {% endfor %}
+      <td class="column SKU sku">{{ product.SKU }}</td>
+      {% for option, value in product.variation.items %}
+      <td class="column option name">{{ value }}</td>
+      {% endfor %}
+      <td class="column supplier_SKU sku">{{ product.supplier_SKU }}</td>
+      {% for field in form %}
+      <td class="location_field">
+        {{ field }}
+        {{ field.errors }}
       </td>
-      {% endif %}
-      <td class="sku">{{ product.supplier_SKU }}</td>
-      <td class="location_field">{{ form.locations }}</td>
-      {% if form.errors %}<td>{% for field in form %}{{ field.errors }}{% endfor %}</td>{% endif %}
+      {% endfor %}
       <td>{% include "inventory/update_stock.html" %}</td>
+      <td>{{ form.non_field_errors }}</td>
     </tr>
     {% endwith %}
     {% endfor %}
+    <tr>
+      <td class="save_row"><button type="submit" class="save_button">Save</button></td>
+    </tr>
   </table>
-  <input type="submit" value="Update Locations" />
 </form>
 
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+  $(document).ready(function() {
+    var table_width = $('.variation_table').find("tr:first th").length;
+    $('.save_row').attr('colspan', table_width);
+  });
+</script>
 {% endblock %}

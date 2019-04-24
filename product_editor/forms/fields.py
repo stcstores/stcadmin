@@ -316,17 +316,35 @@ class Department(fieldtypes.SelectizeModelChoiceField):
         return models.Department.objects.filter(inactive=False)
 
 
-class Warehouse(fieldtypes.SelectizeModelChoiceField):
-    """Field for selecting a Warehouse."""
+class Warehouse(fieldtypes.SingleSelectize):
+    """Field for product department."""
 
-    label = "Warehouse"
-    name = "warehouse"
-    required_message = "A <b>Warehouse</b> must be selected."
-    help_text = "The <b>Warehouse</b> in which the product is located."
+    label = "Department"
+    name = "department"
+    required_message = "A <b>Department</b> must be selected."
+    help_text = "The <b>Department</b> to which the product belongs."
 
-    def get_queryset(self):
-        """Return a queryset of selectable options."""
-        return models.Warehouse.objects.filter()
+    @staticmethod
+    def get_choices():
+        """Get choice options for field."""
+        departments = [
+            (w.warehouse_ID, w.name) for w in models.Warehouse.used_warehouses.all()
+        ]
+        departments.sort(key=lambda x: x[1])
+        return [("", "")] + departments
+
+    def clean(self, value):
+        """Validate cleaned data."""
+        value = super().clean(value)
+        if self.required is False and value == "":
+            return None
+        try:
+            department = models.Warehouse.used_warehouses.get(
+                warehouse_ID=int(value)
+            ).warehouse_ID
+        except models.Warehouse.DoesNotExist:
+            raise forms.ValidationError("Deparment not recognised")
+        return department
 
 
 class Location(fieldtypes.SelectizeField):
@@ -396,7 +414,7 @@ class Location(fieldtypes.SelectizeField):
                 bays.append(models.Bay.objects.get(bay_ID=bay_ID))
             except models.DoesNotExist:
                 raise forms.ValidationError("Bay not recognised")
-        bays = [b for b in bays if not b.default]
+        bays = [b for b in bays if not b.is_default]
         if len(set([bay.warehouse for bay in bays])) > 1:
             raise forms.ValidationError("Bays from multiple warehouses selected.")
         value = [b.bay_ID for b in bays]
@@ -427,7 +445,7 @@ class WarehouseBayField(fieldtypes.CombinationField):
         selectize_options = [field.selectize_options for field in fields]
         if self.lock_warehouse:
             selectize_options[0]["readOnly"] = True
-        warehouse_choices = [(_.warehouse_ID, _.name) for _ in fields[0]._queryset]
+        warehouse_choices = fields[0].get_choices()
         location_choices = fields[1].get_choices()
         kwargs["widget"] = widgets.WarehouseBayWidget(
             choices=[warehouse_choices, location_choices],
@@ -444,13 +462,18 @@ class WarehouseBayField(fieldtypes.CombinationField):
     def clean(self, value):
         """Validate submitted values."""
         value = super().clean(value)
-        warehouse = models.Warehouse.used_warehouses.get(
-            warehouse_ID=value[self.WAREHOUSE]
-        )
+        warehouse = models.Warehouse.objects.get(warehouse_ID=value[self.WAREHOUSE])
+        bays = models.Bay.objects.filter(bay_ID__in=value[self.BAYS], is_default=False)
+        if not all((bay.warehouse == bays[0].warehouse for bay in bays)):
+            raise Exception("FIX THIS")
         value[self.WAREHOUSE] = warehouse.warehouse_ID
-        if len(value[self.BAYS]) == 0:
-            value[self.BAYS] = [warehouse.default_bay.bay_ID]
-        return value
+        if len(bays) == 0:
+            bays = [warehouse.default_bay]
+        cleaned_value = {
+            self.WAREHOUSE: warehouse.warehouse_ID,
+            self.BAYS: [bay.bay_ID for bay in bays],
+        }
+        return cleaned_value
 
 
 class OptionField(FormField):

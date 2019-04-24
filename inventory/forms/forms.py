@@ -157,15 +157,21 @@ class ProductForm(ProductEditorBase, forms.Form):
         initial[self.INTERNATIONAL_SHIPPING] = self.product.international_shipping
         return initial
 
+    def clean(self):
+        """Clean submitted data."""
+        cleaned_data = super().clean()
+        cleaned_data[self.BAYS] = models.Bay.objects.filter(
+            bay_ID__in=cleaned_data[self.LOCATION][self.BAYS]
+        )
+        return cleaned_data
+
     def save(self, *args, **kwargs):
         """Update product."""
         data = self.cleaned_data
         updater = ProductUpdater(self.product)
-
         updater.set_price(data[self.PRICE])
         updater.set_VAT_rate(data[self.VAT_RATE])
-        bays = models.Bay.objects.filter(bay_ID__in=data[self.LOCATION][self.BAYS])
-        updater.set_bays(bays)
+        updater.set_bays(data[self.BAYS])
         updater.set_width(data[self.DIMENSIONS][self.WIDTH])
         updater.set_height(data[self.DIMENSIONS][self.HEIGHT])
         updater.set_length(data[self.DIMENSIONS][self.LENGTH])
