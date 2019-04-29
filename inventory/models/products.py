@@ -107,6 +107,10 @@ class ProductRange(models.Model):
         """Return a queryset of the Product Range's products."""
         return self.product_set.all().order_by("id")
 
+    def has_variations(self):
+        """Return True if the product has multiple variations, otherwise return False."""
+        return self.product_set.count() > 1
+
 
 class Product(models.Model):
     """Model for inventory products."""

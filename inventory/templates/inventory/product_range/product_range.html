@@ -14,7 +14,7 @@
 </div>
 
 <div class="variations">
-  <h3>{% if product.variation %}Variations{% else %}Single Product{% endif %}</h3>
+  <h3>{% if product_range.has_variations %}Variations{% else %}Single Product{% endif %}</h3>
   <table class="variation_table">
     <tr class="row">
       <th class="column header SKU">SKU</th>
