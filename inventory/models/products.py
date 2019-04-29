@@ -105,7 +105,7 @@ class ProductRange(models.Model):
 
     def products(self):
         """Return a queryset of the Product Range's products."""
-        return self.product_set.all().order_by("id")
+        return self.product_set.all().order_by("range_order", "id")
 
     def has_variations(self):
         """Return True if the product has multiple variations, otherwise return False."""
@@ -162,6 +162,7 @@ class Product(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=CREATING)
     date_created = models.DateField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
+    range_order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
         """Meta class for Products."""

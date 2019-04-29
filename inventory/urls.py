@@ -30,6 +30,11 @@ inventory_urlpatterns = [
         name="delete_stcadmin_image",
     ),
     path(
+        "product_order/<int:range_id>/",
+        views.ProductOrderView.as_view(),
+        name="product_order",
+    ),
+    path(
         "print_barcodes/<int:range_id>/",
         views.PrintBarcodeLabels.as_view(),
         name="print_barcodes",

@@ -48,6 +48,12 @@
     <div {% if current_url == url %} class="active"{% endif %}>
       <a href="{{ url }}">Barcode Labels</a>
     </div>
+    {% if product_range.has_variations %}
+    {% url 'inventory:product_order' product_range.range_ID as url %}
+    <div {% if current_url == url %} class="active"{% endif %}>
+      <a href="{{ url }}">Variation Order</a>
+    </div>
+    {% endif %}
   </div>
 </div>
 {% endwith %}

@@ -293,6 +293,7 @@ class ProductAdmin(admin.ModelAdmin):
         "multipack",
         "end_of_line",
         "status",
+        "range_order",
     )
     list_display = (
         "range_SKU",
@@ -304,6 +305,7 @@ class ProductAdmin(admin.ModelAdmin):
         "last_modified",
         "status",
         "end_of_line",
+        "range_order",
     )
     list_display_links = ("SKU",)
     list_filter = ("product_range__department", "end_of_line")
@@ -315,6 +317,7 @@ class ProductAdmin(admin.ModelAdmin):
         "product_ID",
         "product_range__range_ID",
     )
+    list_editable = ("range_order",)
 
 
 @admin.register(models.ProductRangeSelectedOption)
