@@ -103,6 +103,10 @@ class ProductRange(models.Model):
         ).values_list("product_option", flat=True)
         return product_options.ProductOption.objects.filter(id__in=product_option_IDs)
 
+    def products(self):
+        """Return a queryset of the Product Range's products."""
+        return self.product_set.all().order_by("id")
+
 
 class Product(models.Model):
     """Model for inventory products."""

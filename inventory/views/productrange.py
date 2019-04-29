@@ -46,7 +46,7 @@ class ProductRangeView(InventoryUserMixin, FormView):
         """Get template context data."""
         context_data = super().get_context_data(*args, **kwargs)
         context_data["product_range"] = self.product_range
-        context_data["products"] = self.product_range.product_set.all()
+        context_data["products"] = self.product_range.product_set.order_by().all()
         return context_data
 
     def range_error(self):

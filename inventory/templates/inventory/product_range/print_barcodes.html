@@ -21,7 +21,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for product in product_range.product_set.all %}
+    {% for product in product_range.products %}
     <tr>
       <td class="sku">{{ product.SKU }}</td>
       {% if product.variation %}

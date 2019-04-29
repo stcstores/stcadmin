@@ -21,7 +21,7 @@ class RangeUpdater(BaseCloudCommerceUpdater):
             db_object (inventory.models.products.ProductRange)
         """
         super().__init__(db_object)
-        self.product_IDs = [_.product_ID for _ in self.db_object.product_set.all()]
+        self.product_IDs = [_.product_ID for _ in self.db_object.products()]
 
     def set_product_option(self, *, option_ID, value_ID):
         """Set a product option value for all of the Range's departments."""

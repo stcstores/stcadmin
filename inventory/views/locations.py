@@ -27,7 +27,7 @@ class LocationFormView(InventoryUserMixin, TemplateView):
             models.ProductRange, range_ID=self.range_id
         )
         self.formset = LocationsFormSet(
-            form_kwargs=[{"product": p} for p in self.product_range.product_set.all()]
+            form_kwargs=[{"product": p} for p in self.product_range.products()]
         )
         return super().get(*args, **kwargs)
 
@@ -39,7 +39,7 @@ class LocationFormView(InventoryUserMixin, TemplateView):
         )
         self.formset = LocationsFormSet(
             self.request.POST,
-            form_kwargs=[{"product": p} for p in self.product_range.product_set.all()],
+            form_kwargs=[{"product": p} for p in self.product_range.products()],
         )
         if self.formset.is_valid():
             for form in self.formset:
