@@ -6,8 +6,17 @@ import string
 from ccapi import CCAPI
 from django.db import models
 
-from . import product_options
 from .locations import Bay
+from .product_options import (
+    Brand,
+    Department,
+    Gender,
+    InternationalShipping,
+    Manufacturer,
+    PackageType,
+    ProductOption,
+    ProductOptionValue,
+)
 from .suppliers import Supplier
 from .vat_rates import VATRate
 
@@ -43,10 +52,10 @@ class ProductRange(models.Model):
     range_ID = models.CharField(max_length=50, db_index=True, unique=True)
     SKU = models.CharField(max_length=15, unique=True, db_index=True)
     name = models.CharField(max_length=255)
-    department = models.ForeignKey(product_options.Department, on_delete=models.PROTECT)
+    department = models.ForeignKey(Department, on_delete=models.PROTECT)
     description = models.TextField(blank=True, default="")
     product_options = models.ManyToManyField(
-        product_options.ProductOption, blank=True, through="ProductRangeSelectedOption"
+        ProductOption, blank=True, through="ProductRangeSelectedOption"
     )
     amazon_search_terms = models.TextField(blank=True, default="")
     amazon_bullet_points = models.TextField(blank=True, default="")
@@ -94,14 +103,14 @@ class ProductRange(models.Model):
         product_option_IDs = ProductRangeSelectedOption.objects.filter(
             product_range=self, variation=True
         ).values_list("product_option", flat=True)
-        return product_options.ProductOption.objects.filter(id__in=product_option_IDs)
+        return ProductOption.objects.filter(id__in=product_option_IDs)
 
     def listing_options(self):
         """Return the Range's listing product options."""
         product_option_IDs = ProductRangeSelectedOption.objects.filter(
             product_range=self, variation=False
         ).values_list("product_option", flat=True)
-        return product_options.ProductOption.objects.filter(id__in=product_option_IDs)
+        return ProductOption.objects.filter(id__in=product_option_IDs)
 
     def products(self):
         """Return a queryset of the Product Range's products."""
@@ -139,15 +148,11 @@ class Product(models.Model):
     retail_price = models.DecimalField(
         decimal_places=2, max_digits=8, null=True, blank=True
     )
-    brand = models.ForeignKey(product_options.Brand, on_delete=models.PROTECT)
-    manufacturer = models.ForeignKey(
-        product_options.Manufacturer, on_delete=models.PROTECT
-    )
-    package_type = models.ForeignKey(
-        product_options.PackageType, on_delete=models.PROTECT
-    )
+    brand = models.ForeignKey(Brand, on_delete=models.PROTECT)
+    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT)
+    package_type = models.ForeignKey(PackageType, on_delete=models.PROTECT)
     international_shipping = models.ForeignKey(
-        product_options.InternationalShipping, on_delete=models.PROTECT
+        InternationalShipping, on_delete=models.PROTECT
     )
     bays = models.ManyToManyField(Bay, blank=True)
     weight_grams = models.PositiveSmallIntegerField()
@@ -155,13 +160,14 @@ class Product(models.Model):
     height_mm = models.PositiveSmallIntegerField()
     width_mm = models.PositiveSmallIntegerField()
     product_options = models.ManyToManyField(
-        product_options.ProductOptionValue, blank=True, through="ProductOptionValueLink"
+        ProductOptionValue, blank=True, through="ProductOptionValueLink"
     )
     multipack = models.BooleanField(default=False)
     end_of_line = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=CREATING)
     date_created = models.DateField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
+    gender = models.ForeignKey(Gender, null=True, on_delete=models.SET_NULL)
     range_order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
@@ -265,9 +271,7 @@ class ProductRangeSelectedOption(models.Model):
     """Model for linking Product Ranges to Product Options."""
 
     product_range = models.ForeignKey(ProductRange, on_delete=models.CASCADE)
-    product_option = models.ForeignKey(
-        product_options.ProductOption, on_delete=models.CASCADE
-    )
+    product_option = models.ForeignKey(ProductOption, on_delete=models.CASCADE)
     variation = models.BooleanField()
 
     class Meta:
@@ -290,7 +294,7 @@ class ProductOptionValueLink(models.Model):
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     product_option_value = models.ForeignKey(
-        product_options.ProductOptionValue, on_delete=models.CASCADE
+        ProductOptionValue, on_delete=models.CASCADE
     )
 
     class Meta:

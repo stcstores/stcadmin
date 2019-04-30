@@ -211,3 +211,21 @@ class Manufacturer(BaseNonListingProductOptionModel):
 
         verbose_name = "Manufacturer"
         verbose_name_plural = "Manufacturers"
+
+
+class Gender(OrderableProductOptionModel):
+    """Model for Amazon genders."""
+
+    PRODUCT_OPTION_ID = 42556
+    PRODUCT_OPTION_NAME = "Gender"
+
+    readable_name = models.CharField(max_length=50)
+
+    class Meta(OrderableProductOptionModel.Meta):
+        """Meta class for PackageType."""
+
+        verbose_name = "Gender"
+        verbose_name_plural = "Genders"
+
+    def __str__(self):
+        return self.readable_name

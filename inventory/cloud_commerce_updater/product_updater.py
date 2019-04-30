@@ -142,6 +142,11 @@ class ProductUpdater(BaseCloudCommerceUpdater):
         self._set_DB_width(width)
         self._set_CC_width(width)
 
+    def set_gender(self, gender):
+        """Set the product's Gender."""
+        self._set_DB_gender(gender)
+        self._set_CC_gender(gender)
+
     def set_product_option_link(self, product_option_value):
         """
         Set or change the value for one of the product's product options.
@@ -354,6 +359,16 @@ class ProductUpdater(BaseCloudCommerceUpdater):
     def _set_CC_width(self, width):
         self._set_or_create_CC_product_option(
             product_option_ID=self.WIDTH_PRODUCT_OPTION_ID, value=str(width)
+        )
+
+    def _set_DB_gender(self, gender):
+        self.db_object.gender = gender
+        self.db_object.save()
+
+    def _set_CC_gender(self, gender):
+        self._set_CC_product_option(
+            product_option_ID=gender.PRODUCT_OPTION_ID,
+            product_option_value_ID=gender.product_option_value_ID,
         )
 
     def _set_DB_product_option_link(self, product_option_value):

@@ -351,3 +351,12 @@ class ProductOptionValueLinkAdmin(admin.ModelAdmin):
         "product_option_value__value",
         "product__product_ID",
     )
+
+
+@admin.register(models.Gender)
+class GenderAdmin(OrderableProductOptionAdmin):
+    """Model admin for the PackageType model."""
+
+    fields = OrderableProductOptionAdmin.fields + ("readable_name",)
+    list_display = OrderableProductOptionAdmin.list_display + ("readable_name",)
+    list_editable = OrderableProductOptionAdmin.list_editable + ("readable_name",)
