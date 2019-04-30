@@ -529,17 +529,20 @@ class ListingOption(OptionField, fieldtypes.SingleSelectize):
     pass
 
 
-class Brand(ListingOption):
-    """Field for the Brand of the product."""
+class Brand(fieldtypes.SelectizeModelChoiceField):
+    """Field for product department."""
 
     label = "Brand"
     name = "brand"
     required_message = "Please supply a brand"
-    placeholder = "Brand"
     help_text = "The <b>Brand</b> of the product.<br>This is required for listings."
 
+    def get_queryset(self):
+        """Return a queryset of selectable options."""
+        return models.Brand.objects.filter(inactive=False)
 
-class Manufacturer(ListingOption):
+
+class Manufacturer(fieldtypes.SelectizeModelChoiceField):
     """Field for the manufacturer of the product."""
 
     label = "Manufacturer"
@@ -550,8 +553,12 @@ class Manufacturer(ListingOption):
         "The <b>Manufacturer</b> of the product.<br>This is required for " "listings."
     )
 
+    def get_queryset(self):
+        """Return a queryset of selectable options."""
+        return models.Manufacturer.objects.filter(inactive=False)
 
-class Gender(fieldtypes.ChoiceField):
+
+class Gender(fieldtypes.SelectizeModelChoiceField):
     """Field for the gender option of Amazon listings."""
 
     label = "Gender"
@@ -559,26 +566,10 @@ class Gender(fieldtypes.ChoiceField):
     placeholder = "Gender"
     variable = True
     help_text = "Gender for which the product is intended."
-    MENS = "mens"
-    WOMENS = "womens"
-    BOYS = "boys"
-    GIRLS = "girls"
-    BABY_BOYS = "baby-boys"
-    BABY_GIRLS = "baby-girls"
-    UNISEX_BABY = "unisex-baby"
 
-    def get_choices(self):
-        """Return choices for field."""
-        return (
-            (None, ""),
-            (self.MENS, "Mens"),
-            (self.WOMENS, "Womens"),
-            (self.BOYS, "Boys"),
-            (self.GIRLS, "Girls"),
-            (self.BABY_BOYS, "Baby Boys"),
-            (self.BABY_GIRLS, "Baby Girls"),
-            (self.UNISEX_BABY, "Unisex Baby"),
-        )
+    def get_queryset(self):
+        """Return a queryset of selectable options."""
+        return models.Gender.objects.all()
 
 
 class ListOption(fieldtypes.FormField, ListInput):

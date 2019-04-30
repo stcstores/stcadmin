@@ -126,6 +126,7 @@ class ProductForm(ProductEditorBase, forms.Form):
         self.fields[self.INTERNATIONAL_SHIPPING] = fields.InternationalShipping()
         self.fields[self.WEIGHT] = fields.Weight()
         self.fields[self.DIMENSIONS] = fields.Dimensions()
+        self.fields[self.GENDER] = fields.Gender()
         self.initial = self.get_initial()
 
     def get_initial(self):
@@ -155,6 +156,7 @@ class ProductForm(ProductEditorBase, forms.Form):
             initial[self.SUPPLIER] = self.product.supplier
         initial[self.SUPPLIER_SKU] = self.product.supplier_SKU
         initial[self.INTERNATIONAL_SHIPPING] = self.product.international_shipping
+        initial[self.GENDER] = self.product.gender
         return initial
 
     def clean(self):
@@ -182,3 +184,4 @@ class ProductForm(ProductEditorBase, forms.Form):
         updater.set_retail_price(data[self.RETAIL_PRICE])
         updater.set_supplier(data[self.SUPPLIER])
         updater.set_supplier_SKU(data[self.SUPPLIER_SKU])
+        updater.set_gender(data[self.GENDER])
