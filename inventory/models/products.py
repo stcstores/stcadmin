@@ -100,10 +100,10 @@ class ProductRange(models.Model):
 
     def variation_options(self):
         """Return the Range's variable product options."""
-        product_option_IDs = ProductRangeSelectedOption.objects.filter(
+        product_options = ProductRangeSelectedOption.objects.filter(
             product_range=self, variation=True
         ).values_list("product_option", flat=True)
-        return ProductOption.objects.filter(id__in=product_option_IDs)
+        return ProductOption.objects.filter(id__in=product_options)
 
     def listing_options(self):
         """Return the Range's listing product options."""
@@ -119,6 +119,23 @@ class ProductRange(models.Model):
     def has_variations(self):
         """Return True if the product has multiple variations, otherwise return False."""
         return self.product_set.count() > 1
+
+    def variation_values(self):
+        """Return a dict of {option_name: set(option_values)} for the ranges variable options."""
+        values = ProductOptionValueLink.objects.filter(
+            product_option_value__product_option__in=self.variation_options(),
+            product__product_range=self,
+        )
+        option_values = {}
+        for value in values:
+            option_name = value.product_option_value.product_option.name
+            option_value = value.product_option_value.value
+            if option_name not in option_values:
+                option_values[option_name] = []
+            option_values[option_name].append(option_value)
+        for option, value_list in option_values.items():
+            option_values[option] = set(value_list)
+        return option_values
 
 
 class Product(models.Model):

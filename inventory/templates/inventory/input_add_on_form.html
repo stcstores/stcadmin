@@ -1,6 +1,6 @@
 {% load stcadmin_extras %}
 
-{% for field in form %}
+{% for field in form.visible_fields %}
 <div class="InputAddOn">
   {% if field.help_text %}
   <span class="InputAddOn-item">{% tooltip_help_text field %}</span>
@@ -12,4 +12,7 @@
   {% endif %}
   <span class="InputAddOn-item required">{% if field.field.required %}*{% endif %}</span>
 </div>
+{% for field in form.hidden_fields %}
+{{ field}}
+{% endfor %}
 {% endfor %}

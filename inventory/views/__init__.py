@@ -18,4 +18,5 @@ from .suppliers import (  # NOQA
     ToggleSupplierActive,
     UpdateSupplierContact,
 )
+from .variations import VariationsView  # NOQA
 from .views import *  # NOQA

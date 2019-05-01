@@ -1,11 +1,13 @@
 """Forms for inventory app."""
 
 from django import forms
+from django.shortcuts import get_object_or_404
 
 from inventory import models
 from inventory.cloud_commerce_updater import ProductUpdater
 from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms import fields
+from stcadmin.forms import KwargFormSet
 
 
 class ProductRangeForm(forms.Form):
@@ -115,6 +117,7 @@ class ProductForm(ProductEditorBase, forms.Form):
         """Configure form fields."""
         self.product = kwargs.pop("product")
         super().__init__(*args, **kwargs)
+        self.fields[self.PRODUCT_ID] = forms.CharField(widget=forms.HiddenInput())
         self.fields[self.SUPPLIER_SKU] = fields.SupplierSKU()
         self.fields[self.SUPPLIER] = fields.Supplier()
         self.fields[self.PURCHASE_PRICE] = fields.PurchasePrice()
@@ -132,6 +135,7 @@ class ProductForm(ProductEditorBase, forms.Form):
     def get_initial(self):
         """Get initial values for form."""
         initial = {}
+        initial[self.PRODUCT_ID] = self.product.product_ID
         initial[self.PRICE] = self.product.price
         initial[self.VAT_RATE] = self.product.VAT_rate
         bays = self.product.bays.all()
@@ -170,7 +174,8 @@ class ProductForm(ProductEditorBase, forms.Form):
     def save(self, *args, **kwargs):
         """Update product."""
         data = self.cleaned_data
-        updater = ProductUpdater(self.product)
+        product = get_object_or_404(models.Product, data[self.PRODUCT_ID])
+        updater = ProductUpdater(product)
         updater.set_price(data[self.PRICE])
         updater.set_VAT_rate(data[self.VAT_RATE])
         updater.set_bays(data[self.BAYS])
@@ -185,3 +190,18 @@ class ProductForm(ProductEditorBase, forms.Form):
         updater.set_supplier(data[self.SUPPLIER])
         updater.set_supplier_SKU(data[self.SUPPLIER_SKU])
         updater.set_gender(data[self.GENDER])
+
+
+class VariationForm(ProductForm):
+    """Form for the variation page."""
+
+    def __init__(self, *args, **kwargs):
+        """Make the location field inline."""
+        super().__init__(*args, **kwargs)
+        self.fields[self.LOCATION] = fields.WarehouseBayField(inline=True)
+
+
+class VariationsFormSet(KwargFormSet):
+    """Formset for updating the locations of all Products within a Range."""
+
+    form = VariationForm

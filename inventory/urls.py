@@ -19,6 +19,9 @@ inventory_urlpatterns = [
     path("images/<int:range_id>/", views.ImageFormView.as_view(), name="images"),
     path("product/<int:product_id>/", views.ProductView.as_view(), name="product"),
     path(
+        "variations/<int:range_id>/", views.VariationsView.as_view(), name="variations"
+    ),
+    path(
         "descriptions/<int:range_id>/",
         views.DescriptionsView.as_view(),
         name="descriptions",
