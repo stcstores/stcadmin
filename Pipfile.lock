@@ -41,7 +41,7 @@
         "cc-products": {
             "editable": true,
             "git": "https://github.com/stcstores/cc_products.git",
-            "ref": "70a18d306c3a840752046ef6a6a67af268b9c230"
+            "ref": "9506e96c0ed36be766b5ecc3a44bf4d9cad2aad6"
         },
         "ccapi": {
             "editable": true,
@@ -181,7 +181,7 @@
         "list-input": {
             "editable": true,
             "git": "https://github.com/axevalley/list_input.git",
-            "ref": "daf85959950ad7460b32c4bf64c9c63569a4705b"
+            "ref": "b8b0c32a39427a0788e973a4994f77837d4b524f"
         },
         "lxml": {
             "hashes": [
@@ -263,7 +263,7 @@
         "order-profit": {
             "editable": true,
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "e62ab62834ac8aaced1a009a0fa6c7f25b8f30e6"
+            "ref": "51d4f9255c7ed087e471b375c2fa3714994a33cf"
         },
         "packaging": {
             "hashes": [
@@ -498,10 +498,10 @@
         },
         "urllib3": {
             "hashes": [
-                "sha256:4c291ca23bbb55c76518905869ef34bdd5f0e46af7afe6861e8375643ffee1a0",
-                "sha256:9a247273df709c4fedb38c711e44292304f73f39ab01beda9f6b9fc375669ac3"
+                "sha256:2393a695cd12afedd0dcb26fe5d50d0cf248e5a66f75dbd89a3d4eb333a61af4",
+                "sha256:a637e5fae88995b256e3409dc4d52c2e2e0ba32c42a6365fee8bbd2238de3cfb"
             ],
-            "version": "==1.24.2"
+            "version": "==1.24.3"
         },
         "xlsxwriter": {
             "hashes": [
