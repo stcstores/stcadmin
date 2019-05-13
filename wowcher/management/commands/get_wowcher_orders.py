@@ -1,4 +1,4 @@
-"""Create and download a Cloud Commerce Pro product export."""
+"""Find new Wowcher orders and add them to Cloud Commerce."""
 
 import logging
 import sys

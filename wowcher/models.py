@@ -1,6 +1,7 @@
 """Models for the Wowcher app."""
 
 from django.db import models
+from django.db.models import F
 from django.utils import timezone
 
 
@@ -19,6 +20,7 @@ class WowcherDeal(models.Model):
     name = models.CharField(max_length=255, unique=True)
     shipping_price = models.DecimalField(max_digits=6, decimal_places=2)
     created = models.DateTimeField(auto_now_add=True)
+    stock_alert_level = models.PositiveSmallIntegerField(default=3)
     ended = models.DateTimeField(blank=True, null=True, default=None)
     inactive = models.BooleanField(default=False)
 
@@ -49,6 +51,7 @@ class WowcherItem(models.Model):
     wowcher_ID = models.CharField(max_length=20, unique=True, db_index=True)
     CC_SKU = models.CharField(max_length=12)
     CC_product_ID = models.CharField(max_length=20)
+    hide_stock_alert = models.BooleanField(default=False)
 
     class Meta:
         """Meta class for the WowcherItem model."""
@@ -179,3 +182,44 @@ class WowcherOrder(models.Model):
     def on_proof_of_delivery_file(self):
         """Return True if the order has a proof of delivery file, otherwise return False."""
         return self.proof_of_delivery_file is not None
+
+
+class StockAlerts(models.Manager):
+    """Manager for WowcherOrder objects that should be added to a proof of delivery file."""
+
+    def get_queryset(self):
+        """Return a queryset of WowcherOrders for a proof of delivery file."""
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                stock_level__lte=F("item__deal__stock_alert_level"),
+                item__hide_stock_alert=False,
+            )
+        )
+
+
+class WowcherStockLevelCheck(models.Model):
+    """Model for stock level checks of Wowcher items."""
+
+    item = models.OneToOneField(WowcherItem, on_delete=models.CASCADE)
+    stock_level = models.PositiveSmallIntegerField()
+    timestamp = models.DateTimeField(auto_now=True)
+
+    objects = models.Manager()
+    stock_alerts = StockAlerts()
+
+    class Meta:
+        """Meta class for the WowcherStockLevelCheck model."""
+
+        verbose_name = "Wowcher Stock Level"
+        verbose_name_plural = "Wowcher Stock Levels"
+        ordering = ("timestamp",)
+
+    def get_deal(self):
+        """Return the deal to which the item belongs."""
+        return self.item.deal
+
+    def get_SKU(self):
+        """Return the item's SKU."""
+        return self.item.CC_SKU

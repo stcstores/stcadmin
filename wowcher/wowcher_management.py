@@ -41,6 +41,29 @@ class WowcherManager:
             cls.dispatch_order(order)
 
     @classmethod
+    def check_stock_levels(cls):
+        """Update the Cloud Commerce stock levels for Wowcher items."""
+        items = models.WowcherItem.objects.filter(deal__inactive=False)
+        for item in items:
+            stock_level = CCAPI.get_product(item.CC_product_ID).stock_level
+            stock_level_record, _ = models.WowcherStockLevelCheck.objects.get_or_create(
+                item=item, defaults={"stock_level": stock_level}
+            )
+            stock_level_record.stock_level = stock_level
+            stock_level_record.save()
+        alerts = models.WowcherStockLevelCheck.stock_alerts.all()
+        cls._unhide_stock_alerts(alerts)
+        return alerts
+
+    @classmethod
+    def _unhide_stock_alerts(cls, alerts):
+        """Remove the hide_stock_alerts propery from items with no stock alert."""
+        alert_items = alerts.values_list("item", flat=True)
+        models.WowcherItem.objects.exclude(id__in=alert_items).update(
+            hide_stock_alert=False
+        )
+
+    @classmethod
     def update_deal_orders(cls, deal):
         """
         Add new orders for a deal to the database and create them in Cloud Commerce.

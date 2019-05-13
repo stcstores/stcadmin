@@ -2,9 +2,27 @@
 
 {% block content %}
 
-{% if orders %}
+<div class="orders_content">
+{% if stock_alerts %}
+<div class="stock_alerts">
+<h2>Stock Alerts</h2>
+{% for alert in stock_alerts %}
+  <div class="stock_alert">
+    <div class="details{% if alert.stock_level == 0 %} error{% endif %}">
+      {{ alert.item.deal.name }} - {{ alert.item.CC_SKU }} <span class="stock_level">{{ alert.stock_level }}</span> left.
+      <a href="{% url 'wowcher:hide_stock_alert' alert.item.id %}" class="hide_stock_alert">
+        <button>Hide</button>
+      </a>
+    </div>
+    <div class="checked">Last checked {{ alert.timestamp|timesince }} ago.</div>
+  </div>
+{% endfor %}
+</div>
+{% endif %}
+
 
 <div class="wowcher_orders">
+{% if orders %}
 
   <div class="wowcher_code">
     <div class="header">Wowcher Code</div>
@@ -59,16 +77,16 @@
     {% endfor %}
   </div>
 
-</div>
 
 {% else %}
 
 <p>There are no open Wowcher orders</p>
 
 {% endif %}
+</div>
 
 {% endblock %}
-
+</div>
 {% block script %}
   <script>
     $(document).ready(function() {

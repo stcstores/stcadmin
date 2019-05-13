@@ -25,6 +25,7 @@ class Orders(WowcherUserMixin, TemplateView):
         """Add undispatched orders to the context."""
         context = super().get_context_data(*args, **kwargs)
         context["orders"] = models.WowcherOrder.to_dispatch.all()
+        context["stock_alerts"] = models.WowcherStockLevelCheck.stock_alerts.all()
         return context
 
 
@@ -134,4 +135,15 @@ class CancelOrder(WowcherUserMixin, RedirectView):
         order = get_object_or_404(models.WowcherOrder, id=self.kwargs["order_ID"])
         order.canceled = True
         order.save()
+        return reverse_lazy("wowcher:orders")
+
+
+class HideStockAlert(WowcherUserMixin, RedirectView):
+    """Hide an item's stock alerts and redirect to the order page."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Hide an item's stock alerts and redirect to the order page."""
+        item = get_object_or_404(models.WowcherItem, id=self.kwargs["item_ID"])
+        item.hide_stock_alert = True
+        item.save()
         return reverse_lazy("wowcher:orders")

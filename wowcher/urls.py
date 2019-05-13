@@ -35,4 +35,9 @@ urlpatterns = [
         views.DownloadProofOfDeliveryFile.as_view(),
         name="download_proof_of_delivery_file",
     ),
+    path(
+        "hide_stock_alert/<int:item_ID>",
+        views.HideStockAlert.as_view(),
+        name="hide_stock_alert",
+    ),
 ]

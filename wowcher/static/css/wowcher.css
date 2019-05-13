@@ -55,3 +55,34 @@
   padding: 1em;
   vertical-align: top;
 }
+
+.stock_alerts {
+  background: #ddd;
+  border-radius: 2em;
+  display: inline-flex;
+  flex-direction: column;
+  margin: 1em;
+  padding: 1em;
+}
+
+.stock_alert {
+  background: #eee;
+  border-radius: 1em;
+  margin: 0.25em;
+  padding: 1em;
+}
+
+.stock_alerts .details {
+  font-size: 1.25em;
+}
+
+.stock_alerts .checked {
+  font-size: 0.75em;
+}
+
+.stock_level {
+  background: black;
+  border-radius: 0.25em;
+  color: white;
+  padding: 0.25em;
+}

@@ -16,11 +16,19 @@ class WowcherDealAdmin(admin.ModelAdmin):
         "name",
         "shipping_price",
         "created",
+        "stock_alert_level",
         "ended",
         "inactive",
     )
     list_display_links = ("__str__",)
-    list_editable = ("deal_ID", "name", "shipping_price", "ended", "inactive")
+    list_editable = (
+        "deal_ID",
+        "name",
+        "shipping_price",
+        "ended",
+        "inactive",
+        "stock_alert_level",
+    )
     list_filter = ("inactive",)
     search_fields = ("deal_ID", "name")
 
@@ -30,9 +38,22 @@ class WowcherItemAdmin(admin.ModelAdmin):
     """ModelAdmin for the WowcherItem model."""
 
     fields = ("deal", "wowcher_ID", "CC_SKU", "CC_product_ID")
-    list_display = ("__str__", "deal", "wowcher_ID", "CC_SKU", "CC_product_ID")
+    list_display = (
+        "__str__",
+        "deal",
+        "wowcher_ID",
+        "CC_SKU",
+        "CC_product_ID",
+        "hide_stock_alert",
+    )
     list_display_links = ("__str__",)
-    list_editable = ("deal", "wowcher_ID", "CC_SKU", "CC_product_ID")
+    list_editable = (
+        "deal",
+        "wowcher_ID",
+        "CC_SKU",
+        "CC_product_ID",
+        "hide_stock_alert",
+    )
     search_fields = (
         "deal__deal_ID",
         "deal__name",
@@ -98,3 +119,11 @@ class WowcherRedemptionFileAdmin(WowcherFileAdmin):
 @admin.register(models.WowcherProofOfDeliveryFile)
 class WowcherProofOfDeliveryFileAdmin(WowcherFileAdmin):
     """Model Admin for the WowcherProofOfDeliveryFile model."""
+
+
+@admin.register(models.WowcherStockLevelCheck)
+class WowcherStockLevelCheckAdmin(admin.ModelAdmin):
+    """Model admin for the WowcherStockLevelCheck model."""
+
+    list_display = ("get_deal", "get_SKU", "item", "stock_level", "timestamp")
+    list_editable = ("stock_level",)
