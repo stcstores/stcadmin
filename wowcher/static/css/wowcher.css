@@ -1,0 +1,57 @@
+.wowcher_orders {
+  display: inline-flex;
+  flex-direction: row;
+  padding: 1em;
+  flex-grow: 1;
+  background: #ddd;
+  flex: 1 0 auto;
+  border-radius: 2em;
+}
+
+.wowcher_orders div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.wowcher_orders div div {
+  height: 2.5em;
+  padding: 0 0.25em;
+  vertical-align: middle;
+}
+
+.wowcher_orders div div:nth-child(even) {
+  background: #f5efff;
+}
+
+.wowcher_orders div div:nth-child(odd) {
+  background: #fffaef;
+}
+
+.wowcher_orders div:first-child div {
+  border-radius: 1em 0 0 1em;
+  padding-left: 1em;
+}
+
+.wowcher_orders div:last-child div {
+  border-radius: 0 1em 1em 0;
+  padding-right: 1em;
+}
+
+.header {
+  font-weight: bold;
+  text-align: center;
+}
+
+.file_list {
+  display: flex;
+}
+
+.file {
+  background: #eee;
+  border-radius: 2em;
+  display: inline-block;
+  margin: 1em;
+  padding: 1em;
+  vertical-align: top;
+}

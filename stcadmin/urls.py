@@ -28,6 +28,7 @@ urlpatterns = [
     ),
     path("profit_loss/", include("profit_loss.urls", namespace="profit_loss")),
     path("epos/", include("epos.urls", namespace="epos")),
+    path("wowcher/", include("wowcher.urls", namespace="wowcher")),
     path("", include("home.urls", namespace="home")),
     path(
         "password_change_done/",
