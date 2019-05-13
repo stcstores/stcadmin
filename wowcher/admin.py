@@ -83,14 +83,18 @@ class WowcherOrderAdmin(admin.ModelAdmin):
     )
     list_filter = ("dispatched", "canceled")
 
-    @admin.register(models.WowcherRedemptionFile)
-    class WowcherRedemptionFileAdmin(admin.ModelAdmin):
-        """Model Admin for the WowcherRedemptionFile model."""
 
-        list_display = ("__str__", "time_created")
+class WowcherFileAdmin(admin.ModelAdmin):
+    """Model admin for wowcher files."""
 
-    @admin.register(models.WowcherProofOfDeliveryFile)
-    class WowcherProofOfDeliveryFileAdmin(admin.ModelAdmin):
-        """Model Admin for the WowcherProofOfDeliveryFile model."""
+    list_display = ("__str__", "time_created")
 
-        list_display = ("__str__", "time_created")
+
+@admin.register(models.WowcherRedemptionFile)
+class WowcherRedemptionFileAdmin(WowcherFileAdmin):
+    """Model Admin for the WowcherRedemptionFile model."""
+
+
+@admin.register(models.WowcherProofOfDeliveryFile)
+class WowcherProofOfDeliveryFileAdmin(WowcherFileAdmin):
+    """Model Admin for the WowcherProofOfDeliveryFile model."""
