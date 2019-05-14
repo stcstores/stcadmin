@@ -37,8 +37,12 @@ class WowcherManager:
     def update_dispatched_orders(cls):
         """Update all Wowcher orders that have been dispatched in Cloud Commerce."""
         orders = models.WowcherOrder.to_dispatch.all()
+        dispatched_orders = []
         for order in orders:
-            cls.dispatch_order(order)
+            dispatched = cls.dispatch_order(order)
+            if dispatched:
+                dispatched_orders.append(order)
+        return dispatched_orders
 
     @classmethod
     def check_stock_levels(cls):
@@ -148,11 +152,12 @@ class WowcherManager:
         """Check if an order is dispatched in Cloud Commerce and update it's status."""
         cc_order = cls.get_cloud_commerce_order(order.CC_order_ID)
         if not cls.cc_order_is_dispatched(cc_order):
-            return
+            return False
         order.dispatched = True
         if cc_order.tracking_code:
             order.tracking_code = cc_order.tracking_code
         order.save()
+        return True
 
     @staticmethod
     def cc_order_is_dispatched(cc_order):
