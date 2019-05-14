@@ -135,7 +135,7 @@ class BaseWowcherFile(WowcherUserMixin, TemplateView):
         try:
             return self.model.objects.latest("time_created")
 
-        except self.mdoel.DoesNotExist:
+        except self.model.DoesNotExist:
             return None
 
 
