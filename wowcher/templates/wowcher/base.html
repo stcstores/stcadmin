@@ -1,0 +1,10 @@
+{% extends "home/base.html" %}
+{% load staticfiles %}
+{% block additional_head %}{{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/wowcher.css' %}">
+{% endblock %}
+{% block page_title %}Wowcher{% endblock %}
+{% block section_navigation %}
+{% include "wowcher/section_navigation.html" %}
+{% endblock %}
+{% block content %}{% endblock %}

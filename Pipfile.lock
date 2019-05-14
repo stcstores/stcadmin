@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "57d19df4de8d8943a11253bf5bb9cd5e58325c68ab4245680f18d1768d86c92c"
+            "sha256": "aff809c9eefc4c82117cc867327a48b50cf3743ae1b0e074006873e766f66bdd"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -46,7 +46,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "395341bd6ec4250125b26c6573dafd503b014c46"
+            "ref": "f5de5ad9ed5ca930b0f9fd26807db4cf33dc5c80"
         },
         "certifi": {
             "hashes": [
@@ -175,12 +175,12 @@
         },
         "labeler": {
             "editable": true,
-            "git": "https://github.com/axevalley/labeler.git",
+            "git": "https://github.com/lukeshiner/labeler.git",
             "ref": "6c18a66b74a000b619d06e6042b33b72dadd5cac"
         },
         "list-input": {
             "editable": true,
-            "git": "https://github.com/axevalley/list_input.git",
+            "git": "https://github.com/lukeshiner/list_input.git",
             "ref": "b8b0c32a39427a0788e973a4994f77837d4b524f"
         },
         "lxml": {
@@ -346,10 +346,10 @@
         },
         "pygments": {
             "hashes": [
-                "sha256:5ffada19f6203563680669ee7f53b64dabbeb100eb51b61996085e99c03b284a",
-                "sha256:e8218dd399a61674745138520d0d4cf2621d7e032439341bc3f647bff125818d"
+                "sha256:31cba6ffb739f099a85e243eff8cb717089fdd3c7300767d9fc34cb8e1b065f5",
+                "sha256:5ad302949b3c98dd73f8d9fcdc7e9cb592f120e32a18e23efd7f3dc51194472b"
             ],
-            "version": "==2.3.1"
+            "version": "==2.4.0"
         },
         "pylabels": {
             "hashes": [
@@ -372,6 +372,11 @@
             ],
             "index": "pypi",
             "version": "==2019.1"
+        },
+        "pywowcher": {
+            "editable": true,
+            "git": "https://github.com/lukeshiner/pywowcher.git",
+            "ref": "a265596399f6a62952ec48edefb03cfa5835297b"
         },
         "pyyaml": {
             "hashes": [
