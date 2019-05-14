@@ -8,6 +8,7 @@ app_name = "wowcher"
 
 urlpatterns = [
     path("", views.Orders.as_view(), name="orders"),
+    path("deals", views.Deals.as_view(), name="deals"),
     path("redemption_file", views.GetRedemptionFile.as_view(), name="redemption_file"),
     path(
         "proof_of_delivery", views.ProofOfDelivery.as_view(), name="proof_of_delivery"
@@ -40,4 +41,10 @@ urlpatterns = [
         views.HideStockAlert.as_view(),
         name="hide_stock_alert",
     ),
+    path("deal/<int:deal_id>", views.Deal.as_view(), name="deal"),
+    path(
+        "disable_deal/<int:deal_id>", views.DisableDeal.as_view(), name="disable_deal"
+    ),
+    path("enable_deal/<int:deal_id>", views.EnableDeal.as_view(), name="enable_deal"),
+    path("end_deal/<int:deal_id>", views.EndDeal.as_view(), name="end_deal"),
 ]

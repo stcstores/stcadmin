@@ -1,8 +1,10 @@
 """Views for the Wowcher app."""
+from itertools import chain
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic.base import RedirectView, TemplateView
 
 from home.views import UserInGroupMixin
@@ -27,6 +29,87 @@ class Orders(WowcherUserMixin, TemplateView):
         context["orders"] = models.WowcherOrder.to_dispatch.all()
         context["stock_alerts"] = models.WowcherStockLevelCheck.stock_alerts.all()
         return context
+
+
+class Deals(WowcherUserMixin, TemplateView):
+    """View for the deals page."""
+
+    template_name = "wowcher/deals.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for texmplate."""
+        context = super().get_context_data(*args, **kwargs)
+        active = models.WowcherDeal.objects.filter(inactive=False, ended__isnull=True)
+        inactive = models.WowcherDeal.objects.filter(inactive=True, ended__isnull=True)
+        ended = models.WowcherDeal.objects.filter(ended__isnull=False)
+        deals = list(chain(active, inactive, ended))
+        context["deals"] = {
+            deal: {
+                "variations": deal.wowcheritem_set.count(),
+                "stock_alerts": models.WowcherStockLevelCheck.stock_alerts.filter(
+                    item__deal=deal
+                ),
+            }
+            for deal in deals
+        }
+        return context
+
+
+class Deal(WowcherUserMixin, TemplateView):
+    """View for Wowcher deals."""
+
+    template_name = "wowcher/deal.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["deal"] = get_object_or_404(
+            models.WowcherDeal, id=self.kwargs["deal_id"]
+        )
+        stock_alerts = models.WowcherStockLevelCheck.stock_alerts.filter(
+            item__deal=context["deal"]
+        )
+        context["stock_alerts"] = stock_alerts
+        context["items"] = context["deal"].wowcheritem_set.all()
+        context["stock_alert_count"] = len(stock_alerts)
+        context["hidden_stock_alert_count"] = len(
+            [_ for _ in stock_alerts if _.item.hide_stock_alert]
+        )
+        return context
+
+
+class DisableDeal(WowcherUserMixin, RedirectView):
+    """View to disable a Wowcher deal."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Disable a Wowcher deal and redirect to it's deal page."""
+        deal = get_object_or_404(models.WowcherDeal, id=self.kwargs["deal_id"])
+        deal.inactive = True
+        deal.save()
+        return reverse_lazy("wowcher:deal", args=[deal.id])
+
+
+class EnableDeal(WowcherUserMixin, RedirectView):
+    """View to enable a Wowcher deal."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Enable a Wowcher deal and redirect to it's deal page."""
+        deal = get_object_or_404(models.WowcherDeal, id=self.kwargs["deal_id"])
+        deal.inactive = False
+        deal.save()
+        return reverse_lazy("wowcher:deal", args=[deal.id])
+
+
+class EndDeal(WowcherUserMixin, RedirectView):
+    """View to end a Wowcher deal."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """End a Wowcher deal and redirect to it's deal page."""
+        deal = get_object_or_404(models.WowcherDeal, id=self.kwargs["deal_id"])
+        deal.inactive = False
+        deal.ended = timezone.now()
+        deal.save()
+        return reverse_lazy("wowcher:deal", args=[deal.id])
 
 
 class BaseWowcherFile(WowcherUserMixin, TemplateView):
