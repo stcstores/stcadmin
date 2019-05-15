@@ -1,0 +1,186 @@
+.wowcher_orders {
+  background: #ddd;
+  border-radius: 2em;
+  display: inline-flex;
+  flex: 1 0 auto;
+  flex-direction: row;
+  flex-grow: 1;
+  padding: 1em;
+}
+
+.wowcher_orders div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.wowcher_orders div div {
+  height: 2.5em;
+  padding: 0 0.25em;
+  vertical-align: middle;
+}
+
+.wowcher_orders div div:nth-child(even) {
+  background: #f5efff;
+}
+
+.wowcher_orders div div:nth-child(odd) {
+  background: #fffaef;
+}
+
+.wowcher_orders div:first-child div {
+  border-radius: 1em 0 0 1em;
+  padding-left: 1em;
+}
+
+.wowcher_orders div:last-child div {
+  border-radius: 0 1em 1em 0;
+  padding-right: 1em;
+}
+
+.header {
+  font-weight: bold;
+  text-align: center;
+}
+
+.file_list {
+  display: flex;
+}
+
+.file {
+  background: #eee;
+  border-radius: 2em;
+  display: inline-block;
+  margin: 1em;
+  padding: 1em;
+  vertical-align: top;
+}
+
+.stock_alerts {
+  background: #ddd;
+  border-radius: 2em;
+  display: inline-flex;
+  flex-direction: column;
+  margin: 1em;
+  padding: 1em;
+}
+
+.stock_alerts .stock_alert {
+  background: #eee;
+  border-radius: 1em;
+  margin: 0.25em;
+  padding: 1em;
+}
+
+.stock_alert .details {
+  font-size: 1.25em;
+}
+
+.stock_alerts .checked {
+  font-size: 0.75em;
+}
+
+.stock_alerts .stock_level {
+  background: black;
+  border-radius: 0.25em;
+  color: white;
+  padding: 0.25em;
+}
+
+.deals {
+  align-items: flex-start;
+  background: #ddd;
+  border-radius: 2em;
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 1em;
+  width: 90%;
+}
+
+.deals .deal {
+  background: #eee;
+  border-radius: 1em;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0.5em;
+  min-width: 400px;
+  padding: 0.5em;
+  vertical-align: middle;
+  color: black;
+  text-decoration: none;
+}
+
+.deals .deal div {
+  margin: 0;
+  padding: 0;
+}
+
+.deals .variations {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: space-around;
+  text-align: center;
+  text-decoration: none;
+}
+
+.deals .stock_alert {
+  color: red;
+  font-weight: bold;
+}
+
+.deals .update_deal {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: space-around;
+  text-align: center;
+  text-decoration: none;
+}
+
+.button_link {
+  background: #bbb;
+  border-radius: 1em;
+  box-shadow: 2px 2px #888;
+  color: black;
+  display: inline-block;
+  margin: 0.25em;
+  padding: 0.25em 2em;
+  text-decoration: none;
+}
+
+.button_link:hover {
+  box-shadow: 1px 1px #aaa;
+}
+
+.items {
+  align-items: flex-start;
+  background: #ddd;
+  border-radius: 2em;
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 1em;
+  width: 90%;
+}
+
+.item {
+  background: #eee;
+  border-radius: 1em;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0.5em;
+  min-width: 400px;
+  padding: 0.5em;
+  vertical-align: middle;
+}
+
+.deals .deal div {
+  margin: 0;
+  padding: 0;
+}
+
+.item .stock_alert {
+  color: red;
+}
