@@ -41,6 +41,7 @@ class WowcherDeal(models.Model):
         """Mark the Wowcher deal as ended."""
         self.ended = timezone.now()
         self.inactive = True
+        WowcherStockLevelCheck.objects.filter(item__deal=self).delete()
         self.save()
 
 
@@ -194,6 +195,8 @@ class StockAlerts(models.Manager):
             .get_queryset()
             .filter(
                 stock_level__lte=F("item__deal__stock_alert_level"),
+                item__deal__inactive=False,
+                item__deal__ended__isnull=True,
                 item__hide_stock_alert=False,
             )
         )

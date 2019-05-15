@@ -4,7 +4,6 @@ from itertools import chain
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.utils import timezone
 from django.views.generic.base import RedirectView, TemplateView
 
 from home.views import UserInGroupMixin
@@ -106,9 +105,7 @@ class EndDeal(WowcherUserMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         """End a Wowcher deal and redirect to it's deal page."""
         deal = get_object_or_404(models.WowcherDeal, id=self.kwargs["deal_id"])
-        deal.inactive = False
-        deal.ended = timezone.now()
-        deal.save()
+        deal.end_deal()
         return reverse_lazy("wowcher:deal", args=[deal.id])
 
 

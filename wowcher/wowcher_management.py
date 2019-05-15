@@ -47,7 +47,9 @@ class WowcherManager:
     @classmethod
     def check_stock_levels(cls):
         """Update the Cloud Commerce stock levels for Wowcher items."""
-        items = models.WowcherItem.objects.filter(deal__inactive=False)
+        items = models.WowcherItem.objects.filter(
+            deal__inactive=False, deal__ended__isnull=True
+        )
         for item in items:
             stock_level = CCAPI.get_product(item.CC_product_ID).stock_level
             stock_level_record, _ = models.WowcherStockLevelCheck.objects.get_or_create(
