@@ -9,7 +9,11 @@ app_name = "wowcher"
 urlpatterns = [
     path("", views.Orders.as_view(), name="orders"),
     path("deals", views.Deals.as_view(), name="deals"),
-    path("redemption_file", views.GetRedemptionFile.as_view(), name="redemption_file"),
+    path(
+        "delivery_status_file",
+        views.GetDeliveryStatusFile.as_view(),
+        name="delivery_status_file",
+    ),
     path(
         "proof_of_delivery", views.ProofOfDelivery.as_view(), name="proof_of_delivery"
     ),
@@ -17,14 +21,14 @@ urlpatterns = [
         "cancel_order/<int:order_ID>", views.CancelOrder.as_view(), name="cancel_order"
     ),
     path(
-        "create_redemption_file",
-        views.CreateRedemptionFile.as_view(),
-        name="create_redemption_file",
+        "create_delivery_status_file",
+        views.CreateDeliveryStatusFile.as_view(),
+        name="create_delivery_status_file",
     ),
     path(
-        "download_redemption_file/<int:file_ID>",
-        views.DownloadRedemptionFile.as_view(),
-        name="download_redemption_file",
+        "download_delivery_status_file/<int:file_ID>",
+        views.DownloadDeliveryStatusFile.as_view(),
+        name="download_delivery_status_file",
     ),
     path(
         "create_proof_of_delivery_file",
