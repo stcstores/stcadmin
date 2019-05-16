@@ -208,18 +208,18 @@ class RedemptionFile:
         writer.writerows(rows)
         return output.getvalue()
 
-    @classmethod
-    def _filename(self, redemption_file):
+    @staticmethod
+    def _filename(redemption_file):
         """Return the file name for the redemption_file."""
         date = redemption_file.time_created.strftime("%Y-%m-%d")
         return f"redemption_file_{date}.csv"
 
-    @classmethod
-    def _save_to_database(self, orders):
+    @staticmethod
+    def _save_to_database(orders):
         """Add the redemption file to the database."""
         redemption_file = models.WowcherRedemptionFile()
         redemption_file.save()
-        orders.update(redemption_file=self.redemption_file)
+        orders.update(redemption_file=redemption_file)
         return redemption_file
 
 
