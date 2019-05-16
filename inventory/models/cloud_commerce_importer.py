@@ -9,6 +9,7 @@ from django.db import transaction
 
 from . import product_options, products
 from .locations import Bay
+from .product_image import ProductImage
 from .suppliers import Supplier
 from .vat_rates import VATRate
 
@@ -233,11 +234,64 @@ class ProductRangeImporter:
         return new_range
 
 
+class ProductImageImporter:
+    """Add product images to the database."""
+
+    @classmethod
+    @transaction.atomic
+    def create(cls, product):
+        """Add product images to the database."""
+        images = CCAPI.get_product_images(
+            product.product_range.range_ID, product.product_ID
+        )
+        for position, CC_image in enumerate(images):
+            cls.add_image(product=product, CC_image=CC_image, position=position)
+
+    @classmethod
+    def add_image(cls, product, CC_image, position):
+        """Add an image to the database."""
+        image, created = ProductImage.objects.get_or_create(
+            image_ID=CC_image.id,
+            defaults={
+                "product": product,
+                "filename": CC_image.filename,
+                "URL": CC_image.url,
+                "position": position,
+            },
+        )
+        if not created:
+            image.product = product
+            image.filename = CC_image.filename
+            image.URL = CC_image.url
+            image.position = position
+            image.save()
+
+
 def import_product_from_cloud_commerce(product_ID):
-    """Create a new Product from an existing one in Cloud Commerce."""
+    """
+    Create a new Product from an existing one in Cloud Commerce.
+
+    Args:
+        product_ID (str): The Cloud Commerce product ID for the product.
+    """
     return ProductImporter.create(product_ID)
 
 
 def import_product_range_from_cloud_commerce(range_ID):
-    """Create a new Product from an existing one in Cloud Commerce."""
+    """
+    Create a new Product from an existing one in Cloud Commerce.
+
+    Args:
+        range_ID (str): The Cloud Commerce range ID for the product range.
+    """
     return ProductRangeImporter.create(range_ID)
+
+
+def import_product_images_from_cloud_commerce(product):
+    """
+    Add product images to the database.
+
+    Args:
+        product: (inventory.models.Product)
+    """
+    return ProductImageImporter.create(product)

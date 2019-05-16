@@ -1,0 +1,15 @@
+.image_table {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.delete_image, .delete_stcadmin_image {
+  font-weight: bold;
+  color: red;
+  font-size: 1.1em;
+}
+
+.stcadmin_image {
+  display: inline-block;
+  text-align: center;
+}

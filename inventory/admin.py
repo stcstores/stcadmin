@@ -6,19 +6,6 @@ from orderable.admin import OrderableAdmin
 from inventory import models
 
 
-@admin.register(models.STCAdminImage)
-class STCAdminImageAdmin(admin.ModelAdmin):
-    """ModelAdmin for the STCAdminImage model."""
-
-    fields = ["range_id", "image"]
-    list_display = ["id", "__str__", "range_id", "image"]
-    list_display_links = ("__str__",)
-    list_editable = ("range_id", "image")
-
-    def __repr__(self):
-        return str(self.name)
-
-
 @admin.register(models.Barcode)
 class BarcodeAdmin(admin.ModelAdmin):
     """ModelAdmin for the Barcode model."""
@@ -360,3 +347,19 @@ class GenderAdmin(OrderableProductOptionAdmin):
     fields = OrderableProductOptionAdmin.fields + ("readable_name",)
     list_display = OrderableProductOptionAdmin.list_display + ("readable_name",)
     list_editable = OrderableProductOptionAdmin.list_editable + ("readable_name",)
+
+
+@admin.register(models.ProductImage)
+class ProductImageAdmin(admin.ModelAdmin):
+    """Model admin for the ProductImage model."""
+
+    fields = ("image_ID", "product", "filename", "URL", "position")
+    list_display = ("__str__", "image_ID", "product", "filename", "URL", "position")
+    list_display_links = ("__str__",)
+    search_fields = (
+        "product__SKU",
+        "product__product_range__SKU",
+        "product__product_range__name",
+        "product__product_range__range_ID",
+        "product__product_ID",
+    )

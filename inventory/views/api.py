@@ -3,6 +3,7 @@
 import json
 
 from ccapi import CCAPI
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -88,14 +89,22 @@ class SetImageOrderView(InventoryUserMixin, View):
     """Change order of images for a product."""
 
     @method_decorator(csrf_exempt)
+    @transaction.atomic
     def dispatch(self, request):
         """Process HTTP request."""
         try:
             data = json.loads(self.request.body)
-            CCAPI.set_image_order(
-                product_id=data["product_id"], image_ids=data["image_order"]
-            )
-        except Exception:
+            image_order = data["image_order"]
+            product = get_object_or_404(models.Product, product_ID=data["product_ID"])
+            images = models.ProductImage.objects.filter(product=product)
+            if not set(images.values_list("image_ID", flat=True)) == set(image_order):
+                raise Exception("Did not get expected image IDs.")
+            for image in images:
+                image.position = image_order.index(image.image_ID)
+                image.save()
+            models.ProductImage.update_CC_image_order(product)
+        except Exception as e:
+            raise e
             return HttpResponse(status=500)
         return HttpResponse("ok")
 
@@ -108,7 +117,9 @@ class DeleteImage(InventoryUserMixin, View):
         """Process HTTP request."""
         try:
             data = json.loads(self.request.body)
-            CCAPI.delete_image(data["image_id"])
+            image = get_object_or_404(models.ProductImage, image_ID=data["image_id"])
+            CCAPI.delete_image(image.image_ID)
+            image.delete()
         except Exception:
             return HttpResponse(status=500)
         return HttpResponse("ok")
