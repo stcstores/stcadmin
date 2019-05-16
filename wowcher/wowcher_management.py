@@ -170,22 +170,21 @@ class WowcherManager:
             return True
 
 
-class RedemptionFile:
-    """Create a Wowcher redemption file."""
+class DeliveryStatusFile:
+    """Create a Wowcher delivery status file."""
 
     @classmethod
     def new(cls):
-        """Return the filename and contents of a new redemption file."""
-        orders = models.WowcherOrder.for_redemption_file.all()
+        """Return the filename and contents of a new delivery status file."""
+        orders = models.WowcherOrder.for_delivery_status_file.all()
         return cls._save_to_database(orders)
 
     @classmethod
-    def contents(cls, redemption_file):
-        """Return the filename and contents of an existing redemption file."""
-        redemption_file = redemption_file
-        orders = redemption_file.wowcherorder_set.all()
+    def contents(cls, delivery_status_file):
+        """Return the filename and contents of an existing delivery status file."""
+        orders = delivery_status_file.wowcherorder_set.all()
         file_contents = cls._create_file(orders)
-        return cls._filename(redemption_file), file_contents
+        return cls._filename(delivery_status_file), file_contents
 
     @classmethod
     def _rows(cls, orders):
@@ -193,7 +192,7 @@ class RedemptionFile:
 
     @classmethod
     def _order_row(cls, order):
-        """Return a redemption file row for order."""
+        """Return a delivery status file row for order."""
         row = [order.wowcher_code, "Dispatched"]
         if order.tracking_code:
             row.extend(["Royal Mail", order.tracking_code])
@@ -201,7 +200,7 @@ class RedemptionFile:
 
     @classmethod
     def _create_file(cls, orders):
-        """Return the redemption file as a CSV string."""
+        """Return the delivery status file as a CSV string."""
         rows = cls._rows(orders)
         output = io.StringIO()
         writer = csv.writer(output)
@@ -209,18 +208,18 @@ class RedemptionFile:
         return output.getvalue()
 
     @staticmethod
-    def _filename(redemption_file):
-        """Return the file name for the redemption_file."""
-        date = redemption_file.time_created.strftime("%Y-%m-%d")
-        return f"redemption_file_{date}.csv"
+    def _filename(delivery_status_file):
+        """Return the file name for the delivery status file."""
+        date = delivery_status_file.time_created.strftime("%Y-%m-%d")
+        return f"delivery_status_file_{date}.csv"
 
     @staticmethod
     def _save_to_database(orders):
-        """Add the redemption file to the database."""
-        redemption_file = models.WowcherRedemptionFile()
-        redemption_file.save()
-        orders.update(redemption_file=redemption_file)
-        return redemption_file
+        """Add the delivery status file to the database."""
+        delivery_status_file = models.WowcherDeliveryStatusFile()
+        delivery_status_file.save()
+        orders.update(delivery_status_file=delivery_status_file)
+        return delivery_status_file
 
 
 class ProofOfDeliveryFile:
@@ -282,7 +281,7 @@ class ProofOfDeliveryFile:
 
     @staticmethod
     def _save_to_database(orders):
-        """Add the redemption file to the database."""
+        """Add the proof of delivery file to the database."""
         proof_of_delivery_file = models.WowcherProofOfDeliveryFile()
         proof_of_delivery_file.save()
         orders.update(proof_of_delivery_file=proof_of_delivery_file)

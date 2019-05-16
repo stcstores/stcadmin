@@ -21,7 +21,7 @@
     <h3>New {{ file_name|title }} File</h3>
     {% if orders|length > 0 %}
     <p>{{ orders|length }} orders to be added to a {{ file_name }}.</p>
-    <a href="{{ create_url }}" class="create_redemption_file" target="_new">
+    <a href="{{ create_url }}" class="create_file" target="_new">
       <button>Create {{ file_name|title }} File</button>
     </a>
     {% else %}
@@ -33,7 +33,7 @@
 
 {% block script %}
 <script>
-  $('.create_redemption_file').click(function(e) {
+  $('.create_file').click(function(e) {
     e.preventDefault();
     if (window.confirm("Create {{ file_name }} file?")) {
       window.open(this.href, '_blank');

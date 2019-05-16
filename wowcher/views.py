@@ -8,7 +8,7 @@ from django.views.generic.base import RedirectView, TemplateView
 
 from home.views import UserInGroupMixin
 from wowcher import models
-from wowcher.wowcher_management import ProofOfDeliveryFile, RedemptionFile
+from wowcher.wowcher_management import DeliveryStatusFile, ProofOfDeliveryFile
 
 
 class WowcherUserMixin(UserInGroupMixin):
@@ -136,14 +136,14 @@ class BaseWowcherFile(WowcherUserMixin, TemplateView):
             return None
 
 
-class GetRedemptionFile(BaseWowcherFile):
-    """View for the Wowcher Redemption file page."""
+class GetDeliveryStatusFile(BaseWowcherFile):
+    """View for the Wowcher delivery status file page."""
 
-    order_manager = models.WowcherOrder.for_redemption_file
-    model = models.WowcherRedemptionFile
-    donwload_URL_pattern = "wowcher:download_redemption_file"
-    create_URL_pattern = "wowcher:create_redemption_file"
-    file_name = "redemption"
+    order_manager = models.WowcherOrder.for_delivery_status_file
+    model = models.WowcherDeliveryStatusFile
+    donwload_URL_pattern = "wowcher:download_delivery_status_file"
+    create_URL_pattern = "wowcher:create_delivery_status_file"
+    file_name = "delivery status"
 
 
 class ProofOfDelivery(BaseWowcherFile):
@@ -165,11 +165,11 @@ class BaseCreateFileView(WowcherUserMixin, RedirectView):
         return reverse_lazy(self.download_URL_pattern, args=[new_file.id])
 
 
-class CreateRedemptionFile(BaseCreateFileView):
-    """View for creating a new redemption file."""
+class CreateDeliveryStatusFile(BaseCreateFileView):
+    """View for creating a new delivery status file file."""
 
-    file_class = RedemptionFile
-    download_URL_pattern = "wowcher:download_redemption_file"
+    file_class = DeliveryStatusFile
+    download_URL_pattern = "wowcher:download_delivery_status_file"
 
 
 class CreateProofOfDeliveryFile(BaseCreateFileView):
@@ -179,15 +179,15 @@ class CreateProofOfDeliveryFile(BaseCreateFileView):
     download_URL_pattern = "wowcher:download_proof_of_delivery_file"
 
 
-class DownloadRedemptionFile(WowcherUserMixin, RedirectView):
-    """View for downloading a Redemption file."""
+class DownloadDeliveryStatusFile(WowcherUserMixin, RedirectView):
+    """View for downloading a delivery status file."""
 
     def get(self, *args, **kwargs):
-        """Return a download of a Redemption file."""
-        redemption_file = get_object_or_404(
-            models.WowcherRedemptionFile, id=self.kwargs["file_ID"]
+        """Return a download of a delivery status file."""
+        delivery_status_file = get_object_or_404(
+            models.WowcherDeliveryStatusFile, id=self.kwargs["file_ID"]
         )
-        filename, file_contents = RedemptionFile.contents(redemption_file)
+        filename, file_contents = DeliveryStatusFile.contents(delivery_status_file)
         response = HttpResponse(file_contents, content_type="application/csv")
         response["Content-Disposition"] = f"attachment;filename={filename}"
         return response
