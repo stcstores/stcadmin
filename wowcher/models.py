@@ -68,24 +68,24 @@ class WowcherItem(models.Model):
         return self.wowcher_SKU()
 
 
-class WowcherRedemptionFile(models.Model):
-    """Model for Wowcher redemption files."""
+class WowcherDeliveryStatusFile(models.Model):
+    """Model for Wowcher delivery status files."""
 
     time_created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         """Meta class for the WowcherOrder model."""
 
-        verbose_name = "Wowcher Redemption File"
-        verbose_name_plural = "Wowcher Redemption Files"
+        verbose_name = "Wowcher Delivery Status File"
+        verbose_name_plural = "Wowcher Delivery Status Files"
         ordering = ("time_created",)
 
     def __str__(self):
-        return f'Redemption File {self.time_created.strftime("%Y-%m-%d")}'
+        return f'Delivery Status File {self.time_created.strftime("%Y-%m-%d")}'
 
 
 class WowcherProofOfDeliveryFile(models.Model):
-    """Model for Wowcher redemption files."""
+    """Model for Wowcher proof of delivery files."""
 
     time_created = models.DateTimeField(auto_now_add=True)
 
@@ -112,15 +112,15 @@ class OrderToDispatchManager(models.Manager):
         )
 
 
-class ForRedemptionFile(models.Manager):
-    """Manager for WowcherOrder objects that should be added to a redemption file."""
+class ForDeliveryFile(models.Manager):
+    """Manager for WowcherOrder objects that should be added to a delilvery status file."""
 
     def get_queryset(self):
-        """Return a queryset of WowcherOrders for a redemption file."""
+        """Return a queryset of WowcherOrders for a delivery status file."""
         return (
             super()
             .get_queryset()
-            .filter(dispatched=True, canceled=False, redemption_file=None)
+            .filter(dispatched=True, canceled=False, delivery_status_file=None)
         )
 
 
@@ -153,8 +153,8 @@ class WowcherOrder(models.Model):
     quantity = models.PositiveSmallIntegerField()
     dispatched = models.BooleanField(default=False)
     canceled = models.BooleanField(default=False)
-    redemption_file = models.ForeignKey(
-        WowcherRedemptionFile, on_delete=models.SET_NULL, null=True
+    delivery_status_file = models.ForeignKey(
+        WowcherDeliveryStatusFile, on_delete=models.SET_NULL, null=True
     )
     proof_of_delivery_file = models.ForeignKey(
         WowcherProofOfDeliveryFile, on_delete=models.SET_NULL, null=True
@@ -163,7 +163,7 @@ class WowcherOrder(models.Model):
 
     objects = models.Manager()
     to_dispatch = OrderToDispatchManager()
-    for_redemption_file = ForRedemptionFile()
+    for_delivery_status_file = ForDeliveryFile()
     for_proof_of_delivery_file = ForProofOfDelivery()
 
     class Meta:
@@ -176,12 +176,12 @@ class WowcherOrder(models.Model):
     def __str__(self):
         return self.wowcher_code
 
-    def on_redemption_file(self):
-        """Return True if the order has a redemption file, otherwise return False."""
-        return self.redemption_file is not None
+    def on_delivery_status_file(self):
+        """Return True if the order is on a delivery status file, otherwise return False."""
+        return self.delivery_status_file is not None
 
     def on_proof_of_delivery_file(self):
-        """Return True if the order has a proof of delivery file, otherwise return False."""
+        """Return True if the order is on a proof of delivery file, otherwise return False."""
         return self.proof_of_delivery_file is not None
 
 

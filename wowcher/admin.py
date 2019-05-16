@@ -76,7 +76,7 @@ class WowcherOrderAdmin(admin.ModelAdmin):
         "tracking_code",
         "dispatched",
         "canceled",
-        "redemption_file",
+        "delivery_status_file",
         "proof_of_delivery_file",
     )
     list_display = (
@@ -88,7 +88,7 @@ class WowcherOrderAdmin(admin.ModelAdmin):
         "tracking_code",
         "dispatched",
         "canceled",
-        "on_redemption_file",
+        "on_delivery_status_file",
         "on_proof_of_delivery_file",
         "time_created",
     )
@@ -111,9 +111,9 @@ class WowcherFileAdmin(admin.ModelAdmin):
     list_display = ("__str__", "time_created")
 
 
-@admin.register(models.WowcherRedemptionFile)
-class WowcherRedemptionFileAdmin(WowcherFileAdmin):
-    """Model Admin for the WowcherRedemptionFile model."""
+@admin.register(models.WowcherDeliveryStatusFile)
+class WowcherWowcherDeliveryStatusFileAdmin(WowcherFileAdmin):
+    """Model Admin for the WowcherDeliveryStatusFile model."""
 
 
 @admin.register(models.WowcherProofOfDeliveryFile)
