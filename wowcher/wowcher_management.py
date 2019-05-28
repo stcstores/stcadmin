@@ -138,7 +138,7 @@ class WowcherManager:
             raise Exception(
                 (
                     f"No wowcher item found matcing the wowcher SKU {order_SKU} "
-                    f"for wowcher deal {wowcher_order.wowcher_code}."
+                    f"for wowcher deal {wowcher_order.deal_id}."
                 )
             )
 
