@@ -10,6 +10,7 @@ from pathlib import Path
 import openpyxl
 import pywowcher
 from ccapi import CCAPI, NewOrderItem
+from django.db.models import F
 
 from stcadmin import settings
 from wowcher import models
@@ -58,16 +59,19 @@ class WowcherManager:
             stock_level_record.stock_level = stock_level
             stock_level_record.save()
         alerts = models.WowcherStockLevelCheck.stock_alerts.all()
-        cls._unhide_stock_alerts(alerts)
+        cls._unhide_stock_alerts()
         return alerts
 
     @classmethod
-    def _unhide_stock_alerts(cls, alerts):
+    def _unhide_stock_alerts(cls):
         """Remove the hide_stock_alerts propery from items with no stock alert."""
-        alert_items = alerts.values_list("item", flat=True)
-        models.WowcherItem.objects.exclude(id__in=alert_items).update(
-            hide_stock_alert=False
-        )
+        item_IDs = models.WowcherStockLevelCheck.objects.filter(
+            stock_level__gte=F("item__deal__stock_alert_level"),
+            item__deal__inactive=False,
+            item__deal__ended__isnull=True,
+        ).values_list("item", flat=True)
+        items = models.WowcherItem.objects.filter(id__in=item_IDs)
+        items.update(hide_stock_alert=False)
 
     @classmethod
     def update_deal_orders(cls, deal):
