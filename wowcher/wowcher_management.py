@@ -128,11 +128,19 @@ class WowcherManager:
     def get_order_item(cls, wowcher_order):
         """Return the matching WowcherItem object for a Wowcher order."""
         order_SKU = wowcher_order.items[0].sku
-        if "-" in order_SKU:
-            wowcher_ID = order_SKU.split("-")[1]
-            return models.WowcherItem.objects.get(wowcher_ID=wowcher_ID)
-        else:
-            return models.WowcherItem.objects.get(CC_product_ID=order_SKU)
+        try:
+            if "-" in order_SKU:
+                wowcher_ID = order_SKU.split("-")[1]
+                return models.WowcherItem.objects.get(wowcher_ID=wowcher_ID)
+            else:
+                return models.WowcherItem.objects.get(CC_product_ID=order_SKU)
+        except models.WowcherItem.DoesNotExist:
+            raise Exception(
+                (
+                    f"No wowcher item found matcing the wowcher SKU {order_SKU} "
+                    f"for wowcher deal {wowcher_order.wowcher_code}."
+                )
+            )
 
     @classmethod
     def add_order_to_database(cls, deal, wowcher_order):
