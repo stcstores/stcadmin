@@ -47,50 +47,6 @@ class ProductRangeExists(ProductRangeObjectValidationCheck):
         )
 
 
-class ProductRangeHasSKU(ProductRangeObjectValidationCheck):
-    """Check a Product Range has a SKU."""
-
-    name = "Product Range has no SKU"
-    level = Levels.ERROR
-
-    def is_valid(self, *args, **kwargs):
-        """Check a Product Range has a SKU."""
-        if not kwargs["test_object"].SKU:
-            return False
-        else:
-            return True
-
-    def format_error_message(self, *args, **kwargs):
-        """Return a string describing the failed validation."""
-        product_range = kwargs["test_object"]
-        return (
-            f'The Product Range with ID "{product_range.range_ID}" has no SKU in the'
-            " database."
-        )
-
-
-class ProductRangeHasName(ProductRangeObjectValidationCheck):
-    """Check a Product Range has a name."""
-
-    name = "Product Range has no name"
-    level = Levels.ERROR
-
-    def is_valid(self, *args, **kwargs):
-        """Check a Product Range has a name."""
-        if not kwargs["test_object"].name:
-            return False
-        else:
-            return True
-
-    def format_error_message(self, *args, **kwargs):
-        """Return a string describing the failed validation."""
-        product_range = kwargs["test_object"]
-        return (
-            f'The Product Range with ID "{product_range.range_ID}" has no name in the'
-            " database."
-        )
-
-
 class ProductRangeSKUContainsWhitespace(ProductRangeObjectValidationCheck):
     """Check a Product Range SKU does not contain excess whitespace."""
 
