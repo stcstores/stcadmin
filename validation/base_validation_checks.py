@@ -40,7 +40,7 @@ class BaseValidationCheck:
         """Return True if the object passes the validation tests, otherwise False."""
         raise NotImplementedError()
 
-    def format_error_message(self, test_data):
+    def format_error_message(self, *args, **kwargs):
         """Return a string describing the failed validation."""
         raise NotImplementedError()
 
