@@ -90,7 +90,7 @@ class ProductRangeNameContainsWhitespace(ProductRangeObjectValidationCheck):
 class DBProductRangeNameMatchesProductExport(ProductRangeObjectValidationCheck):
     """Check a Product Range's name matches between the database and a Product Export."""
 
-    name = "Product Name does not match"
+    name = "Product Range name does not match"
     level = Levels.ERROR
 
     def get_test_data(self, *args, **kwargs):
