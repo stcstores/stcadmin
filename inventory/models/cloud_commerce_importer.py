@@ -109,9 +109,17 @@ class ProductImporter:
 
     @classmethod
     def _get_option_value_object(cls, *, product_option, value):
-        return product_options.ProductOptionValue.objects.get(
-            product_option=product_option, product_option_value_ID=value.ID
-        )
+        try:
+            return product_options.ProductOptionValue.objects.get(
+                product_option=product_option, product_option_value_ID=value.ID
+            )
+        except product_options.ProductOptionValue.DoesNotExist:
+            raise Exception(
+                (
+                    f'Product option value "{value.value}" does not exist for product '
+                    f'option "{product_option.name}".'
+                )
+            )
 
     @classmethod
     def _set_product_options(cls, product, new_product):
