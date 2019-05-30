@@ -167,7 +167,7 @@ class ProductForm(ProductEditorBase, forms.Form):
     def save(self, *args, **kwargs):
         """Update product."""
         data = self.cleaned_data
-        product = get_object_or_404(models.Product, data[self.PRODUCT_ID])
+        product = get_object_or_404(models.Product, product_ID=data[self.PRODUCT_ID])
         updater = ProductUpdater(product)
         updater.set_price(data[self.PRICE])
         updater.set_VAT_rate(data[self.VAT_RATE])

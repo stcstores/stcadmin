@@ -168,6 +168,11 @@ class ProductUpdater(BaseCloudCommerceUpdater):
             option_value_id=product_option_value_ID,
         )
 
+    def _clear_CC_product_options(self, product_option_ID):
+        self._set_CC_product_option(
+            product_option_ID=product_option_ID, product_option_value_ID=0
+        )
+
     def _set_or_create_CC_product_option(self, *, product_option_ID, value):
         product_option_value_ID = CCAPI.get_option_value_id(
             option_id=product_option_ID, value=value, create=True
@@ -366,10 +371,15 @@ class ProductUpdater(BaseCloudCommerceUpdater):
         self.db_object.save()
 
     def _set_CC_gender(self, gender):
-        self._set_CC_product_option(
-            product_option_ID=gender.PRODUCT_OPTION_ID,
-            product_option_value_ID=gender.product_option_value_ID,
-        )
+        if gender is None:
+            self._clear_CC_product_options(
+                product_option_ID=models.Gender.PRODUCT_OPTION_ID
+            )
+        else:
+            self._set_CC_product_option(
+                product_option_ID=gender.PRODUCT_OPTION_ID,
+                product_option_value_ID=gender.product_option_value_ID,
+            )
 
     def _set_DB_product_option_link(self, product_option_value):
         link, created = models.ProductOptionValueLink.objects.get_or_create(
