@@ -35,7 +35,7 @@ class BayAdmin(admin.ModelAdmin):
     fields = ("bay_ID", "name", "warehouse", "is_default")
     list_display = ("bay_ID", "__str__", "name", "warehouse", "is_default")
     list_editable = ("is_default",)
-    search_fields = ("name",)
+    search_fields = ("name", "bay_ID")
     list_filter = ("warehouse", "is_default")
 
 
