@@ -24,14 +24,31 @@ class WowcherManager:
 
     @classmethod
     def get_new_orders(cls):
-        """Add all new orders to the database and create them in Cloud Commerce."""
+        """
+        Add all new orders to the database and create them in Cloud Commerce.
+
+        Returns:
+            A list of WowcherOrder instances that have been created.
+            A list of wowcher codes for orders that were not created in Cloud Commerce.
+
+        """
         deals = models.WowcherDeal.active.all()
         orders = []
+        errors = []
         for deal in deals:
             orders.extend(cls.update_deal_orders(deal))
         for db_order, wowcher_order in orders:
             create_cloud_commerce_order(db_order=db_order, wowcher_order=wowcher_order)
-        return orders
+        db_orders = [_[0] for _ in orders]
+        completed_orders = []
+        for order in db_orders:
+            order.refresh_from_db()
+            if order.CC_order_ID is None:
+                errors.append(order.wowcher_code)
+                order.delete()
+            else:
+                completed_orders.append(order)
+        return completed_orders, errors
 
     @classmethod
     def update_dispatched_orders(cls):
