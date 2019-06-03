@@ -10,7 +10,6 @@ from pathlib import Path
 import openpyxl
 import pywowcher
 from ccapi import CCAPI, NewOrderItem
-from django.db.models import F
 
 from stcadmin import settings
 from wowcher import models
@@ -59,19 +58,16 @@ class WowcherManager:
             stock_level_record.stock_level = stock_level
             stock_level_record.save()
         alerts = models.WowcherStockLevelCheck.stock_alerts.all()
-        cls._unhide_stock_alerts()
+        cls._unhide_stock_alerts(alerts)
         return alerts
 
     @classmethod
-    def _unhide_stock_alerts(cls):
+    def _unhide_stock_alerts(cls, alerts):
         """Remove the hide_stock_alerts propery from items with no stock alert."""
-        item_IDs = models.WowcherStockLevelCheck.objects.filter(
-            stock_level__gte=F("item__deal__stock_alert_level"),
-            item__deal__inactive=False,
-            item__deal__ended__isnull=True,
-        ).values_list("item", flat=True)
-        items = models.WowcherItem.objects.filter(id__in=item_IDs)
-        items.update(hide_stock_alert=False)
+        alert_items = alerts.values_list("item", flat=True)
+        models.WowcherItem.objects.exclude(id__in=alert_items).update(
+            hide_stock_alert=False
+        )
 
     @classmethod
     def update_deal_orders(cls, deal):
@@ -132,19 +128,11 @@ class WowcherManager:
     def get_order_item(cls, wowcher_order):
         """Return the matching WowcherItem object for a Wowcher order."""
         order_SKU = wowcher_order.items[0].sku
-        try:
-            if "-" in order_SKU:
-                wowcher_ID = order_SKU.split("-")[1]
-                return models.WowcherItem.objects.get(wowcher_ID=wowcher_ID)
-            else:
-                return models.WowcherItem.objects.get(CC_product_ID=order_SKU)
-        except models.WowcherItem.DoesNotExist:
-            raise Exception(
-                (
-                    f"No wowcher item found matcing the wowcher SKU {order_SKU} "
-                    f"for wowcher deal {wowcher_order.deal_id}."
-                )
-            )
+        if "-" in order_SKU:
+            wowcher_ID = order_SKU.split("-")[1]
+            return models.WowcherItem.objects.get(wowcher_ID=wowcher_ID)
+        else:
+            return models.WowcherItem.objects.filter(CC_product_ID=order_SKU).all()[0]
 
     @classmethod
     def add_order_to_database(cls, deal, wowcher_order):
