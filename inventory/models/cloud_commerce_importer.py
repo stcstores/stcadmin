@@ -104,6 +104,10 @@ class ProductImporter:
             multipack=bool(product.product_type),
             status=products.Product.CREATING,
         )
+        option_gender = cls._get_option_value(product, "Gender").value
+        if option_gender:
+            gender = product_options.Gender.objects.get(name=option_gender)
+            new_product.gender = gender
         new_product.save()
         return new_product
 
