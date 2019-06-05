@@ -189,7 +189,7 @@ class ProductExportData:
     MANUFACTURER = "manufacturer"
     DEPARTMENT = "department"
     BRAND = "brand"
-    SUPPLIER_SKU = "suplier_SKU"
+    SUPPLIER_SKU = "supplier_SKU"
     SUPPLIER = "supplier"
     PURCHASE_PRICE = "purchase_price"
     MATERITAL_OPTION = "material_option"
@@ -259,9 +259,9 @@ class ProductExportData:
         GENDER: "OPT_Gender",
         INCOMPLETE: "OPT_Incomplete",
         RETAIL_PRICE: "OPT_Retail Price",
-        HEIGHT: "OPT_Height",
-        LENGTH: "OPT_Length",
-        WIDTH: "OPT_Width",
+        HEIGHT: "OPT_Height MM",
+        LENGTH: "OPT_Length MM",
+        WIDTH: "OPT_Width MM",
     }
 
     def __init__(self, export):
@@ -271,7 +271,7 @@ class ProductExportData:
             export (ProductExport): The ProductExport object from which to load data.
 
         Attrs:
-            export: The ProductExport object from which datat is loaded.
+            export: The ProductExport object from which data is loaded.
             table: A tabler.Table object loaded from the export.
             ranges: A list of ProductExportProductRange objects loaded from the export.
             products: A list of ProductExportProduct objects loaded from the export.
@@ -295,34 +295,46 @@ class ProductExportData:
     @staticmethod
     def parse_bays(value):
         """Return a list of bay names parsed from the VAR_Bay field of a Product Export."""
+        if value is None:
+            return []
         return value.split(";")
-
-    @staticmethod
-    def parse_amazon_list(value):
-        """Return a list of values parsed from the Amazon options in a Product Export."""
-        return value.split("|")
 
     @staticmethod
     def parse_date(value):
         """Return a datetime.datetime object for the Date Created field of a Product Export."""
+        if value is None:
+            return None
         year, month, day = value.split("-")
-        return datetime.datetime(year=year, month=month, day=day)
+        return datetime.date(year=int(year), month=int(month), day=int(day))
 
     @staticmethod
     def parse_bool(value):
         """Return a boolean version of a string 1 or 0."""
         return bool(int(value))
 
+    @staticmethod
+    def parse_barcode(value):
+        """Return the primary barcode of the product."""
+        if value is None:
+            return ""
+        return value.split(",")[0]
+
+    @staticmethod
+    def parse_currency(value):
+        """Return a price value as a string."""
+        if value is None:
+            return ""
+        return str(value)
+
     parsers = {
-        AMAZON_BULLETS: parse_amazon_list.__get__(object),
-        AMAZON_SEARCH_TERMS: parse_amazon_list.__get__(object),
         BAYS: parse_bays.__get__(object),
         DATE_CREATED: parse_date.__get__(object),
         LARGE_LETTER_COMPATIBLE: parse_bool.__get__(object),
+        BARCODE: parse_barcode.__get__(object),
+        PRICE: parse_currency.__get__(object),
+        PURCHASE_PRICE: parse_currency.__get__(object),
+        RETAIL_PRICE: parse_currency.__get__(object),
         HANDLING_TIME: int,
-        PRICE: float,
-        RETAIL_PRICE: float,
-        PURCHASE_PRICE: int,
     }
 
 

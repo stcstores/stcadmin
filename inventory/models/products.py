@@ -272,6 +272,20 @@ class Product(models.Model):
             extensions.append(self.supplier_SKU)
         return extensions
 
+    def product_option_value(self, option_name):
+        """
+        Return the value of a product option.
+
+        Returns:
+            The value of the product option with name option_name for the product if it
+            exists, otherwise returns None.
+
+        """
+        try:
+            return self.product_options.get(product_option__name=option_name).value
+        except ProductOptionValue.DoesNotExist:
+            return None
+
     def CC_create_product(self):
         """Create the product in Cloud Commerce."""
         CCAPI.create_product(
