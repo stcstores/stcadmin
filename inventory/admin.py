@@ -278,6 +278,7 @@ class ProductAdmin(admin.ModelAdmin):
         "height_mm",
         "width_mm",
         "multipack",
+        "gender",
         "end_of_line",
         "status",
         "range_order",
