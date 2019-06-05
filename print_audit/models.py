@@ -1,7 +1,6 @@
 """Models for print_audit."""
 
 import pytz
-from ccapi import CCAPI
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
@@ -24,6 +23,8 @@ class CloudCommerceUser(models.Model):
     stcadmin_user = models.ForeignKey(
         User, null=True, blank=True, on_delete=models.CASCADE
     )
+    first_name = models.CharField(max_length=50)
+    second_name = models.CharField(max_length=50)
     hidden = models.BooleanField(default=False)
 
     objects = models.Manager()
@@ -34,19 +35,6 @@ class CloudCommerceUser(models.Model):
 
         verbose_name = "Cloud Commerce User"
         verbose_name_plural = "Cloud Commerce Users"
-
-    def __init__(self, *args, **kwargs):
-        """Retrive user data from Cloud Commerce."""
-        USERS = CCAPI.get_users()
-        super(CloudCommerceUser, self).__init__(*args, **kwargs)
-        try:
-            self.cc_user = USERS[self.user_id]
-        except IndexError:
-            self.first_name = ""
-            self.second_name = ""
-        else:
-            self.first_name = self.cc_user.first_name
-            self.second_name = self.cc_user.second_name
 
     def __repr__(self):
         return self.full_name()
