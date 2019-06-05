@@ -106,7 +106,7 @@ class DBProductRangeNameMatchesProductExport(ProductRangeObjectValidationCheck):
         export_range = kwargs["export_range"]
         if export_range is None:
             return True
-        elif export_range.products[0].name == kwargs["test_object"].name:
+        elif export_range.products[0].range_name == kwargs["test_object"].name:
             return True
         else:
             return False
