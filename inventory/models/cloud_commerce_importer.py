@@ -192,9 +192,13 @@ class ProductRangeImporter:
 
     @classmethod
     def _get_amazon_list(cls, product, option_name):
-        if option_name in product.options:
-            return cls._get_option_value(product, option_name).value
-        return ""
+        try:
+            value = product.options[option_name].value
+        except KeyError:
+            return ""
+        if value is None:
+            return ""
+        return value
 
     @classmethod
     def _create_range(cls, product_range):
