@@ -31,6 +31,7 @@ class ProductImporter:
         cls._set_product_options(product, new_product)
         new_product.status = new_product.COMPLETE
         new_product.save()
+        ProductImageImporter.create(new_product)
         return new_product
 
     @classmethod
