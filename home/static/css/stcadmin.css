@@ -385,3 +385,7 @@ th {
   flex: 0;
   flex-wrap: nowrap;
 }
+
+.fr-box {
+  overflow: hidden;
+}

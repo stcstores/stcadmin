@@ -269,6 +269,7 @@ button:disabled {
   background: #fbfbfb;
   border: #dddddd 3px solid;
   border-radius: 1em;
+  max-width: 90%;
 }
 
 .listinput {
