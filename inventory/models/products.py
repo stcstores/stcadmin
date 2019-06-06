@@ -184,7 +184,7 @@ class Product(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=CREATING)
     date_created = models.DateField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
-    gender = models.ForeignKey(Gender, null=True, on_delete=models.SET_NULL)
+    gender = models.ForeignKey(Gender, null=True, blank=True, on_delete=models.SET_NULL)
     range_order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
