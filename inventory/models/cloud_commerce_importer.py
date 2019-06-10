@@ -207,7 +207,7 @@ class ProductRangeImporter:
 
     @classmethod
     def _create_range(cls, product_range):
-        product = product_range.products[0]
+        product = CCAPI.get_product(product_range.products[0].id)
         new_range = products.ProductRange(
             range_ID=product_range.id,
             SKU=product_range.sku,
