@@ -18,8 +18,17 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Find new Wowcher orders and add them to Cloud Commerce."""
         try:
-            orders = WowcherManager.get_new_orders()
+            orders, errors = WowcherManager.get_new_orders()
         except Exception as e:
             logger.exception("Error getting new Wowcher orders.")
             raise e
         print(f"Added {len(orders)} Wowcher orders.", file=sys.stderr)
+        if errors:
+            for wowcher_code in errors:
+                print(
+                    f'Error creating order "{wowcher_code}" in Cloud Commerce.',
+                    file=sys.stderr,
+                )
+            error_message = f"Failed to create {len(errors)} orders in Cloud Commerce."
+            logger.exception(error_message)
+            raise Exception(error_message)
