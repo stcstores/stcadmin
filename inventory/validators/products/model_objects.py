@@ -244,6 +244,12 @@ class ProductDimensionsMatch(ProductObjectValidationCheck):
         """Check a products weight in the database matches Cloud Commerce."""
         if self.export_product is None:
             return True
+        if None in (
+            self.export_product.height,
+            self.export_product.length,
+            self.export_product.width,
+        ):
+            return False
         if self.db_product.height_mm != float(self.export_product.height):
             return False
         if self.db_product.length_mm != float(self.export_product.length):
