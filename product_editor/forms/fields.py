@@ -3,7 +3,6 @@
 import json
 import re
 
-from ccapi import CCAPI
 from django import forms
 from list_input import ListInput
 
@@ -499,16 +498,6 @@ class OptionField(FormField):
     def valid_value(self, value):
         """Allow values not in choices."""
         return True
-
-    @staticmethod
-    def get_choices(option_name, options=None, initial=None):
-        """Return choices for field."""
-        if not options:
-            options = CCAPI.get_product_options()
-        values = sorted([value.value for value in options[option_name]])
-        if initial and initial not in values:
-            values.append(initial)
-        return [("", "")] + [(v, v) for v in values]
 
     def validate(self, values):
         """Validate each input value."""

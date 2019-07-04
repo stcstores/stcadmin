@@ -207,6 +207,12 @@ class SelectizeField(BaseSelectizeField, forms.MultipleChoiceField):
 
     widget_class = widgets.MultipleSelectizeWidget
 
+    def __init__(self, *args, **kwargs):
+        """Create the field and widget."""
+        super(BaseSelectizeField, self).__init__(*args, **kwargs)
+        super(forms.MultipleChoiceField, self).__init__(*args, **kwargs)
+        self.widget = self.get_widget(choices=kwargs.get("choices"))
+
     def to_python(self, *args, **kwargs):
         """Return submited values as a list."""
         value = super().to_python(*args, **kwargs)
