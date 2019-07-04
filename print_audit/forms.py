@@ -142,7 +142,7 @@ class FeedbackDateFilterForm(forms.Form):
         """Return cleaned time value in current timezone."""
         if time is None:
             time = timezone.now().date()
-        return self.localise_time(time)
+        return self.localise_time(time).date()
 
     def localise_time(self, time):
         """Localise datetime object."""

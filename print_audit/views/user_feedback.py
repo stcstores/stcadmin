@@ -1,11 +1,14 @@
 """Views for User Feedback."""
 
+import datetime
+
 from django.core.paginator import EmptyPage, Paginator
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
+
 from print_audit import forms, models
 
 from .views import PrintAuditUserMixin
@@ -75,15 +78,16 @@ class UserFeedback(PrintAuditUserMixin, TemplateView):
         """Filter search results by date."""
         if self.form.is_valid():
             if self.form.cleaned_data["date_from"] is not None:
-                date_range = (
+                date_from, date_to = (
                     self.form.cleaned_data["date_from"],
                     self.form.cleaned_data["date_to"],
                 )
                 self.orders = self.orders.filter(
-                    date_created__gte=date_range[0], date_created__lte=date_range[1]
+                    date_created__gte=date_from,
+                    date_created__lte=date_to + datetime.timedelta(days=1),
                 )
                 self.feedback = self.feedback.filter(
-                    timestamp__gte=date_range[0], timestamp__lte=date_range[1]
+                    timestamp__gte=date_from, timestamp__lte=date_to
                 )
 
 
