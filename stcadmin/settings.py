@@ -2,7 +2,6 @@
 
 import os
 
-import pywowcher
 import toml
 from ccapi import CCAPI
 from django.core.exceptions import ImproperlyConfigured
@@ -65,9 +64,6 @@ CC_PWD = get_config("CC_PASS")
 SCAYT_CUSTOMER_ID = get_config("SCAYT_CUSTOMER_ID_TOKEN")
 SECURED_MAIL_MANIFEST_EMAIL_ADDRESS = get_config("SECURED_MAIL_MANIFEST_EMAIL_ADDRESS")
 SECURED_MAIL_DOCKET_EMAIL_ADDRESS = get_config("SECURED_MAIL_DOCKET_EMAIL_ADDRESS")
-WOWCHER_KEY = get_config("WOWCHER_KEY")
-WOWCHER_SECRET_TOKEN = get_config("WOWCHER_SECRET_TOKEN")
-WOWCHER_STOCK_ALERT_EMAIL = get_config("WOWCHER_STOCK_ALERT_EMAIL")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -95,7 +91,6 @@ INSTALLED_APPS = [
     "profit_loss",
     "product_editor",
     "epos",
-    "wowcher",
 ]
 
 MIDDLEWARE = [
@@ -256,6 +251,3 @@ LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "home:index"
 
 CCAPI.create_session(domain=CC_DOMAIN, username=CC_USERNAME, password=CC_PWD)
-pywowcher.session.set_credentials(
-    live_key=WOWCHER_KEY, live_secret_token=WOWCHER_SECRET_TOKEN, use_staging=False
-)

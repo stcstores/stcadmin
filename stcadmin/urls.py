@@ -1,10 +1,10 @@
 """stcadmin URL Configuration."""
-from user import views as user_views
-
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 from django.views.static import serve
+
+from user import views as user_views
 
 admin.site.site_header = "STC Stores Administration"
 
@@ -28,7 +28,6 @@ urlpatterns = [
     ),
     path("profit_loss/", include("profit_loss.urls", namespace="profit_loss")),
     path("epos/", include("epos.urls", namespace="epos")),
-    path("wowcher/", include("wowcher.urls", namespace="wowcher")),
     path("", include("home.urls", namespace="home")),
     path(
         "password_change_done/",
