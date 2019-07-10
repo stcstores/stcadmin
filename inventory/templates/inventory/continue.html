@@ -1,0 +1,16 @@
+{% extends "inventory/base.html" %}
+
+{% block content %}
+<div>
+  <h2>Your in progress edits</h2>
+  {% for edit in user_edits %}
+  <a href="{% url 'inventory:edit_product' edit.id %}">{{ edit }}</a>
+  {% endfor %}
+</div>
+<div>
+  <h2>Other User's in progress edits</h2>
+  {% for edit in others_edits %}
+  {{ edit.user }}: <a href="{% url 'inventory:edit_product' edit.id %}">{{ edit }}</a>
+  {% endfor %}
+</div>
+{% endblock %}

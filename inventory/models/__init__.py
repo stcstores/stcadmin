@@ -3,6 +3,13 @@
 from . import cloud_commerce_importer  # NOQA
 from .barcodes import Barcode, get_barcode  # NOQA
 from .locations import Bay, Warehouse, check_location_integrity  # NOQA
+from .partial import (  # NOQA
+    PartialProduct,
+    PartialProductOptionValueLink,
+    PartialProductRange,
+    PartialProductRangeSelectedOption,
+    ProductEdit,
+)
 from .product_exports import ProductExport  # NOQA
 from .product_image import ProductImage  # NOQA
 from .product_options import (  # NOQA

@@ -94,4 +94,26 @@ api_urlpatterns = [
     path("delete_image/", views.DeleteImage.as_view(), name="delete_image"),
 ]
 
-urlpatterns = inventory_urlpatterns + api_urlpatterns
+product_editor_patterns = [
+    path(
+        "start_editing_product/<int:range_ID>/",
+        views.StartEditingProduct.as_view(),
+        name="start_editing_product",
+    ),
+    path(
+        "edit_product/<int:edit_ID>/", views.EditProduct.as_view(), name="edit_product"
+    ),
+    path(
+        "edit_variations/<int:edit_ID>/",
+        views.EditVariations.as_view(),
+        name="edit_variations",
+    ),
+    path("continue", views.Continue.as_view(), name="continue"),
+    path(
+        "edit_range_details/<int:edit_ID>/",
+        views.EditRangeDetails.as_view(),
+        name="edit_range_details",
+    ),
+]
+
+urlpatterns = inventory_urlpatterns + api_urlpatterns + product_editor_patterns
