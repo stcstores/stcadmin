@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView, TemplateView
 from django.views.generic.edit import FormView
 
-from inventory import models
+from inventory import forms, models
 from inventory.cloud_commerce_updater import PartialRangeUpdater
 
 from .descriptions import DescriptionsView
@@ -55,6 +55,14 @@ class StartEditingProduct(InventoryUserMixin, RedirectView):
             user=self.request.user,
         )
         edit.save()
+        option_values = [
+            _.product_option_value
+            for _ in models.ProductOptionValueLink.objects.filter(
+                product__product_range=product_range
+            )
+        ]
+        for value in option_values:
+            edit.product_option_values.add(value)
         return edit
 
 
@@ -66,18 +74,19 @@ class EditProduct(InventoryUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return the context for the template."""
         context = super().get_context_data(*args, **kwargs)
-        edit = models.ProductEdit.objects.get(pk=self.kwargs["edit_ID"])
-        context["edit"] = edit
-        context["product_range"] = edit.partial_product_range
-        context["variations"] = self.get_variation_matrix(edit.partial_product_range)
+        self.edit = models.ProductEdit.objects.get(pk=self.kwargs["edit_ID"])
+        context["edit"] = self.edit
+        context["product_range"] = self.edit.partial_product_range
+        context["variations"] = self.get_variation_matrix(
+            self.edit.partial_product_range
+        )
         return context
 
     def get_variation_matrix(self, product_range):
         """Return a dict of all possible variations for the range."""
         variations = {}
         products = product_range.products()
-        variation_values = product_range.variation_values()
-        for options in itertools.product(*variation_values.values()):
+        for options in itertools.product(*self.edit.variation_options().values()):
             for product in products:
                 if tuple(product.variation().values()) == options:
                     variations[options] = product
@@ -94,11 +103,11 @@ class EditVariations(InventoryUserMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         """Return the context for the template."""
+        edit = get_object_or_404(models.ProductEdit.objects, pk=self.kwargs["edit_ID"])
         context = super().get_context_data(*args, **kwargs)
-        edit = models.ProductEdit.objects.get(pk=self.kwargs["edit_ID"])
         context["edit"] = edit
         context["product_range"] = edit.partial_product_range
-        context["product_options"] = models.ProductOption.objects.all()
+        context["product_options"] = edit.variation_options
         return context
 
 
@@ -125,3 +134,34 @@ class EditRangeDetails(DescriptionsView):
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
         return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": self.edit.pk})
+
+
+class AddDropdown(InventoryUserMixin, FormView):
+    """Add a new variation product option to a partial product range."""
+
+    form_class = forms.AddVariationOption
+    template_name = "inventory/add_dropdown.html"
+
+    def get_form_kwargs(self, *args, **kwargs):
+        """Return the kwargs for insanciating the form."""
+        kwargs = super().get_form_kwargs(*args, **kwargs)
+        self.edit = get_object_or_404(models.ProductEdit, pk=self.kwargs.get("edit_ID"))
+        kwargs["edit"] = self.edit
+        return kwargs
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["edit"] = self.edit
+        return context
+
+    def form_valid(self, form):
+        """Add the new variation product option and values to the product range."""
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the URL to redirect to on a successful form submission."""
+        return reverse_lazy(
+            "inventory:edit_variations", kwargs={"edit_ID": self.edit.pk}
+        )

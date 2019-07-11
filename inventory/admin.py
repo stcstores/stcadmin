@@ -370,7 +370,7 @@ class ProductImageAdmin(admin.ModelAdmin):
 class ProductEditAdmin(admin.ModelAdmin):
     """Model admin for the ProductEdit model."""
 
-    fields = ("user", "product_range", "partial_product_range")
+    fields = ("user", "product_range", "partial_product_range", "product_option_values")
     list_display = ("__str__", "user", "product_range", "partial_product_range")
 
 

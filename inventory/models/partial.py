@@ -136,12 +136,10 @@ class PartialProductRange(models.Model):
             product_option_value__product_option__in=self.variation_options(),
             product__product_range=self,
         )
-        option_values = {}
+        option_values = {option.name: [] for option in self.product_options.all()}
         for value in values:
             option_name = value.product_option_value.product_option.name
             option_value = value.product_option_value.value
-            if option_name not in option_values:
-                option_values[option_name] = []
             option_values[option_name].append(option_value)
         for option, value_list in option_values.items():
             option_values[option] = set(value_list)
@@ -391,6 +389,7 @@ class ProductEdit(models.Model):
     partial_product_range = models.OneToOneField(
         PartialProductRange, on_delete=models.CASCADE
     )
+    product_option_values = models.ManyToManyField(ProductOptionValue)
 
     class Meta:
         """Meta class for ProductEdit."""
@@ -400,3 +399,13 @@ class ProductEdit(models.Model):
 
     def __str__(self):
         return str(self.partial_product_range)
+
+    def variation_options(self):
+        """Return a dict of {product_option: list(values)} for the product range."""
+        selected_product_options = self.partial_product_range.product_options.all()
+        variation_options = {option.name: [] for option in selected_product_options}
+        for option in selected_product_options:
+            variation_options[option.name] = list(
+                self.product_option_values.filter(product_option=option)
+            )
+        return variation_options

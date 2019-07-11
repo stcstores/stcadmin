@@ -1,0 +1,33 @@
+{% extends "inventory/base.html" %}
+
+{% block content %}
+<h4>Add Drop Down to product range</h4>
+<div id="add_dropdown" class="product_form">
+  <form action="" method="POST" autocomplete="off">{% csrf_token %}
+    {% include "inventory/input_add_on_form.html" %}
+    <button type="submit" id="save_add_dropdown">Add Dropdown</button>
+    <a href="{% url 'inventory:edit_variations' edit.pk %}">
+      <button id="cancel_add_dropdown" type="button">Cancel</button>
+    </a>
+  </form>
+</div>
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+  function hide_fields() {
+    {% for field in form %}{% if 'value' in field.name %}
+    $("#{{ field.auto_id }}").parent().hide();
+    {% endif %}{% endfor %}
+  }
+
+  $(document).ready(function() {
+    $('#{{ form.option.auto_id }}').change(function() {
+      hide_fields();
+      var selectedID = $(this).val();
+      $('#id_values_' + selectedID).parent().show();
+    });
+    $('#{{ form.option.auto_id }}').change();
+  });
+</script>
+{% endblock %}

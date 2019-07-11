@@ -1,6 +1,7 @@
 """Forms for inventory app."""
 
 from django import forms
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 from inventory import models
@@ -198,3 +199,51 @@ class VariationsFormSet(KwargFormSet):
     """Formset for updating the locations of all Products within a Range."""
 
     form = VariationForm
+
+
+class AddVariationOption(forms.Form):
+    """Add a new variation product option to a partial product range."""
+
+    def __init__(self, *args, **kwargs):
+        """Instanciate the form."""
+        self.edit = kwargs.pop("edit")
+        self.product_range = self.edit.partial_product_range
+        super().__init__(*args, **kwargs)
+        self.add_fields()
+
+    def add_fields(self):
+        """Add fields to the form."""
+        self.fields["option"] = fields.AddDropdown(product_range=self.product_range)
+        for option_ID, name in self.fields["option"].choices:
+            if not option_ID:
+                continue
+            self.fields[f"values_{option_ID}"] = fields.VariationOptions(
+                product_option=models.ProductOption.objects.get(pk=option_ID),
+                label=name,
+                required=False,
+            )
+
+    def clean(self):
+        """Ensure a new product option cannot be selected with fewer than two values."""
+        cleaned_data = super().clean()
+        values_field_name = f"values_{cleaned_data['option'].pk}"
+        cleaned_data["values"] = cleaned_data[values_field_name]
+        if len(cleaned_data["values"]) < 2:
+            self.add_error(
+                values_field_name,
+                "At least two variation options must be selected for each dropdown.",
+            )
+        return cleaned_data
+
+    @transaction.atomic
+    def save(self):
+        """Save changes to the database."""
+        product_option = self.cleaned_data["option"]
+        product_option_values = self.cleaned_data["values"]
+        models.PartialProductRangeSelectedOption(
+            product_range=self.product_range,
+            product_option=product_option,
+            variation=True,
+        ).save()
+        for value in product_option_values:
+            self.edit.product_option_values.add(value)
