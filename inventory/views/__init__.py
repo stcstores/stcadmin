@@ -9,6 +9,7 @@ from .product import ProductView  # NOQA
 from .product_editor import (  # NOQA
     AddDropdown,
     AddDropdownValues,
+    AddProductOptionValues,
     Continue,
     EditProduct,
     EditRangeDetails,

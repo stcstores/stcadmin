@@ -449,9 +449,9 @@ class ProductEdit(models.Model):
     def variation_options(self):
         """Return a dict of {product_option: list(values)} for the product range."""
         selected_product_options = self.partial_product_range.product_options.all()
-        variation_options = {option.name: [] for option in selected_product_options}
+        variation_options = {option: [] for option in selected_product_options}
         for option in selected_product_options:
-            variation_options[option.name] = list(
+            variation_options[option] = list(
                 self.product_option_values.filter(product_option=option)
             )
         return variation_options

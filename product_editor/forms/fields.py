@@ -523,20 +523,22 @@ class VariationOptions(OptionField, fieldtypes.SelectizeField):
             product_option=self.product_option
         )
         if self.product_range is not None:
-            self.remove_used_options(available_options, self.product_range)
+            available_options = self.remove_used_options(
+                available_options, self.product_range
+            )
         choices += [(option.value, option.value) for option in available_options]
         return choices
 
     def remove_used_options(self, available_options, product_range):
         """Filter values already used by the product from the choices."""
-        existing_links = [
-            _.product_option_value
-            for _ in models.PartialProductOptionValueLink.objects.filter(
-                product__product_range=self.product_range,
-                product_option_value__product_option=self.product_option,
-            )
-        ]
-        return available_options.difference(existing_links)
+        existing_links = models.PartialProductOptionValueLink.objects.filter(
+            product__product_range=self.product_range,
+            product_option_value__product_option=self.product_option,
+        )
+        existing_values = models.ProductOptionValue.objects.filter(
+            id__in=existing_links.values_list("product_option_value__id", flat=True)
+        )
+        return available_options.difference(existing_values)
 
     def clean(self, values):
         """

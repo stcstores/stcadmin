@@ -111,7 +111,7 @@ class EditVariations(InventoryUserMixin, TemplateView):
         context = super().get_context_data(*args, **kwargs)
         context["edit"] = edit
         context["product_range"] = edit.partial_product_range
-        context["product_options"] = edit.variation_options
+        context["product_options"] = edit.variation_options()
         return context
 
 
@@ -229,3 +229,45 @@ class AddDropdownValues(InventoryUserMixin, TemplateView):
         context["product_range"] = self.product_range
         context["formset"] = self.formset
         return context
+
+
+class AddProductOptionValues(InventoryUserMixin, FormView):
+    """Add product option values to a product edit."""
+
+    form_class = forms.AddProductOptionValuesForm
+    template_name = "inventory/add_product_option_values.html"
+
+    def dispatch(self, *args, **kwargs):
+        """Get model objects."""
+        self.edit = get_object_or_404(
+            models.ProductEdit.objects, pk=self.kwargs["edit_ID"]
+        )
+        self.product_option = get_object_or_404(
+            models.ProductOption.objects, pk=self.kwargs["product_option_ID"]
+        )
+        return super().dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self, *args, **kwargs):
+        """Return the kwargs for the form."""
+        form_kwargs = super().get_form_kwargs(*args, **kwargs)
+        form_kwargs["edit"] = self.edit
+        form_kwargs["product_option"] = self.product_option
+        return form_kwargs
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["edit"] = self.edit
+        context["product_option"] = self.product_option
+        return context
+
+    def form_valid(self, form):
+        """Add the new variation product option and values to the product range."""
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the URL to redirect to on a successful form submission."""
+        return reverse_lazy(
+            "inventory:edit_variations", kwargs={"edit_ID": self.edit.pk}
+        )

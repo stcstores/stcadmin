@@ -323,3 +323,23 @@ class NewDropDownValuesFormset(KwargFormSet):
                     product=product,
                     product_option_value=form.cleaned_data[f"option_{option.name}"],
                 ).save()
+
+
+class AddProductOptionValuesForm(forms.Form):
+    """Form for adding product option values to a partial product edit."""
+
+    def __init__(self, *args, **kwargs):
+        """Add fields."""
+        self.edit = kwargs.pop("edit")
+        self.product_option = kwargs.pop("product_option")
+        super().__init__(*args, **kwargs)
+        self.fields[f"values"] = fields.VariationOptions(
+            product_option=self.product_option,
+            product_range=self.edit.partial_product_range,
+            label=self.product_option.name,
+        )
+
+    def save(self):
+        """Add product option values to the produt edit."""
+        for value in self.cleaned_data["values"]:
+            self.edit.product_option_values.add(value)

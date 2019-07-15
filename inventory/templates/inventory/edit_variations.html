@@ -3,23 +3,27 @@
 
 {% block content %}
 <h1>Editing <span class="sku">{{ product_range.name }}</span></h1>
-<a href="{% url 'inventory:edit_product' edit.pk %}">Back</a>
+<br><br>
+<div>
+  <a href="{% url 'inventory:edit_product' edit.pk %}"><button>Back</button></a>
+  <a href="{% url 'inventory:add_dropdown' edit.pk %}">
+    <button>Add a Dropdown to the Product Range</button>
+  </a>
+</div>
 <div style="display: flex;flex-direction: row;">
-  {% for dropdown, options in product_options.items %}
+  {% for option, values in product_options.items %}
   <div>
-    <h4>{{ dropdown|title }}</h4>
+    <h4>{{ option.name|title }}</h4>
     <ul>
-      {% for option in options %}
-      <li>{{ option.value }}</li>
+      {% for value in values %}
+      <li>{{ value.value }}</li>
       {% endfor %}
-      <a href=""><button class="show_form_button" >Add Option</button></a>
+      <a href="{% url 'inventory:add_product_option_values' edit.pk option.pk %}">
+        <button>Add Option to Dropdown</button>
+      </a>
     </ul>
   </div>
   {% endfor %}
-  <div>
-    <h4>Add Drop Down to product range</h4>
-    <a href="{% url 'inventory:add_dropdown' edit.pk %}"><button>Add Dropdown</button></a>
-  </div>
 </div>
 
 {% endblock %}
