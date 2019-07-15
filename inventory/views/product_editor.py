@@ -2,7 +2,7 @@
 
 import itertools
 
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView, TemplateView
 from django.views.generic.edit import FormView
@@ -163,5 +163,65 @@ class AddDropdown(InventoryUserMixin, FormView):
     def get_success_url(self):
         """Return the URL to redirect to on a successful form submission."""
         return reverse_lazy(
-            "inventory:edit_variations", kwargs={"edit_ID": self.edit.pk}
+            "inventory:add_dropdown_values", kwargs={"edit_ID": self.edit.pk}
         )
+
+
+class AddDropdownValues(InventoryUserMixin, TemplateView):
+    """Add values to for a new dropdown."""
+
+    template_name = "inventory/add_dropdown_values.html"
+
+    def dispatch(self, *args, **kwargs):
+        """Load the formset."""
+        self.edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
+        self.product_range = self.edit.partial_product_range
+        self.formset = forms.NewDropDownValuesFormset(
+            self.request.POST or None, form_kwargs=self.get_initial()
+        )
+        return super().dispatch(*args, **kwargs)
+
+    def get_initial(self):
+        """Return the initial values for the formset."""
+        return [
+            {
+                "edit": self.edit,
+                "product_range": self.product_range,
+                "product": p,
+                "initial": self.get_initial_for_product(p),
+            }
+            for p in self.product_range.products()
+        ]
+
+    def get_initial_for_product(self, product):
+        """Return the initial values for a product for the formset."""
+        initial = {"product_ID": product.id}
+        for option in self.product_range.variation_options():
+            try:
+                initial[
+                    f"option_{option.name}"
+                ] = models.PartialProductOptionValueLink.objects.get(
+                    product=product, product_option_value__product_option=option
+                ).product_option_value
+            except models.PartialProductOptionValueLink.DoesNotExist:
+                pass
+        return initial
+
+    def post(self, *args, **kwargs):
+        """Process POST HTTP request."""
+        if self.formset.is_valid():
+            self.formset.save()
+            return redirect(self.get_success_url())
+        else:
+            return super().get(*args, **kwargs)
+
+    def get_success_url(self):
+        """Return URL to redirect to after successful form submission."""
+        return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": self.edit.id})
+
+    def get_context_data(self, *args, **kwargs):
+        """Get template context data."""
+        context = super().get_context_data(*args, **kwargs)
+        context["product_range"] = self.product_range
+        context["formset"] = self.formset
+        return context

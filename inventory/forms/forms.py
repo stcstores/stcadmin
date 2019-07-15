@@ -247,3 +247,79 @@ class AddVariationOption(forms.Form):
         ).save()
         for value in product_option_values:
             self.edit.product_option_values.add(value)
+
+
+class NewDropDownValues(forms.Form):
+    """Form for adding values for a new product option to a product."""
+
+    def __init__(self, *args, **kwargs):
+        """Set up form fields."""
+        self.edit = kwargs.pop("edit")
+        self.product_range = kwargs.pop("product_range")
+        self.product = kwargs.pop("product")
+        super().__init__(*args, **kwargs)
+        self.fields["product_ID"] = forms.CharField(
+            widget=forms.HiddenInput, required=True
+        )
+        self.options = self.product_range.variation_options()
+        for option in self.options:
+            self.fields[
+                f"option_{option.name}"
+            ] = fields.PartialProductOptionValueSelect(
+                edit=self.edit, product_option=option
+            )
+
+    def clean(self):
+        """Validate the form."""
+        cleaned_data = super().clean()
+        for option in self.options:
+            if not cleaned_data[f"option_{option.name}"]:
+                self.add_error(
+                    f"option_{option.name}", "Product option value cannot be empty."
+                )
+        return cleaned_data
+
+    def variation(self):
+        """Return a dict of submitted product option values."""
+        return {k: v for k, v in self.cleaned_data.items() if k.startswith("option")}
+
+
+class NewDropDownValuesFormset(KwargFormSet):
+    """Formset for adding values for a new product option to a range."""
+
+    form = NewDropDownValues
+
+    def clean(self):
+        """Validate the formset."""
+        for form in self.forms:
+            variation = form.variation()
+            for otherform in (_ for _ in self.forms if _ != form):
+                if variation == otherform.variation():
+                    form.add_error(
+                        None, "This variation is not unique within the Product Range."
+                    )
+        for key in variation.keys():
+            if all((form.variation()[key] == variation[key] for form in self.forms)):
+                for form in self.forms:
+                    form.add_error(
+                        key,
+                        "Every variation cannot have the same value for a drop down. "
+                        "Should this be a listing option?",
+                    )
+        return super().clean()
+
+    @transaction.atomic
+    def save(self):
+        """Update the variation product options for a product range."""
+        models.PartialProductOptionValueLink.objects.filter(
+            product__product_range=self.forms[0].product_range
+        ).delete()
+        for form in self.forms:
+            product = models.PartialProduct.objects.get(
+                id=form.cleaned_data["product_ID"]
+            )
+            for option in form.options:
+                models.PartialProductOptionValueLink(
+                    product=product,
+                    product_option_value=form.cleaned_data[f"option_{option.name}"],
+                ).save()

@@ -8,6 +8,7 @@ from .print_barcodes import BarcodePDF, PrintBarcodeLabels  # NOQA
 from .product import ProductView  # NOQA
 from .product_editor import (  # NOQA
     AddDropdown,
+    AddDropdownValues,
     Continue,
     EditProduct,
     EditRangeDetails,

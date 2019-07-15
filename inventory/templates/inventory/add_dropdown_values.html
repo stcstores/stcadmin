@@ -1,0 +1,53 @@
+{% extends "inventory/base.html" %}
+
+{% block content %}
+<h1>{{ product_range }}</h1>
+{% if form.non_field_errors %}
+<ul class="error">
+  {% for error in form.non_field_errors %}
+  <li>{{ error }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+<form action="" method="POST">{% csrf_token %}
+  {{ formset.management_form }}
+  <table>
+    <tr>
+      <th></th>
+      {% for option in formset.0.options %}
+      <th>{{ option.name }}</th>
+      {% endfor %}
+    </tr>
+    {% for form in formset %}
+    <tr>
+      <th>{{ form.product.SKU }}</th>
+      {% for field in form.visible_fields %}
+      <td>
+        {{ field }}
+        {% if field.errors %}
+        <ul class="error">
+          {% for error in field.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </td>
+      {% endfor %}
+      {% if form.non_field_errors %}
+      <td>
+        <ul class="error">
+          {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+        </ul>
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </table>
+  {% for form in formset %}
+  {% for field in form.hidden_fields %}
+  {{ field }}
+  {% endfor %}
+  {% endfor %}
+  <button>Submit</button>
+</form>
+{% endblock %}

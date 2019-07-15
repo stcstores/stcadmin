@@ -117,6 +117,11 @@ product_editor_patterns = [
     path(
         "add_dropdown/<int:edit_ID>/", views.AddDropdown.as_view(), name="add_dropdown"
     ),
+    path(
+        "add_dropdown_values/<int:edit_ID>/",
+        views.AddDropdownValues.as_view(),
+        name="add_dropdown_values",
+    ),
 ]
 
 urlpatterns = inventory_urlpatterns + api_urlpatterns + product_editor_patterns

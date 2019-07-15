@@ -564,6 +564,22 @@ class ListingOption(OptionField, fieldtypes.SingleSelectize):
     pass
 
 
+class PartialProductOptionValueSelect(fieldtypes.SelectizeModelChoiceField):
+    """Select a product option value for a parital product."""
+
+    def __init__(self, *args, **kwargs):
+        """Select a product option value for a parital product."""
+        self.edit = kwargs.pop("edit")
+        self.product_option = kwargs.pop("product_option")
+        super().__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        """Return a queryset of selectable options."""
+        return self.edit.product_option_values.filter(
+            product_option=self.product_option
+        )
+
+
 class Brand(fieldtypes.SelectizeModelChoiceField):
     """Field for product department."""
 
