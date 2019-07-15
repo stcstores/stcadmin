@@ -1,18 +1,20 @@
 {% extends "inventory/base.html" %}
 {% load static %}
 
+{% block additional_head %}
+  <link rel="stylesheet" href="{% static 'css/edit_variations.css' %}">
+{% endblock %}
+
 {% block content %}
 <h1>Editing <span class="sku">{{ product_range.name }}</span></h1>
-<br><br>
 <div>
-  <a href="{% url 'inventory:edit_product' edit.pk %}"><button>Back</button></a>
   <a href="{% url 'inventory:add_dropdown' edit.pk %}">
     <button>Add a Dropdown to the Product Range</button>
   </a>
 </div>
-<div style="display: flex;flex-direction: row;">
+<div class="options">
   {% for option, values in product_options.items %}
-  <div>
+  <div class="option">
     <h4>{{ option.name|title }}</h4>
     <ul>
       {% for value in values %}
@@ -25,5 +27,6 @@
   </div>
   {% endfor %}
 </div>
+<a href="{% url 'inventory:edit_product' edit.pk %}"><button>Finish</button></a>
 
 {% endblock %}

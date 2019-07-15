@@ -1,0 +1,25 @@
+.options {
+  display: flex;
+  flex-direction: row;
+}
+
+.option {
+  border: 3px #ddd solid;
+  border-radius: 2em;
+  margin: 1em;
+  padding: 1em;
+}
+
+.option ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.option li {
+  background: #ddd;
+  border-radius: 0.5em;
+  color: #222;
+  margin: 0.5em;
+  padding: 0.5em;
+}
