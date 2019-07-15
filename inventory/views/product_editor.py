@@ -86,7 +86,11 @@ class EditProduct(InventoryUserMixin, TemplateView):
         """Return a dict of all possible variations for the range."""
         variations = {}
         products = product_range.products()
-        for options in itertools.product(*self.edit.variation_options().values()):
+        option_values = [
+            [value.value for value in option]
+            for option in self.edit.variation_options().values()
+        ]
+        for options in itertools.product(*option_values):
             for product in products:
                 if tuple(product.variation().values()) == options:
                     variations[options] = product
