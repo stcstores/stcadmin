@@ -1,5 +1,6 @@
 """Models for products."""
 
+import itertools
 import random
 import string
 
@@ -174,6 +175,46 @@ class PartialProductRange(models.Model):
                 partial_link.save()
         return partial_range
 
+    def _variations(self):
+        return [_.variation() for _ in self.products()]
+
+    def missing_variation_product_option_values(self, variations=None):
+        """Return False if any product is missing a variation product option value."""
+        if variations is None:
+            variations = self._variations()
+        if any((None in _.values() for _ in variations)):
+            return False
+        return True
+
+    def unique_variations(self, variations=None):
+        """Return True if all the ranges products have unique variation options."""
+        if variations is None:
+            variations = self._variations()
+        for a, b in itertools.combinations(variations, 2):
+            if a == b:
+                return False
+        return True
+
+    def product_options_have_multiple_values(self, variations=None):
+        """Return True if every variation product option has at least two values."""
+        if variations is None:
+            variations = self._variations()
+        for key in variations[0].keys():
+            if all((_[key] == variations[0][key] for _ in variations)):
+                return False
+        return True
+
+    def valid_variations(self):
+        """Return True if all the ranges products have valid variation options."""
+        variations = self._variations()
+        if not self.missing_variation_product_option_values(variations):
+            return False
+        if not self.unique_variations(variations):
+            return False
+        if not self.product_options_have_multiple_values(variations):
+            return False
+        return True
+
 
 class PartialProduct(models.Model):
     """Model for inventory products."""
@@ -246,10 +287,15 @@ class PartialProduct(models.Model):
 
     def variation(self):
         """Return the product's variation product options as a dict."""
-        return {
+        options = self.product_range.variation_options()
+        variation = {
             option.product_option.name: option.value
             for option in self.variable_options()
         }
+        for option in options:
+            if option.name not in variation:
+                variation[option.name] = None
+        return variation
 
     def listing_options(self):
         """Return the product's listing product options as a dict."""
