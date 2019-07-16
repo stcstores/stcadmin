@@ -137,10 +137,10 @@ class PartialProductRange(models.Model):
             product_option_value__product_option__in=self.variation_options(),
             product__product_range=self,
         )
-        option_values = {option.name: [] for option in self.product_options.all()}
+        option_values = {option: [] for option in self.product_options.all()}
         for value in values:
-            option_name = value.product_option_value.product_option.name
-            option_value = value.product_option_value.value
+            option_name = value.product_option_value.product_option
+            option_value = value.product_option_value
             option_values[option_name].append(option_value)
         for option, value_list in option_values.items():
             option_values[option] = set(value_list)
@@ -455,3 +455,10 @@ class ProductEdit(models.Model):
                 self.product_option_values.filter(product_option=option)
             )
         return variation_options
+
+    def used_options(self):
+        """Return the product options used in the product range."""
+        options = set()
+        for values in self.partial_product_range.variation_values().values():
+            options = options.union(values)
+        return options

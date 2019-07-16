@@ -112,6 +112,7 @@ class EditVariations(InventoryUserMixin, TemplateView):
         context["edit"] = edit
         context["product_range"] = edit.partial_product_range
         context["product_options"] = edit.variation_options()
+        context["used_values"] = edit.used_options()
         return context
 
 
@@ -271,3 +272,19 @@ class AddProductOptionValues(InventoryUserMixin, FormView):
         return reverse_lazy(
             "inventory:edit_variations", kwargs={"edit_ID": self.edit.pk}
         )
+
+
+class RemoveProductOptionValue(InventoryUserMixin, RedirectView):
+    """Remove an unused product option value from the edit's product option value list."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Remove a product option value and redirect."""
+        edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
+        option = get_object_or_404(
+            models.ProductOptionValue, pk=self.kwargs["option_value_ID"]
+        )
+        if option in edit.used_options():
+            raise Exception("option used")
+        else:
+            edit.product_option_values.remove(option)
+        return reverse_lazy("inventory:edit_variations", kwargs={"edit_ID": edit.pk})

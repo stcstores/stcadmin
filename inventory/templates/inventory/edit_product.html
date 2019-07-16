@@ -16,23 +16,24 @@
         <th>{{ option }}</th>
       {% endfor %}
       <th>SKU</th>
-      <th><a href=""><button>Edit All</button></a></th>
+      <th><a href=""><button>Edit / Create All</button></a></th>
     </tr>
     {% for options, product in variations.items %}
     <tr>
       {% for option in options %}<td>{{ option }}</td>{% endfor %}
       {% if product %}
-        <td>{{ product.SKU }}</td>
+        <td class="sku">{{ product.SKU }}</td>
         <td><a href=""><button>Edit</button></a></td>
       {% else %}
-        <td>No Product</td>
+        <td>Product does not exist</td>
+        <td>Create <input type="checkbox"></td>
       {% endif %}
     </tr>
     {% endfor %}
   </table>
   <form action="">
     <input name="edit_ID" value="{{ edit.pk }}" type="text" hidden>
-    <button>Discard Changes</button>
     <button>Save Changes</button>
+    <button>Discard Changes</button>
   </form>
 {% endblock %}

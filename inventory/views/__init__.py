@@ -14,6 +14,7 @@ from .product_editor import (  # NOQA
     EditProduct,
     EditRangeDetails,
     EditVariations,
+    RemoveProductOptionValue,
     StartEditingProduct,
 )
 from .product_order import ProductOrderView  # NOQA

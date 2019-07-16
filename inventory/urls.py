@@ -127,6 +127,11 @@ product_editor_patterns = [
         views.AddProductOptionValues.as_view(),
         name="add_product_option_values",
     ),
+    path(
+        "remove_product_option_value/<int:edit_ID>/<int:option_value_ID>/",
+        views.RemoveProductOptionValue.as_view(),
+        name="remove_product_option_value",
+    ),
 ]
 
 urlpatterns = inventory_urlpatterns + api_urlpatterns + product_editor_patterns

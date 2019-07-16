@@ -16,14 +16,21 @@
   {% for option, values in product_options.items %}
   <div class="option">
     <h4>{{ option.name|title }}</h4>
-    <ul>
-      {% for value in values %}
-      <li>{{ value.value }}</li>
-      {% endfor %}
+    {% for value in values %}
+    <div class="option_value">
+      <p>{{ value.value }}</p>
+      {% if value not in used_values %}
+      <a href="{% url 'inventory:remove_product_option_value' edit.pk value.pk %}">
+        <button>&#x2715;</button>
+      </a>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <div class="option_value">
       <a href="{% url 'inventory:add_product_option_values' edit.pk option.pk %}">
         <button>Add Option to Dropdown</button>
       </a>
-    </ul>
+    </div>
   </div>
   {% endfor %}
 </div>
