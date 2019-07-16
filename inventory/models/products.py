@@ -121,17 +121,15 @@ class ProductRange(models.Model):
         return self.product_set.count() > 1
 
     def variation_values(self):
-        """Return a dict of {option_name: set(option_values)} for the ranges variable options."""
+        """Return a dict of {option: set(option_values)} for the ranges variable options."""
         values = ProductOptionValueLink.objects.filter(
             product_option_value__product_option__in=self.variation_options(),
             product__product_range=self,
         )
-        option_values = {}
+        option_values = {option: [] for option in self.product_options.all()}
         for value in values:
-            option_name = value.product_option_value.product_option.name
-            option_value = value.product_option_value.value
-            if option_name not in option_values:
-                option_values[option_name] = []
+            option_name = value.product_option_value.product_option
+            option_value = value.product_option_value
             option_values[option_name].append(option_value)
         for option, value_list in option_values.items():
             option_values[option] = set(value_list)

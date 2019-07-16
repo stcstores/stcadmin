@@ -132,7 +132,7 @@ class PartialProductRange(models.Model):
         return self.partialproduct_set.count() > 1
 
     def variation_values(self):
-        """Return a dict of {option_name: set(option_values)} for the ranges variable options."""
+        """Return a dict of {option: set(option_values)} for the ranges variable options."""
         values = PartialProductOptionValueLink.objects.filter(
             product_option_value__product_option__in=self.variation_options(),
             product__product_range=self,
