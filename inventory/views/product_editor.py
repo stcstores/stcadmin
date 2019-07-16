@@ -17,7 +17,7 @@ from .views import InventoryUserMixin
 class Continue(InventoryUserMixin, TemplateView):
     """List of products being edited or created."""
 
-    template_name = "inventory/continue.html"
+    template_name = "inventory/product_editor/continue.html"
 
     def get_context_data(self, *args, **kwargs):
         """Return the context for the template."""
@@ -69,7 +69,7 @@ class StartEditingProduct(InventoryUserMixin, RedirectView):
 class EditProduct(InventoryUserMixin, TemplateView):
     """Main view for in progress product edits."""
 
-    template_name = "inventory/edit_product.html"
+    template_name = "inventory/product_editor/edit_product.html"
 
     def get_context_data(self, *args, **kwargs):
         """Return the context for the template."""
@@ -103,7 +103,7 @@ class EditProduct(InventoryUserMixin, TemplateView):
 class EditVariations(InventoryUserMixin, TemplateView):
     """View for editing the variation options of a range."""
 
-    template_name = "inventory/edit_variations.html"
+    template_name = "inventory/product_editor/edit_variations.html"
 
     def get_context_data(self, *args, **kwargs):
         """Return the context for the template."""
@@ -119,7 +119,7 @@ class EditVariations(InventoryUserMixin, TemplateView):
 class EditRangeDetails(DescriptionsView):
     """View for DescriptionForm."""
 
-    template_name = "inventory/edit_range_details.html"
+    template_name = "inventory/product_editor/edit_range_details.html"
 
     def dispatch(self, *args, **kwargs):
         """Process HTTP request."""
@@ -145,7 +145,7 @@ class AddDropdown(InventoryUserMixin, FormView):
     """Add a new variation product option to a partial product range."""
 
     form_class = forms.AddVariationOption
-    template_name = "inventory/add_dropdown.html"
+    template_name = "inventory/product_editor/add_dropdown.html"
 
     def get_form_kwargs(self, *args, **kwargs):
         """Return the kwargs for insanciating the form."""
@@ -175,7 +175,7 @@ class AddDropdown(InventoryUserMixin, FormView):
 class AddDropdownValues(InventoryUserMixin, TemplateView):
     """Add values to for a new dropdown."""
 
-    template_name = "inventory/add_dropdown_values.html"
+    template_name = "inventory/product_editor/add_dropdown_values.html"
 
     def dispatch(self, *args, **kwargs):
         """Load the formset."""
@@ -236,7 +236,7 @@ class AddProductOptionValues(InventoryUserMixin, FormView):
     """Add product option values to a product edit."""
 
     form_class = forms.AddProductOptionValuesForm
-    template_name = "inventory/add_product_option_values.html"
+    template_name = "inventory/product_editor/add_product_option_values.html"
 
     def dispatch(self, *args, **kwargs):
         """Get model objects."""
