@@ -13,6 +13,7 @@ from .product_editor import (  # NOQA
     Continue,
     EditProduct,
     EditRangeDetails,
+    EditVariation,
     EditVariations,
     RemoveProductOptionValue,
     StartEditingProduct,

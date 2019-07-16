@@ -23,7 +23,11 @@
       {% for option in options %}<td>{{ option }}</td>{% endfor %}
       {% if product %}
         <td class="sku">{{ product.SKU }}</td>
-        <td><a href=""><button>Edit</button></a></td>
+        <td>
+          <a href="{% url 'inventory:edit_variation' edit.pk product.pk %}">
+            <button>Edit</button>
+          </a>
+        </td>
       {% else %}
         <td>Product does not exist</td>
         <td>Create <input type="checkbox"></td>

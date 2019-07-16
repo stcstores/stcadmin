@@ -18,21 +18,13 @@ class ProductUpdater(BaseCloudCommerceUpdater):
     WIDTH_PRODUCT_OPTION_ID = 61990
     DATE_CREATED_PRODUCT_OPTION_ID = 41023
 
-    def __init__(self, db_object):
-        """
-        Instantiate the Product Updater.
-
-        args:
-            db_object (inventory.models.products.Product)
-        """
-        super().__init__(db_object)
-
     def set_supplier(self, supplier):
         """
         Set the product's supplier.
 
         args:
             supplier (inventory.models.suppliers.Supplier)
+
         """
         self._set_DB_supplier(supplier)
         self._set_CC_supplier(supplier)
@@ -58,6 +50,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             VAT_rate (inventory.models.vat_rates.VATRate)
+
         """
         self._set_DB_VAT_rate(VAT_rate)
         self._set_CC_VAT_rate(VAT_rate)
@@ -78,6 +71,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             brand (inventory.models.product_options.Brand)
+
         """
         self._set_DB_brand(brand)
         self._set_CC_brand(brand)
@@ -88,6 +82,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             manufacturer (inventory.models.product_options.Manufacturer)
+
         """
         self._set_DB_manufacturer(manufacturer)
         self._set_CC_manufacturer(manufacturer)
@@ -98,6 +93,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             package_type (inventory.models.product_options.PackageType)
+
         """
         self._set_DB_package_type(package_type)
         self._set_CC_package_type(package_type)
@@ -108,6 +104,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             international_shipping (inventory.models.product_options.InternationalShipping)
+
         """
         self._set_DB_international_shipping(international_shipping)
         self._set_CC_international_shipping(international_shipping)
@@ -118,6 +115,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             bays (list(inventory.models.locations.Bay))
+
         """
         self._set_DB_bays(bays)
         self._set_CC_bays(bays)
@@ -153,6 +151,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             product_option_value (inventory.models.product_options.ProductOptionValue)
+
         """
         self._set_DB_product_option_link(product_option_value)
         self._set_CC_product_option_link(product_option_value)
@@ -404,7 +403,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
         )
 
 
-class PartialProductUpdater(BaseCloudCommerceUpdater):
+class PartialProductUpdater(ProductUpdater):
     """Update a Partial Product in the database."""
 
     def set_supplier(self, supplier):
@@ -413,6 +412,7 @@ class PartialProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             supplier (inventory.models.suppliers.Supplier)
+
         """
         self._set_DB_supplier(supplier)
 
@@ -434,6 +434,7 @@ class PartialProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             VAT_rate (inventory.models.vat_rates.VATRate)
+
         """
         self._set_DB_VAT_rate(VAT_rate)
 
@@ -451,6 +452,7 @@ class PartialProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             brand (inventory.models.product_options.Brand)
+
         """
         self._set_DB_brand(brand)
 
@@ -460,6 +462,7 @@ class PartialProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             manufacturer (inventory.models.product_options.Manufacturer)
+
         """
         self._set_DB_manufacturer(manufacturer)
 
@@ -469,6 +472,7 @@ class PartialProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             package_type (inventory.models.product_options.PackageType)
+
         """
         self._set_DB_package_type(package_type)
 
@@ -478,6 +482,7 @@ class PartialProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             international_shipping (inventory.models.product_options.InternationalShipping)
+
         """
         self._set_DB_international_shipping(international_shipping)
 
@@ -487,6 +492,7 @@ class PartialProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             bays (list(inventory.models.locations.Bay))
+
         """
         self._set_DB_bays(bays)
 
@@ -516,5 +522,6 @@ class PartialProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             product_option_value (inventory.models.product_options.ProductOptionValue)
+
         """
         self._set_DB_product_option_link(product_option_value)

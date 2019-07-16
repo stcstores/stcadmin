@@ -2,10 +2,8 @@
 
 from django import forms
 from django.db import transaction
-from django.shortcuts import get_object_or_404
 
 from inventory import models
-from inventory.cloud_commerce_updater import ProductUpdater
 from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms import fields
 from stcadmin.forms import KwargFormSet
@@ -168,8 +166,8 @@ class ProductForm(ProductEditorBase, forms.Form):
     def save(self, *args, **kwargs):
         """Update product."""
         data = self.cleaned_data
-        product = get_object_or_404(models.Product, product_ID=data[self.PRODUCT_ID])
-        updater = ProductUpdater(product)
+        updater_class = kwargs["updater_class"]
+        updater = updater_class(self.product)
         updater.set_price(data[self.PRICE])
         updater.set_VAT_rate(data[self.VAT_RATE])
         updater.set_bays(data[self.BAYS])

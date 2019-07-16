@@ -8,7 +8,7 @@ from django.views.generic.base import RedirectView, TemplateView
 from django.views.generic.edit import FormView
 
 from inventory import forms, models
-from inventory.cloud_commerce_updater import PartialRangeUpdater
+from inventory.cloud_commerce_updater import PartialProductUpdater, PartialRangeUpdater
 
 from .descriptions import DescriptionsView
 from .views import InventoryUserMixin
@@ -288,3 +288,37 @@ class RemoveProductOptionValue(InventoryUserMixin, RedirectView):
         else:
             edit.product_option_values.remove(option)
         return reverse_lazy("inventory:edit_variations", kwargs={"edit_ID": edit.pk})
+
+
+class EditVariation(InventoryUserMixin, FormView):
+    """Edit individual variations in the product editor."""
+
+    template_name = "inventory/product_editor/edit_variation.html"
+    form_class = forms.ProductForm
+
+    def get_form_kwargs(self, *args, **kwargs):
+        """Return kwargs for form."""
+        kwargs = super().get_form_kwargs()
+        self.product = get_object_or_404(
+            models.PartialProduct, pk=self.kwargs["product_ID"]
+        )
+        self.edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
+        kwargs["product"] = self.product
+        return kwargs
+
+    def get_context_data(self, *args, **kwargs):
+        """Get template context data."""
+        context = super().get_context_data(*args, **kwargs)
+        context["edit"] = self.edit
+        context["product"] = self.product
+        context["product_range"] = self.product.product_range
+        return context
+
+    def form_valid(self, form):
+        """Process form request and return HttpResponse."""
+        form.save(updater_class=PartialProductUpdater)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return URL to redirect to after successful form submission."""
+        return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": self.edit.pk})
