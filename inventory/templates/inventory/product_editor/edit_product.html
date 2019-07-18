@@ -10,46 +10,47 @@
   <button>Edit Variation Options</button>
 </a>
 
-  <table>
-    <tr>
-      {% for option in product_range.variation_options %}
-        <th>{{ option }}</th>
-      {% endfor %}
-      <th>SKU</th>
-      <th>
-        <a href="{% url 'inventory:edit_all_variations' edit.pk %}">
-          <button>Edit / Create All</button>
-        </a>
-      </th>
-    </tr>
-    {% for options, product in variations.items %}
-    <tr>
-      {% for option in options %}<td>{{ option }}</td>{% endfor %}
-      {% if product %}
-        <td class="sku">{{ product.SKU }}</td>
-        <td>
-          {% if product.pre_existing %}
-          Existing Variation
-          {% else %}
-          New Variation
-          {% endif %}
-        </td>
-        <td>
-          <a href="{% url 'inventory:edit_variation' edit.pk product.pk %}">
-            <button>Edit</button>
-          </a>
-        </td>
-      {% else %}
-        <td></td>
-        <td>Non-existant Variation</td>
-        <td>Create <input type="checkbox"></td>
-      {% endif %}
-    </tr>
+<table>
+  <tr>
+    {% for option in product_range.variation_options %}
+    <th>{{ option }}</th>
     {% endfor %}
-  </table>
-  <form action="">
-    <input name="edit_ID" value="{{ edit.pk }}" type="text" hidden>
-    <button>Save Changes</button>
-    <button>Discard Changes</button>
-  </form>
+    <th>SKU</th>
+    <th>
+      <a href="{% url 'inventory:edit_all_variations' edit.pk %}">
+        <button>Edit / Create All</button>
+      </a>
+    </th>
+  </tr>
+  {% for options, product in variations.items %}
+  <tr>
+    {% for option in options %}<td>{{ option }}</td>{% endfor %}
+    {% if product %}
+    <td class="sku">{{ product.SKU }}</td>
+    <td>
+      {% if product.pre_existing %}
+      Existing Variation
+      {% else %}
+      New Variation
+      {% endif %}
+    </td>
+    <td>
+      <a href="{% url 'inventory:edit_variation' edit.pk product.pk %}">
+        <button>Edit</button>
+      </a>
+    </td>
+    {% else %}
+    <td></td>
+    <td>Non-existant Variation</td>
+    <td>Create <input type="checkbox"></td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+</table>
+
+<form action="">
+  <input name="edit_ID" value="{{ edit.pk }}" type="text" hidden>
+  <button>Save Changes</button>
+  <button>Discard Changes</button>
+</form>
 {% endblock %}
