@@ -16,7 +16,11 @@
         <th>{{ option }}</th>
       {% endfor %}
       <th>SKU</th>
-      <th><a href=""><button>Edit / Create All</button></a></th>
+      <th>
+        <a href="{% url 'inventory:edit_all_variations' edit.pk %}">
+          <button>Edit / Create All</button>
+        </a>
+      </th>
     </tr>
     {% for options, product in variations.items %}
     <tr>

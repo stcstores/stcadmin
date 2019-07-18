@@ -11,6 +11,7 @@ from .product_editor import (  # NOQA
     AddDropdownValues,
     AddProductOptionValues,
     Continue,
+    EditAllVariations,
     EditProduct,
     EditRangeDetails,
     EditVariation,

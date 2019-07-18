@@ -1,0 +1,113 @@
+{% extends "inventory/product_range/product_range_base.html" %}
+{% load staticfiles %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+<link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
+<script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+<script>{% include 'product_editor/widgets/product_widgets.js' %}</script>
+<link rel="stylesheet" href="{% static 'css/range_page.css' %}">
+{% endblock %}
+
+{% block content %}{{ block.super }}
+<div class="field_selection">
+    {% for field in formset.0.visible_fields %}
+        <button id="hide_{{ field.name }}" class="field_select{% if field.name in error_fields %} error{% endif %}">{{ field.label }}</button>
+    {% endfor %}
+</div>
+<div class="variation_selectors">
+    <table>
+        <th></th>
+        <td><button id="select_all">All</button>&nbsp;<button id="select_none">None</button></td>
+    {% for option, values in variations.items %}
+        <tr>
+            <th>{{ option.name }}</th>
+            <td>{% for value in values %}<button class="select_option">{{ value.value }}</button>&nbsp;{% endfor %}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+
+{% for error in formset.non_field_errors %}
+    {{ error }}
+{% endfor %}
+<form action="" method="POST">{% csrf_token %}
+  {{ formset.management_form }}
+  <table class="variation_table">
+      <tr>
+          {% for variation_field in variations %}
+          <th>{{ variation_field }}</th>
+          {% endfor %}
+          {% for listing_option in formset.0.product.listing_options.keys %}
+          {{ listing_option }}
+          {% endfor %}
+          <th>Supplier SKU</th>
+          {% for field in formset.0.visible_fields %}
+          <th class="field_cell {{ field.name }}">{{ field.label }}</th>
+          <th class="field_cell {{ field.name }}"></th>
+          {% endfor %}
+      </tr>
+      <tr class="copyrow">
+          {% for name in variations %}
+          <th></th>
+          {% endfor %}
+          {% for listing_option in formset.0.product.listing_options %}
+          <th></th>
+          {% endfor %}
+          <th></th>
+          {% for field in formset.0.visible_fields %}
+              <td class="field_cell {{ field.name }}">{{ field }}</td>
+          {% endfor %}
+          <td><button id="copybutton" type="button">Copy</button></td>
+      </tr>
+      <script>
+      $(document).ready(function() {
+          $('.copyrow input, .copyrow select').each(function() {
+              $(this).removeAttr('name');
+              $(this).removeAttr('id');
+          });
+      });
+      </script>
+      {% for form in formset %}
+      <tr class="product">
+          {% for name, value in form.product.variation.items %}
+          <th class="option">{{ value }}</th>
+          {% endfor %}
+          {% for listing_option in form.product.listing_options.values %}
+          {{ listing_option }}
+          {% endfor %}
+          <td class="sku">{{ form.product.supplier_SKU }}</td>
+          {% for field in form.visible_fields %}
+          <td class="field_cell {{ field.name }}">{{ field }}</td>
+          {% endfor %}
+          {% for field in form.visible_fields %}
+          {% if field.errors %}
+              <td class="error field_cell {{ field.name }}">{{ field.errors }}</td>
+          {% endif %}
+          {% endfor %}
+
+          <td><input type="checkbox" class="copy_checkbox"></td>
+          {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+      {% endfor %}
+      </tr>
+      <th colspan="{{ formset.0.variation_options | length | add:"2" }}">
+          <a href="{% url 'inventory:edit_product' edit.pk %}">
+            <button type="button">Back</button>
+          </a>
+          <button type="submit">Save</button>
+      </th>
+  </table>
+</form>
+
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script src="{% static 'scripts/variation_form.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    var table_width = $('.variation_table').find("tr:first th").length;
+    $('.save_row').attr('colspan', table_width);
+  });
+</script>
+{% endblock %}

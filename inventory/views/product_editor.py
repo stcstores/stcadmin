@@ -322,3 +322,41 @@ class EditVariation(InventoryUserMixin, FormView):
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
         return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": self.edit.pk})
+
+
+class EditAllVariations(InventoryUserMixin, TemplateView):
+    """View for editing partial product variations."""
+
+    template_name = "inventory/product_editor/edit_all_variations.html"
+
+    def dispatch(self, *args, **kwargs):
+        """Load the formset."""
+        self.edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
+        self.product_range = self.edit.partial_product_range
+        self.formset = forms.VariationsFormSet(
+            self.request.POST or None,
+            form_kwargs=[{"product": p} for p in self.product_range.products()],
+        )
+        return super().dispatch(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        """Process POST HTTP request."""
+        if self.formset.is_valid():
+            for form in self.formset:
+                form.save(updater_class=PartialProductUpdater)
+            return redirect(self.get_success_url())
+        else:
+            return super().get(*args, **kwargs)
+
+    def get_success_url(self):
+        """Return URL to redirect to after successful form submission."""
+        return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": self.edit.pk})
+
+    def get_context_data(self, *args, **kwargs):
+        """Get template context data."""
+        context = super().get_context_data(*args, **kwargs)
+        context["edit"] = self.edit
+        context["product_range"] = self.product_range
+        context["formset"] = self.formset
+        context["variations"] = self.product_range.variation_values()
+        return context
