@@ -178,15 +178,15 @@ class PartialProductRange(models.Model):
     def _variations(self):
         return [_.variation() for _ in self.products()]
 
-    def missing_variation_product_option_values(self, variations=None):
-        """Return False if any product is missing a variation product option value."""
+    def has_missing_variation_product_option_values(self, variations=None):
+        """Return True if any product is missing a variation product option value."""
         if variations is None:
             variations = self._variations()
         if any((None in _.values() for _ in variations)):
-            return False
-        return True
+            return True
+        return False
 
-    def unique_variations(self, variations=None):
+    def all_unique_variations(self, variations=None):
         """Return True if all the ranges products have unique variation options."""
         if variations is None:
             variations = self._variations()
@@ -207,7 +207,7 @@ class PartialProductRange(models.Model):
     def valid_variations(self):
         """Return True if all the ranges products have valid variation options."""
         variations = self._variations()
-        if not self.missing_variation_product_option_values(variations):
+        if self.has_missing_variation_product_option_values(variations):
             return False
         if not self.unique_variations(variations):
             return False

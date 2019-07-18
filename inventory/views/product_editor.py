@@ -71,12 +71,23 @@ class EditProduct(InventoryUserMixin, TemplateView):
 
     template_name = "inventory/product_editor/edit_product.html"
 
+    def dispatch(self, *args, **kwargs):
+        """If the product range is missing product option values redirect."""
+        self.edit = models.ProductEdit.objects.get(pk=self.kwargs["edit_ID"])
+        self.product_range = self.edit.partial_product_range
+        if self.product_range.has_missing_variation_product_option_values():
+            return redirect(
+                reverse_lazy(
+                    "inventory:add_dropdown_values", kwargs={"edit_ID": self.edit.pk}
+                )
+            )
+        return super().dispatch(*args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         """Return the context for the template."""
         context = super().get_context_data(*args, **kwargs)
-        self.edit = models.ProductEdit.objects.get(pk=self.kwargs["edit_ID"])
         context["edit"] = self.edit
-        context["product_range"] = self.edit.partial_product_range
+        context["product_range"] = self.product_range
         context["variations"] = self.get_variation_matrix(
             self.edit.partial_product_range
         )
