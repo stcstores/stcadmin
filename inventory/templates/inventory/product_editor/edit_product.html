@@ -28,12 +28,20 @@
       {% if product %}
         <td class="sku">{{ product.SKU }}</td>
         <td>
+          {% if product.pre_existing %}
+          Existing Variation
+          {% else %}
+          New Variation
+          {% endif %}
+        </td>
+        <td>
           <a href="{% url 'inventory:edit_variation' edit.pk product.pk %}">
             <button>Edit</button>
           </a>
         </td>
       {% else %}
-        <td>Product does not exist</td>
+        <td></td>
+        <td>Non-existant Variation</td>
         <td>Create <input type="checkbox"></td>
       {% endif %}
     </tr>

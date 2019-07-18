@@ -165,6 +165,7 @@ class PartialProductRange(models.Model):
             product_range=product_range
         ).values():
             product_data["product_range"] = partial_range
+            product_data["pre_existing"] = True
             product = PartialProduct(**product_data)
             product.save()
             links = ProductOptionValueLink.objects.filter(product=product_data["id"])
@@ -265,6 +266,7 @@ class PartialProduct(models.Model):
     range_order = models.PositiveSmallIntegerField(default=0)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=CREATING)
     date_created = models.DateField(auto_now_add=True)
+    pre_existing = models.BooleanField(default=False)
 
     class Meta:
         """Meta class for Products."""
