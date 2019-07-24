@@ -97,7 +97,7 @@ class ProductLoader(ProductEditorBase):
             self.LOCATION: self.get_location_data(self, product),
             self.SUPPLIER: product.supplier.factory_name,
             self.SUPPLIER_SKU: product.supplier_sku,
-            self.WEIGHT: product.weight,
+            self.WEIGHT: int(product.weight),
             self.DIMENSIONS: self.get_dimension_data(self, product),
             self.PACKAGE_TYPE: product.package_type,
             self.BRAND: product.brand,
