@@ -92,6 +92,9 @@ class EditProduct(InventoryUserMixin, TemplateView):
         context["variations"] = self.get_variation_matrix(
             self.edit.partial_product_range
         )
+        context["ready_to_save"] = self.product_range.valid_variations() and all(
+            (p.is_complete() for p in self.product_range.products())
+        )
         return context
 
     def get_variation_matrix(self, product_range):
@@ -398,7 +401,10 @@ class CreateVariation(InventoryUserMixin, RedirectView):
     def create_product(self, product_range, options):
         """Create the new partial product."""
         sku = models.PartialProduct.get_new_SKU()
-        product = models.PartialProduct(SKU=sku, product_range=product_range)
+        product_data = product_range.range_wide_values()
+        product_data["product_range"] = product_range
+        product_data["SKU"] = sku
+        product = models.PartialProduct(**product_data)
         product.save()
         for option in options:
             models.PartialProductOptionValueLink(

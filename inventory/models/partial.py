@@ -204,11 +204,29 @@ class PartialProductRange(models.Model):
         variations = self._variations()
         if self.has_missing_variation_product_option_values(variations):
             return False
-        if not self.unique_variations(variations):
+        if not self.all_unique_variations(variations):
             return False
         if not self.product_options_have_multiple_values(variations):
             return False
         return True
+
+    def range_wide_values(self):
+        """Return a dict of field values that are the same across the range."""
+        data = PartialProduct.objects.filter(product_range=self).values()
+        ignore_keys = (
+            "original_product_id",
+            "product_range_id",
+            "pre_existing",
+            "date_created",
+            "status",
+            "range_order",
+            "end_of_line",
+        )
+        keys = []
+        for key in data[0].keys():
+            if len(set((data[_][key] for _ in range(len(data))))) == 1:
+                keys.append(key)
+        return {k: v for k, v in data[0].items() if k not in ignore_keys and k in keys}
 
 
 class PartialProduct(models.Model):
