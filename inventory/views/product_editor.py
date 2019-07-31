@@ -2,6 +2,7 @@
 
 import itertools
 
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView, TemplateView
@@ -98,7 +99,7 @@ class EditProduct(InventoryUserMixin, TemplateView):
         variations = {}
         products = product_range.products()
         option_values = [
-            [value.value for value in option]
+            [value for value in option]
             for option in self.edit.variation_options().values()
         ]
         for options in itertools.product(*option_values):
@@ -371,3 +372,47 @@ class EditAllVariations(InventoryUserMixin, TemplateView):
         context["formset"] = self.formset
         context["variations"] = self.product_range.variation_values()
         return context
+
+
+class CreateVariation(InventoryUserMixin, RedirectView):
+    """View for creating new variations."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Create new variation and redirect."""
+        edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
+        product_range = edit.partial_product_range
+        options = self.get_product_options()
+        self.create_product(product_range, options)
+        return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": edit.pk})
+
+    def get_product_options(self):
+        """Return a list of the new products variation product options."""
+        options = [
+            get_object_or_404(models.ProductOptionValue, id=option_id)
+            for key, option_id in self.request.POST.items()
+            if key.isdigit()
+        ]
+        return options
+
+    @transaction.atomic
+    def create_product(self, product_range, options):
+        """Create the new partial product."""
+        sku = models.PartialProduct.get_new_SKU()
+        product = models.PartialProduct(SKU=sku, product_range=product_range)
+        product.save()
+        for option in options:
+            models.PartialProductOptionValueLink(
+                product=product, product_option_value=option
+            ).save()
+
+
+class DeleteVariation(InventoryUserMixin, RedirectView):
+    """Delete a partial product."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Delete the variation and redirect."""
+        edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
+        product = get_object_or_404(models.PartialProduct, pk=self.kwargs["product_ID"])
+        if not product.pre_existing:
+            product.delete()
+        return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": edit.pk})

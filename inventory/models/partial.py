@@ -97,13 +97,7 @@ class PartialProductRange(models.Model):
         """Save the model instance."""
         if not self.SKU:
             self.SKU = self.get_new_SKU()
-        if not self.range_ID:
-            self.range_ID = self.create_CC_range()
         super().clean(*args, **kwargs)
-
-    def create_CC_range(self):
-        """Create a new Product Range in Cloud Commerce."""
-        return CCAPI.create_range(self.name, sku=self.SKU)
 
     def product_count(self):
         """Return the number of products in this Range."""
@@ -277,26 +271,25 @@ class PartialProduct(models.Model):
     def __str__(self):
         return f"{self.SKU}: {self.full_name}"
 
+    @classmethod
+    def get_new_SKU(cls):
+        """Return an unused Range SKU."""
+        existing_SKUs = cls._base_manager.values_list("SKU", flat=True)
+        return unique_SKU(existing_SKUs, cls.generate_SKU)
+
     def name(self):
         """Return the product's name."""
         return self.product_range.name
-
-    def save(self, *args, **kwargs):
-        """Create a new product if the product ID is not set."""
-        if not self.product_ID:
-            self.product_ID = self.CC_create_product()
-        super().save(*args, **kwargs)
 
     def variation(self):
         """Return the product's variation product options as a dict."""
         options = self.product_range.variation_options()
         variation = {
-            option.product_option.name: option.value
-            for option in self.variable_options()
+            option.product_option: option for option in self.variable_options()
         }
         for option in options:
-            if option.name not in variation:
-                variation[option.name] = None
+            if option not in variation:
+                variation[option] = None
         return variation
 
     def listing_options(self):
@@ -372,16 +365,28 @@ class PartialProduct(models.Model):
         except ProductOptionValue.DoesNotExist:
             return None
 
-    def CC_create_product(self):
-        """Create the product in Cloud Commerce."""
-        CCAPI.create_product(
-            self.product_range.range_ID,
-            self.product_range.name,
+    def is_complete(self):
+        """Return True if the product is valid and complete, otherwise return False."""
+        not_none_fields = (
+            self.product_range,
+            self.SKU,
             self.barcode,
-            sku=self.SKU,
-            description=self.description,
-            vat_rate_id=int(self.VAT_rate.percentage * 100),
+            self.supplier,
+            self.purchase_price,
+            self.VAT_rate,
+            self.price,
+            self.brand,
+            self.manufacturer,
+            self.package_type,
+            self.international_shipping,
+            self.weight_grams,
+            self.multipack,
+            self.end_of_line,
+            self.range_order,
         )
+        if None in not_none_fields:
+            return False
+        return True
 
 
 class PartialProductRangeSelectedOption(models.Model):

@@ -142,6 +142,16 @@ product_editor_patterns = [
         views.EditAllVariations.as_view(),
         name="edit_all_variations",
     ),
+    path(
+        "create_variation/<int:edit_ID>/",
+        views.CreateVariation.as_view(),
+        name="create_variation",
+    ),
+    path(
+        "delete_variation/<int:edit_ID>/<int:product_ID>/",
+        views.DeleteVariation.as_view(),
+        name="delete_variation",
+    ),
 ]
 
 urlpatterns = inventory_urlpatterns + api_urlpatterns + product_editor_patterns

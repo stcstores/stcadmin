@@ -18,22 +18,25 @@
     <th>SKU</th>
     <th>
       <a href="{% url 'inventory:edit_all_variations' edit.pk %}">
-        <button>Edit / Create All</button>
+        <button>Edit All</button>
       </a>
     </th>
   </tr>
   {% for options, product in variations.items %}
   <tr>
-    {% for option in options %}<td>{{ option }}</td>{% endfor %}
+    {% for option in options %}<td>{{ option.value }}</td>{% endfor %}
     {% if product %}
     <td class="sku">{{ product.SKU }}</td>
-    <td>
-      {% if product.pre_existing %}
-      Existing Variation
-      {% else %}
-      New Variation
-      {% endif %}
-    </td>
+    {% if product.pre_existing %}
+    <td>Existing Variation</td>
+    {% else %}
+    <td>New Variation</td>
+    {% endif %}
+    {% if product.is_complete %}
+      <td class="positive">Complete</td>
+    {% else %}
+      <td class="error">Incomplete</td>
+    {% endif %}
     <td>
       <a href="{% url 'inventory:edit_variation' edit.pk product.pk %}">
         <button>Edit</button>
@@ -42,7 +45,21 @@
     {% else %}
     <td></td>
     <td>Non-existant Variation</td>
-    <td>Create <input type="checkbox"></td>
+    <td colspan="2">
+      <form action="{% url 'inventory:create_variation' edit.id %}" method="POST" class="create_variation_form">{% csrf_token %}
+        {% for option in options %}
+        <input type="hidden" name="{{ option.product_option.id }}" value="{{ option.id }}">
+        {% endfor %}
+        <button>Create</button>
+      </form>
+    </td>
+    {% endif %}
+    {% if product and product.pre_existing is False %}
+    <td>
+      <a class="delete_variation" href="{% url 'inventory:delete_variation' edit.id product.id %}">
+        <button>Delete</button>
+      </a>
+    </td>
     {% endif %}
   </tr>
   {% endfor %}
@@ -53,4 +70,16 @@
   <button>Save Changes</button>
   <button>Discard Changes</button>
 </form>
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+  $(document).ready(function(){
+    $(".delete_variation").click(function(e) {
+      if (!confirm('Are you sure you want to delete this variation?')) {
+        e.preventDefault();
+      }
+    });
+  });
+</script>
 {% endblock %}
