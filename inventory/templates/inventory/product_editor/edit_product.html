@@ -12,10 +12,10 @@
 
 <table>
   <tr>
+    <th>SKU</th>
     {% for option in product_range.variation_options %}
     <th>{{ option }}</th>
     {% endfor %}
-    <th>SKU</th>
     <th>
       <a href="{% url 'inventory:edit_all_variations' edit.pk %}">
         <button>Edit All</button>
@@ -24,9 +24,9 @@
   </tr>
   {% for options, product in variations.items %}
   <tr>
+    <td class="sku">{{ product.SKU }}</td>
     {% for option in options %}<td>{{ option.value }}</td>{% endfor %}
     {% if product %}
-    <td class="sku">{{ product.SKU }}</td>
     {% if product.pre_existing %}
     <td>Existing Variation</td>
     {% else %}
@@ -37,39 +37,36 @@
     {% else %}
       <td class="error">Incomplete</td>
     {% endif %}
-    <td>
+    <th>
       <a href="{% url 'inventory:edit_variation' edit.pk product.pk %}">
         <button>Edit</button>
       </a>
-    </td>
+      {% if product.pre_existing is False %}
+      <a class="delete_variation" href="{% url 'inventory:delete_variation' edit.id product.id %}">
+        <button>Delete</button>
+      </a>
+      {% endif %}
+    </th>
     {% else %}
     <td></td>
-    <td>Non-existant Variation</td>
-    <td colspan="2">
+    <td>Does not exist</td>
+    <th>
       <form action="{% url 'inventory:create_variation' edit.id %}" method="POST" class="create_variation_form">{% csrf_token %}
         {% for option in options %}
         <input type="hidden" name="{{ option.product_option.id }}" value="{{ option.id }}">
         {% endfor %}
         <button>Create</button>
       </form>
-    </td>
-    {% endif %}
-    {% if product and product.pre_existing is False %}
-    <td>
-      <a class="delete_variation" href="{% url 'inventory:delete_variation' edit.id product.id %}">
-        <button>Delete</button>
-      </a>
-    </td>
+    </th>
     {% endif %}
   </tr>
   {% endfor %}
 </table>
 
-<form action="">
-  <input name="edit_ID" value="{{ edit.pk }}" type="text" hidden>
-  <button>Save Changes</button>
-  <button>Discard Changes</button>
-</form>
+
+<button{% if not ready_to_save %} disabled{% endif %}>Save Changes</button>
+<button>Discard Changes</button>
+
 {% endblock %}
 
 {% block script %}{{ block.super }}
