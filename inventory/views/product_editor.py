@@ -276,6 +276,10 @@ class RemoveDropdown(InventoryUserMixin, RedirectView):
         edit.product_option_values.set(
             edit.product_option_values.exclude(product_option=option)
         )
+        models.PartialProductOptionValueLink.objects.filter(
+            product__product_range=edit.partial_product_range,
+            product_option_value__product_option=option,
+        ).delete()
         return reverse_lazy("inventory:edit_variations", kwargs={"edit_ID": edit.pk})
 
 

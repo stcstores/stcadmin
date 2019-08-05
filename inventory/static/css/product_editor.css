@@ -13,3 +13,8 @@
   display: flex;
   width: 100%;
 }
+
+.add_dropdown_values .selectize-input.disabled {
+  color: black;
+  opacity: 1;
+}

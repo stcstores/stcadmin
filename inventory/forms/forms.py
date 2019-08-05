@@ -262,11 +262,15 @@ class NewDropDownValues(forms.Form):
         )
         self.options = self.product_range.variation_options()
         for option in self.options:
-            self.fields[
-                f"option_{option.name}"
-            ] = fields.PartialProductOptionValueSelect(
+            name = f"option_{option.name}"
+            self.fields[name] = fields.PartialProductOptionValueSelect(
                 edit=self.edit, product_option=option
             )
+            option_link = models.PartialProductRangeSelectedOption.objects.get(
+                product_range=self.product_range, product_option=option
+            )
+            if option_link.pre_existing is True:
+                self.fields[name].widget.attrs["disabled"] = True
 
     def clean(self):
         """Validate the form."""
