@@ -422,3 +422,16 @@ class DeleteVariation(InventoryUserMixin, RedirectView):
         if not product.pre_existing:
             product.delete()
         return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": edit.pk})
+
+
+class DiscardChanges(InventoryUserMixin, RedirectView):
+    """Discard changes in product editor."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Delete the variation and redirect."""
+        edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
+        product_range_ID = edit.partial_product_range.range_ID
+        edit.delete()
+        return reverse_lazy(
+            "inventory:product_range", kwargs={"range_id": product_range_ID}
+        )

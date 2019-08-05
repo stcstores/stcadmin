@@ -152,6 +152,11 @@ product_editor_patterns = [
         views.DeleteVariation.as_view(),
         name="delete_variation",
     ),
+    path(
+        "discard_changes/<int:edit_ID>/",
+        views.DiscardChanges.as_view(),
+        name="discard_changes",
+    ),
 ]
 
 urlpatterns = inventory_urlpatterns + api_urlpatterns + product_editor_patterns

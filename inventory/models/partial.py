@@ -142,7 +142,7 @@ class PartialProductRange(models.Model):
 
     @classmethod
     def copy_range(cls, product_range):
-        """Return a PartialRange with PartialProducts matching this ragne."""
+        """Return a PartialRange with PartialProducts matching this range."""
         range_data = ProductRange.objects.filter(pk=product_range.pk).values()[0]
         partial_range = PartialProductRange(**range_data)
         partial_range.save()
@@ -168,6 +168,7 @@ class PartialProductRange(models.Model):
                     product=product, product_option_value=link.product_option_value
                 )
                 partial_link.save()
+            product.bays.set(Product.objects.get(id=product_data["id"]).bays.all())
         return partial_range
 
     def _variations(self):
@@ -487,3 +488,8 @@ class ProductEdit(models.Model):
         for values in self.partial_product_range.variation_values().values():
             options = options.union(values)
         return options
+
+    def delete(self, *args, **kwargs):
+        """Delete the product edit and associated products."""
+        self.partial_product_range.delete()
+        super().delete(*args, **kwargs)

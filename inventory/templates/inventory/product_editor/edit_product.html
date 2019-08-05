@@ -65,7 +65,9 @@
 
 
 <button{% if not ready_to_save %} disabled{% endif %}>Save Changes</button>
-<button>Discard Changes</button>
+<a id="discard_changes" href="{% url 'inventory:discard_changes' edit.id %}">
+  <button>Discard Changes</button>
+</a>
 
 {% endblock %}
 
@@ -74,6 +76,11 @@
   $(document).ready(function(){
     $(".delete_variation").click(function(e) {
       if (!confirm('Are you sure you want to delete this variation?')) {
+        e.preventDefault();
+      }
+    });
+    $("#discard_changes").click(function(e) {
+      if (!confirm('Are you sure you want to discard all changes?')) {
         e.preventDefault();
       }
     });

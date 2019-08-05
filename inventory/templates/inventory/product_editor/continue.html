@@ -2,15 +2,23 @@
 
 {% block content %}
 <div>
-  <h2>Your in progress edits</h2>
+  <h2>Your in progress product changes</h2>
+  {% if user_edits %}
   {% for edit in user_edits %}
   <a href="{% url 'inventory:edit_product' edit.id %}">{{ edit }}</a>
   {% endfor %}
+  {% else %}
+  <p>You do not have any in progress product changes.</p>
+  {% endif %}
 </div>
 <div>
-  <h2>Other User's in progress edits</h2>
+  <h2>Other User's in progress product changes</h2>
+  {% if others_edits %}
   {% for edit in others_edits %}
   {{ edit.user }}: <a href="{% url 'inventory:edit_product' edit.id %}">{{ edit }}</a>
   {% endfor %}
+  {% else %}
+  <p>No other users have in progress product changes.</p>
+  {% endif %}
 </div>
 {% endblock %}
