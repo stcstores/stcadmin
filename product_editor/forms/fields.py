@@ -659,10 +659,10 @@ class AmazonSearchTerms(ListOption):
     maximum = 5
 
 
-class AddDropdown(fieldtypes.SelectizeModelChoiceField):
+class SelectProductOption(fieldtypes.SelectizeModelChoiceField):
     """Field for selecting the package type of a product."""
 
-    label = "Drop Down"
+    label = "Product Option"
     name = "product_option"
     required_message = "A <b>Package Type</b> must be supplied."
     help_text = (
@@ -680,7 +680,7 @@ class AddDropdown(fieldtypes.SelectizeModelChoiceField):
         """Return a queryset of selectable options."""
         queryset = models.ProductOption.objects.filter(inactive=False)
         if self.product_range is not None:
-            selected_options = self.product_range.variation_options()
+            selected_options = self.product_range.product_options.all()
             queryset = queryset.difference(selected_options)
         return queryset
 

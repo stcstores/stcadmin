@@ -199,24 +199,28 @@ class VariationsFormSet(KwargFormSet):
     form = VariationForm
 
 
-class AddVariationOption(forms.Form):
+class AddProductOption(forms.Form):
     """Add a new variation product option to a partial product range."""
 
     def __init__(self, *args, **kwargs):
         """Instanciate the form."""
         self.edit = kwargs.pop("edit")
+        self.variation = kwargs.pop("variation")
         self.product_range = self.edit.partial_product_range
         super().__init__(*args, **kwargs)
         self.add_fields()
 
     def add_fields(self):
         """Add fields to the form."""
-        self.fields["option"] = fields.AddDropdown(product_range=self.product_range)
+        self.fields["option"] = fields.SelectProductOption(
+            product_range=self.product_range
+        )
         for option_ID, name in self.fields["option"].choices:
             if not option_ID:
                 continue
             self.fields[f"values_{option_ID}"] = fields.VariationOptions(
                 product_option=models.ProductOption.objects.get(pk=option_ID),
+                product_range=self.product_range,
                 label=name,
                 required=False,
             )
@@ -226,7 +230,7 @@ class AddVariationOption(forms.Form):
         cleaned_data = super().clean()
         values_field_name = f"values_{cleaned_data['option'].pk}"
         cleaned_data["values"] = cleaned_data[values_field_name]
-        if len(cleaned_data["values"]) < 2:
+        if self.variation is True and len(cleaned_data["values"]) < 2:
             self.add_error(
                 values_field_name,
                 "At least two variation options must be selected for each dropdown.",
@@ -241,14 +245,14 @@ class AddVariationOption(forms.Form):
         models.PartialProductRangeSelectedOption(
             product_range=self.product_range,
             product_option=product_option,
-            variation=True,
+            variation=self.variation,
             pre_existing=False,
         ).save()
         for value in product_option_values:
             self.edit.product_option_values.add(value)
 
 
-class NewDropDownValues(forms.Form):
+class SetProductOptionValues(forms.Form):
     """Form for adding values for a new product option to a product."""
 
     def __init__(self, *args, **kwargs):
@@ -260,7 +264,7 @@ class NewDropDownValues(forms.Form):
         self.fields["product_ID"] = forms.CharField(
             widget=forms.HiddenInput, required=True
         )
-        self.options = self.product_range.variation_options()
+        self.options = self.product_range.product_options.all()
         for option in self.options:
             name = f"option_{option.name}"
             self.fields[name] = fields.PartialProductOptionValueSelect(
@@ -287,10 +291,10 @@ class NewDropDownValues(forms.Form):
         return {k: v for k, v in self.cleaned_data.items() if k.startswith("option")}
 
 
-class NewDropDownValuesFormset(KwargFormSet):
+class SetProductOptionValuesFormset(KwargFormSet):
     """Formset for adding values for a new product option to a range."""
 
-    form = NewDropDownValues
+    form = SetProductOptionValues
 
     def clean(self):
         """Validate the formset."""

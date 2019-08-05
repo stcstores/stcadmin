@@ -8,7 +8,7 @@ from .print_barcodes import BarcodePDF, PrintBarcodeLabels  # NOQA
 from .product import ProductView  # NOQA
 from .product_editor import (  # NOQA
     AddDropdown,
-    AddDropdownValues,
+    AddListingOption,
     AddProductOptionValues,
     Continue,
     CreateVariation,
@@ -21,6 +21,7 @@ from .product_editor import (  # NOQA
     EditVariations,
     RemoveDropdown,
     RemoveProductOptionValue,
+    SetProductOptionValues,
     StartEditingProduct,
 )
 from .product_order import ProductOrderView  # NOQA

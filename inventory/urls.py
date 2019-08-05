@@ -118,9 +118,14 @@ product_editor_patterns = [
         "add_dropdown/<int:edit_ID>/", views.AddDropdown.as_view(), name="add_dropdown"
     ),
     path(
-        "add_dropdown_values/<int:edit_ID>/",
-        views.AddDropdownValues.as_view(),
-        name="add_dropdown_values",
+        "add_listing_option/<int:edit_ID>/",
+        views.AddListingOption.as_view(),
+        name="add_listing_option",
+    ),
+    path(
+        "set_product_option_values/<int:edit_ID>/",
+        views.SetProductOptionValues.as_view(),
+        name="set_product_option_values",
     ),
     path(
         "add_product_option_values/<int:edit_ID>/<int:product_option_ID>/",

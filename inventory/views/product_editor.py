@@ -76,10 +76,11 @@ class EditProduct(InventoryUserMixin, TemplateView):
         """If the product range is missing product option values redirect."""
         self.edit = models.ProductEdit.objects.get(pk=self.kwargs["edit_ID"])
         self.product_range = self.edit.partial_product_range
-        if self.product_range.has_missing_variation_product_option_values():
+        if self.product_range.has_missing_product_option_values():
             return redirect(
                 reverse_lazy(
-                    "inventory:add_dropdown_values", kwargs={"edit_ID": self.edit.pk}
+                    "inventory:set_product_option_values",
+                    kwargs={"edit_ID": self.edit.pk},
                 )
             )
         return super().dispatch(*args, **kwargs)
@@ -126,7 +127,9 @@ class EditVariations(InventoryUserMixin, TemplateView):
         context = super().get_context_data(*args, **kwargs)
         context["edit"] = edit
         context["product_range"] = edit.partial_product_range
-        context["product_options"] = edit.variation_options()
+        context["variation_options"] = edit.partial_product_range.variation_options()
+        context["listing_options"] = edit.partial_product_range.listing_options()
+        context["values"] = edit.product_option_values.all()
         context[
             "pre_existing_options"
         ] = edit.partial_product_range.pre_existing_options()
@@ -159,17 +162,21 @@ class EditRangeDetails(DescriptionsView):
         return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": self.edit.pk})
 
 
-class AddDropdown(InventoryUserMixin, FormView):
-    """Add a new variation product option to a partial product range."""
+class AddProductOption(InventoryUserMixin, FormView):
+    """Add a new product option to a partial product range."""
 
-    form_class = forms.AddVariationOption
-    template_name = "inventory/product_editor/add_dropdown.html"
+    form_class = forms.AddProductOption
+    template_name = "inventory/product_editor/add_product_option.html"
+
+    name = None
+    variation = None
 
     def get_form_kwargs(self, *args, **kwargs):
         """Return the kwargs for insanciating the form."""
         kwargs = super().get_form_kwargs(*args, **kwargs)
         self.edit = get_object_or_404(models.ProductEdit, pk=self.kwargs.get("edit_ID"))
         kwargs["edit"] = self.edit
+        kwargs["variation"] = self.variation
         return kwargs
 
     def get_context_data(self, *args, **kwargs):
@@ -177,6 +184,7 @@ class AddDropdown(InventoryUserMixin, FormView):
         context = super().get_context_data(*args, **kwargs)
         context["edit"] = self.edit
         context["product_range"] = self.edit.partial_product_range
+        context["name"] = self.name
         return context
 
     def form_valid(self, form):
@@ -187,20 +195,34 @@ class AddDropdown(InventoryUserMixin, FormView):
     def get_success_url(self):
         """Return the URL to redirect to on a successful form submission."""
         return reverse_lazy(
-            "inventory:add_dropdown_values", kwargs={"edit_ID": self.edit.pk}
+            "inventory:set_product_option_values", kwargs={"edit_ID": self.edit.pk}
         )
 
 
-class AddDropdownValues(InventoryUserMixin, TemplateView):
+class AddDropdown(AddProductOption):
+    """Add a variation product option to a partial product range."""
+
+    name = "Dropdown"
+    variation = True
+
+
+class AddListingOption(AddProductOption):
+    """Add a listing product option to a partial product range."""
+
+    name = "Listing Option"
+    variation = False
+
+
+class SetProductOptionValues(InventoryUserMixin, TemplateView):
     """Add values to for a new dropdown."""
 
-    template_name = "inventory/product_editor/add_dropdown_values.html"
+    template_name = "inventory/product_editor/set_product_option_values.html"
 
     def dispatch(self, *args, **kwargs):
         """Load the formset."""
         self.edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
         self.product_range = self.edit.partial_product_range
-        self.formset = forms.NewDropDownValuesFormset(
+        self.formset = forms.SetProductOptionValuesFormset(
             self.request.POST or None, form_kwargs=self.get_initial()
         )
         return super().dispatch(*args, **kwargs)
@@ -220,7 +242,7 @@ class AddDropdownValues(InventoryUserMixin, TemplateView):
     def get_initial_for_product(self, product):
         """Return the initial values for a product for the formset."""
         initial = {"product_ID": product.id}
-        for option in self.product_range.variation_options():
+        for option in self.product_range.product_options.all():
             try:
                 initial[
                     f"option_{option.name}"

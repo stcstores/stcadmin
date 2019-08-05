@@ -6,16 +6,23 @@
 {% endblock %}
 
 {% block content %}{{ block.super }}
+<h2>Drop down options</h2>
+<p>
+  Drop down options are used to identify variations within a product range. They appear
+  in variation names and on pick lists. They are used as drop down boxes in listings,
+  allowing customers to select a variation.
+</p>
 <div>
   <a href="{% url 'inventory:add_dropdown' edit.pk %}">
     <button>Add a Dropdown to the Product Range</button>
   </a>
 </div>
 <div class="options">
-  {% for option, values in product_options.items %}
+  {% for option in variation_options %}
   <div class="option">
     <h4>{{ option.name|title }}</h4>
     {% for value in values %}
+    {% if value.product_option == option %}
     <div class="option_value">
       <p>{{ value.value }}</p>
       {% if value not in used_values %}
@@ -24,21 +31,65 @@
       </a>
       {% endif %}
     </div>
+    {% endif %}
     {% endfor %}
     <div>
       <a href="{% url 'inventory:add_product_option_values' edit.pk option.pk %}">
-        <button>Add Option to Dropdown</button>
+        <button>Add a {{ option.name }}</button>
       </a>
       {% if option not in pre_existing_options %}
       <br>
       <a class="remove_dropdown" href="{% url 'inventory:remove_dropdown' edit.pk option.pk %}">
-        <button>Remove Dropdown</button>
+        <button>Remove {{ option.name }} Dropdown</button>
       </a>
       {% endif %}
     </div>
   </div>
   {% endfor %}
 </div>
+
+<h2>Listing options</h2>
+<p>
+  Listing options are used to add more information to a product. They appear in the
+  name of the variation, including on pick lists, as well as in listings.
+  A listing option can be the same for every variation in a range.
+</p>
+<div>
+  <a href="{% url 'inventory:add_listing_option' edit.pk %}">
+    <button>Add a listing option to the Product Range</button>
+  </a>
+</div>
+<div class="options">
+  {% for option in listing_options %}
+  <div class="option">
+    <h4>{{ option.name|title }}</h4>
+    {% for value in values %}
+    {% if value.product_option == option %}
+    <div class="option_value">
+      <p>{{ value.value }}</p>
+      {% if value not in used_values %}
+      <a href="{% url 'inventory:remove_product_option_value' edit.pk value.pk %}">
+        <button>&#x2715;</button>
+      </a>
+      {% endif %}
+    </div>
+    {% endif %}
+    {% endfor %}
+    <div>
+      <a href="{% url 'inventory:add_product_option_values' edit.pk option.pk %}">
+        <button>Add a {{ option.name }}</button>
+      </a>
+      {% if option not in pre_existing_options %}
+      <br>
+      <a class="remove_dropdown" href="{% url 'inventory:remove_dropdown' edit.pk option.pk %}">
+        <button>Remove {{ option.name }} Listing Option</button>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
 <a href="{% url 'inventory:edit_product' edit.pk %}"><button>Finish</button></a>
 {% endblock %}
 

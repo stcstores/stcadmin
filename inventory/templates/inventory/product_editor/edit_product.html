@@ -15,6 +15,9 @@
     {% for option in product_range.variation_options %}
     <th>{{ option }}</th>
     {% endfor %}
+    {% for option in product_range.listing_options %}
+    <th class="listing_option">{{ option }}</th>
+    {% endfor %}
     <th colspan="3">
       <a href="{% url 'inventory:edit_all_variations' edit.pk %}">
         <button>Edit All</button>
@@ -24,7 +27,12 @@
   {% for options, product in variations.items %}
   <tr>
     <th class="sku">{% if product %}{{ product.SKU }}{% else %}-{% endif %}</th>
-    {% for option in options %}<td>{{ option.value }}</td>{% endfor %}
+    {% for option in options %}<td class="name">{{ option.value }}</td>{% endfor %}
+    {% if product %}
+    {% for option, value in product.listing_options.items %}<td class="listing_option name">{{ value }}</td>{% endfor %}
+    {% else %}
+    <th class="listing_option">-</th>
+    {% endif %}
     {% if product %}
     <th>
       <div class="buttons">

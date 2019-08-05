@@ -175,12 +175,14 @@ class PartialProductRange(models.Model):
     def _variations(self):
         return [_.variation() for _ in self.products()]
 
-    def has_missing_variation_product_option_values(self, variations=None):
+    def has_missing_product_option_values(self):
         """Return True if any product is missing a variation product option value."""
-        if variations is None:
-            variations = self._variations()
-        if any((None in _.values() for _ in variations)):
-            return True
+        for option in self.product_options.all():
+            for product in self.products():
+                if not PartialProductOptionValueLink.objects.filter(
+                    product=product, product_option_value__product_option=option
+                ).exists():
+                    return True
         return False
 
     def all_unique_variations(self, variations=None):
@@ -204,7 +206,7 @@ class PartialProductRange(models.Model):
     def valid_variations(self):
         """Return True if all the ranges products have valid variation options."""
         variations = self._variations()
-        if self.has_missing_variation_product_option_values(variations):
+        if self.has_missing_product_option_values():
             return False
         if not self.all_unique_variations(variations):
             return False
@@ -322,8 +324,7 @@ class PartialProduct(models.Model):
     def listing_options(self):
         """Return the product's listing product options as a dict."""
         return {
-            option.product_option.name: option.value
-            for option in self.selected_listing_options()
+            option.product_option: option for option in self.selected_listing_options()
         }
 
     @property
@@ -350,10 +351,10 @@ class PartialProduct(models.Model):
 
     def selected_listing_options(self):
         """Return list of Product Options which are listing options for the range."""
-        variable_options = self.product_range.listing_options()
-        return self.product_options.filter(
-            product_option__in=variable_options
-        ).order_by("product_option")
+        options = self.product_range.listing_options()
+        return self.product_options.filter(product_option__in=options).order_by(
+            "product_option"
+        )
 
     def update_stock_level(self, *, old, new):
         """Set the product's stock level in Cloud Commerce."""
@@ -483,7 +484,7 @@ class ProductEdit(models.Model):
 
     def variation_options(self):
         """Return a dict of {product_option: list(values)} for the product range."""
-        selected_product_options = self.partial_product_range.product_options.all()
+        selected_product_options = self.partial_product_range.variation_options()
         variation_options = {option: [] for option in selected_product_options}
         for option in selected_product_options:
             variation_options[option] = list(
