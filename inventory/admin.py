@@ -399,4 +399,5 @@ class PartialProductOptionValueLinkAdmin(ProductOptionValueLinkAdmin):
 class PartialProductRangeSelectedOptionAdmin(ProductRangeSelectedOptionAdmin):
     """Model admin for the PartialProductRangeSelectedOption model."""
 
-    pass
+    fields = ProductRangeSelectedOptionAdmin.fields + ("pre_existing",)
+    list_display = ProductRangeSelectedOptionAdmin.list_display + ("pre_existing",)

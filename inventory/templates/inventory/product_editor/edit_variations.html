@@ -25,14 +25,33 @@
       {% endif %}
     </div>
     {% endfor %}
-    <div class="option_value">
+    <div>
       <a href="{% url 'inventory:add_product_option_values' edit.pk option.pk %}">
         <button>Add Option to Dropdown</button>
       </a>
+      {% if option not in pre_existing_options %}
+      <br>
+      <a class="remove_dropdown" href="{% url 'inventory:remove_dropdown' edit.pk option.pk %}">
+        <button>Remove Dropdown</button>
+      </a>
+      {% endif %}
     </div>
   </div>
   {% endfor %}
 </div>
 <a href="{% url 'inventory:edit_product' edit.pk %}"><button>Finish</button></a>
+{% endblock %}
 
+{% block script %}{{ block.super }}
+  <script>
+    $(document).ready(function() {
+      $(".remove_dropdown").click(function(e) {
+        if (!confirm(
+          'Are you sure you want to remove this dropdown?\nThis will delete any new variations you have created.'
+        )) {
+          e.preventDefault();
+        }
+      });
+    });
+  </script>
 {% endblock %}

@@ -242,6 +242,7 @@ class AddVariationOption(forms.Form):
             product_range=self.product_range,
             product_option=product_option,
             variation=True,
+            pre_existing=False,
         ).save()
         for value in product_option_values:
             self.edit.product_option_values.add(value)

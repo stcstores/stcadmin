@@ -154,6 +154,7 @@ class PartialProductRange(models.Model):
                 product_range=partial_range,
                 product_option=link.product_option,
                 variation=link.variation,
+                pre_existing=True,
             ).save()
         for product_data in Product.objects.filter(
             product_range=product_range
@@ -228,6 +229,13 @@ class PartialProductRange(models.Model):
             if len(set((data[_][key] for _ in range(len(data))))) == 1:
                 keys.append(key)
         return {k: v for k, v in data[0].items() if k not in ignore_keys and k in keys}
+
+    def pre_existing_options(self):
+        """Return the product options that exist on the original product range."""
+        link_IDs = PartialProductRangeSelectedOption.objects.filter(
+            product_range=self, pre_existing=True
+        ).values_list("product_option")
+        return ProductOption.objects.filter(id__in=link_IDs)
 
 
 class PartialProduct(models.Model):
@@ -414,6 +422,7 @@ class PartialProductRangeSelectedOption(models.Model):
     product_range = models.ForeignKey(PartialProductRange, on_delete=models.CASCADE)
     product_option = models.ForeignKey(ProductOption, on_delete=models.CASCADE)
     variation = models.BooleanField()
+    pre_existing = models.BooleanField(default=False)
 
     class Meta:
         """Meta class for ProductRangeVariableOption."""

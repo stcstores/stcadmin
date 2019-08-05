@@ -127,6 +127,9 @@ class EditVariations(InventoryUserMixin, TemplateView):
         context["edit"] = edit
         context["product_range"] = edit.partial_product_range
         context["product_options"] = edit.variation_options()
+        context[
+            "pre_existing_options"
+        ] = edit.partial_product_range.pre_existing_options()
         context["used_values"] = edit.used_options()
         return context
 
@@ -247,6 +250,33 @@ class AddDropdownValues(InventoryUserMixin, TemplateView):
         context["product_range"] = self.product_range
         context["formset"] = self.formset
         return context
+
+
+class RemoveDropdown(InventoryUserMixin, RedirectView):
+    """Remove a new dropdown from a parital product range."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Remove a product option and redirect."""
+        edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
+        option = get_object_or_404(
+            models.ProductOption, pk=self.kwargs["product_option_ID"]
+        )
+        option_link = get_object_or_404(
+            models.PartialProductRangeSelectedOption,
+            product_range=edit.partial_product_range,
+            product_option=option,
+            pre_existing=False,
+        )
+        products = [
+            _ for _ in edit.partial_product_range.products() if _.pre_existing is False
+        ]
+        for product in products:
+            product.delete()
+        option_link.delete()
+        edit.product_option_values.set(
+            edit.product_option_values.exclude(product_option=option)
+        )
+        return reverse_lazy("inventory:edit_variations", kwargs={"edit_ID": edit.pk})
 
 
 class AddProductOptionValues(InventoryUserMixin, FormView):
