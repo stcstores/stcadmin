@@ -15,6 +15,7 @@
 }
 
 .add_dropdown_values .selectize-input.disabled {
+  background: #eee;
   color: black;
   opacity: 1;
 }

@@ -1,7 +1,6 @@
 {% extends "inventory/product_editor/base.html" %}
 
 {% block content %}{{ block.super }}
-<h1>{{ product_range }}</h1>
 {% if form.non_field_errors %}
 <ul class="error">
   {% for error in form.non_field_errors %}
@@ -11,7 +10,7 @@
 {% endif %}
 <form action="" method="POST">{% csrf_token %}
   {{ formset.management_form }}
-  <table class="add_dropdown_values">
+  <table class="variation_table add_dropdown_values">
     <tr>
       <th></th>
       {% for option in formset.0.options %}
@@ -50,4 +49,14 @@
   {% endfor %}
   <button>Submit</button>
 </form>
+{% endblock %}
+
+{% block script %}{{ block.super }}
+  <script>
+    $(document).ready(function() {
+      $('form').submit(function(e) {
+        $('.selectized').attr('disabled', false);
+      });
+    });
+  </script>
 {% endblock %}
