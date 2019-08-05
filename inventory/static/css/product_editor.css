@@ -1,7 +1,11 @@
+.title {
+  padding: 1em;
+}
+
 .buttons {
   display: flex;
-  flex-direction: row;
   flex: 1 1 0;
+  flex-direction: row;
   min-width: 10em;
 }
 

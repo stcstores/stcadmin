@@ -1,8 +1,6 @@
-{% extends "inventory/base.html" %}
-{% load static %}
-{% load stcadmin_extras %}
+{% extends "inventory/product_editor/base.html" %}
 
-{% block additional_head %}{{ block.super }}
+{% block content %}{{ block.super }}
 <script>{% include 'product_editor/widgets/product_widgets.js' %}</script>
 <link rel="stylesheet" href="{% static 'css/product_page.css' %}">
 <script src="{% static 'scripts/new_product.js' %}"></script>

@@ -1,0 +1,15 @@
+{% extends "inventory/base.html" %}
+{% load static %}
+
+{% block additional_head %}{{ block.super }}
+  <link rel="stylesheet" href="{% static "css/product_editor.css" %}">
+{% endblock %}
+
+{% block content %}{{ block.super }}
+  <div class="title">
+    <h1>Editing <span class="sku">{{ edit.product_range.name }}</span></h1>
+    {% if edit.product_range.name != product_range.name %}
+    <p>(Name changed to <span class="sku">{{ product_range.name }}</span>)</p>
+    {% endif %}
+  </div>
+{% endblock %}

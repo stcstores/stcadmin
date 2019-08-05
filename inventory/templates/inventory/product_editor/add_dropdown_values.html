@@ -1,6 +1,6 @@
-{% extends "inventory/base.html" %}
+{% extends "inventory/product_editor/base.html" %}
 
-{% block content %}
+{% block content %}{{ block.super }}
 <h1>{{ product_range }}</h1>
 {% if form.non_field_errors %}
 <ul class="error">

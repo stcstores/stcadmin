@@ -1,12 +1,11 @@
-{% extends "inventory/base.html" %}
+{% extends "inventory/product_editor/base.html" %}
 {% load static %}
 
-{% block additional_head %}
+{% block additional_head %}{{ block.super }}
 <link rel="stylesheet" href="{% static 'css/edit_variations.css' %}">
 {% endblock %}
 
-{% block content %}
-<h1>Editing <span class="sku">{{ product_range.name }}</span></h1>
+{% block content %}{{ block.super }}
 <div>
   <a href="{% url 'inventory:add_dropdown' edit.pk %}">
     <button>Add a Dropdown to the Product Range</button>

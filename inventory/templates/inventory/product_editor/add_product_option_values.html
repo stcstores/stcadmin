@@ -1,6 +1,6 @@
-{% extends "inventory/base.html" %}
+{% extends "inventory/product_editor/base.html" %}
 
-{% block content %}
+{% block content %}{{ block.super }}
 <h4>Add options to the {{ product_option.name }} dropdown</h4>
 <div class="product_form">
   <form action="" method="POST" autocomplete="off">{% csrf_token %}

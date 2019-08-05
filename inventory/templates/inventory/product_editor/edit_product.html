@@ -1,12 +1,7 @@
-{% extends "inventory/base.html" %}
+{% extends "inventory/product_editor/base.html" %}
 {% load static %}
 
-{% block additional_head %}{{ block.super }}
-  <link rel="stylesheet" href="{% static "css/product_editor.css" %}">
-{% endblock %}
-
-{% block content %}
-<h1>Editing <span class="sku">{{ product_range.name }}</span></h1>
+{% block content %}{{ block.super }}
 <a href="{% url 'inventory:edit_range_details' edit.pk %}">
   <button>Edit Range details</button>
 </a>

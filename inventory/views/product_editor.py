@@ -173,6 +173,7 @@ class AddDropdown(InventoryUserMixin, FormView):
         """Return the context for the template."""
         context = super().get_context_data(*args, **kwargs)
         context["edit"] = self.edit
+        context["product_range"] = self.edit.partial_product_range
         return context
 
     def form_valid(self, form):
@@ -242,6 +243,7 @@ class AddDropdownValues(InventoryUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Get template context data."""
         context = super().get_context_data(*args, **kwargs)
+        context["edit"] = self.edit
         context["product_range"] = self.product_range
         context["formset"] = self.formset
         return context
