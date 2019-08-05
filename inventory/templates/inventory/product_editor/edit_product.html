@@ -1,6 +1,10 @@
 {% extends "inventory/base.html" %}
 {% load static %}
 
+{% block additional_head %}{{ block.super }}
+  <link rel="stylesheet" href="{% static "css/product_editor.css" %}">
+{% endblock %}
+
 {% block content %}
 <h1>Editing <span class="sku">{{ product_range.name }}</span></h1>
 <a href="{% url 'inventory:edit_range_details' edit.pk %}">
@@ -10,13 +14,13 @@
   <button>Edit Variation Options</button>
 </a>
 
-<table>
+<table class="variation_table">
   <tr>
     <th>SKU</th>
     {% for option in product_range.variation_options %}
     <th>{{ option }}</th>
     {% endfor %}
-    <th>
+    <th colspan="3">
       <a href="{% url 'inventory:edit_all_variations' edit.pk %}">
         <button>Edit All</button>
       </a>
@@ -24,40 +28,44 @@
   </tr>
   {% for options, product in variations.items %}
   <tr>
-    <td class="sku">{{ product.SKU }}</td>
+    <th class="sku">{% if product %}{{ product.SKU }}{% else %}-{% endif %}</th>
     {% for option in options %}<td>{{ option.value }}</td>{% endfor %}
     {% if product %}
+    <th>
+      <div class="buttons">
+        <a href="{% url 'inventory:edit_variation' edit.pk product.pk %}">
+          <button>Edit</button>
+        </a>
+        {% if product.pre_existing is False %}
+        <a class="delete_variation" href="{% url 'inventory:delete_variation' edit.id product.id %}">
+          <button>Delete</button>
+        </a>
+        {% endif %}
+      </div>
+    </th>
     {% if product.pre_existing %}
-    <td>Existing Variation</td>
+    <td>Existing</td>
     {% else %}
-    <td>New Variation</td>
+    <td>New</td>
     {% endif %}
     {% if product.is_complete %}
       <td class="positive">Complete</td>
     {% else %}
       <td class="error">Incomplete</td>
     {% endif %}
-    <th>
-      <a href="{% url 'inventory:edit_variation' edit.pk product.pk %}">
-        <button>Edit</button>
-      </a>
-      {% if product.pre_existing is False %}
-      <a class="delete_variation" href="{% url 'inventory:delete_variation' edit.id product.id %}">
-        <button>Delete</button>
-      </a>
-      {% endif %}
-    </th>
     {% else %}
-    <td></td>
-    <td>Does not exist</td>
     <th>
-      <form action="{% url 'inventory:create_variation' edit.id %}" method="POST" class="create_variation_form">{% csrf_token %}
-        {% for option in options %}
-        <input type="hidden" name="{{ option.product_option.id }}" value="{{ option.id }}">
-        {% endfor %}
-        <button>Create</button>
-      </form>
+      <div class="buttons">
+        <form action="{% url 'inventory:create_variation' edit.id %}" method="POST" class="create_variation_form">{% csrf_token %}
+          {% for option in options %}
+          <input type="hidden" name="{{ option.product_option.id }}" value="{{ option.id }}">
+          {% endfor %}
+          <button>Create</button>
+        </form>
+      </div>
     </th>
+    <td>Does not exist</td>
+    <td>-</td>
     {% endif %}
   </tr>
   {% endfor %}
