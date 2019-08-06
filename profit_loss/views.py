@@ -119,14 +119,12 @@ class ExportOrders(View):
 
     def dispatch(self, *args, **kwargs):
         """Return HttpResponse containing CSV file."""
-        print("dispatch")
         self.request = args[0]
         output = io.StringIO()
         self.orders = self.get_orders()
         header = self.header()
         data = self.get_data()
         writer = csv.writer(output)
-        print("done")
         writer.writerow(header)
         for row in data:
             writer.writerow(row)
