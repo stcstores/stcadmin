@@ -10,7 +10,11 @@ from django.views.generic.base import RedirectView, TemplateView
 from django.views.generic.edit import FormView
 
 from inventory import forms, models
-from inventory.cloud_commerce_updater import PartialProductUpdater, PartialRangeUpdater
+from inventory.cloud_commerce_updater import (
+    PartialProductUpdater,
+    PartialRangeUpdater,
+    SaveEdit,
+)
 
 from .descriptions import DescriptionsView
 from .views import InventoryUserMixin
@@ -152,11 +156,19 @@ class EditRangeDetails(DescriptionsView):
         self.product_range = self.edit.partial_product_range
         return super(FormView, self).dispatch(*args, **kwargs)
 
+    def get_context_data(self, *args, **kwargs):
+        """Return the context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["edit"] = self.edit
+        context["product_range"] = self.edit.partial_product_range
+        return context
+
     def form_valid(self, form):
         """Process form request and return HttpResponse."""
         updater = PartialRangeUpdater(self.product_range)
         updater.set_name(form.cleaned_data["title"])
         updater.set_description(form.cleaned_data["description"])
+        updater.set_department(form.cleaned_data["department"])
         updater.set_amazon_bullet_points("|".join(form.cleaned_data["amazon_bullets"]))
         updater.set_amazon_search_terms("|".join(form.cleaned_data["search_terms"]))
         return super(FormView, self).form_valid(form)
@@ -508,6 +520,19 @@ class DiscardChanges(InventoryUserMixin, RedirectView):
         edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
         product_range_ID = edit.partial_product_range.range_ID
         edit.delete()
+        return reverse_lazy(
+            "inventory:product_range", kwargs={"range_id": product_range_ID}
+        )
+
+
+class SaveChanges(InventoryUserMixin, RedirectView):
+    """Save changes made in the product editor."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Save changes and redirect."""
+        edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
+        product_range_ID = edit.partial_product_range.range_ID
+        SaveEdit(edit, self.request)
         return reverse_lazy(
             "inventory:product_range", kwargs={"range_id": product_range_ID}
         )

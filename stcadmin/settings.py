@@ -193,6 +193,14 @@ LOGGING = {
             "filters": ["add_user_to_log_record"],
             "formatter": "default_formatter",
         },
+        "product_editor_file_handler": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "logs", "product_editor.log"),
+            "maxBytes": 1_048_576,
+            "backupCount": 2,
+            "filters": ["add_user_to_log_record", "replace_newlines"],
+            "formatter": "default_formatter",
+        },
         "stdout": {"class": "logging.StreamHandler", "level": "INFO"},
     },
     "loggers": {
@@ -225,6 +233,11 @@ LOGGING = {
             "handlers": ["mail_admins", "error_file_handler"],
             "level": "ERROR",
             "propagate": False,
+        },
+        "product_editor": {
+            "handlers": ["stdout", "product_editor_file_handler"],
+            "level": "DEBUG",
+            "propogate": False,
         },
     },
     "formatters": {

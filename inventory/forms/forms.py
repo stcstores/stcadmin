@@ -109,7 +109,9 @@ class ProductForm(ProductEditorBase, forms.Form):
         """Configure form fields."""
         self.product = kwargs.pop("product")
         super().__init__(*args, **kwargs)
-        self.fields[self.PRODUCT_ID] = forms.CharField(widget=forms.HiddenInput())
+        self.fields[self.BRAND] = fields.Brand()
+        self.fields[self.MANUFACTURER] = fields.Manufacturer()
+        self.fields[self.BARCODE] = fields.Barcode()
         self.fields[self.SUPPLIER_SKU] = fields.SupplierSKU()
         self.fields[self.SUPPLIER] = fields.Supplier()
         self.fields[self.PURCHASE_PRICE] = fields.PurchasePrice()
@@ -127,7 +129,9 @@ class ProductForm(ProductEditorBase, forms.Form):
     def get_initial(self):
         """Get initial values for form."""
         initial = {}
-        initial[self.PRODUCT_ID] = self.product.product_ID
+        initial[self.BRAND] = self.product.brand
+        initial[self.MANUFACTURER] = self.product.manufacturer
+        initial[self.BARCODE] = self.product.barcode
         initial[self.PRICE] = self.product.price
         initial[self.VAT_RATE] = self.product.VAT_rate
         bays = self.product.bays.all()
@@ -168,6 +172,9 @@ class ProductForm(ProductEditorBase, forms.Form):
         data = self.cleaned_data
         updater_class = kwargs["updater_class"]
         updater = updater_class(self.product)
+        updater.set_brand(data[self.BRAND])
+        updater.set_manufacturer(data[self.MANUFACTURER])
+        updater.set_barcode(data[self.BARCODE])
         updater.set_price(data[self.PRICE])
         updater.set_VAT_rate(data[self.VAT_RATE])
         updater.set_bays(data[self.BAYS])

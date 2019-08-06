@@ -21,6 +21,7 @@ from .product_editor import (  # NOQA
     EditVariations,
     RemoveDropdown,
     RemoveProductOptionValue,
+    SaveChanges,
     SetProductOptionValues,
     StartEditingProduct,
 )

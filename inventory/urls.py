@@ -167,6 +167,9 @@ product_editor_patterns = [
         views.RemoveDropdown.as_view(),
         name="remove_dropdown",
     ),
+    path(
+        "save_changes/<int:edit_ID>/", views.SaveChanges.as_view(), name="save_changes"
+    ),
 ]
 
 urlpatterns = inventory_urlpatterns + api_urlpatterns + product_editor_patterns

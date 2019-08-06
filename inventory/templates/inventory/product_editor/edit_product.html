@@ -78,8 +78,9 @@
   {% endfor %}
 </table>
 
-
-<button{% if not ready_to_save %} disabled{% endif %}>Save Changes</button>
+<a href="{% url 'inventory:save_changes' edit.pk %}">
+  <button{% if not ready_to_save %} disabled{% endif %}>Save Changes</button>
+</a>
 <a id="discard_changes" href="{% url 'inventory:discard_changes' edit.id %}">
   <button>Discard Changes</button>
 </a>

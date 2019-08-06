@@ -156,6 +156,11 @@ class ProductUpdater(BaseCloudCommerceUpdater):
         self._set_DB_product_option_link(product_option_value)
         self._set_CC_product_option_link(product_option_value)
 
+    def remove_product_option_link(self, product_option_value):
+        """Remove a product option link from the product."""
+        self._remove_DB_product_option_link(product_option_value)
+        self._remove_CC_product_option_link(product_option_value)
+
     def set_date_created(self):
         """Set the date on which the product was created."""
         self._set_CC_date_created(self.db_object.date_created)
@@ -394,6 +399,16 @@ class ProductUpdater(BaseCloudCommerceUpdater):
         self._set_CC_product_option(
             product_option_ID=product_option_value.product_option.product_option_ID,
             product_option_value_ID=product_option_value.product_option_value_ID,
+        )
+
+    def _remove_DB_product_option(self, product_option_value):
+        models.ProductOptionValueLink.objects.get(
+            product=self.product, value=product_option_value
+        ).delete()
+
+    def _remove_CC_product_option(self, product_option_value):
+        self._clear_CC_product_options(
+            product_option_value.product_option.product_option_ID
         )
 
     def _set_CC_date_created(self, date):
