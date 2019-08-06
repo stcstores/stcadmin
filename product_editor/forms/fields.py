@@ -575,6 +575,10 @@ class PartialProductOptionValueSelect(fieldtypes.SelectizeModelChoiceField):
         self.product_option = kwargs.pop("product_option")
         super().__init__(*args, **kwargs)
 
+    def label_from_instance(self, obj):
+        """Return the name of the option as it should appear in the form."""
+        return obj.value
+
     def get_queryset(self):
         """Return a queryset of selectable options."""
         return self.edit.product_option_values.filter(

@@ -1,6 +1,8 @@
 {% extends "inventory/product_editor/base.html" %}
 
 {% block content %}{{ block.super }}
+<h2>Match Product Options to Variations</h2>
+<p>Note: Once saved Dropdown product options cannot be changed.</p>
 {% if form.non_field_errors %}
 <ul class="error">
   {% for error in form.non_field_errors %}
@@ -10,24 +12,34 @@
 {% endif %}
 <form action="" method="POST">{% csrf_token %}
   {{ formset.management_form }}
-  <table class="variation_table add_dropdown_values">
+  <table class="variation_table set_product_option_values">
     <tr>
       <th></th>
-      {% for option in formset.0.options %}
-      <th>{{ option.name }}</th>
+      <th colspan="{{ formset.0.variation_options|length }}">Dropdowns</th>
+      {% if formset.0.listing_options|length > 0 %}
+      <th colspan="{{ formset.0.listing_options|length }}">Listing Options</th>
+      {% endif %}
+    </tr>
+    <tr>
+      <th></th>
+      {% for option in formset.0.variation_options %}
+      <th class="name">{{ option.name }}</th>
+      {% endfor %}
+      {% for option in formset.0.listing_options %}
+      <th class="listing_option name">{{ option.name }}</th>
       {% endfor %}
     </tr>
     {% for form in formset %}
     <tr>
       <th>{{ form.product.SKU }}</th>
       {% for field in form.visible_fields %}
-      <td>
-        {{ field }}
+      <td class="option_field">
+        <span class="{% if forloop.counter > formset.0.variation_options|length %}listing_option {% endif %}name">
+          {{ field }}
+        </span>
         {% if field.errors %}
         <ul class="error">
-          {% for error in field.errors %}
-          <li>{{ error }}</li>
-          {% endfor %}
+          {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
         </ul>
         {% endif %}
       </td>
@@ -47,7 +59,7 @@
   {{ field }}
   {% endfor %}
   {% endfor %}
-  <button>Submit</button>
+  <button>Finish</button>
 </form>
 {% endblock %}
 

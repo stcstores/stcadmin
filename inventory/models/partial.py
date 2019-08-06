@@ -125,6 +125,32 @@ class PartialProductRange(models.Model):
         """Return True if the product has multiple variations, otherwise return False."""
         return self.partialproduct_set.count() > 1
 
+    def product_option_values(self):
+        """Return the product option values used by this range."""
+        return ProductOptionValue.objects.filter(
+            pk__in=PartialProductOptionValueLink.objects.filter(
+                product__pk__in=self.products().values_list("pk", flat=True)
+            ).values_list("product_option_value", flat=True)
+        )
+
+    def variation_option_values(self):
+        """Return the product option values used by this range."""
+        return ProductOptionValue.objects.filter(
+            product_option__in=self.variation_options(),
+            pk__in=PartialProductOptionValueLink.objects.filter(
+                product__pk__in=self.products().values_list("pk", flat=True)
+            ).values_list("product_option_value", flat=True),
+        )
+
+    def listing_option_values(self):
+        """Return the product option values used by this range."""
+        return ProductOptionValue.objects.filter(
+            product_option__in=self.listing_options(),
+            pk__in=PartialProductOptionValueLink.objects.filter(
+                product__pk__in=self.products().values_list("pk", flat=True)
+            ).values_list("product_option_value", flat=True),
+        )
+
     def variation_values(self):
         """Return a dict of {option: set(option_values)} for the ranges variable options."""
         values = PartialProductOptionValueLink.objects.filter(
@@ -491,13 +517,6 @@ class ProductEdit(models.Model):
                 self.product_option_values.filter(product_option=option)
             )
         return variation_options
-
-    def used_options(self):
-        """Return the product options used in the product range."""
-        options = set()
-        for values in self.partial_product_range.variation_values().values():
-            options = options.union(values)
-        return options
 
     def delete(self, *args, **kwargs):
         """Delete the product edit and associated products."""

@@ -13,7 +13,7 @@
   <tr>
     <th>SKU</th>
     {% for option in product_range.variation_options %}
-    <th>{{ option }}</th>
+    <th class="name">{{ option }}</th>
     {% endfor %}
     {% for option in product_range.listing_options %}
     <th class="listing_option">{{ option }}</th>
@@ -29,9 +29,13 @@
     <th class="sku">{% if product %}{{ product.SKU }}{% else %}-{% endif %}</th>
     {% for option in options %}<td class="name">{{ option.value }}</td>{% endfor %}
     {% if product %}
-    {% for option, value in product.listing_options.items %}<td class="listing_option name">{{ value }}</td>{% endfor %}
+    {% for option, value in product.listing_options.items %}
+    <td class="listing_option name">{{ value }}</td>
+    {% endfor %}
     {% else %}
-    <th class="listing_option">-</th>
+    {% for option in product_range.listing_options %}
+    <th class="listing_option name">-</th>
+    {% endfor %}
     {% endif %}
     {% if product %}
     <th>

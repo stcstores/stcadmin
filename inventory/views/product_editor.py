@@ -133,7 +133,7 @@ class EditVariations(InventoryUserMixin, TemplateView):
         context[
             "pre_existing_options"
         ] = edit.partial_product_range.pre_existing_options()
-        context["used_values"] = edit.used_options()
+        context["used_values"] = edit.partial_product_range.product_option_values()
         return context
 
 
@@ -243,14 +243,22 @@ class SetProductOptionValues(InventoryUserMixin, TemplateView):
         """Return the initial values for a product for the formset."""
         initial = {"product_ID": product.id}
         for option in self.product_range.product_options.all():
+            name = f"option_{option.name}"
             try:
-                initial[
-                    f"option_{option.name}"
-                ] = models.PartialProductOptionValueLink.objects.get(
+                value = models.PartialProductOptionValueLink.objects.get(
                     product=product, product_option_value__product_option=option
                 ).product_option_value
+
             except models.PartialProductOptionValueLink.DoesNotExist:
-                pass
+                # If option is a listing option with only one available value set it
+                if option in self.product_range.listing_options():
+                    values = self.edit.product_option_values.filter(
+                        product_option=option
+                    )
+                    if values.count() == 1:
+                        initial[name] = values[0]
+            else:
+                initial[name] = value
         return initial
 
     def post(self, *args, **kwargs):
@@ -343,7 +351,7 @@ class AddProductOptionValues(InventoryUserMixin, FormView):
     def get_success_url(self):
         """Return the URL to redirect to on a successful form submission."""
         return reverse_lazy(
-            "inventory:edit_variations", kwargs={"edit_ID": self.edit.pk}
+            "inventory:set_product_option_values", kwargs={"edit_ID": self.edit.pk}
         )
 
 
@@ -356,7 +364,7 @@ class RemoveProductOptionValue(InventoryUserMixin, RedirectView):
         option = get_object_or_404(
             models.ProductOptionValue, pk=self.kwargs["option_value_ID"]
         )
-        if option in edit.used_options():
+        if option in edit.partial_product_range.product_option_values():
             raise Exception("option used")
         else:
             edit.product_option_values.remove(option)

@@ -265,11 +265,20 @@ class SetProductOptionValues(forms.Form):
             widget=forms.HiddenInput, required=True
         )
         self.options = self.product_range.product_options.all()
-        for option in self.options:
-            name = f"option_{option.name}"
-            self.fields[name] = fields.PartialProductOptionValueSelect(
-                edit=self.edit, product_option=option
-            )
+        self.variation_options = self.product_range.variation_options()
+        self.listing_options = self.product_range.listing_options()
+        for option in self.variation_options:
+            self.add_option_field(option, True)
+        for option in self.listing_options:
+            self.add_option_field(option, False)
+
+    def add_option_field(self, option, variation):
+        """Add a product option field to the form."""
+        name = f"option_{option.name}"
+        self.fields[name] = fields.PartialProductOptionValueSelect(
+            edit=self.edit, product_option=option
+        )
+        if variation is True:
             option_link = models.PartialProductRangeSelectedOption.objects.get(
                 product_range=self.product_range, product_option=option
             )
@@ -280,7 +289,9 @@ class SetProductOptionValues(forms.Form):
         """Validate the form."""
         cleaned_data = super().clean()
         for option in self.options:
-            if not cleaned_data[f"option_{option.name}"]:
+            name = f"option_{option.name}"
+            if name not in cleaned_data or not cleaned_data[name]:
+                cleaned_data[name] = ""
                 self.add_error(
                     f"option_{option.name}", "Product option value cannot be empty."
                 )
@@ -288,7 +299,11 @@ class SetProductOptionValues(forms.Form):
 
     def variation(self):
         """Return a dict of submitted product option values."""
-        return {k: v for k, v in self.cleaned_data.items() if k.startswith("option")}
+        variation = {}
+        for option in self.variation_options:
+            name = f"option_{option.name}"
+            variation[name] = self.cleaned_data.get(name)
+        return variation
 
 
 class SetProductOptionValuesFormset(KwargFormSet):
@@ -305,15 +320,23 @@ class SetProductOptionValuesFormset(KwargFormSet):
                     form.add_error(
                         None, "This variation is not unique within the Product Range."
                     )
+        self.multiple_values_for_variation_options()
+        return super().clean()
+
+    def multiple_values_for_variation_options(self):
+        """Add an error if a variation option only has one value."""
+        variation = self.forms[0].variation()
         for key in variation.keys():
-            if all((form.variation()[key] == variation[key] for form in self.forms)):
+            if all(
+                (form.variation().get(key) == variation[key] for form in self.forms)
+            ):
                 for form in self.forms:
                     form.add_error(
                         key,
                         "Every variation cannot have the same value for a drop down. "
                         "Should this be a listing option?",
                     )
-        return super().clean()
+                return
 
     @transaction.atomic
     def save(self):

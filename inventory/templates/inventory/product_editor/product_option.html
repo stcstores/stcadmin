@@ -1,0 +1,35 @@
+<div>
+  <a href="{% if variation %}{% url 'inventory:add_dropdown' edit.pk %}{% else %}{% url 'inventory:add_listing_option' edit.pk %}{% endif %}">
+    <button>Add a {% if variation %}Dropdown{% else %}Listing option{% endif %} to the Product Range</button>
+  </a>
+</div>
+<div class="options">
+  {% for option in options %}
+  <div class="product_option">
+    <h4>{{ option.name|title }}</h4>
+    {% for value in values %}
+    {% if value.product_option == option %}
+    <div class="product_option_value">
+      <p>{{ value.value }}</p>
+      {% if value not in used_values %}
+      <a href="{% url 'inventory:remove_product_option_value' edit.pk value.pk %}">
+        <button>&#x2715;</button>
+      </a>
+      {% endif %}
+    </div>
+    {% endif %}
+    {% endfor %}
+    <div>
+      <a href="{% url 'inventory:add_product_option_values' edit.pk option.pk %}">
+        <button>Add a {% if variation %}Dropdown{% else %}Listing option{% endif %}</button>
+      </a>
+      {% if option not in pre_existing_options %}
+      <br>
+      <a class="{% if variation %}remove_dropdown{% else %}remove_listing_option{% endif %}" href="{% url 'inventory:remove_dropdown' edit.pk option.pk %}">
+        <button>Remove {{ option.name }} {% if variation %}Dropdown{% else %}Listing option{% endif %}</button>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
