@@ -21,7 +21,7 @@
     {% endfor %}
     <div>
       <a href="{% url 'inventory:add_product_option_values' edit.pk option.pk %}">
-        <button>Add a {% if variation %}Dropdown{% else %}Listing option{% endif %}</button>
+        <button>Add a {{ option }} {% if variation %}Dropdown{% else %}Listing option{% endif %} value</button>
       </a>
       {% if option not in pre_existing_options %}
       <br>

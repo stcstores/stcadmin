@@ -2,6 +2,7 @@
 
 import itertools
 
+from django.contrib import messages
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -77,6 +78,9 @@ class EditProduct(InventoryUserMixin, TemplateView):
         self.edit = models.ProductEdit.objects.get(pk=self.kwargs["edit_ID"])
         self.product_range = self.edit.partial_product_range
         if self.product_range.has_missing_product_option_values():
+            messages.add_message(
+                self.request, messages.ERROR, f"Variations are missing product options."
+            )
             return redirect(
                 reverse_lazy(
                     "inventory:set_product_option_values",
@@ -398,11 +402,17 @@ class EditVariation(InventoryUserMixin, FormView):
     def form_valid(self, form):
         """Process form request and return HttpResponse."""
         form.save(updater_class=PartialProductUpdater)
+        messages.add_message(
+            self.request, messages.SUCCESS, f"Product {self.product.SKU} Updated."
+        )
         return super().form_valid(form)
 
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
-        return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": self.edit.pk})
+        return reverse_lazy(
+            "inventory:edit_variation",
+            kwargs={"edit_ID": self.edit.pk, "product_ID": self.product.id},
+        )
 
 
 class EditAllVariations(InventoryUserMixin, TemplateView):
