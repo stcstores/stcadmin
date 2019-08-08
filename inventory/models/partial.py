@@ -4,7 +4,6 @@ import itertools
 import random
 import string
 
-from ccapi import CCAPI
 from django.conf import settings
 from django.db import models
 
@@ -20,6 +19,8 @@ from .product_options import (
     ProductOptionValue,
 )
 from .products import (
+    BaseProductModel,
+    BaseProductRangeModel,
     Product,
     ProductOptionValueLink,
     ProductRange,
@@ -54,7 +55,7 @@ def unique_SKU(existing_SKUs, SKU_function):
             )
 
 
-class PartialProductRange(models.Model):
+class PartialProductRange(models.Model, BaseProductRangeModel):
     """Model for Product Ranges."""
 
     original_range = models.ForeignKey(
@@ -79,8 +80,11 @@ class PartialProductRange(models.Model):
         verbose_name = "Partial Product Range"
         verbose_name_plural = "Partial Product Ranges"
 
-    def __str__(self):
-        return self.name
+    def __init__(self, *args, **kwargs):
+        """Set foreign models."""
+        self._selected_options_model = PartialProductRangeSelectedOption
+        self._product_option_link_model = PartialProductOptionValueLink
+        super().__init__(*args, **kwargs)
 
     @classmethod
     def get_new_SKU(cls):
@@ -93,78 +97,13 @@ class PartialProductRange(models.Model):
         """Return a Product Range SKU."""
         return f"RNG_{generate_SKU()}"
 
-    def clean(self, *args, **kwargs):
-        """Save the model instance."""
-        if not self.SKU:
-            self.SKU = self.get_new_SKU()
-        super().clean(*args, **kwargs)
-
     def product_count(self):
         """Return the number of products in this Range."""
         return self.partialproduct_set.count()
 
-    def variation_options(self):
-        """Return the Range's variable product options."""
-        product_options = PartialProductRangeSelectedOption.objects.filter(
-            product_range=self, variation=True
-        ).values_list("product_option", flat=True)
-        return ProductOption.objects.filter(id__in=product_options)
-
-    def listing_options(self):
-        """Return the Range's listing product options."""
-        product_option_IDs = PartialProductRangeSelectedOption.objects.filter(
-            product_range=self, variation=False
-        ).values_list("product_option", flat=True)
-        return ProductOption.objects.filter(id__in=product_option_IDs)
-
     def products(self):
         """Return a queryset of the Product Range's products."""
         return self.partialproduct_set.all().order_by("range_order", "id")
-
-    def has_variations(self):
-        """Return True if the product has multiple variations, otherwise return False."""
-        return self.products().count() > 1
-
-    def product_option_values(self):
-        """Return the product option values used by this range."""
-        return ProductOptionValue.objects.filter(
-            pk__in=PartialProductOptionValueLink.objects.filter(
-                product__pk__in=self.products().values_list("pk", flat=True)
-            ).values_list("product_option_value", flat=True)
-        )
-
-    def variation_option_values(self):
-        """Return the product option values used by this range."""
-        return ProductOptionValue.objects.filter(
-            product_option__in=self.variation_options(),
-            pk__in=PartialProductOptionValueLink.objects.filter(
-                product__pk__in=self.products().values_list("pk", flat=True)
-            ).values_list("product_option_value", flat=True),
-        )
-
-    def listing_option_values(self):
-        """Return the product option values used by this range."""
-        return ProductOptionValue.objects.filter(
-            product_option__in=self.listing_options(),
-            pk__in=PartialProductOptionValueLink.objects.filter(
-                product__pk__in=self.products().values_list("pk", flat=True)
-            ).values_list("product_option_value", flat=True),
-        )
-
-    def variation_values(self):
-        """Return a dict of {option: set(option_values)} for the ranges variable options."""
-        values = PartialProductOptionValueLink.objects.filter(
-            product_option_value__product_option__in=self.variation_options(),
-            product__product_range=self,
-        )
-        option_values = {option: [] for option in self.product_options.all()}
-        for value in values:
-            option_name = value.product_option_value.product_option
-            option_value = value.product_option_value
-            option_values[option_name].append(option_value)
-        for option, value_list in option_values.items():
-            option_values[option] = set(value_list)
-        return option_values
 
     @classmethod
     def copy_range(cls, product_range):
@@ -266,20 +205,8 @@ class PartialProductRange(models.Model):
         return ProductOption.objects.filter(id__in=link_IDs)
 
 
-class PartialProduct(models.Model):
+class PartialProduct(models.Model, BaseProductModel):
     """Model for inventory products."""
-
-    COMPLETE = "complete"
-    CREATING = "creating"
-    UPDATING = "updating"
-    ERROR = "error"
-
-    STATUS_CHOICES = (
-        (COMPLETE, "Complete"),
-        (CREATING, "Creating"),
-        (UPDATING, "Updating"),
-        (ERROR, "Error"),
-    )
 
     product_ID = models.CharField(max_length=50, unique=True, null=True)
     original_product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
@@ -313,7 +240,11 @@ class PartialProduct(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
     gender = models.ForeignKey(Gender, null=True, blank=True, on_delete=models.SET_NULL)
     range_order = models.PositiveSmallIntegerField(default=0)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=CREATING)
+    status = models.CharField(
+        max_length=20,
+        choices=BaseProductModel.STATUS_CHOICES,
+        default=BaseProductModel.CREATING,
+    )
     date_created = models.DateField(auto_now_add=True)
     pre_existing = models.BooleanField(default=False)
 
@@ -323,94 +254,16 @@ class PartialProduct(models.Model):
         verbose_name = "Partial Product"
         verbose_name_plural = "Partial Products"
 
-    def __str__(self):
-        return f"{self.SKU}: {self.full_name}"
-
     @classmethod
     def get_new_SKU(cls):
         """Return an unused Range SKU."""
         existing_SKUs = cls._base_manager.values_list("SKU", flat=True)
         return unique_SKU(existing_SKUs, cls.generate_SKU)
 
-    def name(self):
-        """Return the product's name."""
-        return self.product_range.name
-
-    def variation(self):
-        """Return the product's variation product options as a dict."""
-        options = self.product_range.variation_options()
-        variation = {
-            option.product_option: option for option in self.variable_options()
-        }
-        for option in options:
-            if option not in variation:
-                variation[option] = None
-        return variation
-
-    def listing_options(self):
-        """Return the product's listing product options as a dict."""
-        return {
-            option.product_option: option for option in self.selected_listing_options()
-        }
-
-    @property
-    def full_name(self):
-        """Return the product name with any extensions."""
-        return " - ".join([self.product_range.name] + self.name_extensions())
-
     @staticmethod
     def generate_SKU():
         """Return a Product SKU."""
         return generate_SKU()
-
-    @property
-    def range_SKU(self):
-        """Return the product's Range SKU."""
-        return self.product_range.SKU
-
-    def variable_options(self):
-        """Return list of Product Options which are variable for the range."""
-        variable_options = self.product_range.variation_options()
-        return self.product_options.filter(
-            product_option__in=variable_options
-        ).order_by("product_option")
-
-    def selected_listing_options(self):
-        """Return list of Product Options which are listing options for the range."""
-        options = self.product_range.listing_options()
-        return self.product_options.filter(product_option__in=options).order_by(
-            "product_option"
-        )
-
-    def department(self):
-        """Return the Product's department."""
-        return self.product_range.department
-
-    def stock_level(self):
-        """Return the products current stock level in Cloud Commerce."""
-        product = CCAPI.get_product(self.product_ID)
-        return product.stock_level
-
-    def name_extensions(self):
-        """Return additions to the product name."""
-        extensions = [_.value for _ in self.variable_options().all()]
-        if self.supplier_SKU:
-            extensions.append(self.supplier_SKU)
-        return extensions
-
-    def product_option_value(self, option_name):
-        """
-        Return the value of a product option.
-
-        Returns:
-            The value of the product option with name option_name for the product if it
-            exists, otherwise returns None.
-
-        """
-        try:
-            return self.product_options.get(product_option__name=option_name).value
-        except ProductOptionValue.DoesNotExist:
-            return None
 
     def is_complete(self):
         """Return True if the product is valid and complete, otherwise return False."""
