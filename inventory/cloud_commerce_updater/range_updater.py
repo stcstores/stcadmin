@@ -178,7 +178,8 @@ class RangeUpdater(BaseCloudCommerceUpdater):
 
     def _remove_DB_product_option(self, product_option):
         models.ProductOptionValueLink.objects.filter(
-            product__product_ID__in=self.product_IDs, product_option=product_option
+            product__product_ID__in=self.product_IDs,
+            product_option_value__product_option=product_option,
         ).delete()
         models.ProductRangeSelectedOption.objects.get(
             product_range=self.db_object, product_option=product_option

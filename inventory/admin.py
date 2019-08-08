@@ -385,7 +385,8 @@ class PartialProductRangeAdmin(ProductRangeAdmin):
 class PartialProductAdmin(ProductAdmin):
     """Model admin for the PartialProduct model."""
 
-    pass
+    fields = ProductAdmin.fields + ("pre_existing",)
+    list_display = ProductAdmin.list_display + ("pre_existing",)
 
 
 @admin.register(models.PartialProductOptionValueLink)

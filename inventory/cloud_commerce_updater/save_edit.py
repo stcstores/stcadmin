@@ -1,6 +1,9 @@
 """Save changes made in the product editor."""
+
 import logging
 import threading
+
+from ccapi import CCAPI
 
 from inventory import cloud_commerce_updater, models
 
@@ -29,6 +32,8 @@ class SaveEdit:
         self._add_new_variation_options(self)
         self._add_new_listing_options(self)
         self._create_new_products(self)
+        # Create a new range updater that recognises new products.
+        self.range_updater = cloud_commerce_updater.RangeUpdater(self.original_range)
         self._update_range_details(self)
         self._update_products(self)
         logger.info(f"{self.user} - Range {self.original_range.SKU} - Finished update.")
@@ -74,34 +79,76 @@ class SaveEdit:
             self.range_updater.add_listing_product_option(product_option)
 
     def _create_new_products(self):
+        self.new_products_created = False
         for product in self.partial_range.products():
-            if not product.product_ID:
+            if not product.pre_existing:
+                self.new_products_created = True
                 self._create_product(self, product)
 
-    def _create_product(self, product):
+    def _create_product(self, partial_product):
         logger.debug(
-            f"{self.user} - Range {self.original_range.SKU} - Create product {product}."
+            f"{self.user} - Range {self.original_range.SKU} - Create product {partial_product}."
         )
-        raise NotImplementedError
+        product_ID = CCAPI.create_product(
+            range_id=self.original_range.range_ID,
+            name=self.original_range.name,
+            description=self.original_range.description,
+            barcode=partial_product.barcode,
+            vat_rate=0,
+            sku=partial_product.SKU,
+        )
+        new_product = models.Product(
+            product_ID=product_ID,
+            product_range=self.original_range,
+            SKU=partial_product.SKU,
+            supplier=partial_product.supplier,
+            supplier_SKU=partial_product.supplier_SKU,
+            barcode=partial_product.barcode,
+            purchase_price=partial_product.purchase_price,
+            VAT_rate=partial_product.VAT_rate,
+            price=partial_product.price,
+            retail_price=partial_product.retail_price,
+            brand=partial_product.brand,
+            manufacturer=partial_product.manufacturer,
+            package_type=partial_product.package_type,
+            international_shipping=partial_product.international_shipping,
+            weight_grams=partial_product.weight_grams,
+            length_mm=partial_product.length_mm,
+            height_mm=partial_product.height_mm,
+            width_mm=partial_product.width_mm,
+        )
+        new_product.save()
+        new_product.bays.set(partial_product.bays.all())
+        updater = cloud_commerce_updater.ProductUpdater(new_product)
+        updater.set_date_created()
+        self._update_product(self, partial_product, updater)
 
     def _update_range_details(self):
+        # Set name.
         if self.partial_range.name != self.original_range.name:
             logger.debug(
                 f'{self.user} - Range {self.original_range.SKU} - Set range name to "{self.partial_range.name}".'
             )
             self.range_updater.set_name(self.partial_range.name)
-        if self.partial_range.department != self.original_range.department:
+        # Set department.
+        if (
+            self.new_products_created
+            or self.partial_range.department != self.original_range.department
+        ):
             logger.debug(
                 f'{self.user} - Range {self.original_range.SKU} - Set department to "{self.partial_range.department}".'
             )
             self.range_updater.set_department(self.partial_range.department)
+        # Set description.
         if self.partial_range.description != self.original_range.description:
             logger.debug(
                 f"{self.user} - Range {self.original_range.SKU} - Set description."
             )
             self.range_updater.set_description(self.partial_range.description)
+        # Set amazon search terms.
         if (
-            self.partial_range.amazon_search_terms
+            self.new_products_created
+            or self.partial_range.amazon_search_terms
             != self.original_range.amazon_search_terms
         ):
             logger.debug(
@@ -110,8 +157,10 @@ class SaveEdit:
             self.range_updater.set_amazon_search_terms(
                 self.partial_range.amazon_search_terms
             )
+        # Set amazon bullet points.
         if (
-            self.partial_range.amazon_bullet_points
+            self.new_products_created
+            or self.partial_range.amazon_bullet_points
             != self.original_range.amazon_bullet_points
         ):
             logger.debug(
@@ -123,112 +172,177 @@ class SaveEdit:
 
     def _update_products(self):
         for product in self.partial_range.products():
-            self._update_product(self, product)
+            original_product = self.original_range.product_set.get(SKU=product.SKU)
+            updater = cloud_commerce_updater.ProductUpdater(original_product)
+            self._update_product(
+                self, product, updater, original_product=original_product
+            )
 
-    def _update_product(self, partial_product):
-        original_product = self.original_range.product_set.get(SKU=partial_product.SKU)
-        updater = cloud_commerce_updater.ProductUpdater(original_product)
+    def _update_product(self, partial_product, updater, original_product=None):
         self._update_product_option_links(
-            self, partial_product, original_product, updater
+            self, partial_product, updater, original_product=original_product
         )
-        if original_product.supplier != partial_product.supplier:
+        # Set supplier.
+        if (
+            original_product is None
+            or original_product.supplier != partial_product.supplier
+        ):
             logger.debug(
-                f'{self.user} - Product {original_product.SKU} - Set supplier to "{partial_product.supplier}".'
+                f'{self.user} - Product {partial_product.SKU} - Set supplier to "{partial_product.supplier}".'
             )
             updater.set_supplier(partial_product.supplier)
-        if original_product.supplier_SKU != partial_product.supplier_SKU:
+        # Set supplier SKU.
+        if (
+            original_product is None
+            or original_product.supplier_SKU != partial_product.supplier_SKU
+        ):
             logger.debug(
-                f'{self.user} - Product {original_product.SKU} - Set supplier SKU to "{partial_product.supplier_SKU}".'
+                f'{self.user} - Product {partial_product.SKU} - Set supplier SKU to "{partial_product.supplier_SKU}".'
             )
             updater.set_supplier_SKU(partial_product.supplier_SKU)
-        if original_product.barcode != partial_product.barcode:
+
+        # Set Barcode.
+        if (
+            original_product is not None
+            and original_product.barcode != partial_product.barcode
+        ):  # Note: Barcode is only set for existing products as it is set at prdouct createion.
             logger.debug(
-                f'{self.user} - Product {original_product.SKU} - Set barcode to "{self.partial_product.barcode}".'
+                f'{self.user} - Product {partial_product.SKU} - Set barcode to "{partial_product.barcode}".'
             )
             updater.set_barcode(partial_product.barcode)
-        if original_product.purchase_price != partial_product.purchase_price:
+        # Set pruchase price.
+        if (
+            original_product is None
+            or original_product.purchase_price != partial_product.purchase_price
+        ):
             logger.debug(
-                f"{self.user} - Product {original_product.SKU} - Set purchase price to {partial_product.purchase_price}."
+                f"{self.user} - Product {partial_product.SKU} - Set purchase price to {partial_product.purchase_price}."
             )
             updater.set_purchase_price(partial_product.purchase_price)
-        if original_product.VAT_rate != partial_product.VAT_rate:
+        # Set VAT rate.
+        if (
+            original_product is None
+            or original_product.VAT_rate != partial_product.VAT_rate
+        ):
             logger.debug(
-                f'{self.user} - Product {original_product.SKU} - Set VAT rate to "{partial_product.VAT_rate}".'
+                f'{self.user} - Product {partial_product.SKU} - Set VAT rate to "{partial_product.VAT_rate}".'
             )
             updater.set_VAT_rate(partial_product.VAT_rate)
-        if original_product.price != partial_product.price:
+        # Set price.
+        if original_product is None or original_product.price != partial_product.price:
             logger.debug(
-                f"{self.user} - Product {original_product.SKU} - Set price to {partial_product.price}."
+                f"{self.user} - Product {partial_product.SKU} - Set price to {partial_product.price}."
             )
             updater.set_price(partial_product.price)
-        if original_product.retail_price != partial_product.retail_price:
+        # Set retail_price.
+        if (
+            original_product is None
+            or original_product.retail_price != partial_product.retail_price
+        ):
             logger.debug(
-                f"{self.user} - Product {original_product.SKU} - Set retail price to {partial_product.retail_price}."
+                f"{self.user} - Product {partial_product.SKU} - Set retail price to {partial_product.retail_price}."
             )
             updater.set_retail_price(partial_product.retail_price)
-        if original_product.brand != partial_product.brand:
+        # Set brand.
+        if original_product is None or original_product.brand != partial_product.brand:
             logger.debug(
-                f'{self.user} - Product {original_product.SKU} - Set brand to "{partial_product.brand}".'
+                f'{self.user} - Product {partial_product.SKU} - Set brand to "{partial_product.brand}".'
             )
             updater.set_brand(partial_product.brand)
-        if original_product.manufacturer != partial_product.manufacturer:
+        # Set manufacturer.
+        if (
+            original_product is None
+            or original_product.manufacturer != partial_product.manufacturer
+        ):
             logger.debug(
-                f'{self.user} - Product {original_product.SKU} - Set manufacturer to "{partial_product.manufacturer}".'
+                f'{self.user} - Product {partial_product.SKU} - Set manufacturer to "{partial_product.manufacturer}".'
             )
             updater.set_manufacturer(partial_product.manufacturer)
-        if original_product.package_type != partial_product.package_type:
+        # Set package type.
+        if (
+            original_product is None
+            or original_product.package_type != partial_product.package_type
+        ):
             logger.debug(
-                f'{self.user} - Product {original_product.SKU} - Set package type to "{partial_product.package_type}".'
+                f'{self.user} - Product {partial_product.SKU} - Set package type to "{partial_product.package_type}".'
             )
             updater.set_package_type(partial_product.package_type)
+        # Set international shipping.
         if (
-            original_product.international_shipping
+            original_product is None
+            or original_product.international_shipping
             != partial_product.international_shipping
         ):
             logger.debug(
-                f'{self.user} - Product {original_product.SKU} - Set international shipping to "{partial_product.international_shipping}".'
+                f'{self.user} - Product {partial_product.SKU} - Set international shipping to "{partial_product.international_shipping}".'
             )
             updater.set_international_shipping(partial_product.international_shipping)
-        if original_product.weight_grams != partial_product.weight_grams:
+        # Set weight.
+        if (
+            original_product is None
+            or original_product.weight_grams != partial_product.weight_grams
+        ):
             logger.debug(
-                f"{self.user} - Product {original_product.SKU} - Set weight to {partial_product.weight}g."
+                f"{self.user} - Product {partial_product.SKU} - Set weight to {partial_product.weight_grams}g."
             )
             updater.set_weight(partial_product.weight_grams)
-        if original_product.length_mm != partial_product.length_mm:
+        # Set length.
+        if (
+            original_product is None
+            or original_product.length_mm != partial_product.length_mm
+        ):
             logger.debug(
-                f"{self.user} - Product {original_product.SKU} - Set length to {partial_product.length_mm}mm."
+                f"{self.user} - Product {partial_product.SKU} - Set length to {partial_product.length_mm}mm."
             )
             updater.set_length(partial_product.length_mm)
-        if original_product.height_mm != partial_product.height_mm:
+        # Set height.
+        if (
+            original_product is None
+            or original_product.height_mm != partial_product.height_mm
+        ):
             logger.debug(
-                f"{self.user} - Product {original_product.SKU} - Set height to {partial_product.height_mm}mm."
+                f"{self.user} - Product {partial_product.SKU} - Set height to {partial_product.height_mm}mm."
             )
             updater.set_height(partial_product.height_mm)
-        if original_product.width_mm != partial_product.width_mm:
+        # Set width.
+        if (
+            original_product is None
+            or original_product.width_mm != partial_product.width_mm
+        ):
             logger.debug(
-                f"{self.user} - Product {original_product.SKU} - Set width to {partial_product.width_mm}mm."
+                f"{self.user} - Product {partial_product.SKU} - Set width to {partial_product.width_mm}mm."
             )
             updater.set_width(partial_product.width_mm)
-        if original_product.gender != partial_product.gender:
-            logger.debug(f'{self.user} - Set gender to "{partial_product.gender}".')
-            updater.set_supplier_SKU(partial_product.gender)
-        new_bays = list(partial_product.bays.all())
-        if list(original_product.bays.all()) != new_bays:
+        # Set gender.
+        if (
+            original_product is None
+            or original_product.gender != partial_product.gender
+        ):
             logger.debug(
-                f"{self.user} - Product {original_product.SKU} - Set bays to {new_bays}."
+                f'{self.user} - Product {partial_product.SKU} - Set gender to "{partial_product.gender}".'
+            )
+            updater.set_supplier_SKU(partial_product.gender)
+        # Set bays.
+        new_bays = list(partial_product.bays.all())
+        if original_product is None or list(original_product.bays.all()) != new_bays:
+            logger.debug(
+                f"{self.user} - Product {partial_product.SKU} - Set bays to {new_bays}."
             )
             updater.set_bays(partial_product.bays.all())
 
-    def _update_product_option_links(self, partial_product, original_product, updater):
-        self._remove_old_product_option_links(
-            self, partial_product, original_product, updater
-        )
+    def _update_product_option_links(
+        self, partial_product, updater, original_product=None
+    ):
+        if original_product is not None:
+            self._remove_old_product_option_links(
+                self, partial_product, updater, original_product
+            )
         self._add_new_product_option_links(
-            self, partial_product, original_product, updater
+            self, partial_product, updater, original_product=original_product
         )
 
     def _remove_old_product_option_links(
-        self, partial_product, original_product, updater
+        self, partial_product, updater, original_product
     ):
         old_links = models.ProductOptionValueLink.objects.filter(
             product=original_product
@@ -243,16 +357,22 @@ class SaveEdit:
                 )
                 updater.remove_product_option(link.product_option_value)
 
-    def _add_new_product_option_links(self, partial_product, original_product, updater):
+    def _add_new_product_option_links(
+        self, partial_product, updater, original_product=None
+    ):
         new_links = models.PartialProductOptionValueLink.objects.filter(
             product=partial_product
         )
         for link in new_links:
-            link_exists = models.ProductOptionValueLink.objects.filter(
-                product=original_product, product_option_value=link.product_option_value
-            ).exists()
+            if original_product is None:
+                link_exists = False
+            else:
+                link_exists = models.ProductOptionValueLink.objects.filter(
+                    product=original_product,
+                    product_option_value=link.product_option_value,
+                ).exists()
             if not link_exists:
                 logger.debug(
-                    f'{self.user} - Product {original_product.SKU} - Add product option "{link.product_option_value}".'
+                    f'{self.user} - Product {partial_product.SKU} - Add product option "{link.product_option_value}".'
                 )
                 updater.set_product_option_link(link.product_option_value)
