@@ -1,8 +1,5 @@
 """Models for products."""
 
-import random
-import string
-
 from ccapi import CCAPI
 from django.db import models
 
@@ -19,31 +16,6 @@ from .product_options import (
 )
 from .suppliers import Supplier
 from .vat_rates import VATRate
-
-UNIQUE_SKU_ATTEMPTS = 100
-
-
-def generate_SKU():
-    """Return a Product SKU."""
-    pass
-
-    def get_character_block():
-        return "".join(random.choices(string.ascii_uppercase + string.digits, k=3))
-
-    return "_".join((get_character_block() for _ in range(3)))
-
-
-def unique_SKU(existing_SKUs, SKU_function):
-    """Generate a unique SKU."""
-    remaining_attempts = UNIQUE_SKU_ATTEMPTS
-    while True:
-        SKU = SKU_function()
-        if SKU not in existing_SKUs:
-            return SKU
-        if remaining_attempts == 0:
-            raise Exception(
-                f"Did not generate a unique SKU in {UNIQUE_SKU_ATTEMPTS} attemtps."
-            )
 
 
 class ProductRange(models.Model):
@@ -71,17 +43,6 @@ class ProductRange(models.Model):
     def __str__(self):
         return f"{self.SKU} - {self.name}"
 
-    @classmethod
-    def get_new_SKU(cls):
-        """Return an unused Range SKU."""
-        existing_SKUs = cls._base_manager.values_list("SKU", flat=True)
-        return unique_SKU(existing_SKUs, cls.generate_SKU)
-
-    @staticmethod
-    def generate_SKU():
-        """Return a Product Range SKU."""
-        return f"RNG_{generate_SKU()}"
-
     def clean(self, *args, **kwargs):
         """Save the model instance."""
         if not self.SKU:
@@ -89,10 +50,6 @@ class ProductRange(models.Model):
         if not self.range_ID:
             self.range_ID = self.create_CC_range()
         super().clean(*args, **kwargs)
-
-    def create_CC_range(self):
-        """Create a new Product Range in Cloud Commerce."""
-        return CCAPI.create_range(self.name, sku=self.SKU)
 
     def product_count(self):
         """Return the number of products in this Range."""
@@ -119,6 +76,32 @@ class ProductRange(models.Model):
     def has_variations(self):
         """Return True if the product has multiple variations, otherwise return False."""
         return self.product_set.count() > 1
+
+    def product_option_values(self):
+        """Return the product option values used by this range."""
+        return ProductOptionValue.objects.filter(
+            pk__in=ProductOptionValueLink.objects.filter(
+                product__pk__in=self.products().values_list("pk", flat=True)
+            ).values_list("product_option_value", flat=True)
+        )
+
+    def variation_option_values(self):
+        """Return the product option values used by this range."""
+        return ProductOptionValue.objects.filter(
+            product_option__in=self.variation_options(),
+            pk__in=ProductOptionValueLink.objects.filter(
+                product__pk__in=self.products().values_list("pk", flat=True)
+            ).values_list("product_option_value", flat=True),
+        )
+
+    def listing_option_values(self):
+        """Return the product option values used by this range."""
+        return ProductOptionValue.objects.filter(
+            product_option__in=self.listing_options(),
+            pk__in=ProductOptionValueLink.objects.filter(
+                product__pk__in=self.products().values_list("pk", flat=True)
+            ).values_list("product_option_value", flat=True),
+        )
 
     def variation_values(self):
         """Return a dict of {option: set(option_values)} for the ranges variable options."""
@@ -198,35 +181,27 @@ class Product(models.Model):
         """Return the product's name."""
         return self.product_range.name
 
-    def save(self, *args, **kwargs):
-        """Create a new product if the product ID is not set."""
-        if not self.product_ID:
-            self.product_ID = self.CC_create_product()
-        super().save(*args, **kwargs)
-
     def variation(self):
         """Return the product's variation product options as a dict."""
-        return {
-            option.product_option.name: option.value
-            for option in self.variable_options()
+        options = self.product_range.variation_options()
+        variation = {
+            option.product_option: option for option in self.variable_options()
         }
+        for option in options:
+            if option not in variation:
+                variation[option] = None
+        return variation
 
     def listing_options(self):
         """Return the product's listing product options as a dict."""
         return {
-            option.product_option.name: option.value
-            for option in self.selected_listing_options()
+            option.product_option: option for option in self.selected_listing_options()
         }
 
     @property
     def full_name(self):
         """Return the product name with any extensions."""
         return " - ".join([self.product_range.name] + self.name_extensions())
-
-    @staticmethod
-    def generate_SKU():
-        """Return a Product SKU."""
-        return generate_SKU()
 
     @property
     def range_SKU(self):
@@ -242,10 +217,10 @@ class Product(models.Model):
 
     def selected_listing_options(self):
         """Return list of Product Options which are listing options for the range."""
-        variable_options = self.product_range.listing_options()
-        return self.product_options.filter(
-            product_option__in=variable_options
-        ).order_by("product_option")
+        options = self.product_range.listing_options()
+        return self.product_options.filter(product_option__in=options).order_by(
+            "product_option"
+        )
 
     def update_stock_level(self, *, old, new):
         """Set the product's stock level in Cloud Commerce."""
@@ -283,17 +258,6 @@ class Product(models.Model):
             return self.product_options.get(product_option__name=option_name).value
         except ProductOptionValue.DoesNotExist:
             return None
-
-    def CC_create_product(self):
-        """Create the product in Cloud Commerce."""
-        CCAPI.create_product(
-            self.product_range.range_ID,
-            self.product_range.name,
-            self.barcode,
-            sku=self.SKU,
-            description=self.description,
-            vat_rate_id=int(self.VAT_rate.percentage * 100),
-        )
 
 
 class ProductRangeSelectedOption(models.Model):

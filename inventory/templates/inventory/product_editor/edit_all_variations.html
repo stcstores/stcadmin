@@ -76,7 +76,7 @@
     {% for form in formset %}
     <tr class="product">
       {% for name, value in form.product.variation.items %}
-      <th class="option">{{ value }}</th>
+      <th class="option">{{ value.value }}</th>
       {% endfor %}
       {% for listing_option in form.product.listing_options.values %}
       {{ listing_option }}

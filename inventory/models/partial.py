@@ -123,7 +123,7 @@ class PartialProductRange(models.Model):
 
     def has_variations(self):
         """Return True if the product has multiple variations, otherwise return False."""
-        return self.partialproduct_set.count() > 1
+        return self.products().count() > 1
 
     def product_option_values(self):
         """Return the product option values used by this range."""
@@ -381,13 +381,6 @@ class PartialProduct(models.Model):
         return self.product_options.filter(product_option__in=options).order_by(
             "product_option"
         )
-
-    def update_stock_level(self, *, old, new):
-        """Set the product's stock level in Cloud Commerce."""
-        CCAPI.update_product_stock_level(
-            product_id=self.product_ID, old_stock_level=old, new_stock_level=new
-        )
-        return self.stock_level()
 
     def department(self):
         """Return the Product's department."""
