@@ -1,0 +1,207 @@
+{% extends "inventory/range_settings.html" %}
+{% load static %}
+{% load inventory_extras %}
+{% load reference_extras %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+{% endblock %}
+
+{% block page_title %}Product Images{% endblock %}
+
+{% block content %}{{ block.super }}
+<h1 class="page_title">Images Page</h1>
+{% help_button 'inventory_help' 'inventory-images_page' %}
+<h2>{{ product_range.name }}</h2>
+<style>
+    .image_table {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .delete_image, .delete_stcadmin_image {
+        font-weight: bold;
+        color: red;
+        font-size: 1.1em;
+    }
+
+    .stcadmin_image {
+        display: inline-block;
+        text-align: center;
+    }
+</style>
+
+<form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+    {{ form.as_p }}
+</form>
+
+{% for option, values in options.items %}
+    <p>{{ option }}: {% for value, product_ids in values.items %}
+        <button onclick="select_products([{% for p_id in product_ids %}{{ p_id }}, {% endfor %}])">{{ value }}</button>{% endfor %}</p>
+{% endfor %}
+
+<table class="image_table">
+    <tr>
+        <th>Product</th>
+        <th><button id="toggle_selected">Toggle</button></th>
+    </tr>
+    {% for product in products %}
+        <tr id="row_{{ product.id }}">
+            <td class="product_id" hidden>{{ product.id }}</td>
+            <td>{{ product.full_name }}</td>
+            <td class="selected"><input type="checkbox" id="select_{{ product.id }}"></td>
+            {% for image in product.images %}
+                <td class="product_image">
+                    <img src="{{ image.url }}" alt="{{ image.id }}" height="100">
+                    <br>
+                    <a class="image_id" href="{{ image.url }}" target="_blank">{{ image.id }}</a>
+                    <p>
+                        <button class="move_image_left">&lt;</button>
+                        <button class="delete_image">&times;</button>
+                        <button class="move_image_right">&gt;</button>
+                    </p>
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+{% if stcadmin_images %}
+<br>
+<h3>STC Admin Images</h3>
+<div>
+    {% for image in stcadmin_images %}
+        <div class="stcadmin_image">
+            <a class="image_id" href="{{ image.image.url }}" target="_blank">
+                <img src="{{ image.image.url }}" alt="{{ image.id }}" height="100">
+            </a>
+            <p>
+                <a href="{% url 'inventory:delete_stcadmin_image' image.id %}">
+                    <button class="delete_stcadmin_image">&times;</button>
+                </a>
+            </p>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+
+function get_image_order(product_id) {
+    var row = $('#row_' + product_id);
+    var image_order = [];
+    row.find('.product_image').each(function() {
+        image_order.push($(this).find('.image_id').text());
+    });
+    return image_order
+}
+
+function select_products(product_ids) {
+    var checkboxes = $('.selected input:checkbox');
+    checkboxes.prop('checked', false);
+    for (var i=0; i < product_ids.length; i++) {
+        $('#select_' + product_ids[i]).prop('checked', true);
+    }
+    $('.selected input:checkbox').change();
+}
+
+function update_image_order(product_id) {
+    var url = '{% url "inventory:set_image_order" %}';
+    var image_order = get_image_order(product_id);
+    var data = {'product_id': product_id, 'image_order': image_order};
+    $.post({
+        url: url,
+        data: JSON.stringify(data),
+        success: function() {
+            console.log(image_order);
+        },
+        error: function() {
+            api_error();
+        }
+    });
+}
+
+function delete_image(image) {
+    var url = '{% url "inventory:delete_image" %}';
+    var image_id = image.find('.image_id').text();
+    var data = {'image_id': image_id};
+    $.post({
+        url: url,
+        data: JSON.stringify(data),
+        success: function() {
+            image.remove();
+        },
+        error: function() {
+            api_error();
+        }
+    });
+}
+
+$(document).ready(function() {
+
+    $('.move_image_left').click(function() {
+        var image = $(this).closest('td');
+        var product_id = image.closest('tr').find('.product_id').text();
+        if (image.index() > 3) {
+             image.insertBefore(image.prev());
+        }
+        update_image_order(product_id);
+    });
+
+    $('.move_image_right').click(function() {
+        var image = $(this).closest('td');
+        var product_id = image.closest('tr').find('.product_id').text();
+        if (!(image.is(':last-child'))) {
+             image.insertAfter(image.next());
+        }
+        update_image_order(product_id);
+    });
+
+    $('.delete_image').click(function() {
+        var image = $(this).closest('td');
+        delete_image(image);
+    });
+
+    $('#toggle_selected').click(function() {
+        var checkboxes = $('.selected input:checkbox');
+        var checked = $('.selected input:checked');
+        if (checked.length === 0) {
+            checkboxes.prop('checked', true);
+        } else {
+            checkboxes.prop('checked', false);
+        }
+        $('.selected input:checkbox').change();
+    });
+
+    $('.selected input:checkbox').change(function() {
+        var checked = $('.selected input:checked');
+        var product_id_input = $('#{{ form.product_ids.auto_id }}');
+        var product_ids = [];
+        checked.each(function() {
+            var product_id = this.id.split('_')[1];
+            product_ids.push(product_id);
+        });
+        if (checked.length == 0) {
+            $('#{{ form.cloud_commerce_images.auto_id }}').attr('disabled', true);
+        } else {
+            $('#{{ form.cloud_commerce_images.auto_id }}').attr('disabled', false);
+        }
+        product_id_input.val(JSON.stringify(product_ids));
+    });
+
+    $('#{{ form.cloud_commerce_images.auto_id }}').change(function() {
+        $(this).closest('form').submit();
+    });
+
+    $('#{{ form.stcadmin_images.auto_id }}').change(function() {
+        $(this).closest('form').submit();
+    });
+
+    $('.selected input:checkbox').change();
+});
+
+</script>
+
+{% endblock %}

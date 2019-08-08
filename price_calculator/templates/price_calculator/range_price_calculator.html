@@ -1,5 +1,7 @@
-{% extends "inventory/product_range/product_range_base.html" %}
-{% load staticfiles %}
+{% extends "inventory/range_settings.html" %}
+{% load static %}
+{% load inventory_extras %}
+{% load reference_extras %}
 
 {% block additional_head %}{{ block.super }}
 <script src="{% static 'scripts/price_calculator.js' %}"></script>

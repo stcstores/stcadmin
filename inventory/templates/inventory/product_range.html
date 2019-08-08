@@ -1,0 +1,114 @@
+{% extends "inventory/base.html" %}
+{% load static %}
+{% load inventory_extras %}
+{% load product_editor_extras %}
+{% load stcadmin_extras %}
+{% load reference_extras %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+{% endblock %}
+
+{% block page_title %}CCP New Product Success{% endblock %}
+
+{% block content %}
+    {% if 'Incomplete' not in  product_range.options.option_names %}
+        {% include "inventory/product_range_nav.html" %}
+    {% endif %}
+    <h1 class="page_title">Range Page</h1>
+    {% help_button 'inventory_help' 'inventory-range_page' %}
+    <h2>{{ product_range.name }}</h2>
+    <p>SKU: {{ product_range.sku}}</p>
+    <p>ID: {{ product_range.id }}</p>
+    <p>Department: {{ product_range.products.0.options.Department.value }}</p>
+    {% if 'Incomplete' in  product_range.options.option_names %}
+    <div class="message_box error">
+        <h2>INCOMPLETE</h2>
+        <p>
+            Creation of this product has not yet completed and is likely still
+            in progress.
+        </p>
+        <p>
+            Please allow some time for this to complete then <a href="">refresh</a> this page.
+            If the item is complete this message will not appear.
+        </p>
+        <p>
+            If it was created some time ago (an hour or more) and you can still
+            see this message an error may have occurred, in this case the
+            product should be deleted and re-created.
+        </p>
+        <p>
+            While this message is present <span style="font-weight: bold;">DO NOT</span>
+            make any changes to the product in STCAdmin
+            <span style="font-weight: bold;">OR</span> Cloud Commerce.
+        </p>
+    </div>
+
+    <form action="" method="POST">{% csrf_token %}
+        <table>
+            {% for field in form %}
+            <tr>
+                <td>{{ field.label }}</td>
+                <td>{{ field }}</td>
+                <td>{% tooltip_help_text field %}</td>
+                {% if field.errors %}
+                    <td class="error">{{ field.errors }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            <tr><td colspan="3"><input type="submit" value="Update"></td></tr>
+        </table>
+    </form>
+    {% endif %}
+    <div class="product_list">
+        <h3>Products</h3>
+        <table class="product_list">
+            <tr>
+                <th>SKU</th>
+                <th>Title</th>
+                <th>Barcode</th>
+                <th colspan="3">Stock Level</th>
+                <th></th>
+            </tr>
+        {% for product in product_range.products %}
+        <tr>
+            <td>{{ product.sku}}</td>
+            <td><a href="{% url 'inventory:product' product.id %}">{{product.full_name}}</a></td>
+            <td>{{product.barcode}}</td>
+            <td><input id="stock_{{ product.id }}" type="text" value="{{ product.stock_level }}" size="4" /></td>
+            <td><button id="update_{{ product.id }}" class="stock_update_button">Update Stock Level</button></td>
+            <td><img id="status_{{ product.id }}" class="update_status" src=""></td>
+            <td><a href="{% ccp_product_page product_range.id product.id %}" target="_blank"><button>View Product on Cloud Commerce</button></a></td>
+        </tr>
+        {% endfor %}
+        </table>
+    </div>
+{% endblock %}
+
+{% block script %}{{ block.super }}
+    <script>
+        loading_image = "{% static 'images/loading.gif' %}"
+        complete_image = "{% static 'images/complete.jpg' %}"
+        error_image = "{% static 'images/error.jpg' %}"
+        update_stock_url = "{% url 'inventory:update_stock_level' %}";
+        product_details = {
+          {% for product in product_range.products %}
+              '{{ product.id }}': {
+                'stock_level': {{ product.stock_level }},
+                'sku': '{{product.sku}}'
+              },
+          {% endfor %}
+        }
+
+        {% if 'Incomplete' in  product_range.options.option_names %}
+        $(document).ready(function() {
+            $('.content input').prop('disabled', true);
+            $('.content button').prop('disabled', true);
+            setTimeout(function(){
+               window.location.reload(1);
+           }, 15000);
+        });
+        {% endif %}
+    </script>
+{% endblock %}
