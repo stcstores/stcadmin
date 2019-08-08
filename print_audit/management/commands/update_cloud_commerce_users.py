@@ -19,14 +19,13 @@ class Command(BaseCommand):
         """Update print audit."""
         try:
             cc_users = CCAPI.get_users()
-            for user in CloudCommerceUser.objects.all():
+            for user in CloudCommerceUser.objects.filter(hidden=False):
                 try:
                     cc_user = cc_users[user.user_id]
                     user.first_name = cc_user.first_name
                     user.second_name = cc_user.second_name
                 except IndexError:
-                    user.first_name = ""
-                    user.second_name = ""
+                    pass
                 user.save()
         except Exception as e:
             logger.exception("Error updating Cloud Commerce Usernames.")

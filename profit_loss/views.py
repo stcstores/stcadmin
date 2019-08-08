@@ -2,7 +2,7 @@
 
 import csv
 import datetime
-from io import StringIO
+import io
 
 import pytz
 from django.core.paginator import Paginator
@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import is_naive
 from django.views.generic.base import TemplateView, View
 from django.views.generic.list import ListView
+
 from home.views import UserInGroupMixin
 from profit_loss import models
 from spring_manifest.models import CloudCommerceCountryID
@@ -119,11 +120,11 @@ class ExportOrders(View):
     def dispatch(self, *args, **kwargs):
         """Return HttpResponse containing CSV file."""
         self.request = args[0]
-        output = StringIO()
+        output = io.StringIO()
         self.orders = self.get_orders()
         header = self.header()
         data = self.get_data()
-        writer = csv.writer(output, csv.QUOTE_NONNUMERIC)
+        writer = csv.writer(output)
         writer.writerow(header)
         for row in data:
             writer.writerow(row)
