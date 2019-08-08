@@ -6,6 +6,25 @@ from .images import ImageFormView  # NOQA
 from .locations import LocationFormView  # NOQA
 from .print_barcodes import BarcodePDF, PrintBarcodeLabels  # NOQA
 from .product import ProductView  # NOQA
+from .product_editor import (  # NOQA
+    AddDropdown,
+    AddListingOption,
+    AddProductOptionValues,
+    Continue,
+    CreateVariation,
+    DeleteVariation,
+    DiscardChanges,
+    EditAllVariations,
+    EditProduct,
+    EditRangeDetails,
+    EditVariation,
+    EditVariations,
+    RemoveDropdown,
+    RemoveProductOptionValue,
+    SaveChanges,
+    SetProductOptionValues,
+    StartEditingProduct,
+)
 from .product_order import ProductOrderView  # NOQA
 from .productrange import ProductRangeView  # NOQA
 from .productsearch import ProductSearchView  # NOQA

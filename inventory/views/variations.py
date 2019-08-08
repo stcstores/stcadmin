@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 
 from inventory import models
+from inventory.cloud_commerce_updater import ProductUpdater
 from inventory.forms import VariationsFormSet
 
 from .views import InventoryUserMixin
@@ -31,7 +32,7 @@ class VariationsView(InventoryUserMixin, TemplateView):
         """Process POST HTTP request."""
         if self.formset.is_valid():
             for form in self.formset:
-                form.save()
+                form.save(updater_class=ProductUpdater)
             messages.add_message(
                 self.request, messages.SUCCESS, "Variation Order Updated"
             )

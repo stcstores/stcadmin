@@ -364,3 +364,41 @@ class ProductImageAdmin(admin.ModelAdmin):
         "product__product_range__range_ID",
         "product__product_ID",
     )
+
+
+@admin.register(models.ProductEdit)
+class ProductEditAdmin(admin.ModelAdmin):
+    """Model admin for the ProductEdit model."""
+
+    fields = ("user", "product_range", "partial_product_range", "product_option_values")
+    list_display = ("__str__", "user", "product_range", "partial_product_range")
+
+
+@admin.register(models.PartialProductRange)
+class PartialProductRangeAdmin(ProductRangeAdmin):
+    """Model admin for the PartialProductRange model."""
+
+    pass
+
+
+@admin.register(models.PartialProduct)
+class PartialProductAdmin(ProductAdmin):
+    """Model admin for the PartialProduct model."""
+
+    fields = ProductAdmin.fields + ("pre_existing",)
+    list_display = ProductAdmin.list_display + ("pre_existing",)
+
+
+@admin.register(models.PartialProductOptionValueLink)
+class PartialProductOptionValueLinkAdmin(ProductOptionValueLinkAdmin):
+    """Model admin for the PartialProductOptionValueLink model."""
+
+    pass
+
+
+@admin.register(models.PartialProductRangeSelectedOption)
+class PartialProductRangeSelectedOptionAdmin(ProductRangeSelectedOptionAdmin):
+    """Model admin for the PartialProductRangeSelectedOption model."""
+
+    fields = ProductRangeSelectedOptionAdmin.fields + ("pre_existing",)
+    list_display = ProductRangeSelectedOptionAdmin.list_display + ("pre_existing",)

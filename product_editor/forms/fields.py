@@ -507,15 +507,83 @@ class OptionField(FormField):
 
 
 class VariationOptions(OptionField, fieldtypes.SelectizeField):
-    """Field for options that define variations."""
+    """Field for Product Options that define variations."""
 
-    pass
+    def __init__(self, *args, **kwargs):
+        """Instanciate the field."""
+        self.product_option = kwargs.pop("product_option")
+        self.product_range = kwargs.pop("product_range", None)
+        kwargs["choices"] = self.get_choices()
+        super().__init__(*args, **kwargs)
+
+    def get_choices(self):
+        """Return the choices for the field."""
+        choices = [("", "")]
+        available_options = models.ProductOptionValue.objects.filter(
+            product_option=self.product_option
+        )
+        if self.product_range is not None:
+            available_options = self.remove_used_options(
+                available_options, self.product_range
+            )
+        choices += [(option.value, option.value) for option in available_options]
+        return choices
+
+    def remove_used_options(self, available_options, product_range):
+        """Filter values already used by the product from the choices."""
+        existing_links = models.PartialProductOptionValueLink.objects.filter(
+            product__product_range=self.product_range,
+            product_option_value__product_option=self.product_option,
+        )
+        existing_values = models.ProductOptionValue.objects.filter(
+            id__in=existing_links.values_list("product_option_value__id", flat=True)
+        )
+        return available_options.difference(existing_values)
+
+    def clean(self, values):
+        """
+        Return the values as model objects.
+
+        Create an non-existant values.
+        """
+        options = []
+        for value in values:
+            try:
+                option = models.ProductOptionValue.objects.get(
+                    product_option=self.product_option, value=value
+                )
+            except models.ProductOptionValue.DoesNotExist:
+                raise NotImplementedError(
+                    "Creating new product options is not implemented."
+                )
+            options.append(option)
+        return options
 
 
 class ListingOption(OptionField, fieldtypes.SingleSelectize):
     """Field for options that provide information for listings."""
 
     pass
+
+
+class PartialProductOptionValueSelect(fieldtypes.SelectizeModelChoiceField):
+    """Select a product option value for a parital product."""
+
+    def __init__(self, *args, **kwargs):
+        """Select a product option value for a parital product."""
+        self.edit = kwargs.pop("edit")
+        self.product_option = kwargs.pop("product_option")
+        super().__init__(*args, **kwargs)
+
+    def label_from_instance(self, obj):
+        """Return the name of the option as it should appear in the form."""
+        return obj.value
+
+    def get_queryset(self):
+        """Return a queryset of selectable options."""
+        return self.edit.product_option_values.filter(
+            product_option=self.product_option
+        )
 
 
 class Brand(fieldtypes.SelectizeModelChoiceField):
@@ -593,3 +661,33 @@ class AmazonSearchTerms(ListOption):
     html_class = "amazon_search_terms"
     help_text = "Create upto five search terms for Amazon listings."
     maximum = 5
+
+
+class SelectProductOption(fieldtypes.SelectizeModelChoiceField):
+    """Field for selecting the package type of a product."""
+
+    label = "Product Option"
+    name = "product_option"
+    required_message = "A <b>Package Type</b> must be supplied."
+    help_text = (
+        "The <b>Shipping Rule</b> will be selected acording to the "
+        "<b>Package Type</b>."
+    )
+    selectize_options = {"maxItems": 1}
+
+    def __init__(self, *args, **kwargs):
+        """Instanciate the field."""
+        self.product_range = kwargs.get("product_range")
+        super().__init__()
+
+    def get_queryset(self):
+        """Return a queryset of selectable options."""
+        queryset = models.ProductOption.objects.filter(inactive=False)
+        if self.product_range is not None:
+            selected_options = self.product_range.product_options.all()
+            queryset = queryset.difference(selected_options)
+        return queryset
+
+    def clean(self, value):
+        """Return the submitted values as model objects."""
+        return models.ProductOption.objects.get(pk=value)

@@ -178,7 +178,8 @@ class RangeUpdater(BaseCloudCommerceUpdater):
 
     def _remove_DB_product_option(self, product_option):
         models.ProductOptionValueLink.objects.filter(
-            product__product_ID__in=self.product_IDs, product_option=product_option
+            product__product_ID__in=self.product_IDs,
+            product_option_value__product_option=product_option,
         ).delete()
         models.ProductRangeSelectedOption.objects.get(
             product_range=self.db_object, product_option=product_option
@@ -195,3 +196,69 @@ class RangeUpdater(BaseCloudCommerceUpdater):
             option_id=product_option.product_option_ID,
             drop_down=variation,
         )
+
+
+class PartialRangeUpdater(RangeUpdater):
+    """Update a Partial Product Range in the database."""
+
+    def set_name(self, name: str):
+        """Set the name for the Range."""
+        self._set_DB_name(name)
+
+    def set_department(self, department):
+        """
+        Set the department for the Range.
+
+        args:
+            department (inventory.models.product_options.Department)
+        """
+        self._set_DB_department(department)
+
+    def set_description(self, description: str):
+        """Set the description for the Range."""
+        self._set_DB_description(description)
+
+    def set_amazon_search_terms(self, search_terms: str):
+        """Set the Amazon search terms for the Range."""
+        self._set_DB_amazon_search_terms(search_terms)
+
+    def set_amazon_bullet_points(self, bullet_points: str):
+        """Set the Amazon search terms for the Range."""
+        self._set_DB_amazon_bullet_points(bullet_points)
+
+    def set_end_of_line(self, end_of_line=True):
+        """
+        Set the Range's End-of-Line status.
+
+        kwargs:
+            end_of_line (bool): If True the Range will be set as End-of-Line, if False
+                the Range will be set as not End-of-Line.
+        """
+        self._set_DB_end_of_line(end_of_line)
+
+    def add_variation_product_option(self, product_option):
+        """
+        Add a variation Product Option to the Range.
+
+        args:
+            product_option: inventory.models.product_options.ProductOption
+        """
+        self._add_DB_product_option(product_option, variation=True)
+
+    def add_listing_product_option(self, product_option):
+        """
+        Add a listing Product Option to the Range.
+
+        args:
+            product_option: inventory.models.product_options.ProductOption
+        """
+        self._add_DB_product_option(product_option, variation=False)
+
+    def remove_product_option(self, product_option):
+        """
+        Remove a Product Option from the Range.
+
+        args:
+            product_option: inventory.models.product_options.ProductOption
+        """
+        self._remove_DB_product_option(product_option)

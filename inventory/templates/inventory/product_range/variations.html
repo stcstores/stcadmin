@@ -22,8 +22,8 @@
         <td><button id="select_all">All</button>&nbsp;<button id="select_none">None</button></td>
     {% for option, values in variations.items %}
         <tr>
-            <th>{{ option }}</th>
-            <td>{% for value in values %}<button class="select_option">{{ value }}</button>&nbsp;{% endfor %}</td>
+            <th>{{ option.name }}</th>
+            <td>{% for value in values %}<button class="select_option">{{ value.value }}</button>&nbsp;{% endfor %}</td>
         </tr>
     {% endfor %}
     </table>
@@ -71,7 +71,7 @@
     {% for form in formset %}
     <tr class="product">
         {% for name, value in form.product.variation.items %}
-        <th class="option">{{ value }}</th>
+        <th class="option">{{ value.value }}</th>
         {% endfor %}
         {% for listing_option in form.product.listing_options.values %}
         {{ listing_option }}

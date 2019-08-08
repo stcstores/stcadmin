@@ -1,0 +1,44 @@
+{% extends "inventory/product_editor/base.html" %}
+{% load static %}
+
+{% block additional_head %}{{ block.super }}
+<script>{% include 'product_editor/widgets/product_widgets.js' %}</script>
+<link rel="stylesheet" href="{% static 'css/product_page.css' %}">
+<script src="{% static 'scripts/new_product.js' %}"></script>
+{% include 'home/froala_head.html' %}
+{% endblock %}
+
+{% block content %}{{ block.super }}
+
+<div class="page_center">
+
+  <div class="product_form">
+    <form action="" method="POST" autocomplete="off">{% csrf_token %}
+      {% include "inventory/input_add_on_form.html" %}
+      <button type="submit" class="save_button">Save</button>
+    </form>
+  </div>
+
+  <div class="description_instructions">
+    <h3>Descriptions</h3>
+    <ul>
+      <li>Must <b>not</b> start with the title of the product. It will be added automatically on ebay.</li>
+      <li>Must <b>not</b> include information about <b>price</b> or <b>postage</b>.</li>
+      <li>The description can <b>contain</b> bullet points to hightlight key information but <b>MUST NOT</b> consist only of bullet ponts.</li>
+      <li>Do <b>not</b> use abrieviations such as "L" for length as this cannot be translated for foriegn listings.</li>
+      <li>Sentences must end with full stops.</li>
+      <li>Proper use of capitalisation is required.</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+
+  $(document).ready(function(){
+    $('.fr-box').addClass('InputAddOn-field');
+  });
+
+</script>
+{% endblock %}

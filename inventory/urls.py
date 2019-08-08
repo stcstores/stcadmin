@@ -94,4 +94,82 @@ api_urlpatterns = [
     path("delete_image/", views.DeleteImage.as_view(), name="delete_image"),
 ]
 
-urlpatterns = inventory_urlpatterns + api_urlpatterns
+product_editor_patterns = [
+    path(
+        "start_editing_product/<int:range_ID>/",
+        views.StartEditingProduct.as_view(),
+        name="start_editing_product",
+    ),
+    path(
+        "edit_product/<int:edit_ID>/", views.EditProduct.as_view(), name="edit_product"
+    ),
+    path(
+        "edit_variations/<int:edit_ID>/",
+        views.EditVariations.as_view(),
+        name="edit_variations",
+    ),
+    path("continue", views.Continue.as_view(), name="continue"),
+    path(
+        "edit_range_details/<int:edit_ID>/",
+        views.EditRangeDetails.as_view(),
+        name="edit_range_details",
+    ),
+    path(
+        "add_dropdown/<int:edit_ID>/", views.AddDropdown.as_view(), name="add_dropdown"
+    ),
+    path(
+        "add_listing_option/<int:edit_ID>/",
+        views.AddListingOption.as_view(),
+        name="add_listing_option",
+    ),
+    path(
+        "set_product_option_values/<int:edit_ID>/",
+        views.SetProductOptionValues.as_view(),
+        name="set_product_option_values",
+    ),
+    path(
+        "add_product_option_values/<int:edit_ID>/<int:product_option_ID>/",
+        views.AddProductOptionValues.as_view(),
+        name="add_product_option_values",
+    ),
+    path(
+        "remove_product_option_value/<int:edit_ID>/<int:option_value_ID>/",
+        views.RemoveProductOptionValue.as_view(),
+        name="remove_product_option_value",
+    ),
+    path(
+        "edit_variation/<int:edit_ID>/<int:product_ID>/",
+        views.EditVariation.as_view(),
+        name="edit_variation",
+    ),
+    path(
+        "edit_all_variations/<int:edit_ID>/",
+        views.EditAllVariations.as_view(),
+        name="edit_all_variations",
+    ),
+    path(
+        "create_variation/<int:edit_ID>/",
+        views.CreateVariation.as_view(),
+        name="create_variation",
+    ),
+    path(
+        "delete_variation/<int:edit_ID>/<int:product_ID>/",
+        views.DeleteVariation.as_view(),
+        name="delete_variation",
+    ),
+    path(
+        "discard_changes/<int:edit_ID>/",
+        views.DiscardChanges.as_view(),
+        name="discard_changes",
+    ),
+    path(
+        "remove_dowpdown/<int:edit_ID>/<int:product_option_ID>/",
+        views.RemoveDropdown.as_view(),
+        name="remove_dropdown",
+    ),
+    path(
+        "save_changes/<int:edit_ID>/", views.SaveChanges.as_view(), name="save_changes"
+    ),
+]
+
+urlpatterns = inventory_urlpatterns + api_urlpatterns + product_editor_patterns

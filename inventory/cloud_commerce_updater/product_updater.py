@@ -18,21 +18,13 @@ class ProductUpdater(BaseCloudCommerceUpdater):
     WIDTH_PRODUCT_OPTION_ID = 61990
     DATE_CREATED_PRODUCT_OPTION_ID = 41023
 
-    def __init__(self, db_object):
-        """
-        Instantiate the Product Updater.
-
-        args:
-            db_object (inventory.models.products.Product)
-        """
-        super().__init__(db_object)
-
     def set_supplier(self, supplier):
         """
         Set the product's supplier.
 
         args:
             supplier (inventory.models.suppliers.Supplier)
+
         """
         self._set_DB_supplier(supplier)
         self._set_CC_supplier(supplier)
@@ -58,6 +50,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             VAT_rate (inventory.models.vat_rates.VATRate)
+
         """
         self._set_DB_VAT_rate(VAT_rate)
         self._set_CC_VAT_rate(VAT_rate)
@@ -78,6 +71,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             brand (inventory.models.product_options.Brand)
+
         """
         self._set_DB_brand(brand)
         self._set_CC_brand(brand)
@@ -88,6 +82,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             manufacturer (inventory.models.product_options.Manufacturer)
+
         """
         self._set_DB_manufacturer(manufacturer)
         self._set_CC_manufacturer(manufacturer)
@@ -98,6 +93,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             package_type (inventory.models.product_options.PackageType)
+
         """
         self._set_DB_package_type(package_type)
         self._set_CC_package_type(package_type)
@@ -108,6 +104,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             international_shipping (inventory.models.product_options.InternationalShipping)
+
         """
         self._set_DB_international_shipping(international_shipping)
         self._set_CC_international_shipping(international_shipping)
@@ -118,6 +115,7 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             bays (list(inventory.models.locations.Bay))
+
         """
         self._set_DB_bays(bays)
         self._set_CC_bays(bays)
@@ -153,9 +151,15 @@ class ProductUpdater(BaseCloudCommerceUpdater):
 
         args:
             product_option_value (inventory.models.product_options.ProductOptionValue)
+
         """
         self._set_DB_product_option_link(product_option_value)
         self._set_CC_product_option_link(product_option_value)
+
+    def remove_product_option_link(self, product_option_value):
+        """Remove a product option link from the product."""
+        self._remove_DB_product_option_link(product_option_value)
+        self._remove_CC_product_option_link(product_option_value)
 
     def set_date_created(self):
         """Set the date on which the product was created."""
@@ -397,8 +401,142 @@ class ProductUpdater(BaseCloudCommerceUpdater):
             product_option_value_ID=product_option_value.product_option_value_ID,
         )
 
+    def _remove_DB_product_option(self, product_option_value):
+        models.ProductOptionValueLink.objects.get(
+            product=self.product, value=product_option_value
+        ).delete()
+
+    def _remove_CC_product_option(self, product_option_value):
+        self._clear_CC_product_options(
+            product_option_value.product_option.product_option_ID
+        )
+
     def _set_CC_date_created(self, date):
         date_string = date.strftime("%Y-%m-%d")
         self._set_or_create_CC_product_option(
             product_option_ID=self.DATE_CREATED_PRODUCT_OPTION_ID, value=date_string
         )
+
+
+class PartialProductUpdater(ProductUpdater):
+    """Update a Partial Product in the database."""
+
+    def set_supplier(self, supplier):
+        """
+        Set the product's supplier.
+
+        args:
+            supplier (inventory.models.suppliers.Supplier)
+
+        """
+        self._set_DB_supplier(supplier)
+
+    def set_supplier_SKU(self, supplier_SKU: str):
+        """Set the product's supplier SKU."""
+        self._set_DB_supplier_SKU(supplier_SKU)
+
+    def set_barcode(self, barcode: str):
+        """Set the product's barcode."""
+        self._set_DB_barcode(barcode)
+
+    def set_purchase_price(self, purchase_price):
+        """Set the product's purchase price."""
+        self._set_DB_purchase_price(purchase_price)
+
+    def set_VAT_rate(self, VAT_rate):
+        """
+        Set the product's VAT rate.
+
+        args:
+            VAT_rate (inventory.models.vat_rates.VATRate)
+
+        """
+        self._set_DB_VAT_rate(VAT_rate)
+
+    def set_price(self, price):
+        """Set the product's price."""
+        self._set_DB_price(price)
+
+    def set_retail_price(self, retail_price):
+        """Set the product's retail price."""
+        self._set_DB_retail_price(retail_price)
+
+    def set_brand(self, brand):
+        """
+        Set the product's brand.
+
+        args:
+            brand (inventory.models.product_options.Brand)
+
+        """
+        self._set_DB_brand(brand)
+
+    def set_manufacturer(self, manufacturer):
+        """
+        Set the product's manufacturer.
+
+        args:
+            manufacturer (inventory.models.product_options.Manufacturer)
+
+        """
+        self._set_DB_manufacturer(manufacturer)
+
+    def set_package_type(self, package_type):
+        """
+        Set the product's package type.
+
+        args:
+            package_type (inventory.models.product_options.PackageType)
+
+        """
+        self._set_DB_package_type(package_type)
+
+    def set_international_shipping(self, international_shipping):
+        """
+        Set the product's international shipping.
+
+        args:
+            international_shipping (inventory.models.product_options.InternationalShipping)
+
+        """
+        self._set_DB_international_shipping(international_shipping)
+
+    def set_bays(self, bays):
+        """
+        Set the bays in which the product is stocked.
+
+        args:
+            bays (list(inventory.models.locations.Bay))
+
+        """
+        self._set_DB_bays(bays)
+
+    def set_weight(self, weight: int):
+        """Set the product's weight in grams."""
+        self._set_DB_weight(weight)
+
+    def set_length(self, length: int):
+        """Set the product's length in milimeters."""
+        self._set_DB_length(length)
+
+    def set_height(self, height: int):
+        """Set the product's height in milimeters."""
+        self._set_DB_height(height)
+
+    def set_width(self, width: int):
+        """Set the product's width in milimeters."""
+        self._set_DB_width(width)
+
+    def set_gender(self, gender):
+        """Set the product's Gender."""
+        self._set_DB_gender(gender)
+
+    def set_product_option_link(self, product_option_value):
+        """
+        Set or change the value for one of the product's product options.
+
+        args:
+            product_option_value (inventory.models.product_options.ProductOptionValue)
+
+        """
+        self._set_DB_product_option_link(product_option_value)
