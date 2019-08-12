@@ -19,7 +19,7 @@ class LabelMakerTemplateTest(TestCase):
     def template_test(self, url, template):
         """Test url uses template."""
         response = self.client.get(url)
-        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, template)
 
     def test_uses_index_template(self):
