@@ -37,7 +37,7 @@ class DescriptionsView(InventoryUserMixin, FormView):
 
     def form_valid(self, form):
         """Process form request and return HttpResponse."""
-        updater = RangeUpdater(self.product_range)
+        updater = RangeUpdater(self.product_range, self.request.user)
         updater.set_name(form.cleaned_data["title"])
         updater.set_description(form.cleaned_data["description"])
         updater.set_amazon_bullet_points("|".join(form.cleaned_data["amazon_bullets"]))

@@ -165,7 +165,7 @@ class EditRangeDetails(DescriptionsView):
 
     def form_valid(self, form):
         """Process form request and return HttpResponse."""
-        updater = PartialRangeUpdater(self.product_range)
+        updater = PartialRangeUpdater(self.product_range, self.request.user)
         updater.set_name(form.cleaned_data["title"])
         updater.set_description(form.cleaned_data["description"])
         updater.set_department(form.cleaned_data["department"])
@@ -395,12 +395,13 @@ class EditVariation(InventoryUserMixin, FormView):
 
     def get_form_kwargs(self, *args, **kwargs):
         """Return kwargs for form."""
+        self.edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
         kwargs = super().get_form_kwargs()
         self.product = get_object_or_404(
             models.PartialProduct, pk=self.kwargs["product_ID"]
         )
-        self.edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
         kwargs["product"] = self.product
+        kwargs["user"] = self.request.user
         return kwargs
 
     def get_context_data(self, *args, **kwargs):

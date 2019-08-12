@@ -108,6 +108,7 @@ class ProductForm(ProductEditorBase, forms.Form):
     def __init__(self, *args, **kwargs):
         """Configure form fields."""
         self.product = kwargs.pop("product")
+        self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
         self.fields[self.BRAND] = fields.Brand()
         self.fields[self.MANUFACTURER] = fields.Manufacturer()
@@ -171,7 +172,7 @@ class ProductForm(ProductEditorBase, forms.Form):
         """Update product."""
         data = self.cleaned_data
         updater_class = kwargs["updater_class"]
-        updater = updater_class(self.product)
+        updater = updater_class(self.product, self.user)
         updater.set_brand(data[self.BRAND])
         updater.set_manufacturer(data[self.MANUFACTURER])
         updater.set_barcode(data[self.BARCODE])

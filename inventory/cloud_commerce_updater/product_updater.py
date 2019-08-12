@@ -1,5 +1,8 @@
 """Update Products in the database and Cloud Commerce."""
 
+
+import logging
+
 from ccapi import CCAPI
 
 from inventory import models
@@ -7,8 +10,8 @@ from inventory import models
 from .base_updater import BaseCloudCommerceUpdater
 
 
-class ProductUpdater(BaseCloudCommerceUpdater):
-    """Update a Product in the database and in Cloud Commerce."""
+class BaseProductUpdater(BaseCloudCommerceUpdater):
+    """Base updater for updating products."""
 
     SUPPLIER_SKU_PRODUCT_OPTION_ID = 34627
     PURCHASE_PRICE_PRODUCT_OPTION_ID = 35132
@@ -26,23 +29,35 @@ class ProductUpdater(BaseCloudCommerceUpdater):
             supplier (inventory.models.suppliers.Supplier)
 
         """
-        self._set_DB_supplier(supplier)
-        self._set_CC_supplier(supplier)
+        args, kwargs = self._prepare_set_supplier(supplier)
+        if self.update_DB:
+            self._set_DB_supplier(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_supplier(*args, **kwargs)
 
-    def set_supplier_SKU(self, supplier_SKU: str):
+    def set_supplier_SKU(self, supplier_SKU):
         """Set the product's supplier SKU."""
-        self._set_DB_supplier_SKU(supplier_SKU)
-        self._set_CC_supplier_SKU(supplier_SKU)
+        args, kwargs = self._prepare_set_supplier_SKU(supplier_SKU)
+        if self.update_DB:
+            self._set_DB_supplier_SKU(supplier_SKU)
+        if self.update_CC:
+            self._set_CC_supplier_SKU(supplier_SKU)
 
-    def set_barcode(self, barcode: str):
+    def set_barcode(self, barcode):
         """Set the product's barcode."""
-        self._set_DB_barcode(barcode)
-        self._set_CC_barcode(barcode)
+        args, kwargs = self._prepare_set_barcode(barcode)
+        if self.update_DB:
+            self._set_DB_barcode(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_barcode(*args, **kwargs)
 
     def set_purchase_price(self, purchase_price):
         """Set the product's purchase price."""
-        self._set_DB_purchase_price(purchase_price)
-        self._set_CC_purchase_price(purchase_price)
+        args, kwargs = self._prepare_set_purchase_price(purchase_price)
+        if self.update_DB:
+            self._set_DB_purchase_price(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_purchase_price(*args, **kwargs)
 
     def set_VAT_rate(self, VAT_rate):
         """
@@ -52,18 +67,27 @@ class ProductUpdater(BaseCloudCommerceUpdater):
             VAT_rate (inventory.models.vat_rates.VATRate)
 
         """
-        self._set_DB_VAT_rate(VAT_rate)
-        self._set_CC_VAT_rate(VAT_rate)
+        args, kwargs = self._prepare_set_VAT_rate(VAT_rate)
+        if self.update_DB:
+            self._set_DB_VAT_rate(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_VAT_rate(*args, **kwargs)
 
     def set_price(self, price):
         """Set the product's price."""
-        self._set_DB_price(price)
-        self._set_CC_price(price)
+        args, kwargs = self._prepare_set_price(price)
+        if self.update_DB:
+            self._set_DB_price(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_price(*args, **kwargs)
 
     def set_retail_price(self, retail_price):
         """Set the product's retail price."""
-        self._set_DB_retail_price(retail_price)
-        self._set_CC_retail_price(retail_price)
+        args, kwargs = self._prepare_set_retail_price(retail_price)
+        if self.update_DB:
+            self._set_DB_retail_price(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_retail_price(*args, **kwargs)
 
     def set_brand(self, brand):
         """
@@ -73,8 +97,11 @@ class ProductUpdater(BaseCloudCommerceUpdater):
             brand (inventory.models.product_options.Brand)
 
         """
-        self._set_DB_brand(brand)
-        self._set_CC_brand(brand)
+        args, kwargs = self._prepare_set_brand(brand)
+        if self.update_DB:
+            self._set_DB_brand(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_brand(*args, **kwargs)
 
     def set_manufacturer(self, manufacturer):
         """
@@ -84,8 +111,11 @@ class ProductUpdater(BaseCloudCommerceUpdater):
             manufacturer (inventory.models.product_options.Manufacturer)
 
         """
-        self._set_DB_manufacturer(manufacturer)
-        self._set_CC_manufacturer(manufacturer)
+        args, kwargs = self._prepare_set_manufacturer(manufacturer)
+        if self.update_DB:
+            self._set_DB_manufacturer(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_manufacturer(*args, **kwargs)
 
     def set_package_type(self, package_type):
         """
@@ -95,8 +125,11 @@ class ProductUpdater(BaseCloudCommerceUpdater):
             package_type (inventory.models.product_options.PackageType)
 
         """
-        self._set_DB_package_type(package_type)
-        self._set_CC_package_type(package_type)
+        args, kwargs = self._prepare_set_package_type(package_type)
+        if self.update_DB:
+            self._set_DB_package_type(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_package_type(*args, **kwargs)
 
     def set_international_shipping(self, international_shipping):
         """
@@ -106,8 +139,11 @@ class ProductUpdater(BaseCloudCommerceUpdater):
             international_shipping (inventory.models.product_options.InternationalShipping)
 
         """
-        self._set_DB_international_shipping(international_shipping)
-        self._set_CC_international_shipping(international_shipping)
+        args, kwargs = self._prepare_set_international_shipping(international_shipping)
+        if self.update_DB:
+            self._set_DB_international_shipping(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_international_shipping(*args, **kwargs)
 
     def set_bays(self, bays):
         """
@@ -117,33 +153,51 @@ class ProductUpdater(BaseCloudCommerceUpdater):
             bays (list(inventory.models.locations.Bay))
 
         """
-        self._set_DB_bays(bays)
-        self._set_CC_bays(bays)
+        args, kwargs = self._prepare_set_bays(bays)
+        if self.update_DB:
+            self._set_DB_bays(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_bays(*args, **kwargs)
 
-    def set_weight(self, weight: int):
+    def set_weight(self, weight):
         """Set the product's weight in grams."""
-        self._set_DB_weight(weight)
-        self._set_CC_weight(weight)
+        args, kwargs = self._prepare_set_weight(weight)
+        if self.update_DB:
+            self._set_DB_weight(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_weight(*args, **kwargs)
 
-    def set_length(self, length: int):
+    def set_length(self, length):
         """Set the product's length in milimeters."""
-        self._set_DB_length(length)
-        self._set_CC_length(length)
+        args, kwargs = self._prepare_set_length(length)
+        if self.update_DB:
+            self._set_DB_length(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_length(*args, **kwargs)
 
-    def set_height(self, height: int):
+    def set_height(self, height):
         """Set the product's height in milimeters."""
-        self._set_DB_height(height)
-        self._set_CC_height(height)
+        args, kwargs = self._prepare_set_height(height)
+        if self.update_DB:
+            self._set_DB_height(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_height(*args, **kwargs)
 
-    def set_width(self, width: int):
+    def set_width(self, width):
         """Set the product's width in milimeters."""
-        self._set_DB_width(width)
-        self._set_CC_width(width)
+        args, kwargs = self._prepare_set_width(width)
+        if self.update_DB:
+            self._set_DB_width(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_width(*args, **kwargs)
 
     def set_gender(self, gender):
         """Set the product's Gender."""
-        self._set_DB_gender(gender)
-        self._set_CC_gender(gender)
+        args, kwargs = self._prepare_set_gender(gender)
+        if self.update_DB:
+            self._set_DB_gender(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_gender(*args, **kwargs)
 
     def set_product_option_link(self, product_option_value):
         """
@@ -153,17 +207,110 @@ class ProductUpdater(BaseCloudCommerceUpdater):
             product_option_value (inventory.models.product_options.ProductOptionValue)
 
         """
-        self._set_DB_product_option_link(product_option_value)
-        self._set_CC_product_option_link(product_option_value)
+        args, kwargs = self._prepare_set_product_option_link(product_option_value)
+        if self.update_DB:
+            self._set_DB_product_option_link(*args, **kwargs)
+        if self.update_CC:
+            self._set_CC_product_option_link(*args, **kwargs)
 
     def remove_product_option_link(self, product_option_value):
         """Remove a product option link from the product."""
-        self._remove_DB_product_option_link(product_option_value)
-        self._remove_CC_product_option_link(product_option_value)
+        args, kwargs = self._prepare_remove_product_option_link(product_option_value)
+        if self.update_DB:
+            self._remove_DB_product_option_link(*args, **kwargs)
+        if self.update_CC:
+            self._remove_CC_product_option_link(*args, **kwargs)
 
     def set_date_created(self):
         """Set the date on which the product was created."""
-        self._set_CC_date_created(self.db_object.date_created)
+        args, kwargs = self._prepare_set_date_created()
+        if self.update_CC:
+            self._set_CC_date_created(*args, **kwargs)
+
+    def _prepare_set_supplier(self, supplier):
+        self.log(f"Set supplier to {supplier}.")
+        return [supplier], {}
+
+    def _prepare_set_supplier_SKU(self, supplier_SKU):
+        self.log(f"Set supplier SKU to {supplier_SKU}.")
+        return [supplier_SKU], {}
+
+    def _prepare_set_barcode(self, barcode):
+        self.log(f"Set barcode to {barcode}.")
+        return [barcode], {}
+
+    def _prepare_set_purchase_price(self, purchase_price):
+        self.log(f"Set purchase price to {purchase_price}.")
+        return [purchase_price], {}
+
+    def _prepare_set_VAT_rate(self, VAT_rate):
+        self.log(f"Set VAT rate to {VAT_rate}.")
+        return [VAT_rate], {}
+
+    def _prepare_set_price(self, price):
+        self.log(f"Set price to {price}.")
+        return [price], {}
+
+    def _prepare_set_retail_price(self, retail_price):
+        self.log(f"Set retail price to {retail_price}.")
+        return [retail_price], {}
+
+    def _prepare_set_brand(self, brand):
+        self.log(f"Set brand to {brand}.")
+        return [brand], {}
+
+    def _prepare_set_manufacturer(self, manufacturer):
+        self.log(f"Set manufacturer to {manufacturer}.")
+        return [manufacturer], {}
+
+    def _prepare_set_package_type(self, package_type):
+        self.log(f"Set package type to {package_type}.")
+        return [package_type], {}
+
+    def _prepare_set_international_shipping(self, international_shipping):
+        self.log(f"Set international shipping to {international_shipping}.")
+        return [international_shipping], {}
+
+    def _prepare_set_bays(self, bays):
+        self.log(f"Set bays to {list(bays)}.")
+        return [bays], {}
+
+    def _prepare_set_weight(self, weight):
+        self.log(f"Set weight to {weight}.")
+        return [weight], {}
+
+    def _prepare_set_length(self, length):
+        self.log(f"Set length to {length}.")
+        return [length], {}
+
+    def _prepare_set_height(self, height):
+        self.log(f"Set height to {height}.")
+        return [height], {}
+
+    def _prepare_set_width(self, width):
+        self.log(f"Set width to {width}.")
+        return [width], {}
+
+    def _prepare_set_gender(self, gender):
+        self.log(f"Set gender to {gender}.")
+        return [gender], {}
+
+    def _prepare_set_product_option_link(self, product_option_value):
+        self.log(
+            f'Set product option "{product_option_value.product_option}" to '
+            f'"{product_option_value.value}"'
+        )
+        return [product_option_value], {}
+
+    def _prepare_remove_product_option_link(self, product_option_value):
+        self.log(f'Remove product option "{product_option_value.product_option}".')
+        return [product_option_value], {}
+
+    def _prepare_set_date_created(self):
+        self.log(
+            f"Set date created to {self.db_object.date_created} on Cloud Commerce."
+        )
+        return [self.db_object.date_created], {}
 
     def _set_CC_product_option(self, *, product_option_ID, product_option_value_ID):
         CCAPI.set_product_option_value(
@@ -418,125 +565,19 @@ class ProductUpdater(BaseCloudCommerceUpdater):
         )
 
 
-class PartialProductUpdater(ProductUpdater):
+class ProductUpdater(BaseProductUpdater):
+    """Update a Product in the database and in Cloud Commerce."""
+
+    LOG_MESSAGE = "{} - Product {} - {}"
+    update_DB = True
+    update_CC = True
+
+
+class PartialProductUpdater(BaseProductUpdater):
     """Update a Partial Product in the database."""
 
-    def set_supplier(self, supplier):
-        """
-        Set the product's supplier.
+    LOGGING_LEVEL = logging.DEBUG
+    LOG_MESSAGE = "{} - Partial Product {} - {}"
 
-        args:
-            supplier (inventory.models.suppliers.Supplier)
-
-        """
-        self._set_DB_supplier(supplier)
-
-    def set_supplier_SKU(self, supplier_SKU: str):
-        """Set the product's supplier SKU."""
-        self._set_DB_supplier_SKU(supplier_SKU)
-
-    def set_barcode(self, barcode: str):
-        """Set the product's barcode."""
-        self._set_DB_barcode(barcode)
-
-    def set_purchase_price(self, purchase_price):
-        """Set the product's purchase price."""
-        self._set_DB_purchase_price(purchase_price)
-
-    def set_VAT_rate(self, VAT_rate):
-        """
-        Set the product's VAT rate.
-
-        args:
-            VAT_rate (inventory.models.vat_rates.VATRate)
-
-        """
-        self._set_DB_VAT_rate(VAT_rate)
-
-    def set_price(self, price):
-        """Set the product's price."""
-        self._set_DB_price(price)
-
-    def set_retail_price(self, retail_price):
-        """Set the product's retail price."""
-        self._set_DB_retail_price(retail_price)
-
-    def set_brand(self, brand):
-        """
-        Set the product's brand.
-
-        args:
-            brand (inventory.models.product_options.Brand)
-
-        """
-        self._set_DB_brand(brand)
-
-    def set_manufacturer(self, manufacturer):
-        """
-        Set the product's manufacturer.
-
-        args:
-            manufacturer (inventory.models.product_options.Manufacturer)
-
-        """
-        self._set_DB_manufacturer(manufacturer)
-
-    def set_package_type(self, package_type):
-        """
-        Set the product's package type.
-
-        args:
-            package_type (inventory.models.product_options.PackageType)
-
-        """
-        self._set_DB_package_type(package_type)
-
-    def set_international_shipping(self, international_shipping):
-        """
-        Set the product's international shipping.
-
-        args:
-            international_shipping (inventory.models.product_options.InternationalShipping)
-
-        """
-        self._set_DB_international_shipping(international_shipping)
-
-    def set_bays(self, bays):
-        """
-        Set the bays in which the product is stocked.
-
-        args:
-            bays (list(inventory.models.locations.Bay))
-
-        """
-        self._set_DB_bays(bays)
-
-    def set_weight(self, weight: int):
-        """Set the product's weight in grams."""
-        self._set_DB_weight(weight)
-
-    def set_length(self, length: int):
-        """Set the product's length in milimeters."""
-        self._set_DB_length(length)
-
-    def set_height(self, height: int):
-        """Set the product's height in milimeters."""
-        self._set_DB_height(height)
-
-    def set_width(self, width: int):
-        """Set the product's width in milimeters."""
-        self._set_DB_width(width)
-
-    def set_gender(self, gender):
-        """Set the product's Gender."""
-        self._set_DB_gender(gender)
-
-    def set_product_option_link(self, product_option_value):
-        """
-        Set or change the value for one of the product's product options.
-
-        args:
-            product_option_value (inventory.models.product_options.ProductOptionValue)
-
-        """
-        self._set_DB_product_option_link(product_option_value)
+    update_DB = True
+    update_CC = False

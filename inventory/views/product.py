@@ -27,6 +27,7 @@ class ProductView(InventoryUserMixin, FormView):
         """Return kwargs for form."""
         kwargs = super().get_form_kwargs()
         kwargs["product"] = self.product
+        kwargs["user"] = self.request.user
         return kwargs
 
     def form_valid(self, form):

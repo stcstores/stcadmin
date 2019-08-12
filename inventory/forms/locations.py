@@ -49,7 +49,7 @@ class LocationsForm(forms.Form):
 
     def save(self):
         """Update product with new bays."""
-        updater = ProductUpdater(self.product)
+        updater = ProductUpdater(self.product, self.request.user)
         updater.set_bays(self.cleaned_data[self.BAYS])
 
 
