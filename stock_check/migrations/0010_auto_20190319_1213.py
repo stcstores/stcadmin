@@ -5,10 +5,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("inventory", "0023_vatrate"),
-        ("stock_check", "0009_auto_20190226_1206"),
-    ]
+    dependencies = [("inventory", "0001_initial"), ("stock_check", "0001_initial")]
 
     operations = [
         migrations.RenameModel(old_name="Product", new_name="StockCheckProduct"),
