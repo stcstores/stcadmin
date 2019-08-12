@@ -189,7 +189,7 @@
         "list-input": {
             "editable": true,
             "git": "https://github.com/lukeshiner/list_input.git",
-            "ref": "b8b0c32a39427a0788e973a4994f77837d4b524f"
+            "ref": "a6a12328bfcdc976fc42ca3c6e3c5f141aa995d7"
         },
         "lml": {
             "hashes": [
@@ -253,7 +253,7 @@
         "order-profit": {
             "editable": true,
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "23803160e68af78d29c0dd2b2cca0588f91d077e"
+            "ref": "aaaf6318ac58c8fdb4240ac8d058419495bdc044"
         },
         "packaging": {
             "hashes": [
