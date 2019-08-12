@@ -2,11 +2,17 @@
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+
+from inventory import models
 from product_editor.forms import fields
 
 
 class TestField(TestCase):
     """Tests for Product Editor form fields."""
+
+    def setUp(self):
+        """Create product option."""
+        models.ProductOption(name="Size", product_option_ID=9823).save()
 
     def test_title_disallowed_characters(self):
         """Test Title field class allowed characters."""
@@ -17,7 +23,9 @@ class TestField(TestCase):
 
     def test_option_field_allowed_characters(self):
         """Test option field allowed characters."""
-        field = fields.VariationOptions(label="Size", choices=[])
+        field = fields.VariationOptions(
+            product_option=models.ProductOption.objects.get(name="Size")
+        )
         field.validate(["Hello World"])
         field.validate(["Hello World", "Hello Earth"])
         field.validate(["Hello + (world) ."])

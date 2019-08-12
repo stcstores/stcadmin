@@ -10,7 +10,7 @@ from inventory import models
 from product_editor.editor_manager import ProductEditorBase
 
 from . import fieldtypes, widgets
-from .fieldtypes import FormField, Validators
+from .fieldtypes import Validators
 
 
 class Title(fieldtypes.TextField):
@@ -475,7 +475,7 @@ class WarehouseBayField(fieldtypes.CombinationField):
         return cleaned_value
 
 
-class OptionField(FormField):
+class ProductOptionValueField(fieldtypes.SelectizeField):
     """Base field class for editing Product Options."""
 
     option_allowed_characters = {
@@ -487,33 +487,14 @@ class OptionField(FormField):
 
     def __init__(self, *args, **kwargs):
         """Set options for selectize."""
-        self.selectize_options = self.selectize_options.copy()
-        self.selectize_options["create"] = True
-        if kwargs.get("label") in self.option_allowed_characters:
-            self.allowed_characters = self.option_allowed_characters[
-                kwargs.get("label")
-            ]
-        super().__init__(*args, **kwargs)
-
-    def valid_value(self, value):
-        """Allow values not in choices."""
-        return True
-
-    def validate(self, values):
-        """Validate each input value."""
-        if self.allowed_characters is not None:
-            for value in values:
-                Validators.allow_characters(value, self.allowed_characters)
-
-
-class VariationOptions(OptionField, fieldtypes.SelectizeField):
-    """Field for Product Options that define variations."""
-
-    def __init__(self, *args, **kwargs):
-        """Instanciate the field."""
         self.product_option = kwargs.pop("product_option")
         self.product_range = kwargs.pop("product_range", None)
         kwargs["choices"] = self.get_choices()
+        self.selectize_options = self.selectize_options.copy()
+        self.selectize_options["create"] = True
+        self.allowed_characters = self.option_allowed_characters.get(
+            self.product_option.name
+        )
         super().__init__(*args, **kwargs)
 
     def get_choices(self):
@@ -540,6 +521,16 @@ class VariationOptions(OptionField, fieldtypes.SelectizeField):
         )
         return available_options.difference(existing_values)
 
+    def valid_value(self, value):
+        """Allow values not in choices."""
+        return True
+
+    def validate(self, values):
+        """Validate each input value."""
+        if self.allowed_characters is not None:
+            for value in values:
+                Validators.allow_characters(value, self.allowed_characters)
+
     def clean(self, values):
         """
         Return the values as model objects.
@@ -560,7 +551,13 @@ class VariationOptions(OptionField, fieldtypes.SelectizeField):
         return options
 
 
-class ListingOption(OptionField, fieldtypes.SingleSelectize):
+class VariationOptions(ProductOptionValueField):
+    """Field for Product Options that define variations."""
+
+    pass
+
+
+class ListingOption(ProductOptionValueField):
     """Field for options that provide information for listings."""
 
     pass
