@@ -4,8 +4,7 @@ import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
 
-import inventory.models.product_exports
-import inventory.models.stcadmin_image
+import inventory
 
 
 class Migration(migrations.Migration):
@@ -26,12 +25,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("range_id", models.CharField(max_length=10)),
-                (
-                    "image",
-                    models.ImageField(
-                        upload_to=inventory.models.stcadmin_image.get_product_image_upload_to
-                    ),
-                ),
+                ("image", models.ImageField()),
             ],
             options={
                 "verbose_name": "STC Admin Image",
