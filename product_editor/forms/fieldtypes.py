@@ -153,6 +153,8 @@ class FormField(forms.Field):
             Validators.disallow_characters(value, self.disallowed_characters)
         if self.allowed_characters is not None:
             Validators.allow_characters(value, self.allowed_characters)
+        for validator in self.validators:
+            validator(value)
 
 
 class ChoiceField(FormField, forms.ChoiceField):
@@ -271,11 +273,16 @@ class NumberField(FormField, forms.IntegerField):
         return value
 
 
-class PriceField(FormField, forms.FloatField):
+class PriceField(FormField, forms.DecimalField):
     """Base class for product fields for handeling monetary values."""
 
     size = None
     small_size = None
+
+    def __init__(self, *args, **kwargs):
+        """Instanciate field."""
+        FormField.__init__(self, *args, **kwargs)
+        forms.DecimalField.__init__(self, max_digits=5, decimal_places=2)
 
 
 class CheckboxField(FormField, forms.BooleanField):
