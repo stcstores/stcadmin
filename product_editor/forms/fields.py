@@ -399,7 +399,9 @@ class Location(fieldtypes.SelectizeField):
                 bays.append(models.Bay.objects.get(bay_ID=bay_ID))
             except models.DoesNotExist:
                 raise forms.ValidationError("Bay not recognised")
-        bays = [b for b in bays if not b.default]
+        filtered_bays = [_ for _ in bays if "Backup" not in _.name and not _.default]
+        if filtered_bays:
+            bays = [b for b in bays if not b.default]
         if len(set([bay.warehouse for bay in bays])) > 1:
             raise forms.ValidationError("Bays from multiple warehouses selected.")
         value = [b.bay_ID for b in bays]
