@@ -22,6 +22,7 @@ class DestinationCountryAdmin(admin.ModelAdmin):
         "currency_symbol",
         "min_channel_fee",
         "shipping_region",
+        "exchange_rate",
         "sort_order",
     )
     list_display = (
@@ -30,6 +31,7 @@ class DestinationCountryAdmin(admin.ModelAdmin):
         "currency_symbol",
         "min_channel_fee",
         "shipping_region",
+        "exchange_rate",
         "sort_order",
     )
     list_editable = (
@@ -37,6 +39,7 @@ class DestinationCountryAdmin(admin.ModelAdmin):
         "currency_symbol",
         "min_channel_fee",
         "shipping_region",
+        "exchange_rate",
         "sort_order",
     )
     search_fields = ("name",)
