@@ -1,6 +1,5 @@
 """Models for price_calculator app."""
 
-import requests
 from django.db import models
 from django.db.models import Q
 
@@ -31,6 +30,7 @@ class DestinationCountry(models.Model):
     shipping_region = models.ForeignKey(
         ShippingRegion, on_delete=models.CASCADE, null=True, blank=True
     )
+    exchange_rate = models.FloatField()
     sort_order = models.IntegerField(default=0)
 
     class Meta:
@@ -49,20 +49,6 @@ class DestinationCountry(models.Model):
 
     def __str__(self):
         return self.name
-
-    def exchange_rates(self):
-        """Return the current exchange rates for the country."""
-        URL = f"https://api.exchangerate-api.com/v4/latest/{self.currency_code}"
-        response = requests.get(URL)
-        response.raise_for_status()
-        return response.json()["rates"]
-
-    def current_rate(self):
-        """Return current currency conversion rate to GBP."""
-        if self.currency_code == "GBP":
-            return 1
-        rates = self.exchange_rates()
-        return rates["GBP"]
 
 
 class PackageType(models.Model):
