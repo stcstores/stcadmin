@@ -24,6 +24,7 @@ class LocationsForm(forms.Form):
         self.fields[self.LOCATIONS] = WarehouseBayField(inline=True)
         self.cleaned_data = {}
         self.initial.update(self.get_initial())
+        print(self.data)
 
     def get_initial(self):
         """Return initial data."""

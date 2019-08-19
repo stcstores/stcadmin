@@ -103,6 +103,18 @@ class Bay(models.Model):
         )
         return cls(name=backup_name, warehouse=department)
 
+    @property
+    def is_backup(self):
+        """Return True if the bay is a backup bay, otherwise False."""
+        return "Backup" in self.name
+
+    @property
+    def is_primary(self):
+        """Return True if the bay is a primary bay, otherwise False."""
+        if not self.is_backup and not self.is_default:
+            return True
+        return False
+
     def save(self, *args, **kwargs):
         """Create the bay in Cloud Commerce if it has no ID."""
         if not self.bay_ID:

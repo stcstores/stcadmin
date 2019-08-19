@@ -370,12 +370,12 @@ class Location(fieldtypes.SelectizeField):
 
     def __init__(self, department=None):
         """Set department."""
-        self.department = department
+        self.warehouse = department
         super().__init__()
 
     def get_choices(self):
         """Return choices for field."""
-        if self.department is None:
+        if self.warehouse is None:
             warehouses = models.Warehouse.used_warehouses.all()
             options = [["", ""]]
             for warehouse in warehouses:
@@ -395,30 +395,47 @@ class Location(fieldtypes.SelectizeField):
                 return [(bay.bay_ID, bay.name) for bay in warehouse.bay_set.all()]
 
     def get_warehouse(self):
-        """Return Warehouse object matching the field's department."""
-        if isinstance(self.department, int):
-            return models.Warehouse.objects.get(warehouse_ID=self.department)
-        return models.Warehouse.objects.get(name=self.department)
+        """Return Warehouse object matching the field's warehouse."""
+        if isinstance(self.warehouse, int):
+            return models.Warehouse.objects.get(warehouse_ID=self.warehouse)
+        return models.Warehouse.objects.get(name=self.warehouse)
 
     def to_python(self, *args, **kwargs):
         """Return submitted bays as a list of bay IDs."""
         return [int(x) for x in super().to_python(*args, **kwargs)]
 
-    def clean(self, value):
-        """Validate bay selection."""
-        value = super().clean(value)
+    def get_bay_objects(self, value):
+        """Return the subbmitted bays as a list of Bay model objects."""
         bays = []
         for bay_ID in value:
             try:
                 bays.append(models.Bay.objects.get(bay_ID=bay_ID))
             except models.DoesNotExist:
                 raise forms.ValidationError("Bay not recognised")
-        bays = [b for b in bays if not b.is_default]
-        if len(set([bay.warehouse for bay in bays])) > 1:
-            raise forms.ValidationError("Bays from multiple warehouses selected.")
+        return bays
+
+    def check_warehouse(self, bays):
+        """Return the warehouse to which the bays belong or raise ValidationError."""
+        if self.warehouse is None and not bays:
+            raise forms.ValidationError("At least one bay must be provided.")
+            return
+        warehouse = self.warehouse or bays[0].warehouse
+        if not all((bay.warehouse == warehouse for bay in bays)):
+            raise forms.ValidationError("All bays must be in the same warehouse.")
+        return warehouse
+
+    def clean(self, value):
+        """Validate bay selection."""
+        value = super().clean(value)
+        bays = self.get_bay_objects(value)
+        warehouse = self.check_warehouse(bays)
+        primary_bays = [bay for bay in bays if bay.is_primary]
+        if primary_bays:
+            bays = [bay for bay in bays if not bay.is_default]
+        else:
+            if warehouse and not any((bay.is_default for bay in bays)):
+                bays.append(warehouse.default_bay)
         value = [b.bay_ID for b in bays]
-        if self.department is not None and len(value) == 0:
-            value = [self.get_warehouse().default_bay.bay_ID]
         return value
 
 
