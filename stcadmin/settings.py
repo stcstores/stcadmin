@@ -1,9 +1,9 @@
 """Django settings for stcadmin project."""
 
 import os
+import sys
 
 import toml
-from ccapi import CCAPI
 from django.core.exceptions import ImproperlyConfigured
 
 SOURCE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
@@ -263,4 +263,4 @@ DOCS_ROOT = os.path.join(SOURCE_DIR, "docs", "build", "html")
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "home:index"
 
-CCAPI.create_session(domain=CC_DOMAIN, username=CC_USERNAME, password=CC_PWD)
+TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
