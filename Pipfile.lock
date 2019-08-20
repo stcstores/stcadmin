@@ -53,7 +53,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "20c1e827970fe335a723693afc4367688c6d0f72"
+            "ref": "d15f2406f4870616191e0edf73e4d4cb9297897e"
         },
         "certifi": {
             "hashes": [
@@ -245,10 +245,10 @@
         },
         "openpyxl": {
             "hashes": [
-                "sha256:1d2af392cef8c8227bd2ac3ebe3a28b25aba74fd4fa473ce106065f0b73bfe2e"
+                "sha256:72d1ed243972cad0b3c236230083cac00d9c72804e64a2ae93d7901aec1a8f1c"
             ],
             "index": "pypi",
-            "version": "==2.6.2"
+            "version": "==2.6.3"
         },
         "order-profit": {
             "editable": true,
@@ -510,11 +510,11 @@
         },
         "xlsxwriter": {
             "hashes": [
-                "sha256:5ec6aa71f6ae4b6298376d8b6a56ca9cdcb8b80323a444212226447aed4fa10f",
-                "sha256:ec51d99c0cc5d95ec8d8e9c8de7c8fbbf461988bec01a8c86b5155a6716b0a5a"
+                "sha256:1a49d3b0bd70eff9641aed131f39de65cc7cb626af11d2c30200a86fb33dd109",
+                "sha256:37026a50342b248e38606f52a7cd213d4cbc7adc008d5667c93d53262bde6506"
             ],
             "index": "pypi",
-            "version": "==1.1.8"
+            "version": "==1.1.9"
         }
     },
     "develop": {
