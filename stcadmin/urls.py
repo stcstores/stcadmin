@@ -1,7 +1,5 @@
 """stcadmin URL Configuration."""
-import sys
 
-from ccapi import CCAPI
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
@@ -11,21 +9,6 @@ from user import views as user_views
 
 admin.site.site_header = "STC Stores Administration"
 
-
-def create_CCAPI_session():
-    """Create the Cloud Commerce session."""
-    if not settings.TESTING:
-        CCAPI.create_session(
-            domain=settings.CC_DOMAIN,
-            username=settings.CC_USERNAME,
-            password=settings.CC_PWD,
-        )
-        print("Created Cloud Commerce session.", file=sys.stderr)
-    else:
-        print("Skipping Cloud Commerce session for testing.", file=sys.stderr)
-
-
-create_CCAPI_session()
 
 app_name = "stcadmin"
 urlpatterns = [

@@ -4,6 +4,7 @@ import os
 import sys
 
 import toml
+from ccapi import CCAPI
 from django.core.exceptions import ImproperlyConfigured
 
 SOURCE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
@@ -264,3 +265,15 @@ LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "home:index"
 
 TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
+
+
+def create_CCAPI_session():
+    """Create the Cloud Commerce session."""
+    if not TESTING:
+        CCAPI.create_session(domain=CC_DOMAIN, username=CC_USERNAME, password=CC_PWD)
+        print("Created Cloud Commerce session.", file=sys.stderr)
+    else:
+        print("Skipping Cloud Commerce session for testing.", file=sys.stderr)
+
+
+create_CCAPI_session()
