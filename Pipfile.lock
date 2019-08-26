@@ -53,7 +53,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "d15f2406f4870616191e0edf73e4d4cb9297897e"
+            "ref": "73df055bb751dbe4759c70bbe7ea8315a6487f36"
         },
         "certifi": {
             "hashes": [
@@ -510,11 +510,11 @@
         },
         "xlsxwriter": {
             "hashes": [
-                "sha256:1a49d3b0bd70eff9641aed131f39de65cc7cb626af11d2c30200a86fb33dd109",
-                "sha256:37026a50342b248e38606f52a7cd213d4cbc7adc008d5667c93d53262bde6506"
+                "sha256:22904d1284b82426ed43b2ada0ff60f99c4736634acb7fc1584caf07789e55ac",
+                "sha256:e60be95ee38e81916d7c67f658902f9e51322400be20cf0563837f69a63ad3c5"
             ],
             "index": "pypi",
-            "version": "==1.1.9"
+            "version": "==1.2.0"
         }
     },
     "develop": {
