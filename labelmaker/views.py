@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import DeleteView, FormView
+
 from home.views import UserInGroupMixin
 from labelmaker import forms
 from labelmaker.models import SizeChart, SizeChartSize
@@ -253,3 +254,27 @@ class AddressLabelPDF(BasePDFLabelView):
         """Return list containing lists of lines of text for each label."""
         text = self.request.POST.get("label_text")
         return [text.split("\r\n")]
+
+
+class SmallLabelForm(TemplateView, LabelmakerUserMixin):
+    """View for the small label creation form."""
+
+    template_name = "labelmaker/small_label_form.html"
+
+
+class SmallLabelPDF(BasePDFLabelView):
+    """View for address label PDF creation."""
+
+    label_format = labeler.SmallLabelFormat
+    label_sheet = labeler.STW046025PO
+
+    def get_label_data(self, *args, **kwargs):
+        """Return list containing lists of lines of text for each label."""
+        text = [_ for _ in self.request.POST.getlist("label_text") if _]
+        quantities = [int(_) for _ in self.request.POST.getlist("quantity")]
+        data = []
+        for i in range(len(text)):
+            label_text = text[i].split("\r\n")
+            for _ in range(quantities[i]):
+                data.append(label_text)
+        return data
