@@ -184,7 +184,7 @@
         "labeler": {
             "editable": true,
             "git": "https://github.com/lukeshiner/labeler.git",
-            "ref": "6c18a66b74a000b619d06e6042b33b72dadd5cac"
+            "ref": "0844c6af6fcdab7585d5581ec8c4c0e0e38d01e9"
         },
         "list-input": {
             "editable": true,
