@@ -1,6 +1,7 @@
 """URL patters for the labelmaker app."""
 
 from django.urls import path
+
 from labelmaker import views
 
 app_name = "labelmaker"
@@ -45,4 +46,6 @@ urlpatterns = [
     path(
         "address_label_pdf", views.AddressLabelPDF.as_view(), name="address_label_pdf"
     ),
+    path("small_labels", views.SmallLabelForm.as_view(), name="small_labels"),
+    path("small_label_pdf", views.SmallLabelPDF.as_view(), name="small_label_pdf"),
 ]

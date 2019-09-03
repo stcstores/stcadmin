@@ -53,7 +53,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "d15f2406f4870616191e0edf73e4d4cb9297897e"
+            "ref": "acc9f8dd673e97e906c2761eac3440d266ec58e7"
         },
         "certifi": {
             "hashes": [
@@ -78,11 +78,11 @@
         },
         "django": {
             "hashes": [
-                "sha256:16a5d54411599780ac9dfe3b9b38f90f785c51259a584e0b24b6f14a7f69aae8",
-                "sha256:9a2f98211ab474c710fcdad29c82f30fc14ce9917c7a70c3682162a624de4035"
+                "sha256:148a4a2d1a85b23883b0a4e99ab7718f518a83675e4485e44dc0c1d36988c5fa",
+                "sha256:deb70aa038e59b58593673b15e9a711d1e5ccd941b5973b30750d5d026abfd56"
             ],
             "index": "pypi",
-            "version": "==2.2.4"
+            "version": "==2.2.5"
         },
         "django-formtools": {
             "hashes": [
@@ -184,7 +184,7 @@
         "labeler": {
             "editable": true,
             "git": "https://github.com/lukeshiner/labeler.git",
-            "ref": "6c18a66b74a000b619d06e6042b33b72dadd5cac"
+            "ref": "0844c6af6fcdab7585d5581ec8c4c0e0e38d01e9"
         },
         "list-input": {
             "editable": true,
@@ -510,11 +510,11 @@
         },
         "xlsxwriter": {
             "hashes": [
-                "sha256:1a49d3b0bd70eff9641aed131f39de65cc7cb626af11d2c30200a86fb33dd109",
-                "sha256:37026a50342b248e38606f52a7cd213d4cbc7adc008d5667c93d53262bde6506"
+                "sha256:22904d1284b82426ed43b2ada0ff60f99c4736634acb7fc1584caf07789e55ac",
+                "sha256:e60be95ee38e81916d7c67f658902f9e51322400be20cf0563837f69a63ad3c5"
             ],
             "index": "pypi",
-            "version": "==1.1.9"
+            "version": "==1.2.0"
         }
     },
     "develop": {

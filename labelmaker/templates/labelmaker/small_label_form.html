@@ -1,0 +1,54 @@
+{% extends "labelmaker/base.html" %}
+
+{% block content %}
+
+<h1>Small Labels</h1>
+<h2>Create labels with generic text on small labels</h2>
+
+<form action="{% url 'labelmaker:small_label_pdf' %}" method="POST" target="_blank" autocomplete="off">{% csrf_token %}
+  <table>
+    <thead>
+      <tr>
+        <th>Text</th>
+        <th>Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <textarea name="label_text" id="label_text_input" cols="20" rows="3" style="text-align: center;"></textarea>
+          <td>
+            <input name="quantity" type="number" value="1" min="0" max="999" step="1">
+          </td>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="2"><button type="submit">Generate Label</button></th>
+      </tr>
+    </tfoot>
+  </table>
+  <br>
+</form>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  function addRow() {
+    var row = $('tbody tr:last').clone();
+    row.find('textarea').val('');
+    row.find('input').val(1);
+    row.insertAfter($('tbody tr:last'));
+  }
+  $(document).ready(function() {
+    $('table').focusout(function(e) {
+      var lastRow = $(this).find('tbody tr:last');
+      if (lastRow.find('textarea').val().length > 0) {
+        addRow();
+      }
+    });
+  });
+</script>
+{% endblock %}
