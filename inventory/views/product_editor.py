@@ -3,7 +3,6 @@
 import itertools
 
 from django.contrib import messages
-from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView, TemplateView
@@ -72,6 +71,45 @@ class StartEditingProduct(InventoryUserMixin, RedirectView):
         return edit
 
 
+class StartNewProduct(InventoryUserMixin, FormView):
+    """Start creating a new product."""
+
+    template_name = "inventory/product_editor/edit_range_details.html"
+    form_class = forms.DescriptionForm
+
+    def form_valid(self, form):
+        """Create a new partial product."""
+        data = form.cleaned_data
+        partial_range = models.PartialProductRange(
+            SKU=models.PartialProductRange.get_new_SKU()
+        )
+        partial_range.save()
+        updater = PartialRangeUpdater(partial_range, self.request.user)
+        updater.set_name(data["title"])
+        updater.set_department(data["department"])
+        if data["description"]:
+            updater.set_description(data["description"])
+        updater.set_amazon_search_terms(data["search_terms"])
+        updater.set_amazon_bullet_points(data["amazon_bullets"])
+        self.product = models.PartialProduct(
+            SKU=models.PartialProduct.get_new_SKU(), product_range=partial_range
+        )
+        self.product.save()
+        self.edit = models.ProductEdit(
+            user=self.request.user,
+            product_range=None,
+            partial_product_range=partial_range,
+        )
+        self.edit.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the URL to redirect to on a successful form submission."""
+        return reverse_lazy(
+            "inventory:setup_variations", kwargs={"edit_ID": self.edit.pk}
+        )
+
+
 class EditProduct(InventoryUserMixin, TemplateView):
     """Main view for in progress product edits."""
 
@@ -122,6 +160,48 @@ class EditProduct(InventoryUserMixin, TemplateView):
             else:
                 variations[options] = None
         return variations
+
+
+class SetupVariations(InventoryUserMixin, FormView):
+    """Setup product options for a new product."""
+
+    template_name = "inventory/product_editor/setup_variations.html"
+    form_class = forms.SetupVariationsForm
+
+    def dispatch(self, *args, **kwargs):
+        """Process HTTP request."""
+        self.edit = get_object_or_404(models.ProductEdit, pk=self.kwargs.get("edit_ID"))
+        self.product_range = self.edit.partial_product_range
+        return super(FormView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["edit"] = self.edit
+        return context
+
+    def form_valid(self, form):
+        """Add product options to the product edit."""
+        data = form.cleaned_data
+        for product_option, product_option_values in data.items():
+            if product_option_values:
+                models.PartialProductRangeSelectedOption(
+                    product_range=self.edit.partial_product_range,
+                    product_option=product_option,
+                    variation=True,
+                ).save()
+                self.edit.product_option_values.add(*product_option_values)
+        return super().form_valid(form)
+
+    def get_success_url(self, *args, **kwargs):
+        """Redirect on successful validation of the form."""
+        return reverse_lazy(
+            "inventory:create_initial_variation",
+            kwargs={
+                "edit_ID": self.edit.pk,
+                "product_ID": self.edit.partial_product_range.products()[0].pk,
+            },
+        )
 
 
 class EditVariations(InventoryUserMixin, TemplateView):
@@ -211,7 +291,7 @@ class AddProductOption(InventoryUserMixin, FormView):
     def get_success_url(self):
         """Return the URL to redirect to on a successful form submission."""
         return reverse_lazy(
-            "inventory:set_product_option_values", kwargs={"edit_ID": self.edit.pk}
+            "inventory:edit_variation", kwargs={"edit_ID": self.edit.pk}
         )
 
 
@@ -428,6 +508,23 @@ class EditVariation(InventoryUserMixin, FormView):
         )
 
 
+class CreateInitialVariation(EditVariation):
+    """Create the first product in a new range."""
+
+    def get_success_url(self):
+        """Return URL to redirect to after successful form submission."""
+        product_options = self.edit.variation_options().values()
+        for i, options in enumerate(itertools.product(*product_options)):
+            if i == 1:
+                for option in options:
+                    models.PartialProductOptionValueLink.objects.get_or_create(
+                        product=self.product, product_option_value=option
+                    )
+                continue
+            self.edit.create_product(options)
+        return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": self.edit.pk})
+
+
 class EditAllVariations(InventoryUserMixin, TemplateView):
     """View for editing partial product variations."""
 
@@ -472,9 +569,8 @@ class CreateVariation(InventoryUserMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         """Create new variation and redirect."""
         edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
-        product_range = edit.partial_product_range
         options = self.get_product_options()
-        self.create_product(product_range, options)
+        edit.create_product(options)
         return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": edit.pk})
 
     def get_product_options(self):
@@ -485,20 +581,6 @@ class CreateVariation(InventoryUserMixin, RedirectView):
             if key.isdigit()
         ]
         return options
-
-    @transaction.atomic
-    def create_product(self, product_range, options):
-        """Create the new partial product."""
-        sku = models.PartialProduct.get_new_SKU()
-        product_data = product_range.range_wide_values()
-        product_data["product_range"] = product_range
-        product_data["SKU"] = sku
-        product = models.PartialProduct(**product_data)
-        product.save()
-        for option in options:
-            models.PartialProductOptionValueLink(
-                product=product, product_option_value=option
-            ).save()
 
 
 class DeleteVariation(InventoryUserMixin, RedirectView):
@@ -519,11 +601,14 @@ class DiscardChanges(InventoryUserMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         """Delete the variation and redirect."""
         edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
-        product_range_ID = edit.partial_product_range.range_ID
         edit.delete()
-        return reverse_lazy(
-            "inventory:product_range", kwargs={"range_id": product_range_ID}
-        )
+        if edit.product_range is not None:
+            product_range_ID = edit.partial_product_range.range_ID
+            return reverse_lazy(
+                "inventory:product_range", kwargs={"range_id": product_range_ID}
+            )
+        else:
+            return reverse_lazy("inventory:product_search")
 
 
 class SaveChanges(InventoryUserMixin, RedirectView):

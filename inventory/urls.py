@@ -101,6 +101,9 @@ product_editor_patterns = [
         name="start_editing_product",
     ),
     path(
+        "start_new_product", views.StartNewProduct.as_view(), name="start_new_product"
+    ),
+    path(
         "edit_product/<int:edit_ID>/", views.EditProduct.as_view(), name="edit_product"
     ),
     path(
@@ -143,6 +146,11 @@ product_editor_patterns = [
         name="edit_variation",
     ),
     path(
+        "create_initial_variation/<int:edit_ID>/<int:product_ID>/",
+        views.CreateInitialVariation.as_view(),
+        name="create_initial_variation",
+    ),
+    path(
         "edit_all_variations/<int:edit_ID>/",
         views.EditAllVariations.as_view(),
         name="edit_all_variations",
@@ -169,6 +177,11 @@ product_editor_patterns = [
     ),
     path(
         "save_changes/<int:edit_ID>/", views.SaveChanges.as_view(), name="save_changes"
+    ),
+    path(
+        "setup_variations/<int:edit_ID>/",
+        views.SetupVariations.as_view(),
+        name="setup_variations",
     ),
 ]
 

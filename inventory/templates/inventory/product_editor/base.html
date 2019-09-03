@@ -7,9 +7,13 @@
 
 {% block content %}{{ block.super }}
   <div class="title">
+    {% if edit.product_range %}
     <h1>Editing <span class="sku">{{ edit.product_range.name }}</span></h1>
     {% if edit.product_range.name != product_range.name %}
     <p>(Name changed to <span class="sku">{{ product_range.name }}</span>)</p>
+    {% endif %}
+    {% else %}
+    <h1>Creating <span class="sku">{{ edit.partial_product_range.name }}</span></h1>
     {% endif %}
   </div>
 {% endblock %}

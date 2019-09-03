@@ -1,0 +1,10 @@
+{% extends "inventory/product_editor/base.html" %}
+
+{% block content %}{{ block.super }}
+<h3>Add the variation options for the product.</h3>
+<h3>Leave this form blank to create a single item product.</h3>
+<form action="" method="POST" id="setup_variations_form">{% csrf_token %}
+  {% include "inventory/input_add_on_form.html" %}
+  <button>Continue</button>
+</form>
+{% endblock %}

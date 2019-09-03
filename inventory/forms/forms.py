@@ -371,7 +371,7 @@ class AddProductOptionValuesForm(forms.Form):
         self.edit = kwargs.pop("edit")
         self.product_option = kwargs.pop("product_option")
         super().__init__(*args, **kwargs)
-        self.fields[f"values"] = fields.VariationOptions(
+        self.fields["values"] = fields.VariationOptions(
             product_option=self.product_option,
             product_range=self.edit.partial_product_range,
             label=self.product_option.name,
@@ -381,3 +381,30 @@ class AddProductOptionValuesForm(forms.Form):
         """Add product option values to the produt edit."""
         for value in self.cleaned_data["values"]:
             self.edit.product_option_values.add(value)
+
+
+class SetupVariationsForm(forms.Form):
+    """Setup variaion product options for a new product."""
+
+    def __init__(self, *args, **kwargs):
+        """Add fields."""
+        super().__init__(*args, **kwargs)
+        for product_option in models.ProductOption.objects.all():
+            self.fields[str(product_option.pk)] = fields.VariationOptions(
+                required=False, product_option=product_option, label=product_option.name
+            )
+
+    def clean(self):
+        """Return the submitted variations as {product_option: product_option_value}."""
+        data = dict(super().clean())
+        for field, values in data.items():
+            if len(values) == 1:
+                self.add_error(
+                    field,
+                    "At least two values must be selected for any used drop down.",
+                )
+        cleaned_data = {
+            models.ProductOption.objects.get(id=int(key)): value
+            for key, value in data.items()
+        }
+        return cleaned_data

@@ -11,6 +11,7 @@ from .product_editor import (  # NOQA
     AddListingOption,
     AddProductOptionValues,
     Continue,
+    CreateInitialVariation,
     CreateVariation,
     DeleteVariation,
     DiscardChanges,
@@ -23,7 +24,9 @@ from .product_editor import (  # NOQA
     RemoveProductOptionValue,
     SaveChanges,
     SetProductOptionValues,
+    SetupVariations,
     StartEditingProduct,
+    StartNewProduct,
 )
 from .product_order import ProductOrderView  # NOQA
 from .productrange import ProductRangeView  # NOQA

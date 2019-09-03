@@ -5,7 +5,8 @@ import random
 import string
 
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
+from django.utils import timezone
 
 from .locations import Bay
 from .product_options import (
@@ -339,7 +340,9 @@ class ProductEdit(models.Model):
     """Model for storing in progress product edits."""
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    product_range = models.OneToOneField(ProductRange, on_delete=models.CASCADE)
+    product_range = models.OneToOneField(
+        ProductRange, on_delete=models.CASCADE, null=True
+    )
     partial_product_range = models.OneToOneField(
         PartialProductRange, on_delete=models.CASCADE
     )
@@ -363,6 +366,21 @@ class ProductEdit(models.Model):
                 self.product_option_values.filter(product_option=option)
             )
         return variation_options
+
+    @transaction.atomic
+    def create_product(self, options):
+        """Create the new partial product."""
+        product_data = self.partial_product_range.range_wide_values()
+        product_data["id"] = None
+        product_data["product_range"] = self.partial_product_range
+        product_data["SKU"] = PartialProduct.get_new_SKU()
+        product_data["date_created"] = timezone.now()
+        product = PartialProduct(**product_data)
+        product.save()
+        for option in options:
+            PartialProductOptionValueLink(
+                product=product, product_option_value=option
+            ).save()
 
     def delete(self, *args, **kwargs):
         """Delete the product edit and associated products."""
