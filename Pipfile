@@ -29,6 +29,7 @@ django-orderable = "*"
 [dev-packages]
 "Fabric3" = "<2.0"
 pytest-django = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.7"
