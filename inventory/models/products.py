@@ -24,12 +24,6 @@ class BaseProductRangeModel:
     def __str__(self):
         return f"{self.SKU} - {self.name}"
 
-    def clean(self, *args, **kwargs):
-        """Save the model instance."""
-        if not self.SKU:
-            self.SKU = self.get_new_SKU()
-        super().clean(*args, **kwargs)
-
     def has_variations(self):
         """Return True if the product has multiple variations, otherwise return False."""
         return self.products().count() > 1
