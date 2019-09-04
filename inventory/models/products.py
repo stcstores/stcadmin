@@ -70,11 +70,12 @@ class BaseProductRangeModel:
 
     def variation_values(self):
         """Return a dict of {option: set(option_values)} for the ranges variable options."""
+        variation_options = self.variation_options()
         values = self._product_option_link_model.objects.filter(
-            product_option_value__product_option__in=self.variation_options(),
+            product_option_value__product_option__in=variation_options,
             product__product_range=self,
         )
-        option_values = {option: [] for option in self.product_options.all()}
+        option_values = {option: [] for option in variation_options}
         for value in values:
             option_name = value.product_option_value.product_option
             option_value = value.product_option_value
