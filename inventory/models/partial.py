@@ -56,7 +56,7 @@ def unique_SKU(existing_SKUs, SKU_function):
             )
 
 
-class PartialProductRange(models.Model, BaseProductRangeModel):
+class PartialProductRange(BaseProductRangeModel, models.Model):
     """Model for Product Ranges."""
 
     original_range = models.ForeignKey(
@@ -206,7 +206,7 @@ class PartialProductRange(models.Model, BaseProductRangeModel):
         return ProductOption.objects.filter(id__in=link_IDs)
 
 
-class PartialProduct(models.Model, BaseProductModel):
+class PartialProduct(BaseProductModel, models.Model):
     """Model for inventory products."""
 
     product_ID = models.CharField(max_length=50, unique=True, null=True)

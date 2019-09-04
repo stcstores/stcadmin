@@ -185,7 +185,7 @@ class BaseProductModel:
             return None
 
 
-class ProductRange(models.Model, BaseProductRangeModel):
+class ProductRange(BaseProductRangeModel, models.Model):
     """Model for Product Ranges."""
 
     range_ID = models.CharField(max_length=50, db_index=True, unique=True)
@@ -222,7 +222,7 @@ class ProductRange(models.Model, BaseProductRangeModel):
         return self.product_set.all().order_by("range_order", "id")
 
 
-class Product(models.Model, BaseProductModel):
+class Product(BaseProductModel, models.Model):
     """Model for inventory products."""
 
     product_ID = models.CharField(max_length=50, unique=True, db_index=True)
