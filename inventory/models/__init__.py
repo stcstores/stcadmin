@@ -2,7 +2,7 @@
 
 from . import cloud_commerce_importer  # NOQA
 from .barcodes import Barcode, get_barcode  # NOQA
-from .locations import Bay, Warehouse, check_location_integrity  # NOQA
+from .locations import Bay, Warehouse  # NOQA
 from .partial import (  # NOQA
     PartialProduct,
     PartialProductOptionValueLink,
