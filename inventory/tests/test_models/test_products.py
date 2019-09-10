@@ -36,7 +36,7 @@ class SetupProducts:
 
     def create_suppliers(self):
         self.supplier = models.Supplier.objects.create(
-            name="Shop Inc", product_option_value_ID="289493"
+            name="Shop Inc", product_option_value_ID="289493", factory_ID="164868"
         )
 
     def create_VAT_rates(self):
@@ -439,7 +439,7 @@ class TestVariationProduct(SetupVariationProductRange, TestCase):
     @patch("inventory.models.products.CCAPI")
     def test_update_stock_level_method(self, mock_CCAPI):
         self.product.update_stock_level(old=5, new=6)
-        mock_CCAPI.get_product.update_product_stock_level(
+        mock_CCAPI.update_product_stock_level.assert_called_with(
             product_id=self.product.product_ID, old_stock_level=5, new_stock_level=6
         )
 
