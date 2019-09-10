@@ -1,11 +1,10 @@
 from unittest.mock import Mock, patch
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.shortcuts import reverse
-from django.test import TestCase, override_settings
 
 from inventory import models
+
+from .inventory_view_test import InventoryViewTest
 
 
 class TestSuppliersViews:
@@ -31,21 +30,7 @@ class TestSuppliersViews:
         return response
 
 
-@override_settings(
-    STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage"
-)
-class ViewTest(TestCase):
-    def setUp(self):
-        super().setUp()
-        user = get_user_model().objects.create_user(
-            username="testuser", email="tester@test.com", password="12345"
-        )
-        Group.objects.get(name="inventory").user_set.add(user)
-        login = self.client.login(username="testuser", password="12345")
-        self.assertTrue(login)
-
-
-class TestSuppliersView(TestSuppliersViews, ViewTest):
+class TestSuppliersView(TestSuppliersViews, InventoryViewTest):
     def test_suppliers_view(self):
         response = self.client.get(reverse("inventory:suppliers"))
         self.assertEqual(response.status_code, 200)
@@ -55,7 +40,7 @@ class TestSuppliersView(TestSuppliersViews, ViewTest):
         )
 
 
-class TestSupplierView(TestSuppliersViews, ViewTest):
+class TestSupplierView(TestSuppliersViews, InventoryViewTest):
     def test_supplier_view(self):
         response = self.client.get(
             reverse("inventory:supplier", kwargs={"pk": self.supplier.pk})
@@ -70,7 +55,7 @@ class TestSupplierView(TestSuppliersViews, ViewTest):
         self.assertContains(response, self.supplier_contact.name)
 
 
-class TestCreateSupplierView(TestSuppliersViews, ViewTest):
+class TestCreateSupplierView(TestSuppliersViews, InventoryViewTest):
     @patch("inventory.models.suppliers.CCAPI")
     def test_create_supplier_get(self, mock_CCAPI):
         response = self.client.get(reverse("inventory:create_supplier"))
@@ -131,7 +116,7 @@ class TestCreateSupplierView(TestSuppliersViews, ViewTest):
         self.assertEqual(new_supplier.product_option_value_ID, "245578")
 
 
-class TestToggleSupplierActiveView(TestSuppliersViews, ViewTest):
+class TestToggleSupplierActiveView(TestSuppliersViews, InventoryViewTest):
     def test_set_inactive(self):
         supplier = models.Supplier.objects.get(id=self.supplier.id)
         self.assertFalse(supplier.inactive)
@@ -164,7 +149,7 @@ class TestToggleSupplierActiveView(TestSuppliersViews, ViewTest):
         self.assertFalse(supplier.inactive)
 
 
-class TestCreateSupplierContactView(TestSuppliersViews, ViewTest):
+class TestCreateSupplierContactView(TestSuppliersViews, InventoryViewTest):
     name = "Joe Bloggs"
     phone = "9584612455"
     email = "noeone@nowhere.com"
@@ -228,7 +213,7 @@ class TestCreateSupplierContactView(TestSuppliersViews, ViewTest):
         self.assertEqual(new_supplier_contact.notes, "")
 
 
-class TestUpdateSupplierContactView(TestSuppliersViews, ViewTest):
+class TestUpdateSupplierContactView(TestSuppliersViews, InventoryViewTest):
     name = "Joe Bloggs"
     phone = "9584612455"
     email = "noeone@nowhere.com"
@@ -282,7 +267,7 @@ class TestUpdateSupplierContactView(TestSuppliersViews, ViewTest):
         self.assertEqual(supplier_contact.notes, self.notes)
 
 
-class TestDeleteSupplierContactView(TestSuppliersViews, ViewTest):
+class TestDeleteSupplierContactView(TestSuppliersViews, InventoryViewTest):
     def test_get_method(self):
         response = self.client.get(
             reverse(
