@@ -57,6 +57,14 @@ class BaseProductOptionValueModel(models.Model):
         """Return all Cloud Commerce Product Options for this model."""
         return CCAPI.get_product_options()[cls.PRODUCT_OPTION_NAME]
 
+    def create_CC_product_option(self, value):
+        """
+        Return the ID of the Department Product Option matching name.
+
+        If it does not exist it will be created.
+        """
+        return CCAPI.create_option_value(self.product_option.product_option_ID, value)
+
 
 class ProductOptionValue(BaseProductOptionValueModel):
     """Model for Cloud Commerce Product Option Values."""
@@ -73,14 +81,6 @@ class ProductOptionValue(BaseProductOptionValueModel):
 
     def __str__(self):
         return f"{self.product_option.name}: {self.value}"
-
-    def create_CC_product_option(self, value):
-        """
-        Return the ID of the Department Product Option matching name.
-
-        If it does not exist it will be created.
-        """
-        return CCAPI.create_option_value(self.product_option.product_option_ID, value)
 
 
 class BaseNonListingProductOptionModel(BaseProductOptionValueModel):

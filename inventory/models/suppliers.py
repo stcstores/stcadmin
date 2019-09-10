@@ -33,8 +33,7 @@ class Supplier(BaseNonListingProductOptionModel):
 
         Create a Product Option and Factory in Cloud Commerce if neither exist.
         """
-        if self.product_option_value_ID == "" or self.factory_ID == "":
-            self.product_option_value_ID = self.create_product_option(self.name)
+        if self.factory_ID == "":
             self.factory_ID = self.create_factory(self.name)
         super().save(*args, **kwargs)
 
@@ -91,3 +90,8 @@ class SupplierContact(models.Model):
             raise ValidationError(
                 "At least one of (name, email, phone) must not be empty"
             )
+
+    def save(self, *args, **kwargs):
+        """Validate the instance and save it."""
+        self.full_clean()
+        return super().save(*args, **kwargs)
