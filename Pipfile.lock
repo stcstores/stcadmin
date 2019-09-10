@@ -53,7 +53,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "6f392a29692e100b041f8d36d05a0278feec5f0a"
+            "ref": "95a74e32520a3c22ce90be120306d241aeeb4eda"
         },
         "certifi": {
             "hashes": [
