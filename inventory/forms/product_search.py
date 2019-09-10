@@ -6,7 +6,6 @@ from django.contrib.postgres.search import SearchVector
 
 from inventory import models
 from product_editor.forms import fields
-from product_editor.forms.fieldtypes import SelectizeModelChoiceField
 from product_editor.forms.widgets import HorizontalRadio
 
 
@@ -44,9 +43,7 @@ class ProductSearchForm(forms.Form):
         help_text="Hide End of Line Ranges",
     )
     department = fields.Department(required=False)
-    supplier = SelectizeModelChoiceField(
-        queryset=models.Supplier.objects.filter(inactive=False), required=False
-    )
+    supplier = fields.Supplier(required=False)
     show_hidden = forms.BooleanField(required=False)
 
     def save(self):
