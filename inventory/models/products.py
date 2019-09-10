@@ -154,9 +154,7 @@ class BaseProductModel:
 
     def stock_level(self):
         """Return the products current stock level in Cloud Commerce."""
-        if self.product_ID:
-            product = CCAPI.get_product(self.product_ID)
-            return product.stock_level
+        return CCAPI.get_product(self.product_ID).stock_level
 
     def name_extensions(self):
         """Return additions to the product name."""
