@@ -22,11 +22,13 @@ class Command(BaseCommand):
             for user in CloudCommerceUser.objects.filter(hidden=False):
                 try:
                     cc_user = cc_users[user.user_id]
-                    user.first_name = cc_user.first_name
-                    user.second_name = cc_user.second_name
                 except IndexError:
                     pass
-                user.save()
+                else:
+                    if cc_user.first_name and cc_user.second_name:
+                        user.second_name = cc_user.second_name
+                        user.first_name = cc_user.first_name
+                        user.save()
         except Exception as e:
             logger.exception("Error updating Cloud Commerce Usernames.")
             raise e

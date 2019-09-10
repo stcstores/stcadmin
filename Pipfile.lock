@@ -53,7 +53,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "0b05a7538d2de36f31bc60e37e6e077a8b7761c3"
+            "ref": "6f392a29692e100b041f8d36d05a0278feec5f0a"
         },
         "certifi": {
             "hashes": [
@@ -253,7 +253,7 @@
         "order-profit": {
             "editable": true,
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "aaaf6318ac58c8fdb4240ac8d058419495bdc044"
+            "ref": "3d4e1cbddb4575fcef220ff856d6547512d157a4"
         },
         "packaging": {
             "hashes": [
@@ -444,9 +444,9 @@
         },
         "snowballstemmer": {
             "hashes": [
-                "sha256:9f3b9ffe0809d174f7047e121431acf99c89a7040f0ca84f94ba53a498e6d0c9"
+                "sha256:713e53b79cbcf97bc5245a06080a33d54a77e7cce2f789c835a143bcdb5c033e"
             ],
-            "version": "==1.9.0"
+            "version": "==1.9.1"
         },
         "soupsieve": {
             "hashes": [
