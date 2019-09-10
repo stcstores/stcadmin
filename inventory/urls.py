@@ -73,11 +73,6 @@ inventory_urlpatterns = [
 ]
 
 api_urlpatterns = [
-    path(
-        "get_stock_for_products/",
-        views.GetStockForProductView.as_view(),
-        name="get_stock_for_product",
-    ),
     path("get_new_sku/", views.GetNewSKUView.as_view(), name="get_new_sku"),
     path(
         "get_new_range_sku/",

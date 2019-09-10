@@ -35,28 +35,6 @@ class GetNewRangeSKUView(InventoryUserMixin, View):
         return HttpResponse(sku)
 
 
-class GetStockForProductView(InventoryUserMixin, View):
-    """Return stock number for product."""
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request):
-        """Process HTTP request."""
-        variation_ids = json.loads(self.request.body)["variation_ids"]
-        stock_data = []
-        for variation_id in variation_ids:
-            product = CCAPI.get_product(variation_id)
-            stock_data.append(
-                {
-                    "variation_id": variation_id,
-                    "stock_level": product.stock_level,
-                    "locations": " ".join(
-                        [location.name for location in product.locations]
-                    ),
-                }
-            )
-        return HttpResponse(json.dumps(stock_data))
-
-
 class UpdateStockLevelView(InventoryUserMixin, View):
     """Update product stock level."""
 
