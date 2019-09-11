@@ -1,7 +1,7 @@
 """Models for the inventory app."""
 
 from . import cloud_commerce_importer  # NOQA
-from .barcodes import Barcode, get_barcode  # NOQA
+from .barcodes import Barcode  # NOQA
 from .locations import Bay, Warehouse  # NOQA
 from .partial import (  # NOQA
     PartialProduct,
