@@ -41,7 +41,7 @@ class Warehouse(models.Model):
     @property
     def bays(self):
         """Return all bays in this warehouse except the default bay."""
-        return self.bay_set.exclude(name=self.name)
+        return self.bay_set.exclude(is_default=True)
 
     @property
     def default_bay(self):
