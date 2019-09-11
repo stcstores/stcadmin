@@ -16,6 +16,14 @@ class NotEnoughBarcodes(Exception):
         super().__init__("Not enough barcodes available.")
 
 
+class BarcodeUsed(Exception):
+    """Exception raised when marking a used barcode as used."""
+
+    def __init__(self):
+        """Raise exception."""
+        super().__init__("Barcode is already used.")
+
+
 class Barcode(models.Model):
     """Barcode for use with new products."""
 
@@ -27,6 +35,7 @@ class Barcode(models.Model):
     used_for = models.TextField(null=True)
 
     NotEnoughBarcodes = NotEnoughBarcodes
+    BarcodeUsed = BarcodeUsed
 
     class Meta:
         """Meta class for Barcode."""
@@ -36,6 +45,8 @@ class Barcode(models.Model):
 
     def mark_used(self, user, used_for=None):
         """Mark barcode as used."""
+        if not self.available:
+            raise BarcodeUsed
         self.available = False
         self.used_on = timezone.now()
         self.used_by = user
@@ -46,7 +57,7 @@ class Barcode(models.Model):
     @transaction.atomic
     def get_barcode(cls, user, used_for=None):
         """Return and mark used a single barcode."""
-        return cls.get_barcodes(1, user, used_for=used_for)
+        return cls.get_barcodes(count=1, user=user, used_for=used_for)[0]
 
     @classmethod
     @transaction.atomic
