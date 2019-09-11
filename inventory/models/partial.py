@@ -50,6 +50,7 @@ def unique_SKU(existing_SKUs, SKU_function):
         SKU = SKU_function()
         if SKU not in existing_SKUs:
             return SKU
+        remaining_attempts -= 1
         if remaining_attempts == 0:
             raise Exception(
                 f"Did not generate a unique SKU in {UNIQUE_SKU_ATTEMPTS} attemtps."
