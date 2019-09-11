@@ -10,10 +10,17 @@ from inventory import models
 class BarcodeAdmin(admin.ModelAdmin):
     """ModelAdmin for the Barcode model."""
 
-    fields = ("barcode", "used")
-    list_display = ("barcode", "used")
-    search_fields = ("barcode",)
-    list_filter = ("used",)
+    fields = ("barcode", "added_on", "used_on", "used_by", "used_for")
+    list_display = (
+        "barcode",
+        "available",
+        "added_on",
+        "used_on",
+        "used_by",
+        "used_for",
+    )
+    search_fields = ("barcode", "used_for")
+    list_filter = ("available", "used_by")
 
     def __repr__(self):
         return str(self.barcode)
