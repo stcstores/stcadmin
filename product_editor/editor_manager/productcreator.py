@@ -52,7 +52,9 @@ class ProductSaver(ProductEditorBase):
     def create_single_product(self):
         """Create a single (non variation) product."""
         data = DataSanitizer(
-            self.product_data[self.BASIC], self.product_data[self.PRODUCT_INFO]
+            self.user,
+            self.product_data[self.BASIC],
+            self.product_data[self.PRODUCT_INFO],
         )
         option_data = self.product_data[self.LISTING_OPTIONS]
         data[self.OPTIONS] = {k: v for k, v in option_data.items() if v}
@@ -100,6 +102,7 @@ class ProductSaver(ProductEditorBase):
         else:
             raise exceptions.VariationNotFoundError(variation_info)
         data = DataSanitizer(
+            self.user,
             self.product_data[self.BASIC],
             self.product_data[self.PRODUCT_INFO],
             variation_info=variation_info,
@@ -256,8 +259,9 @@ class DataSanitizer(ProductEditorBase):
         ProductEditorBase.WIDTH,
     )
 
-    def __new__(self, basic_info, product_info, variation_info=None):
+    def __new__(self, user, basic_info, product_info, variation_info=None):
         """Clean data from basic_info or variation_info page."""
+        self.user = user
         product_data = {}
         product_data.update(basic_info)
         product_data.update(product_info)
@@ -305,7 +309,7 @@ class DataSanitizer(ProductEditorBase):
     def set_barcode(self, product_data, data):
         """Set barcode from database if not provided."""
         if not product_data[self.BARCODE]:
-            data[self.BARCODE] = models.get_barcode()
+            data[self.BARCODE] = models.Barcode.get_barcode(self.user)
         else:
             data[self.BARCODE] = product_data[self.BARCODE]
 
