@@ -82,6 +82,10 @@ class ProductOptionValue(BaseProductOptionValueModel):
     def __str__(self):
         return f"{self.product_option.name}: {self.value}"
 
+    def get_product_options(self):
+        """Return all Cloud Commerce Product Options for this model."""
+        raise NotImplementedError()
+
 
 class BaseNonListingProductOptionModel(BaseProductOptionValueModel):
     """Abstract model for Cloud Commerce Product Options."""
