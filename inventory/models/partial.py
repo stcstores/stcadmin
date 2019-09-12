@@ -190,8 +190,10 @@ class PartialProductRange(BaseProductRangeModel, models.Model):
             "pre_existing",
             "date_created",
             "status",
+            "barcode",
             "range_order",
             "end_of_line",
+            "multipack",
         )
         keys = []
         for key in data[0].keys():
