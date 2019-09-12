@@ -272,7 +272,6 @@ class PartialProduct(BaseProductModel, models.Model):
     def is_complete(self):
         """Return True if the product is valid and complete, otherwise return False."""
         not_none_fields = (
-            self.product_range,
             self.SKU,
             self.barcode,
             self.supplier,
@@ -284,9 +283,6 @@ class PartialProduct(BaseProductModel, models.Model):
             self.package_type,
             self.international_shipping,
             self.weight_grams,
-            self.multipack,
-            self.end_of_line,
-            self.range_order,
         )
         if None in not_none_fields:
             return False
