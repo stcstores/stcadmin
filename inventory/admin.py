@@ -22,9 +22,6 @@ class BarcodeAdmin(admin.ModelAdmin):
     search_fields = ("barcode", "used_for")
     list_filter = ("available", "used_by")
 
-    def __repr__(self):
-        return str(self.barcode)
-
 
 @admin.register(models.Warehouse)
 class WarehouseAdmin(admin.ModelAdmin):
