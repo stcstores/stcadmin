@@ -181,11 +181,7 @@ class BaseSelectizeField(FormField):
 
     def __init__(self, *args, **kwargs):
         """Set field attributes."""
-        if "choices" in kwargs:
-            self.choices = kwargs["choices"]
-        else:
-            self.choices = self.get_choices()
-            kwargs["choices"] = self.choices
+        self.choices = kwargs.get("choices") or ()
         if "label" in kwargs:
             self.label = kwargs.pop("label")
         kwargs = super().__init__(*args, **kwargs)
@@ -200,7 +196,7 @@ class BaseSelectizeField(FormField):
         if self.size is not None:
             attrs["size"] = self.size
         return self.widget_class(
-            attrs=attrs, selectize_options=self.selectize_options, choices=self.choices
+            attrs=attrs, selectize_options=self.selectize_options, choices=()
         )
 
 
@@ -242,14 +238,16 @@ class SelectizeModelChoiceField(forms.ModelChoiceField, SingleSelectize):
 
     def __init__(self, *args, **kwargs):
         """Create a ModelChoiceField with a Selectize widget."""
+        if kwargs.get("required") is False:
+            self.required_message = ""
         kwargs.update(self.get_field_kwargs(*args, **kwargs))
         if not args and not kwargs.get("queryset"):
             kwargs["queryset"] = self.get_queryset()
+
         kwargs["empty_label"] = ""
+
         super().__init__(*args, **kwargs)
-        self.choices = list(self._get_choices())[1:]
-        self.choices.insert(0, ("", ""))
-        self.widget = super(SingleSelectize, self).get_widget()
+        self.widget = super(SingleSelectize, self).get_widget(choices=self.choices)
 
 
 class NumberField(FormField, forms.IntegerField):
