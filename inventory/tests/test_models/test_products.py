@@ -16,6 +16,7 @@ class SetupProducts:
         self.create_manufacturers()
         self.create_package_types()
         self.create_international_shipping()
+        self.create_gender()
         self.create_product_options()
         self.create_ranges()
         self.add_products()
@@ -33,25 +34,40 @@ class SetupProducts:
         self.department = models.Department.objects.create(
             name="Test Department", product_option_value_ID="8394"
         )
+        self.other_department = models.Department.objects.create(
+            name="Sports", product_option_value_ID="8384"
+        )
 
     def create_suppliers(self):
         self.supplier = models.Supplier.objects.create(
             name="Shop Inc", product_option_value_ID="289493", factory_ID="164868"
+        )
+        self.other_supplier = models.Supplier.objects.create(
+            name="Wholesale", product_option_value_ID="289485", factory_ID="164416"
         )
 
     def create_VAT_rates(self):
         self.VAT_rate = models.VATRate.objects.create(
             VAT_rate_ID="0", name="Basic", percentage=0.2
         )
+        self.other_VAT_rate = models.VATRate.objects.create(
+            VAT_rate_ID="5", name="VAT Free", percentage=0
+        )
 
     def create_brands(self):
         self.brand = models.Brand.objects.create(
             name="Shop Inc", product_option_value_ID="394503"
         )
+        self.other_brand = models.Brand.objects.create(
+            name="Shoes Shop", product_option_value_ID="394746"
+        )
 
     def create_manufacturers(self):
         self.manufacturer = models.Manufacturer.objects.create(
-            name="Shop Inc", product_option_value_ID="394584"
+            name="Shop Inc", product_option_value_ID="394565"
+        )
+        self.other_manufacturer = models.Manufacturer.objects.create(
+            name="Shoes Shop", product_option_value_ID="394584"
         )
 
     def create_package_types(self):
@@ -60,10 +76,26 @@ class SetupProducts:
             product_option_value_ID="398540",
             large_letter_compatible=False,
         )
+        self.other_package_type = models.PackageType.objects.create(
+            name="Express Shipping",
+            product_option_value_ID="398456",
+            large_letter_compatible=True,
+        )
 
     def create_international_shipping(self):
         self.international_shipping = models.InternationalShipping.objects.create(
             name="Standard", product_option_value_ID="26578"
+        )
+        self.other_international_shipping = models.InternationalShipping.objects.create(
+            name="Express", product_option_value_ID="26587"
+        )
+
+    def create_gender(self):
+        self.gender = models.Gender.objects.create(
+            name="mens", readable_name="Mens", product_option_value_ID="416164"
+        )
+        self.other_gender = models.Gender.objects.create(
+            name="womens", readable_name="Womens", product_option_value_ID="416115"
         )
 
     def create_product_options(self):
@@ -142,6 +174,7 @@ class SetupProducts:
             manufacturer=self.manufacturer,
             package_type=self.package_type,
             international_shipping=self.international_shipping,
+            gender=self.gender,
             weight_grams=500,
             length_mm=50,
             height_mm=150,

@@ -173,11 +173,11 @@ class PartialProductRange(BaseProductRangeModel, models.Model):
     def valid_variations(self):
         """Return True if all the ranges products have valid variation options."""
         variations = self._variations()
+        if not self.product_options_have_multiple_values(variations):
+            return False
         if self.has_missing_product_option_values():
             return False
         if not self.all_unique_variations(variations):
-            return False
-        if not self.product_options_have_multiple_values(variations):
             return False
         return True
 
@@ -380,6 +380,7 @@ class ProductEdit(models.Model):
             PartialProductOptionValueLink(
                 product=product, product_option_value=option
             ).save()
+        return product
 
     def delete(self, *args, **kwargs):
         """Delete the product edit and associated products."""
