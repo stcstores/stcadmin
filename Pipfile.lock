@@ -253,7 +253,7 @@
         "order-profit": {
             "editable": true,
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "d3cff1caaae1a4f6849cd019eefe0e4df92e7cb4"
+            "ref": "0c528145f7a7d062f40e081adfd7400fe7e89b75"
         },
         "packaging": {
             "hashes": [
@@ -510,11 +510,11 @@
         },
         "xlsxwriter": {
             "hashes": [
-                "sha256:22904d1284b82426ed43b2ada0ff60f99c4736634acb7fc1584caf07789e55ac",
-                "sha256:e60be95ee38e81916d7c67f658902f9e51322400be20cf0563837f69a63ad3c5"
+                "sha256:48c04e6cec449a562455d7cf40305de1190adfc821e834e023425461f345dfc2",
+                "sha256:7f41b1dbd6b38dd1ce243156cac54d1dae50a41f4a45871596ca67b0abcfb3e8"
             ],
             "index": "pypi",
-            "version": "==1.2.0"
+            "version": "==1.2.1"
         }
     },
     "develop": {
