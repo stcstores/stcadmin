@@ -149,6 +149,7 @@ class FormField(forms.Field):
 
     def validate(self, value):
         """Limit characters if disallowed_characters is set."""
+        super().validate(value)
         if self.disallowed_characters is not None:
             Validators.disallow_characters(value, self.disallowed_characters)
         if self.allowed_characters is not None:
