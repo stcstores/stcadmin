@@ -323,6 +323,11 @@ class Warehouse(fieldtypes.SingleSelectize):
     required_message = "A <b>Department</b> must be selected."
     help_text = "The <b>Department</b> to which the product belongs."
 
+    def __init__(self, *args, **kwargs):
+        """Initialise field."""
+        kwargs["choices"] = self.get_choices()
+        super().__init__(*args, **kwargs)
+
     @staticmethod
     def get_choices():
         """Get choice options for field."""
@@ -368,10 +373,10 @@ class Location(fieldtypes.SelectizeField):
         "sortField": "text",
     }
 
-    def __init__(self, department=None):
+    def __init__(self, **kwargs):
         """Set department."""
-        self.warehouse = department
-        super().__init__()
+        self.warehouse = kwargs.get("department")
+        super().__init__(required=kwargs.get("required"), choices=self.get_choices())
 
     def get_choices(self):
         """Return choices for field."""
@@ -457,7 +462,7 @@ class WarehouseBayField(fieldtypes.CombinationField):
         """Create sub fields."""
         kwargs["label"] = "Location"
         self.lock_warehouse = kwargs.pop("lock_warehouse", False)
-        fields = (Warehouse(), Location())
+        fields = (Warehouse(), Location(required=False))
         selectize_options = [field.selectize_options for field in fields]
         if self.lock_warehouse:
             selectize_options[0]["readOnly"] = True
