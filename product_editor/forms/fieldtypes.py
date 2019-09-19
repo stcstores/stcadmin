@@ -97,8 +97,8 @@ class FormField(forms.Field):
 
     def get_field_kwargs(self, *args, **kwargs):
         """Return the kwargs for the field."""
-        if self.is_required:
-            kwargs["required"] = True
+        if "required" not in kwargs:
+            kwargs["required"] = self.is_required
         else:
             kwargs["required"] = False
         if "small" in kwargs:
