@@ -20,8 +20,10 @@ class BaseSelectizeWidget:
     template_name = "product_editor/widgets/selectize.html"
 
 
-class MultipleSelectizeWidget(BaseSelectizeWidget, forms.SelectMultiple):
+class MultipleSelectizeWidget(forms.SelectMultiple):
     """Widget for selectize fields allowing multiple values."""
+
+    template_name = "product_editor/widgets/selectize.html"
 
     def __init__(self, *args, **kwargs):
         """Set selectize options."""

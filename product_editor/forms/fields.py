@@ -256,7 +256,7 @@ class Dimensions(fieldtypes.CombinationField):
         fields = (Height(), Width(), Length())
         kwargs["widget"] = widgets.DimensionsWidget()
         super().__init__(
-            fields=fields, require_all_fields=False, required=False, *args, **kwargs
+            *args, fields=fields, require_all_fields=False, required=False, **kwargs
         )
 
     def compress(self, value):

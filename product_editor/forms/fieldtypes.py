@@ -243,12 +243,10 @@ class SelectizeModelChoiceField(forms.ModelChoiceField, SingleSelectize):
             self.required_message = ""
         kwargs.update(self.get_field_kwargs(*args, **kwargs))
         if not args and not kwargs.get("queryset"):
-            kwargs["queryset"] = self.get_queryset()
-
+            self.queryset = self.get_queryset()
         kwargs["empty_label"] = ""
-
-        super().__init__(*args, **kwargs)
-        self.widget = super(SingleSelectize, self).get_widget(choices=self.choices)
+        kwargs["widget"] = SingleSelectize.get_widget(self, choices=self.choices)
+        forms.ModelChoiceField.__init__(self, self.queryset, **kwargs)
 
 
 class NumberField(FormField, forms.IntegerField):
