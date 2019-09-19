@@ -53,22 +53,7 @@ class StartEditingProduct(InventoryUserMixin, RedirectView):
 
     def start_edit(self, product_range):
         """Create a new product edit."""
-        partial_product_range = models.PartialProductRange.copy_range(product_range)
-        edit = models.ProductEdit(
-            product_range=product_range,
-            partial_product_range=partial_product_range,
-            user=self.request.user,
-        )
-        edit.save()
-        option_values = [
-            _.product_option_value
-            for _ in models.ProductOptionValueLink.objects.filter(
-                product__product_range=product_range
-            )
-        ]
-        for value in option_values:
-            edit.product_option_values.add(value)
-        return edit
+        return models.ProductEdit.reate_product_edit(self.request.user, product_range)
 
 
 class StartNewProduct(InventoryUserMixin, FormView):

@@ -386,3 +386,23 @@ class ProductEdit(models.Model):
         """Delete the product edit and associated products."""
         self.partial_product_range.delete()
         super().delete(*args, **kwargs)
+
+    @classmethod
+    @transaction.atomic
+    def create_product_edit(cls, user, product_range):
+        """Create a product edit."""
+        partial_product_range = PartialProductRange.copy_range(product_range)
+        edit = cls._default_manager.create(
+            product_range=product_range,
+            partial_product_range=partial_product_range,
+            user=user,
+        )
+        option_values = [
+            _.product_option_value
+            for _ in ProductOptionValueLink.objects.filter(
+                product__product_range=product_range
+            )
+        ]
+        for value in option_values:
+            edit.product_option_values.add(value)
+        return edit
