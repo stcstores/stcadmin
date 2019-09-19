@@ -11,17 +11,12 @@ from .test_products import SetupVariationProductRange
 class SetupPartialProductRange(SetupVariationProductRange, ViewTest):
     def setUp(self):
         super().setUp()
-        models.PartialProductRange.copy_range(self.product_range)
-        self.original_range = self.product_range
-        self.product_range = models.PartialProductRange.objects.get(
-            pk=self.product_range.pk
+        self.product_edit = models.ProductEdit.create_product_edit(
+            self.user, self.product_range
         )
+        self.original_range = self.product_edit.product_range
+        self.product_range = self.product_edit.partial_product_range
         self.product = self.product_range.products()[0]
-        self.product_edit = models.ProductEdit.objects.create(
-            product_range=self.original_range,
-            partial_product_range=self.product_range,
-            user=self.user,
-        )
 
 
 class TestUnique_SKU(TestCase):
