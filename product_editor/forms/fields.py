@@ -696,17 +696,15 @@ class SelectProductOption(fieldtypes.SelectizeModelChoiceField):
 
     def __init__(self, *args, **kwargs):
         """Instanciate the field."""
-        self.product_range = kwargs.get("product_range")
-        super().__init__()
+        self.product_range = kwargs.pop("product_range", None)
+        super().__init__(*args, **kwargs)
 
     def get_queryset(self):
         """Return a queryset of selectable options."""
         queryset = models.ProductOption.objects.filter(inactive=False)
         if self.product_range is not None:
-            selected_options = self.product_range.product_options.all()
-            queryset = queryset.difference(selected_options)
+            selected_options = self.product_range.product_options.values_list(
+                "pk", flat=True
+            )
+            queryset = queryset.exclude(pk__in=selected_options)
         return queryset
-
-    def clean(self, value):
-        """Return the submitted values as model objects."""
-        return models.ProductOption.objects.get(pk=value)
