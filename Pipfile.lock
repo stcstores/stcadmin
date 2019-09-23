@@ -182,7 +182,7 @@
         "list-input": {
             "editable": true,
             "git": "https://github.com/lukeshiner/list_input.git",
-            "ref": "be6d85b36c63c6eb835f1d00b73b72b762453dda"
+            "ref": "377f0d900e577c05817fdcab08d035edd3342db6"
         },
         "lml": {
             "hashes": [
