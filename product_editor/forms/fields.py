@@ -1,6 +1,5 @@
 """Fields for use with forms for creating and editing products."""
 
-import json
 import re
 
 from django import forms
@@ -653,13 +652,6 @@ class ListOption(fieldtypes.FormField, ListInput):
 
     separator = "|"
     disallowed_characters = [separator]
-
-    def clean(self, value):
-        """Clean submitted value."""
-        if value is None:
-            return []
-        value = json.loads(value)
-        return value
 
 
 class AmazonBulletPoints(ListOption):
