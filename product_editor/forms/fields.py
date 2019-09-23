@@ -653,6 +653,13 @@ class ListOption(fieldtypes.FormField, ListInput):
     separator = "|"
     disallowed_characters = [separator]
 
+    def __init__(self, *args, **kwargs):
+        """Initialize field."""
+        fieldtypes.FormField.__init__(self, *args, **kwargs)
+        kwargs["minimum"] = self.__class__.minimum
+        kwargs["maximum"] = self.__class__.maximum
+        ListInput.__init__(self, *args, **kwargs)
+
 
 class AmazonBulletPoints(ListOption):
     """Field for Amazon bullet point descriptions."""
@@ -660,7 +667,9 @@ class AmazonBulletPoints(ListOption):
     label = "Amazon Bullet Points"
     name = "amazon_bullet_points"
     html_class = "amazon_bullet_points"
-    help_text = "Create upto five bullet points for Amazon listings."
+    help_text = "Create up to five bullet points for Amazon listings."
+    required = False
+    minimum = 0
     maximum = 5
 
 
@@ -670,7 +679,9 @@ class AmazonSearchTerms(ListOption):
     label = "Amazon Search Terms"
     name = "amazon_search_terms"
     html_class = "amazon_search_terms"
-    help_text = "Create upto five search terms for Amazon listings."
+    help_text = "Create up to five search terms for Amazon listings."
+    required = False
+    minimum = 0
     maximum = 5
 
 
