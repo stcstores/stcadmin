@@ -524,9 +524,11 @@ class ProductOptionValueField(fieldtypes.SelectizeField):
         """
         Return the values as model objects.
 
-        Create an non-existant values.
+        Create any non-existant values.
         """
         options = []
+        if values is None:
+            values = []
         for value in values:
             try:
                 option = models.ProductOptionValue.objects.get(

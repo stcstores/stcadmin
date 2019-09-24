@@ -230,13 +230,14 @@ class AddProductOption(forms.Form):
     def clean(self):
         """Ensure a new product option cannot be selected with fewer than two values."""
         cleaned_data = super().clean()
-        values_field_name = f"values_{cleaned_data['option'].pk}"
-        cleaned_data["values"] = cleaned_data[values_field_name]
-        if self.variation is True and len(cleaned_data["values"]) < 2:
-            self.add_error(
-                values_field_name,
-                "At least two variation options must be selected for each dropdown.",
-            )
+        if "option" in cleaned_data:
+            values_field_name = f"values_{cleaned_data['option'].pk}"
+            cleaned_data["values"] = cleaned_data[values_field_name]
+            if self.variation is True and len(cleaned_data["values"]) < 2:
+                self.add_error(
+                    values_field_name,
+                    "At least two variation options must be selected for each dropdown.",
+                )
         return cleaned_data
 
     @transaction.atomic
