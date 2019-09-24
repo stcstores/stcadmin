@@ -37,9 +37,7 @@ def warehouses():
     warehouses = models.Warehouse.used_warehouses.all()
     data = {}
     for w in warehouses:
-        data[w.warehouse_ID] = [
-            {"value": b.bay_ID, "text": b.name} for b in w.bay_set.all()
-        ]
+        data[w.id] = [{"value": b.id, "text": b.name} for b in w.bay_set.all()]
     return mark_safe(json.dumps(data))
 
 

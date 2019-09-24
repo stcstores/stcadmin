@@ -56,27 +56,22 @@ class CreateBayForm(forms.Form):
         self.fields[
             "bay_type"
         ].help_text = "Is this a primary picking location or backup bay?"
-        self.fields["location"] = fields.Department(label="Location")
+        self.fields["location"] = fields.Warehouse(label="Location")
         self.fields["location"].help_text = "The physical location of the bay."
         self.fields["location"].required = False
 
     def clean(self, *args, **kwargs):
         """Create correct name for bay and ensure it does not already exist."""
         data = super().clean(*args, **kwargs)
-        data["warehouse"] = models.Warehouse.objects.get(
-            warehouse_ID=data["department"]
-        )
+        data["warehouse"] = data["department"].default_warehouse()
         if data["bay_type"] == self.BACKUP:
-            if not data["location"]:
+            if "location" not in data or not data["location"]:
                 self.add_error("location", "Location is required for backup bays.")
                 return
-            data["backup_location"] = models.Warehouse.objects.get(
-                warehouse_ID=data["location"]
-            )
             self.new_bay = models.Bay.new_backup_bay(
                 name=data["name"],
                 department=data["warehouse"],
-                backup_location=data["backup_location"],
+                backup_location=data["location"],
             )
         else:
             self.new_bay = models.Bay(name=data["name"], warehouse=data["warehouse"])
@@ -138,23 +133,22 @@ class ProductForm(ProductEditorBase, forms.Form):
         bays = self.product.bays.all()
         warehouses = list(set([bay.warehouse for bay in bays]))
         if len(warehouses) > 1:
-            self.add_error(self.LOCATIONS, "Mixed warehouses.")
+            raise ValueError(f"Product {self.product.SKU} is in multiple warehouses.")
         elif len(warehouses) == 1:
             initial[self.LOCATION] = {
-                self.WAREHOUSE: warehouses[0].warehouse_ID,
-                self.BAYS: [bay.bay_ID for bay in bays],
+                self.WAREHOUSE: warehouses[0].id,
+                self.BAYS: [bay.id for bay in bays],
             }
         initial[self.DIMENSIONS] = {
-            self.WIDTH: self.product.width_mm,
             self.HEIGHT: self.product.height_mm,
             self.LENGTH: self.product.length_mm,
+            self.WIDTH: self.product.width_mm,
         }
         initial[self.WEIGHT] = self.product.weight_grams
         initial[self.PURCHASE_PRICE] = self.product.purchase_price
         initial[self.RETAIL_PRICE] = self.product.retail_price
         initial[self.PACKAGE_TYPE] = self.product.package_type
-        if self.product.supplier:
-            initial[self.SUPPLIER] = self.product.supplier
+        initial[self.SUPPLIER] = self.product.supplier
         initial[self.SUPPLIER_SKU] = self.product.supplier_SKU
         initial[self.INTERNATIONAL_SHIPPING] = self.product.international_shipping
         initial[self.GENDER] = self.product.gender
@@ -163,9 +157,9 @@ class ProductForm(ProductEditorBase, forms.Form):
     def clean(self):
         """Clean submitted data."""
         cleaned_data = super().clean()
-        cleaned_data[self.BAYS] = models.Bay.objects.filter(
-            bay_ID__in=cleaned_data[self.LOCATION][self.BAYS]
-        )
+        if self.LOCATION in cleaned_data:
+            bay_IDs = [bay.id for bay in cleaned_data[self.LOCATION][self.BAYS]]
+            cleaned_data[self.BAYS] = list(models.Bay.objects.filter(id__in=bay_IDs))
         return cleaned_data
 
     def save(self, *args, **kwargs):

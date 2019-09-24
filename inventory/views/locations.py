@@ -39,7 +39,10 @@ class LocationFormView(InventoryUserMixin, TemplateView):
         )
         self.formset = LocationsFormSet(
             self.request.POST,
-            form_kwargs=[{"product": p} for p in self.product_range.products()],
+            form_kwargs=[
+                {"product": p, "user": self.request.user}
+                for p in self.product_range.products()
+            ],
         )
         if self.formset.is_valid():
             for form in self.formset:
