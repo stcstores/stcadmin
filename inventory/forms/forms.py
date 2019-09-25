@@ -263,6 +263,7 @@ class SetProductOptionValues(forms.Form):
         self.edit = kwargs.pop("edit")
         self.product_range = kwargs.pop("product_range")
         self.product = kwargs.pop("product")
+        kwargs["initial"] = self.get_initial()
         super().__init__(*args, **kwargs)
         self.fields["product_ID"] = forms.CharField(
             widget=forms.HiddenInput, required=True
@@ -307,6 +308,36 @@ class SetProductOptionValues(forms.Form):
             name = f"option_{option.name}"
             variation[name] = self.cleaned_data.get(name)
         return variation
+
+    def get_initial(self):
+        """Return the initial values for a product for the formset."""
+        initial = {"product_ID": self.product.id}
+        for product_option in self.product_range.product_options.all():
+            name = f"option_{product_option.name}"
+            value = self.get_product_option_value(self.product, product_option)
+            if value:
+                initial[name] = value
+        return initial
+
+    def get_product_option_value(self, product, product_option):
+        """Return the initial product option value."""
+        value = None
+        try:
+            value = models.PartialProductOptionValueLink.objects.get(
+                product=self.product,
+                product_option_value__product_option=product_option,
+            ).product_option_value
+
+        except models.PartialProductOptionValueLink.DoesNotExist:
+            if product_option in self.product_range.listing_options():
+                value = self.get_avaliable_option(product, product_option)
+        return value
+
+    def get_avaliable_option(self, product, product_option):
+        """Return the only available listing option if possible, otherwise None."""
+        values = self.edit.product_option_values.filter(product_option=product_option)
+        if values.count() == 1:
+            return values[0]
 
 
 class SetProductOptionValuesFormset(KwargFormSet):

@@ -275,9 +275,7 @@ class AddProductOption(InventoryUserMixin, FormView):
 
     def get_success_url(self):
         """Return the URL to redirect to on a successful form submission."""
-        return reverse_lazy(
-            "inventory:edit_variation", kwargs={"edit_ID": self.edit.pk}
-        )
+        return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": self.edit.pk})
 
 
 class AddDropdown(AddProductOption):
@@ -311,36 +309,9 @@ class SetProductOptionValues(InventoryUserMixin, TemplateView):
     def get_initial(self):
         """Return the initial values for the formset."""
         return [
-            {
-                "edit": self.edit,
-                "product_range": self.product_range,
-                "product": p,
-                "initial": self.get_initial_for_product(p),
-            }
+            {"edit": self.edit, "product_range": self.product_range, "product": p}
             for p in self.product_range.products()
         ]
-
-    def get_initial_for_product(self, product):
-        """Return the initial values for a product for the formset."""
-        initial = {"product_ID": product.id}
-        for option in self.product_range.product_options.all():
-            name = f"option_{option.name}"
-            try:
-                value = models.PartialProductOptionValueLink.objects.get(
-                    product=product, product_option_value__product_option=option
-                ).product_option_value
-
-            except models.PartialProductOptionValueLink.DoesNotExist:
-                # If option is a listing option with only one available value set it
-                if option in self.product_range.listing_options():
-                    values = self.edit.product_option_values.filter(
-                        product_option=option
-                    )
-                    if values.count() == 1:
-                        initial[name] = values[0]
-            else:
-                initial[name] = value
-        return initial
 
     def post(self, *args, **kwargs):
         """Process POST HTTP request."""
