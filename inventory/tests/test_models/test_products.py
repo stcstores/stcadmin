@@ -195,6 +195,7 @@ class SetupSingleProductRange(SetupProducts):
         self.product = self.new_product(self.product_range)
         self.product.product_ID = "724587"
         self.product.save()
+        self.product = models.Product.objects.get(id=self.product.id)
 
 
 class SetupVariationProductRange(SetupProducts):
@@ -256,7 +257,7 @@ class SetupVariationProductRange(SetupProducts):
                 product=product, product_option_value=self.model_product_option_value
             )
             self.variations.append(product)
-        self.product = self.variations[0]
+        self.product = models.Product.objects.get(id=self.variations[0].id)
 
 
 class TestSingleProduct(SetupSingleProductRange, TestCase):
