@@ -478,7 +478,6 @@ class ProductOptionValueField(fieldtypes.SelectizeField):
         """Set options for selectize."""
         self.product_option = kwargs.pop("product_option")
         self.product_range = kwargs.pop("product_range", None)
-        kwargs["choices"] = self.get_choices()
         self.selectize_options = self.selectize_options.copy()
         self.selectize_options["create"] = True
         self.allowed_characters = self.option_allowed_characters.get(
