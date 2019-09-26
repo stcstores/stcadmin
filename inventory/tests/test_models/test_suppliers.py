@@ -8,7 +8,7 @@ class TestSupplierContactModel(TestCase):
     def setUp(self):
         super().setUp()
         self.supplier = models.Supplier.objects.create(
-            name="Stock Inc", product_option_value_ID="165415"
+            name="Stock Inc", product_option_value_ID="165415", factory_ID="28493782"
         )
         self.supplier_contact = models.SupplierContact.objects.create(
             supplier=self.supplier,

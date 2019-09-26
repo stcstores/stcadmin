@@ -33,7 +33,7 @@ class Supplier(BaseNonListingProductOptionModel):
 
         Create a Product Option and Factory in Cloud Commerce if neither exist.
         """
-        if self.factory_ID == "":
+        if not self.factory_ID:
             self.factory_ID = self.create_factory(self.name)
         super().save(*args, **kwargs)
 
