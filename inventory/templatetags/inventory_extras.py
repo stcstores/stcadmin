@@ -4,7 +4,6 @@ import json
 
 from ccapi import URLs
 from django import template
-from django.template import loader
 from django.utils.safestring import mark_safe
 
 from inventory import models
@@ -50,10 +49,3 @@ def product_options(option=None):
         return {x.option_name: x.values for x in ProductOptions}
     else:
         return ProductOptions[option].options
-
-
-@register.simple_tag
-def format_variation_name(variation):
-    """Format the variation identification for the product search results."""
-    t = loader.get_template("inventory/product_search/format_variation_name.html")
-    return t.render({"variation": variation})
