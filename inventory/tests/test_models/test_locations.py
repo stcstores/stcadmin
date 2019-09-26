@@ -1,8 +1,7 @@
 from unittest.mock import Mock, patch
 
-from django.test import TestCase
-
 from inventory import models
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
 class CreateBays:
@@ -37,7 +36,7 @@ class CreateBays:
         models.Bay.objects.bulk_create(self.bays)
 
 
-class TestWarehouse(CreateBays, TestCase):
+class TestWarehouse(CreateBays, STCAdminTest):
     def test_str_method(self):
         self.assertEqual(str(self.warehouse_1), self.warehouse_1.name)
 
@@ -65,7 +64,7 @@ class TestWarehouse(CreateBays, TestCase):
         )
 
 
-class TestBays(CreateBays, TestCase):
+class TestBays(CreateBays, STCAdminTest):
     @patch("inventory.models.locations.CCAPI")
     def test_create_bay_with_ID(self, mock_CCAPI):
         models.Bay(bay_ID="846156", warehouse=self.warehouse_1, name="New Bay").save()

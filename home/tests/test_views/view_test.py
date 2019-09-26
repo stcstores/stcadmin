@@ -1,12 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.test import TestCase, override_settings
+
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
-@override_settings(
-    STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage"
-)
-class ViewTest(TestCase):
+class ViewTest(STCAdminTest):
     def setUp(self):
         super().setUp()
         self.user = get_user_model().objects.create_user(

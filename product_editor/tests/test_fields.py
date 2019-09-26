@@ -5,16 +5,16 @@ from decimal import Decimal
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.test import TestCase
 
 from inventory import models
 from inventory.tests.test_models.test_partial import SetupPartialProductRange
 from inventory.tests.test_models.test_products import SetupVariationProductRange
 from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms import fields
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
-class FieldTest(TestCase):
+class FieldTest(STCAdminTest):
     """Base class for testing custom fields."""
 
     def get_form_class(self, field=None):

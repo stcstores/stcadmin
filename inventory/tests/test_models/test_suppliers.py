@@ -1,10 +1,10 @@
 from django.core.exceptions import ValidationError
-from django.test import TestCase
 
 from inventory import models
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
-class TestSupplierContactModel(TestCase):
+class TestSupplierContactModel(STCAdminTest):
     def setUp(self):
         super().setUp()
         self.supplier = models.Supplier.objects.create(

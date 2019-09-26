@@ -1,11 +1,10 @@
 from unittest.mock import Mock, patch
 
-from django.test import TestCase
-
 from inventory import models
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
-class TestProductOption(TestCase):
+class TestProductOption(STCAdminTest):
     def setUp(self):
         super().setUp()
         self.product_option = models.ProductOption.objects.create(
@@ -30,7 +29,7 @@ class TestProductOption(TestCase):
         mock_CCAPI.get_product_options.assert_called_once()
 
 
-class TestProductOptionValue(TestCase):
+class TestProductOptionValue(STCAdminTest):
     def setUp(self):
         super().setUp()
         self.product_option = models.ProductOption.objects.create(
@@ -73,7 +72,7 @@ class TestProductOptionValue(TestCase):
         )
 
 
-class TestDepartment(TestCase):
+class TestDepartment(STCAdminTest):
     def setUp(self):
         super().setUp()
         self.department = models.Department.objects.create(
@@ -137,7 +136,7 @@ class TestDepartment(TestCase):
         self.assertEqual(self.department.default_bay(), bay)
 
 
-class TestPackageType(TestCase):
+class TestPackageType(STCAdminTest):
     def setUp(self):
         super().setUp()
         self.package_type = models.PackageType.objects.create(
@@ -185,7 +184,7 @@ class TestPackageType(TestCase):
         )
 
 
-class TestInternationalShipping(TestCase):
+class TestInternationalShipping(STCAdminTest):
     def setUp(self):
         super().setUp()
         self.international_shipping = models.InternationalShipping.objects.create(
@@ -233,7 +232,7 @@ class TestInternationalShipping(TestCase):
         )
 
 
-class TestBrand(TestCase):
+class TestBrand(STCAdminTest):
     def setUp(self):
         super().setUp()
         self.brand = models.Brand.objects.create(
@@ -277,7 +276,7 @@ class TestBrand(TestCase):
         )
 
 
-class TestManufacturer(TestCase):
+class TestManufacturer(STCAdminTest):
     def setUp(self):
         super().setUp()
         self.manufacturer = models.Manufacturer.objects.create(
@@ -321,7 +320,7 @@ class TestManufacturer(TestCase):
         )
 
 
-class TestGender(TestCase):
+class TestGender(STCAdminTest):
     def setUp(self):
         super().setUp()
         self.gender = models.Gender.objects.create(

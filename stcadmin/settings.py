@@ -264,7 +264,11 @@ DOCS_ROOT = os.path.join(SOURCE_DIR, "docs", "build", "html")
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "home:index"
 
-TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
+TESTING = (
+    len(sys.argv) > 1
+    and sys.argv[1] == "test"
+    or os.path.basename(sys.argv[0]) in ("pytest", "py.test")
+)
 
 
 def create_CCAPI_session():

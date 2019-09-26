@@ -1,9 +1,8 @@
 from unittest.mock import Mock
 
-from django.test import TestCase
-
 from home.tests.test_views.view_test import ViewTest
 from inventory import models
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 from .test_products import SetupVariationProductRange
 
@@ -19,7 +18,7 @@ class SetupPartialProductRange(SetupVariationProductRange, ViewTest):
         self.product = self.product_range.products()[0]
 
 
-class TestUnique_SKU(TestCase):
+class TestUnique_SKU(STCAdminTest):
     def test_unique_SKU(self):
         function = Mock()
         function.return_value = "RNG_164_DH3-J9L"
@@ -39,7 +38,7 @@ class TestUnique_SKU(TestCase):
             models.partial.unique_SKU(["RNG_164_DH3-J9L"], function)
 
 
-class TestPartialProductRange(SetupPartialProductRange, TestCase):
+class TestPartialProductRange(SetupPartialProductRange, STCAdminTest):
     def test_generate_SKU_method(self):
         SKU = models.PartialProductRange.get_new_SKU()
         self.assertEqual(SKU[:4], "RNG_")
@@ -304,7 +303,7 @@ class TestPartialProductRange(SetupPartialProductRange, TestCase):
         )
 
 
-class TestPartialProduct(SetupPartialProductRange, TestCase):
+class TestPartialProduct(SetupPartialProductRange, STCAdminTest):
     def test_generate_SKU_method(self):
         SKU = models.PartialProduct.get_new_SKU()
         self.assertNotEqual(SKU[:4], "RNG_")
@@ -376,7 +375,7 @@ class TestPartialProduct(SetupPartialProductRange, TestCase):
         self.assertIsNone(self.product.product_option_value("Quantity"))
 
 
-class TestPartialProduct_is_complete_Method(SetupPartialProductRange, TestCase):
+class TestPartialProduct_is_complete_Method(SetupPartialProductRange, STCAdminTest):
     def test_when_complete(self):
         self.assertTrue(self.product.is_complete())
 
@@ -436,7 +435,7 @@ class TestPartialProduct_is_complete_Method(SetupPartialProductRange, TestCase):
         self.assertFalse(self.product.is_complete())
 
 
-class TestPartialProductRangeSelectedOption(SetupPartialProductRange, TestCase):
+class TestPartialProductRangeSelectedOption(SetupPartialProductRange, STCAdminTest):
     def test_str_method(self):
         selected_option = models.PartialProductRangeSelectedOption.objects.get(
             product_range=self.product_range, product_option=self.size_product_option
@@ -447,7 +446,7 @@ class TestPartialProductRangeSelectedOption(SetupPartialProductRange, TestCase):
         )
 
 
-class TestPartialProductOptionValueLink(SetupPartialProductRange, TestCase):
+class TestPartialProductOptionValueLink(SetupPartialProductRange, STCAdminTest):
     def test_str_method(self):
         option_link = models.PartialProductOptionValueLink.objects.get(
             product=self.product, product_option_value=self.red_product_option_value
@@ -457,7 +456,7 @@ class TestPartialProductOptionValueLink(SetupPartialProductRange, TestCase):
         )
 
 
-class TestProductEdit(SetupPartialProductRange, TestCase):
+class TestProductEdit(SetupPartialProductRange, STCAdminTest):
     def test_str_method(self):
         self.assertEqual(str(self.product_edit), str(self.product_range))
 

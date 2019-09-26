@@ -1,9 +1,8 @@
 import itertools
 from unittest.mock import patch
 
-from django.test import TestCase
-
 from inventory import models
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
 class SetupProducts:
@@ -260,7 +259,7 @@ class SetupVariationProductRange(SetupProducts):
         self.product = models.Product.objects.get(id=self.variations[0].id)
 
 
-class TestSingleProduct(SetupSingleProductRange, TestCase):
+class TestSingleProduct(SetupSingleProductRange, STCAdminTest):
     def test_str_method(self):
         self.assertEqual(str(self.product), f"{self.product.SKU}: Test Range - TV009")
 
@@ -300,7 +299,7 @@ class TestSingleProduct(SetupSingleProductRange, TestCase):
         self.assertIsNone(self.product.product_option_value("Size"))
 
 
-class TestSingleProductRange(SetupSingleProductRange, TestCase):
+class TestSingleProductRange(SetupSingleProductRange, STCAdminTest):
     def test_str_method(self):
         self.assertEqual(
             str(self.product_range), f"{self.product_range.SKU} - Test Range"
@@ -334,7 +333,7 @@ class TestSingleProductRange(SetupSingleProductRange, TestCase):
         self.assertEqual(self.product_range.variation_values(), {})
 
 
-class TestVariationProductRange(SetupVariationProductRange, TestCase):
+class TestVariationProductRange(SetupVariationProductRange, STCAdminTest):
     def test_str_method(self):
         self.assertEqual(
             str(self.product_range), f"{self.product_range.SKU} - Test Range"
@@ -420,7 +419,7 @@ class TestVariationProductRange(SetupVariationProductRange, TestCase):
         )
 
 
-class TestVariationProduct(SetupVariationProductRange, TestCase):
+class TestVariationProduct(SetupVariationProductRange, STCAdminTest):
     def test_str_method(self):
         self.assertEqual(
             str(self.product), f"{self.product.SKU}: Test Range - Small - Red - TV009"
@@ -494,7 +493,7 @@ class TestVariationProduct(SetupVariationProductRange, TestCase):
         )
 
 
-class TestProductRangeSelectedOptionModel(SetupVariationProductRange, TestCase):
+class TestProductRangeSelectedOptionModel(SetupVariationProductRange, STCAdminTest):
     def test_str_method(self):
         link = models.ProductRangeSelectedOption.objects.get(
             product_range=self.product_range, product_option=self.size_product_option
@@ -504,7 +503,7 @@ class TestProductRangeSelectedOptionModel(SetupVariationProductRange, TestCase):
         )
 
 
-class TestProductOptionValueLinkModel(SetupVariationProductRange, TestCase):
+class TestProductOptionValueLinkModel(SetupVariationProductRange, STCAdminTest):
     def test_str_method(self):
         link = models.ProductOptionValueLink.objects.get(
             product=self.product, product_option_value=self.small_product_option_value
