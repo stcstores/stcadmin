@@ -38,14 +38,3 @@ def warehouses():
     for w in warehouses:
         data[w.id] = [{"value": b.id, "text": b.name} for b in w.bay_set.all()]
     return mark_safe(json.dumps(data))
-
-
-@register.simple_tag
-def product_options(option=None):
-    """Return dict containing product options and values."""
-    from ccapi import ProductOptions
-
-    if option is None:
-        return {x.option_name: x.values for x in ProductOptions}
-    else:
-        return ProductOptions[option].options
