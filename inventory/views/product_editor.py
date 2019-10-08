@@ -53,7 +53,7 @@ class StartEditingProduct(InventoryUserMixin, RedirectView):
 
     def start_edit(self, product_range):
         """Create a new product edit."""
-        return models.ProductEdit.reate_product_edit(self.request.user, product_range)
+        return models.ProductEdit.create_product_edit(self.request.user, product_range)
 
 
 class StartNewProduct(InventoryUserMixin, FormView):
