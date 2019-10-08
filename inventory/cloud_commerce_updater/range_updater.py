@@ -21,6 +21,7 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
 
         args:
             db_object (inventory.models.products.ProductRange)
+
         """
         super().__init__(*args, **kwargs)
         self.product_IDs = [_.product_ID for _ in self.db_object.products()]
@@ -39,6 +40,7 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
 
         args:
             department (inventory.models.product_options.Department)
+
         """
         args, kwargs = self._prepare_set_department(department)
         if self.update_DB:
@@ -79,7 +81,7 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
                 the Range will be set as not End-of-Line.
         """
         args, kwargs = self._prepare_set_end_of_line(end_of_line)
-        if self.udpate_DB:
+        if self.update_DB:
             self._set_DB_end_of_line(*args, **kwargs)
         if self.update_CC:
             self._set_CC_end_of_line(*args, **kwargs)
@@ -90,11 +92,12 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
 
         args:
             product_option: inventory.models.product_options.ProductOption
+
         """
         args, kwargs = self._prepare_add_variation_product_option(product_option)
         if self.update_DB:
             self._add_DB_product_option(*args, **kwargs)
-        if self.udpate_CC:
+        if self.update_CC:
             self._add_CC_product_option(*args, **kwargs)
 
     def add_listing_product_option(self, product_option):
@@ -103,6 +106,7 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
 
         args:
             product_option: inventory.models.product_options.ProductOption
+
         """
         args, kwargs = self._prepare_add_listing_product_option(product_option)
         if self.update_DB:
@@ -116,6 +120,7 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
 
         args:
             product_option: inventory.models.product_options.ProductOption
+
         """
         args, kwargs = self._prepare_remove_product_option(product_option)
         if self.update_DB:
@@ -226,7 +231,7 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
         product_range.set_end_of_line(bool(end_of_line))
 
     def _add_DB_product_option(self, product_option, *, variation):
-        link, created = models.ProductRangeSelectedOption.objects.get_or_create(
+        link, created = self.product_range_selected_option_model.objects.get_or_create(
             product_range=self.db_object,
             product_option=product_option,
             defaults={"variation": bool(variation)},
@@ -242,11 +247,11 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
         self._set_CC_product_option_variation(product_option, variation)
 
     def _remove_DB_product_option(self, product_option):
-        models.ProductOptionValueLink.objects.filter(
+        self.product_option_value_link_model.objects.filter(
             product__product_ID__in=self.product_IDs,
             product_option_value__product_option=product_option,
         ).delete()
-        models.ProductRangeSelectedOption.objects.get(
+        self.product_range_selected_option_model.objects.get(
             product_range=self.db_object, product_option=product_option
         ).delete()
 
@@ -270,6 +275,9 @@ class RangeUpdater(BaseRangeUpdater):
     update_DB = True
     update_CC = True
 
+    product_range_selected_option_model = models.ProductRangeSelectedOption
+    product_option_value_link_model = models.ProductOptionValueLink
+
 
 class PartialRangeUpdater(BaseRangeUpdater):
     """Update a Partial Product Range in the database."""
@@ -278,3 +286,6 @@ class PartialRangeUpdater(BaseRangeUpdater):
     LOG_MESSAGE = "{} - Partial Range {} - {}"
     update_DB = True
     update_CC = False
+
+    product_range_selected_option_model = models.PartialProductRangeSelectedOption
+    product_option_value_link_model = models.PartialProductOptionValueLink
