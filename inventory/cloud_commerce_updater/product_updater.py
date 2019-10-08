@@ -404,13 +404,13 @@ class BaseProductUpdater(BaseCloudCommerceUpdater):
         self.db_object.save()
 
     def _set_CC_retail_price(self, retail_price):
-        if retail_price:
-            value = "{:.2f}".format(retail_price)
+        if retail_price is None:
+            self._clear_CC_product_options(self.RETAIL_PRICE_PRODUCT_OPTION_ID)
         else:
-            value = ""
-        self._set_or_create_CC_product_option(
-            product_option_ID=self.RETAIL_PRICE_PRODUCT_OPTION_ID, value=value
-        )
+            value = "{:.2f}".format(retail_price)
+            self._set_or_create_CC_product_option(
+                product_option_ID=self.RETAIL_PRICE_PRODUCT_OPTION_ID, value=value
+            )
 
     def _set_DB_brand(self, brand):
         self.db_object.brand = brand
