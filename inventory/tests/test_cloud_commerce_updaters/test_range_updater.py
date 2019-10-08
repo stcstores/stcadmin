@@ -186,6 +186,19 @@ class RangeUpdaterTests:
             self.assertTrue(selected_option.variation)
         else:
             self.assertFalse(selected_option.variation)
+        if self.update_CC:
+            mock_CCAPI.add_option_to_product.assert_called_once_with(
+                range_id=self.product_range.range_ID,
+                option_id=product_option.product_option_ID,
+            )
+            mock_CCAPI.set_range_option_drop_down.assert_called_once_with(
+                range_id=self.product_range.range_ID,
+                option_id=product_option.product_option_ID,
+                drop_down=True,
+            )
+            self.assertEqual(2, len(mock_CCAPI.mock_calls))
+        else:
+            self.assertEqual(0, len(mock_CCAPI.mock_calls))
 
     @patch("inventory.cloud_commerce_updater.range_updater.CCAPI")
     def test_add_listing_product_option(self, mock_CCAPI):
@@ -226,6 +239,19 @@ class RangeUpdaterTests:
             self.assertFalse(selected_option.variation)
         else:
             self.assertTrue(selected_option.variation)
+        if self.update_CC:
+            mock_CCAPI.add_option_to_product.assert_called_once_with(
+                range_id=self.product_range.range_ID,
+                option_id=product_option.product_option_ID,
+            )
+            mock_CCAPI.set_range_option_drop_down.assert_called_once_with(
+                range_id=self.product_range.range_ID,
+                option_id=product_option.product_option_ID,
+                drop_down=False,
+            )
+            self.assertEqual(2, len(mock_CCAPI.mock_calls))
+        else:
+            self.assertEqual(0, len(mock_CCAPI.mock_calls))
 
     @patch("inventory.cloud_commerce_updater.range_updater.CCAPI")
     def test_remove_product_option(self, mock_CCAPI):
