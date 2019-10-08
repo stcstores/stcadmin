@@ -533,14 +533,13 @@ class BaseProductUpdater(BaseCloudCommerceUpdater):
             )
 
     def _set_DB_product_option_link(self, product_option_value):
-        link, created = models.ProductOptionValueLink.objects.get_or_create(
+        link, created = self.product_option_value_link_model.objects.filter(
             product=self.db_object,
             product_option_value__product_option=product_option_value.product_option,
-            defaults={"product_option_value": product_option_value},
+        ).delete()
+        self.product_option_value_link_model.objects.create(
+            product=self.db_object, product_option_value=product_option_value
         )
-        if link.product_option_value != product_option_value:
-            link.product_option_value = product_option_value
-            link.save()
 
     def _set_CC_product_option_link(self, product_option_value):
         self._set_CC_product_option(
@@ -548,12 +547,13 @@ class BaseProductUpdater(BaseCloudCommerceUpdater):
             product_option_value_ID=product_option_value.product_option_value_ID,
         )
 
-    def _remove_DB_product_option(self, product_option_value):
-        models.ProductOptionValueLink.objects.get(
-            product=self.product, value=product_option_value
+    def _remove_DB_product_option_link(self, product_option_value):
+        self.product_option_value_link_model.objects.filter(
+            product=self.db_object,
+            product_option_value__product_option=product_option_value.product_option,
         ).delete()
 
-    def _remove_CC_product_option(self, product_option_value):
+    def _remove_CC_product_option_link(self, product_option_value):
         self._clear_CC_product_options(
             product_option_value.product_option.product_option_ID
         )
@@ -572,6 +572,8 @@ class ProductUpdater(BaseProductUpdater):
     update_DB = True
     update_CC = True
 
+    product_option_value_link_model = models.ProductOptionValueLink
+
 
 class PartialProductUpdater(BaseProductUpdater):
     """Update a Partial Product in the database."""
@@ -581,3 +583,5 @@ class PartialProductUpdater(BaseProductUpdater):
 
     update_DB = True
     update_CC = False
+
+    product_option_value_link_model = models.PartialProductOptionValueLink
