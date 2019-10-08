@@ -13,11 +13,14 @@ logger = logging.getLogger("product_editor")
 class SaveEdit:
     """Save changes made in the product editor."""
 
-    def __new__(self, edit, request):
+    def __init__(self, edit, request):
         """Make changes in a new thread."""
         self.edit = edit
         self.user = request.user
-        t = threading.Thread(target=self.save_edit, args=[self])
+
+    def save_edit_threaded(self):
+        """Update the product in a new thread."""
+        t = threading.Thread(target=self.save_edit, args=[])
         t.setDaemon(True)
         t.start()
 
@@ -29,17 +32,17 @@ class SaveEdit:
             self.original_range, self.user
         )
         self.range_updater.log("Begin updating.", level=logging.INFO)
-        self._remove_unused_variation_options(self)
-        self._remove_unused_listing_options(self)
-        self._add_new_variation_options(self)
-        self._add_new_listing_options(self)
-        self._create_new_products(self)
+        self._remove_unused_variation_options()
+        self._remove_unused_listing_options()
+        self._add_new_variation_options()
+        self._add_new_listing_options()
+        self._create_new_products()
         # Create a new range updater that recognises new products.
         self.range_updater = cloud_commerce_updater.RangeUpdater(
             self.original_range, self.user
         )
-        self._update_range_details(self)
-        self._update_products(self)
+        self._update_range_details()
+        self._update_products()
         self.range_updater.log("Finish updating.", level=logging.INFO)
 
     def _remove_unused_variation_options(self):
@@ -75,7 +78,7 @@ class SaveEdit:
         for product in self.partial_range.products():
             if not product.pre_existing:
                 self.new_products_created = True
-                self._create_product(self, product)
+                self._create_product(product)
 
     def _create_product(self, partial_product):
         self.range_updater.log(f"Create product {partial_product}.", level=logging.INFO)
@@ -111,7 +114,7 @@ class SaveEdit:
         new_product.bays.set(partial_product.bays.all())
         updater = cloud_commerce_updater.ProductUpdater(new_product, self.user)
         updater.set_date_created()
-        self._update_product(self, partial_product, updater)
+        self._update_product(partial_product, updater)
 
     def _update_range_details(self):
         # Set name.
@@ -149,13 +152,11 @@ class SaveEdit:
         for product in self.partial_range.products():
             original_product = self.original_range.product_set.get(SKU=product.SKU)
             updater = cloud_commerce_updater.ProductUpdater(original_product, self.user)
-            self._update_product(
-                self, product, updater, original_product=original_product
-            )
+            self._update_product(product, updater, original_product=original_product)
 
     def _update_product(self, partial_product, updater, original_product=None):
         self._update_product_option_links(
-            self, partial_product, updater, original_product=original_product
+            partial_product, updater, original_product=original_product
         )
         # Set supplier.
         if (
@@ -260,10 +261,10 @@ class SaveEdit:
     ):
         if original_product is not None:
             self._remove_old_product_option_links(
-                self, partial_product, updater, original_product
+                partial_product, updater, original_product
             )
         self._add_new_product_option_links(
-            self, partial_product, updater, original_product=original_product
+            partial_product, updater, original_product=original_product
         )
 
     def _remove_old_product_option_links(

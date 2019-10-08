@@ -572,7 +572,7 @@ class SaveChanges(InventoryUserMixin, RedirectView):
         """Save changes and redirect."""
         edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
         product_range_ID = edit.partial_product_range.range_ID
-        SaveEdit(edit, self.request)
+        SaveEdit(edit, self.request).save_edit_threaded()
         return reverse_lazy(
             "inventory:product_range", kwargs={"range_id": product_range_ID}
         )
