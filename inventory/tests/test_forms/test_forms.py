@@ -561,7 +561,9 @@ class TestAddProductOptionForm(SetupPartialProductRange, FormTest):
                 self.horse_product_option_value.value,
             ],
         }
-        form = forms.AddProductOption(data, edit=self.product_edit, variation=True)
+        form = forms.AddProductOption(
+            data, edit=self.product_edit, variation=True, user=self.user
+        )
         self.assert_form_is_valid(form)
         self.assertEqual(form.cleaned_data["option"], self.design_product_option)
         self.assertEqual(
@@ -580,7 +582,9 @@ class TestAddProductOptionForm(SetupPartialProductRange, FormTest):
                 self.cat_product_option_value.value
             ],
         }
-        form = forms.AddProductOption(data, edit=self.product_edit, variation=True)
+        form = forms.AddProductOption(
+            data, edit=self.product_edit, variation=True, user=self.user
+        )
         self.assert_form_invalid(form)
         self.assertIn(f"values_{self.design_product_option.id}", form.errors)
 
@@ -589,12 +593,16 @@ class TestAddProductOptionForm(SetupPartialProductRange, FormTest):
             "option": self.design_product_option.id,
             f"values_{self.design_product_option.id}": [],
         }
-        form = forms.AddProductOption(data, edit=self.product_edit, variation=True)
+        form = forms.AddProductOption(
+            data, edit=self.product_edit, variation=True, user=self.user
+        )
         self.assert_form_invalid(form)
         self.assertIn(f"values_{self.design_product_option.id}", form.errors)
 
     def test_empty_form(self):
-        form = forms.AddProductOption({}, edit=self.product_edit, variation=True)
+        form = forms.AddProductOption(
+            {}, edit=self.product_edit, variation=True, user=self.user
+        )
         self.assert_form_invalid(form)
 
     def test_save_method_for_variation(self):
@@ -606,7 +614,9 @@ class TestAddProductOptionForm(SetupPartialProductRange, FormTest):
                 self.horse_product_option_value.value,
             ],
         }
-        form = forms.AddProductOption(data, edit=self.product_edit, variation=True)
+        form = forms.AddProductOption(
+            data, edit=self.product_edit, variation=True, user=self.user
+        )
         self.assert_form_is_valid(form)
         form.save()
         self.assertTrue(

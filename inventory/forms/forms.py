@@ -4,6 +4,7 @@ from django import forms
 from django.db import transaction
 
 from inventory import models
+from inventory.cloud_commerce_updater import PartialRangeUpdater
 from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms import fields
 from stcadmin.forms import KwargFormSet
@@ -15,7 +16,7 @@ class ProductRangeForm(forms.Form):
     end_of_line = forms.BooleanField(
         required=False,
         help_text=(
-            "Ranges are maked as <b>end of line</b> if the entire range is"
+            "Ranges are marked as <b>end of line</b> if the entire range is"
             " out of stock and unlikely to be re-ordered."
         ),
     )
@@ -208,6 +209,7 @@ class AddProductOption(forms.Form):
         """Instanciate the form."""
         self.edit = kwargs.pop("edit")
         self.variation = kwargs.pop("variation")
+        self.user = kwargs.pop("user")
         self.product_range = self.edit.partial_product_range
         super().__init__(*args, **kwargs)
         self.add_fields()
@@ -245,12 +247,11 @@ class AddProductOption(forms.Form):
         """Save changes to the database."""
         product_option = self.cleaned_data["option"]
         product_option_values = self.cleaned_data["values"]
-        models.PartialProductRangeSelectedOption(
-            product_range=self.product_range,
-            product_option=product_option,
-            variation=self.variation,
-            pre_existing=False,
-        ).save()
+        updater = PartialRangeUpdater(self.product_range, self.user)
+        if self.variation is True:
+            updater.add_variation_product_option(product_option)
+        else:
+            updater.add_listing_product_option(product_option)
         for value in product_option_values:
             self.edit.product_option_values.add(value)
 

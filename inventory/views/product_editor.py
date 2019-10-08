@@ -168,13 +168,10 @@ class SetupVariations(InventoryUserMixin, FormView):
     def form_valid(self, form):
         """Add product options to the product edit."""
         data = form.cleaned_data
+        updater = PartialRangeUpdater(self.product_range, self.request.user)
         for product_option, product_option_values in data.items():
             if product_option_values:
-                models.PartialProductRangeSelectedOption(
-                    product_range=self.edit.partial_product_range,
-                    product_option=product_option,
-                    variation=True,
-                ).save()
+                updater.add_variation_product_option(product_option)
                 self.edit.product_option_values.add(*product_option_values)
         return super().form_valid(form)
 
@@ -258,6 +255,7 @@ class AddProductOption(InventoryUserMixin, FormView):
         self.edit = get_object_or_404(models.ProductEdit, pk=self.kwargs.get("edit_ID"))
         kwargs["edit"] = self.edit
         kwargs["variation"] = self.variation
+        kwargs["user"] = self.request.user
         return kwargs
 
     def get_context_data(self, *args, **kwargs):
