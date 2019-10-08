@@ -249,11 +249,11 @@ class SaveEdit:
             original_product is None
             or original_product.gender != partial_product.gender
         ):
-            updater.set_supplier_SKU(partial_product.gender)
+            updater.set_gender(partial_product.gender)
         # Set bays.
         new_bays = list(partial_product.bays.all())
         if original_product is None or list(original_product.bays.all()) != new_bays:
-            updater.set_bays(partial_product.bays.all())
+            updater.set_bays(list(partial_product.bays.all()))
 
     def _update_product_option_links(
         self, partial_product, updater, original_product=None
