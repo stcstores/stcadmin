@@ -5,7 +5,10 @@ import threading
 
 from ccapi import CCAPI
 
-from inventory import cloud_commerce_updater, models
+from inventory import models
+
+from .product_updater import ProductUpdater
+from .range_updater import RangeUpdater
 
 logger = logging.getLogger("product_editor")
 
@@ -13,10 +16,10 @@ logger = logging.getLogger("product_editor")
 class SaveEdit:
     """Save changes made in the product editor."""
 
-    def __init__(self, edit, request):
+    def __init__(self, edit, user):
         """Make changes in a new thread."""
         self.edit = edit
-        self.user = request.user
+        self.user = user
 
     def save_edit_threaded(self):
         """Update the product in a new thread."""
@@ -28,9 +31,7 @@ class SaveEdit:
         """Update the product."""
         self.original_range = self.edit.product_range
         self.partial_range = self.edit.partial_product_range
-        self.range_updater = cloud_commerce_updater.RangeUpdater(
-            self.original_range, self.user
-        )
+        self.range_updater = RangeUpdater(self.original_range, self.user)
         self.range_updater.log("Begin updating.", level=logging.INFO)
         self._remove_unused_variation_options()
         self._remove_unused_listing_options()
@@ -38,9 +39,7 @@ class SaveEdit:
         self._add_new_listing_options()
         self._create_new_products()
         # Create a new range updater that recognises new products.
-        self.range_updater = cloud_commerce_updater.RangeUpdater(
-            self.original_range, self.user
-        )
+        self.range_updater = RangeUpdater(self.original_range, self.user)
         self._update_range_details()
         self._update_products()
         self.range_updater.log("Finish updating.", level=logging.INFO)
@@ -112,7 +111,7 @@ class SaveEdit:
         )
         new_product.save()
         new_product.bays.set(partial_product.bays.all())
-        updater = cloud_commerce_updater.ProductUpdater(new_product, self.user)
+        updater = ProductUpdater(new_product, self.user)
         updater.set_date_created()
         self._update_product(partial_product, updater)
 
@@ -151,7 +150,7 @@ class SaveEdit:
     def _update_products(self):
         for product in self.partial_range.products():
             original_product = self.original_range.product_set.get(SKU=product.SKU)
-            updater = cloud_commerce_updater.ProductUpdater(original_product, self.user)
+            updater = ProductUpdater(original_product, self.user)
             self._update_product(product, updater, original_product=original_product)
 
     def _update_product(self, partial_product, updater, original_product=None):
