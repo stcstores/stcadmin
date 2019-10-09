@@ -81,8 +81,7 @@ class SetImageOrderView(InventoryUserMixin, View):
                 image.position = image_order.index(image.image_ID)
                 image.save()
             models.ProductImage.update_CC_image_order(product)
-        except Exception as e:
-            raise e
+        except Exception:
             return HttpResponse(status=500)
         return HttpResponse("ok")
 
