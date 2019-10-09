@@ -72,3 +72,78 @@ class TestGetStockLevelView(SetupSingleProductRange, InventoryViewTest):
         ).encode("utf8")
         self.assertEqual(response.content, expected_response)
         mock_CCAPI.get_product.assert_called_once_with(self.product.product_ID)
+
+
+class BaseImageViewTest(SetupSingleProductRange, InventoryViewTest):
+    def setUp(self):
+        super().setUp()
+        models.ProductImage.objects.bulk_create(
+            [
+                models.ProductImage(
+                    image_ID=str(2849393 + i),
+                    product=self.product,
+                    filename=f"img_{i}.jpg",
+                    URL=f"http://someimages.com/img_{i}.jpg",
+                    position=i - 1,
+                )
+                for i in range(1, 6)
+            ]
+        )
+
+
+class TestSetImageOrderView(BaseImageViewTest):
+    @patch("inventory.models.product_image.CCAPI")
+    def test_post_method(self, mock_CCAPI):
+        images = models.ProductImage.objects.filter(product=self.product)
+        image_order = list(reversed([image.image_ID for image in images]))
+        data = {"product_ID": self.product.product_ID, "image_order": image_order}
+        response = self.client.post(
+            reverse("inventory:set_image_order"),
+            json.dumps(data),
+            content_type="application/json",
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(b"ok", response.content)
+        images = models.ProductImage.objects.filter(product=self.product)
+        self.assertEqual(image_order, [image.image_ID for image in images])
+        mock_CCAPI.set_image_order.assert_called_once_with(
+            product_id=self.product.product_ID, image_ids=image_order
+        )
+        self.assertEqual(1, len(mock_CCAPI.mock_calls))
+
+    @patch("inventory.models.product_image.CCAPI")
+    def test_exception_raised_for_wrong_image_IDs(self, mock_CCAPI):
+        image_order = ["28493023", "38409303"]
+        data = {"product_ID": self.product.product_ID, "image_order": image_order}
+        response = self.client.post(
+            reverse("inventory:set_image_order"),
+            json.dumps(data),
+            content_type="application/json",
+        )
+        self.assertEqual(500, response.status_code)
+
+
+class TestDeleteImageView(BaseImageViewTest):
+    @patch("inventory.views.api.CCAPI")
+    def test_delete_image(self, mock_CCAPI):
+        images = models.ProductImage.objects.filter(product=self.product)
+        image_ID = images[0].image_ID
+        response = self.client.post(
+            reverse("inventory:delete_image"),
+            json.dumps({"image_id": image_ID}),
+            content_type="application/json",
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(b"ok", response.content)
+        mock_CCAPI.delete_image.assert_called_once_with(image_ID)
+        self.assertEqual(1, len(mock_CCAPI.mock_calls))
+        self.assertFalse(models.ProductImage.objects.filter(image_ID=image_ID).exists())
+
+    @patch("inventory.views.api.CCAPI")
+    def test_delete_non_existant_image(self, mock_CCAPI):
+        response = self.client.post(
+            reverse("inventory:delete_image"),
+            json.dumps({"image_id": "93734948"}),
+            content_type="application/json",
+        )
+        self.assertEqual(500, response.status_code)
