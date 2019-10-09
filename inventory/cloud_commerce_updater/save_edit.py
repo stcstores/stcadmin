@@ -108,6 +108,7 @@ class SaveEdit:
             length_mm=partial_product.length_mm,
             height_mm=partial_product.height_mm,
             width_mm=partial_product.width_mm,
+            gender=partial_product.gender,
         )
         new_product.save()
         new_product.bays.set(partial_product.bays.all())
@@ -282,16 +283,14 @@ class SaveEdit:
     def _add_new_product_option_links(
         self, partial_product, updater, original_product=None
     ):
+        if original_product is None:
+            return
         new_links = models.PartialProductOptionValueLink.objects.filter(
             product=partial_product
         )
         for link in new_links:
-            if original_product is None:
-                link_exists = False
-            else:
-                link_exists = models.ProductOptionValueLink.objects.filter(
-                    product=original_product,
-                    product_option_value=link.product_option_value,
-                ).exists()
+            link_exists = models.ProductOptionValueLink.objects.filter(
+                product=original_product, product_option_value=link.product_option_value
+            ).exists()
             if not link_exists:
                 updater.set_product_option_link(link.product_option_value)
