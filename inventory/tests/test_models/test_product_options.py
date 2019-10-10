@@ -5,9 +5,9 @@ from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
 class TestProductOption(STCAdminTest):
-    def setUp(self):
-        super().setUp()
-        self.product_option = models.ProductOption.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        cls.product_option = models.ProductOption.objects.create(
             name="Size", product_option_ID="38473"
         )
 
@@ -30,14 +30,14 @@ class TestProductOption(STCAdminTest):
 
 
 class TestProductOptionValue(STCAdminTest):
-    def setUp(self):
-        super().setUp()
-        self.product_option = models.ProductOption.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        cls.product_option = models.ProductOption.objects.create(
             name="Size", product_option_ID="38473"
         )
-        self.product_option_value = models.ProductOptionValue.objects.create(
+        cls.product_option_value = models.ProductOptionValue.objects.create(
             value="Small",
-            product_option=self.product_option,
+            product_option=cls.product_option,
             product_option_value_ID="65461",
         )
 
@@ -73,9 +73,9 @@ class TestProductOptionValue(STCAdminTest):
 
 
 class TestDepartment(STCAdminTest):
-    def setUp(self):
-        super().setUp()
-        self.department = models.Department.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        cls.department = models.Department.objects.create(
             name="Test Department", product_option_value_ID="48292"
         )
 
@@ -137,9 +137,9 @@ class TestDepartment(STCAdminTest):
 
 
 class TestPackageType(STCAdminTest):
-    def setUp(self):
-        super().setUp()
-        self.package_type = models.PackageType.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        cls.package_type = models.PackageType.objects.create(
             name="Standard Shipping",
             product_option_value_ID="48284",
             large_letter_compatible=True,
@@ -185,9 +185,9 @@ class TestPackageType(STCAdminTest):
 
 
 class TestInternationalShipping(STCAdminTest):
-    def setUp(self):
-        super().setUp()
-        self.international_shipping = models.InternationalShipping.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        cls.international_shipping = models.InternationalShipping.objects.create(
             name="Standard Shipping", product_option_value_ID="48284"
         )
 
@@ -233,9 +233,9 @@ class TestInternationalShipping(STCAdminTest):
 
 
 class TestBrand(STCAdminTest):
-    def setUp(self):
-        super().setUp()
-        self.brand = models.Brand.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        cls.brand = models.Brand.objects.create(
             name="Stock Inc", product_option_value_ID="48284"
         )
 
@@ -277,9 +277,9 @@ class TestBrand(STCAdminTest):
 
 
 class TestManufacturer(STCAdminTest):
-    def setUp(self):
-        super().setUp()
-        self.manufacturer = models.Manufacturer.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        cls.manufacturer = models.Manufacturer.objects.create(
             name="Stock Inc", product_option_value_ID="48284"
         )
 
@@ -321,9 +321,9 @@ class TestManufacturer(STCAdminTest):
 
 
 class TestGender(STCAdminTest):
-    def setUp(self):
-        super().setUp()
-        self.gender = models.Gender.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        cls.gender = models.Gender.objects.create(
             name="mens", readable_name="Mens", product_option_value_ID="48284"
         )
 

@@ -21,12 +21,13 @@ class TestDescriptionForm(FormTest):
     AMAZON_BULLETS_VALUE = ["One", "Two", "Three"]
     SEARCH_TERMS_VALUE = ["Four", "Five", "Six"]
 
-    def setUp(self):
-        super().setUp()
-        self.department = models.Department.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.department = models.Department.objects.create(
             name="Test Department", product_option_value_ID="28493"
         )
-        self.department_value = self.department.id
+        cls.department_value = cls.department.id
 
     def test_form_valid(self):
         form_data = {
@@ -137,15 +138,16 @@ class TestCreateBayForm(FormTest):
 
     name_value = "New Bay"
 
-    def setUp(self):
-        super().setUp()
-        self.department = models.Department.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.department = models.Department.objects.create(
             name="Allsorts", product_option_value_ID="8487329"
         )
-        self.warehouse = models.Warehouse.objects.create(
+        cls.warehouse = models.Warehouse.objects.create(
             name="Allsorts", warehouse_ID="28394", abriviation="AS"
         )
-        self.second_warehouse = models.Warehouse.objects.create(
+        cls.second_warehouse = models.Warehouse.objects.create(
             name="Beachware", warehouse_ID="28992", abriviation="BW"
         )
 
@@ -211,39 +213,40 @@ class TestCreateBayForm(FormTest):
 
 
 class TestProductForm(SetupVariationProductRange, FormTest):
-    def setUp(self):
-        super().setUp()
-        self.warehouse = models.Warehouse.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.warehouse = models.Warehouse.objects.create(
             name="Warehouse", abriviation="WH", warehouse_ID="93943"
         )
-        self.bays = [
+        cls.bays = [
             models.Bay.objects.create(
                 name="New Bay",
                 bay_ID="383492",
-                warehouse=self.warehouse,
+                warehouse=cls.warehouse,
                 is_default=False,
             )
         ]
-        self.product.bays.set([self.bays[0]])
-        self.form_data = {
-            ProductEditorBase.BRAND: self.brand.id,
-            ProductEditorBase.MANUFACTURER: self.manufacturer.id,
-            ProductEditorBase.BARCODE: self.product.barcode,
-            ProductEditorBase.SUPPLIER_SKU: self.product.supplier_SKU,
-            ProductEditorBase.SUPPLIER: self.supplier.id,
-            ProductEditorBase.PURCHASE_PRICE: self.product.purchase_price,
-            ProductEditorBase.VAT_RATE: self.VAT_rate.id,
-            ProductEditorBase.PRICE: self.product.price,
-            ProductEditorBase.RETAIL_PRICE: self.product.retail_price,
-            ProductEditorBase.LOCATION + "_0": self.warehouse.id,
-            ProductEditorBase.LOCATION + "_1": [self.bays[0].id],
-            ProductEditorBase.PACKAGE_TYPE: self.package_type.id,
-            ProductEditorBase.INTERNATIONAL_SHIPPING: self.international_shipping.id,
-            ProductEditorBase.WEIGHT: self.product.weight_grams,
-            ProductEditorBase.DIMENSIONS + "_0": self.product.height_mm,
-            ProductEditorBase.DIMENSIONS + "_1": self.product.length_mm,
-            ProductEditorBase.DIMENSIONS + "_2": self.product.width_mm,
-            ProductEditorBase.GENDER: self.gender.id,
+        cls.product.bays.set([cls.bays[0]])
+        cls.form_data = {
+            ProductEditorBase.BRAND: cls.brand.id,
+            ProductEditorBase.MANUFACTURER: cls.manufacturer.id,
+            ProductEditorBase.BARCODE: cls.product.barcode,
+            ProductEditorBase.SUPPLIER_SKU: cls.product.supplier_SKU,
+            ProductEditorBase.SUPPLIER: cls.supplier.id,
+            ProductEditorBase.PURCHASE_PRICE: cls.product.purchase_price,
+            ProductEditorBase.VAT_RATE: cls.VAT_rate.id,
+            ProductEditorBase.PRICE: cls.product.price,
+            ProductEditorBase.RETAIL_PRICE: cls.product.retail_price,
+            ProductEditorBase.LOCATION + "_0": cls.warehouse.id,
+            ProductEditorBase.LOCATION + "_1": [cls.bays[0].id],
+            ProductEditorBase.PACKAGE_TYPE: cls.package_type.id,
+            ProductEditorBase.INTERNATIONAL_SHIPPING: cls.international_shipping.id,
+            ProductEditorBase.WEIGHT: cls.product.weight_grams,
+            ProductEditorBase.DIMENSIONS + "_0": cls.product.height_mm,
+            ProductEditorBase.DIMENSIONS + "_1": cls.product.length_mm,
+            ProductEditorBase.DIMENSIONS + "_2": cls.product.width_mm,
+            ProductEditorBase.GENDER: cls.gender.id,
         }
 
     def get_form(self, *args, **kwargs):
@@ -531,24 +534,25 @@ class TestVariationForm(TestProductForm):
 
 
 class TestAddProductOptionForm(SetupPartialProductRange, FormTest):
-    def setUp(self):
-        super().setUp()
-        self.design_product_option = models.ProductOption.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.design_product_option = models.ProductOption.objects.create(
             name="Design", product_option_ID="284938"
         )
-        self.cat_product_option_value = models.ProductOptionValue.objects.create(
+        cls.cat_product_option_value = models.ProductOptionValue.objects.create(
             value="Cat",
-            product_option=self.design_product_option,
+            product_option=cls.design_product_option,
             product_option_value_ID="3849382",
         )
-        self.dog_product_option_value = models.ProductOptionValue.objects.create(
+        cls.dog_product_option_value = models.ProductOptionValue.objects.create(
             value="Dog",
-            product_option=self.design_product_option,
+            product_option=cls.design_product_option,
             product_option_value_ID="7465466",
         )
-        self.horse_product_option_value = models.ProductOptionValue.objects.create(
+        cls.horse_product_option_value = models.ProductOptionValue.objects.create(
             value="Horse",
-            product_option=self.design_product_option,
+            product_option=cls.design_product_option,
             product_option_value_ID="9465646",
         )
 
@@ -599,13 +603,12 @@ class TestAddProductOptionForm(SetupPartialProductRange, FormTest):
         self.assert_form_invalid(form)
         self.assertIn(f"values_{self.design_product_option.id}", form.errors)
 
-    def test_empty_form(self):
+    def save_method_test(self, variation):
         form = forms.AddProductOption(
             {}, edit=self.product_edit, variation=True, user=self.user
         )
         self.assert_form_invalid(form)
 
-    def test_save_method_for_variation(self):
         data = {
             "option": self.design_product_option.id,
             f"values_{self.design_product_option.id}": [
@@ -615,7 +618,7 @@ class TestAddProductOptionForm(SetupPartialProductRange, FormTest):
             ],
         }
         form = forms.AddProductOption(
-            data, edit=self.product_edit, variation=True, user=self.user
+            data, edit=self.product_edit, variation=variation, user=self.user
         )
         self.assert_form_is_valid(form)
         form.save()
@@ -623,7 +626,7 @@ class TestAddProductOptionForm(SetupPartialProductRange, FormTest):
             models.PartialProductRangeSelectedOption.objects.filter(
                 product_range=self.product_range,
                 product_option=self.design_product_option,
-                variation=True,
+                variation=variation,
                 pre_existing=False,
             ).exists()
         )
@@ -634,6 +637,12 @@ class TestAddProductOptionForm(SetupPartialProductRange, FormTest):
         )
         for value in values:
             self.assertIn(value, self.product_edit.product_option_values.all())
+
+    def test_save_method_for_variation(self):
+        self.save_method_test(True)
+
+    def test_save_method_for_non_variation(self):
+        self.save_method_test(False)
 
 
 class TestSetProductOptionValuesForm(SetupPartialProductRange, FormTest):
@@ -808,15 +817,12 @@ class TestSetProductOptionValuesForm(SetupPartialProductRange, FormTest):
 
 
 class TestSetProductOptionValuesFormset(SetupPartialProductRange, FormTest):
-    def setUp(self):
-        super().setUp()
-        self.kwargs = [
-            {
-                "product": _,
-                "edit": self.product_edit,
-                "product_range": self.product_range,
-            }
-            for _ in self.product_range.products()
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.kwargs = [
+            {"product": _, "edit": cls.product_edit, "product_range": cls.product_range}
+            for _ in cls.product_range.products()
         ]
 
     def get_form_data(self):

@@ -36,6 +36,11 @@ class TestGetNewRangeSKUView(InventoryViewTest):
 
 
 class TestUpdateStockLevelView(SetupSingleProductRange, InventoryViewTest):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        InventoryViewTest.setUpTestData()
+
     @patch("inventory.models.products.CCAPI")
     def test_post_method(self, mock_CCAPI):
         old_stock_level = 1
@@ -60,6 +65,11 @@ class TestUpdateStockLevelView(SetupSingleProductRange, InventoryViewTest):
 
 
 class TestGetStockLevelView(SetupSingleProductRange, InventoryViewTest):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        InventoryViewTest.setUpTestData()
+
     @patch("inventory.models.products.CCAPI")
     def test_post_method(self, mock_CCAPI):
         mock_CCAPI.get_product.return_value = Mock(stock_level=5)
@@ -75,13 +85,15 @@ class TestGetStockLevelView(SetupSingleProductRange, InventoryViewTest):
 
 
 class BaseImageViewTest(SetupSingleProductRange, InventoryViewTest):
-    def setUp(self):
-        super().setUp()
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        InventoryViewTest.setUpTestData()
         models.ProductImage.objects.bulk_create(
             [
                 models.ProductImage(
                     image_ID=str(2849393 + i),
-                    product=self.product,
+                    product=cls.product,
                     filename=f"img_{i}.jpg",
                     URL=f"http://someimages.com/img_{i}.jpg",
                     position=i - 1,
@@ -89,6 +101,10 @@ class BaseImageViewTest(SetupSingleProductRange, InventoryViewTest):
                 for i in range(1, 6)
             ]
         )
+
+    def setUp(self):
+        SetupSingleProductRange.setUp(self)
+        InventoryViewTest.setUp(self)
 
 
 class TestSetImageOrderView(BaseImageViewTest):

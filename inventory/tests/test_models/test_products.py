@@ -1,4 +1,5 @@
 import itertools
+from decimal import Decimal
 from unittest.mock import patch
 
 from inventory import models
@@ -8,147 +9,153 @@ from stcadmin.tests.stcadmin_test import STCAdminTest
 class SetupProducts:
     def setUp(self):
         super().setUp()
-        self.create_departments()
-        self.create_suppliers()
-        self.create_VAT_rates()
-        self.create_brands()
-        self.create_manufacturers()
-        self.create_package_types()
-        self.create_international_shipping()
-        self.create_gender()
-        self.create_product_options()
-        self.create_ranges()
-        self.add_products()
+        self.product_range = models.ProductRange.objects.get(SKU=self.product_range.SKU)
+        self.product = models.Product.objects.get(SKU=self.product.SKU)
 
-    def tearDown(self):
-        models.ProductOptionValueLink.objects.all().delete()
-        models.ProductRangeSelectedOption.objects.all().delete()
-        models.ProductOptionValue.objects.all().delete()
-        models.Product.objects.all().delete()
-        models.ProductRange.objects.all().delete()
-        models.ProductOption.objects.all().delete()
-        super().tearDown()
+    @classmethod
+    def setUpTestData(cls):
+        cls.create_departments()
+        cls.create_suppliers()
+        cls.create_VAT_rates()
+        cls.create_brands()
+        cls.create_manufacturers()
+        cls.create_package_types()
+        cls.create_international_shipping()
+        cls.create_gender()
+        cls.create_product_options()
+        cls.create_ranges()
+        cls.add_products()
 
-    def create_departments(self):
-        self.department = models.Department.objects.create(
+    @classmethod
+    def create_departments(cls):
+        cls.department = models.Department.objects.create(
             name="Test Department", product_option_value_ID="8394"
         )
-        self.other_department = models.Department.objects.create(
+        cls.other_department = models.Department.objects.create(
             name="Sports", product_option_value_ID="8384"
         )
 
-    def create_suppliers(self):
-        self.supplier = models.Supplier.objects.create(
+    @classmethod
+    def create_suppliers(cls):
+        cls.supplier = models.Supplier.objects.create(
             name="Shop Inc", product_option_value_ID="289493", factory_ID="164868"
         )
-        self.other_supplier = models.Supplier.objects.create(
+        cls.other_supplier = models.Supplier.objects.create(
             name="Wholesale", product_option_value_ID="289485", factory_ID="164416"
         )
 
-    def create_VAT_rates(self):
-        self.VAT_rate = models.VATRate.objects.create(
+    @classmethod
+    def create_VAT_rates(cls):
+        cls.VAT_rate = models.VATRate.objects.create(
             VAT_rate_ID="0", name="Basic", percentage=0.2
         )
-        self.other_VAT_rate = models.VATRate.objects.create(
+        cls.other_VAT_rate = models.VATRate.objects.create(
             VAT_rate_ID="5", name="VAT Free", percentage=0
         )
 
-    def create_brands(self):
-        self.brand = models.Brand.objects.create(
+    @classmethod
+    def create_brands(cls):
+        cls.brand = models.Brand.objects.create(
             name="Shop Inc", product_option_value_ID="394503"
         )
-        self.other_brand = models.Brand.objects.create(
+        cls.other_brand = models.Brand.objects.create(
             name="Shoes Shop", product_option_value_ID="394746"
         )
 
-    def create_manufacturers(self):
-        self.manufacturer = models.Manufacturer.objects.create(
+    @classmethod
+    def create_manufacturers(cls):
+        cls.manufacturer = models.Manufacturer.objects.create(
             name="Shop Inc", product_option_value_ID="394565"
         )
-        self.other_manufacturer = models.Manufacturer.objects.create(
+        cls.other_manufacturer = models.Manufacturer.objects.create(
             name="Shoes Shop", product_option_value_ID="394584"
         )
 
-    def create_package_types(self):
-        self.package_type = models.PackageType.objects.create(
+    @classmethod
+    def create_package_types(cls):
+        cls.package_type = models.PackageType.objects.create(
             name="Basic Shipping",
             product_option_value_ID="398540",
             large_letter_compatible=False,
         )
-        self.other_package_type = models.PackageType.objects.create(
+        cls.other_package_type = models.PackageType.objects.create(
             name="Express Shipping",
             product_option_value_ID="398456",
             large_letter_compatible=True,
         )
 
-    def create_international_shipping(self):
-        self.international_shipping = models.InternationalShipping.objects.create(
+    @classmethod
+    def create_international_shipping(cls):
+        cls.international_shipping = models.InternationalShipping.objects.create(
             name="Standard", product_option_value_ID="26578"
         )
-        self.other_international_shipping = models.InternationalShipping.objects.create(
+        cls.other_international_shipping = models.InternationalShipping.objects.create(
             name="Express", product_option_value_ID="26587"
         )
 
-    def create_gender(self):
-        self.gender = models.Gender.objects.create(
+    @classmethod
+    def create_gender(cls):
+        cls.gender = models.Gender.objects.create(
             name="mens", readable_name="Mens", product_option_value_ID="416164"
         )
-        self.other_gender = models.Gender.objects.create(
+        cls.other_gender = models.Gender.objects.create(
             name="womens", readable_name="Womens", product_option_value_ID="416115"
         )
 
-    def create_product_options(self):
-        self.size_product_option = models.ProductOption.objects.create(
+    @classmethod
+    def create_product_options(cls):
+        cls.size_product_option = models.ProductOption.objects.create(
             name="Size", product_option_ID="3833", sort_order=0
         )
-        self.colour_product_option = models.ProductOption.objects.create(
+        cls.colour_product_option = models.ProductOption.objects.create(
             name="Colour", product_option_ID="3835", sort_order=1
         )
-        self.model_product_option = models.ProductOption.objects.create(
+        cls.model_product_option = models.ProductOption.objects.create(
             name="Model", product_option_ID="7651", sort_order=2
         )
-        self.red_product_option_value = models.ProductOptionValue.objects.create(
+        cls.red_product_option_value = models.ProductOptionValue.objects.create(
             value="Red",
-            product_option=self.colour_product_option,
+            product_option=cls.colour_product_option,
             product_option_value_ID="39495",
         )
-        self.green_product_option_value = models.ProductOptionValue.objects.create(
+        cls.green_product_option_value = models.ProductOptionValue.objects.create(
             value="Green",
-            product_option=self.colour_product_option,
+            product_option=cls.colour_product_option,
             product_option_value_ID="39484",
         )
-        self.blue_product_option_value = models.ProductOptionValue.objects.create(
+        cls.blue_product_option_value = models.ProductOptionValue.objects.create(
             value="Blue",
-            product_option=self.colour_product_option,
+            product_option=cls.colour_product_option,
             product_option_value_ID="39464",
         )
-        self.small_product_option_value = models.ProductOptionValue.objects.create(
+        cls.small_product_option_value = models.ProductOptionValue.objects.create(
             value="Small",
-            product_option=self.size_product_option,
+            product_option=cls.size_product_option,
             product_option_value_ID="59303",
         )
-        self.medium_product_option_value = models.ProductOptionValue.objects.create(
+        cls.medium_product_option_value = models.ProductOptionValue.objects.create(
             value="Medium",
-            product_option=self.size_product_option,
+            product_option=cls.size_product_option,
             product_option_value_ID="59398",
         )
-        self.large_product_option_value = models.ProductOptionValue.objects.create(
+        cls.large_product_option_value = models.ProductOptionValue.objects.create(
             value="Large",
-            product_option=self.size_product_option,
+            product_option=cls.size_product_option,
             product_option_value_ID="59384",
         )
-        self.model_product_option_value = models.ProductOptionValue.objects.create(
+        cls.model_product_option_value = models.ProductOptionValue.objects.create(
             value="DB25",
-            product_option=self.model_product_option,
+            product_option=cls.model_product_option,
             product_option_value_ID="549681",
         )
 
-    def new_product_range(self):
+    @classmethod
+    def new_product_range(cls):
         return models.ProductRange(
-            range_ID=self.RANGE_ID,
+            range_ID=cls.RANGE_ID,
             SKU="RNG_A8D_D83_NFU",
             name="Test Range",
-            department=self.department,
+            department=cls.department,
             description="A test product\nLine Two",
             amazon_bullet_points=(
                 "Dad's Army - Service Issue Mug.|Ceramic Boxed Mug.|"
@@ -157,23 +164,24 @@ class SetupProducts:
             amazon_search_terms="Ceramic Mug|Dad's Army",
         )
 
-    def new_product(self, product_range):
+    @classmethod
+    def new_product(cls, product_range):
         return models.Product(
             product_ID="0",
             product_range=product_range,
             SKU=models.PartialProduct.generate_SKU(),
-            supplier=self.supplier,
+            supplier=cls.supplier,
             supplier_SKU="TV009",
             barcode="29485839",
             purchase_price=5.60,
-            VAT_rate=self.VAT_rate,
+            VAT_rate=cls.VAT_rate,
             price=6.80,
             retail_price=12.70,
-            brand=self.brand,
-            manufacturer=self.manufacturer,
-            package_type=self.package_type,
-            international_shipping=self.international_shipping,
-            gender=self.gender,
+            brand=cls.brand,
+            manufacturer=cls.manufacturer,
+            package_type=cls.package_type,
+            international_shipping=cls.international_shipping,
+            gender=cls.gender,
             weight_grams=500,
             length_mm=50,
             height_mm=150,
@@ -185,28 +193,31 @@ class SetupSingleProductRange(SetupProducts):
     RANGE_ID = "548354"
     maxDiff = None
 
-    def create_ranges(self):
-        self.product_range = self.new_product_range()
-        self.product_range.range_ID = self.RANGE_ID
-        self.product_range.save()
+    @classmethod
+    def create_ranges(cls):
+        cls.product_range = cls.new_product_range()
+        cls.product_range.range_ID = cls.RANGE_ID
+        cls.product_range.save()
 
-    def add_products(self):
-        self.product = self.new_product(self.product_range)
-        self.product.product_ID = "724587"
-        self.product.save()
-        self.product = models.Product.objects.get(id=self.product.id)
+    @classmethod
+    def add_products(cls):
+        cls.product = cls.new_product(cls.product_range)
+        cls.product.product_ID = "724587"
+        cls.product.save()
+        cls.product = models.Product.objects.get(id=cls.product.id)
 
 
 class SetupVariationProductRange(SetupProducts):
     RANGE_ID = "389839"
     maxDiff = None
 
-    def create_ranges(self):
-        self.product_range = models.ProductRange.objects.create(
-            range_ID=self.RANGE_ID,
+    @classmethod
+    def create_ranges(cls):
+        cls.product_range = models.ProductRange.objects.create(
+            range_ID=cls.RANGE_ID,
             SKU="RNG_A8D_D83_NFU",
             name="Test Range",
-            department=self.department,
+            department=cls.department,
             description="A test product\nLine Two",
             amazon_bullet_points=(
                 "Dad's Army - Service Issue Mug.|Ceramic Boxed Mug.|"
@@ -215,37 +226,38 @@ class SetupVariationProductRange(SetupProducts):
             amazon_search_terms="Ceramic Mug|Dad's Army",
         )
         models.ProductRangeSelectedOption.objects.create(
-            product_range=self.product_range,
-            product_option=self.size_product_option,
+            product_range=cls.product_range,
+            product_option=cls.size_product_option,
             variation=True,
         )
         models.ProductRangeSelectedOption.objects.create(
-            product_range=self.product_range,
-            product_option=self.colour_product_option,
+            product_range=cls.product_range,
+            product_option=cls.colour_product_option,
             variation=True,
         )
         models.ProductRangeSelectedOption.objects.create(
-            product_range=self.product_range,
-            product_option=self.model_product_option,
+            product_range=cls.product_range,
+            product_option=cls.model_product_option,
             variation=False,
         )
 
-    def add_products(self):
-        self.variations = []
+    @classmethod
+    def add_products(cls):
+        cls.variations = []
         options = [
             [
-                self.small_product_option_value,
-                self.medium_product_option_value,
-                self.large_product_option_value,
+                cls.small_product_option_value,
+                cls.medium_product_option_value,
+                cls.large_product_option_value,
             ],
             [
-                self.red_product_option_value,
-                self.green_product_option_value,
-                self.blue_product_option_value,
+                cls.red_product_option_value,
+                cls.green_product_option_value,
+                cls.blue_product_option_value,
             ],
         ]
         for i, options in enumerate(itertools.product(*options)):
-            product = self.new_product(self.product_range)
+            product = cls.new_product(cls.product_range)
             product.product_ID = str(93943 + i)
             product.save()
             for option in options:
@@ -253,13 +265,58 @@ class SetupVariationProductRange(SetupProducts):
                     product=product, product_option_value=option
                 )
             models.ProductOptionValueLink.objects.create(
-                product=product, product_option_value=self.model_product_option_value
+                product=product, product_option_value=cls.model_product_option_value
             )
-            self.variations.append(product)
-        self.product = models.Product.objects.get(id=self.variations[0].id)
+            cls.variations.append(product)
+        cls.product = models.Product.objects.get(id=cls.variations[0].id)
 
 
 class TestSingleProduct(SetupSingleProductRange, STCAdminTest):
+    def test_properties(self):
+        self.assertEqual("724587", self.product.product_ID)
+        self.assertEqual(self.product_range, self.product.product_range)
+        self.assertEqual(11, len(self.product.SKU))
+        self.assertEqual(self.supplier, self.product.supplier)
+        self.assertEqual("TV009", self.product.supplier_SKU)
+        self.assertEqual("29485839", self.product.barcode)
+        self.assertEqual(Decimal("5.60"), self.product.purchase_price)
+        self.assertEqual(self.VAT_rate, self.product.VAT_rate)
+        self.assertEqual(Decimal("6.80"), self.product.price)
+        self.assertEqual(Decimal("12.70"), self.product.retail_price)
+        self.assertEqual(self.brand, self.product.brand)
+        self.assertEqual(self.manufacturer, self.product.manufacturer)
+        self.assertEqual(self.package_type, self.product.package_type)
+        self.assertEqual(
+            self.international_shipping, self.product.international_shipping
+        )
+        self.assertEqual(self.gender, self.product.gender)
+        self.assertEqual(500, self.product.weight_grams)
+        self.assertEqual(50, self.product.length_mm)
+        self.assertEqual(150, self.product.height_mm)
+        self.assertEqual(24, self.product.width_mm)
+        self.assertIsNotNone(self.product.date_created)
+        # models.Product(
+        #     product_ID="0",
+        #     product_range=product_range,
+        #     SKU=models.PartialProduct.generate_SKU(),
+        #     supplier=cls.supplier,
+        #     supplier_SKU="TV009",
+        #     barcode="29485839",
+        #     purchase_price=5.60,
+        #     VAT_rate=cls.VAT_rate,
+        #     price=6.80,
+        #     retail_price=12.70,
+        #     brand=cls.brand,
+        #     manufacturer=cls.manufacturer,
+        #     package_type=cls.package_type,
+        #     international_shipping=cls.international_shipping,
+        #     gender=cls.gender,
+        #     weight_grams=500,
+        #     length_mm=50,
+        #     height_mm=150,
+        #     width_mm=24,
+        # )
+
     def test_str_method(self):
         self.assertEqual(str(self.product), f"{self.product.SKU}: Test Range - TV009")
 
@@ -420,6 +477,30 @@ class TestVariationProductRange(SetupVariationProductRange, STCAdminTest):
 
 
 class TestVariationProduct(SetupVariationProductRange, STCAdminTest):
+    def test_properties(self):
+        for product in self.product_range.products():
+            self.assertEqual(self.product_range, product.product_range)
+            self.assertEqual(11, len(product.SKU))
+            self.assertEqual(self.supplier, product.supplier)
+            self.assertEqual("TV009", product.supplier_SKU)
+            self.assertEqual("29485839", product.barcode)
+            self.assertEqual(Decimal("5.60"), self.product.purchase_price)
+            self.assertEqual(self.VAT_rate, self.product.VAT_rate)
+            self.assertEqual(Decimal("6.80"), self.product.price)
+            self.assertEqual(Decimal("12.70"), self.product.retail_price)
+            self.assertEqual(self.brand, product.brand)
+            self.assertEqual(self.manufacturer, product.manufacturer)
+            self.assertEqual(self.package_type, product.package_type)
+            self.assertEqual(
+                self.international_shipping, product.international_shipping
+            )
+            self.assertEqual(self.gender, product.gender)
+            self.assertEqual(500, product.weight_grams)
+            self.assertEqual(50, product.length_mm)
+            self.assertEqual(150, product.height_mm)
+            self.assertEqual(24, product.width_mm)
+            self.assertIsNotNone(product.date_created)
+
     def test_str_method(self):
         self.assertEqual(
             str(self.product), f"{self.product.SKU}: Test Range - Small - Red - TV009"

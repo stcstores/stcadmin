@@ -8,30 +8,31 @@ from .form_test import FormTest
 
 
 class SetupLocationsForm:
-    def setUp(self):
-        super().setUp()
-        self.warehouse = models.Warehouse.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.warehouse = models.Warehouse.objects.create(
             name="Warehouse", warehouse_ID="2894032", abriviation="WH"
         )
-        self.bays = [
+        cls.bays = [
             models.Bay.objects.create(
-                name="Bay 1", bay_ID="384932", warehouse=self.warehouse
+                name="Bay 1", bay_ID="384932", warehouse=cls.warehouse
             ),
             models.Bay.objects.create(
-                name="Bay 2", bay_ID="435435", warehouse=self.warehouse
+                name="Bay 2", bay_ID="435435", warehouse=cls.warehouse
             ),
             models.Bay.objects.create(
-                name="Bay 3", bay_ID="834345", warehouse=self.warehouse
+                name="Bay 3", bay_ID="834345", warehouse=cls.warehouse
             ),
             models.Bay.objects.create(
-                name="Bay 4", bay_ID="643438", warehouse=self.warehouse
+                name="Bay 4", bay_ID="643438", warehouse=cls.warehouse
             ),
         ]
-        for product in self.variations:
-            product.bays.set(self.bays)
-        self.form_data = {
-            LocationsForm.LOCATION + "_0": self.warehouse.id,
-            LocationsForm.LOCATION + "_1": [bay.id for bay in self.bays],
+        for product in cls.variations:
+            product.bays.set(cls.bays)
+        cls.form_data = {
+            LocationsForm.LOCATION + "_0": cls.warehouse.id,
+            LocationsForm.LOCATION + "_1": [bay.id for bay in cls.bays],
         }
 
 

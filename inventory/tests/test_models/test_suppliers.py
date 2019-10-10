@@ -5,13 +5,13 @@ from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
 class TestSupplierContactModel(STCAdminTest):
-    def setUp(self):
-        super().setUp()
-        self.supplier = models.Supplier.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        cls.supplier = models.Supplier.objects.create(
             name="Stock Inc", product_option_value_ID="165415", factory_ID="28493782"
         )
-        self.supplier_contact = models.SupplierContact.objects.create(
-            supplier=self.supplier,
+        cls.supplier_contact = models.SupplierContact.objects.create(
+            supplier=cls.supplier,
             name="Jeff",
             email="jeff@stockinc.com",
             phone="0742156456",

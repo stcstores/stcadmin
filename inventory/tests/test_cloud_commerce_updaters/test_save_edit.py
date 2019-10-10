@@ -1,25 +1,31 @@
 from decimal import Decimal
 from unittest.mock import Mock, call, patch
 
-from home.tests.test_views.view_test import ViewTest
 from inventory import models
 from inventory.cloud_commerce_updater import SaveEdit
 from inventory.tests.test_models.test_products import SetupVariationProductRange
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
-class BaseSaveEditTest(SetupVariationProductRange, ViewTest):
+class BaseSaveEditTest(SetupVariationProductRange, STCAdminTest):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.create_user()
+        cls.setup_products()
+
     def setUp(self):
-        super().setUp()
         self.setup_mocks()
-        self.setup_products()
-
-    def setup_products(self):
-        self.product_edit = models.ProductEdit.create_product_edit(
-            self.user, self.product_range
-        )
+        self.product_edit = models.ProductEdit.objects.get(id=self.product_edit.id)
         self.original_range = self.product_edit.product_range
         self.product_range = self.product_edit.partial_product_range
         self.product = self.product_range.products()[0]
+
+    @classmethod
+    def setup_products(cls):
+        cls.product_edit = models.ProductEdit.create_product_edit(
+            cls.user, cls.product_range
+        )
 
     def setup_mocks(self):
         ccapi_patcher = patch("inventory.cloud_commerce_updater.save_edit.CCAPI")
@@ -441,18 +447,17 @@ class TestSaveEditWithExistingProduct(BaseSaveEditTest):
 
 
 class TestSaveEditWithNewVariation(BaseSaveEditTest):
-    def setup_products(self):
-        self.product.delete()
-        self.product_edit = models.ProductEdit.create_product_edit(
-            self.user, self.product_range
+    @classmethod
+    def setup_products(cls):
+        cls.product.delete()
+        cls.product_edit = models.ProductEdit.create_product_edit(
+            cls.user, cls.product_range
         )
-        self.original_range = self.product_edit.product_range
-        self.product_range = self.product_edit.partial_product_range
-        self.product = self.product_edit.create_product(
-            (self.small_product_option_value, self.red_product_option_value)
+        cls.product = cls.product_edit.create_product(
+            (cls.small_product_option_value, cls.red_product_option_value)
         )
-        self.product.barcode = "385493829"
-        self.product.save()
+        cls.product.barcode = "385493829"
+        cls.product.save()
 
     def setup_mocks(self):
         super().setup_mocks()
@@ -562,14 +567,13 @@ class TestSaveEditWithNewVariation(BaseSaveEditTest):
 
 
 class TestSaveEditForNewRange(BaseSaveEditTest):
-    def setup_products(self):
-        self.product_edit = models.ProductEdit.create_product_edit(
-            self.user, self.product_range
+    @classmethod
+    def setup_products(cls):
+        cls.product_edit = models.ProductEdit.create_product_edit(
+            cls.user, cls.product_range
         )
-        self.product_range = self.product_edit.partial_product_range
-        self.product = self.product_range.products()[0]
-        self.product_edit.product_range.products().delete()
-        self.product_edit.product_range.delete()
-        self.product_count = self.product_range.products().count()
-        self.product_edit.product_range = None
-        self.product_edit.save()
+        cls.product = cls.product_edit.partial_product_range.products()[0]
+        cls.product_edit.product_range.products().delete()
+        cls.product_edit.product_range.delete()
+        cls.product_edit.product_range = None
+        cls.product_edit.save()

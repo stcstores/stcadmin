@@ -31,13 +31,18 @@ class RangeUpdaterTest(BaseRangeUpdaterTest):
 class PartialRangeUpdaterTest(BaseRangeUpdaterTest):
     updater_class = PartialRangeUpdater
 
-    def setup_products(self):
-        self.product_edit = models.ProductEdit.create_product_edit(
-            self.user, self.product_range
-        )
+    def setUp(self):
+        self.product_edit = models.ProductEdit.objects.get(id=self.product_edit.id)
         self.original_range = self.product_edit.product_range
         self.product_range = self.product_edit.partial_product_range
         self.product = self.product_range.products()[0]
+        super().setUp()
+
+    @classmethod
+    def setup_products(cls):
+        cls.product_edit = models.ProductEdit.create_product_edit(
+            cls.user, cls.product_range
+        )
 
     def test_update_DB(self):
         self.update_DB_test()

@@ -1,10 +1,10 @@
 from unittest.mock import patch
 
-from home.tests.test_views.view_test import ViewTest
 from inventory.tests.test_models.test_products import SetupVariationProductRange
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
-class BaseUpdaterMethodTest(ViewTest):
+class BaseUpdaterMethodTest(STCAdminTest):
     def update_DB_test(self):
         raise NotImplementedError
 
@@ -19,9 +19,13 @@ class BaseUpdaterMethodTest(ViewTest):
 
 
 class BaseUpdaterTest(SetupVariationProductRange):
+    @classmethod
+    def setUpTestData(cls):
+        STCAdminTest.create_user()
+        super().setUpTestData()
+        cls.setup_products()
+
     def setUp(self):
-        super(SetupVariationProductRange, self).setUp()
-        self.setup_products()
         self.updater = self.updater_class(self.updater_object(), self.user)
         self.setup_mock()
         self.update_updater()
@@ -35,7 +39,8 @@ class BaseUpdaterTest(SetupVariationProductRange):
         self.mock_CCAPI = ccapi_patcher.start()
         self.addCleanup(ccapi_patcher.stop)
 
-    def setup_products(self):
+    @classmethod
+    def setup_products(cls):
         pass
 
     def update_updater(self):

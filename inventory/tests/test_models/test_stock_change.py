@@ -1,20 +1,21 @@
 from django.utils import timezone
 
-from home.tests.test_views.view_test import ViewTest
 from inventory import models
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
-class TestVATRate(ViewTest):
-    def setUp(self):
-        super().setUp()
-        self.timestamp = timezone.now()
-        self.stock_change = models.StockChange.objects.create(
-            user=self.user,
+class TestVATRate(STCAdminTest):
+    @classmethod
+    def setUpTestData(cls):
+        cls.create_user()
+        cls.timestamp = timezone.now()
+        cls.stock_change = models.StockChange.objects.create(
+            user=cls.user,
             product_sku="AXE-73D-N4Q",
             product_id="384093",
             stock_before=5,
             stock_after=7,
-            timestamp=self.timestamp,
+            timestamp=cls.timestamp,
         )
 
     def test_str_method(self):

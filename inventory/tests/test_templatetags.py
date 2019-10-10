@@ -48,28 +48,28 @@ class TestCCPOrderPage(STCAdminTest):
 
 
 class TestWarehouses(STCAdminTest):
-    def setUp(self):
-        super().setUp()
-        self.warehouse_1 = models.Warehouse.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        cls.warehouse_1 = models.Warehouse.objects.create(
             name="Warehouse 1", abriviation="WH1", warehouse_ID="284939"
         )
-        self.warehouse_2 = models.Warehouse.objects.create(
+        cls.warehouse_2 = models.Warehouse.objects.create(
             name="Warehouse 2", abriviation="WH2", warehouse_ID="846146"
         )
-        self.bay_1 = models.Bay.objects.create(
-            name="Bay 1", bay_ID="2849302", warehouse=self.warehouse_1
+        cls.bay_1 = models.Bay.objects.create(
+            name="Bay 1", bay_ID="2849302", warehouse=cls.warehouse_1
         )
-        self.bay_2 = models.Bay.objects.create(
-            name="Bay 2", bay_ID="5161516", warehouse=self.warehouse_1
+        cls.bay_2 = models.Bay.objects.create(
+            name="Bay 2", bay_ID="5161516", warehouse=cls.warehouse_1
         )
-        self.bay_3 = models.Bay.objects.create(
-            name="Bay 3", bay_ID="8131997", warehouse=self.warehouse_1
+        cls.bay_3 = models.Bay.objects.create(
+            name="Bay 3", bay_ID="8131997", warehouse=cls.warehouse_1
         )
-        self.bay_4 = models.Bay.objects.create(
-            name="Bay 4", bay_ID="9411356", warehouse=self.warehouse_2
+        cls.bay_4 = models.Bay.objects.create(
+            name="Bay 4", bay_ID="9411356", warehouse=cls.warehouse_2
         )
-        self.bay_5 = models.Bay.objects.create(
-            name="Bay 5", bay_ID="9431155", warehouse=self.warehouse_2
+        cls.bay_5 = models.Bay.objects.create(
+            name="Bay 5", bay_ID="9431155", warehouse=cls.warehouse_2
         )
 
     def test_warehouses(self):

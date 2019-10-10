@@ -333,7 +333,7 @@ class TestNotRequiredDepartmentField(TestDepartmentField):
         self.valid_check(input="", expected=None)
 
 
-class TestPartialProductOptionValueSelectField(FieldTest, SetupPartialProductRange):
+class TestPartialProductOptionValueSelectField(SetupPartialProductRange, FieldTest):
     def get_field(self):
         return fields.PartialProductOptionValueSelect(
             edit=self.product_edit, product_option=self.colour_product_option

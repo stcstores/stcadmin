@@ -1,12 +1,13 @@
 from django.utils import timezone
 
-from home.tests.test_views.view_test import ViewTest
 from inventory import models
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
-class TestBarcode(ViewTest):
-    def setUp(self):
-        super().setUp()
+class TestBarcode(STCAdminTest):
+    @classmethod
+    def setUpTestData(cls):
+        cls.create_user()
         barcodes = [str(8114165461 + i) for i in range(50)]
         models.Barcode.objects.bulk_create(
             [models.Barcode(barcode=_) for _ in barcodes]

@@ -26,13 +26,18 @@ class ProductUpdaterTest(BaseProductUpdaterTest):
 class PartialProductUpdaterTest(BaseProductUpdaterTest):
     updater_class = PartialProductUpdater
 
-    def setup_products(self):
-        self.product_edit = models.ProductEdit.create_product_edit(
-            self.user, self.product_range
+    @classmethod
+    def setup_products(cls):
+        cls.product_edit = models.ProductEdit.create_product_edit(
+            cls.user, cls.product_range
         )
+
+    def setUp(self):
+        self.product_edit = models.ProductEdit.objects.get(id=self.product_edit.id)
         self.original_range = self.product_edit.product_range
         self.product_range = self.product_edit.partial_product_range
         self.product = self.product_range.products()[0]
+        super().setUp()
 
     def test_update_DB(self):
         self.update_DB_test()

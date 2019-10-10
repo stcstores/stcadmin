@@ -1,4 +1,4 @@
-from inventory import forms
+from inventory import forms, models
 from inventory.tests.test_models.test_products import SetupProducts
 
 from .form_test import FormTest
@@ -7,40 +7,62 @@ from .form_test import FormTest
 class TestProductSearchForm(SetupProducts, FormTest):
     RANGE_ID = "389839"
 
-    def create_ranges(self):
-        self.normal_range = self.new_product_range()
-        self.normal_range.range_ID = "4939943"
-        self.normal_range.SKU = "RNG_939_ESA_383"
-        self.normal_range.name = "Normal Range"
-        self.normal_range.save()
+    def setUp(self):
+        self.normal_range = models.ProductRange.objects.get(SKU=self.normal_range_SKU)
+        self.eol_range = models.ProductRange.objects.get(SKU=self.eol_range_SKU)
+        self.hidden_range = models.ProductRange.objects.get(SKU=self.hidden_range_SKU)
 
-        self.eol_range = self.new_product_range()
-        self.eol_range.range_ID = "9841315"
-        self.eol_range.SKU = "RNG_5D9_L3U_8LD"
-        self.eol_range.end_of_line = True
-        self.eol_range.name = "EOL Range"
-        self.eol_range.save()
+        self.normal_product = models.Product.objects.get(SKU=self.normal_product_SKU)
+        self.eol_product = models.Product.objects.get(SKU=self.eol_product_SKU)
+        self.hidden_product = models.Product.objects.get(SKU=self.hidden_product_SKU)
 
-        self.hidden_range = self.new_product_range()
-        self.hidden_range.range_ID = "5751616"
-        self.hidden_range.SKU = "RNG_SEW_738_7GH"
-        self.hidden_range.hidden = True
-        self.hidden_range.name = "Hidden Range"
-        self.hidden_range.save()
+    @classmethod
+    def create_ranges(cls):
+        cls.normal_range_SKU = "RNG_939_ESA_383"
+        cls.eol_range_SKU = "RNG_5D9_L3U_8LD"
+        cls.hidden_range_SKU = "RNG_SEW_738_7GH"
 
-    def add_products(self):
-        self.normal_product = self.new_product(self.normal_range)
-        self.normal_product.product_ID = "3490392"
-        self.normal_product.save()
+        cls.normal_range = cls.new_product_range()
+        cls.normal_range.range_ID = "4939943"
+        cls.normal_range.SKU = cls.normal_range_SKU
+        cls.normal_range.name = "Normal Range"
+        cls.normal_range.save()
 
-        self.eol_product = self.new_product(self.eol_range)
-        self.eol_product.product_ID = "9841165"
-        self.eol_product.supplier_SKU = "TESTSUPPLIERSKU"
-        self.eol_product.save()
+        cls.eol_range = cls.new_product_range()
+        cls.eol_range.range_ID = "9841315"
+        cls.eol_range.SKU = cls.eol_range_SKU
+        cls.eol_range.end_of_line = True
+        cls.eol_range.name = "EOL Range"
+        cls.eol_range.save()
 
-        self.hidden_product = self.new_product(self.hidden_range)
-        self.hidden_product.product_ID = "986115616"
-        self.hidden_product.save()
+        cls.hidden_range = cls.new_product_range()
+        cls.hidden_range.range_ID = "5751616"
+        cls.hidden_range.SKU = cls.hidden_range_SKU
+        cls.hidden_range.hidden = True
+        cls.hidden_range.name = "Hidden Range"
+        cls.hidden_range.save()
+
+    @classmethod
+    def add_products(cls):
+        cls.normal_product_SKU = "JSL_48D_8TN"
+        cls.eol_product_SKU = "8JR_L4B_JTE"
+        cls.hidden_product_SKU = "BHN_DLC_GNB"
+
+        normal_product = cls.new_product(cls.normal_range)
+        normal_product.SKU = cls.normal_product_SKU
+        normal_product.product_ID = "3490392"
+        normal_product.save()
+
+        eol_product = cls.new_product(cls.eol_range)
+        eol_product.SKU = cls.eol_product_SKU
+        eol_product.product_ID = "9841165"
+        eol_product.supplier_SKU = "TESTSUPPLIERSKU"
+        eol_product.save()
+
+        hidden_product = cls.new_product(cls.hidden_range)
+        hidden_product.SKU = cls.hidden_product_SKU
+        hidden_product.product_ID = "986115616"
+        hidden_product.save()
 
     def test_form(self):
         data = {

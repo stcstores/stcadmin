@@ -1,20 +1,29 @@
 from unittest.mock import Mock
 
-from home.tests.test_views.view_test import ViewTest
 from inventory import models
 from stcadmin.tests.stcadmin_test import STCAdminTest
 
 from .test_products import SetupVariationProductRange
 
 
-class SetupPartialProductRange(SetupVariationProductRange, ViewTest):
+class SetupPartialProductRange(SetupVariationProductRange):
+    @classmethod
+    def setUpTestData(cls):
+        STCAdminTest.create_user()
+        super().setUpTestData()
+        cls.product_edit = models.ProductEdit.create_product_edit(
+            cls.user, cls.product_range
+        )
+        cls.original_range = cls.product_edit.product_range
+        cls.product_range = cls.product_edit.partial_product_range
+        cls.product = cls.product_range.products()[0]
+
     def setUp(self):
         super().setUp()
-        self.product_edit = models.ProductEdit.create_product_edit(
-            self.user, self.product_range
-        )
-        self.original_range = self.product_edit.product_range
-        self.product_range = self.product_edit.partial_product_range
+        range_SKU = self.product_range.SKU
+        self.product_edit = models.ProductEdit.objects.get(product_range__SKU=range_SKU)
+        self.original_range = models.ProductRange.objects.get(SKU=range_SKU)
+        self.product_range = models.PartialProductRange.objects.get(SKU=range_SKU)
         self.product = self.product_range.products()[0]
 
 

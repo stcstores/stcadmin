@@ -5,35 +5,36 @@ from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
 class CreateBays:
-    def setUp(self):
-        super().setUp()
-        self.warehouse_1 = models.Warehouse.objects.create(
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.warehouse_1 = models.Warehouse.objects.create(
             warehouse_ID="84616", name="Warehouse 1", abriviation="WH1"
         )
-        self.warehouse_2 = models.Warehouse.objects.create(
+        cls.warehouse_2 = models.Warehouse.objects.create(
             warehouse_ID="94651", name="Warehouse 2", abriviation="WH2"
         )
-        self.bays = [
+        cls.bays = [
             models.Bay(
                 bay_ID="489616",
                 name="Bay 1",
-                warehouse=self.warehouse_1,
+                warehouse=cls.warehouse_1,
                 is_default=True,
             ),
             models.Bay(
                 bay_ID="156168",
                 name="Bay 2",
-                warehouse=self.warehouse_1,
+                warehouse=cls.warehouse_1,
                 is_default=False,
             ),
             models.Bay(
                 bay_ID="861536",
                 name="Bay 3",
-                warehouse=self.warehouse_1,
+                warehouse=cls.warehouse_1,
                 is_default=False,
             ),
         ]
-        models.Bay.objects.bulk_create(self.bays)
+        models.Bay.objects.bulk_create(cls.bays)
 
 
 class TestWarehouse(CreateBays, STCAdminTest):
