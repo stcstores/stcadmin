@@ -2,8 +2,10 @@
 
 import pytz
 from django.db import models, transaction
+from django.db.models import Q
 from django.utils.timezone import is_naive
 from order_profit import OrderProfit
+
 from spring_manifest.models import CloudCommerceCountryID
 
 
@@ -19,12 +21,13 @@ class Order(models.Model):
     weight = models.PositiveIntegerField()
     vat_rate = models.PositiveIntegerField(null=True, blank=True)
     price = models.PositiveIntegerField()
-    purchase_price = models.PositiveIntegerField()
-    postage_price = models.PositiveIntegerField()
-    item_count = models.PositiveIntegerField()
+    purchase_price = models.PositiveIntegerField(null=True)
+    postage_price = models.PositiveIntegerField(null=True)
+    item_count = models.PositiveIntegerField(null=True)
     date_recieved = models.DateTimeField()
     dispatch_date = models.DateTimeField()
-    shipping_service = models.CharField(max_length=250)
+    shipping_service = models.CharField(max_length=250, null=True)
+    error = models.BooleanField(default=False)
 
     class Meta:
         """Meta class for Order."""
@@ -32,6 +35,20 @@ class Order(models.Model):
         verbose_name = "Order"
         verbose_name_plural = "Orders"
         ordering = ["-dispatch_date"]
+        constraints = [
+            models.CheckConstraint(
+                check=Q(error=True) | Q(postage_price__isnull=False),
+                name="postage_price_not_null_unless_error",
+            ),
+            models.CheckConstraint(
+                check=Q(error=True) | Q(item_count__isnull=False),
+                name="item_count_not_null_unless_error",
+            ),
+            models.CheckConstraint(
+                check=Q(error=True) | Q(shipping_service__isnull=False),
+                name="shipping_service_not_null_unless_error",
+            ),
+        ]
 
     def vat(self):
         """Return VAT paid on order."""
@@ -40,6 +57,8 @@ class Order(models.Model):
 
     def profit(self):
         """Return profit made on order."""
+        if self.error:
+            return 0
         if self.vat() is not None:
             return self.price - sum(
                 [
@@ -58,6 +77,8 @@ class Order(models.Model):
 
     def profit_no_vat(self):
         """Return profit on order not taking VAT into account."""
+        if self.error:
+            return 0
         return self.price - sum(
             [self.postage_price, self.purchase_price, self.channel_fee()]
         )
@@ -128,6 +149,7 @@ class UpdateOrderProfit(OrderProfit):
                 date_recieved=Order.localise_datetime(o.date_recieved),
                 dispatch_date=Order.localise_datetime(o.dispatch_date),
                 shipping_service=o.courier,
+                error=o.error,
             )
             order.save()
             for p in o.products:
