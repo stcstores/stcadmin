@@ -30,4 +30,4 @@ django-orderable = "*"
 "Fabric3" = "<2.0"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"
