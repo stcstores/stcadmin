@@ -25,31 +25,32 @@ def localise_datetime(date_input):
     return date_input
 
 
-def get_order_queryset(posted_data):
+def get_order_queryset(posted_data, hide_errors=False):
     """Return orders matching GET query."""
-    orders = models.Order.objects
-    if posted_data.get("order_id", None) is not None:
-        order_id = posted_data.get("order_id")
-        if isinstance(order_id, str) and order_id.isdigit():
-            return orders.filter(order_id=int(order_id))
-    if posted_data.get("date_from"):
-        year, month, day = posted_data["date_from"].split("-")
+    data = {key: value for key, value in posted_data.items() if len(value) > 0}
+    kwargs = {}
+    if "order_id" in data and len(data["order_id"]) > 0:
+        kwargs["order_id"] = data["order_id"]
+    if "date_from" in data:
+        year, month, day = data["date_from"].split("-")
         start_date = localise_datetime(
             datetime.datetime(year=int(year), month=int(month), day=int(day))
         )
-        orders = orders.filter(date_recieved__gte=start_date)
-    if posted_data.get("date_to"):
-        year, month, day = posted_data["date_to"].split("-")
+        kwargs["date_recieved__gte"] = start_date
+    if "date_to" in data:
+        year, month, day = data["date_to"].split("-")
         end_date = localise_datetime(
             datetime.datetime(year=int(year), month=int(month), day=int(day))
         )
         end_date += datetime.timedelta(days=1)
-        orders = orders.filter(date_recieved__lte=end_date)
-    if posted_data.get("department"):
-        orders = orders.filter(department=posted_data.get("department"))
-    if posted_data.get("country"):
-        orders = orders.filter(country__name=posted_data.get("country"))
-    return orders
+        kwargs["date_recieved__lte"] = end_date
+    if "department" in data:
+        kwargs["department"] = data["department"]
+    if "country" in data:
+        kwargs["country__name"] = data["country"]
+    if hide_errors:
+        kwargs["error"] = False
+    return models.Order.objects.filter(**kwargs)
 
 
 class ProfitLossUserMixin(UserInGroupMixin):
@@ -136,7 +137,7 @@ class ExportOrders(View):
 
     def get_orders(self):
         """Return orders matching query."""
-        return get_order_queryset(self.request.POST).all()
+        return get_order_queryset(self.request.POST, hide_errors=True).all()
 
     def format_price(self, price):
         """Return pence integer as formated price string."""
