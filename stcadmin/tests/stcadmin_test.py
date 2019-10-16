@@ -18,10 +18,15 @@ class STCAdminTest(TestCase):
     USER_PASSWORD = "AverySECUREpassword"
 
     @classmethod
-    def create_user(cls):
-        cls.user = get_user_model().objects.create_user(
-            username=cls.USERNAME, email=cls.USER_EMAIL, password=cls.USER_PASSWORD
+    def create_user(cls, username=None, email=None, password=None):
+        user = get_user_model().objects.create_user(
+            username=username or cls.USERNAME,
+            email=email or cls.USER_EMAIL,
+            password=password or cls.USER_PASSWORD,
         )
+        if username is None:
+            cls.user = user
+        return user
 
     @classmethod
     def add_group(cls, group_name):
