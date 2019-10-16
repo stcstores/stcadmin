@@ -1,6 +1,7 @@
 """Model admin for profit loss models."""
 
 from django.contrib import admin
+
 from profit_loss import models
 
 
@@ -21,6 +22,7 @@ class OrderAdmin(admin.ModelAdmin):
         "item_count",
         "date_recieved",
         "dispatch_date",
+        "error",
     )
     list_display = (
         "__str__",
@@ -37,10 +39,17 @@ class OrderAdmin(admin.ModelAdmin):
         "date_recieved",
         "dispatch_date",
         "profit",
+        "error",
     )
     list_display_links = ("__str__",)
     search_fields = ("order_id",)
-    list_filter = ("dispatch_date", "department", "shipping_service", "country")
+    list_filter = (
+        "error",
+        "dispatch_date",
+        "department",
+        "shipping_service",
+        "country",
+    )
 
     def __repr__(self):
         return str(self.order_id)

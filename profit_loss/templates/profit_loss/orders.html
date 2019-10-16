@@ -96,10 +96,14 @@
             <td>{{ order.country.name }}</td>
             <td class="date">{{ order.date_recieved|date:'D jS N h:iA' }}</td>
             <td class="date">{{ order.dispatch_date|date:'D jS N h:iA' }}</td>
+            {% if order.error %}
+            <th colspan="4" class="error">ERROR</th>
+            {% else %}
             <td>{{ order.item_count }}</td>
             <td>{% format_price order.price %}</td>
             <td>{% format_price order.profit %}</td>
             <td>{% if order.profit_percentage %}{{ order.profit_percentage }}%{% else %}<span class="negative">&mdash;</span>{% endif %}</td>
+            {% endif %}
             <td><a href="{% ccp_order_page order.order_id order.customer_id %}" target="_blank"><button>C</button></a></td>
         </tr>
         {% endfor %}

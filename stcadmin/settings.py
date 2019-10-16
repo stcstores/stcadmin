@@ -179,6 +179,13 @@ LOGGING = {
             "filters": ["add_user_to_log_record", "replace_newlines"],
             "formatter": "default_formatter",
         },
+        "order_profit_file_handler": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "logs", "order_profit.log"),
+            "maxBytes": 1_048_576,
+            "backupCount": 2,
+            "formatter": "default_formatter",
+        },
         "error_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": os.path.join(BASE_DIR, "logs", "stcadmin_error.log"),
@@ -217,6 +224,11 @@ LOGGING = {
             "propagate": False,
         },
         "ccapi_errors": {
+            "handlers": ["mail_admins", "error_file_handler"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "order_profit": {
             "handlers": ["mail_admins", "error_file_handler"],
             "level": "ERROR",
             "propagate": False,
