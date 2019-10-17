@@ -176,13 +176,14 @@ class TestNoUpdateRangeUpdaterSetDescription(
 class TestSetSearchTerms(BaseUpdaterMethodTest):
     def setup_test(self):
         self.original_search_terms = self.product_range.amazon_search_terms
-        self.new_search_terms = "Mug|Cup|Drink Container"
+        self.new_search_terms = ["Mug", "Cup", "Drink Container"]
+        self.search_tem_text = "|".join(self.new_search_terms)
         self.product_option_value_ID = "284938"
         self.mock_CCAPI.get_option_value_id.return_value = self.product_option_value_ID
         self.updater.set_amazon_search_terms(self.new_search_terms)
 
     def update_DB_test(self):
-        self.assertEqual(self.new_search_terms, self.product_range.amazon_search_terms)
+        self.assertEqual(self.search_tem_text, self.product_range.amazon_search_terms)
 
     def no_DB_update_test(self):
         self.assertEqual(
@@ -192,7 +193,7 @@ class TestSetSearchTerms(BaseUpdaterMethodTest):
     def update_CC_test(self):
         self.mock_CCAPI.get_option_value_id.assert_called_once_with(
             self.updater.AMAZON_SEARCH_TERMS_OPTION_ID,
-            value=self.new_search_terms,
+            value=self.search_tem_text,
             create=True,
         )
         self.mock_CCAPI.set_product_option_value.assert_called_once_with(
@@ -222,14 +223,15 @@ class TestNoUpdateRangeUpdaterSetSearchTerms(
 class TestSetBullets(BaseUpdaterMethodTest):
     def setup_test(self):
         self.original_bullet_points = self.product_range.amazon_bullet_points
-        self.new_bullet_points = "Mug|Cup|Drink Container"
+        self.new_bullet_points = ["Mug", "Cup", "Drink Container"]
+        self.bulllet_points_text = "|".join(self.new_bullet_points)
         self.product_option_value_ID = "9465161"
         self.mock_CCAPI.get_option_value_id.return_value = self.product_option_value_ID
         self.updater.set_amazon_bullet_points(self.new_bullet_points)
 
     def update_DB_test(self):
         self.assertEqual(
-            self.new_bullet_points, self.product_range.amazon_bullet_points
+            self.bulllet_points_text, self.product_range.amazon_bullet_points
         )
 
     def no_DB_update_test(self):
@@ -240,7 +242,7 @@ class TestSetBullets(BaseUpdaterMethodTest):
     def update_CC_test(self):
         self.mock_CCAPI.get_option_value_id.assert_called_once_with(
             self.updater.AMAZON_BULLET_POINTS_OPTION_ID,
-            value=self.new_bullet_points,
+            value=self.bulllet_points_text,
             create=True,
         )
         self.mock_CCAPI.set_product_option_value.assert_called_once_with(

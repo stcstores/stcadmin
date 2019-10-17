@@ -231,8 +231,8 @@ class EditRangeDetails(DescriptionsView):
         updater.set_name(form.cleaned_data["title"])
         updater.set_description(form.cleaned_data["description"])
         updater.set_department(form.cleaned_data["department"])
-        updater.set_amazon_bullet_points("|".join(form.cleaned_data["amazon_bullets"]))
-        updater.set_amazon_search_terms("|".join(form.cleaned_data["search_terms"]))
+        updater.set_amazon_search_terms(form.cleaned_data["search_terms"])
+        updater.set_amazon_bullet_points(form.cleaned_data["amazon_bullets"])
         return super(FormView, self).form_valid(form)
 
     def get_success_url(self):

@@ -141,12 +141,14 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
         return [description], {}
 
     def _prepare_set_amazon_search_terms(self, search_terms):
-        self.log(f'Set amazon search terms to "{search_terms[:50]}...".')
-        return [search_terms], {}
+        search_term_text = "|".join(search_terms)
+        self.log(f'Set amazon search terms to "{search_term_text[:50]}...".')
+        return [search_term_text], {}
 
     def _prepare_set_amazon_bullet_points(self, bullet_points):
-        self.log(f'Set amazon bullet points to "{bullet_points[:50]}...".')
-        return [bullet_points], {}
+        bulllet_points_text = "|".join(bullet_points)
+        self.log(f'Set amazon bullet points to "{bulllet_points_text[:50]}...".')
+        return [bulllet_points_text], {}
 
     def _prepare_set_end_of_line(self, end_of_line=True):
         self.log(f"Set end of line to {end_of_line}.")
