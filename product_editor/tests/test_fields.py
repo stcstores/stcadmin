@@ -7,8 +7,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from inventory import models
-from inventory.tests.test_models.test_partial import SetupPartialProductRange
-from inventory.tests.test_models.test_products import SetupVariationProductRange
+from inventory.tests import fixtures
 from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms import fields
 from stcadmin.tests.stcadmin_test import STCAdminTest
@@ -333,7 +332,13 @@ class TestNotRequiredDepartmentField(TestDepartmentField):
         self.valid_check(input="", expected=None)
 
 
-class TestPartialProductOptionValueSelectField(SetupPartialProductRange, FieldTest):
+class TestPartialProductOptionValueSelectField(
+    fixtures.EditingProductFixture, FieldTest
+):
+    def setUp(self):
+        fixtures.EditingProductFixture.setUp(self)
+        super().setUp()
+
     def get_field(self):
         return fields.PartialProductOptionValueSelect(
             edit=self.product_edit, product_option=self.colour_product_option
@@ -443,13 +448,22 @@ class TestSelectProductOptionField(FieldTest):
 
 
 class TestSelectProductOptionFieldWithProduct(
-    SetupVariationProductRange, TestSelectProductOptionField
+    fixtures.VariationProductRangeFixture, TestSelectProductOptionField
 ):
+    def setUp(self):
+        fixtures.VariationProductRangeFixture.setUp(self)
+        super().setUp()
+        self.new_product_option = models.ProductOption.objects.create(
+            name="Design", product_option_ID="384938"
+        )
+
     def get_field(self):
         return fields.SelectProductOption(product_range=self.product_range)
 
     def test_field(self):
-        self.valid_check(input=self.product_option.id, expected=self.product_option)
+        self.valid_check(
+            input=self.new_product_option.id, expected=self.new_product_option
+        )
         self.invalid_check(input="670")
         self.invalid_check(input=self.colour_product_option.id)
 

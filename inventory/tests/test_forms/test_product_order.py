@@ -1,11 +1,11 @@
 from inventory import forms, models
 from inventory.forms.product_order import ProductOrderForm
-from inventory.tests.test_models.test_products import SetupVariationProductRange
+from inventory.tests import fixtures
 
 from .form_test import FormTest
 
 
-class TestProductOrderForm(SetupVariationProductRange, FormTest):
+class TestProductOrderForm(fixtures.VariationProductRangeFixture, FormTest):
     def test_initial(self):
         form = ProductOrderForm(product=self.product)
         initial = form.get_initial()
@@ -35,7 +35,7 @@ class TestProductOrderForm(SetupVariationProductRange, FormTest):
         self.assertEqual(5, product.range_order)
 
 
-class TestProductOrderFormSet(SetupVariationProductRange, FormTest):
+class TestProductOrderFormSet(fixtures.VariationProductRangeFixture, FormTest):
     def get_form_data(self):
         data = {"form-TOTAL_FORMS": len(self.variations), "form-INITIAL_FORMS": 0}
         for i, variation in enumerate(self.variations):

@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from inventory import forms, models
 from inventory.forms.locations import LocationsForm
-from inventory.tests.test_models.test_products import SetupVariationProductRange
+from inventory.tests import fixtures
 
 from .form_test import FormTest
 
@@ -28,15 +28,20 @@ class SetupLocationsForm:
                 name="Bay 4", bay_ID="643438", warehouse=cls.warehouse
             ),
         ]
-        for product in cls.variations:
-            product.bays.set(cls.bays)
-        cls.form_data = {
-            LocationsForm.LOCATION + "_0": cls.warehouse.id,
-            LocationsForm.LOCATION + "_1": [bay.id for bay in cls.bays],
+
+    def setUp(self):
+        super().setUp()
+        for product in self.variations:
+            product.bays.set(self.bays)
+        self.form_data = {
+            LocationsForm.LOCATION + "_0": self.warehouse.id,
+            LocationsForm.LOCATION + "_1": [bay.id for bay in self.bays],
         }
 
 
-class TestLocationsForm(SetupLocationsForm, SetupVariationProductRange, FormTest):
+class TestLocationsForm(
+    SetupLocationsForm, fixtures.VariationProductRangeFixture, FormTest
+):
     def test_locations_form(self):
         form = LocationsForm(self.form_data, product=self.product, user=self.user)
         self.assert_form_is_valid(form)
@@ -89,7 +94,9 @@ class TestLocationsForm(SetupLocationsForm, SetupVariationProductRange, FormTest
         mock_updater.set_bays.assert_called_once_with(self.bays)
 
 
-class TestLocationsFormSet(SetupLocationsForm, SetupVariationProductRange, FormTest):
+class TestLocationsFormSet(
+    SetupLocationsForm, fixtures.VariationProductRangeFixture, FormTest
+):
     def test_locations_formset(self):
         forms.LocationsFormSet(
             form_kwargs=[{"product": _} for _ in self.product_range.products()]

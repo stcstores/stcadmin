@@ -3,29 +3,18 @@ from unittest.mock import Mock, call, patch
 
 from inventory import models
 from inventory.cloud_commerce_updater import SaveEdit
-from inventory.tests.test_models.test_products import SetupVariationProductRange
+from inventory.tests import fixtures
 from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
-class BaseSaveEditTest(SetupVariationProductRange, STCAdminTest):
+class BaseSaveEditTest:
     @classmethod
     def setUpTestData(cls):
-        super().setUpTestData()
-        cls.create_user()
-        cls.setup_products()
+        STCAdminTest.create_user()
 
     def setUp(self):
+        self.fixture_class.setUp(self)
         self.setup_mocks()
-        self.product_edit = models.ProductEdit.objects.get(id=self.product_edit.id)
-        self.original_range = self.product_edit.product_range
-        self.product_range = self.product_edit.partial_product_range
-        self.product = self.product_range.products()[0]
-
-    @classmethod
-    def setup_products(cls):
-        cls.product_edit = models.ProductEdit.create_product_edit(
-            cls.user, cls.product_range
-        )
 
     def setup_mocks(self):
         ccapi_patcher = patch("inventory.cloud_commerce_updater.save_edit.CCAPI")
@@ -47,7 +36,10 @@ class BaseSaveEditTest(SetupVariationProductRange, STCAdminTest):
         self.mock_ProductUpdater.return_value = self.mock_product_updater
 
 
-class TestSaveEditWithExistingProduct(BaseSaveEditTest):
+class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
+    fixture_class = fixtures.EditingProductFixture
+    fixtures = fixture_class.fixtures
+
     def test_save_edit(self):
         save_edit = SaveEdit(self.product_edit, self.user)
         self.assertEqual(self.product_edit, save_edit.edit)
@@ -446,18 +438,25 @@ class TestSaveEditWithExistingProduct(BaseSaveEditTest):
         self.assertEqual(product_count, len(self.mock_product_updater.mock_calls))
 
 
-class TestSaveEditWithNewVariation(BaseSaveEditTest):
+class TestSaveEditWithNewProduct(BaseSaveEditTest, STCAdminTest):
+    fixture_class = fixtures.EditingProductFixture
+    fixtures = fixtures.EditingProductFixture.fixtures
+
     @classmethod
-    def setup_products(cls):
-        cls.product.delete()
-        cls.product_edit = models.ProductEdit.create_product_edit(
-            cls.user, cls.product_range
-        )
-        cls.product = cls.product_edit.create_product(
-            (cls.small_product_option_value, cls.red_product_option_value)
-        )
-        cls.product.barcode = "385493829"
-        cls.product.save()
+    def setUpTestData(cls):
+        STCAdminTest.create_user()
+        models.Product.objects.get(id=1).delete()
+
+    def setUp(self):
+        fixtures.ProductRequirementsFixture.setUp(self)
+        self.product_edit = models.ProductEdit.objects.get(id=1)
+        self.original_range = models.ProductRange.objects.get(id=1)
+        self.product_range = models.PartialProductRange.objects.get(id=1)
+        self.product = models.PartialProduct.objects.get(id=1)
+        self.product.pre_existing = False
+        self.product.barcode = "385493829"
+        self.setup_mocks()
+        self.product.save()
 
     def setup_mocks(self):
         super().setup_mocks()
@@ -556,24 +555,23 @@ class TestSaveEditWithNewVariation(BaseSaveEditTest):
         )
         self.mock_product_updater.set_date_created.assert_called_once()
         self.mock_product_updater.set_product_option_link.assert_has_calls(
-            (call(self.small_product_option_value), call(self.red_product_option_value))
+            (
+                call(self.small_product_option_value),
+                call(self.red_product_option_value),
+                call(self.model_product_option_value),
+            )
         )
         self.assertEqual(
-            2, len(self.mock_product_updater.set_product_option_link.mock_calls)
+            3, len(self.mock_product_updater.set_product_option_link.mock_calls)
         )
-        self.assertEqual(19, len(self.mock_product_updater.mock_calls))
+        self.assertEqual(20, len(self.mock_product_updater.mock_calls))
         self.assertEqual(3, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(6, len(self.mock_range_updater.mock_calls))
 
 
-class TestSaveEditForNewRange(BaseSaveEditTest):
-    @classmethod
-    def setup_products(cls):
-        cls.product_edit = models.ProductEdit.create_product_edit(
-            cls.user, cls.product_range
-        )
-        cls.product = cls.product_edit.partial_product_range.products()[0]
-        cls.product_edit.product_range.products().delete()
-        cls.product_edit.product_range.delete()
-        cls.product_edit.product_range = None
-        cls.product_edit.save()
+# class TestSaveEditForNewRange(BaseSaveEditTest, fixtures.UnsavedNewProductRangeFixture):
+#     fixtures = fixtures.UnsavedNewProductRangeFixture.fixtures
+#
+#     def setUp(self):
+#         fixtures.UnsavedNewProductRangeFixture.setUp(self)
+#         super().setUp()

@@ -1,30 +1,8 @@
 from unittest.mock import Mock
 
 from inventory import models
+from inventory.tests import fixtures
 from stcadmin.tests.stcadmin_test import STCAdminTest
-
-from .test_products import SetupVariationProductRange
-
-
-class SetupPartialProductRange(SetupVariationProductRange):
-    @classmethod
-    def setUpTestData(cls):
-        STCAdminTest.create_user()
-        super().setUpTestData()
-        cls.product_edit = models.ProductEdit.create_product_edit(
-            cls.user, cls.product_range
-        )
-        cls.original_range = cls.product_edit.product_range
-        cls.product_range = cls.product_edit.partial_product_range
-        cls.product = cls.product_range.products()[0]
-
-    def setUp(self):
-        super().setUp()
-        range_SKU = self.product_range.SKU
-        self.product_edit = models.ProductEdit.objects.get(product_range__SKU=range_SKU)
-        self.original_range = models.ProductRange.objects.get(SKU=range_SKU)
-        self.product_range = models.PartialProductRange.objects.get(SKU=range_SKU)
-        self.product = self.product_range.products()[0]
 
 
 class TestUnique_SKU(STCAdminTest):
@@ -47,7 +25,7 @@ class TestUnique_SKU(STCAdminTest):
             models.partial.unique_SKU(["RNG_164_DH3-J9L"], function)
 
 
-class TestPartialProductRange(SetupPartialProductRange, STCAdminTest):
+class TestPartialProductRange(fixtures.EditingProductFixture, STCAdminTest):
     def test_generate_SKU_method(self):
         SKU = models.PartialProductRange.get_new_SKU()
         self.assertEqual(SKU[:4], "RNG_")
@@ -233,7 +211,7 @@ class TestPartialProductRange(SetupPartialProductRange, STCAdminTest):
             "gender_id": self.gender.id,
         }
         self.assertEqual(self.product_range.range_wide_values(), expected)
-        product.supplier = self.other_supplier
+        product.supplier = models.Supplier.objects.get(id=2)
         product.save()
         expected.pop("supplier_id")
         self.assertEqual(self.product_range.range_wide_values(), expected)
@@ -245,7 +223,7 @@ class TestPartialProductRange(SetupPartialProductRange, STCAdminTest):
         product.save()
         expected.pop("purchase_price")
         self.assertEqual(self.product_range.range_wide_values(), expected)
-        product.VAT_rate = self.other_VAT_rate
+        product.VAT_rate = models.VATRate.objects.get(id=2)
         product.save()
         expected.pop("VAT_rate_id")
         self.assertEqual(self.product_range.range_wide_values(), expected)
@@ -257,19 +235,19 @@ class TestPartialProductRange(SetupPartialProductRange, STCAdminTest):
         product.save()
         expected.pop("retail_price")
         self.assertEqual(self.product_range.range_wide_values(), expected)
-        product.brand = self.other_brand
+        product.brand = models.Brand.objects.get(id=2)
         product.save()
         expected.pop("brand_id")
         self.assertEqual(self.product_range.range_wide_values(), expected)
-        product.manufacturer = self.other_manufacturer
+        product.manufacturer = models.Manufacturer.objects.get(id=2)
         product.save()
         expected.pop("manufacturer_id")
         self.assertEqual(self.product_range.range_wide_values(), expected)
-        product.package_type = self.other_package_type
+        product.package_type = models.PackageType.objects.get(id=2)
         product.save()
         expected.pop("package_type_id")
         self.assertEqual(self.product_range.range_wide_values(), expected)
-        product.international_shipping = self.other_international_shipping
+        product.international_shipping = models.InternationalShipping.objects.get(id=2)
         product.save()
         expected.pop("international_shipping_id")
         self.assertEqual(self.product_range.range_wide_values(), expected)
@@ -289,7 +267,7 @@ class TestPartialProductRange(SetupPartialProductRange, STCAdminTest):
         product.save()
         expected.pop("height_mm")
         self.assertEqual(self.product_range.range_wide_values(), expected)
-        product.gender = self.other_gender
+        product.gender = models.Gender.objects.get(id=2)
         product.save()
         expected.pop("gender_id")
         self.assertEqual(self.product_range.range_wide_values(), {})
@@ -312,7 +290,7 @@ class TestPartialProductRange(SetupPartialProductRange, STCAdminTest):
         )
 
 
-class TestPartialProduct(SetupPartialProductRange, STCAdminTest):
+class TestPartialProduct(fixtures.EditingProductFixture, STCAdminTest):
     def test_generate_SKU_method(self):
         SKU = models.PartialProduct.get_new_SKU()
         self.assertNotEqual(SKU[:4], "RNG_")
@@ -384,7 +362,9 @@ class TestPartialProduct(SetupPartialProductRange, STCAdminTest):
         self.assertIsNone(self.product.product_option_value("Quantity"))
 
 
-class TestPartialProduct_is_complete_Method(SetupPartialProductRange, STCAdminTest):
+class TestPartialProduct_is_complete_Method(
+    fixtures.EditingProductFixture, STCAdminTest
+):
     def test_when_complete(self):
         self.assertTrue(self.product.is_complete())
 
@@ -444,7 +424,9 @@ class TestPartialProduct_is_complete_Method(SetupPartialProductRange, STCAdminTe
         self.assertFalse(self.product.is_complete())
 
 
-class TestPartialProductRangeSelectedOption(SetupPartialProductRange, STCAdminTest):
+class TestPartialProductRangeSelectedOption(
+    fixtures.EditingProductFixture, STCAdminTest
+):
     def test_str_method(self):
         selected_option = models.PartialProductRangeSelectedOption.objects.get(
             product_range=self.product_range, product_option=self.size_product_option
@@ -455,7 +437,7 @@ class TestPartialProductRangeSelectedOption(SetupPartialProductRange, STCAdminTe
         )
 
 
-class TestPartialProductOptionValueLink(SetupPartialProductRange, STCAdminTest):
+class TestPartialProductOptionValueLink(fixtures.EditingProductFixture, STCAdminTest):
     def test_str_method(self):
         option_link = models.PartialProductOptionValueLink.objects.get(
             product=self.product, product_option_value=self.red_product_option_value
@@ -465,7 +447,7 @@ class TestPartialProductOptionValueLink(SetupPartialProductRange, STCAdminTest):
         )
 
 
-class TestProductEdit(SetupPartialProductRange, STCAdminTest):
+class TestProductEdit(fixtures.EditingProductFixture, STCAdminTest):
     def test_str_method(self):
         self.assertEqual(str(self.product_edit), str(self.product_range))
 

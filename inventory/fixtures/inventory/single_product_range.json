@@ -1,0 +1,46 @@
+[{
+  "model": "inventory.productrange",
+  "pk": 1,
+  "fields": {
+    "range_ID": "548354",
+    "SKU": "RNG_A8D_D83_NFU",
+    "name": "Test Range",
+    "department": 1,
+    "description": "A test product\nLine Two",
+    "amazon_search_terms": "Ceramic Mug|Dad's Army",
+    "amazon_bullet_points": "Dad's Army - Service Issue Mug.|Ceramic Boxed Mug.|Height: 11 cm x Width: 8 cm approx.|Officially Licensed Product.",
+    "end_of_line": false,
+    "hidden": false
+  }
+}, {
+  "model": "inventory.product",
+  "pk": 1,
+  "fields": {
+    "product_ID": "724587",
+    "product_range": 1,
+    "SKU": "VMM_QZR_DWZ",
+    "supplier": 1,
+    "supplier_SKU": "TV009",
+    "barcode": "29485839",
+    "purchase_price": "5.60",
+    "VAT_rate": 1,
+    "price": "6.80",
+    "retail_price": "12.70",
+    "brand": 1,
+    "manufacturer": 1,
+    "package_type": 1,
+    "international_shipping": 1,
+    "weight_grams": 500,
+    "length_mm": 50,
+    "height_mm": 150,
+    "width_mm": 24,
+    "multipack": false,
+    "end_of_line": false,
+    "status": "creating",
+    "date_created": "2019-10-17",
+    "last_modified": "2019-10-17T13:28:45.676Z",
+    "gender": 1,
+    "range_order": 0,
+    "bays": []
+  }
+}]

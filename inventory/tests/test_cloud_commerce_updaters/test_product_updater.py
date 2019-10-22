@@ -2,6 +2,7 @@ from unittest.mock import Mock, call
 
 from inventory import models
 from inventory.cloud_commerce_updater import PartialProductUpdater, ProductUpdater
+from inventory.tests import fixtures
 
 from .test_updater_base import BaseUpdaterMethodTest, BaseUpdaterTest
 
@@ -9,11 +10,15 @@ from .test_updater_base import BaseUpdaterMethodTest, BaseUpdaterTest
 class BaseProductUpdaterTest(BaseUpdaterTest):
     patch_path = "inventory.cloud_commerce_updater.product_updater.CCAPI"
 
+    def setUp(self):
+        fixtures.VariationProductRangeFixture.setUp(self)
+        super().setUp()
+
     def updater_object(self):
         return self.product
 
 
-class ProductUpdaterTest(BaseProductUpdaterTest):
+class ProductUpdaterTest(BaseProductUpdaterTest, fixtures.VariationProductRangeFixture):
     updater_class = ProductUpdater
 
     def test_update_DB(self):
@@ -23,20 +28,11 @@ class ProductUpdaterTest(BaseProductUpdaterTest):
         self.update_CC_test()
 
 
-class PartialProductUpdaterTest(BaseProductUpdaterTest):
+class PartialProductUpdaterTest(BaseProductUpdaterTest, fixtures.EditingProductFixture):
     updater_class = PartialProductUpdater
 
-    @classmethod
-    def setup_products(cls):
-        cls.product_edit = models.ProductEdit.create_product_edit(
-            cls.user, cls.product_range
-        )
-
     def setUp(self):
-        self.product_edit = models.ProductEdit.objects.get(id=self.product_edit.id)
-        self.original_range = self.product_edit.product_range
-        self.product_range = self.product_edit.partial_product_range
-        self.product = self.product_range.products()[0]
+        fixtures.EditingProductFixture.setUp(self)
         super().setUp()
 
     def test_update_DB(self):
@@ -46,8 +42,14 @@ class PartialProductUpdaterTest(BaseProductUpdaterTest):
         self.no_CC_update_test()
 
 
-class NoChangeProductUpdaterTest(BaseProductUpdaterTest):
+class NoChangeProductUpdaterTest(
+    BaseProductUpdaterTest, fixtures.VariationProductRangeFixture
+):
     updater_class = ProductUpdater
+
+    def setUp(self):
+        fixtures.VariationProductRangeFixture.setUp(self)
+        super().setUp()
 
     def update_updater(self):
         self.updater.update_DB = False

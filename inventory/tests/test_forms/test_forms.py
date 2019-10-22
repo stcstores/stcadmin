@@ -2,8 +2,7 @@ import json
 from unittest.mock import Mock, patch
 
 from inventory import forms, models
-from inventory.tests.test_models.test_partial import SetupPartialProductRange
-from inventory.tests.test_models.test_products import SetupVariationProductRange
+from inventory.tests import fixtures
 from product_editor.editor_manager import ProductEditorBase
 
 from .form_test import FormTest
@@ -212,7 +211,7 @@ class TestCreateBayForm(FormTest):
         self.assertEqual(form.new_bay.bay_ID, "979461")
 
 
-class TestProductForm(SetupVariationProductRange, FormTest):
+class TestProductForm(fixtures.VariationProductRangeFixture, FormTest):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -227,26 +226,29 @@ class TestProductForm(SetupVariationProductRange, FormTest):
                 is_default=False,
             )
         ]
-        cls.product.bays.set([cls.bays[0]])
-        cls.form_data = {
-            ProductEditorBase.BRAND: cls.brand.id,
-            ProductEditorBase.MANUFACTURER: cls.manufacturer.id,
-            ProductEditorBase.BARCODE: cls.product.barcode,
-            ProductEditorBase.SUPPLIER_SKU: cls.product.supplier_SKU,
-            ProductEditorBase.SUPPLIER: cls.supplier.id,
-            ProductEditorBase.PURCHASE_PRICE: cls.product.purchase_price,
-            ProductEditorBase.VAT_RATE: cls.VAT_rate.id,
-            ProductEditorBase.PRICE: cls.product.price,
-            ProductEditorBase.RETAIL_PRICE: cls.product.retail_price,
-            ProductEditorBase.LOCATION + "_0": cls.warehouse.id,
-            ProductEditorBase.LOCATION + "_1": [cls.bays[0].id],
-            ProductEditorBase.PACKAGE_TYPE: cls.package_type.id,
-            ProductEditorBase.INTERNATIONAL_SHIPPING: cls.international_shipping.id,
-            ProductEditorBase.WEIGHT: cls.product.weight_grams,
-            ProductEditorBase.DIMENSIONS + "_0": cls.product.height_mm,
-            ProductEditorBase.DIMENSIONS + "_1": cls.product.length_mm,
-            ProductEditorBase.DIMENSIONS + "_2": cls.product.width_mm,
-            ProductEditorBase.GENDER: cls.gender.id,
+
+    def setUp(self):
+        fixtures.VariationProductRangeFixture.setUp(self)
+        self.product.bays.set([self.bays[0]])
+        self.form_data = {
+            ProductEditorBase.BRAND: self.brand.id,
+            ProductEditorBase.MANUFACTURER: self.manufacturer.id,
+            ProductEditorBase.BARCODE: self.product.barcode,
+            ProductEditorBase.SUPPLIER_SKU: self.product.supplier_SKU,
+            ProductEditorBase.SUPPLIER: self.supplier.id,
+            ProductEditorBase.PURCHASE_PRICE: self.product.purchase_price,
+            ProductEditorBase.VAT_RATE: self.VAT_rate.id,
+            ProductEditorBase.PRICE: self.product.price,
+            ProductEditorBase.RETAIL_PRICE: self.product.retail_price,
+            ProductEditorBase.LOCATION + "_0": self.warehouse.id,
+            ProductEditorBase.LOCATION + "_1": [self.bays[0].id],
+            ProductEditorBase.PACKAGE_TYPE: self.package_type.id,
+            ProductEditorBase.INTERNATIONAL_SHIPPING: self.international_shipping.id,
+            ProductEditorBase.WEIGHT: self.product.weight_grams,
+            ProductEditorBase.DIMENSIONS + "_0": self.product.height_mm,
+            ProductEditorBase.DIMENSIONS + "_1": self.product.length_mm,
+            ProductEditorBase.DIMENSIONS + "_2": self.product.width_mm,
+            ProductEditorBase.GENDER: self.gender.id,
         }
 
     def get_form(self, *args, **kwargs):
@@ -533,7 +535,7 @@ class TestVariationForm(TestProductForm):
         return forms.VariationForm(*args, **kwargs)
 
 
-class TestAddProductOptionForm(SetupPartialProductRange, FormTest):
+class TestAddProductOptionForm(fixtures.EditingProductFixture, FormTest):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -645,7 +647,11 @@ class TestAddProductOptionForm(SetupPartialProductRange, FormTest):
         self.save_method_test(False)
 
 
-class TestSetProductOptionValuesForm(SetupPartialProductRange, FormTest):
+class TestSetProductOptionValuesForm(fixtures.EditingProductFixture, FormTest):
+    def setUp(self):
+        fixtures.EditingProductFixture.setUp(self)
+        super().setUp()
+
     def test_form(self):
         form = forms.SetProductOptionValues(
             edit=self.product_edit,
@@ -816,13 +822,17 @@ class TestSetProductOptionValuesForm(SetupPartialProductRange, FormTest):
         )
 
 
-class TestSetProductOptionValuesFormset(SetupPartialProductRange, FormTest):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.kwargs = [
-            {"product": _, "edit": cls.product_edit, "product_range": cls.product_range}
-            for _ in cls.product_range.products()
+class TestSetProductOptionValuesFormset(fixtures.EditingProductFixture, FormTest):
+    def setUp(self):
+        fixtures.EditingProductFixture.setUp(self)
+        super().setUp()
+        self.kwargs = [
+            {
+                "product": _,
+                "edit": self.product_edit,
+                "product_range": self.product_range,
+            }
+            for _ in self.product_range.products()
         ]
 
     def get_form_data(self):
@@ -973,7 +983,7 @@ class TestSetProductOptionValuesFormset(SetupPartialProductRange, FormTest):
         )
 
 
-class TestAddProductOptionValuesForm(SetupPartialProductRange, FormTest):
+class TestAddProductOptionValuesForm(fixtures.EditingProductFixture, FormTest):
     def test_form(self):
         data = {"values": [self.red_product_option_value.value]}
         form = forms.AddProductOptionValuesForm(
@@ -1065,7 +1075,7 @@ class TestAddProductOptionValuesForm(SetupPartialProductRange, FormTest):
         )
 
 
-class TestSetupVariationsForm(SetupPartialProductRange, FormTest):
+class TestSetupVariationsForm(fixtures.EditingProductFixture, FormTest):
     def test_form(self):
         form = forms.SetupVariationsForm()
         self.assertCountEqual(

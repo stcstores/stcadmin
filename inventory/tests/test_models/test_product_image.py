@@ -1,12 +1,11 @@
 from unittest.mock import patch
 
 from inventory import models
+from inventory.tests import fixtures
 from stcadmin.tests.stcadmin_test import STCAdminTest
 
-from .test_products import SetupSingleProductRange
 
-
-class TestProductImage(SetupSingleProductRange, STCAdminTest):
+class TestProductImage(fixtures.SingleProductRangeFixture, STCAdminTest):
     @patch("inventory.models.product_image.CCAPI")
     def test_update_CC_image_order_method(self, mock_CCAPI):
         image_IDs = ["380929", "284930", "402928", "2948729"]

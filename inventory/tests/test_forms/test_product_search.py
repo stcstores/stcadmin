@@ -1,69 +1,10 @@
 from inventory import forms, models
-from inventory.tests.test_models.test_products import SetupProducts
+from inventory.tests import fixtures
 
 from .form_test import FormTest
 
 
-class TestProductSearchForm(SetupProducts, FormTest):
-    RANGE_ID = "389839"
-
-    def setUp(self):
-        self.normal_range = models.ProductRange.objects.get(SKU=self.normal_range_SKU)
-        self.eol_range = models.ProductRange.objects.get(SKU=self.eol_range_SKU)
-        self.hidden_range = models.ProductRange.objects.get(SKU=self.hidden_range_SKU)
-
-        self.normal_product = models.Product.objects.get(SKU=self.normal_product_SKU)
-        self.eol_product = models.Product.objects.get(SKU=self.eol_product_SKU)
-        self.hidden_product = models.Product.objects.get(SKU=self.hidden_product_SKU)
-
-    @classmethod
-    def create_ranges(cls):
-        cls.normal_range_SKU = "RNG_939_ESA_383"
-        cls.eol_range_SKU = "RNG_5D9_L3U_8LD"
-        cls.hidden_range_SKU = "RNG_SEW_738_7GH"
-
-        cls.normal_range = cls.new_product_range()
-        cls.normal_range.range_ID = "4939943"
-        cls.normal_range.SKU = cls.normal_range_SKU
-        cls.normal_range.name = "Normal Range"
-        cls.normal_range.save()
-
-        cls.eol_range = cls.new_product_range()
-        cls.eol_range.range_ID = "9841315"
-        cls.eol_range.SKU = cls.eol_range_SKU
-        cls.eol_range.end_of_line = True
-        cls.eol_range.name = "EOL Range"
-        cls.eol_range.save()
-
-        cls.hidden_range = cls.new_product_range()
-        cls.hidden_range.range_ID = "5751616"
-        cls.hidden_range.SKU = cls.hidden_range_SKU
-        cls.hidden_range.hidden = True
-        cls.hidden_range.name = "Hidden Range"
-        cls.hidden_range.save()
-
-    @classmethod
-    def add_products(cls):
-        cls.normal_product_SKU = "JSL_48D_8TN"
-        cls.eol_product_SKU = "8JR_L4B_JTE"
-        cls.hidden_product_SKU = "BHN_DLC_GNB"
-
-        normal_product = cls.new_product(cls.normal_range)
-        normal_product.SKU = cls.normal_product_SKU
-        normal_product.product_ID = "3490392"
-        normal_product.save()
-
-        eol_product = cls.new_product(cls.eol_range)
-        eol_product.SKU = cls.eol_product_SKU
-        eol_product.product_ID = "9841165"
-        eol_product.supplier_SKU = "TESTSUPPLIERSKU"
-        eol_product.save()
-
-        hidden_product = cls.new_product(cls.hidden_range)
-        hidden_product.SKU = cls.hidden_product_SKU
-        hidden_product.product_ID = "986115616"
-        hidden_product.save()
-
+class TestProductSearchForm(fixtures.MultipleRangesFixture, FormTest):
     def test_form(self):
         data = {
             "search_term": "Range",
@@ -122,17 +63,17 @@ class TestProductSearchForm(SetupProducts, FormTest):
         self.product_search_form_test(expected, data)
 
     def test_department_filter(self):
-        self.eol_range.department = self.other_department
+        self.eol_range.department = models.Department.objects.get(id=2)
         self.eol_range.save()
-        data = {"department": self.other_department.id}
+        data = {"department": self.eol_range.department.id}
         expected = [self.eol_range]
         self.product_search_form_test(expected, data)
 
     def test_supplier_filter(self):
         product = self.eol_range.products()[0]
-        product.supplier = self.other_supplier
+        product.supplier = models.Supplier.objects.get(id=2)
         product.save()
-        data = {"supplier": self.other_supplier.id}
+        data = {"supplier": product.supplier.id}
         expected = [self.eol_range]
         self.product_search_form_test(expected, data)
 

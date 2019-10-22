@@ -1,6 +1,5 @@
 from unittest.mock import patch
 
-from inventory.tests.test_models.test_products import SetupVariationProductRange
 from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
@@ -18,14 +17,13 @@ class BaseUpdaterMethodTest(STCAdminTest):
         self.assertEqual(0, len(self.mock_CCAPI.mock_calls))
 
 
-class BaseUpdaterTest(SetupVariationProductRange):
+class BaseUpdaterTest:
     @classmethod
     def setUpTestData(cls):
         STCAdminTest.create_user()
-        super().setUpTestData()
-        cls.setup_products()
 
     def setUp(self):
+        super().setUp()
         self.updater = self.updater_class(self.updater_object(), self.user)
         self.setup_mock()
         self.update_updater()

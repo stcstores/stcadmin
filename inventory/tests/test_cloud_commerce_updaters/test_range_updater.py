@@ -2,6 +2,7 @@ from unittest.mock import Mock
 
 from inventory import models
 from inventory.cloud_commerce_updater import PartialRangeUpdater, RangeUpdater
+from inventory.tests import fixtures
 
 from .test_updater_base import BaseUpdaterMethodTest, BaseUpdaterTest
 
@@ -17,9 +18,13 @@ class BaseRangeUpdaterTest(BaseUpdaterTest):
         return self.product_range
 
 
-class RangeUpdaterTest(BaseRangeUpdaterTest):
+class RangeUpdaterTest(BaseRangeUpdaterTest, fixtures.VariationProductRangeFixture):
 
     updater_class = RangeUpdater
+
+    def setUp(self):
+        fixtures.VariationProductRangeFixture.setUp(self)
+        super().setUp()
 
     def test_update_DB(self):
         self.update_DB_test()
@@ -28,31 +33,29 @@ class RangeUpdaterTest(BaseRangeUpdaterTest):
         self.update_CC_test()
 
 
-class PartialRangeUpdaterTest(BaseRangeUpdaterTest):
+class PartialRangeUpdaterTest(BaseRangeUpdaterTest, fixtures.EditingProductFixture):
     updater_class = PartialRangeUpdater
 
     def setUp(self):
-        self.product_edit = models.ProductEdit.objects.get(id=self.product_edit.id)
-        self.original_range = self.product_edit.product_range
-        self.product_range = self.product_edit.partial_product_range
-        self.product = self.product_range.products()[0]
+        fixtures.EditingProductFixture.setUp(self)
         super().setUp()
 
-    @classmethod
-    def setup_products(cls):
-        cls.product_edit = models.ProductEdit.create_product_edit(
-            cls.user, cls.product_range
-        )
-
     def test_update_DB(self):
+        print(self.product_range)
         self.update_DB_test()
 
     def test_update_CC(self):
         self.no_CC_update_test()
 
 
-class NoChangeRangeUpdaterTest(BaseRangeUpdaterTest):
+class NoChangeRangeUpdaterTest(
+    BaseRangeUpdaterTest, fixtures.VariationProductRangeFixture
+):
     updater_class = RangeUpdater
+
+    def setUp(self):
+        fixtures.VariationProductRangeFixture.setUp(self)
+        super().setUp()
 
     def update_updater(self):
         self.updater.update_DB = False

@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 from django.shortcuts import reverse
 
 from inventory import models
-from inventory.tests.test_models.test_products import SetupSingleProductRange
+from inventory.tests import fixtures
 
 from .inventory_view_test import InventoryViewTest
 
@@ -35,7 +35,7 @@ class TestGetNewRangeSKUView(InventoryViewTest):
         self.assertEqual(response.content, sku)
 
 
-class TestUpdateStockLevelView(SetupSingleProductRange, InventoryViewTest):
+class TestUpdateStockLevelView(fixtures.SingleProductRangeFixture, InventoryViewTest):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -64,7 +64,7 @@ class TestUpdateStockLevelView(SetupSingleProductRange, InventoryViewTest):
         )
 
 
-class TestGetStockLevelView(SetupSingleProductRange, InventoryViewTest):
+class TestGetStockLevelView(fixtures.SingleProductRangeFixture, InventoryViewTest):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -84,16 +84,15 @@ class TestGetStockLevelView(SetupSingleProductRange, InventoryViewTest):
         mock_CCAPI.get_product.assert_called_once_with(self.product.product_ID)
 
 
-class BaseImageViewTest(SetupSingleProductRange, InventoryViewTest):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        InventoryViewTest.setUpTestData()
+class BaseImageViewTest(fixtures.SingleProductRangeFixture, InventoryViewTest):
+    def setUp(self):
+        fixtures.SingleProductRangeFixture.setUp(self)
+        InventoryViewTest.setUp(self)
         models.ProductImage.objects.bulk_create(
             [
                 models.ProductImage(
                     image_ID=str(2849393 + i),
-                    product=cls.product,
+                    product=self.product,
                     filename=f"img_{i}.jpg",
                     URL=f"http://someimages.com/img_{i}.jpg",
                     position=i - 1,
@@ -101,10 +100,6 @@ class BaseImageViewTest(SetupSingleProductRange, InventoryViewTest):
                 for i in range(1, 6)
             ]
         )
-
-    def setUp(self):
-        SetupSingleProductRange.setUp(self)
-        InventoryViewTest.setUp(self)
 
 
 class TestSetImageOrderView(BaseImageViewTest):
