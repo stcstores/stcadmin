@@ -862,7 +862,7 @@ class TestSetProductOptionValuesFormset(fixtures.EditingProductFixture, FormTest
             self.get_form_data(), form_kwargs=self.kwargs
         )
         self.assert_form_is_valid(formset)
-        self.assertEqual(
+        self.assertCountEqual(
             [
                 {
                     "product_ID": str(self.variations[0].id),
