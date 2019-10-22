@@ -186,6 +186,7 @@ LOGGING = {
             "maxBytes": 1_048_576,
             "backupCount": 2,
             "formatter": "default_formatter",
+            "delay": True,
         },
         "error_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
