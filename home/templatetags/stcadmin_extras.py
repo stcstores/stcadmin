@@ -19,6 +19,13 @@ def tooltip(title="", text=""):
 
 
 @register.simple_tag
+def user_groups(user):
+    """Return a list of names of groups to which user belongs."""
+    groups = user.groups.values_list("name", flat=True)
+    return groups
+
+
+@register.simple_tag
 def tooltip_help_text(field):
     """Return rendered tooltip for a form field."""
     if field is not None and len(field.help_text) > 0:
@@ -39,7 +46,7 @@ def feedback_badges(user):
 
     try:
         user = models.CloudCommerceUser.objects.filter(stcadmin_user=user)[0]
-    except Exception as e:
+    except Exception:
         return ""
     feedback_types = models.Feedback.objects.all().order_by("-score")
     html = ["<table>"]

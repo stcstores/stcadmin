@@ -1,59 +1,69 @@
 {% extends "home/base.html" %}
 {% load static %}
+{% load stcadmin_extras %}
 {% block page_title %}STC Admin{% endblock %}
 {% block content %}
 <style>
-.pack_count, .feedback {
+  .pack_count,
+  .feedback {
     font-size: 0.5em;
-}
+  }
 </style>
-    <h1>STC Admin</h1>
-    <div class="site_index">
-        <p>From here you can access:</p>
-        <ul class='app'>
-            <li><a href="{% url 'reference:index' %}">Reference</a></li>
-            <p>Access reference material.</p>
-            {% for group in request.user.groups.all %}{% if group.name == 'inventory' %}
-                <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
-                <p>Tools for working with Cloud Commerce Inventory</p>
-                <ul class="section">
-                    <li><a href="{% url 'inventory:product_search' %}">Product Search</a></li>
-                    <p>Find products in the Inventory</p>
-                    <li><a href="{% url 'product_editor:basic_info' %}">New Product</a></li>
-                    <p>Create a new <a href="{% url 'product_editor:basic_info' %}"> product</a>.</p>
-                    <li><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>
-                    <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
-                </ul>
-            {% endif %}{% endfor %}
-            {% for group in request.user.groups.all %}{% if group.name == 'labelmaker' %}
-                <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
-                <p>Make printable product labels.</p>
-            {% endif %}{% endfor %}
-            {% for group in request.user.groups.all %}{% if group.name == 'manifests' %}
-                <li><a href="{% url 'spring_manifest:manifest_list' %}">Spring</a></li>
-                <p>Send Spring manifest</p>
-            {% endif %}{% endfor %}
-            {% for group in request.user.groups.all %}{% if group.name == 'admin' %}
-                <li><a href="/admin/">Admin</a></li>
-                <p>Tools for administering STC Admin.</p>
-                <ul class="section">
-                    <li>View and edit database tables.</li>
-                    <li>Manage users and groups.</li>
-                </ul>
-            {% endif %}{% endfor %}
-        </ul>
-    </div>
-    <div class="homepage_feedback">
-        <table class="feedback" id="feedback">
+{% user_groups user as groups %}
+<h1>STC Admin</h1>
+<div class="site_index">
+  <p>From here you can access:</p>
+  <ul class='app'>
+    <li><a href="{% url 'reference:index' %}">Reference</a></li>
+    <p>Access reference material.</p>
 
-        </table>
-    </div>
+    {% if "inventory" in groups %}
+    <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
+    <p>Tools for working with Cloud Commerce Inventory</p>
+    <ul class="section">
+      <li><a href="{% url 'inventory:product_search' %}">Product Search</a></li>
+      <p>Find products in the Inventory</p>
+      <li><a href="{% url 'product_editor:basic_info' %}">New Product</a></li>
+      <p>Create a new <a href="{% url 'product_editor:basic_info' %}"> product</a>.</p>
+      <li><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>
+      <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
+    </ul>
+    {% endif %}
+
+    {% if group.name == 'labelmaker' %}
+    <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
+    <p>Make printable product labels.</p>
+    {% endif %}
+
+    {% if 'manifests' in groups %}
+    <li><a href="{% url 'spring_manifest:manifest_list' %}">Spring</a></li>
+    <p>Send Spring manifest</p>
+    {% endif %}
+
+    {% if 'admin' in groups %}
+    <li><a href="/admin/">Admin</a></li>
+    <p>Tools for administering STC Admin.</p>
+    <ul class="section">
+      <li>View and edit database tables.</li>
+      <li>Manage users and groups.</li>
+    </ul>
+    {% endif %}
+
+  </ul>
+</div>
+<div class="homepage_feedback">
+  <table class="feedback" id="feedback">
+
+  </table>
+</div>
 {% endblock %}
 
 {% block script %}{{ block.super }}
 <script>
-    {% include 'print_audit/get_feedback.html' %}
+  {% include 'print_audit/get_feedback.html' %}
 
-    $(document).ready(function() {get_feedback();});
+  $(document).ready(function() {
+    get_feedback();
+  });
 </script>
 {% endblock %}
