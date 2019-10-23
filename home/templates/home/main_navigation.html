@@ -1,20 +1,40 @@
+{% load stcadmin_extras %}
 {% load reference_extras %}
 
 {% block main_navigation %}
 <div class="main_navigation">
-    <ul>
-        <li><a href="{% url 'home:index' %}">Home</a></li>
-        <li><a href="{% url 'reference:index' %}">Reference</a></li>
-        {% for group in request.user.groups.all %}{% if group.name == 'inventory' %}<li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>{% endif %}{% endfor %}
-        {% for group in request.user.groups.all %}{% if group.name == 'labelmaker' %}<li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>{% endif %}{% endfor %}
-        {% for group in request.user.groups.all %}{% if group.name == 'print_audit' %}<li><a href="{% url 'print_audit:index' %}">Print Audit</a></li>{% endif %}{% endfor %}
-        {% for group in request.user.groups.all %}{% if group.name == 'manifests' %}<li><a href="{% url 'spring_manifest:manifest_list' %}">Manifests</a></li>{% endif %}{% endfor %}
-        {% for group in request.user.groups.all %}{% if group.name == 'stock_check' %}<li><a href="{% url 'stock_check:warehouses' %}">Stock Check</a></li>{% endif %}{% endfor %}
-        {% for group in request.user.groups.all %}{% if group.name == 'profit_loss' %}<li><a href="{% url 'profit_loss:orders' %}">Profit Loss</a></li>{% endif %}{% endfor %}
-        {% for group in request.user.groups.all %}{% if group.name == 'epos' %}<li><a href="{% url 'epos:index' %}">EPOS</a></li>{% endif %}{% endfor %}
-        {% for group in request.user.groups.all %}{% if group.name == 'validation' %}<li><a href="{% url 'validation:home' %}">Validation</a></li>{% endif %}{% endfor %}
-        <li><a href="{% help_url %}">Help</a></li>
-        {% for group in request.user.groups.all %}{% if group.name == 'admin' %}<li><a href="/admin/">Admin</a></li>{% endif %}{% endfor %}
-    </ul>
+  <ul>
+    <li><a href="{% url 'home:index' %}">Home</a></li>
+    <li><a href="{% url 'reference:index' %}">Reference</a></li>
+    {% user_groups user as groups %}
+    {% if "inventory" in groups %}
+    <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
+    {% endif %}
+    {% if group.name == 'labelmaker' %}
+    <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
+    {% endif %}
+    {% if 'print_audit' in groups %}
+    <li><a href="{% url 'print_audit:index' %}">Print Audit</a></li>
+    {% endif %}
+    {% if 'manifests' in groups %}
+    <li><a href="{% url 'spring_manifest:manifest_list' %}">Manifests</a></li>
+    {% endif %}
+    {% if 'stock_check' in groups %}
+    <li><a href="{% url 'stock_check:warehouses' %}">Stock Check</a></li>
+    {% endif %}
+    {% if 'profit_loss' in groups %}
+    <li><a href="{% url 'profit_loss:orders' %}">Profit Loss</a></li>
+    {% endif %}
+    {% if 'epos' in groups %}
+    <li><a href="{% url 'epos:index' %}">EPOS</a></li>
+    {% endif %}
+    {% if 'validation' in groups %}
+    <li><a href="{% url 'validation:home' %}">Validation</a></li>
+    {% endif %}
+    <li><a href="{% help_url %}">Help</a></li>
+    {% if 'admin' in groups %}
+    <li><a href="/admin/">Admin</a></li>
+    {% endif %}
+  </ul>
 </div>
 {% endblock %}
