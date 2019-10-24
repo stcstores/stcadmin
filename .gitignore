@@ -105,3 +105,6 @@ ENV/
 .ropeproject
 
 !deploy_tools/local_settings.py
+
+# VSCode
+.vscode/
