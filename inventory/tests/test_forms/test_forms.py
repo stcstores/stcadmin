@@ -128,7 +128,9 @@ class TestDescriptionForm(FormTest):
         self.assert_form_invalid(form)
 
 
-class TestCreateBayForm(FormTest):
+class TestCreateBayForm(FormTest, fixtures.ProductRequirementsFixture):
+    fixtures = fixtures.ProductRequirementsFixture.fixtures
+
     DEPARTMENT = "department"
     LOCATION = "location"
     WAREHOUSE = "warehouse"
@@ -137,18 +139,9 @@ class TestCreateBayForm(FormTest):
 
     name_value = "New Bay"
 
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.department = models.Department.objects.create(
-            name="Allsorts", product_option_value_ID="8487329"
-        )
-        cls.warehouse = models.Warehouse.objects.create(
-            name="Allsorts", warehouse_ID="28394", abriviation="AS"
-        )
-        cls.second_warehouse = models.Warehouse.objects.create(
-            name="Beachware", warehouse_ID="28992", abriviation="BW"
-        )
+    def setUp(self):
+        fixtures.ProductRequirementsFixture.setUp(self)
+        super().setUp()
 
     def test_primary_bay_valid(self):
         form_data = {
@@ -159,16 +152,16 @@ class TestCreateBayForm(FormTest):
         form = forms.CreateBayForm(form_data)
         self.assert_form_is_valid(form)
         self.assertEqual(form.cleaned_data[self.DEPARTMENT], self.department)
-        self.assertEqual(form.cleaned_data[self.WAREHOUSE], self.warehouse)
+        self.assertEqual(form.cleaned_data[self.WAREHOUSE], self.warehouse_1)
         self.assertEqual(form.cleaned_data[self.NAME], self.name_value)
         self.assertEqual(form.cleaned_data[self.BAY_TYPE], forms.CreateBayForm.PRIMARY)
         self.assertEqual(form.new_bay.name, self.name_value)
-        self.assertEqual(form.new_bay.warehouse, self.warehouse)
+        self.assertEqual(form.new_bay.warehouse, self.warehouse_1)
         self.assertIsNone(form.new_bay.id)
 
     def test_backup_bay_valid(self):
         form_data = {
-            self.LOCATION: self.second_warehouse.id,
+            self.LOCATION: self.warehouse_1.id,
             self.DEPARTMENT: self.department.id,
             self.NAME: self.name_value,
             self.BAY_TYPE: forms.CreateBayForm.BACKUP,
@@ -176,11 +169,15 @@ class TestCreateBayForm(FormTest):
         form = forms.CreateBayForm(form_data)
         self.assert_form_is_valid(form)
         self.assertEqual(form.cleaned_data[self.DEPARTMENT], self.department)
-        self.assertEqual(form.cleaned_data[self.WAREHOUSE], self.warehouse)
+        self.assertEqual(form.cleaned_data[self.WAREHOUSE], self.warehouse_1)
         self.assertEqual(form.cleaned_data[self.NAME], self.name_value)
         self.assertEqual(form.cleaned_data[self.BAY_TYPE], forms.CreateBayForm.BACKUP)
-        self.assertEqual(form.new_bay.name, "AS Backup Beachware New Bay")
-        self.assertEqual(form.new_bay.warehouse, self.warehouse)
+        expected_name = (
+            f"{self.warehouse_1.abriviation} Backup "
+            f"{self.department.name} {self.name_value}"
+        )
+        self.assertEqual(form.new_bay.name, expected_name)
+        self.assertEqual(form.new_bay.warehouse, self.warehouse_1)
         self.assertIsNone(form.new_bay.id)
 
     def test_raises_for_backup_without_location(self):
@@ -194,7 +191,8 @@ class TestCreateBayForm(FormTest):
 
     @patch("inventory.models.locations.CCAPI")
     def test_save_method(self, mock_CCAPI):
-        mock_CCAPI.get_bay_id.return_value = "979461"
+        new_bay_ID = "979461"
+        mock_CCAPI.get_bay_id.return_value = new_bay_ID
         form_data = {
             self.DEPARTMENT: self.department.id,
             self.NAME: self.name_value,
@@ -205,10 +203,10 @@ class TestCreateBayForm(FormTest):
         self.assertIsNone(form.new_bay.id)
         form.save()
         mock_CCAPI.get_bay_id.assert_called_once_with(
-            self.name_value, self.warehouse.name, create=True
+            self.name_value, self.warehouse_1.name, create=True
         )
         self.assertIsNotNone(form.new_bay.id)
-        self.assertEqual(form.new_bay.bay_ID, "979461")
+        self.assertEqual(form.new_bay.bay_ID, new_bay_ID)
 
 
 class TestProductForm(fixtures.VariationProductRangeFixture, FormTest):
@@ -491,13 +489,7 @@ class TestProductForm(fixtures.VariationProductRangeFixture, FormTest):
         self.assertEqual(initial[ProductEditorBase.GENDER], self.product.gender)
 
     def test_error_is_added_for_product_with_mixed_warehouses(self):
-        warehouse_2 = models.Warehouse.objects.create(
-            name="Warehouse 2", abriviation="WH2", warehouse_ID="849382"
-        )
-        bay_2 = models.Bay.objects.create(
-            name="Bay 2", warehouse=warehouse_2, bay_ID="3937293"
-        )
-        self.product.bays.set((self.bays[0], bay_2))
+        self.product.bays.set((self.warehouse_1_bay_1, self.warehouse_2_bay_1))
         with self.assertRaises(ValueError):
             self.get_form(product=self.product, user=self.user)
 

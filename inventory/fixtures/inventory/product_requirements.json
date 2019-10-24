@@ -86,9 +86,9 @@
   "pk": 1,
   "fields": {
     "product_option_value_ID": "8394",
-    "name": "Test Department",
+    "name": "Home",
     "inactive": false,
-    "abriviation": null
+    "abriviation": "HH"
   }
 }, {
   "model": "inventory.department",
@@ -97,7 +97,7 @@
     "product_option_value_ID": "8384",
     "name": "Sports",
     "inactive": false,
-    "abriviation": null
+    "abriviation": "SS"
   }
 }, {
   "model": "inventory.packagetype",

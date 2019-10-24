@@ -1,10 +1,31 @@
 from inventory import models
 
 
-class ProductRequirementsFixture:
-    fixtures = ("inventory/product_requirements",)
+class LocationsFixture:
+    fixtures = ("inventory/locations",)
 
     def setUp(self):
+        self.warehouse_1 = models.Warehouse.objects.get(id=1)
+        self.warehouse_2 = models.Warehouse.objects.get(id=2)
+        self.warehouse_1_defualt_bay = models.Bay.objects.get(id=1)
+        self.warehouse_2_default_bay = models.Bay.objects.get(id=2)
+        self.warehouse_1_bay_1 = models.Bay.objects.get(id=3)
+        self.warehouse_1_bay_2 = models.Bay.objects.get(id=4)
+        self.warehouse_1_bay_3 = models.Bay.objects.get(id=5)
+        self.warehouse_1_bay_4 = models.Bay.objects.get(id=6)
+        self.warehouse_1_bay_5 = models.Bay.objects.get(id=7)
+        self.warehouse_2_bay_1 = models.Bay.objects.get(id=8)
+        self.warehouse_2_bay_2 = models.Bay.objects.get(id=9)
+        self.warehouse_2_bay_3 = models.Bay.objects.get(id=10)
+        self.warehouse_2_bay_4 = models.Bay.objects.get(id=11)
+        self.warehouse_2_bay_5 = models.Bay.objects.get(id=12)
+
+
+class ProductRequirementsFixture(LocationsFixture):
+    fixtures = LocationsFixture.fixtures + ("inventory/product_requirements",)
+
+    def setUp(self):
+        LocationsFixture.setUp(self)
         self.department = models.Department.objects.get(id=1)
         self.supplier = models.Supplier.objects.get(id=1)
         self.brand = models.Brand.objects.get(id=1)
@@ -29,7 +50,7 @@ class SingleProductRangeFixture(ProductRequirementsFixture):
     fixtures = ProductRequirementsFixture.fixtures + ("inventory/single_product_range",)
 
     def setUp(self):
-        super().setUp()
+        ProductRequirementsFixture.setUp(self)
         self.product_range = models.ProductRange.objects.get(pk=1)
         self.product = models.Product.objects.get(id=1)
 
@@ -63,7 +84,7 @@ class MultipleRangesFixture(ProductRequirementsFixture):
     fixtures = ProductRequirementsFixture.fixtures + ("inventory/product_search",)
 
     def setUp(self):
-        super().setUp()
+        ProductRequirementsFixture.setUp(self)
         self.normal_range = models.ProductRange.objects.get(id=1)
         self.eol_range = models.ProductRange.objects.get(id=2)
         self.hidden_range = models.ProductRange.objects.get(id=3)
@@ -74,9 +95,9 @@ class MultipleRangesFixture(ProductRequirementsFixture):
 
 
 class UnsavedNewProductRangeFixture(ProductRequirementsFixture):
-    fixtures = ProductRequirementsFixture.fixtures + ("inventory/save_edit",)
+    fixtures = ProductRequirementsFixture.fixtures + ("inventory/new_product",)
 
     def setUp(self):
-        super().setUp()
+        ProductRequirementsFixture.setUp(self)
         self.product_edit = models.ProductEdit.objects.get(id=1)
         self.product_range = models.PartialProductRange.objects.get(id=1)

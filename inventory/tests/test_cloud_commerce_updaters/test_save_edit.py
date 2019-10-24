@@ -301,14 +301,7 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
         self.assertEqual(1, len(self.mock_product_updater.mock_calls))
 
     def test_set_bays(self):
-        warehouse = models.Warehouse.objects.create(
-            name="Warehouse", abriviation="WH", warehouse_ID="38493"
-        )
-        bays = [
-            models.Bay(name="Bay 1", bay_ID="234598", warehouse=warehouse),
-            models.Bay(name="Bay 2", bay_ID="284392", warehouse=warehouse),
-        ]
-        models.Bay.objects.bulk_create(bays)
+        bays = [self.warehouse_1_bay_1, self.warehouse_1_bay_2]
         self.product.bays.set(bays)
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))

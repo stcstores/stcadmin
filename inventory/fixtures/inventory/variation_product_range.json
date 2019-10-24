@@ -6,7 +6,7 @@
     "SKU": "RNG_A8D_D83_NFU",
     "name": "Test Range",
     "department": 1,
-    "description": "A test product\nLine Two",
+    "description": "A test product<br>Line Two",
     "amazon_search_terms": "Ceramic Mug|Dad's Army",
     "amazon_bullet_points": "Dad's Army - Service Issue Mug.|Ceramic Boxed Mug.|Height: 11 cm x Width: 8 cm approx.|Officially Licensed Product.",
     "end_of_line": false,

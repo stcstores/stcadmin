@@ -525,35 +525,22 @@ class TestPriceField(FieldTest):
         self.invalid_check(input="5.689")
 
 
-class BaseWarehouseAndBayFieldTest:
-    """Setup locations for testing bay and warehouse fields."""
+class BaseWarehouseAndBayFieldTest(fixtures.ProductRequirementsFixture):
 
     WAREHOUSE_KEY = ProductEditorBase.WAREHOUSE
     BAY_KEY = ProductEditorBase.BAYS
 
-    def setUp(self):
-        """Create locations for tests."""
-        self.warehouse = models.Warehouse(
-            name="Warehouse 1", warehouse_ID="52", abriviation="WH"
-        )
-        self.warehouse.save()
-        self.default_bay = models.Bay(
-            name="Default Bay", warehouse=self.warehouse, bay_ID="31", is_default=True
-        )
-        self.default_bay.save()
-        self.bays = [
-            models.Bay(name=f"Bay_{i}", warehouse=self.warehouse, bay_ID=str(32 + i))
-            for i in range(1, 11)
-        ]
-        models.Bay.objects.bulk_create(self.bays)
-
 
 class TestWarehouse(BaseWarehouseAndBayFieldTest, FieldTest):
+    def setUp(self):
+        fixtures.ProductRequirementsFixture.setUp(self)
+        super().setUp()
+
     def get_field(self):
         return fields.Warehouse()
 
     def test_field(self):
-        self.valid_check(input=self.warehouse.id, expected=self.warehouse)
+        self.valid_check(input=self.warehouse_1.id, expected=self.warehouse_1)
         self.invalid_check(input=67)
 
     def test_empty(self):
@@ -561,38 +548,50 @@ class TestWarehouse(BaseWarehouseAndBayFieldTest, FieldTest):
 
 
 class BaseLocationFieldTest(BaseWarehouseAndBayFieldTest):
-    """Tests for LocationField both with and without the warehouse kwarg."""
+    def setUp(self):
+        fixtures.ProductRequirementsFixture.setUp(self)
+        super().setUp()
 
     def test_single_primary_bay(self):
-        self.valid_check(input=[self.bays[0].id], expected=[self.bays[0].id])
+        self.valid_check(
+            input=[self.warehouse_1_bay_1.id], expected=[self.warehouse_1_bay_1.id]
+        )
 
     def test_multiple_primary_bays(self):
         self.valid_check(
-            input=[self.bays[0].id, self.bays[1].id],
-            expected=[self.bays[0].id, self.bays[1].id],
+            input=[self.warehouse_1_bay_1.id, self.warehouse_1_bay_2.id],
+            expected=[self.warehouse_1_bay_1.id, self.warehouse_1_bay_2.id],
         )
 
     def test_default_bay_is_removed_when_other_primary_bays_are_passed(self):
         self.valid_check(
-            input=[self.default_bay.id, self.bays[1].id], expected=[self.bays[1].id]
+            input=[self.warehouse_1_defualt_bay.id, self.warehouse_1_bay_2.id],
+            expected=[self.warehouse_1_bay_2.id],
         )
 
     def test_default_bay_is_not_removed_when_no_other_primary_bays_are_passed(self):
-        self.valid_check(input=[self.default_bay.id], expected=[self.default_bay.id])
+        self.valid_check(
+            input=[self.warehouse_1_defualt_bay.id],
+            expected=[self.warehouse_1_defualt_bay.id],
+        )
 
 
 class TestLocationFieldWithLocation(BaseLocationFieldTest, FieldTest):
-    """Tests for LocationField with the warehouse parameter."""
+    def setUp(self):
+        fixtures.ProductRequirementsFixture.setUp(self)
+        super().setUp()
 
     def get_field(self):
-        return fields.Location(department=self.warehouse)
+        return fields.Location(department=self.warehouse_1)
 
     def test_default_bay_is_added_for_empty_input(self):
-        self.valid_check(input=[], expected=[self.default_bay.id])
+        self.valid_check(input=[], expected=[self.warehouse_1_defualt_bay.id])
 
 
 class TestLocationFieldWithoutLocation(BaseLocationFieldTest, FieldTest):
-    """Tests for LocationField without the warehouse parameter."""
+    def setUp(self):
+        fixtures.ProductRequirementsFixture.setUp(self)
+        super().setUp()
 
     def get_field(self):
         return fields.Location()
@@ -611,10 +610,13 @@ class TestWarhouseBayField(BaseWarehouseAndBayFieldTest, FieldTest):
     def test_warehouse_bay_field(self):
         self.valid_check(
             input={
-                self.WAREHOUSE_KEY: self.warehouse.id,
-                self.BAY_KEY: [self.bays[0].id],
+                self.WAREHOUSE_KEY: self.warehouse_1.id,
+                self.BAY_KEY: [self.warehouse_1_bay_1.id],
             },
-            expected={self.WAREHOUSE_KEY: self.warehouse, self.BAY_KEY: [self.bays[0]]},
+            expected={
+                self.WAREHOUSE_KEY: self.warehouse_1,
+                self.BAY_KEY: [self.warehouse_1_bay_1],
+            },
         )
 
 
