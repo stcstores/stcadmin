@@ -31,6 +31,10 @@ django-debug-toolbar = "*"
 "Fabric3" = "<2.0"
 pytest-django = "*"
 pytest-cov = "*"
+flake8 = "*"
+flake8-docstrings = "*"
+black = {git = "https://github.com/psf/black.git",ref = "master",editable = true}
+
 
 [requires]
 python_version = "3.8"
