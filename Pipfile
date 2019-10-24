@@ -29,6 +29,9 @@ django-debug-toolbar = "*"
 
 [dev-packages]
 "Fabric3" = "<2.0"
+flake8 = "*"
+flake8-docstrings = "*"
+black = {git = "https://github.com/psf/black.git",ref = "master",editable = true}
 
 [requires]
 python_version = "3.8"
