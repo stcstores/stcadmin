@@ -106,7 +106,7 @@ class EditProduct(InventoryUserMixin, TemplateView):
         self.product_range = self.edit.partial_product_range
         if self.product_range.has_missing_product_option_values():
             messages.add_message(
-                self.request, messages.ERROR, f"Variations are missing product options."
+                self.request, messages.ERROR, "Variations are missing product options."
             )
             return redirect(
                 reverse_lazy(
