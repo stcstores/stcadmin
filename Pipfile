@@ -34,6 +34,7 @@ pytest-cov = "*"
 flake8 = "*"
 flake8-docstrings = "*"
 black = {git = "https://github.com/psf/black.git",ref = "master",editable = true}
+pytest = "*"
 
 
 [requires]
