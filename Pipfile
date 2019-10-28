@@ -32,6 +32,7 @@ django-debug-toolbar = "*"
 flake8 = "*"
 flake8-docstrings = "*"
 black = {git = "https://github.com/psf/black.git",ref = "master",editable = true}
+pytest = "*"
 
 [requires]
 python_version = "3.8"
