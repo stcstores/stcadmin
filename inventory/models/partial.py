@@ -201,6 +201,16 @@ class PartialProductRange(BaseProductRangeModel, models.Model):
                 keys.append(key)
         return {k: v for k, v in data[0].items() if k not in ignore_keys and k in keys}
 
+    def range_bays_match(self):
+        """Return True if all products in the range have matching bays."""
+        bays = [
+            set(product.bays.values_list("id", flat=True))
+            for product in self.products()
+        ]
+        if all((_ == bays[0] for _ in bays)):
+            return bays[0]
+        return None
+
     def pre_existing_options(self):
         """Return the product options that exist on the original product range."""
         link_IDs = PartialProductRangeSelectedOption.objects.filter(
@@ -375,7 +385,10 @@ class ProductEdit(models.Model):
         product_data["SKU"] = PartialProduct.get_new_SKU()
         product_data["date_created"] = timezone.now()
         product = PartialProduct(**product_data)
+        bays = self.partial_product_range.range_bays_match()
         product.save()
+        if bays:
+            product.bays.set(self.partial_product_range.products()[0].bays.all())
         for option in options:
             PartialProductOptionValueLink(
                 product=product, product_option_value=option

@@ -41,6 +41,6 @@
     "last_modified": "2019-10-17T13:28:45.676Z",
     "gender": 1,
     "range_order": 0,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }]

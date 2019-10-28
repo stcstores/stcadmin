@@ -289,6 +289,18 @@ class TestPartialProductRange(fixtures.EditingProductFixture, STCAdminTest):
             [self.colour_product_option, self.size_product_option],
         )
 
+    def test_range_bays_match_method(self):
+        self.assertEqual(
+            list(self.product_range.range_bays_match()),
+            [
+                self.warehouse_1_bay_1.id,
+                self.warehouse_1_bay_2.id,
+                self.warehouse_1_bay_3.id,
+            ],
+        )
+        self.product.bays.set([self.warehouse_2_bay_1])
+        self.assertIsNone(self.product_range.range_bays_match())
+
 
 class TestPartialProduct(fixtures.EditingProductFixture, STCAdminTest):
     def test_generate_SKU_method(self):

@@ -41,7 +41,7 @@
     "last_modified": "2019-10-17T13:35:26.859Z",
     "gender": 1,
     "range_order": 0,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.product",
@@ -72,7 +72,7 @@
     "last_modified": "2019-10-17T13:35:26.881Z",
     "gender": 1,
     "range_order": 0,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.product",
@@ -103,7 +103,7 @@
     "last_modified": "2019-10-17T13:35:26.895Z",
     "gender": 1,
     "range_order": 0,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.product",
@@ -134,7 +134,7 @@
     "last_modified": "2019-10-17T13:35:26.909Z",
     "gender": 1,
     "range_order": 0,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.product",
@@ -165,7 +165,7 @@
     "last_modified": "2019-10-17T13:35:26.922Z",
     "gender": 1,
     "range_order": 0,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.product",
@@ -196,7 +196,7 @@
     "last_modified": "2019-10-17T13:35:26.935Z",
     "gender": 1,
     "range_order": 0,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.product",
@@ -227,7 +227,7 @@
     "last_modified": "2019-10-17T13:35:26.949Z",
     "gender": 1,
     "range_order": 0,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.product",
@@ -258,7 +258,7 @@
     "last_modified": "2019-10-17T13:35:26.961Z",
     "gender": 1,
     "range_order": 0,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.product",
@@ -289,7 +289,7 @@
     "last_modified": "2019-10-17T13:35:26.973Z",
     "gender": 1,
     "range_order": 0,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.productrangeselectedoption",

@@ -61,7 +61,7 @@
     "status": "creating",
     "date_created": "2019-10-17",
     "pre_existing": true,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.partialproduct",
@@ -94,7 +94,7 @@
     "status": "creating",
     "date_created": "2019-10-17",
     "pre_existing": true,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.partialproduct",
@@ -127,7 +127,7 @@
     "status": "creating",
     "date_created": "2019-10-17",
     "pre_existing": true,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.partialproduct",
@@ -160,7 +160,7 @@
     "status": "creating",
     "date_created": "2019-10-17",
     "pre_existing": true,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.partialproduct",
@@ -193,7 +193,7 @@
     "status": "creating",
     "date_created": "2019-10-17",
     "pre_existing": true,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.partialproduct",
@@ -226,7 +226,7 @@
     "status": "creating",
     "date_created": "2019-10-17",
     "pre_existing": true,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.partialproduct",
@@ -259,7 +259,7 @@
     "status": "creating",
     "date_created": "2019-10-17",
     "pre_existing": true,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.partialproduct",
@@ -292,7 +292,7 @@
     "status": "creating",
     "date_created": "2019-10-17",
     "pre_existing": true,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.partialproduct",
@@ -325,7 +325,7 @@
     "status": "creating",
     "date_created": "2019-10-17",
     "pre_existing": true,
-    "bays": []
+    "bays": [3, 4, 5]
   }
 }, {
   "model": "inventory.partialproductrangeselectedoption",
