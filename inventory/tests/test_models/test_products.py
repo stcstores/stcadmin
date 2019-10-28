@@ -38,8 +38,9 @@ class TestSingleProduct(fixtures.SingleProductRangeFixture, STCAdminTest):
         self.assertEqual(self.product.full_name, "Test Range - TV009")
 
     def test_full_name_property_without_supplier_SKU(self):
-        self.product.supplier_SKU = None
-        self.assertEqual(self.product.full_name, "Test Range")
+        product = self.product
+        product.supplier_SKU = None
+        self.assertEqual(product.full_name, "Test Range")
 
     def test_range_SKU_property(self):
         self.assertEqual(self.product.range_SKU, self.product_range.SKU)
@@ -63,8 +64,9 @@ class TestSingleProduct(fixtures.SingleProductRangeFixture, STCAdminTest):
         self.assertCountEqual(self.product.name_extensions(), ["TV009"])
 
     def test_name_extensions_method_without_supplier_SKU(self):
-        self.product.supplier_SKU = None
-        self.assertCountEqual(self.product.name_extensions(), [])
+        product = self.product
+        product.supplier_SKU = None
+        self.assertCountEqual(product.name_extensions(), [])
 
     def test_product_option_value_method(self):
         self.assertIsNone(self.product.product_option_value("Size"))
@@ -224,8 +226,9 @@ class TestVariationProduct(fixtures.VariationProductRangeFixture, STCAdminTest):
         self.assertEqual(self.product.full_name, "Test Range - Small - Red - TV009")
 
     def test_full_name_property_without_supplier_SKU(self):
-        self.product.supplier_SKU = None
-        self.assertEqual(self.product.full_name, "Test Range - Small - Red")
+        product = self.product
+        product.supplier_SKU = None
+        self.assertEqual(product.full_name, "Test Range - Small - Red")
 
     def test_range_SKU_property(self):
         self.assertEqual(self.product.range_SKU, self.product_range.SKU)
@@ -268,8 +271,9 @@ class TestVariationProduct(fixtures.VariationProductRangeFixture, STCAdminTest):
         self.assertCountEqual(self.product.name_extensions(), ["Small", "Red", "TV009"])
 
     def test_name_extensions_method_without_supplier_SKU(self):
-        self.product.supplier_SKU = None
-        self.assertCountEqual(self.product.name_extensions(), ["Small", "Red"])
+        product = self.product
+        product.supplier_SKU = None
+        self.assertCountEqual(product.name_extensions(), ["Small", "Red"])
 
     def test_product_option_value_method(self):
         self.assertEqual(self.product.product_option_value("Size"), "Small")

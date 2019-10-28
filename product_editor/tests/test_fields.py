@@ -335,10 +335,6 @@ class TestNotRequiredDepartmentField(TestDepartmentField):
 class TestPartialProductOptionValueSelectField(
     fixtures.EditingProductFixture, FieldTest
 ):
-    def setUp(self):
-        fixtures.EditingProductFixture.setUp(self)
-        super().setUp()
-
     def get_field(self):
         return fields.PartialProductOptionValueSelect(
             edit=self.product_edit, product_option=self.colour_product_option
@@ -448,13 +444,14 @@ class TestSelectProductOptionField(FieldTest):
 
 
 class TestSelectProductOptionFieldWithProduct(
-    fixtures.VariationProductRangeFixture, TestSelectProductOptionField
+    TestSelectProductOptionField, fixtures.VariationProductRangeFixture
 ):
+    fixtures = fixtures.VariationProductRangeFixture.fixtures
+
     def setUp(self):
-        fixtures.VariationProductRangeFixture.setUp(self)
         super().setUp()
         self.new_product_option = models.ProductOption.objects.create(
-            name="Design", product_option_ID="384938"
+            name="Shoe Size", product_option_ID="384938"
         )
 
     def get_field(self):
@@ -532,9 +529,7 @@ class BaseWarehouseAndBayFieldTest(fixtures.ProductRequirementsFixture):
 
 
 class TestWarehouse(BaseWarehouseAndBayFieldTest, FieldTest):
-    def setUp(self):
-        fixtures.ProductRequirementsFixture.setUp(self)
-        super().setUp()
+    fixtures = fixtures.ProductRequirementsFixture.fixtures
 
     def get_field(self):
         return fields.Warehouse()
@@ -548,10 +543,6 @@ class TestWarehouse(BaseWarehouseAndBayFieldTest, FieldTest):
 
 
 class BaseLocationFieldTest(BaseWarehouseAndBayFieldTest):
-    def setUp(self):
-        fixtures.ProductRequirementsFixture.setUp(self)
-        super().setUp()
-
     def test_single_primary_bay(self):
         self.valid_check(
             input=[self.warehouse_1_bay_1.id], expected=[self.warehouse_1_bay_1.id]
@@ -577,10 +568,6 @@ class BaseLocationFieldTest(BaseWarehouseAndBayFieldTest):
 
 
 class TestLocationFieldWithLocation(BaseLocationFieldTest, FieldTest):
-    def setUp(self):
-        fixtures.ProductRequirementsFixture.setUp(self)
-        super().setUp()
-
     def get_field(self):
         return fields.Location(department=self.warehouse_1)
 
@@ -589,10 +576,6 @@ class TestLocationFieldWithLocation(BaseLocationFieldTest, FieldTest):
 
 
 class TestLocationFieldWithoutLocation(BaseLocationFieldTest, FieldTest):
-    def setUp(self):
-        fixtures.ProductRequirementsFixture.setUp(self)
-        super().setUp()
-
     def get_field(self):
         return fields.Location()
 

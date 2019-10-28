@@ -1,3 +1,4 @@
+from decimal import Decimal
 from unittest.mock import Mock, call
 
 from inventory import models
@@ -9,10 +10,6 @@ from .test_updater_base import BaseUpdaterMethodTest, BaseUpdaterTest
 
 class BaseProductUpdaterTest(BaseUpdaterTest):
     patch_path = "inventory.cloud_commerce_updater.product_updater.CCAPI"
-
-    def setUp(self):
-        fixtures.VariationProductRangeFixture.setUp(self)
-        super().setUp()
 
     def updater_object(self):
         return self.product
@@ -31,10 +28,6 @@ class ProductUpdaterTest(BaseProductUpdaterTest, fixtures.VariationProductRangeF
 class PartialProductUpdaterTest(BaseProductUpdaterTest, fixtures.EditingProductFixture):
     updater_class = PartialProductUpdater
 
-    def setUp(self):
-        fixtures.EditingProductFixture.setUp(self)
-        super().setUp()
-
     def test_update_DB(self):
         self.update_DB_test()
 
@@ -46,10 +39,6 @@ class NoChangeProductUpdaterTest(
     BaseProductUpdaterTest, fixtures.VariationProductRangeFixture
 ):
     updater_class = ProductUpdater
-
-    def setUp(self):
-        fixtures.VariationProductRangeFixture.setUp(self)
-        super().setUp()
 
     def update_updater(self):
         self.updater.update_DB = False
@@ -194,11 +183,11 @@ class TestSetPurchasePrice(BaseUpdaterMethodTest):
         self.value_ID = "2849829"
         self.mock_CCAPI.get_option_value_id.return_value = self.value_ID
         self.original_purchase_price = self.product.purchase_price
-        self.new_purchase_price = 11.99
-        self.updater.set_purchase_price(self.new_purchase_price)
+        self.new_purchase_price = "11.99"
+        self.updater.set_purchase_price(float(self.new_purchase_price))
 
     def update_DB_test(self):
-        self.assertEqual(self.new_purchase_price, self.product.purchase_price)
+        self.assertEqual(Decimal(self.new_purchase_price), self.product.purchase_price)
 
     def no_DB_update_test(self):
         self.assertEqual(self.original_purchase_price, self.product.purchase_price)
@@ -206,7 +195,7 @@ class TestSetPurchasePrice(BaseUpdaterMethodTest):
     def update_CC_test(self):
         self.mock_CCAPI.get_option_value_id.assert_called_once_with(
             option_id=self.option_ID,
-            value="{:.2f}".format(self.new_purchase_price),
+            value="{:.2f}".format(float(self.new_purchase_price)),
             create=True,
         )
         self.mock_CCAPI.set_product_option_value.assert_called_once_with(
@@ -270,18 +259,18 @@ class TestNoUpdateRangeUpdaterSetVATRate(NoChangeProductUpdaterTest, TestSetVATR
 class TestSetPrice(BaseUpdaterMethodTest):
     def setup_test(self):
         self.original_price = self.product.price
-        self.new_price = 58.70
-        self.updater.set_price(self.new_price)
+        self.new_price = "58.70"
+        self.updater.set_price(float(self.new_price))
 
     def update_DB_test(self):
-        self.assertEqual(self.new_price, self.product.price)
+        self.assertEqual(Decimal(self.new_price), self.product.price)
 
     def no_DB_update_test(self):
         self.assertEqual(self.original_price, self.product.price)
 
     def update_CC_test(self):
         self.mock_CCAPI.set_product_base_price.assert_called_once_with(
-            product_id=self.product.product_ID, price=self.new_price
+            product_id=self.product.product_ID, price=float(self.new_price)
         )
         self.assertEqual(1, len(self.mock_CCAPI.mock_calls))
 
@@ -304,11 +293,11 @@ class TestSetRetailPrice(BaseUpdaterMethodTest):
         self.value_ID = "94651564"
         self.mock_CCAPI.get_option_value_id.return_value = self.value_ID
         self.original_retail_price = self.product.retail_price
-        self.new_retail_price = 12.50
-        self.updater.set_retail_price(self.new_retail_price)
+        self.new_retail_price = "12.50"
+        self.updater.set_retail_price(float(self.new_retail_price))
 
     def update_DB_test(self):
-        self.assertEqual(self.new_retail_price, self.product.retail_price)
+        self.assertEqual(Decimal(self.new_retail_price), self.product.retail_price)
 
     def no_DB_update_test(self):
         self.assertEqual(self.original_retail_price, self.product.retail_price)
@@ -316,7 +305,7 @@ class TestSetRetailPrice(BaseUpdaterMethodTest):
     def update_CC_test(self):
         self.mock_CCAPI.get_option_value_id.assert_called_once_with(
             option_id=self.option_ID,
-            value="{:.2f}".format(self.new_retail_price),
+            value="{:.2f}".format(float(self.new_retail_price)),
             create=True,
         )
         self.mock_CCAPI.set_product_option_value.assert_called_once_with(

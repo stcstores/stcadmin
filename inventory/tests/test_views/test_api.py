@@ -35,11 +35,8 @@ class TestGetNewRangeSKUView(InventoryViewTest):
         self.assertEqual(response.content, sku)
 
 
-class TestUpdateStockLevelView(fixtures.SingleProductRangeFixture, InventoryViewTest):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        InventoryViewTest.setUpTestData()
+class TestUpdateStockLevelView(InventoryViewTest, fixtures.SingleProductRangeFixture):
+    fixtures = fixtures.SingleProductRangeFixture.fixtures
 
     @patch("inventory.models.products.CCAPI")
     def test_post_method(self, mock_CCAPI):
@@ -64,11 +61,8 @@ class TestUpdateStockLevelView(fixtures.SingleProductRangeFixture, InventoryView
         )
 
 
-class TestGetStockLevelView(fixtures.SingleProductRangeFixture, InventoryViewTest):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        InventoryViewTest.setUpTestData()
+class TestGetStockLevelView(InventoryViewTest, fixtures.SingleProductRangeFixture):
+    fixtures = fixtures.SingleProductRangeFixture.fixtures
 
     @patch("inventory.models.products.CCAPI")
     def test_post_method(self, mock_CCAPI):
@@ -84,10 +78,11 @@ class TestGetStockLevelView(fixtures.SingleProductRangeFixture, InventoryViewTes
         mock_CCAPI.get_product.assert_called_once_with(self.product.product_ID)
 
 
-class BaseImageViewTest(fixtures.SingleProductRangeFixture, InventoryViewTest):
+class BaseImageViewTest(InventoryViewTest, fixtures.SingleProductRangeFixture):
+    fixtures = fixtures.SingleProductRangeFixture.fixtures
+
     def setUp(self):
-        fixtures.SingleProductRangeFixture.setUp(self)
-        InventoryViewTest.setUp(self)
+        super().setUp()
         models.ProductImage.objects.bulk_create(
             [
                 models.ProductImage(

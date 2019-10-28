@@ -25,7 +25,9 @@ class TestUnique_SKU(STCAdminTest):
             models.partial.unique_SKU(["RNG_164_DH3-J9L"], function)
 
 
-class TestPartialProductRange(fixtures.EditingProductFixture, STCAdminTest):
+class TestPartialProductRange(STCAdminTest, fixtures.EditingProductFixture):
+    fixtures = fixtures.EditingProductFixture.fixtures
+
     def test_generate_SKU_method(self):
         SKU = models.PartialProductRange.get_new_SKU()
         self.assertEqual(SKU[:4], "RNG_")
@@ -303,6 +305,8 @@ class TestPartialProductRange(fixtures.EditingProductFixture, STCAdminTest):
 
 
 class TestPartialProduct(fixtures.EditingProductFixture, STCAdminTest):
+    fixtures = fixtures.EditingProductFixture.fixtures
+
     def test_generate_SKU_method(self):
         SKU = models.PartialProduct.get_new_SKU()
         self.assertNotEqual(SKU[:4], "RNG_")
@@ -322,8 +326,9 @@ class TestPartialProduct(fixtures.EditingProductFixture, STCAdminTest):
         self.assertEqual(self.product.full_name, "Test Range - Small - Red - TV009")
 
     def test_full_name_property_without_supplier_SKU(self):
-        self.product.supplier_SKU = None
-        self.assertEqual(self.product.full_name, "Test Range - Small - Red")
+        product = self.product
+        product.supplier_SKU = None
+        self.assertEqual(product.full_name, "Test Range - Small - Red")
 
     def test_range_SKU_property(self):
         self.assertEqual(self.product.range_SKU, self.product_range.SKU)
@@ -366,8 +371,9 @@ class TestPartialProduct(fixtures.EditingProductFixture, STCAdminTest):
         self.assertCountEqual(self.product.name_extensions(), ["Small", "Red", "TV009"])
 
     def test_name_extensions_method_without_supplier_SKU(self):
-        self.product.supplier_SKU = None
-        self.assertCountEqual(self.product.name_extensions(), ["Small", "Red"])
+        product = self.product
+        product.supplier_SKU = None
+        self.assertCountEqual(product.name_extensions(), ["Small", "Red"])
 
     def test_product_option_value_method(self):
         self.assertEqual(self.product.product_option_value("Size"), "Small")
@@ -375,70 +381,85 @@ class TestPartialProduct(fixtures.EditingProductFixture, STCAdminTest):
 
 
 class TestPartialProduct_is_complete_Method(
-    fixtures.EditingProductFixture, STCAdminTest
+    STCAdminTest, fixtures.EditingProductFixture
 ):
+    fixtures = fixtures.EditingProductFixture.fixtures
+
     def test_when_complete(self):
         self.assertTrue(self.product.is_complete())
 
     def test_fails_for_no_SKU(self):
-        self.product.SKU = None
-        self.product.save()
+        product = self.product
+        product.SKU = None
+        product.save()
         self.assertFalse(self.product.is_complete())
 
     def test_fails_for_no_barcode(self):
-        self.product.barcode = None
-        self.product.save()
+        product = self.product
+        product.barcode = None
+        product.save()
         self.assertFalse(self.product.is_complete())
 
     def test_fails_for_no_supplier(self):
-        self.product.supplier = None
-        self.product.save()
+        product = self.product
+        product.supplier = None
+        product.save()
         self.assertFalse(self.product.is_complete())
 
     def test_fails_for_no_purchase_price(self):
-        self.product.purchase_price = None
-        self.product.save()
+        product = self.product
+        product.purchase_price = None
+        product.save()
         self.assertFalse(self.product.is_complete())
 
     def test_fails_for_no_VAT_rate(self):
-        self.product.VAT_rate = None
-        self.product.save()
+        product = self.product
+        product.VAT_rate = None
+        product.save()
         self.assertFalse(self.product.is_complete())
 
     def test_fails_for_no_price(self):
-        self.product.price = None
-        self.product.save()
+        product = self.product
+        product.price = None
+        product.save()
         self.assertFalse(self.product.is_complete())
 
     def test_fails_for_no_brand(self):
-        self.product.brand = None
-        self.product.save()
+        product = self.product
+        product.brand = None
+        product.save()
         self.assertFalse(self.product.is_complete())
 
     def test_fails_for_no_manufacturer(self):
-        self.product.manufacturer = None
-        self.product.save()
+        product = self.product
+        product.manufacturer = None
+        product.save()
         self.assertFalse(self.product.is_complete())
 
     def test_fails_for_no_package_type(self):
-        self.product.package_type = None
-        self.product.save()
+        product = self.product
+        product.package_type = None
+        product.save()
         self.assertFalse(self.product.is_complete())
 
     def test_fails_for_no_international_shipping(self):
-        self.product.international_shipping = None
-        self.product.save()
+        product = self.product
+        product.international_shipping = None
+        product.save()
         self.assertFalse(self.product.is_complete())
 
     def test_fails_for_no_weight(self):
-        self.product.weight_grams = None
-        self.product.save()
+        product = self.product
+        product.weight_grams = None
+        product.save()
         self.assertFalse(self.product.is_complete())
 
 
 class TestPartialProductRangeSelectedOption(
-    fixtures.EditingProductFixture, STCAdminTest
+    STCAdminTest, fixtures.EditingProductFixture
 ):
+    fixtures = fixtures.EditingProductFixture.fixtures
+
     def test_str_method(self):
         selected_option = models.PartialProductRangeSelectedOption.objects.get(
             product_range=self.product_range, product_option=self.size_product_option
@@ -449,7 +470,9 @@ class TestPartialProductRangeSelectedOption(
         )
 
 
-class TestPartialProductOptionValueLink(fixtures.EditingProductFixture, STCAdminTest):
+class TestPartialProductOptionValueLink(STCAdminTest, fixtures.EditingProductFixture):
+    fixtures = fixtures.EditingProductFixture.fixtures
+
     def test_str_method(self):
         option_link = models.PartialProductOptionValueLink.objects.get(
             product=self.product, product_option_value=self.red_product_option_value
@@ -460,6 +483,8 @@ class TestPartialProductOptionValueLink(fixtures.EditingProductFixture, STCAdmin
 
 
 class TestProductEdit(fixtures.EditingProductFixture, STCAdminTest):
+    fixtures = fixtures.EditingProductFixture.fixtures
+
     def test_str_method(self):
         self.assertEqual(str(self.product_edit), str(self.product_range))
 
@@ -470,16 +495,15 @@ class TestProductEdit(fixtures.EditingProductFixture, STCAdminTest):
         )
 
     def test_delete_method(self):
-        self.product_edit.delete()
+        product = self.product
+        product_range = self.product_range
+        edit = self.product_edit
+        edit.delete()
+        self.assertFalse(models.PartialProduct.objects.filter(id=product.id).exists())
         self.assertFalse(
-            models.PartialProduct.objects.filter(id=self.product.id).exists()
+            models.PartialProductRange.objects.filter(id=product_range.id).exists()
         )
-        self.assertFalse(
-            models.PartialProductRange.objects.filter(id=self.product_range.id).exists()
-        )
-        self.assertFalse(
-            models.ProductEdit.objects.filter(id=self.product_edit.id).exists()
-        )
+        self.assertFalse(models.ProductEdit.objects.filter(id=edit.id).exists())
 
     def test_create_product_method(self):
         self.product.delete()

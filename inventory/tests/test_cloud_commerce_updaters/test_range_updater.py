@@ -22,10 +22,6 @@ class RangeUpdaterTest(BaseRangeUpdaterTest, fixtures.VariationProductRangeFixtu
 
     updater_class = RangeUpdater
 
-    def setUp(self):
-        fixtures.VariationProductRangeFixture.setUp(self)
-        super().setUp()
-
     def test_update_DB(self):
         self.update_DB_test()
 
@@ -35,10 +31,6 @@ class RangeUpdaterTest(BaseRangeUpdaterTest, fixtures.VariationProductRangeFixtu
 
 class PartialRangeUpdaterTest(BaseRangeUpdaterTest, fixtures.EditingProductFixture):
     updater_class = PartialRangeUpdater
-
-    def setUp(self):
-        fixtures.EditingProductFixture.setUp(self)
-        super().setUp()
 
     def test_update_DB(self):
         print(self.product_range)
@@ -52,10 +44,6 @@ class NoChangeRangeUpdaterTest(
     BaseRangeUpdaterTest, fixtures.VariationProductRangeFixture
 ):
     updater_class = RangeUpdater
-
-    def setUp(self):
-        fixtures.VariationProductRangeFixture.setUp(self)
-        super().setUp()
 
     def update_updater(self):
         self.updater.update_DB = False

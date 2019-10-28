@@ -63,10 +63,11 @@ class TestProductSearchForm(fixtures.MultipleRangesFixture, FormTest):
         self.product_search_form_test(expected, data)
 
     def test_department_filter(self):
-        self.eol_range.department = models.Department.objects.get(id=2)
-        self.eol_range.save()
+        product_range = self.eol_range
+        product_range.department = models.Department.objects.get(id=2)
+        product_range.save()
         data = {"department": self.eol_range.department.id}
-        expected = [self.eol_range]
+        expected = [product_range]
         self.product_search_form_test(expected, data)
 
     def test_supplier_filter(self):

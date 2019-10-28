@@ -13,7 +13,6 @@ class BaseSaveEditTest:
         STCAdminTest.create_user()
 
     def setUp(self):
-        self.fixture_class.setUp(self)
         self.setup_mocks()
 
     def setup_mocks(self):
@@ -36,9 +35,10 @@ class BaseSaveEditTest:
         self.mock_ProductUpdater.return_value = self.mock_product_updater
 
 
-class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
-    fixture_class = fixtures.EditingProductFixture
-    fixtures = fixture_class.fixtures
+class TestSaveEditForNewRange(
+    BaseSaveEditTest, STCAdminTest, fixtures.EditingProductFixture
+):
+    fixtures = fixtures.EditingProductFixture.fixtures
 
     def test_save_edit(self):
         save_edit = SaveEdit(self.product_edit, self.user)
@@ -54,8 +54,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
 
     def test_set_range_name(self):
         name = "New Range Name"
-        self.product_range.name = name
-        self.product_range.save()
+        product_range = self.product_range
+        product_range.name = name
+        product_range.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.mock_range_updater.set_name.assert_called_once_with(name)
@@ -63,11 +64,10 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
         self.assertEqual(0, len(self.mock_product_updater.mock_calls))
 
     def test_set_department(self):
-        department = models.Department.objects.create(
-            name="New Department", product_option_value_ID="328549"
-        )
-        self.product_range.department = department
-        self.product_range.save()
+        department = self.second_department
+        product_range = self.product_range
+        product_range.department = department
+        product_range.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.mock_range_updater.set_department.assert_called_once_with(department)
@@ -76,8 +76,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
 
     def test_set_description(self):
         description = "New Description\nFor the product range."
-        self.product_range.description = description
-        self.product_range.save()
+        product_range = self.product_range
+        product_range.description = description
+        product_range.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.mock_range_updater.set_description.assert_called_once_with(description)
@@ -86,8 +87,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
 
     def test_set_amazon_search_terms(self):
         search_terms = "mug|cup"
-        self.product_range.amazon_search_terms = search_terms
-        self.product_range.save()
+        product_range = self.product_range
+        product_range.amazon_search_terms = search_terms
+        product_range.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.mock_range_updater.set_amazon_search_terms.assert_called_once_with(
@@ -98,8 +100,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
 
     def test_set_amazon_bullet_points(self):
         bullets = "mug|cup"
-        self.product_range.amazon_bullet_points = bullets
-        self.product_range.save()
+        product_range = self.product_range
+        product_range.amazon_bullet_points = bullets
+        product_range.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.mock_range_updater.set_amazon_bullet_points.assert_called_once_with(
@@ -109,11 +112,10 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
         self.assertEqual(0, len(self.mock_product_updater.mock_calls))
 
     def test_set_supplier(self):
-        new_supplier = models.Supplier.objects.create(
-            name="New Supplier", product_option_value_ID="38493", factory_ID="384938"
-        )
-        self.product.supplier = new_supplier
-        self.product.save()
+        new_supplier = self.second_supplier
+        product = self.product
+        product.supplier = new_supplier
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -122,8 +124,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
 
     def test_set_supplier_SKU(self):
         new_supplier_SKU = "BN0383"
-        self.product.supplier_SKU = new_supplier_SKU
-        self.product.save()
+        product = self.product
+        product.supplier_SKU = new_supplier_SKU
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -134,8 +137,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
 
     def test_set_barcode(self):
         new_barcode = "0387547393"
-        self.product.barcode = new_barcode
-        self.product.save()
+        product = self.product
+        product.barcode = new_barcode
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -144,8 +148,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
 
     def test_set_purchase_price(self):
         new_purchase_price = 5.99
-        self.product.purchase_price = new_purchase_price
-        self.product.save()
+        product = self.product
+        product.purchase_price = new_purchase_price
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -155,11 +160,10 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
         self.assertEqual(1, len(self.mock_product_updater.mock_calls))
 
     def test_set_VAT_rate(self):
-        new_VAT_rate = models.VATRate.objects.create(
-            name="New VAT Rate", VAT_rate_ID="3849030", percentage=0.4
-        )
-        self.product.VAT_rate = new_VAT_rate
-        self.product.save()
+        new_VAT_rate = self.second_VAT_rate
+        product = self.product
+        product.VAT_rate = new_VAT_rate
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -168,8 +172,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
 
     def test_set_price(self):
         new_price = 8.74
-        self.product.price = new_price
-        self.product.save()
+        product = self.product
+        product.price = new_price
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -180,8 +185,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
 
     def test_set_retail_price(self):
         new_price = 8.74
-        self.product.retail_price = new_price
-        self.product.save()
+        product = self.product
+        product.retail_price = new_price
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -191,11 +197,10 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
         self.assertEqual(1, len(self.mock_product_updater.mock_calls))
 
     def test_set_brand(self):
-        new_brand = models.Brand.objects.create(
-            name="Things", product_option_value_ID="3849382"
-        )
-        self.product.brand = new_brand
-        self.product.save()
+        new_brand = self.second_brand
+        product = self.product
+        product.brand = new_brand
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -203,11 +208,10 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
         self.assertEqual(1, len(self.mock_product_updater.mock_calls))
 
     def test_set_manufacturer(self):
-        new_manufacturer = models.Manufacturer.objects.create(
-            name="Things", product_option_value_ID="3849382"
-        )
-        self.product.manufacturer = new_manufacturer
-        self.product.save()
+        new_manufacturer = self.second_manufacturer
+        product = self.product
+        product.manufacturer = new_manufacturer
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -217,13 +221,10 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
         self.assertEqual(1, len(self.mock_product_updater.mock_calls))
 
     def test_set_package_type(self):
-        new_package_type = models.PackageType.objects.create(
-            name="Boxed",
-            product_option_value_ID="3849382",
-            large_letter_compatible=False,
-        )
-        self.product.package_type = new_package_type
-        self.product.save()
+        new_package_type = self.seccond_package_type
+        product = self.product
+        product.package_type = new_package_type
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -233,11 +234,10 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
         self.assertEqual(1, len(self.mock_product_updater.mock_calls))
 
     def test_set_international_shipping(self):
-        international_shipping = models.InternationalShipping.objects.create(
-            name="Expedited", product_option_value_ID="3849382"
-        )
-        self.product.international_shipping = international_shipping
-        self.product.save()
+        international_shipping = self.second_international_shipping
+        product = self.product
+        product.international_shipping = international_shipping
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -248,8 +248,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
 
     def test_set_weight(self):
         weight = 584
-        self.product.weight_grams = weight
-        self.product.save()
+        product = self.product
+        product.weight_grams = weight
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -258,8 +259,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
 
     def test_set_length(self):
         length = 1150
-        self.product.length_mm = length
-        self.product.save()
+        product = self.product
+        product.length_mm = length
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -268,8 +270,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
 
     def test_set_width(self):
         width = 860
-        self.product.width_mm = width
-        self.product.save()
+        product = self.product
+        product.width_mm = width
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -278,8 +281,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
 
     def test_set_height(self):
         height = 51
-        self.product.height_mm = height
-        self.product.save()
+        product = self.product
+        product.height_mm = height
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -287,13 +291,10 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
         self.assertEqual(1, len(self.mock_product_updater.mock_calls))
 
     def test_set_gender(self):
-        gender = models.Gender.objects.create(
-            name="childrens",
-            product_option_value_ID="89461456",
-            readable_name="Childrens",
-        )
-        self.product.gender = gender
-        self.product.save()
+        gender = self.second_gender
+        product = self.product
+        product.gender = gender
+        product.save()
         SaveEdit(self.product_edit, self.user).save_edit()
         self.assertEqual(2, len(self.mock_range_updater.log.mock_calls))
         self.assertEqual(2, len(self.mock_range_updater.mock_calls))
@@ -431,8 +432,9 @@ class TestSaveEditForNewRange(BaseSaveEditTest, STCAdminTest):
         self.assertEqual(product_count, len(self.mock_product_updater.mock_calls))
 
 
-class TestSaveEditWithNewProduct(BaseSaveEditTest, STCAdminTest):
-    fixture_class = fixtures.EditingProductFixture
+class TestSaveEditWithNewProduct(
+    BaseSaveEditTest, STCAdminTest, fixtures.EditingProductFixture
+):
     fixtures = fixtures.EditingProductFixture.fixtures
 
     @classmethod
@@ -441,15 +443,11 @@ class TestSaveEditWithNewProduct(BaseSaveEditTest, STCAdminTest):
         models.Product.objects.get(id=1).delete()
 
     def setUp(self):
-        fixtures.ProductRequirementsFixture.setUp(self)
-        self.product_edit = models.ProductEdit.objects.get(id=1)
-        self.original_range = models.ProductRange.objects.get(id=1)
-        self.product_range = models.PartialProductRange.objects.get(id=1)
-        self.product = models.PartialProduct.objects.get(id=1)
-        self.product.pre_existing = False
-        self.product.barcode = "385493829"
+        product = self.product
+        product.pre_existing = False
+        product.barcode = "385493829"
         self.setup_mocks()
-        self.product.save()
+        product.save()
 
     def setup_mocks(self):
         super().setup_mocks()

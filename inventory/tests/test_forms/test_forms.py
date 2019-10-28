@@ -139,10 +139,6 @@ class TestCreateBayForm(FormTest, fixtures.ProductRequirementsFixture):
 
     name_value = "New Bay"
 
-    def setUp(self):
-        fixtures.ProductRequirementsFixture.setUp(self)
-        super().setUp()
-
     def test_primary_bay_valid(self):
         form_data = {
             self.DEPARTMENT: self.department.id,
@@ -226,7 +222,6 @@ class TestProductForm(fixtures.VariationProductRangeFixture, FormTest):
         ]
 
     def setUp(self):
-        fixtures.VariationProductRangeFixture.setUp(self)
         self.product.bays.set([self.bays[0]])
         self.form_data = {
             ProductEditorBase.BRAND: self.brand.id,
@@ -640,10 +635,6 @@ class TestAddProductOptionForm(fixtures.EditingProductFixture, FormTest):
 
 
 class TestSetProductOptionValuesForm(fixtures.EditingProductFixture, FormTest):
-    def setUp(self):
-        fixtures.EditingProductFixture.setUp(self)
-        super().setUp()
-
     def test_form(self):
         form = forms.SetProductOptionValues(
             edit=self.product_edit,
@@ -816,7 +807,6 @@ class TestSetProductOptionValuesForm(fixtures.EditingProductFixture, FormTest):
 
 class TestSetProductOptionValuesFormset(fixtures.EditingProductFixture, FormTest):
     def setUp(self):
-        fixtures.EditingProductFixture.setUp(self)
         super().setUp()
         self.kwargs = [
             {

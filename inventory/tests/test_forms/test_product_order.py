@@ -5,7 +5,9 @@ from inventory.tests import fixtures
 from .form_test import FormTest
 
 
-class TestProductOrderForm(fixtures.VariationProductRangeFixture, FormTest):
+class TestProductOrderForm(FormTest, fixtures.VariationProductRangeFixture):
+    fixtures = fixtures.VariationProductRangeFixture.fixtures
+
     def test_initial(self):
         form = ProductOrderForm(product=self.product)
         initial = form.get_initial()
@@ -36,13 +38,18 @@ class TestProductOrderForm(fixtures.VariationProductRangeFixture, FormTest):
 
 
 class TestProductOrderFormSet(fixtures.VariationProductRangeFixture, FormTest):
+    def setUp(self):
+        self.new_order = {
+            variation.id: variation.range_order + 5 for variation in self.variations
+        }
+
     def get_form_data(self):
         data = {"form-TOTAL_FORMS": len(self.variations), "form-INITIAL_FORMS": 0}
         for i, variation in enumerate(self.variations):
             data.update(
                 {
                     f"form-{i}-product_ID": variation.product_ID,
-                    f"form-{i}-range_order": variation.range_order + 5,
+                    f"form-{i}-range_order": self.new_order[variation.id],
                 }
             )
         return data
@@ -69,5 +76,4 @@ class TestProductOrderFormSet(fixtures.VariationProductRangeFixture, FormTest):
         for form in formset:
             form.save()
         for variation in self.variations:
-            product = models.Product.objects.get(id=variation.id)
-            self.assertEqual(variation.range_order + 5, product.range_order)
+            self.assertEqual(self.new_order[variation.id], variation.range_order)
