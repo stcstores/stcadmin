@@ -232,7 +232,7 @@ class VariationProductRangeFixture(ProductRequirementsFixture):
 
     @property
     def variations(self):
-        return models.Product.objects.all()
+        return models.Product.objects.all().order_by("id")
 
 
 class EditingProductFixture(VariationProductRangeFixture):
@@ -257,7 +257,7 @@ class EditingProductFixture(VariationProductRangeFixture):
 
     @property
     def variations(self):
-        return models.PartialProduct.objects.all()
+        return models.PartialProduct.objects.all().order_by("id")
 
 
 class MultipleRangesFixture(ProductRequirementsFixture):
