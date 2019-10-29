@@ -523,28 +523,6 @@ class TestVariationForm(TestProductForm):
 
 
 class TestAddProductOptionForm(fixtures.EditingProductFixture, FormTest):
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.design_product_option = models.ProductOption.objects.create(
-            name="Design", product_option_ID="284938"
-        )
-        cls.cat_product_option_value = models.ProductOptionValue.objects.create(
-            value="Cat",
-            product_option=cls.design_product_option,
-            product_option_value_ID="3849382",
-        )
-        cls.dog_product_option_value = models.ProductOptionValue.objects.create(
-            value="Dog",
-            product_option=cls.design_product_option,
-            product_option_value_ID="7465466",
-        )
-        cls.horse_product_option_value = models.ProductOptionValue.objects.create(
-            value="Horse",
-            product_option=cls.design_product_option,
-            product_option_value_ID="9465646",
-        )
-
     def test_form(self):
         data = {
             "option": self.design_product_option.id,
@@ -1082,6 +1060,7 @@ class TestSetupVariationsForm(fixtures.EditingProductFixture, FormTest):
                 ],
                 self.size_product_option: [],
                 self.model_product_option: [],
+                self.design_product_option: [],
             },
             form.cleaned_data,
         )
@@ -1117,6 +1096,7 @@ class TestSetupVariationsForm(fixtures.EditingProductFixture, FormTest):
                     self.large_product_option_value,
                 ],
                 self.model_product_option: [],
+                self.design_product_option: [],
             },
             form.cleaned_data,
         )
@@ -1129,6 +1109,7 @@ class TestSetupVariationsForm(fixtures.EditingProductFixture, FormTest):
                 self.colour_product_option: [],
                 self.size_product_option: [],
                 self.model_product_option: [],
+                self.design_product_option: [],
             },
             form.cleaned_data,
         )

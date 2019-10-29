@@ -26,6 +26,15 @@
     "inactive": false
   }
 }, {
+  "model": "inventory.productoption",
+  "pk": 4,
+  "fields": {
+    "sort_order": 3,
+    "name": "Design",
+    "product_option_ID": "9841",
+    "inactive": false
+  }
+}, {
   "model": "inventory.productoptionvalue",
   "pk": 1,
   "fields": {
@@ -80,6 +89,30 @@
     "product_option_value_ID": "549681",
     "product_option": 3,
     "value": "DB25"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 8,
+  "fields": {
+    "product_option_value_ID": "685416",
+    "product_option": 4,
+    "value": "Cat"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 9,
+  "fields": {
+    "product_option_value_ID": "164846",
+    "product_option": 4,
+    "value": "Dog"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 10,
+  "fields": {
+    "product_option_value_ID": "984316",
+    "product_option": 4,
+    "value": "Horse"
   }
 }, {
   "model": "inventory.department",

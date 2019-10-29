@@ -12,7 +12,7 @@ class BaseRangeUpdaterTest(BaseUpdaterTest):
 
     def setUp(self):
         super().setUp()
-        self.product_IDs = [_.product_ID for _ in self.product_range.products()]
+        self.product_IDs = [_.product_ID for _ in self.variations]
 
     def updater_object(self):
         return self.product_range
@@ -337,7 +337,7 @@ class TestNoUpdateRangeUpdaterAddVariationOption(
 class TestAddVariationOptionUpdatesListingOption(BaseUpdaterMethodTest):
     def setup_test(self):
         self.product_option = models.ProductOption.objects.create(
-            name="Design", product_option_ID="3840382"
+            name="Shoe Size", product_option_ID="3840382"
         )
         self.updater.product_range_selected_option_model.objects.create(
             product_range=self.product_range,

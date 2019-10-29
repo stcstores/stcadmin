@@ -141,6 +141,10 @@ class ProductRequirementsFixture(LocationsFixture):
         return models.ProductOption.objects.get(id=3)
 
     @property
+    def design_product_option(self):
+        return models.ProductOption.objects.get(id=4)
+
+    @property
     def red_product_option_value(self):
         return models.ProductOptionValue.objects.get(id=1)
 
@@ -167,6 +171,18 @@ class ProductRequirementsFixture(LocationsFixture):
     @property
     def model_product_option_value(self):
         return models.ProductOptionValue.objects.get(id=7)
+
+    @property
+    def cat_product_option_value(self):
+        return models.ProductOptionValue.objects.get(id=8)
+
+    @property
+    def dog_product_option_value(self):
+        return models.ProductOptionValue.objects.get(id=9)
+
+    @property
+    def horse_product_option_value(self):
+        return models.ProductOptionValue.objects.get(id=10)
 
     @property
     def product_options(self):

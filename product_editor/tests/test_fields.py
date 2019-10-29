@@ -425,41 +425,29 @@ class TestGenderField(FieldTest):
         self.valid_check(input="", expected=None)
 
 
-class TestSelectProductOptionField(FieldTest):
-    def setUp(self):
-        super().setUp()
-        self.product_option = models.ProductOption.objects.create(
-            name="Design", product_option_ID="384593"
-        )
+class TestSelectProductOptionField(FieldTest, fixtures.VariationProductRangeFixture):
+    fixtures = fixtures.VariationProductRangeFixture.fixtures
 
     def get_field(self):
         return fields.SelectProductOption()
 
     def test_field(self):
-        self.valid_check(input=self.product_option.id, expected=self.product_option)
+        self.valid_check(
+            input=self.size_product_option.id, expected=self.size_product_option
+        )
         self.invalid_check(input=67)
 
     def test_empty(self):
         self.invalid_check(input="")
 
 
-class TestSelectProductOptionFieldWithProduct(
-    TestSelectProductOptionField, fixtures.VariationProductRangeFixture
-):
-    fixtures = fixtures.VariationProductRangeFixture.fixtures
-
-    def setUp(self):
-        super().setUp()
-        self.new_product_option = models.ProductOption.objects.create(
-            name="Shoe Size", product_option_ID="384938"
-        )
-
+class TestSelectProductOptionFieldWithProduct(TestSelectProductOptionField):
     def get_field(self):
         return fields.SelectProductOption(product_range=self.product_range)
 
     def test_field(self):
         self.valid_check(
-            input=self.new_product_option.id, expected=self.new_product_option
+            input=self.design_product_option.id, expected=self.design_product_option
         )
         self.invalid_check(input="670")
         self.invalid_check(input=self.colour_product_option.id)
