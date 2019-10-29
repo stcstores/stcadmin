@@ -822,58 +822,59 @@ class TestSetProductOptionValuesFormset(fixtures.EditingProductFixture, FormTest
             self.get_form_data(), form_kwargs=self.kwargs
         )
         self.assert_form_is_valid(formset)
+        variations = self.variations
         self.assertCountEqual(
             [
                 {
-                    "product_ID": str(self.variations[0].id),
+                    "product_ID": str(variations[0].id),
                     "option_Size": self.small_product_option_value,
                     "option_Colour": self.red_product_option_value,
                     "option_Model": self.model_product_option_value,
                 },
                 {
-                    "product_ID": str(self.variations[1].id),
+                    "product_ID": str(variations[1].id),
                     "option_Size": self.small_product_option_value,
                     "option_Colour": self.green_product_option_value,
                     "option_Model": self.model_product_option_value,
                 },
                 {
-                    "product_ID": str(self.variations[2].id),
+                    "product_ID": str(variations[2].id),
                     "option_Size": self.small_product_option_value,
                     "option_Colour": self.blue_product_option_value,
                     "option_Model": self.model_product_option_value,
                 },
                 {
-                    "product_ID": str(self.variations[3].id),
+                    "product_ID": str(variations[3].id),
                     "option_Size": self.medium_product_option_value,
                     "option_Colour": self.red_product_option_value,
                     "option_Model": self.model_product_option_value,
                 },
                 {
-                    "product_ID": str(self.variations[4].id),
+                    "product_ID": str(variations[4].id),
                     "option_Size": self.medium_product_option_value,
                     "option_Colour": self.green_product_option_value,
                     "option_Model": self.model_product_option_value,
                 },
                 {
-                    "product_ID": str(self.variations[5].id),
+                    "product_ID": str(variations[5].id),
                     "option_Size": self.medium_product_option_value,
                     "option_Colour": self.blue_product_option_value,
                     "option_Model": self.model_product_option_value,
                 },
                 {
-                    "product_ID": str(self.variations[6].id),
+                    "product_ID": str(variations[6].id),
                     "option_Size": self.large_product_option_value,
                     "option_Colour": self.red_product_option_value,
                     "option_Model": self.model_product_option_value,
                 },
                 {
-                    "product_ID": str(self.variations[7].id),
+                    "product_ID": str(variations[7].id),
                     "option_Size": self.large_product_option_value,
                     "option_Colour": self.green_product_option_value,
                     "option_Model": self.model_product_option_value,
                 },
                 {
-                    "product_ID": str(self.variations[8].id),
+                    "product_ID": str(variations[8].id),
                     "option_Size": self.large_product_option_value,
                     "option_Colour": self.blue_product_option_value,
                     "option_Model": self.model_product_option_value,
