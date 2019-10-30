@@ -1005,8 +1005,8 @@ class TestAddProductOptionValuesForm(fixtures.EditingProductFixture, FormTest):
                 product_option=self.colour_product_option
             ),
         )
-        magenta = models.ProductOptionValue.objects.create(
-            value="Magenta",
+        cyan = models.ProductOptionValue.objects.create(
+            value="Cyan",
             product_option=self.colour_product_option,
             product_option_value_ID="8903483",
         )
@@ -1015,12 +1015,12 @@ class TestAddProductOptionValuesForm(fixtures.EditingProductFixture, FormTest):
             product_option=self.colour_product_option,
             product_option_value_ID="794616",
         )
-        data = {"values": [magenta.value, tangerine.value]}
+        data = {"values": [cyan.value, tangerine.value]}
         form = forms.AddProductOptionValuesForm(
             data, edit=self.product_edit, product_option=self.colour_product_option
         )
         self.assert_form_is_valid(form)
-        self.assertDictEqual({"values": [magenta, tangerine]}, form.cleaned_data)
+        self.assertDictEqual({"values": [cyan, tangerine]}, form.cleaned_data)
         form.save()
         self.assertCountEqual(
             [
@@ -1028,7 +1028,7 @@ class TestAddProductOptionValuesForm(fixtures.EditingProductFixture, FormTest):
                 self.green_product_option_value,
                 self.blue_product_option_value,
                 tangerine,
-                magenta,
+                cyan,
             ],
             self.product_edit.product_option_values.filter(
                 product_option=self.colour_product_option

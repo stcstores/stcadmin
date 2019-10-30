@@ -358,92 +358,92 @@
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 1,
   "fields": {
-    "product": 9,
+    "product": 1,
     "product_option_value": 6
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 2,
   "fields": {
-    "product": 9,
-    "product_option_value": 3
+    "product": 1,
+    "product_option_value": 1
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 3,
   "fields": {
-    "product": 9,
-    "product_option_value": 7
+    "product": 1,
+    "product_option_value": 11
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 4,
   "fields": {
-    "product": 8,
+    "product": 2,
     "product_option_value": 6
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 5,
   "fields": {
-    "product": 8,
+    "product": 2,
     "product_option_value": 2
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 6,
   "fields": {
-    "product": 8,
-    "product_option_value": 7
+    "product": 2,
+    "product_option_value": 11
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 7,
   "fields": {
-    "product": 7,
+    "product": 3,
     "product_option_value": 6
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 8,
   "fields": {
-    "product": 7,
-    "product_option_value": 1
+    "product": 3,
+    "product_option_value": 3
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 9,
   "fields": {
-    "product": 7,
-    "product_option_value": 7
+    "product": 3,
+    "product_option_value": 11
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 10,
   "fields": {
-    "product": 6,
-    "product_option_value": 5
+    "product": 4,
+    "product_option_value": 7
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 11,
   "fields": {
-    "product": 6,
-    "product_option_value": 3
+    "product": 4,
+    "product_option_value": 1
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 12,
   "fields": {
-    "product": 6,
-    "product_option_value": 7
+    "product": 4,
+    "product_option_value": 11
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 13,
   "fields": {
     "product": 5,
-    "product_option_value": 5
+    "product_option_value": 7
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
@@ -457,91 +457,91 @@
   "pk": 15,
   "fields": {
     "product": 5,
-    "product_option_value": 7
+    "product_option_value": 11
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 16,
   "fields": {
-    "product": 4,
-    "product_option_value": 5
+    "product": 6,
+    "product_option_value": 7
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 17,
   "fields": {
-    "product": 4,
-    "product_option_value": 1
+    "product": 6,
+    "product_option_value": 3
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 18,
   "fields": {
-    "product": 4,
-    "product_option_value": 7
+    "product": 6,
+    "product_option_value": 11
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 19,
   "fields": {
-    "product": 3,
-    "product_option_value": 4
+    "product": 7,
+    "product_option_value": 8
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 20,
   "fields": {
-    "product": 3,
-    "product_option_value": 3
+    "product": 7,
+    "product_option_value": 1
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 21,
   "fields": {
-    "product": 3,
-    "product_option_value": 7
+    "product": 7,
+    "product_option_value": 11
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 22,
   "fields": {
-    "product": 2,
-    "product_option_value": 4
+    "product": 8,
+    "product_option_value": 8
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 23,
   "fields": {
-    "product": 2,
+    "product": 8,
     "product_option_value": 2
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 24,
   "fields": {
-    "product": 2,
-    "product_option_value": 7
+    "product": 8,
+    "product_option_value": 11
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 25,
   "fields": {
-    "product": 1,
-    "product_option_value": 4
+    "product": 9,
+    "product_option_value": 8
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 26,
   "fields": {
-    "product": 1,
-    "product_option_value": 1
+    "product": 9,
+    "product_option_value": 3
   }
 }, {
   "model": "inventory.partialproductoptionvaluelink",
   "pk": 27,
   "fields": {
-    "product": 1,
-    "product_option_value": 7
+    "product": 9,
+    "product_option_value": 11
   }
 }, {
   "model": "inventory.productedit",
@@ -550,6 +550,6 @@
     "user": 1,
     "product_range": null,
     "partial_product_range": 1,
-    "product_option_values": [1, 2, 3, 4, 5, 6, 7]
+    "product_option_values": [1, 2, 3, 6, 7, 8, 11]
   }
 }]

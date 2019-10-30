@@ -157,35 +157,55 @@ class ProductRequirementsFixture(LocationsFixture):
         return models.ProductOptionValue.objects.get(id=3)
 
     @property
-    def small_product_option_value(self):
+    def purple_product_option_value(self):
         return models.ProductOptionValue.objects.get(id=4)
 
     @property
-    def medium_product_option_value(self):
+    def magenta_product_option_value(self):
         return models.ProductOptionValue.objects.get(id=5)
 
     @property
-    def large_product_option_value(self):
+    def small_product_option_value(self):
         return models.ProductOptionValue.objects.get(id=6)
 
     @property
-    def model_product_option_value(self):
+    def medium_product_option_value(self):
         return models.ProductOptionValue.objects.get(id=7)
 
     @property
-    def cat_product_option_value(self):
+    def large_product_option_value(self):
         return models.ProductOptionValue.objects.get(id=8)
 
     @property
-    def dog_product_option_value(self):
+    def xl_product_option_value(self):
         return models.ProductOptionValue.objects.get(id=9)
 
     @property
-    def horse_product_option_value(self):
+    def xxl_product_option_value(self):
         return models.ProductOptionValue.objects.get(id=10)
 
     @property
-    def product_options(self):
+    def model_product_option_value(self):
+        return models.ProductOptionValue.objects.get(id=11)
+
+    @property
+    def second_model_product_option_value(self):
+        return models.ProductOptionValue.objects.get(id=12)
+
+    @property
+    def cat_product_option_value(self):
+        return models.ProductOptionValue.objects.get(id=13)
+
+    @property
+    def dog_product_option_value(self):
+        return models.ProductOptionValue.objects.get(id=14)
+
+    @property
+    def horse_product_option_value(self):
+        return models.ProductOptionValue.objects.get(id=15)
+
+    @property
+    def used_product_options(self):
         return [
             self.colour_product_option,
             self.size_product_option,
@@ -193,7 +213,11 @@ class ProductRequirementsFixture(LocationsFixture):
         ]
 
     @property
-    def product_option_values(self):
+    def all_product_options(self):
+        return self.used_product_options.extend([self.design_product_option])
+
+    @property
+    def used_product_option_values(self):
         return [
             self.small_product_option_value,
             self.medium_product_option_value,
@@ -203,6 +227,21 @@ class ProductRequirementsFixture(LocationsFixture):
             self.blue_product_option_value,
             self.model_product_option_value,
         ]
+
+    @property
+    def all_product_option_values(self):
+        return self.used_product_option_values.extend(
+            [
+                self.xl_product_option_value,
+                self.xxl_product_option_value,
+                self.purple_product_option_value,
+                self.magenta_product_option_value,
+                self.cat_product_option_value,
+                self.dog_product_option_value,
+                self.horse_product_option_value,
+                self.second_model_product_option_value,
+            ]
+        )
 
 
 class SingleProductRangeFixture(ProductRequirementsFixture):
@@ -228,7 +267,43 @@ class VariationProductRangeFixture(ProductRequirementsFixture):
 
     @property
     def product(self):
+        return self.small_red_product
+
+    @property
+    def small_red_product(self):
         return models.Product.objects.get(id=1)
+
+    @property
+    def small_green_product(self):
+        return models.Product.objects.get(id=2)
+
+    @property
+    def small_blue_product(self):
+        return models.Product.objects.get(id=3)
+
+    @property
+    def medium_red_product(self):
+        return models.Product.objects.get(id=4)
+
+    @property
+    def medium_green_product(self):
+        return models.Product.objects.get(id=5)
+
+    @property
+    def medium_blue_product(self):
+        return models.Product.objects.get(id=6)
+
+    @property
+    def large_red_product(self):
+        return models.Product.objects.get(id=7)
+
+    @property
+    def large_green_product(self):
+        return models.Product.objects.get(id=8)
+
+    @property
+    def large_blue_product(self):
+        return models.Product.objects.get(id=9)
 
     @property
     def variations(self):
@@ -253,7 +328,43 @@ class EditingProductFixture(VariationProductRangeFixture):
 
     @property
     def product(self):
+        return self.small_red_product
+
+    @property
+    def small_red_product(self):
         return models.PartialProduct.objects.get(id=1)
+
+    @property
+    def small_green_product(self):
+        return models.PartialProduct.objects.get(id=2)
+
+    @property
+    def small_blue_product(self):
+        return models.PartialProduct.objects.get(id=3)
+
+    @property
+    def medium_red_product(self):
+        return models.PartialProduct.objects.get(id=4)
+
+    @property
+    def medium_green_product(self):
+        return models.PartialProduct.objects.get(id=5)
+
+    @property
+    def medium_blue_product(self):
+        return models.PartialProduct.objects.get(id=6)
+
+    @property
+    def large_red_product(self):
+        return models.PartialProduct.objects.get(id=7)
+
+    @property
+    def large_green_product(self):
+        return models.PartialProduct.objects.get(id=8)
+
+    @property
+    def large_blue_product(self):
+        return models.PartialProduct.objects.get(id=9)
 
     @property
     def variations(self):

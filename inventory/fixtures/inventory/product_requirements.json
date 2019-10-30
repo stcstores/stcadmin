@@ -62,13 +62,29 @@
   "model": "inventory.productoptionvalue",
   "pk": 4,
   "fields": {
+    "product_option_value_ID": "545666",
+    "product_option": 2,
+    "value": "Purple"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 5,
+  "fields": {
+    "product_option_value_ID": "145686",
+    "product_option": 2,
+    "value": "Magenta"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 6,
+  "fields": {
     "product_option_value_ID": "59303",
     "product_option": 1,
     "value": "Small"
   }
 }, {
   "model": "inventory.productoptionvalue",
-  "pk": 5,
+  "pk": 7,
   "fields": {
     "product_option_value_ID": "59398",
     "product_option": 1,
@@ -76,7 +92,7 @@
   }
 }, {
   "model": "inventory.productoptionvalue",
-  "pk": 6,
+  "pk": 8,
   "fields": {
     "product_option_value_ID": "59384",
     "product_option": 1,
@@ -84,7 +100,23 @@
   }
 }, {
   "model": "inventory.productoptionvalue",
-  "pk": 7,
+  "pk": 9,
+  "fields": {
+    "product_option_value_ID": "616168",
+    "product_option": 1,
+    "value": "XL"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 10,
+  "fields": {
+    "product_option_value_ID": "745616",
+    "product_option": 1,
+    "value": "XXL"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 11,
   "fields": {
     "product_option_value_ID": "549681",
     "product_option": 3,
@@ -92,7 +124,15 @@
   }
 }, {
   "model": "inventory.productoptionvalue",
-  "pk": 8,
+  "pk": 12,
+  "fields": {
+    "product_option_value_ID": "946131",
+    "product_option": 3,
+    "value": "DB50"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 13,
   "fields": {
     "product_option_value_ID": "685416",
     "product_option": 4,
@@ -100,7 +140,7 @@
   }
 }, {
   "model": "inventory.productoptionvalue",
-  "pk": 9,
+  "pk": 14,
   "fields": {
     "product_option_value_ID": "164846",
     "product_option": 4,
@@ -108,7 +148,7 @@
   }
 }, {
   "model": "inventory.productoptionvalue",
-  "pk": 10,
+  "pk": 15,
   "fields": {
     "product_option_value_ID": "984316",
     "product_option": 4,
@@ -118,7 +158,7 @@
   "model": "inventory.department",
   "pk": 1,
   "fields": {
-    "product_option_value_ID": "8394",
+    "product_option_value_ID": "839944",
     "name": "Home",
     "inactive": false,
     "abriviation": "HH"
@@ -127,7 +167,7 @@
   "model": "inventory.department",
   "pk": 2,
   "fields": {
-    "product_option_value_ID": "8384",
+    "product_option_value_ID": "641648",
     "name": "Sports",
     "inactive": false,
     "abriviation": "SS"
