@@ -1,11 +1,12 @@
 """Tests for Product Editor form fields."""
 
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+
 from product_editor.forms import fields
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
-class TestField(TestCase):
+class TestField(STCAdminTest):
     """Tests for Product Editor form fields."""
 
     def test_title_disallowed_characters(self):

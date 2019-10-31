@@ -1,4 +1,5 @@
 """stcadmin URL Configuration."""
+
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
@@ -7,6 +8,7 @@ from django.views.static import serve
 from user import views as user_views
 
 admin.site.site_header = "STC Stores Administration"
+
 
 app_name = "stcadmin"
 urlpatterns = [

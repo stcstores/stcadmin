@@ -1,6 +1,7 @@
 """Django settings for stcadmin project."""
 
 import os
+import sys
 
 import toml
 from ccapi import CCAPI
@@ -189,6 +190,7 @@ LOGGING = {
             "maxBytes": 1_048_576,
             "backupCount": 2,
             "formatter": "default_formatter",
+            "delay": True,
         },
         "error_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
@@ -197,6 +199,14 @@ LOGGING = {
             "backupCount": 2,
             "level": "ERROR",
             "filters": ["add_user_to_log_record"],
+            "formatter": "default_formatter",
+        },
+        "product_editor_file_handler": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "logs", "product_editor.log"),
+            "maxBytes": 1_048_576,
+            "backupCount": 2,
+            "filters": ["add_user_to_log_record", "replace_newlines"],
             "formatter": "default_formatter",
         },
         "stdout": {"class": "logging.StreamHandler", "level": "INFO"},
@@ -232,6 +242,11 @@ LOGGING = {
             "level": "ERROR",
             "propagate": False,
         },
+        "product_editor": {
+            "handlers": ["stdout", "product_editor_file_handler"],
+            "level": "DEBUG",
+            "propogate": False,
+        },
         "order_profit": {
             "handlers": ["mail_admins", "error_file_handler"],
             "level": "ERROR",
@@ -266,4 +281,20 @@ DOCS_ROOT = os.path.join(SOURCE_DIR, "docs", "build", "html")
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "home:index"
 
-CCAPI.create_session(domain=CC_DOMAIN, username=CC_USERNAME, password=CC_PWD)
+TESTING = (
+    len(sys.argv) > 1
+    and sys.argv[1] == "test"
+    or os.path.basename(sys.argv[0]) in ("pytest", "py.test")
+)
+
+
+def create_CCAPI_session():
+    """Create the Cloud Commerce session."""
+    if not TESTING:
+        CCAPI.create_session(domain=CC_DOMAIN, username=CC_USERNAME, password=CC_PWD)
+        print("Created Cloud Commerce session.", file=sys.stderr)
+    else:
+        print("Skipping Cloud Commerce session for testing.", file=sys.stderr)
+
+
+create_CCAPI_session()
