@@ -101,7 +101,7 @@ class ProductRequirementsFixture(LocationsFixture):
         return models.PackageType.objects.get(id=1)
 
     @property
-    def seccond_package_type(self):
+    def second_package_type(self):
         return models.PackageType.objects.get(id=2)
 
     @property

@@ -221,7 +221,7 @@ class TestSaveEditForNewRange(
         self.assertEqual(1, len(self.mock_product_updater.mock_calls))
 
     def test_set_package_type(self):
-        new_package_type = self.seccond_package_type
+        new_package_type = self.second_package_type
         product = self.product
         product.package_type = new_package_type
         product.save()
