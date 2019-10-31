@@ -390,6 +390,7 @@ class AddProductOptionValues(InventoryUserMixin, FormView):
         """Return the context for the template."""
         context = super().get_context_data(*args, **kwargs)
         context["edit"] = self.edit
+        context["product_range"] = self.edit.partial_product_range
         context["product_option"] = self.product_option
         return context
 
@@ -490,7 +491,10 @@ class EditAllVariations(InventoryUserMixin, TemplateView):
         self.product_range = self.edit.partial_product_range
         self.formset = forms.VariationsFormSet(
             self.request.POST or None,
-            form_kwargs=[{"product": p} for p in self.product_range.products()],
+            form_kwargs=[
+                {"product": p, "user": self.request.user}
+                for p in self.product_range.products()
+            ],
         )
         return super().dispatch(*args, **kwargs)
 
