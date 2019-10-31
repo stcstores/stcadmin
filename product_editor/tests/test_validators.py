@@ -1,11 +1,12 @@
 """Tests for Product Editor form validators."""
 
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+
 from product_editor.forms.fieldtypes import Validators
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
-class TestValidators(TestCase):
+class TestValidators(STCAdminTest):
     """Tests for Product Editor form validators."""
 
     def test_alphanumeric(self):

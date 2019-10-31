@@ -1,10 +1,11 @@
 """Test app groups are created in database."""
 
 from django.contrib.auth.models import Group
-from django.test import TestCase
+
+from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
-class TestAppGroupsCreated(TestCase):
+class TestAppGroupsCreated(STCAdminTest):
     """Test app groups are created in database."""
 
     def test_app_groups_exist(self):
