@@ -38,3 +38,6 @@ class STCAdminTest(TestCase):
         user = self.create_user()
         login = self.client.login(username=user.username, password=self.USER_PASSWORD)
         self.assertTrue(login)
+
+    def user_logged_in(self):
+        return "_auth_user_id" in self.client.session
