@@ -8,13 +8,14 @@ from django.shortcuts import reverse
 from inventory import forms, models
 from inventory.tests import fixtures
 from product_editor.editor_manager import ProductEditorBase
+from stcadmin.tests.stcadmin_test import ViewTests
 
 from .inventory_view_test import InventoryViewTest
 
 
-class TestContinueView(InventoryViewTest, fixtures.MultipleRangesFixture):
+class TestContinueView(InventoryViewTest, fixtures.MultipleRangesFixture, ViewTests):
     fixtures = fixtures.MultipleRangesFixture.fixtures
-    URL = reverse("inventory:continue")
+    URL = "/inventory/continue/"
     RANGE_ID = "384934"
 
     def setUp(self):
@@ -24,8 +25,9 @@ class TestContinueView(InventoryViewTest, fixtures.MultipleRangesFixture):
         models.ProductEdit.create_product_edit(self.other_user, self.eol_range)
         models.ProductEdit.create_product_edit(self.other_user, self.hidden_range)
 
-    def test_template(self):
-        response = self.client.get(self.URL)
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, "inventory/product_editor/continue.html")
 
     def test_view_context(self):
@@ -51,18 +53,24 @@ class TestContinueView(InventoryViewTest, fixtures.MultipleRangesFixture):
 
 
 class TestStartEditingProductView(
-    InventoryViewTest, fixtures.VariationProductRangeFixture
+    InventoryViewTest, fixtures.VariationProductRangeFixture, ViewTests
 ):
     fixtures = fixtures.VariationProductRangeFixture.fixtures
 
-    def test_view(self):
+    def get_URL(self):
+        return f"/inventory/start_editing_product/{self.product_range.range_ID}/"
+
+    def test_get_method(self):
         self.assertFalse(models.ProductEdit.objects.filter().exists())
-        response = self.client.get(
-            reverse(
-                "inventory:start_editing_product",
-                kwargs={"range_ID": self.product_range.range_ID},
-            )
+        response = self.make_get_request()
+        edit = models.ProductEdit.objects.get(product_range=self.product_range)
+        self.assertRedirects(
+            response, reverse("inventory:edit_product", kwargs={"edit_ID": edit.id})
         )
+
+    def test_post_method(self):
+        self.assertFalse(models.ProductEdit.objects.filter().exists())
+        response = self.make_post_request()
         edit = models.ProductEdit.objects.get(product_range=self.product_range)
         self.assertRedirects(
             response, reverse("inventory:edit_product", kwargs={"edit_ID": edit.id})
@@ -70,34 +78,26 @@ class TestStartEditingProductView(
 
     def test_uses_existing_edit_if_possible(self):
         edit = models.ProductEdit.create_product_edit(self.user, self.product_range)
-        response = self.client.get(
-            reverse(
-                "inventory:start_editing_product",
-                kwargs={"range_ID": self.product_range.range_ID},
-            )
-        )
+        response = self.make_get_request()
         edit = models.ProductEdit.objects.get(product_range=self.product_range)
         self.assertRedirects(
             response, reverse("inventory:edit_product", kwargs={"edit_ID": edit.id})
         )
 
 
-class TestStartNewProductView(InventoryViewTest):
+class TestStartNewProductView(
+    InventoryViewTest, fixtures.ProductRequirementsFixture, ViewTests
+):
+    fixtures = fixtures.ProductRequirementsFixture.fixtures
+    URL = "/inventory/start_new_product/"
+
     title = "New Test Range"
     search_terms = ["A", "Test", "Item"]
     amazon_bullets = ["This", "Is", "a", "New", "Item"]
     description = "A description.\nOf a new item."
 
-    @classmethod
-    def setUpTestData(cls):
-        InventoryViewTest.setUpTestData()
-        cls.department = models.Department.objects.create(
-            name="Test Department", abriviation="TD", product_option_value_ID="395483"
-        )
-
-    def setUp(self):
-        super().setUp()
-        self.form_data = {
+    def get_form_data(self):
+        return {
             "title": self.title,
             "department": self.department.id,
             "description": self.description,
@@ -108,19 +108,21 @@ class TestStartNewProductView(InventoryViewTest):
     def get_ID_from_URL(self, url):
         return int(list(filter(None, url.split("/")))[-1])
 
-    def test_view(self):
-        response = self.client.get(reverse("inventory:start_new_product"))
+    def make_post_request(self):
+        return self.client.post(self.URL, self.get_form_data())
+
+    def test_get_method(self):
+        response = self.make_get_request()
         self.assertTemplateUsed(
             response, "inventory/product_editor/edit_range_details.html"
         )
+        self.assertEqual(200, response.status_code)
         self.assertIsInstance(response.context["form"], forms.DescriptionForm)
 
-    def test_post(self):
+    def test_post_method(self):
         self.assertFalse(models.ProductEdit.objects.filter().exists())
         self.assertFalse(models.PartialProductRange.objects.filter().exists())
-        response = self.client.post(
-            reverse("inventory:start_new_product"), self.form_data
-        )
+        response = self.make_post_request()
         if response.context is not None:
             form = response.context["form"]
             self.assertEqual(
@@ -133,10 +135,7 @@ class TestStartNewProductView(InventoryViewTest):
         )
 
     def test_edit_created(self):
-        response = self.client.post(
-            reverse("inventory:start_new_product"), self.form_data
-        )
-        self.assertEqual(302, response.status_code)
+        response = self.make_post_request()
         edit_ID = self.get_ID_from_URL(response.url)
         edit = models.ProductEdit.objects.get(id=edit_ID)
         self.assertEqual(self.user, edit.user)
@@ -145,10 +144,7 @@ class TestStartNewProductView(InventoryViewTest):
         self.assertEqual(0, edit.product_option_values.count())
 
     def test_product_range_created(self):
-        response = self.client.post(
-            reverse("inventory:start_new_product"), self.form_data
-        )
-        self.assertEqual(302, response.status_code)
+        response = self.make_post_request()
         edit_ID = self.get_ID_from_URL(response.url)
         edit = models.ProductEdit.objects.get(id=edit_ID)
         self.assertEqual(self.title, edit.partial_product_range.name)
@@ -163,10 +159,9 @@ class TestStartNewProductView(InventoryViewTest):
         )
 
     def test_post_without_title(self):
-        self.form_data.pop("title")
-        response = self.client.post(
-            reverse("inventory:start_new_product"), self.form_data
-        )
+        form_data = self.get_form_data()
+        form_data.pop("title")
+        response = self.client.post(self.URL, form_data)
         self.assertEqual(200, response.status_code)
         self.assertIsNotNone(response.context.get("form"))
         form = response.context["form"]
@@ -174,10 +169,9 @@ class TestStartNewProductView(InventoryViewTest):
         self.assertIn("title", form.errors)
 
     def test_post_without_department(self):
-        self.form_data.pop("department")
-        response = self.client.post(
-            reverse("inventory:start_new_product"), self.form_data
-        )
+        form_data = self.get_form_data()
+        form_data.pop("department")
+        response = self.client.post(self.URL, form_data)
         self.assertEqual(200, response.status_code)
         self.assertIsNotNone(response.context.get("form"))
         form = response.context["form"]
@@ -185,37 +179,34 @@ class TestStartNewProductView(InventoryViewTest):
         self.assertIn("department", form.errors)
 
     def test_post_without_description(self):
-        self.form_data.pop("description")
-        response = self.client.post(
-            reverse("inventory:start_new_product"), self.form_data
-        )
+        form_data = self.get_form_data()
+        form_data.pop("description")
+        response = self.client.post(self.URL, form_data)
         self.assertEqual(302, response.status_code)
         edit_ID = self.get_ID_from_URL(response.url)
         edit = models.ProductEdit.objects.get(id=edit_ID)
         self.assertEqual(edit.partial_product_range.description, "")
 
     def test_post_without_search_terms(self):
-        self.form_data.pop("search_terms")
-        response = self.client.post(
-            reverse("inventory:start_new_product"), self.form_data
-        )
+        form_data = self.get_form_data()
+        form_data.pop("search_terms")
+        response = self.client.post(self.URL, form_data)
         self.assertEqual(302, response.status_code)
         edit_ID = self.get_ID_from_URL(response.url)
         edit = models.ProductEdit.objects.get(id=edit_ID)
         self.assertEqual(edit.partial_product_range.amazon_search_terms, "")
 
     def test_post_without_amazon_bullets(self):
-        self.form_data.pop("amazon_bullets")
-        response = self.client.post(
-            reverse("inventory:start_new_product"), self.form_data
-        )
+        form_data = self.get_form_data()
+        form_data.pop("amazon_bullets")
+        response = self.client.post(self.URL, form_data)
         self.assertEqual(302, response.status_code)
         edit_ID = self.get_ID_from_URL(response.url)
         edit = models.ProductEdit.objects.get(id=edit_ID)
         self.assertEqual(edit.partial_product_range.amazon_bullet_points, "")
 
 
-class TestEditProductView(InventoryViewTest, fixtures.EditingProductFixture):
+class TestEditProductView(InventoryViewTest, fixtures.EditingProductFixture, ViewTests):
     fixtures = fixtures.EditingProductFixture.fixtures
 
     def expected_variation_matrix(self):
@@ -258,19 +249,17 @@ class TestEditProductView(InventoryViewTest, fixtures.EditingProductFixture):
             ): models.PartialProduct.objects.get(id=3),
         }
 
-    def get_response(self, edit_ID=None):
+    def get_URL(self, edit_ID=None):
         if edit_ID is None:
             edit_ID = self.product_edit.id
-        return self.client.get(
-            reverse("inventory:edit_product", kwargs={"edit_ID": edit_ID})
-        )
+        return f"/inventory/edit_product/{edit_ID}/"
 
-    def test_view(self):
-        response = self.get_response()
+    def test_get_method(self):
+        response = self.make_get_request()
         self.assertTemplateUsed(response, "inventory/product_editor/edit_product.html")
 
     def test_get_variation_matrix(self):
-        response = self.get_response()
+        response = self.make_get_request()
         self.assertEqual(
             self.expected_variation_matrix(), response.context["variations"]
         )
@@ -280,11 +269,11 @@ class TestEditProductView(InventoryViewTest, fixtures.EditingProductFixture):
         self.product.delete()
         variation = (self.small_product_option_value, self.red_product_option_value)
         expected[variation] = None
-        response = self.get_response()
+        response = self.make_get_request()
         self.assertEqual(expected, response.context["variations"])
 
     def test_context(self):
-        response = self.get_response()
+        response = self.make_get_request()
         self.assertEqual(self.product_edit, response.context["edit"])
         self.assertEqual(
             self.product_edit.partial_product_range, response.context["product_range"]
@@ -296,7 +285,7 @@ class TestEditProductView(InventoryViewTest, fixtures.EditingProductFixture):
 
     def test_missing_variations(self):
         models.PartialProductOptionValueLink.objects.get(id=1).delete()
-        response = self.get_response()
+        response = self.make_get_request()
         self.assertRedirects(
             response,
             reverse(
@@ -308,13 +297,33 @@ class TestEditProductView(InventoryViewTest, fixtures.EditingProductFixture):
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Variations are missing product options.")
 
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
 
-class TestSetupVariationsView(InventoryViewTest, fixtures.ProductRequirementsFixture):
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
+
+
+class TestSetupVariationsView(
+    InventoryViewTest, fixtures.ProductRequirementsFixture, ViewTests
+):
     fixtures = fixtures.ProductRequirementsFixture.fixtures + (
         "inventory/setup_variations",
     )
 
-    URL = "inventory:setup_variations"
+    template = "inventory/product_editor/setup_variations.html"
+
+    def get_URL(self, edit_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        return f"/inventory/setup_variations/{edit_ID}/"
+
+    def make_post_request(self):
+        return self.client.post(self.get_URL(), self.form_data)
 
     def setUp(self):
         super().setUp()
@@ -333,27 +342,19 @@ class TestSetupVariationsView(InventoryViewTest, fixtures.ProductRequirementsFix
             ],
         }
 
-    def test_view(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id})
-        )
-        self.assertTemplateUsed(
-            response, "inventory/product_editor/setup_variations.html"
-        )
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertTemplateUsed(response, self.template)
         self.assertIn("form", response.context)
         self.assertIsInstance(response.context["form"], forms.SetupVariationsForm)
 
     def test_context(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id})
-        )
+        response = self.make_get_request()
         self.assertIn("edit", response.context)
         self.assertEqual(self.product_edit, response.context["edit"])
 
-    def test_post(self):
-        response = self.client.post(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id}), self.form_data
-        )
+    def test_post_method(self):
+        response = self.make_post_request()
         self.assertRedirects(
             response,
             reverse(
@@ -363,9 +364,7 @@ class TestSetupVariationsView(InventoryViewTest, fixtures.ProductRequirementsFix
         )
 
     def test_product_range_selected_options_set(self):
-        self.client.post(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id}), self.form_data
-        )
+        self.make_post_request()
         for option in (self.colour_product_option, self.size_product_option):
             self.assertTrue(
                 models.PartialProductRangeSelectedOption.objects.filter(
@@ -374,9 +373,7 @@ class TestSetupVariationsView(InventoryViewTest, fixtures.ProductRequirementsFix
             )
 
     def test_product_option_values_added_to_edit(self):
-        self.client.post(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id}), self.form_data
-        )
+        self.make_post_request()
         product_option_values = (
             self.small_product_option_value,
             self.medium_product_option_value,
@@ -390,9 +387,7 @@ class TestSetupVariationsView(InventoryViewTest, fixtures.ProductRequirementsFix
         )
 
     def test_create_single_product(self):
-        response = self.client.post(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id}), {}
-        )
+        response = self.client.post(self.get_URL(), {})
         self.assertRedirects(
             response,
             reverse(
@@ -414,19 +409,37 @@ class TestSetupVariationsView(InventoryViewTest, fixtures.ProductRequirementsFix
             ]
         }
         with self.assertRaises(NotImplementedError):
-            self.client.post(
-                reverse(self.URL, kwargs={"edit_ID": self.product_edit.id}), form_data
-            )
+            self.client.post(self.get_URL(), form_data)
+
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
 
 
 class TestCreateInitialVariationView(
-    InventoryViewTest, fixtures.ProductRequirementsFixture
+    InventoryViewTest, fixtures.ProductRequirementsFixture, ViewTests
 ):
     fixtures = fixtures.ProductRequirementsFixture.fixtures + (
         "inventory/create_initial_variation",
     )
 
-    URL = "inventory:create_initial_variation"
+    template = "inventory/product_editor/edit_variation.html"
+
+    def get_URL(self, edit_ID=None, product_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        if product_ID is None:
+            product_ID = self.product.id
+        return "/inventory/create_initial_variation/" f"{edit_ID}/{product_ID}/"
+
+    def make_post_request(self):
+        return self.client.post(self.get_URL(), self.form_data)
 
     def setUp(self):
         super().setUp()
@@ -454,43 +467,27 @@ class TestCreateInitialVariationView(
             ProductEditorBase.GENDER: self.gender.id,
         }
 
-    def test_view(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id, "product_ID": 1})
-        )
+    def test_get_method(self):
+        response = self.make_get_request()
         self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed(
-            response, "inventory/product_editor/edit_variation.html"
-        )
+        self.assertTemplateUsed(response, self.template)
 
     def test_context(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id, "product_ID": 1})
-        )
+        response = self.make_get_request()
         self.assertEqual(self.product_edit, response.context["edit"])
         self.assertEqual(self.product_range, response.context["product_range"])
         self.assertEqual(self.product, response.context["product"])
         self.assertIsInstance(response.context["form"], forms.ProductForm)
 
-    def test_post(self):
-        response = self.client.post(
-            reverse(
-                self.URL, kwargs={"edit_ID": self.product_edit.id, "product_ID": 1}
-            ),
-            self.form_data,
-        )
+    def test_post_method(self):
+        response = self.make_post_request()
         self.assertRedirects(
             response,
             reverse("inventory:edit_product", kwargs={"edit_ID": self.product_edit.id}),
         )
 
     def test_new_products(self):
-        self.client.post(
-            reverse(
-                self.URL, kwargs={"edit_ID": self.product_edit.id, "product_ID": 1}
-            ),
-            self.form_data,
-        )
+        self.make_post_request()
         product_query = models.PartialProduct.objects.filter(
             product_range=self.product_range
         )
@@ -530,25 +527,36 @@ class TestCreateInitialVariationView(
                     ).exists()
                 )
 
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="999999", product_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
 
-class TestEditVariationsView(InventoryViewTest, fixtures.EditingProductFixture):
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="999999", product_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
+
+
+class TestEditVariationsView(
+    InventoryViewTest, fixtures.EditingProductFixture, ViewTests
+):
     fixtures = fixtures.EditingProductFixture.fixtures
 
-    URL = "inventory:edit_variations"
+    def get_URL(self, edit_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        return f"/inventory/edit_variations/{edit_ID}/"
 
-    def test_view(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id})
-        )
+    def test_get_method(self):
+        response = self.make_get_request()
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(
             response, "inventory/product_editor/edit_variations.html"
         )
 
     def test_context(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id})
-        )
+        response = self.make_get_request()
         self.assertEqual(self.product_edit, response.context["edit"])
         self.assertEqual(self.product_range, response.context["product_range"])
         self.assertEqual(
@@ -568,11 +576,21 @@ class TestEditVariationsView(InventoryViewTest, fixtures.EditingProductFixture):
             self.used_product_option_values, list(response.context["used_values"])
         )
 
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
 
-class TestEditRangeDetailsView(InventoryViewTest, fixtures.EditingProductFixture):
+
+class TestEditRangeDetailsView(
+    InventoryViewTest, fixtures.EditingProductFixture, ViewTests
+):
     fixtures = fixtures.EditingProductFixture.fixtures
 
-    URL = "inventory:edit_range_details"
+    def get_URL(self, edit_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        return f"/inventory/edit_range_details/{edit_ID}/"
 
     TITLE_VALUE = "Updated Title"
     DESCRIPTION_VALUE = "Updated description.\nOf a product."
@@ -580,18 +598,14 @@ class TestEditRangeDetailsView(InventoryViewTest, fixtures.EditingProductFixture
     SEARCH_TERMS_VALUE = ["Four", "Five", "Six"]
 
     def test_get_method(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id})
-        )
+        response = self.make_get_request()
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(
             response, "inventory/product_editor/edit_range_details.html"
         )
 
     def test_context(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id})
-        )
+        response = response = self.make_get_request()
         self.assertEqual(self.product_edit, response.context["edit"])
         self.assertEqual(self.product_range, response.context["product_range"])
         self.assertIsInstance(response.context["form"], forms.DescriptionForm)
@@ -604,9 +618,7 @@ class TestEditRangeDetailsView(InventoryViewTest, fixtures.EditingProductFixture
             "amazon_bullets": json.dumps(self.AMAZON_BULLETS_VALUE),
             "search_terms": json.dumps(self.SEARCH_TERMS_VALUE),
         }
-        response = self.client.post(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id}), form_data
-        )
+        response = self.client.post(self.get_URL(), form_data)
         self.assertRedirects(
             response,
             reverse("inventory:edit_product", kwargs={"edit_ID": self.product_edit.pk}),
@@ -622,6 +634,16 @@ class TestEditRangeDetailsView(InventoryViewTest, fixtures.EditingProductFixture
             "|".join(self.SEARCH_TERMS_VALUE), product_range.amazon_search_terms
         )
 
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
+
 
 class AddProductOptionViewTests(fixtures.EditingProductFixture):
     fixtures = fixtures.EditingProductFixture.fixtures
@@ -631,26 +653,11 @@ class AddProductOptionViewTests(fixtures.EditingProductFixture):
     AMAZON_BULLETS_VALUE = ["One", "Two", "Three"]
     SEARCH_TERMS_VALUE = ["Four", "Five", "Six"]
 
-    def test_get_method(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id})
-        )
-        self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed(
-            response, "inventory/product_editor/add_product_option.html"
-        )
+    def make_post_request(self):
+        return self.client.post(self.get_URL(), self.get_form_data())
 
-    def test_context(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id})
-        )
-        self.assertEqual(self.product_edit, response.context["edit"])
-        self.assertEqual(self.product_range, response.context["product_range"])
-        self.assertEqual(self.name_value, response.context["name"])
-        self.assertIsInstance(response.context["form"], forms.AddProductOption)
-
-    def test_post_method(self):
-        form_data = {
+    def get_form_data(self):
+        return {
             "option": self.design_product_option.id,
             f"values_{self.design_product_option.id}": [
                 self.cat_product_option_value.value,
@@ -658,9 +665,23 @@ class AddProductOptionViewTests(fixtures.EditingProductFixture):
                 self.horse_product_option_value.value,
             ],
         }
-        response = self.client.post(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id}), form_data
+
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(
+            response, "inventory/product_editor/add_product_option.html"
         )
+
+    def test_context(self):
+        response = self.make_get_request()
+        self.assertEqual(self.product_edit, response.context["edit"])
+        self.assertEqual(self.product_range, response.context["product_range"])
+        self.assertEqual(self.name_value, response.context["name"])
+        self.assertIsInstance(response.context["form"], forms.AddProductOption)
+
+    def test_post_method(self):
+        response = self.make_post_request()
         self.assertRedirects(
             response,
             reverse("inventory:edit_product", kwargs={"edit_ID": self.product_edit.pk}),
@@ -685,23 +706,49 @@ class AddProductOptionViewTests(fixtures.EditingProductFixture):
         ):
             self.assertIn(value, self.product_edit.product_option_values.all())
 
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
 
-class TestAddDropdownView(AddProductOptionViewTests, InventoryViewTest):
-    URL = "inventory:add_dropdown"
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
+
+
+class TestAddDropdownView(AddProductOptionViewTests, InventoryViewTest, ViewTests):
     expected_variation_value = True
     name_value = "Dropdown"
 
+    def get_URL(self, edit_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        return f"/inventory/add_dropdown/{edit_ID}/"
 
-class TestAddListingOptionView(AddProductOptionViewTests, InventoryViewTest):
-    URL = "inventory:add_listing_option"
+
+class TestAddListingOptionView(AddProductOptionViewTests, InventoryViewTest, ViewTests):
     expected_variation_value = False
     name_value = "Listing Option"
 
+    def get_URL(self, edit_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        return f"/inventory/add_listing_option/{edit_ID}/"
 
-class TestSetProductOptionValuesView(InventoryViewTest, fixtures.EditingProductFixture):
+
+class TestSetProductOptionValuesView(
+    InventoryViewTest, fixtures.EditingProductFixture, ViewTests
+):
     fixtures = fixtures.EditingProductFixture.fixtures
 
-    URL = "inventory:set_product_option_values"
+    def get_URL(self, edit_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        return f"/inventory/set_product_option_values/{edit_ID}/"
+
+    def make_post_request(self):
+        return self.client.post(self.get_URL(), self.get_form_data())
 
     def get_form_data(self):
         products = self.variations
@@ -716,18 +763,14 @@ class TestSetProductOptionValuesView(InventoryViewTest, fixtures.EditingProductF
         return form_data
 
     def test_get_method(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id})
-        )
+        response = self.make_get_request()
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(
             response, "inventory/product_editor/set_product_option_values.html"
         )
 
     def test_context(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id})
-        )
+        response = self.make_get_request()
         self.assertEqual(self.product_edit, response.context["edit"])
         self.assertEqual(self.product_range, response.context["product_range"])
         self.assertIsInstance(
@@ -735,10 +778,7 @@ class TestSetProductOptionValuesView(InventoryViewTest, fixtures.EditingProductF
         )
 
     def test_post_method(self):
-        response = self.client.post(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id}),
-            self.get_form_data(),
-        )
+        response = self.make_post_request()
         self.assertRedirects(
             response,
             reverse("inventory:edit_product", kwargs={"edit_ID": self.product_edit.id}),
@@ -752,30 +792,44 @@ class TestSetProductOptionValuesView(InventoryViewTest, fixtures.EditingProductF
         self.assertTrue(query.exists())
         query.delete()
         self.assertFalse(query.exists())
-        self.client.post(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id}), form_data
-        )
+        self.client.post(self.get_URL(), form_data)
         self.assertTrue(query.exists())
 
     def test_redirects_for_invalid_form(self):
         form_data = self.get_form_data()
         form_data.pop("form-1-product_ID")
-        response = self.client.post(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id}), form_data
-        )
+        response = self.client.post(self.get_URL(), form_data)
         self.assertEqual(200, response.status_code)
         self.assertIn(
             {"product_ID": ["This field is required."]},
             response.context["formset"].errors,
         )
 
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
 
-class TestRemoveDropdownView(InventoryViewTest, fixtures.EditingProductFixture):
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
+
+
+class TestRemoveDropdownView(
+    InventoryViewTest, fixtures.EditingProductFixture, ViewTests
+):
     fixtures = fixtures.EditingProductFixture.fixtures
 
-    URL = "inventory:remove_dropdown"
+    def get_URL(self, edit_ID=None, product_option_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        if product_option_ID is None:
+            product_option_ID = self.colour_product_option.id
+        return f"/inventory/remove_dowpdown/{edit_ID}/{product_option_ID}/"
 
-    def test_view(self):
+    def setUp(self):
+        super().setUp()
         for product in self.variations[:3]:
             product.pre_existing = False
             product.save()
@@ -785,15 +839,9 @@ class TestRemoveDropdownView(InventoryViewTest, fixtures.EditingProductFixture):
         )
         selected_option.pre_existing = False
         selected_option.save()
-        response = self.client.get(
-            reverse(
-                self.URL,
-                kwargs={
-                    "edit_ID": self.product_edit.id,
-                    "product_option_ID": product_option.id,
-                },
-            )
-        )
+
+    def test_get_method(self):
+        response = self.make_get_request()
         self.assertRedirects(
             response,
             reverse(
@@ -802,43 +850,65 @@ class TestRemoveDropdownView(InventoryViewTest, fixtures.EditingProductFixture):
         )
         self.assertFalse(
             models.PartialProductRangeSelectedOption.objects.filter(
-                product_range=self.product_range, product_option=product_option
+                product_range=self.product_range,
+                product_option=self.colour_product_option,
             ).exists()
         )
-        self.assertEqual(
-            6,
-            models.PartialProduct.objects.filter(
-                product_range=self.product_range
-            ).count(),
+        partial_product_count = models.PartialProduct.objects.filter(
+            product_range=self.product_range
+        ).count()
+        self.assertEqual(6, partial_product_count)
+        self.assertNotIn(
+            self.colour_product_option, self.product_edit.product_option_values.all()
         )
-        self.assertNotIn(product_option, self.product_edit.product_option_values.all())
 
-    def test_response_for_invalid_product_edit(self):
-        response = self.client.get(
+    def test_post_method(self):
+        response = self.make_post_request()
+        self.assertRedirects(
+            response,
             reverse(
-                self.URL,
-                kwargs={
-                    "edit_ID": 52,
-                    "product_option_ID": self.colour_product_option.id,
-                },
-            )
+                "inventory:edit_variations", kwargs={"edit_ID": self.product_edit.id}
+            ),
         )
+        self.assertNotIn(
+            self.colour_product_option, self.product_edit.product_option_values.all()
+        )
+
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
         self.assertEqual(404, response.status_code)
 
-    def test_response_for_invalid_product_option(self):
-        response = self.client.get(
-            reverse(
-                self.URL,
-                kwargs={"edit_ID": self.product_edit.id, "product_option_ID": 965},
-            )
-        )
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_get_invalid_option_ID(self):
+        URL = self.get_URL(product_option_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_post_invalid_option_ID(self):
+        URL = self.get_URL(product_option_ID="99999")
+        response = self.client.post(URL)
         self.assertEqual(404, response.status_code)
 
 
-class TestAddProductOptionValuesView(InventoryViewTest, fixtures.EditingProductFixture):
+class TestAddProductOptionValuesView(
+    InventoryViewTest, fixtures.EditingProductFixture, ViewTests
+):
     fixtures = fixtures.EditingProductFixture.fixtures
 
-    URL = "inventory:add_product_option_values"
+    def get_URL(self, edit_ID=None, product_option_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        if product_option_ID is None:
+            product_option_ID = self.colour_product_option.id
+        return f"/inventory/add_product_option_values/{edit_ID}/{product_option_ID}/"
+
+    def make_post_request(self):
+        return self.client.post(self.get_URL(), self.get_form_data())
 
     def get_form_data(self):
         return {
@@ -849,15 +919,7 @@ class TestAddProductOptionValuesView(InventoryViewTest, fixtures.EditingProductF
         }
 
     def test_get_method(self):
-        response = self.client.get(
-            reverse(
-                self.URL,
-                kwargs={
-                    "edit_ID": self.product_edit.id,
-                    "product_option_ID": self.colour_product_option.id,
-                },
-            )
-        )
+        response = self.make_get_request()
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(
             response, "inventory/product_editor/add_product_option_values.html"
@@ -866,12 +928,7 @@ class TestAddProductOptionValuesView(InventoryViewTest, fixtures.EditingProductF
     def test_context(self):
         edit = self.product_edit
         product_option = self.colour_product_option
-        response = self.client.get(
-            reverse(
-                self.URL,
-                kwargs={"edit_ID": edit.id, "product_option_ID": product_option.id},
-            )
-        )
+        response = self.make_get_request()
         self.assertEqual(edit, response.context["edit"])
         self.assertEqual(self.product_range, response.context["product_range"])
         self.assertEqual(product_option, response.context["product_option"])
@@ -883,11 +940,7 @@ class TestAddProductOptionValuesView(InventoryViewTest, fixtures.EditingProductF
         edit = self.product_edit
         product_option = self.colour_product_option
         response = self.client.post(
-            reverse(
-                self.URL,
-                kwargs={"edit_ID": edit.id, "product_option_ID": product_option.id},
-            ),
-            self.get_form_data(),
+            self.get_URL(product_option_ID=product_option.id), self.get_form_data()
         )
         self.assertRedirects(
             response,
@@ -902,28 +955,63 @@ class TestAddProductOptionValuesView(InventoryViewTest, fixtures.EditingProductF
             self.product_edit.product_option_values.all(),
         )
 
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_get_invalid_option_ID(self):
+        URL = self.get_URL(product_option_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_post_invalid_option_ID(self):
+        URL = self.get_URL(product_option_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
+
 
 class TestRemoveProductOptionValueView(
-    InventoryViewTest, fixtures.EditingProductFixture
+    InventoryViewTest, fixtures.EditingProductFixture, ViewTests
 ):
     fixtures = fixtures.EditingProductFixture.fixtures
 
-    URL = "inventory:remove_product_option_value"
+    def get_URL(self, edit_ID=None, option_value_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        if option_value_ID is None:
+            option_value_ID = self.red_product_option_value.id
+        return f"/inventory/remove_product_option_value/{edit_ID}/{option_value_ID}/"
 
-    def test_view(self):
+    def test_get_method(self):
         edit = self.product_edit
         edit.product_option_values.add(self.purple_product_option_value)
         self.assertIn(
             self.purple_product_option_value, edit.product_option_values.all()
         )
         response = self.client.get(
-            reverse(
-                self.URL,
-                kwargs={
-                    "edit_ID": edit.id,
-                    "option_value_ID": self.purple_product_option_value.id,
-                },
-            )
+            self.get_URL(option_value_ID=self.purple_product_option_value.id)
+        )
+        self.assertRedirects(
+            response, reverse("inventory:edit_variations", kwargs={"edit_ID": edit.id})
+        )
+        self.assertNotIn(
+            self.purple_product_option_value, edit.product_option_values.all()
+        )
+
+    def test_post_method(self):
+        edit = self.product_edit
+        edit.product_option_values.add(self.purple_product_option_value)
+        self.assertIn(
+            self.purple_product_option_value, edit.product_option_values.all()
+        )
+        response = self.client.post(
+            self.get_URL(option_value_ID=self.purple_product_option_value.id)
         )
         self.assertRedirects(
             response, reverse("inventory:edit_variations", kwargs={"edit_ID": edit.id})
@@ -933,23 +1021,46 @@ class TestRemoveProductOptionValueView(
         )
 
     def test_raises_if_option_used(self):
-        edit = self.product_edit
         with self.assertRaises(Exception):
             self.client.get(
-                reverse(
-                    self.URL,
-                    kwargs={
-                        "edit_ID": edit.id,
-                        "option_value_ID": self.small_product_option_value.id,
-                    },
-                )
+                self.get_URL(option_value_ID=self.small_product_option_value.id)
             )
 
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
 
-class TestEditVariationView(InventoryViewTest, fixtures.EditingProductFixture):
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_get_invalid_option_value_ID(self):
+        URL = self.get_URL(option_value_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_post_invalid_option_value_ID(self):
+        URL = self.get_URL(option_value_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
+
+
+class TestEditVariationView(
+    InventoryViewTest, fixtures.EditingProductFixture, ViewTests
+):
     fixtures = fixtures.EditingProductFixture.fixtures
 
-    URL = "inventory:edit_variation"
+    def get_URL(self, edit_ID=None, product_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        if product_ID is None:
+            product_ID = self.product.id
+        return f"/inventory/edit_variation/{edit_ID}/{product_ID}/"
+
+    def make_post_request(self):
+        return self.client.post(self.get_URL(), self.get_form_data())
 
     def get_form_data(self):
         return {
@@ -974,37 +1085,21 @@ class TestEditVariationView(InventoryViewTest, fixtures.EditingProductFixture):
         }
 
     def test_get_method(self):
-        response = self.client.get(
-            reverse(
-                self.URL,
-                kwargs={"edit_ID": self.product_edit.id, "product_ID": self.product.id},
-            )
-        )
+        response = self.make_get_request()
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(
             response, "inventory/product_editor/edit_variation.html"
         )
 
     def test_context(self):
-        edit = self.product_edit
-        response = self.client.get(
-            reverse(
-                self.URL, kwargs={"edit_ID": edit.id, "product_ID": self.product.id}
-            )
-        )
-        self.assertEqual(edit, response.context["edit"])
+        response = self.make_get_request()
+        self.assertEqual(self.product_edit, response.context["edit"])
         self.assertEqual(self.product_range, response.context["product_range"])
         self.assertEqual(self.product, response.context["product"])
         self.assertIsInstance(response.context["form"], forms.ProductForm)
 
     def test_post_method(self):
-        response = self.client.post(
-            reverse(
-                self.URL,
-                kwargs={"edit_ID": self.product_edit.id, "product_ID": self.product.id},
-            ),
-            self.get_form_data(),
-        )
+        response = self.make_post_request()
         self.assertRedirects(
             response,
             reverse(
@@ -1014,13 +1109,7 @@ class TestEditVariationView(InventoryViewTest, fixtures.EditingProductFixture):
         )
 
     def test_product_edit(self):
-        self.client.post(
-            reverse(
-                self.URL,
-                kwargs={"edit_ID": self.product_edit.id, "product_ID": self.product.id},
-            ),
-            self.get_form_data(),
-        )
+        self.make_post_request()
         product = self.product
         self.assertEqual(self.second_brand, product.brand)
         self.assertEqual("8946516515", product.barcode)
@@ -1042,11 +1131,39 @@ class TestEditVariationView(InventoryViewTest, fixtures.EditingProductFixture):
         self.assertEqual(124, product.width_mm)
         self.assertEqual(self.second_gender, product.gender)
 
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
 
-class TestEditAllVariationsView(InventoryViewTest, fixtures.EditingProductFixture):
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_get_invalid_product_ID(self):
+        URL = self.get_URL(product_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_post_invalid_oroduct_ID(self):
+        URL = self.get_URL(product_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
+
+
+class TestEditAllVariationsView(
+    InventoryViewTest, fixtures.EditingProductFixture, ViewTests
+):
     fixtures = fixtures.EditingProductFixture.fixtures
 
-    URL = "inventory:edit_all_variations"
+    def get_URL(self, edit_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        return f"/inventory/edit_all_variations/{edit_ID}/"
+
+    def make_post_request(self):
+        return self.client.post(self.get_URL(), self.get_form_data())
 
     def get_form_data(self):
         form_count = len(self.variations)
@@ -1085,18 +1202,15 @@ class TestEditAllVariationsView(InventoryViewTest, fixtures.EditingProductFixtur
         return form_data
 
     def test_get_method(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id})
-        )
+        response = self.make_get_request()
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(
             response, "inventory/product_editor/edit_all_variations.html"
         )
 
     def test_context(self):
-        edit = self.product_edit
-        response = self.client.get(reverse(self.URL, kwargs={"edit_ID": edit.id}))
-        self.assertEqual(edit, response.context["edit"])
+        response = self.make_get_request()
+        self.assertEqual(self.product_edit, response.context["edit"])
         self.assertEqual(self.product_range, response.context["product_range"])
         self.assertIsInstance(response.context["formset"], forms.VariationsFormSet)
         self.assertEqual(
@@ -1104,10 +1218,7 @@ class TestEditAllVariationsView(InventoryViewTest, fixtures.EditingProductFixtur
         )
 
     def test_post_method(self):
-        response = self.client.post(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id}),
-            self.get_form_data(),
-        )
+        response = self.make_post_request()
         self.assertRedirects(
             response,
             reverse("inventory:edit_product", kwargs={"edit_ID": self.product_edit.id}),
@@ -1136,24 +1247,33 @@ class TestEditAllVariationsView(InventoryViewTest, fixtures.EditingProductFixtur
     def test_invalid_form_submission(self):
         form_data = self.get_form_data()
         form_data.pop(f"form-0-{ProductEditorBase.PRICE}")
-        response = self.client.post(
-            reverse(self.URL, kwargs={"edit_ID": self.product_edit.id}), form_data
-        )
+        response = self.client.post(self.get_URL(), form_data)
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(
             response, "inventory/product_editor/edit_all_variations.html"
         )
         self.assertIn(ProductEditorBase.PRICE, response.context["formset"][0].errors)
 
-    def test_invalid_edit_ID(self):
-        response = self.client.get(reverse(self.URL, kwargs={"edit_ID": 99}))
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
         self.assertEqual(404, response.status_code)
 
 
-class TestCreateVariationView(InventoryViewTest, fixtures.EditingProductFixture):
+class TestCreateVariationView(
+    InventoryViewTest, fixtures.EditingProductFixture, ViewTests
+):
     fixtures = fixtures.EditingProductFixture.fixtures
 
-    URL = "inventory:create_variation"
+    def get_URL(self, edit_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        return f"/inventory/create_variation/{edit_ID}/"
 
     def get_form_data(self):
         return {
@@ -1161,12 +1281,13 @@ class TestCreateVariationView(InventoryViewTest, fixtures.EditingProductFixture)
             "2": self.small_product_option_value.id,
         }
 
+    def make_post_request(self):
+        return self.client.post(self.get_URL(), self.get_form_data())
+
     def test_post_method(self):
         self.small_red_product.delete()
         edit = self.product_edit
-        response = self.client.post(
-            reverse(self.URL, kwargs={"edit_ID": edit.id}), self.get_form_data()
-        )
+        response = self.make_post_request()
         self.assertRedirects(
             response,
             reverse("inventory:edit_product", kwargs={"edit_ID": edit.id}),
@@ -1183,26 +1304,57 @@ class TestCreateVariationView(InventoryViewTest, fixtures.EditingProductFixture)
                 ).exists()
             )
 
-    def test_invalid_edit_ID(self):
-        response = self.client.post(
-            reverse(self.URL, kwargs={"edit_ID": 99}), form_data=self.get_form_data()
+    def test_get_method(self):
+        self.small_red_product.delete()
+        edit = self.product_edit
+        response = self.make_post_request()
+        self.assertRedirects(
+            response,
+            reverse("inventory:edit_product", kwargs={"edit_ID": edit.id}),
+            status_code=302,
+            target_status_code=302,
         )
+
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
         self.assertEqual(404, response.status_code)
 
 
-class TestDeleteVariationView(InventoryViewTest, fixtures.EditingProductFixture):
+class TestDeleteVariationView(
+    InventoryViewTest, fixtures.EditingProductFixture, ViewTests
+):
     fixtures = fixtures.EditingProductFixture.fixtures
 
-    URL = "inventory:delete_variation"
+    def get_URL(self, edit_ID=None, product_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        if product_ID is None:
+            product_ID = self.product.id
+        return f"/inventory/delete_variation/{edit_ID}/{product_ID}/"
 
     def test_get_method(self):
         edit = self.product_edit
         product = self.product
         product.pre_existing = False
         product.save()
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": edit.id, "product_ID": product.id})
+        response = self.make_get_request()
+        self.assertRedirects(
+            response, reverse("inventory:edit_product", kwargs={"edit_ID": edit.id})
         )
+        self.assertFalse(models.PartialProduct.objects.filter(id=product.id).exists())
+
+    def test_post_method(self):
+        edit = self.product_edit
+        product = self.product
+        product.pre_existing = False
+        product.save()
+        response = self.make_post_request()
         self.assertRedirects(
             response, reverse("inventory:edit_product", kwargs={"edit_ID": edit.id})
         )
@@ -1211,39 +1363,66 @@ class TestDeleteVariationView(InventoryViewTest, fixtures.EditingProductFixture)
     def test_pre_existing_product_not_deleted(self):
         edit = self.product_edit
         product = self.product
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": edit.id, "product_ID": product.id})
-        )
+        response = self.make_get_request()
         self.assertRedirects(
             response, reverse("inventory:edit_product", kwargs={"edit_ID": edit.id})
         )
         self.assertTrue(models.PartialProduct.objects.filter(id=product.id).exists())
 
-    def test_invalid_edit_ID(self):
-        response = self.client.get(
-            reverse(self.URL, kwargs={"edit_ID": 99, "product_ID": self.product.id})
-        )
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
         self.assertEqual(404, response.status_code)
 
-    def test_invalid_product_ID(self):
-        response = self.client.get(
-            reverse(
-                self.URL, kwargs={"edit_ID": self.product_edit.id, "product_ID": 99}
-            )
-        )
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_get_invalid_product_ID(self):
+        URL = self.get_URL(product_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_post_invalid_oroduct_ID(self):
+        URL = self.get_URL(product_ID="99999")
+        response = self.client.post(URL)
         self.assertEqual(404, response.status_code)
 
 
-class TestDiscardChangesView(InventoryViewTest, fixtures.EditingProductFixture):
+class TestDiscardChangesView(
+    InventoryViewTest, fixtures.EditingProductFixture, ViewTests
+):
     fixtures = fixtures.EditingProductFixture.fixtures
 
-    URL = "inventory:discard_changes"
+    def get_URL(self, edit_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        return f"/inventory/discard_changes/{edit_ID}/"
 
     def test_get_method(self):
         edit = self.product_edit
         product_range = edit.partial_product_range
         original_range = edit.product_range
-        response = self.client.get(reverse(self.URL, kwargs={"edit_ID": edit.id}))
+        response = self.make_get_request()
+        self.assertRedirects(
+            response,
+            reverse(
+                "inventory:product_range", kwargs={"range_id": original_range.range_ID}
+            ),
+        )
+        self.assertFalse(
+            models.PartialProductRangeSelectedOption.objects.filter(
+                id=product_range.id
+            ).exists()
+        )
+        self.assertFalse(models.ProductEdit.objects.filter(id=edit.id).exists())
+
+    def test_post_method(self):
+        edit = self.product_edit
+        product_range = edit.partial_product_range
+        original_range = edit.product_range
+        response = self.make_post_request()
         self.assertRedirects(
             response,
             reverse(
@@ -1262,7 +1441,7 @@ class TestDiscardChangesView(InventoryViewTest, fixtures.EditingProductFixture):
         product_range = edit.partial_product_range
         edit.product_range = None
         edit.save()
-        response = self.client.get(reverse(self.URL, kwargs={"edit_ID": edit.id}))
+        response = self.make_get_request()
         self.assertRedirects(response, reverse("inventory:product_search"))
         self.assertFalse(
             models.PartialProductRangeSelectedOption.objects.filter(
@@ -1271,15 +1450,24 @@ class TestDiscardChangesView(InventoryViewTest, fixtures.EditingProductFixture):
         )
         self.assertFalse(models.ProductEdit.objects.filter(id=edit.id).exists())
 
-    def test_invalid_edit_ID(self):
-        response = self.client.get(reverse(self.URL, kwargs={"edit_ID": 99}))
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
         self.assertEqual(404, response.status_code)
 
 
-class TestSaveChangesView(InventoryViewTest, fixtures.EditingProductFixture):
+class TestSaveChangesView(InventoryViewTest, fixtures.EditingProductFixture, ViewTests):
     fixtures = fixtures.EditingProductFixture.fixtures
 
-    URL = "inventory:save_changes"
+    def get_URL(self, edit_ID=None):
+        if edit_ID is None:
+            edit_ID = self.product_edit.id
+        return f"/inventory/save_changes/{edit_ID}/"
 
     @patch("inventory.views.product_editor.SaveEdit")
     def test_get_method(self, mock_SaveEdit):
@@ -1287,7 +1475,7 @@ class TestSaveChangesView(InventoryViewTest, fixtures.EditingProductFixture):
         mock_SaveEdit.return_value = mock_save_edit
         edit = self.product_edit
         original_range = edit.product_range
-        response = self.client.get(reverse(self.URL, kwargs={"edit_ID": edit.id}))
+        response = self.make_get_request()
         self.assertRedirects(
             response,
             reverse(
@@ -1297,6 +1485,28 @@ class TestSaveChangesView(InventoryViewTest, fixtures.EditingProductFixture):
         mock_SaveEdit.assert_called_once_with(edit, self.user)
         mock_save_edit.save_edit_threaded.assert_called_once()
 
-    def test_invalid_edit_ID(self):
-        response = self.client.get(reverse(self.URL, kwargs={"edit_ID": 99}))
+    @patch("inventory.views.product_editor.SaveEdit")
+    def test_post_method(self, mock_SaveEdit):
+        mock_save_edit = Mock()
+        mock_SaveEdit.return_value = mock_save_edit
+        edit = self.product_edit
+        original_range = edit.product_range
+        response = self.make_post_request()
+        self.assertRedirects(
+            response,
+            reverse(
+                "inventory:product_range", kwargs={"range_id": original_range.range_ID}
+            ),
+        )
+        mock_SaveEdit.assert_called_once_with(edit, self.user)
+        mock_save_edit.save_edit_threaded.assert_called_once()
+
+    def test_get_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.get(URL)
+        self.assertEqual(404, response.status_code)
+
+    def test_post_invalid_edit_ID(self):
+        URL = self.get_URL(edit_ID="99999")
+        response = self.client.post(URL)
         self.assertEqual(404, response.status_code)
