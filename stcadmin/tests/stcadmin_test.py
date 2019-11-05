@@ -51,6 +51,7 @@ class STCAdminTest(TestCase):
 
 
 class ViewTests:
+    group_name = None
     get_method_status_code = 405
     post_method_status_code = 405
 
