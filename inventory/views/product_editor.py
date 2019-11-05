@@ -15,7 +15,6 @@ from inventory.cloud_commerce_updater import (
     SaveEdit,
 )
 
-from .descriptions import DescriptionsView
 from .views import InventoryUserMixin
 
 
@@ -102,7 +101,7 @@ class EditProduct(InventoryUserMixin, TemplateView):
 
     def dispatch(self, *args, **kwargs):
         """If the product range is missing product option values redirect."""
-        self.edit = models.ProductEdit.objects.get(pk=self.kwargs["edit_ID"])
+        self.edit = get_object_or_404(models.ProductEdit, id=self.kwargs["edit_ID"])
         self.product_range = self.edit.partial_product_range
         if self.product_range.has_missing_product_option_values():
             messages.add_message(
@@ -157,7 +156,7 @@ class SetupVariations(InventoryUserMixin, FormView):
         """Process HTTP request."""
         self.edit = get_object_or_404(models.ProductEdit, pk=self.kwargs.get("edit_ID"))
         self.product_range = self.edit.partial_product_range
-        return super(FormView, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         """Return context for the template."""
@@ -207,16 +206,27 @@ class EditVariations(InventoryUserMixin, TemplateView):
         return context
 
 
-class EditRangeDetails(DescriptionsView):
+class EditRangeDetails(InventoryUserMixin, FormView):
     """View for DescriptionForm."""
 
+    form_class = forms.DescriptionForm
     template_name = "inventory/product_editor/edit_range_details.html"
 
     def dispatch(self, *args, **kwargs):
         """Process HTTP request."""
         self.edit = get_object_or_404(models.ProductEdit, pk=self.kwargs.get("edit_ID"))
         self.product_range = self.edit.partial_product_range
-        return super(FormView, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
+
+    def get_initial(self):
+        """Get initial data for form."""
+        initial = super().get_initial()
+        initial["title"] = self.product_range.name
+        initial["department"] = self.product_range.department
+        initial["description"] = self.product_range.description
+        initial["amazon_bullets"] = self.product_range.amazon_bullet_points.split("|")
+        initial["search_terms"] = self.product_range.amazon_search_terms.split("|")
+        return initial
 
     def get_context_data(self, *args, **kwargs):
         """Return the context for the template."""
