@@ -281,6 +281,16 @@
     "inactive": false
   }
 }, {
+  "model": "inventory.suppliercontact",
+  "pk": 1,
+  "fields": {
+    "supplier": 1,
+    "name": "Jeff",
+    "email": "jeff@stockinc.com",
+    "phone": "0742156456",
+    "notes": "A note about the supplier"
+  }
+}, {
   "model": "inventory.vatrate",
   "pk": 1,
   "fields": {

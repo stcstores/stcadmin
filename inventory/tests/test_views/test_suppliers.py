@@ -3,49 +3,37 @@ from unittest.mock import Mock, patch
 from django.shortcuts import reverse
 
 from inventory import models
+from inventory.tests import fixtures
+from stcadmin.tests.stcadmin_test import ViewTests
 
 from .inventory_view_test import InventoryViewTest
 
 
-class TestSuppliersViews:
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.supplier = models.Supplier.objects.create(
-            name="Stock Inc", product_option_value_ID="165415", factory_ID="84135"
-        )
-        cls.supplier_contact = models.SupplierContact.objects.create(
-            supplier=cls.supplier,
-            name="Jeff",
-            email="jeff@stockinc.com",
-            phone="0742156456",
-            notes="A note about the supplier",
-        )
+class TestSuppliersView(
+    InventoryViewTest, fixtures.ProductRequirementsFixture, ViewTests
+):
+    fixtures = fixtures.ProductRequirementsFixture.fixtures
+    URL = "/inventory/suppliers/suppliers/"
 
-    def factories_response(self, factories):
-        response = []
-        for name, id in factories:
-            mock = Mock(name=name, id=id)
-            mock.name = name
-            response.append(mock)
-        return response
-
-
-class TestSuppliersView(TestSuppliersViews, InventoryViewTest):
-    def test_suppliers_view(self):
-        response = self.client.get(reverse("inventory:suppliers"))
-        self.assertEqual(response.status_code, 200)
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
         self.assertContains(response, self.supplier.name)
         self.assertQuerysetEqual(
             response.context["suppliers"], map(repr, models.Supplier.objects.all())
         )
 
 
-class TestSupplierView(TestSuppliersViews, InventoryViewTest):
-    def test_supplier_view(self):
-        response = self.client.get(
-            reverse("inventory:supplier", kwargs={"pk": self.supplier.pk})
-        )
+class TestSupplierView(
+    InventoryViewTest, fixtures.ProductRequirementsFixture, ViewTests
+):
+    fixtures = fixtures.ProductRequirementsFixture.fixtures
+
+    def get_URL(self):
+        return f"/inventory/suppliers/{self.supplier.id}/"
+
+    def test_get_method(self):
+        response = self.make_get_request()
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.supplier.name)
         self.assertEqual(response.context["supplier"], self.supplier)
@@ -56,31 +44,48 @@ class TestSupplierView(TestSuppliersViews, InventoryViewTest):
         self.assertContains(response, self.supplier_contact.name)
 
 
-class TestCreateSupplierView(TestSuppliersViews, InventoryViewTest):
+class TestCreateSupplierView(
+    InventoryViewTest, fixtures.ProductRequirementsFixture, ViewTests
+):
+    fixtures = fixtures.ProductRequirementsFixture.fixtures
+    URL = "/inventory/suppliers/create_supplier/"
+
+    def factories_response(self, factories):
+        response = []
+        for name, id in factories:
+            mock = Mock(name=name, id=id)
+            mock.name = name
+            response.append(mock)
+        return response
+
+    def make_post_request(self):
+        form_data = {"name": "Supplier Name"}
+        return self.client.post(self.get_URL(), form_data)
+
     @patch("inventory.models.suppliers.CCAPI")
-    def test_create_supplier_get(self, mock_CCAPI):
-        response = self.client.get(reverse("inventory:create_supplier"))
+    def test_get_method(self, mock_CCAPI):
+        response = self.client.get(self.URL)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Name")
+        self.assertEqual(0, len(mock_CCAPI.mock_calls))
 
-    @patch("inventory.models.suppliers.CCAPI.get_factories")
-    @patch("inventory.models.suppliers.CCAPI.create_factory")
-    @patch("inventory.models.product_options.CCAPI.create_option_value")
-    def test_create_supplier_post(
-        self, mock_create_option_value, mock_create_factory, mock_get_factories
-    ):
+    @patch("inventory.models.suppliers.CCAPI")
+    @patch("inventory.models.product_options.CCAPI")
+    def test_post_method(self, mock_product_options_CCAPI, mock_suppliers_CCAPI):
         name = "New Supplier"
         factories = (("Socks R Us", "86166"), ("shoeseller", "843135"))
-        mock_get_factories.return_value = self.factories_response(factories)
-        mock_create_factory.return_value = Mock(name=name, id="513478")
-        mock_create_option_value.return_value = "943154"
+        mock_suppliers_CCAPI.get_factories.return_value = self.factories_response(
+            factories
+        )
+        mock_suppliers_CCAPI.create_factory.return_value = Mock(name=name, id="513478")
+        mock_product_options_CCAPI.create_option_value.return_value = "943154"
         self.assertFalse(models.Supplier.objects.filter(name=name).exists())
         response = self.client.post(
             reverse("inventory:create_supplier"), {"name": name}
         )
-        mock_get_factories.assert_called_once()
-        mock_create_factory.assert_called_once_with(name)
-        mock_create_option_value.assert_called_once_with(
+        mock_suppliers_CCAPI.get_factories.assert_called_once()
+        mock_suppliers_CCAPI.create_factory.assert_called_once_with(name)
+        mock_product_options_CCAPI.create_option_value.assert_called_once_with(
             models.Supplier.PRODUCT_OPTION_ID, name
         )
         new_supplier = models.Supplier.objects.get(name=name)
@@ -93,11 +98,13 @@ class TestCreateSupplierView(TestSuppliersViews, InventoryViewTest):
             target_status_code=200,
             fetch_redirect_response=True,
         )
+        self.assertEqual(2, len(mock_suppliers_CCAPI.mock_calls))
+        self.assertEqual(1, len(mock_product_options_CCAPI.mock_calls))
 
-    @patch("inventory.models.suppliers.CCAPI.get_factories")
-    @patch("inventory.models.product_options.CCAPI.create_option_value")
+    @patch("inventory.models.suppliers.CCAPI")
+    @patch("inventory.models.product_options.CCAPI")
     def test_create_supplier_with_existing_factory(
-        self, mock_create_option_value, mock_get_factories
+        self, mock_product_options_CCAPI, mock_suppliers_CCAPI
     ):
         name = "Another Supplier"
         factories = (
@@ -105,64 +112,75 @@ class TestCreateSupplierView(TestSuppliersViews, InventoryViewTest):
             ("shoeseller", "843135"),
             (name, "781546"),
         )
-        mock_get_factories.return_value = self.factories_response(factories)
-        mock_create_option_value.return_value = "245578"
+        mock_suppliers_CCAPI.get_factories.return_value = self.factories_response(
+            factories
+        )
+        mock_product_options_CCAPI.create_option_value.return_value = "245578"
         self.client.post(reverse("inventory:create_supplier"), {"name": name})
-        mock_create_option_value.assert_called_once_with(
+        mock_product_options_CCAPI.create_option_value.assert_called_once_with(
             models.Supplier.PRODUCT_OPTION_ID, name
         )
-        mock_get_factories.assert_called_once()
+        mock_suppliers_CCAPI.get_factories.assert_called_once()
         new_supplier = models.Supplier.objects.get(name=name)
         self.assertEqual(new_supplier.factory_ID, "781546")
         self.assertEqual(new_supplier.product_option_value_ID, "245578")
+        self.assertEqual(1, len(mock_suppliers_CCAPI.mock_calls))
+        self.assertEqual(1, len(mock_product_options_CCAPI.mock_calls))
 
 
-class TestToggleSupplierActiveView(TestSuppliersViews, InventoryViewTest):
-    def test_set_inactive(self):
-        supplier = models.Supplier.objects.get(id=self.supplier.id)
-        self.assertFalse(supplier.inactive)
-        response = self.client.get(
-            reverse("inventory:toggle_supplier_active", kwargs={"pk": self.supplier.pk})
-        )
-        supplier = models.Supplier.objects.get(id=self.supplier.id)
+class TestToggleSupplierActiveView(
+    InventoryViewTest, fixtures.ProductRequirementsFixture, ViewTests
+):
+    fixtures = fixtures.ProductRequirementsFixture.fixtures
+
+    def get_URL(self):
+        return f"/inventory/toggle_supplier_active/{self.supplier.id}/"
+
+    def test_get_method(self):
+        response = self.make_get_request()
         self.assertRedirects(
             response,
-            supplier.get_absolute_url(),
+            self.supplier.get_absolute_url(),
             status_code=302,
             target_status_code=200,
-            fetch_redirect_response=True,
         )
-        self.assertTrue(supplier.inactive)
+
+    def test_post_method(self):
+        response = self.make_post_request()
+        self.assertRedirects(
+            response,
+            self.supplier.get_absolute_url(),
+            status_code=302,
+            target_status_code=200,
+        )
+
+    def test_set_inactive(self):
+        self.assertFalse(self.supplier.inactive)
+        self.make_get_request()
+        self.assertTrue(self.supplier.inactive)
 
     def test_set_active(self):
-        models.Supplier.objects.filter(id=self.supplier.id).update(inactive=True)
-        response = self.client.get(
-            reverse("inventory:toggle_supplier_active", kwargs={"pk": self.supplier.pk})
-        )
-        supplier = models.Supplier.objects.get(id=self.supplier.id)
-        self.assertRedirects(
-            response,
-            supplier.get_absolute_url(),
-            status_code=302,
-            target_status_code=200,
-            fetch_redirect_response=True,
-        )
-        self.assertFalse(supplier.inactive)
+        supplier = self.supplier
+        supplier.inactive = True
+        supplier.save()
+        self.make_get_request()
+        self.assertFalse(self.supplier.inactive)
 
 
-class TestCreateSupplierContactView(TestSuppliersViews, InventoryViewTest):
+class TestCreateSupplierContactView(
+    InventoryViewTest, fixtures.ProductRequirementsFixture, ViewTests
+):
+    fixtures = fixtures.ProductRequirementsFixture.fixtures
     name = "Joe Bloggs"
     phone = "9584612455"
     email = "noeone@nowhere.com"
     notes = "Call in the morning"
 
+    def get_URL(self):
+        return f"/inventory/suppliers/create_contact/{self.supplier.id}/"
+
     def test_get_method(self):
-        response = self.client.get(
-            reverse(
-                "inventory:create_supplier_contact",
-                kwargs={"supplier_pk": self.supplier.pk},
-            )
-        )
+        response = self.make_get_request()
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.supplier.name)
         self.assertContains(response, self.supplier.pk)
@@ -174,10 +192,7 @@ class TestCreateSupplierContactView(TestSuppliersViews, InventoryViewTest):
 
     def test_post_method(self):
         response = self.client.post(
-            reverse(
-                "inventory:create_supplier_contact",
-                kwargs={"supplier_pk": self.supplier.pk},
-            ),
+            self.get_URL(),
             {
                 "supplier": self.supplier.pk,
                 "name": self.name,
@@ -201,11 +216,7 @@ class TestCreateSupplierContactView(TestSuppliersViews, InventoryViewTest):
 
     def test_create_without_details(self):
         self.client.post(
-            reverse(
-                "inventory:create_supplier_contact",
-                kwargs={"supplier_pk": self.supplier.pk},
-            ),
-            {"supplier": self.supplier.pk, "name": self.name},
+            self.get_URL(), {"supplier": self.supplier.pk, "name": self.name}
         )
         new_supplier_contact = models.SupplierContact.objects.get(name=self.name)
         self.assertEqual(new_supplier_contact.name, self.name)
@@ -214,19 +225,20 @@ class TestCreateSupplierContactView(TestSuppliersViews, InventoryViewTest):
         self.assertEqual(new_supplier_contact.notes, "")
 
 
-class TestUpdateSupplierContactView(TestSuppliersViews, InventoryViewTest):
+class TestUpdateSupplierContactView(
+    InventoryViewTest, fixtures.ProductRequirementsFixture, ViewTests
+):
+    fixtures = fixtures.ProductRequirementsFixture.fixtures
     name = "Joe Bloggs"
     phone = "9584612455"
     email = "noeone@nowhere.com"
     notes = "Call in the morning"
 
+    def get_URL(self):
+        return f"/inventory/suppliers/update_contact/{self.supplier_contact.id}/"
+
     def test_get_method(self):
-        response = self.client.get(
-            reverse(
-                "inventory:update_supplier_contact",
-                kwargs={"pk": self.supplier_contact.pk},
-            )
-        )
+        response = self.make_get_request()
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Supplier")
         self.assertContains(response, "Name")
@@ -240,10 +252,7 @@ class TestUpdateSupplierContactView(TestSuppliersViews, InventoryViewTest):
 
     def test_post_method(self):
         response = self.client.post(
-            reverse(
-                "inventory:update_supplier_contact",
-                kwargs={"pk": self.supplier_contact.pk},
-            ),
+            self.get_URL(),
             {
                 "supplier": self.supplier.pk,
                 "name": self.name,
@@ -268,28 +277,26 @@ class TestUpdateSupplierContactView(TestSuppliersViews, InventoryViewTest):
         self.assertEqual(supplier_contact.notes, self.notes)
 
 
-class TestDeleteSupplierContactView(TestSuppliersViews, InventoryViewTest):
+class TestDeleteSupplierContactView(
+    InventoryViewTest, fixtures.ProductRequirementsFixture, ViewTests
+):
+    fixtures = fixtures.ProductRequirementsFixture.fixtures
+
+    def get_URL(self):
+        return f"/inventory/suppliers/delete_contact/{self.supplier_contact.id}/"
+
     def test_get_method(self):
-        response = self.client.get(
-            reverse(
-                "inventory:delete_supplier_contact",
-                kwargs={"pk": self.supplier_contact.pk},
-            )
-        )
+        response = self.make_get_request()
         self.assertContains(response, "Are you sure you want to delete")
         self.assertContains(response, self.supplier.name)
         self.assertContains(response, self.supplier_contact.name)
         self.assertContains(response, "Confirm")
 
     def test_post_method(self):
-        response = self.client.post(
-            reverse(
-                "inventory:delete_supplier_contact",
-                kwargs={"pk": self.supplier_contact.pk},
-            )
-        )
+        supplier_contact = self.supplier_contact
+        response = self.make_post_request()
         self.assertFalse(
-            models.SupplierContact.objects.filter(pk=self.supplier_contact.pk).exists()
+            models.SupplierContact.objects.filter(id=supplier_contact.id).exists()
         )
         self.assertRedirects(
             response,

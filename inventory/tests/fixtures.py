@@ -81,6 +81,10 @@ class ProductRequirementsFixture(LocationsFixture):
         return models.Supplier.objects.get(id=2)
 
     @property
+    def supplier_contact(self):
+        return models.SupplierContact.objects.get(id=1)
+
+    @property
     def brand(self):
         return models.Brand.objects.get(id=1)
 
