@@ -19,7 +19,7 @@ class GetNewSKUView(InventoryUserMixin, View):
     """Return new Product SKU."""
 
     @method_decorator(csrf_exempt)
-    def dispatch(self, request):
+    def post(self, request):
         """Process HTTP request."""
         sku = CCAPI.get_sku(range_sku=False)
         return HttpResponse(sku)
@@ -29,7 +29,7 @@ class GetNewRangeSKUView(InventoryUserMixin, View):
     """Return new Product Range SKU."""
 
     @method_decorator(csrf_exempt)
-    def dispatch(self, request):
+    def post(self, request):
         """Process HTTP request."""
         sku = CCAPI.get_sku(range_sku=True)
         return HttpResponse(sku)
@@ -39,7 +39,7 @@ class UpdateStockLevelView(InventoryUserMixin, View):
     """Update product stock level."""
 
     @method_decorator(csrf_exempt)
-    def dispatch(self, request):
+    def post(self, request):
         """Process HTTP request."""
         product_ID = self.request.POST["product_ID"]
         product = get_object_or_404(models.Product, product_ID=product_ID)
@@ -55,7 +55,7 @@ class GetStockLevelView(InventoryUserMixin, View):
     """Get the current stock level for a product."""
 
     @method_decorator(csrf_exempt)
-    def dispatch(self, request):
+    def post(self, request):
         """Process HTTP request."""
         product_ID = self.request.POST["product_ID"]
         product = get_object_or_404(models.Product, product_ID=product_ID)
@@ -68,12 +68,12 @@ class SetImageOrderView(InventoryUserMixin, View):
 
     @method_decorator(csrf_exempt)
     @transaction.atomic
-    def dispatch(self, request):
+    def post(self, request):
         """Process HTTP request."""
         try:
             data = json.loads(self.request.body)
-            image_order = data["image_order"]
             product = get_object_or_404(models.Product, product_ID=data["product_ID"])
+            image_order = data["image_order"]
             images = models.ProductImage.objects.filter(product=product)
             if not set(images.values_list("image_ID", flat=True)) == set(image_order):
                 raise Exception("Did not get expected image IDs.")
@@ -90,7 +90,7 @@ class DeleteImage(InventoryUserMixin, View):
     """Remove image from a product."""
 
     @method_decorator(csrf_exempt)
-    def dispatch(self, request):
+    def post(self, request):
         """Process HTTP request."""
         try:
             data = json.loads(self.request.body)
