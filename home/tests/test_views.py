@@ -1,11 +1,12 @@
 import sys
 from unittest.mock import Mock
 
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import reverse
 
 from home import views
 from stcadmin import settings
-from stcadmin.tests.stcadmin_test import STCAdminTest
+from stcadmin.tests.stcadmin_test import STCAdminTest, ViewTests
 
 
 class TestUserLoginMixin(STCAdminTest):
@@ -32,7 +33,7 @@ class TestUserInGroupMixin(STCAdminTest):
         self.assertFalse(view.test_func())
 
 
-class TestIndexView(STCAdminTest):
+class TestIndexView(STCAdminTest, ViewTests):
     URL = "/"
     template = "home/index.html"
 
@@ -42,39 +43,47 @@ class TestIndexView(STCAdminTest):
         self.login_user()
 
     def test_get_method(self):
-        response = self.client.get(self.URL)
+        response = self.make_get_request()
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(self.template)
 
-    def test_logged_out_user(self):
-        self.client.logout()
-        response = self.client.get(self.URL)
-        self.assertRedirects(response, f"{settings.LOGIN_URL}?next={self.URL}")
-
     def test_post_method(self):
-        response = self.client.post(self.URL)
-        self.assertEqual(405, response.status_code)
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(self.template)
 
     def test_template(self):
-        response = self.client.get(self.URL)
+        response = self.make_get_request()
         self.assertIn("<h1>STC Admin</h1>", str(response.content))
         self.assertIn("Inventory", str(response.content))
         self.assertNotIn("Labelmaker", str(response.content))
         self.assertIn('class="homepage_feedback', str(response.content))
 
+    def test_user_not_in_group_get(self):
+        pass
 
-class TestVersionView(STCAdminTest):
+    def test_user_not_in_group_post(self):
+        pass
+
+
+class TestVersionView(STCAdminTest, ViewTests):
     URL = "/version/"
     template = "home/version.html"
 
     def test_get_method(self):
-        response = self.client.get(self.URL)
+        response = self.make_get_request()
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(self.template)
 
-    def test_post_method(self):
-        response = self.client.post(self.URL)
-        self.assertEqual(405, response.status_code)
+    def test_logged_out_user_get(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(self.template)
+
+    def test_logged_out_user_post(self):
+        self.client.logout()
+        response = self.make_post_request()
+        self.assertIsInstance(response, HttpResponseNotAllowed)
 
     def test_template(self):
         response = self.client.get(self.URL)
@@ -83,6 +92,12 @@ class TestVersionView(STCAdminTest):
         self.assertIn("STCAdmin Version", str(response.content))
         self.assertIn("Installed Packages", str(response.content))
         self.assertIn(sys.version.replace("\n", "\\n"), str(response.content))
+
+    def test_user_not_in_group_get(self):
+        pass
+
+    def test_user_not_in_group_post(self):
+        pass
 
 
 class TestRobotsView(STCAdminTest):
