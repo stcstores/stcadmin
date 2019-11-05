@@ -43,7 +43,7 @@ inventory_urlpatterns = [
         views.CreateBayView.as_view(),
         name="create_warehouse_bay",
     ),
-    path("suppliers/suppliers", views.Suppliers.as_view(), name="suppliers"),
+    path("suppliers/suppliers/", views.Suppliers.as_view(), name="suppliers"),
     path("suppliers/<int:pk>/", views.Supplier.as_view(), name="supplier"),
     path(
         "suppliers/create_supplier/",
