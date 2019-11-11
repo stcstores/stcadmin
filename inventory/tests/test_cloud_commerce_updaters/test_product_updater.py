@@ -270,7 +270,7 @@ class TestSetPrice(BaseUpdaterMethodTest):
 
     def update_CC_test(self):
         self.mock_CCAPI.set_product_base_price.assert_called_once_with(
-            product_id=self.product.product_ID, price=float(self.new_price)
+            product_id=self.product.product_ID, price=self.new_price
         )
         self.assertEqual(1, len(self.mock_CCAPI.mock_calls))
 
