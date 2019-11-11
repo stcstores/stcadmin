@@ -3,8 +3,6 @@
 import logging
 import threading
 
-from ccapi import CCAPI
-
 from inventory import models
 
 from .product_updater import ProductUpdater
@@ -31,17 +29,22 @@ class SaveEdit:
         """Update the product."""
         self.original_range = self.edit.product_range
         self.partial_range = self.edit.partial_product_range
+        if self.original_range is None:
+            self.original_range = self._create_new_range()
         self.range_updater = RangeUpdater(self.original_range, self.user)
         self.range_updater.log("Begin updating.", level=logging.INFO)
         self._remove_unused_product_options()
         self._add_new_variation_options()
         self._add_new_listing_options()
         self._create_new_products()
-        # Create a new range updater that recognises any new products.
-        self.range_updater = RangeUpdater(self.original_range, self.user)
+        if self.new_products_created is True:
+            self.range_updater.set_product_IDs()
         self._update_range_details()
         self._update_product_details()
         self.range_updater.log("Finish updating.", level=logging.INFO)
+
+    def _create_new_range(self):
+        return RangeUpdater.create_new_range(self.partial_range)
 
     def _remove_unused_product_options(self):
         original_options = self.original_range.product_options.all()
@@ -67,43 +70,13 @@ class SaveEdit:
     def _create_new_products(self):
         self.new_products_created = False
         for product in self.partial_range.products():
-            if not product.pre_existing:
+            if product.pre_existing is False:
                 self.new_products_created = True
                 self._create_product(product)
 
     def _create_product(self, partial_product):
         self.range_updater.log(f"Create product {partial_product}.", level=logging.INFO)
-        product_ID = CCAPI.create_product(
-            range_id=self.original_range.range_ID,
-            name=self.original_range.name,
-            description=self.original_range.description,
-            barcode=partial_product.barcode,
-            vat_rate=0,
-            sku=partial_product.SKU,
-        )
-        new_product = models.Product(
-            product_ID=product_ID,
-            product_range=self.original_range,
-            SKU=partial_product.SKU,
-            supplier=partial_product.supplier,
-            supplier_SKU=partial_product.supplier_SKU,
-            barcode=partial_product.barcode,
-            purchase_price=partial_product.purchase_price,
-            VAT_rate=partial_product.VAT_rate,
-            price=partial_product.price,
-            retail_price=partial_product.retail_price,
-            brand=partial_product.brand,
-            manufacturer=partial_product.manufacturer,
-            package_type=partial_product.package_type,
-            international_shipping=partial_product.international_shipping,
-            weight_grams=partial_product.weight_grams,
-            length_mm=partial_product.length_mm,
-            height_mm=partial_product.height_mm,
-            width_mm=partial_product.width_mm,
-            gender=partial_product.gender,
-        )
-        new_product.save()
-        new_product.bays.set(partial_product.bays.all())
+        new_product = self.range_updater.create_product(partial_product)
         updater = ProductUpdater(new_product, self.user)
         updater.set_date_created()
         _UpdateProduct(
@@ -205,7 +178,7 @@ class _UpdateProduct:
                 product_option_value=link.product_option_value,
             )
             if not link_exists:
-                self.updater.remove_product_option(link.product_option_value)
+                self.updater.remove_product_option_link(link.product_option_value)
 
     def _add_new_product_option_links(self):
         new_links = models.PartialProductOptionValueLink.objects.filter(
@@ -217,7 +190,6 @@ class _UpdateProduct:
                 product_option_value=link.product_option_value,
             ).exists()
             if not link_exists:
-                print(self.partial_product.SKU, link.product_option_value)
                 self.updater.set_product_option_link(link.product_option_value)
 
     def _set_supplier(self):

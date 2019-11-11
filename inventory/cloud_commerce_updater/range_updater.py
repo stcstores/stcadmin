@@ -1,6 +1,7 @@
 """Update Product Ranges in the database and Cloud Commerce."""
 
 import logging
+import time
 
 from ccapi import CCAPI
 
@@ -24,6 +25,10 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
 
         """
         super().__init__(*args, **kwargs)
+        self.set_product_IDs()
+
+    def set_product_IDs(self):
+        """Update the product_IDs attribute."""
         self.product_IDs = [_.product_ID for _ in self.db_object.products()]
 
     def set_name(self, name):
@@ -260,6 +265,11 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
         ).delete()
 
     def _remove_CC_product_option(self, product_option):
+        CCAPI.set_product_option_value(
+            product_ids=self.product_IDs,
+            option_id=product_option.product_option_ID,
+            option_value_id=0,
+        )
         CCAPI.remove_option_from_product(
             range_id=self.db_object.range_ID, option_id=product_option.product_option_ID
         )
@@ -281,6 +291,76 @@ class RangeUpdater(BaseRangeUpdater):
 
     product_range_selected_option_model = models.ProductRangeSelectedOption
     product_option_value_link_model = models.ProductOptionValueLink
+
+    CREATE_RANGE_ATTEMPTS = 100
+    RETRY_TIMEOUT = 0.5
+
+    @classmethod
+    def _get_new_range_ID(cls, partial_product_range):
+        range_ID = CCAPI.create_range(
+            range_name=partial_product_range.name, sku=partial_product_range.SKU
+        )
+        for _ in range(cls.CREATE_RANGE_ATTEMPTS):
+            try:
+                CCAPI.get_range(range_ID)
+            except Exception:
+                time.sleep(cls.RETRY_TIMEOUT)
+            else:
+                return range_ID
+        raise Exception("Error creating new Product Range in Cloud Commerce")
+
+    @classmethod
+    def create_new_range(cls, partial_product_range):
+        """Create a new Product Range."""
+        range_ID = cls._get_new_range_ID(partial_product_range)
+        new_range = models.ProductRange.objects.create(
+            range_ID=range_ID,
+            name=partial_product_range.name,
+            SKU=partial_product_range.SKU,
+            department=partial_product_range.department,
+            description=partial_product_range.description,
+            amazon_search_terms=partial_product_range.amazon_search_terms,
+            amazon_bullet_points=partial_product_range.amazon_bullet_points,
+        )
+        return new_range
+
+    def _get_new_product_ID(self, partial_product):
+        product_ID = CCAPI.create_product(
+            range_id=self.db_object.range_ID,
+            name=self.db_object.name,
+            description=self.db_object.description,
+            barcode=partial_product.barcode,
+            vat_rate=0,
+            sku=partial_product.SKU,
+        )
+        return product_ID
+
+    def create_product(self, partial_product):
+        """Create a new Product."""
+        product_ID = self._get_new_product_ID(partial_product)
+        new_product = models.Product.objects.create(
+            product_ID=product_ID,
+            product_range=self.db_object,
+            SKU=partial_product.SKU,
+            supplier=partial_product.supplier,
+            supplier_SKU=partial_product.supplier_SKU,
+            barcode=partial_product.barcode,
+            purchase_price=partial_product.purchase_price,
+            VAT_rate=partial_product.VAT_rate,
+            price=partial_product.price,
+            retail_price=partial_product.retail_price,
+            brand=partial_product.brand,
+            manufacturer=partial_product.manufacturer,
+            package_type=partial_product.package_type,
+            international_shipping=partial_product.international_shipping,
+            weight_grams=partial_product.weight_grams,
+            length_mm=partial_product.length_mm,
+            height_mm=partial_product.height_mm,
+            width_mm=partial_product.width_mm,
+            gender=partial_product.gender,
+        )
+        new_product.bays.set(partial_product.bays.all())
+        return new_product
 
 
 class PartialRangeUpdater(BaseRangeUpdater):
