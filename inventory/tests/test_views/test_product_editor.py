@@ -193,8 +193,8 @@ class TestStartNewProductView(
         response = self.client.post(self.URL, form_data)
         self.assertEqual(302, response.status_code)
         edit_ID = self.get_ID_from_URL(response.url)
-        edit = models.ProductEdit.objects.get(id=edit_ID)
-        self.assertEqual(edit.partial_product_range.amazon_search_terms, "")
+        product_range = models.ProductEdit.objects.get(id=edit_ID).partial_product_range
+        self.assertEqual(product_range.amazon_search_terms, "")
 
     def test_post_without_amazon_bullets(self):
         form_data = self.get_form_data()
@@ -1498,6 +1498,18 @@ class TestSaveChangesView(InventoryViewTest, fixtures.EditingProductFixture, Vie
                 "inventory:product_range", kwargs={"range_id": original_range.range_ID}
             ),
         )
+        mock_SaveEdit.assert_called_once_with(edit, self.user)
+        mock_save_edit.save_edit_threaded.assert_called_once()
+
+    @patch("inventory.views.product_editor.SaveEdit")
+    def test_post_method_with_new_range(self, mock_SaveEdit):
+        mock_save_edit = Mock()
+        mock_SaveEdit.return_value = mock_save_edit
+        edit = self.product_edit
+        edit.product_range = None
+        edit.save()
+        response = self.make_post_request()
+        self.assertRedirects(response, reverse("inventory:continue"))
         mock_SaveEdit.assert_called_once_with(edit, self.user)
         mock_save_edit.save_edit_threaded.assert_called_once()
 

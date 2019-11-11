@@ -141,14 +141,12 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
         return [description], {}
 
     def _prepare_set_amazon_search_terms(self, search_terms):
-        search_term_text = "|".join(search_terms)
-        self.log(f'Set amazon search terms to "{search_term_text[:50]}...".')
-        return [search_term_text], {}
+        self.log(f'Set amazon search terms to "{search_terms[:50]}...".')
+        return [search_terms], {}
 
     def _prepare_set_amazon_bullet_points(self, bullet_points):
-        bulllet_points_text = "|".join(bullet_points)
-        self.log(f'Set amazon bullet points to "{bulllet_points_text[:50]}...".')
-        return [bulllet_points_text], {}
+        self.log(f'Set amazon bullet points to "{bullet_points[:50]}...".')
+        return [bullet_points], {}
 
     def _prepare_set_end_of_line(self, end_of_line=True):
         self.log(f"Set end of line to {end_of_line}.")
@@ -206,7 +204,9 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
 
     def _set_CC_amazon_search_terms(self, search_terms):
         value_ID = CCAPI.get_option_value_id(
-            self.AMAZON_SEARCH_TERMS_OPTION_ID, value=search_terms, create=True
+            option_id=self.AMAZON_SEARCH_TERMS_OPTION_ID,
+            value=search_terms,
+            create=True,
         )
         self._set_CC_product_option_value_for_products(
             option_ID=self.AMAZON_SEARCH_TERMS_OPTION_ID, value_ID=value_ID
@@ -218,7 +218,9 @@ class BaseRangeUpdater(BaseCloudCommerceUpdater):
 
     def _set_CC_amazon_bullet_points(self, bullet_points):
         value_ID = CCAPI.get_option_value_id(
-            self.AMAZON_BULLET_POINTS_OPTION_ID, value=bullet_points, create=True
+            option_id=self.AMAZON_BULLET_POINTS_OPTION_ID,
+            value=bullet_points,
+            create=True,
         )
         self._set_CC_product_option_value_for_products(
             option_ID=self.AMAZON_BULLET_POINTS_OPTION_ID, value_ID=value_ID

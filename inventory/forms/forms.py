@@ -1,5 +1,6 @@
 """Forms for inventory app."""
 
+
 from django import forms
 from django.db import transaction
 
@@ -30,6 +31,23 @@ class DescriptionForm(forms.Form):
     description = fields.Description()
     amazon_bullets = fields.AmazonBulletPoints()
     search_terms = fields.AmazonSearchTerms()
+
+    def clean(self, *args, **kwargs):
+        """Format amazon list strings."""
+        cleaned_data = super().clean(*args, **kwargs)
+        if "amazon_bullets" in cleaned_data:
+            cleaned_data["amazon_bullets"] = self.format_amazon_list(
+                cleaned_data["amazon_bullets"]
+            )
+        if "search_terms" in cleaned_data:
+            cleaned_data["search_terms"] = self.format_amazon_list(
+                cleaned_data["search_terms"]
+            )
+        return cleaned_data
+
+    def format_amazon_list(self, amazon_list_json):
+        """Return a formatted amazon list string."""
+        return "|".join(amazon_list_json)
 
 
 class CreateBayForm(forms.Form):
