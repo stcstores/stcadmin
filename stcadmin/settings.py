@@ -7,6 +7,8 @@ import toml
 from ccapi import CCAPI
 from django.core.exceptions import ImproperlyConfigured
 
+TRAVIS_ENVIRONMENT = "TRAVIS" in os.environ
+
 SOURCE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 BASE_DIR = os.path.dirname(SOURCE_DIR)
 CONFIG_DIR = os.path.join(BASE_DIR, "config")
@@ -30,8 +32,8 @@ def get_config(key):
 
 
 # Secret Key
-secret_key_path = os.path.join(CONFIG_DIR, "secret_key.toml")
 try:
+    secret_key_path = os.path.join(CONFIG_DIR, "secret_key.toml")
     with open(secret_key_path, "r") as secret_key_file:
         SECRET_KEY = toml.load(secret_key_file)["SECRET_KEY"]
 except Exception:
@@ -290,7 +292,7 @@ TESTING = (
 
 def create_CCAPI_session():
     """Create the Cloud Commerce session."""
-    if not TESTING:
+    if not TESTING and not TRAVIS_ENVIRONMENT:
         CCAPI.create_session(domain=CC_DOMAIN, username=CC_USERNAME, password=CC_PWD)
         print("Created Cloud Commerce session.", file=sys.stderr)
     else:

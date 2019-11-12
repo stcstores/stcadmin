@@ -87,7 +87,7 @@ class TestVersionView(STCAdminTest, ViewTests):
 
     def test_template(self):
         response = self.client.get(self.URL)
-        self.assertIn("django", str(response.content))
+        self.assertIn("django", str(response.content).lower())
         self.assertIn("Python Version", str(response.content))
         self.assertIn("STCAdmin Version", str(response.content))
         self.assertIn("Installed Packages", str(response.content))
