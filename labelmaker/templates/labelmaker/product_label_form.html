@@ -2,47 +2,49 @@
 {% load static %}
 
 {% block content %}
-    <div id="size_chart_label_setup" class="size_chart_label_setup">
-        <div id="add_product_code" class="form_section">
-            <p class="form_section_header">Product Code</p>
-            <input type="text" id="product_code" name="product_code">
-        </div>
-        {% if sizes %}
-        <div id="add_sizes" class="form_section">
-            <p class="form_section_header">Size</p>
-            {% for size in sizes %}
-            <input class="size_checkbox" type="checkbox" name="size_{{size.id}}" value="{{size.id}}">
-            <label for="size_{{size.id}}">{% if size.name.strip %}{{size.name.strip}}{% else %}UK: {{ size.uk_size }}{% endif %}</label><br>{% endfor %}
-        </div>
-        <div id="add_colours" class="form_section"></div>
-        <br>
-        {% else %}
-        <div id="add_size_colour"></div>
-        <br>
-        {% endif %}
-        <button id="create_table_button">Create Table</button>
-        <br><br>
-        <div id="selection_table"></div>
-        <form action="{% if size_chart %}{% url 'labelmaker:generate_pdf_for_size_chart' size_chart_id=size_chart.id %}{% else %}{% url 'labelmaker:generate_pdf_no_size_chart' %}{% endif %}" method="POST" id="label_selection_form" class="hidden">
-            {% csrf_token %}
-            <input type="text" name="data" id="data">
-        </form>
+<div id="size_chart_label_setup" class="size_chart_label_setup">
+    <div id="add_product_code" class="form_section">
+        <p class="form_section_header">Product Code</p>
+        <input type="text" id="product_code" name="product_code">
     </div>
-    {% endblock %}
-    {% block script %}
-    <script>
     {% if sizes %}
-    $( document ).ready(function() {
+    <div id="add_sizes" class="form_section">
+        <p class="form_section_header">Size</p>
+        {% for size in sizes %}
+        <input class="size_checkbox" type="checkbox" name="size_{{size.id}}" value="{{size.id}}">
+        <label for="size_{{size.id}}">{% if size.name.strip %}{{size.name.strip}}{% else %}UK:
+            {{ size.uk_size }}{% endif %}</label><br>{% endfor %}
+    </div>
+    <div id="add_colours" class="form_section"></div>
+    <br>
+    {% else %}
+    <div id="add_size_colour"></div>
+    <br>
+    {% endif %}
+    <button id="create_table_button">Create Table</button>
+    <br><br>
+    <div id="selection_table"></div>
+    <form
+        action="{% if size_chart %}{% url 'labelmaker:generate_pdf_for_size_chart' size_chart.id %}{% else %}{% url 'labelmaker:generate_pdf_no_size_chart' %}{% endif %}"
+        method="POST" id="label_selection_form" class="hidden">
+        {% csrf_token %}
+        <input type="text" name="data" id="data">
+    </form>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    {% if sizes %}
+    $(document).ready(function () {
         var size_data = {
-            {% for size in sizes %}{{size.id}}: {{size.uk_size}},
-            {% endfor %}
+            {% for size in sizes %} {{ size.id }}: {{ size.uk_size }},{% endfor %}
         };
 
         var colour_list = LabelForm($('#add_colours'), ['colour']);
 
-        get_sizes = function() {
+        get_sizes = function () {
             var sizes = [];
-            $('.size_checkbox').each(function() {
+            $('.size_checkbox').each(function () {
                 if ($(this).is(':checked')) {
                     var ref = $(this).val();
                     var name = $(this).next("label").text();
@@ -52,12 +54,12 @@
             return sizes.sort();
         };
 
-        get_colours = function() {
+        get_colours = function () {
             return colour_list['colour'].get_list().sort();
         };
 
         var create_table_button = $('#create_table_button');
-        create_table_button.click(function() {
+        create_table_button.click(function () {
             var data = {
                 sizes: get_sizes(),
                 colours: get_colours()
@@ -68,32 +70,32 @@
         })
     });
     {% else %}
-        $( document ).ready(function() {
-            var size_and_colour = LabelForm($('#add_size_colour'), ['size', 'colour']);
+    $(document).ready(function () {
+        var size_and_colour = LabelForm($('#add_size_colour'), ['size', 'colour']);
 
-            get_sizes = function() {
-                var sizes = []
-                $.each(size_and_colour['size'].get_list().sort(), function(index, size) {
-                    sizes.push([size, size]);
-                });
-                return sizes;
-            };
+        get_sizes = function () {
+            var sizes = []
+            $.each(size_and_colour['size'].get_list().sort(), function (index, size) {
+                sizes.push([size, size]);
+            });
+            return sizes;
+        };
 
-            get_colours = function() {
-                return size_and_colour['colour'].get_list().sort();
-            };
+        get_colours = function () {
+            return size_and_colour['colour'].get_list().sort();
+        };
 
-            var create_table_button = $('#create_table_button');
-            create_table_button.click(function() {
-                var data = {
-                    sizes: get_sizes(),
-                    colours: get_colours()
-                }
-                var form = $('#label_selection_form');
-                var table = LabelSelectionTable($('#selection_table'), data, form);
-                return table;
-            })
-        });
+        var create_table_button = $('#create_table_button');
+        create_table_button.click(function () {
+            var data = {
+                sizes: get_sizes(),
+                colours: get_colours()
+            }
+            var form = $('#label_selection_form');
+            var table = LabelSelectionTable($('#selection_table'), data, form);
+            return table;
+        })
+    }); 
     {% endif %}
-    </script>
-    {% endblock %}
+</script>
+{% endblock %}

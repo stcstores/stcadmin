@@ -7,45 +7,59 @@ from labelmaker import views
 app_name = "labelmaker"
 
 urlpatterns = [
+    path("", views.Index.as_view(), name="index"),
+    path("product_labels/", views.ProductLabels.as_view(), name="product_labels"),
     path(
-        "create_size_chart/",
+        "product_labels/create_size_chart/",
         views.CreateSizeChart.as_view(),
-        name="create_size_chart_form",
+        name="create_size_chart",
     ),
-    path("size_charts/", views.SizeCharts.as_view(), name="size_charts"),
     path(
-        "label_form/<int:size_chart_id>/",
-        views.ProductLabelFormSizeChart.as_view(),
-        name="label_form",
+        "product_labels/edit_size_chart_sizes/<int:id>/",
+        views.EditSizeChartSizes.as_view(),
+        name="edit_size_chart_sizes",
     ),
-    path("label_form/", views.ProductLabelFormNoSizeChart.as_view(), name="label_form"),
     path(
-        "generate_pdf_no_size_chart/",
+        "product_labels/update_size_chart/<int:pk>/",
+        views.UpdateSizeChart.as_view(),
+        name="update_size_chart",
+    ),
+    path(
+        "product_labels/delete_size_chart/<int:id>/",
+        views.DeleteSizeChart.as_view(),
+        name="delete_size_chart",
+    ),
+    path(
+        "product_labels/create_product_labels/<int:id>/",
+        views.CreateProductLabelsWithTemplate.as_view(),
+        name="create_product_labels",
+    ),
+    path(
+        "product_labels/create_product_labels/",
+        views.CreateProductLabelsWithoutTemplate.as_view(),
+        name="create_product_labels",
+    ),
+    path(
+        "product_labels/generate_pdf_no_size_chart/",
         views.ProductLabelsPDFNoSizeChart.as_view(),
         name="generate_pdf_no_size_chart",
     ),
     path(
-        "generate_pdf_for_size_chart/<int:size_chart_id>/",
+        "product_labels/generate_pdf_for_size_chart/<int:id>/",
         views.ProductLabelsPDFFromSizeChart.as_view(),
         name="generate_pdf_for_size_chart",
     ),
+    path("product_labels/test/", views.TestProductPDFLabel.as_view(), name="test_pdf"),
+    path("address_labels/", views.AddressLabelForm.as_view(), name="address_labels"),
     path(
-        "delete_size_chart/<int:size_chart_id>/",
-        views.DeleteSizeChart.as_view(),
-        name="delete_size_chart",
+        "address_labels/address_label_pdf",
+        views.AddressLabelPDF.as_view(),
+        name="address_label_pdf",
     ),
-    path("test/", views.TestProductPDFLabel.as_view(), name="test_pdf"),
+    path("small_labels/", views.SmallLabelForm.as_view(), name="small_labels"),
     path(
-        "size_chart_form/<int:pk>/",
-        views.SizeChartForm.as_view(),
-        name="size_chart_form",
+        "small_labels/small_label_pdf/",
+        views.SmallLabelPDF.as_view(),
+        name="small_label_pdf",
     ),
-    path("product_labels/", views.ProductLabels.as_view(), name="product_labels"),
-    path("", views.Index.as_view(), name="index"),
-    path("address_labels", views.AddressLabelForm.as_view(), name="address_labels"),
-    path(
-        "address_label_pdf", views.AddressLabelPDF.as_view(), name="address_label_pdf"
-    ),
-    path("small_labels", views.SmallLabelForm.as_view(), name="small_labels"),
-    path("small_label_pdf", views.SmallLabelPDF.as_view(), name="small_label_pdf"),
 ]

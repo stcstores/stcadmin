@@ -1,0 +1,385 @@
+[{
+    "model": "inventory.supplier",
+    "pk": 1,
+    "fields": {
+        "name": "Baum Trading",
+        "product_option_ID": "3758697",
+        "factory_ID": "4518",
+        "inactive": false
+    }
+}, {
+    "model": "inventory.supplier",
+    "pk": 2,
+    "fields": {
+        "name": "KS Brands",
+        "product_option_ID": "3758718",
+        "factory_ID": "4582",
+        "inactive": false
+    }
+}, {
+    "model": "inventory.supplier",
+    "pk": 3,
+    "fields": {
+        "name": "Aargee",
+        "product_option_ID": "5341795",
+        "factory_ID": "9947",
+        "inactive": false
+    }
+}, {
+    "model": "inventory.supplier",
+    "pk": 4,
+    "fields": {
+        "name": "Unused Supplier",
+        "product_option_ID": "4946416",
+        "factory_ID": "651516",
+        "inactive": false
+    }
+}, {
+    "model": "labelmaker.sizechart",
+    "pk": 1,
+    "fields": {
+        "name": "Ladies Clothing",
+        "supplier": 1
+    }
+}, {
+    "model": "labelmaker.sizechart",
+    "pk": 2,
+    "fields": {
+        "name": "Ladies Slippers",
+        "supplier": 1
+
+    }
+}, {
+    "model": "labelmaker.sizechart",
+    "pk": 3,
+    "fields": {
+        "name": "Ladies Slippers",
+        "supplier": 2
+    }
+}, {
+    "model": "labelmaker.sizechart",
+    "pk": 4,
+    "fields": {
+        "name": "Wellies",
+        "supplier": 2
+    }
+}, {
+    "model": "labelmaker.sizechart",
+    "pk": 5,
+    "fields": {
+        "name": "No Supplier Chart",
+        "supplier": null
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 1,
+    "fields": {
+        "size_chart": 1,
+        "sort": 1,
+        "name": "Small",
+        "uk_size": "8-10",
+        "eu_size": "36-38",
+        "us_size": "4-6",
+        "au_size": "10-12"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 2,
+    "fields": {
+        "size_chart": 1,
+        "sort": 2,
+        "name": "Medium",
+        "uk_size": "12-14",
+        "eu_size": "40-42",
+        "us_size": "8-10",
+        "au_size": "14-16"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 3,
+    "fields": {
+        "size_chart": 1,
+        "sort": 3,
+        "name": "Large",
+        "uk_size": "16-18",
+        "eu_size": "44-46",
+        "us_size": "12-14",
+        "au_size": "18-20"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 4,
+    "fields": {
+        "size_chart": 1,
+        "sort": 4,
+        "name": "XL",
+        "uk_size": "20-22",
+        "eu_size": "48-50",
+        "us_size": "16-18",
+        "au_size": "22-24"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 5,
+    "fields": {
+        "size_chart": 1,
+        "sort": 5,
+        "name": "2XL",
+        "uk_size": "24-26",
+        "eu_size": "52-54",
+        "us_size": "20-22",
+        "au_size": "26-28"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 6,
+    "fields": {
+        "size_chart": 1,
+        "sort": 6,
+        "name": "3XL",
+        "uk_size": "26-28",
+        "eu_size": "54-56",
+        "us_size": "22-24",
+        "au_size": "28-30"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 7,
+    "fields": {
+        "size_chart": 1,
+        "sort": 7,
+        "name": "4XL",
+        "uk_size": "28-30",
+        "eu_size": "56-58",
+        "us_size": "24-26",
+        "au_size": "30-32"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 8,
+    "fields": {
+        "size_chart": 2,
+        "sort": 0,
+        "name": "",
+        "uk_size": "3",
+        "eu_size": "36",
+        "us_size": "5",
+        "au_size": "5"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 9,
+    "fields": {
+        "size_chart": 2,
+        "sort": 1,
+        "name": "",
+        "uk_size": "4",
+        "eu_size": "37",
+        "us_size": "6",
+        "au_size": "6"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 10,
+    "fields": {
+        "size_chart": 2,
+        "sort": 2,
+        "name": "",
+        "uk_size": "5",
+        "eu_size": "38",
+        "us_size": "7",
+        "au_size": "7"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 11,
+    "fields": {
+        "size_chart": 2,
+        "sort": 3,
+        "name": "",
+        "uk_size": "6",
+        "eu_size": "39",
+        "us_size": "8",
+        "au_size": "8"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 12,
+    "fields": {
+        "size_chart": 2,
+        "sort": 4,
+        "name": "",
+        "uk_size": "7",
+        "eu_size": "40",
+        "us_size": "9",
+        "au_size": "9"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 13,
+    "fields": {
+        "size_chart": 2,
+        "sort": 5,
+        "name": "",
+        "uk_size": "8",
+        "eu_size": "41",
+        "us_size": "10",
+        "au_size": "10"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 14,
+    "fields": {
+        "size_chart": 3,
+        "sort": 0,
+        "name": "",
+        "uk_size": "3-4",
+        "eu_size": "36-37",
+        "us_size": "5-6",
+        "au_size": "5-6"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 15,
+    "fields": {
+        "size_chart": 3,
+        "sort": 1,
+        "name": "",
+        "uk_size": "5-6",
+        "eu_size": "38-39",
+        "us_size": "7-8",
+        "au_size": "7-8"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 16,
+    "fields": {
+        "size_chart": 3,
+        "sort": 2,
+        "name": "",
+        "uk_size": "7-8",
+        "eu_size": "40-41",
+        "us_size": "9-10",
+        "au_size": "9-10"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 31,
+    "fields": {
+        "size_chart": 4,
+        "sort": 0,
+        "name": "",
+        "uk_size": "4",
+        "eu_size": "37",
+        "us_size": "6",
+        "au_size": "6"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 32,
+    "fields": {
+        "size_chart": 4,
+        "sort": 1,
+        "name": "",
+        "uk_size": "5",
+        "eu_size": "38",
+        "us_size": "7",
+        "au_size": "7"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 33,
+    "fields": {
+        "size_chart": 4,
+        "sort": 2,
+        "name": "",
+        "uk_size": "6",
+        "eu_size": "39",
+        "us_size": "8",
+        "au_size": "8"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 34,
+    "fields": {
+        "size_chart": 4,
+        "sort": 3,
+        "name": "",
+        "uk_size": "7",
+        "eu_size": "40",
+        "us_size": "9",
+        "au_size": "9"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 35,
+    "fields": {
+        "size_chart": 4,
+        "sort": 4,
+        "name": "",
+        "uk_size": "8",
+        "eu_size": "41",
+        "us_size": "10",
+        "au_size": "10"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 36,
+    "fields": {
+        "size_chart": 5,
+        "sort": 0,
+        "name": "",
+        "uk_size": "4",
+        "eu_size": "37",
+        "us_size": "6",
+        "au_size": "6"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 37,
+    "fields": {
+        "size_chart": 5,
+        "sort": 1,
+        "name": "",
+        "uk_size": "5",
+        "eu_size": "38",
+        "us_size": "7",
+        "au_size": "7"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 38,
+    "fields": {
+        "size_chart": 5,
+        "sort": 2,
+        "name": "",
+        "uk_size": "6",
+        "eu_size": "39",
+        "us_size": "8",
+        "au_size": "8"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 39,
+    "fields": {
+        "size_chart": 5,
+        "sort": 3,
+        "name": "",
+        "uk_size": "7",
+        "eu_size": "40",
+        "us_size": "9",
+        "au_size": "9"
+    }
+}, {
+    "model": "labelmaker.sizechartsize",
+    "pk": 40,
+    "fields": {
+        "size_chart": 5,
+        "sort": 4,
+        "name": "",
+        "uk_size": "8",
+        "eu_size": "41",
+        "us_size": "10",
+        "au_size": "10"
+    }
+}]

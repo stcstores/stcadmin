@@ -4,15 +4,14 @@ import json
 
 import labeler
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import DeleteView, FormView
+from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 
 from home.views import UserInGroupMixin
-from labelmaker import forms
-from labelmaker.models import SizeChart, SizeChartSize
+from labelmaker import forms, models
 
 
 class LabelmakerUserMixin(UserInGroupMixin):
@@ -35,66 +34,77 @@ class ProductLabels(LabelmakerUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return context for template."""
         context_data = super().get_context_data()
-        context_data["size_charts"] = SizeChart.objects.all()
+        context_data["size_charts"] = models.SizeChart.by_supplier()
         return context_data
 
 
-class SizeChartForm(FormView):
+class CreateSizeChart(LabelmakerUserMixin, CreateView):
+    """Create a SizeChart object."""
+
+    model = models.SizeChart
+    fields = ["supplier", "name"]
+
+    def get_success_url(self):
+        """Redirect to the size form."""
+        models.SizeChartSize.objects.create(size_chart=self.object)
+        return self.object.get_edit_sizes_url()
+
+
+class UpdateSizeChart(LabelmakerUserMixin, UpdateView):
+    """Update a SizeChart object."""
+
+    model = models.SizeChart
+    fields = ["supplier", "name"]
+
+    def get_success_url(self):
+        """Redirect to edit the size chart's sizes."""
+        return self.object.get_edit_sizes_url()
+
+
+class DeleteSizeChart(LabelmakerUserMixin, DeleteView):
+    """Delete a SizeChart object."""
+
+    model = models.SizeChart
+    success_url = reverse_lazy("labelmaker:product_labels")
+
+    def get_object(self, *args, **kwargs):
+        """Return object to delete."""
+        return get_object_or_404(self.model, id=self.kwargs.get("id"))
+
+
+class EditSizeChartSizes(FormView):
     """View for Size Chart form."""
 
-    template_name = "labelmaker/size_chart.html"
+    template_name = "labelmaker/size_chart_sizes.html"
     form_class = forms.SizeFormset
 
     def form_valid(self, form):
         """Update model object."""
-        size_chart_name = form.data.get("size_chart_name")
-        if str(form.instance.name) != size_chart_name:
-            form.instance.name = size_chart_name
-            form.instance.save()
-        form.save()
+        for _form in form:
+            if _form.is_valid() and _form.has_changed():
+                form.save()
         return super().form_valid(form)
 
     def get_context_data(self, *args, **kwargs):
         """Return context data for template."""
         context_data = super().get_context_data()
         context_data["formset"] = context_data.pop("form")
+        context_data["size_chart"] = context_data["formset"].instance
         return context_data
 
     def get_form_kwargs(self, *args, **kwargs):
         """Return kwargs for form."""
         kwargs = super().get_form_kwargs()
-        self.size_chart_id = self.kwargs.get("pk")
-        kwargs["instance"] = get_object_or_404(SizeChart, pk=self.size_chart_id)
+        self.size_chart_id = self.kwargs.get("id")
+        kwargs["instance"] = get_object_or_404(models.SizeChart, id=self.size_chart_id)
         return kwargs
 
     def get_success_url(self):
         """Return URL to redirect to after successful submission."""
-        return reverse_lazy("labelmaker:size_charts")
+        return reverse_lazy("labelmaker:product_labels")
 
 
-class CreateSizeChart(LabelmakerUserMixin, View):
-    """View for create size chart page."""
-
-    def dispatch(self, *args, **kwargs):
-        """Create new size chart and redirct to it's edit page."""
-        size_chart = SizeChart.objects.create(name="PLACEHOLDER NAME")
-        SizeChartSize.objects.create(size_chart=size_chart)
-        return redirect(size_chart.get_absolute_url())
-
-
-class SizeCharts(LabelmakerUserMixin, TemplateView):
-    """View for size chart edit page."""
-
-    template_name = "labelmaker/size_charts.html"
-
-    def get_context_data(self, *args, **kwargs):
-        """Return context data for template."""
-        context_data = super().get_context_data(*args, **kwargs)
-        context_data["size_charts"] = SizeChart.objects.all()
-        return context_data
-
-
-class ProductLabelFormSizeChart(LabelmakerUserMixin, TemplateView):
+class CreateProductLabelsWithTemplate(LabelmakerUserMixin, TemplateView):
     """View for label form when using a size chart."""
 
     template_name = "labelmaker/product_label_form.html"
@@ -102,13 +112,15 @@ class ProductLabelFormSizeChart(LabelmakerUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return context data for template."""
         context_data = super().get_context_data(*args, **kwargs)
-        size_chart_id = self.kwargs.get("size_chart_id")
-        context_data["size_chart"] = get_object_or_404(SizeChart, pk=size_chart_id)
+        size_chart_id = self.kwargs.get("id")
+        context_data["size_chart"] = get_object_or_404(
+            models.SizeChart, id=size_chart_id
+        )
         context_data["sizes"] = context_data["size_chart"].sizechartsize_set.all()
         return context_data
 
 
-class ProductLabelFormNoSizeChart(LabelmakerUserMixin, TemplateView):
+class CreateProductLabelsWithoutTemplate(LabelmakerUserMixin, TemplateView):
     """View for label form when not using a size chart."""
 
     template_name = "labelmaker/product_label_form.html"
@@ -174,7 +186,7 @@ class ProductLabelsPDFFromSizeChart(BaseProductPDFLabelView):
     def get_label_data(self, *args, **kwargs):
         """Return list containing lists of lines of text for each label."""
         self.product_code = self.request.POST["product_code"]
-        size_chart_id = self.kwargs.get("size_chart_id") or None
+        size_chart_id = self.kwargs.get("id") or None
         data = json.loads(self.request.POST["data"])
 
         label_data = self.get_label_data_for_size_chart(
@@ -186,7 +198,7 @@ class ProductLabelsPDFFromSizeChart(BaseProductPDFLabelView):
         """Return text lines for labels generated from a size chart."""
         label_data = []
         for variation in json_data:
-            size = get_object_or_404(SizeChartSize, pk=variation["size"])
+            size = get_object_or_404(models.SizeChartSize, id=variation["size"])
             colour = variation["colour"]
 
             foriegn_size_list = [
@@ -225,17 +237,6 @@ class TestProductPDFLabel(BaseProductPDFLabelView):
             ["Medium", "Grey", "64535"],
         ]
         return data
-
-
-class DeleteSizeChart(LabelmakerUserMixin, DeleteView):
-    """View to delete SizeChart objects."""
-
-    model = SizeChart
-    success_url = reverse_lazy("labelmaker:size_charts")
-
-    def get_object(self, *args, **kwargs):
-        """Return object to delete."""
-        return get_object_or_404(SizeChart, pk=self.kwargs.get("size_chart_id"))
 
 
 class AddressLabelForm(TemplateView, LabelmakerUserMixin):

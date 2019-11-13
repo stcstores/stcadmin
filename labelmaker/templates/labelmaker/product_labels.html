@@ -3,38 +3,47 @@
 
 {% block content %}
 <h1>Product Labels</h1>
-<h2>Create labels for products</h2>
-    <div id="label_form" class="label_form">
-        <label for="size_chart">Supplier</label>
-        <select name="size_chart" id="select_size_chart" autofocus size="{{ size_charts|length|add:2 }}">
-            <option value="none" selected="selected">None</option>
-            <option value="add">Add...</option>
-            {% for size_chart in size_charts %}<option value="{{size_chart.id}}">{{size_chart.name}}</option>{% endfor %}
-        </select>
-        <button id="size_chart_go">Go</button>
+
+<div class="template_supplier">
+    <a href="{% url 'labelmaker:create_product_labels' %}">
+        <button>Create Product Labels without a Template</button>
+    </a>
+</div>
+
+<h2>Templates</h2>
+
+<div class="template_list">
+    {% for supplier, supplier_charts in size_charts.items %}
+    <div class="template_supplier">
+        {% if supplier %}
+        <p>{{ supplier.name }}</p>
+        {% else %}
+        <p>Unknown Supplier</p>
+        {% endif %}
+        <ul class="supplier_template_list">
+            {% for chart in supplier_charts %}
+            <div class="template">
+                <a href="{{ chart.get_use_url }}">
+                    <li>{{ chart.name }}</li>
+                </a>
+                <div class="template_buttons">
+                    <a href="{{ chart.get_edit_sizes_url }}" title="Edit">
+                        <img src="{% static 'images/edit.png' %}" alt="Edit" height="20" width="20">
+                    </a>
+                    <a href="{{ chart.get_delete_url }}" title="Delete">
+                        <img src="{% static 'images/delete.png' %}" alt="Delete" height="20" width="20">
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </ul>
     </div>
-{% endblock %}
-{% block script %}
-    <script>
-        $( document ).ready(function() {
-            var size_chart_urls = {
-                {% for size_chart in size_charts %}
-                '{{ size_chart.id }}': '{% url 'labelmaker:label_form' size_chart.id %}',
-                {% endfor %}
-            };
+    {% endfor %}
+</div>
 
-            $('#size_chart_go').click(function() {
-                var selected_size_chart = $('#select_size_chart').val();
-                if (selected_size_chart === "none") {
-                    window.location = "{% url 'labelmaker:label_form' %}"
-                } else if (selected_size_chart === "add") {
-                    window.location = "{% url 'labelmaker:create_size_chart_form' %}"
-                } else {
-                    window.location = size_chart_urls[selected_size_chart]
-                }
-            });
-
-            var form = LabelForm($('#label_form'));
-        });
-    </script>
+<div class="template_supplier">
+    <a href="{% url 'labelmaker:create_size_chart' %}">
+        <button>Create a New Product Label Template</button>
+    </a>
+</div>
 {% endblock %}

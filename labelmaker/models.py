@@ -31,14 +31,20 @@ class SizeChart(models.Model):
         return dict(supplier_dict)
 
     def get_absolute_url(self):
-        """Return URL for the object."""
-        return reverse("labelmaker:size_chart_form", kwargs={"pk": str(self.id)})
+        """Return the URL to update the object."""
+        return reverse("labelmaker:update_size_chart", args=[self.id])
 
     def get_delete_url(self):
-        """Get URL to delete the object."""
-        return reverse(
-            "labelmaker:delete_size_chart", kwargs={"size_chart_id": str(self.id)}
-        )
+        """Return the URL to delete the object."""
+        return reverse("labelmaker:delete_size_chart", args=[self.id])
+
+    def get_edit_sizes_url(self):
+        """Return the URL to edit the chart's sizes."""
+        return reverse("labelmaker:edit_size_chart_sizes", args=[self.id])
+
+    def get_use_url(self):
+        """Return the URL to use the size chart."""
+        return reverse("labelmaker:create_product_labels", args=[self.id])
 
     def __str__(self):
         if self.supplier is not None:
