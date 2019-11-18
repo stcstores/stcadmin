@@ -11,7 +11,9 @@ from inventory.models import Supplier
 class SizeChart(models.Model):
     """Model for size charts."""
 
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, null=True)
+    supplier = models.ForeignKey(
+        Supplier, on_delete=models.CASCADE, blank=True, null=True
+    )
     name = models.CharField(max_length=200)
 
     class Meta:
