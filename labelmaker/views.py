@@ -1,9 +1,8 @@
 """Views for the labelmaker app."""
-
 import json
 
 import labeler
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -254,6 +253,8 @@ class AddressLabelPDF(BasePDFLabelView):
     def get_label_data(self, *args, **kwargs):
         """Return list containing lists of lines of text for each label."""
         text = self.request.POST.get("label_text")
+        if text is None:
+            raise Http404
         return [text.split("\r\n")]
 
 
