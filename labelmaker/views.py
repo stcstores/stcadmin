@@ -269,6 +269,10 @@ class AddressLabelPDF(BasePDFLabelView):
     def get_label_data(self, *args, **kwargs):
         """Return list containing lists of lines of text for each label."""
         text = self.request.POST.get("label_text")
+        return self.parse_label_data(text)
+
+    def parse_label_data(self, text):
+        """Return the label text as a list of lines."""
         if text is None:
             raise http.Http404
         return [text.split("\r\n")]
@@ -290,9 +294,13 @@ class SmallLabelPDF(BasePDFLabelView):
         """Return list containing lists of lines of text for each label."""
         text = [_ for _ in self.request.POST.getlist("label_text") if _]
         quantities = [int(_) for _ in self.request.POST.getlist("quantity")]
+        return self.parse_label_data(text, quantities)
+
+    def parse_label_data(self, text, quantities):
+        """Return the label text as a list of lines."""
         data = []
-        for i in range(len(text)):
-            label_text = text[i].split("\r\n")
+        for i, line in enumerate(text):
+            label_text = line.split("\r\n")
             for _ in range(quantities[i]):
                 data.append(label_text)
         return data
