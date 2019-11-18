@@ -454,3 +454,101 @@ class TestTestProductPDFLabelView(LabelmakerViewTest, ViewTests):
         self.assertEqual(200, response.status_code)
         self.assertEqual(response.get("Content-Disposition"), 'filename="labels.pdf"')
         self.assertIn("PDF", str(response.content))
+
+
+class TestAddressLabelFormView(LabelmakerViewTest, ViewTests):
+
+    URL = "/labelmaker/address_labels/"
+    template = "labelmaker/address_label_form.html"
+
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, self.template)
+        self.assertIn("Address Label", str(response.content))
+
+
+class TestAddressLabelPDFView(LabelmakerViewTest, ViewTests):
+    URL = "/labelmaker/address_labels/address_label_pdf/"
+    label_contents = ["Address Line 1", "Address Line 2", "Address Line 3"]
+
+    def get_form_data(self):
+        return {"label_text": "\r\n".join(self.label_contents)}
+
+    def make_post_request(self):
+        return self.client.post(self.get_URL(), self.get_form_data())
+
+    def test_post_method(self):
+        response = self.make_post_request()
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(response.get("Content-Disposition"), 'filename="labels.pdf"')
+        self.assertIn("PDF", str(response.content))
+
+    def test_label_data(self):
+        label_data = views.AddressLabelPDF().parse_label_data(
+            "\r\n".join(self.label_contents)
+        )
+        self.assertEqual([self.label_contents], label_data)
+
+    def test_empty_post(self):
+        response = self.client.post(self.get_URL())
+        self.assertEqual(404, response.status_code)
+
+
+class TestSmallLabelFormView(LabelmakerViewTest, ViewTests):
+
+    URL = "/labelmaker/small_labels/"
+    template = "labelmaker/small_label_form.html"
+
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, self.template)
+        self.assertIn("Small Label", str(response.content))
+
+
+class TestSmallLabelPDFView(LabelmakerViewTest, ViewTests):
+    URL = "/labelmaker/small_labels/small_label_pdf/"
+    label_contents = ["Address Line 1", "Address Line 2", "Address Line 3"]
+
+    def get_form_data(self):
+        return {"label_text": ["\r\n".join(self.label_contents)], "quantity": [1]}
+
+    def make_post_request(self):
+        return self.client.post(self.get_URL(), self.get_form_data())
+
+    def test_post_method(self):
+        response = self.make_post_request()
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(response.get("Content-Disposition"), 'filename="labels.pdf"')
+        self.assertIn("PDF", str(response.content))
+
+    def test_label_data(self):
+        text = ["\r\n".join(self.label_contents)]
+        quantities = [1]
+        label_data = views.SmallLabelPDF().parse_label_data(text, quantities)
+        self.assertEqual(label_data, [self.label_contents])
+
+    def test_label_quantity(self):
+        text = ["\r\n".join(self.label_contents)]
+        quantities = [2]
+        label_data = views.SmallLabelPDF().parse_label_data(text, quantities)
+        self.assertEqual(label_data, [self.label_contents, self.label_contents])
+
+    def test_multiple_labels(self):
+        first_label_contents = ["Line 1", "Line 2"]
+        second_label_contents = ["First Line", "Second Line"]
+        label_contents = (first_label_contents, second_label_contents)
+        quantities = [2, 3]
+        text = ["\r\n".join(_) for _ in label_contents]
+        label_data = views.SmallLabelPDF().parse_label_data(text, quantities)
+        self.assertEqual(
+            label_data,
+            [
+                first_label_contents,
+                first_label_contents,
+                second_label_contents,
+                second_label_contents,
+                second_label_contents,
+            ],
+        )
