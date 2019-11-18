@@ -10,7 +10,7 @@
     {% if "inventory" in groups %}
     <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
     {% endif %}
-    {% if group.name == 'labelmaker' %}
+    {% if 'labelmaker' in groups %}
     <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
     {% endif %}
     {% if 'print_audit' in groups %}

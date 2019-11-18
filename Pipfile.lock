@@ -46,7 +46,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "20e66498345558a415fa5e5e2bfcd137323273bb"
+            "ref": "ab36fce3272345b612dd23026370944abfeef24b"
         },
         "certifi": {
             "hashes": [
@@ -185,7 +185,7 @@
         "labeler": {
             "editable": true,
             "git": "https://github.com/lukeshiner/labeler.git",
-            "ref": "9c0eaef1c3cf755d9d602033b9b741a0139ba39b"
+            "ref": "c0b341863cc07f85887503fecd4e01f0ec0f1d7e"
         },
         "list-input": {
             "editable": true,
@@ -254,7 +254,7 @@
         "order-profit": {
             "editable": true,
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "f02f40d1988cad80ed356e17f41fc7e5611674f6"
+            "ref": "119c2af233a8b872cebe70d68cb0ad81dbc56efc"
         },
         "packaging": {
             "hashes": [
@@ -520,11 +520,11 @@
         },
         "xlsxwriter": {
             "hashes": [
-                "sha256:1b12a3cd73e5d131892451dee7428b67f9d898ffa6ddda55426b57e6575c517f",
-                "sha256:44ae953aded1fcb426b427f6622063de79f2c2430d38091c21ab5da69969869e"
+                "sha256:027fa3d22ccfb5da5d77c29ed740aece286a9a6cc101b564f2f7ca11eb1d490b",
+                "sha256:5d480cee5babf3865227d5c81269d96be8e87914fc96403ca6fa1b1e4f64c080"
             ],
             "index": "pypi",
-            "version": "==1.2.5"
+            "version": "==1.2.6"
         }
     },
     "develop": {
@@ -868,11 +868,11 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:27abc3fef618a01bebb1f0d6d303d2816a99aa87a5968ebc32fe971be91eb1e6",
-                "sha256:58cee9e09242937e136dbb3dab466116ba20d6b7828c7620f23947f37eb4dae4"
+                "sha256:8e256fe71eb74e14a4d20a5987bb5e1488f0511ee800680aaedc62b9358714e8",
+                "sha256:ff0090819f669aaa0284d0f4aad1a6d9d67a6efdc6dd4eb4ac56b704f890a0d6"
             ],
             "index": "pypi",
-            "version": "==5.2.2"
+            "version": "==5.2.4"
         },
         "pytest-cov": {
             "hashes": [

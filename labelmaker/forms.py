@@ -2,6 +2,7 @@
 
 from django import forms
 from django.forms.models import inlineformset_factory
+
 from labelmaker import models
 
 
@@ -18,5 +19,5 @@ class SizeChartSizeForm(forms.ModelForm):
 
 
 SizeFormset = inlineformset_factory(
-    models.SizeChart, models.SizeChartSize, extra=0, form=SizeChartSizeForm
+    models.SizeChart, models.SizeChartSize, extra=1, max_num=1, form=SizeChartSizeForm
 )

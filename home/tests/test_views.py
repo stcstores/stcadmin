@@ -1,6 +1,7 @@
 import sys
 from unittest.mock import Mock
 
+from django.contrib.auth.models import Group
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import reverse
 
@@ -58,6 +59,24 @@ class TestIndexView(STCAdminTest, ViewTests):
         self.assertIn("Inventory", str(response.content))
         self.assertNotIn("Labelmaker", str(response.content))
         self.assertIn('class="homepage_feedback', str(response.content))
+
+    def test_navbar(self):
+        groups = [
+            ("admin", "Admin"),
+            ("epos", "EPOS"),
+            ("inventory", "Inventory"),
+            ("labelmaker", "Labelmaker"),
+            ("manifests", "Manifests"),
+            ("print_audit", "Print Audit"),
+            ("profit_loss", "Print Audit"),
+            ("stock_check", "Stock Check"),
+        ]
+        for group_name, nav_item in groups:
+            Group.objects.get_or_create(name=group_name)
+            self.add_group(group_name)
+        response = self.make_get_request()
+        for group_name, nav_item in groups:
+            self.assertIn(nav_item, str(response.content))
 
     def test_user_not_in_group_get(self):
         pass
