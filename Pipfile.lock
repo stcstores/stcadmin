@@ -46,7 +46,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "20e66498345558a415fa5e5e2bfcd137323273bb"
+            "ref": "ab36fce3272345b612dd23026370944abfeef24b"
         },
         "certifi": {
             "hashes": [
@@ -185,7 +185,7 @@
         "labeler": {
             "editable": true,
             "git": "https://github.com/lukeshiner/labeler.git",
-            "ref": "53c74a926aa27c03bcfe1c920472018ec75274a4"
+            "ref": "c0b341863cc07f85887503fecd4e01f0ec0f1d7e"
         },
         "list-input": {
             "editable": true,
@@ -254,7 +254,7 @@
         "order-profit": {
             "editable": true,
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "7f53d117eccb3dad8e7bad87a1cd0d47a2a06351"
+            "ref": "4839d005ec65828119ab6294c46f2d615dc3d62f"
         },
         "packaging": {
             "hashes": [
@@ -520,11 +520,11 @@
         },
         "xlsxwriter": {
             "hashes": [
-                "sha256:1b12a3cd73e5d131892451dee7428b67f9d898ffa6ddda55426b57e6575c517f",
-                "sha256:44ae953aded1fcb426b427f6622063de79f2c2430d38091c21ab5da69969869e"
+                "sha256:027fa3d22ccfb5da5d77c29ed740aece286a9a6cc101b564f2f7ca11eb1d490b",
+                "sha256:5d480cee5babf3865227d5c81269d96be8e87914fc96403ca6fa1b1e4f64c080"
             ],
             "index": "pypi",
-            "version": "==1.2.5"
+            "version": "==1.2.6"
         }
     },
     "develop": {
