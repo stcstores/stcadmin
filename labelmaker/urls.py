@@ -49,7 +49,11 @@ urlpatterns = [
         views.ProductLabelsPDFFromSizeChart.as_view(),
         name="generate_product_labels",
     ),
-    path("product_labels/test/", views.TestProductPDFLabel.as_view(), name="test_pdf"),
+    path(
+        "product_labels/test/",
+        views.TestProductPDFLabel.as_view(),
+        name="test_product_labels",
+    ),
     path("address_labels/", views.AddressLabelForm.as_view(), name="address_labels"),
     path(
         "address_labels/address_label_pdf/",
