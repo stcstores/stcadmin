@@ -30,8 +30,8 @@
     <br><br>
     <div id="selection_table"></div>
     <form
-        action="{% if size_chart %}{% url 'labelmaker:generate_pdf_for_size_chart' size_chart.id %}{% else %}{% url 'labelmaker:generate_pdf_no_size_chart' %}{% endif %}"
-        method="POST" id="label_selection_form" class="hidden">
+        action="{% if size_chart %}{% url 'labelmaker:generate_product_labels' size_chart.id %}{% else %}{% url 'labelmaker:generate_product_labels' %}{% endif %}"
+        method="POST" id="label_selection_form" class="hidden" target="_blank">
         {% csrf_token %}
         <input type="text" name="data" id="data">
     </form>
