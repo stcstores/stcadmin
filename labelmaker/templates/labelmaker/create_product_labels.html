@@ -2,6 +2,11 @@
 {% load static %}
 
 {% block content %}
+{% if size_chart %}
+<h2>
+    {% if size_chart.supplier %}{{ size_chart.supplier.name }} - {% endif %}{{ size_chart.name }}
+</h2>
+{% endif %}
 <div id="size_chart_label_setup" class="size_chart_label_setup">
     <div id="add_product_code" class="form_section">
         <p class="form_section_header">Product Code</p>
