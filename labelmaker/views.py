@@ -254,7 +254,7 @@ class TestProductPDFLabel(BaseProductPDFLabelView):
         return data
 
 
-class AddressLabelForm(TemplateView, LabelmakerUserMixin):
+class AddressLabelForm(LabelmakerUserMixin, TemplateView):
     """View for the address label creation form."""
 
     template_name = "labelmaker/address_label_form.html"
@@ -274,7 +274,7 @@ class AddressLabelPDF(BasePDFLabelView):
         return [text.split("\r\n")]
 
 
-class SmallLabelForm(TemplateView, LabelmakerUserMixin):
+class SmallLabelForm(LabelmakerUserMixin, TemplateView):
     """View for the small label creation form."""
 
     template_name = "labelmaker/small_label_form.html"
