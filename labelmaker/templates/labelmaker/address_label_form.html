@@ -6,7 +6,7 @@
 <h1>Address Labels</h1>
 <h2>Create labels using address label paper</h2>
 
-<form action="address_label_pdf" method="POST" target="_blank">{% csrf_token %}
+<form action="{% url 'labelmaker:address_label_pdf' %}" method="POST" target="_blank">{% csrf_token %}
     <table>
         <tr>
             <th>Label text</th>

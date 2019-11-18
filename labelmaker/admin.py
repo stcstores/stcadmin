@@ -1,6 +1,7 @@
 """Model admin for labelmaker app."""
 
 from django.contrib import admin
+
 from labelmaker import models
 
 
@@ -8,7 +9,7 @@ from labelmaker import models
 class SizeChartAdmin(admin.ModelAdmin):
     """Model admin for SizeChart model."""
 
-    fields = ("name",)
+    fields = ("supplier", "name")
 
 
 @admin.register(models.SizeChartSize)
