@@ -40,14 +40,14 @@ urlpatterns = [
         name="create_product_labels",
     ),
     path(
-        "product_labels/generate_pdf_no_size_chart/",
+        "product_labels/generate_product_labels/",
         views.ProductLabelsPDFNoSizeChart.as_view(),
-        name="generate_pdf_no_size_chart",
+        name="generate_product_labels",
     ),
     path(
-        "product_labels/generate_pdf_for_size_chart/<int:id>/",
+        "product_labels/generate_product_labels/<int:id>/",
         views.ProductLabelsPDFFromSizeChart.as_view(),
-        name="generate_pdf_for_size_chart",
+        name="generate_product_labels",
     ),
     path("product_labels/test/", views.TestProductPDFLabel.as_view(), name="test_pdf"),
     path("address_labels/", views.AddressLabelForm.as_view(), name="address_labels"),
