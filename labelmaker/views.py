@@ -72,7 +72,7 @@ class DeleteSizeChart(LabelmakerUserMixin, DeleteView):
         return get_object_or_404(self.model, id=self.kwargs.get("id"))
 
 
-class EditSizeChartSizes(FormView):
+class EditSizeChartSizes(LabelmakerUserMixin, FormView):
     """View for Size Chart form."""
 
     template_name = "labelmaker/size_chart_sizes.html"
