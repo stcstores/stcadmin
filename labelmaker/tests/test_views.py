@@ -466,6 +466,7 @@ class TestAddressLabelFormView(LabelmakerViewTest, ViewTests):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, self.template)
         self.assertIn("Address Label", str(response.content))
+        self.assertIn(reverse("labelmaker:address_label_pdf"), str(response.content))
 
 
 class TestAddressLabelPDFView(LabelmakerViewTest, ViewTests):
