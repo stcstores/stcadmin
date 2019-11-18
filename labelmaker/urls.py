@@ -52,7 +52,7 @@ urlpatterns = [
     path("product_labels/test/", views.TestProductPDFLabel.as_view(), name="test_pdf"),
     path("address_labels/", views.AddressLabelForm.as_view(), name="address_labels"),
     path(
-        "address_labels/address_label_pdf",
+        "address_labels/address_label_pdf/",
         views.AddressLabelPDF.as_view(),
         name="address_label_pdf",
     ),
