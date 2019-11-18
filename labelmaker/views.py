@@ -107,7 +107,7 @@ class EditSizeChartSizes(FormView):
 class CreateProductLabelsWithTemplate(LabelmakerUserMixin, TemplateView):
     """View for label form when using a size chart."""
 
-    template_name = "labelmaker/product_label_form.html"
+    template_name = "labelmaker/create_product_labels.html"
 
     def get_context_data(self, *args, **kwargs):
         """Return context data for template."""
@@ -123,7 +123,7 @@ class CreateProductLabelsWithTemplate(LabelmakerUserMixin, TemplateView):
 class CreateProductLabelsWithoutTemplate(LabelmakerUserMixin, TemplateView):
     """View for label form when not using a size chart."""
 
-    template_name = "labelmaker/product_label_form.html"
+    template_name = "labelmaker/create_product_labels.html"
 
 
 class BasePDFLabelView(LabelmakerUserMixin, View):
