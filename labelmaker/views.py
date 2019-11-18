@@ -2,7 +2,7 @@
 import json
 
 import labeler
-from django.http import Http404, HttpResponse
+from django import http
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -128,9 +128,13 @@ class CreateProductLabelsWithoutTemplate(LabelmakerUserMixin, TemplateView):
 class BasePDFLabelView(LabelmakerUserMixin, View):
     """Base class for views for printable label PDFs."""
 
-    def dispatch(self, *args, **kwargs):
+    def post(self, *args, **kwargs):
         """Create HTTP response."""
-        response = HttpResponse(content_type="application/pdf")
+        return self.create_label_response(*args, **kwargs)
+
+    def create_label_response(self, *args, **kwargs):
+        """Return an HttpResponse object with the generated label PDF."""
+        response = http.HttpResponse(content_type="application/pdf")
         response["Content-Disposition"] = 'filename="labels.pdf"'
         sheet = self.get_label_sheet(*args, **kwargs)
         data = self.get_label_data(*args, **kwargs)
@@ -155,6 +159,10 @@ class BaseProductPDFLabelView(BasePDFLabelView):
     label_format = labeler.DefaultLabelFormat
     label_sheet = labeler.STW046025PO
 
+    def read_json(self):
+        """Return label data from POST data."""
+        return json.loads(self.request.POST.get("data"))
+
 
 class ProductLabelsPDFNoSizeChart(BaseProductPDFLabelView):
     """View for product labels created without a size chart."""
@@ -163,7 +171,7 @@ class ProductLabelsPDFNoSizeChart(BaseProductPDFLabelView):
         """Return list containing lists of lines of text for each label."""
         self.product_code = self.request.POST["product_code"]
         data = []
-        for item in json.loads(self.request.POST["data"]):
+        for item in self.read_json():
             for number in range(int(item["quantity"])):
                 data.append([item["size"], item["colour"], self.product_code])
         return data
@@ -184,34 +192,25 @@ class ProductLabelsPDFFromSizeChart(BaseProductPDFLabelView):
 
     def get_label_data(self, *args, **kwargs):
         """Return list containing lists of lines of text for each label."""
-        self.product_code = self.request.POST["product_code"]
-        size_chart_id = self.kwargs.get("id") or None
-        data = json.loads(self.request.POST["data"])
-
+        product_code = self.request.POST.get("product_code")
+        size_chart = get_object_or_404(models.SizeChart, id=self.kwargs.get("id"))
+        label_input = self.read_json()
         label_data = self.get_label_data_for_size_chart(
-            self.product_code, data, size_chart_id
+            product_code, label_input, size_chart
         )
         return label_data
 
-    def get_label_data_for_size_chart(self, product_code, json_data, size_chart_id):
+    def get_label_data_for_size_chart(self, product_code, label_input, size_chart):
         """Return text lines for labels generated from a size chart."""
         label_data = []
-        for variation in json_data:
-            size = get_object_or_404(models.SizeChartSize, id=variation["size"])
-            colour = variation["colour"]
-
-            foriegn_size_list = [
-                "{}: {}".format(size[0], size[1])
-                for size in size.get_sizes()
-                if len(size[1]) > 0
-            ]
-
-            foriegn_size_data = [
-                " ".join(li) for li in self.split_list(foriegn_size_list, 3)
-            ]
-
-            for i in range(int(variation["quantity"])):
-                if size.name is not None and len(size.name) > 0:
+        for label in label_input:
+            size = get_object_or_404(
+                models.SizeChartSize, id=label["size"], size_chart=size_chart
+            )
+            colour = label["colour"]
+            foriegn_size_data = self.foriegn_size_data(size)
+            for i in range(int(label["quantity"])):
+                if size.name:
                     size_name = size.name
                 else:
                     size_name = "UK: " + size.uk_size
@@ -219,9 +218,26 @@ class ProductLabelsPDFFromSizeChart(BaseProductPDFLabelView):
                 label_data.append(foriegn_size_data)
         return label_data
 
+    def foriegn_size_data(self, size):
+        """Return label data for foreign sizes."""
+        size_list = [
+            "{}: {}".format(size[0], size[1])
+            for size in size.get_sizes()
+            if len(size[1]) > 0
+        ]
+        return [" ".join(_) for _ in self.split_list(size_list, 3)]
+
 
 class TestProductPDFLabel(BaseProductPDFLabelView):
     """View to create a PDF of labels generated from test data."""
+
+    def get(self, *args, **kwargs):
+        """Return test label PDF."""
+        return self.create_label_response(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        """Prevent POST requests."""
+        return http.HttpResponseNotAllowed(["GET"])
 
     def get_label_data(self, *args, **kwargs):
         """Create PDF labels using test data."""
@@ -254,7 +270,7 @@ class AddressLabelPDF(BasePDFLabelView):
         """Return list containing lists of lines of text for each label."""
         text = self.request.POST.get("label_text")
         if text is None:
-            raise Http404
+            raise http.Http404
         return [text.split("\r\n")]
 
 
