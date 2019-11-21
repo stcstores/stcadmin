@@ -254,7 +254,7 @@
         "order-profit": {
             "editable": true,
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "bc24f638f27030c5ba5a624b19837298eab54c2f"
+            "ref": "5fd8194925d1e381cde076567671eb3276e6fb5e"
         },
         "packaging": {
             "hashes": [
