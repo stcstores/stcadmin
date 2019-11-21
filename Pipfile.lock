@@ -46,7 +46,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "b784cf0e05ae5d718bd67368ad784bf94e55ee93"
+            "ref": "3ec5e1a901986018e80641ac3ab9b34e3305797d"
         },
         "certifi": {
             "hashes": [
@@ -185,7 +185,7 @@
         "labeler": {
             "editable": true,
             "git": "https://github.com/lukeshiner/labeler.git",
-            "ref": "c0b341863cc07f85887503fecd4e01f0ec0f1d7e"
+            "ref": "6c0e86f0d1ff2d34a61b9bb6d964a120d0c3f7e2"
         },
         "list-input": {
             "editable": true,
@@ -254,7 +254,7 @@
         "order-profit": {
             "editable": true,
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "145374101ee727627a506937287736fd92f6ea3f"
+            "ref": "bc24f638f27030c5ba5a624b19837298eab54c2f"
         },
         "packaging": {
             "hashes": [
