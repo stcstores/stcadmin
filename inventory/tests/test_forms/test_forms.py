@@ -42,9 +42,11 @@ class TestDescriptionForm(FormTest):
         self.assertEqual(form.cleaned_data[self.DEPARTMENT], self.department)
         self.assertEqual(form.cleaned_data[self.DESCRIPTION], self.DESCRIPTION_VALUE)
         self.assertEqual(
-            form.cleaned_data[self.AMAZON_BULLETS], self.AMAZON_BULLETS_VALUE
+            form.cleaned_data[self.AMAZON_BULLETS], "|".join(self.AMAZON_BULLETS_VALUE)
         )
-        self.assertEqual(form.cleaned_data[self.SEARCH_TERMS], self.SEARCH_TERMS_VALUE)
+        self.assertEqual(
+            form.cleaned_data[self.SEARCH_TERMS], "|".join(self.SEARCH_TERMS_VALUE)
+        )
 
     def test_form_without_title(self):
         form_data = {
@@ -88,7 +90,7 @@ class TestDescriptionForm(FormTest):
         }
         form = forms.DescriptionForm(form_data)
         self.assert_form_is_valid(form)
-        self.assertEqual(form.cleaned_data[self.AMAZON_BULLETS], [])
+        self.assertEqual(form.cleaned_data[self.AMAZON_BULLETS], "")
 
     def test_form_with_too_many_amazon_bullets(self):
         form_data = {
@@ -112,7 +114,7 @@ class TestDescriptionForm(FormTest):
         }
         form = forms.DescriptionForm(form_data)
         self.assert_form_is_valid(form)
-        self.assertEqual(form.cleaned_data[self.SEARCH_TERMS], [])
+        self.assertEqual(form.cleaned_data[self.SEARCH_TERMS], "")
 
     def test_form_with_too_many_search_terms(self):
         form_data = {

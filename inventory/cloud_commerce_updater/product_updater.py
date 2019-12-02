@@ -397,7 +397,8 @@ class BaseProductUpdater(BaseCloudCommerceUpdater):
         self.db_object.save()
 
     def _set_CC_price(self, price):
-        CCAPI.set_product_base_price(product_id=self.db_object.product_ID, price=price)
+        value = "{:.2f}".format(price)
+        CCAPI.set_product_base_price(product_id=self.db_object.product_ID, price=value)
 
     def _set_DB_retail_price(self, retail_price):
         self.db_object.retail_price = retail_price

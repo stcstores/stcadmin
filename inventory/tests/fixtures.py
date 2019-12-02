@@ -413,3 +413,11 @@ class UnsavedNewProductRangeFixture(ProductRequirementsFixture):
     @property
     def product_range(self):
         return models.PartialProductRange.objects.get(id=1)
+
+    @property
+    def variations(self):
+        return list(
+            models.PartialProduct.objects.filter(
+                product_range=self.product_range
+            ).order_by("id")
+        )

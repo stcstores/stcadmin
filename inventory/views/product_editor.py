@@ -585,8 +585,11 @@ class SaveChanges(InventoryUserMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         """Save changes and redirect."""
         edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
-        product_range_ID = edit.partial_product_range.range_ID
         SaveEdit(edit, self.request.user).save_edit_threaded()
-        return reverse_lazy(
-            "inventory:product_range", kwargs={"range_id": product_range_ID}
-        )
+        if edit.product_range is not None:
+            range_ID = edit.partial_product_range.range_ID
+            return reverse_lazy(
+                "inventory:product_range", kwargs={"range_id": range_ID}
+            )
+        else:
+            return reverse_lazy("inventory:continue")

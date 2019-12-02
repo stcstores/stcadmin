@@ -4,7 +4,7 @@
   "fields": {
     "sort_order": 0,
     "name": "Size",
-    "product_option_ID": "3833",
+    "product_option_ID": "32123",
     "inactive": false
   }
 }, {
@@ -13,7 +13,7 @@
   "fields": {
     "sort_order": 1,
     "name": "Colour",
-    "product_option_ID": "3835",
+    "product_option_ID": "32130",
     "inactive": false
   }
 }, {
@@ -22,7 +22,7 @@
   "fields": {
     "sort_order": 2,
     "name": "Model",
-    "product_option_ID": "7651",
+    "product_option_ID": "32142",
     "inactive": false
   }
 }, {
@@ -31,14 +31,14 @@
   "fields": {
     "sort_order": 3,
     "name": "Design",
-    "product_option_ID": "9841",
+    "product_option_ID": "32129",
     "inactive": false
   }
 }, {
   "model": "inventory.productoptionvalue",
   "pk": 1,
   "fields": {
-    "product_option_value_ID": "39495",
+    "product_option_value_ID": "3040595",
     "product_option": 2,
     "value": "Red"
   }
@@ -46,7 +46,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 2,
   "fields": {
-    "product_option_value_ID": "39484",
+    "product_option_value_ID": "3040634",
     "product_option": 2,
     "value": "Green"
   }
@@ -54,7 +54,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 3,
   "fields": {
-    "product_option_value_ID": "39464",
+    "product_option_value_ID": "3040589",
     "product_option": 2,
     "value": "Blue"
   }
@@ -62,7 +62,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 4,
   "fields": {
-    "product_option_value_ID": "545666",
+    "product_option_value_ID": "3040953",
     "product_option": 2,
     "value": "Purple"
   }
@@ -70,7 +70,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 5,
   "fields": {
-    "product_option_value_ID": "145686",
+    "product_option_value_ID": "4894405",
     "product_option": 2,
     "value": "Magenta"
   }
@@ -78,7 +78,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 6,
   "fields": {
-    "product_option_value_ID": "59303",
+    "product_option_value_ID": "3040560",
     "product_option": 1,
     "value": "Small"
   }
@@ -86,7 +86,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 7,
   "fields": {
-    "product_option_value_ID": "59398",
+    "product_option_value_ID": "3040559",
     "product_option": 1,
     "value": "Medium"
   }
@@ -94,7 +94,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 8,
   "fields": {
-    "product_option_value_ID": "59384",
+    "product_option_value_ID": "3040558",
     "product_option": 1,
     "value": "Large"
   }
@@ -102,7 +102,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 9,
   "fields": {
-    "product_option_value_ID": "616168",
+    "product_option_value_ID": "3040618",
     "product_option": 1,
     "value": "XL"
   }
@@ -110,7 +110,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 10,
   "fields": {
-    "product_option_value_ID": "745616",
+    "product_option_value_ID": "3040677",
     "product_option": 1,
     "value": "XXL"
   }
@@ -118,7 +118,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 11,
   "fields": {
-    "product_option_value_ID": "549681",
+    "product_option_value_ID": "4456701",
     "product_option": 3,
     "value": "DB25"
   }
@@ -126,7 +126,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 12,
   "fields": {
-    "product_option_value_ID": "946131",
+    "product_option_value_ID": "4456989",
     "product_option": 3,
     "value": "DB50"
   }
@@ -134,7 +134,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 13,
   "fields": {
-    "product_option_value_ID": "685416",
+    "product_option_value_ID": "3040822",
     "product_option": 4,
     "value": "Cat"
   }
@@ -142,7 +142,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 14,
   "fields": {
-    "product_option_value_ID": "164846",
+    "product_option_value_ID": "3041336",
     "product_option": 4,
     "value": "Dog"
   }
@@ -150,7 +150,7 @@
   "model": "inventory.productoptionvalue",
   "pk": 15,
   "fields": {
-    "product_option_value_ID": "984316",
+    "product_option_value_ID": "3040714",
     "product_option": 4,
     "value": "Horse"
   }
