@@ -5,6 +5,8 @@ from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
 class TestCurrency(STCAdminTest):
+    fixtures = ("shipping/currency",)
+
     def test_create_object(self):
         name = "Test Country Dollars"
         code = "TCD"
@@ -16,8 +18,14 @@ class TestCurrency(STCAdminTest):
         self.assertEqual(code, currency.code)
         self.assertEqual(Decimal(float(exchange_rate)), currency.exchange_rate)
 
+    def test_str_(self):
+        currency = models.Currency.objects.get(id=1)
+        self.assertEqual(currency.name, str(currency))
+
 
 class TestCountry(STCAdminTest):
+    fixtures = ("shipping/currency", "shipping/country")
+
     def test_create_object(self):
         country_ID = "839"
         name = "Test Country"
@@ -39,16 +47,28 @@ class TestCountry(STCAdminTest):
         self.assertEqual(region, country.region)
         self.assertEqual(currency, country.currency)
 
+    def test_str(self):
+        country = models.Country.objects.get(id=1)
+        self.assertEqual(country.name, str(country))
+
 
 class TestProvider(STCAdminTest):
+    fixtures = ("shipping/currency", "shipping/country", "shipping/services")
+
     def test_create_object(self):
         name = "Test Provider"
         provider = models.Provider.objects.create(name=name)
         saved_provider = models.Provider.objects.get(id=provider.id)
         self.assertEqual(name, saved_provider.name)
 
+    def test_str(self):
+        provider = models.Provider.objects.get(id=1)
+        self.assertEqual(provider.name, str(provider))
+
 
 class TestService(STCAdminTest):
+    fixtures = ("shipping/currency", "shipping/country", "shipping/services")
+
     def test_create_object(self):
         name = "Test Service"
         provider = models.Provider.objects.create(name="Test Provider")
@@ -56,8 +76,19 @@ class TestService(STCAdminTest):
         self.assertEqual(name, service.name)
         self.assertEqual(provider, service.provider)
 
+    def test_str(self):
+        service = models.Service.objects.get(id=1)
+        self.assertEqual(service.name, str(service))
+
 
 class TestShippingRule(STCAdminTest):
+    fixtures = (
+        "shipping/currency",
+        "shipping/country",
+        "shipping/services",
+        "shipping/shipping_rules",
+    )
+
     def test_create_object(self):
         provider = models.Provider.objects.create(name="Test Provider")
         service = models.Service.objects.create(name="Test Service", provider=provider)
@@ -71,3 +102,7 @@ class TestShippingRule(STCAdminTest):
         self.assertEqual(service, shipping_rule.service)
         self.assertFalse(shipping_rule.priority)
         self.assertFalse(shipping_rule.inactive)
+
+    def test_str(self):
+        rule = models.ShippingRule.objects.get(id=1)
+        self.assertEqual(rule.name, str(rule))

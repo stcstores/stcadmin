@@ -1,6 +1,6 @@
 [{
     "model": "shipping.currency",
-    "pk": 2,
+    "pk": 1,
     "fields": {
         "name": "Canadian Dollars",
         "code": "CAD",
@@ -8,7 +8,7 @@
     }
 }, {
     "model": "shipping.currency",
-    "pk": 3,
+    "pk": 2,
     "fields": {
         "name": "United States Dollars",
         "code": "USD",

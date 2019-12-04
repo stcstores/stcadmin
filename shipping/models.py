@@ -15,6 +15,9 @@ class Currency(models.Model):
         verbose_name = "Currency"
         verbose_name_plural = "Currencies"
 
+    def __str__(self):
+        return self.name
+
 
 class Country(models.Model):
     """Model for shipping countries."""
@@ -41,6 +44,9 @@ class Country(models.Model):
         verbose_name_plural = "Countries"
         ordering = ("country_ID",)
 
+    def __str__(self):
+        return self.name
+
 
 class Provider(models.Model):
     """Model for shipping providers."""
@@ -52,6 +58,9 @@ class Provider(models.Model):
 
         verbose_name = "Provider"
         verbose_name_plural = "Providers"
+
+    def __str__(self):
+        return self.name
 
 
 class Service(models.Model):
@@ -66,6 +75,9 @@ class Service(models.Model):
         verbose_name = "Service"
         verbose_name_plural = "Services"
         unique_together = ("name", "provider")
+
+    def __str__(self):
+        return self.name
 
 
 class ShippingRule(models.Model):
@@ -82,3 +94,6 @@ class ShippingRule(models.Model):
 
         verbose_name = "Shipping Rule"
         verbose_name_plural = "Shipping Rules"
+
+    def __str__(self):
+        return self.name

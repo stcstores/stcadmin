@@ -1,7 +1,10 @@
 """Model Admin for the shipping app."""
 from django.contrib import admin
 
+from shipping import models
 
+
+@admin.register(models.Currency)
 class CurrencyAdmin(admin.ModelAdmin):
     """Model Admin for shipping.Currency."""
 
@@ -10,15 +13,17 @@ class CurrencyAdmin(admin.ModelAdmin):
     list_editable = ("code", "exchange_rate")
 
 
+@admin.register(models.Country)
 class CountryAdmin(admin.ModelAdmin):
     """Model Admin for shipping.Country."""
 
     fields = ("country_ID", "name", "region", "currency")
     list_display = ("__str__", "country_ID", "name", "region", "currency")
     list_editable = ("country_ID", "name", "region", "currency")
-    list_filter = ("region", "country")
+    list_filter = ("region",)
 
 
+@admin.register(models.Provider)
 class ProviderAdmin(admin.ModelAdmin):
     """Model Admin for shipping.Provider."""
 
@@ -27,6 +32,7 @@ class ProviderAdmin(admin.ModelAdmin):
     list_editable = ("name",)
 
 
+@admin.register(models.Service)
 class ServiceAdmin(admin.ModelAdmin):
     """Model Admin for shipping.Service."""
 
@@ -35,6 +41,7 @@ class ServiceAdmin(admin.ModelAdmin):
     list_editable = ("name", "provider")
 
 
+@admin.register(models.ShippingRule)
 class ShippingRuleAdmin(admin.ModelAdmin):
     """Model Admmin for shipping.ShippingRule."""
 

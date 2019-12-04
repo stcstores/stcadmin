@@ -546,7 +546,7 @@
         "ISO_code": "CA",
         "name": "Canada",
         "region": "ROW",
-        "currency": 2
+        "currency": 1
     }
 }, {
     "model": "shipping.country",
@@ -2466,7 +2466,7 @@
         "ISO_code": "US",
         "name": "United States",
         "region": "ROW",
-        "currency": 3
+        "currency": 1
     }
 }, {
     "model": "shipping.country",
@@ -2646,7 +2646,7 @@
         "ISO_code": "CA",
         "name": "Canada Fr",
         "region": "ROW",
-        "currency": 2
+        "currency": 1
     }
 }, {
     "model": "shipping.country",
