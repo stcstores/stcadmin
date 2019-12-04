@@ -1,0 +1,17 @@
+[{
+    "model": "shipping.currency",
+    "pk": 2,
+    "fields": {
+        "name": "Canadian Dollars",
+        "code": "CAD",
+        "exchange_rate": "0.000"
+    }
+}, {
+    "model": "shipping.currency",
+    "pk": 3,
+    "fields": {
+        "name": "United States Dollars",
+        "code": "USD",
+        "exchange_rate": "0.000"
+    }
+}]

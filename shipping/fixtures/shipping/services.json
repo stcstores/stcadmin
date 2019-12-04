@@ -1,0 +1,177 @@
+[{
+    "model": "shipping.provider",
+    "pk": 1,
+    "fields": {
+        "name": "DPD"
+    }
+}, {
+    "model": "shipping.provider",
+    "pk": 2,
+    "fields": {
+        "name": "Secured Mail"
+    }
+}, {
+    "model": "shipping.provider",
+    "pk": 3,
+    "fields": {
+        "name": "Manual"
+    }
+}, {
+    "model": "shipping.provider",
+    "pk": 4,
+    "fields": {
+        "name": "DHL"
+    }
+}, {
+    "model": "shipping.provider",
+    "pk": 5,
+    "fields": {
+        "name": "Parcelforce"
+    }
+}, {
+    "model": "shipping.provider",
+    "pk": 6,
+    "fields": {
+        "name": "Royal Mail"
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 1,
+    "fields": {
+        "name": "Manual Dispatch",
+        "provider": 2
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 2,
+    "fields": {
+        "name": "TPNN - Tracked 24 No Signature",
+        "provider": 6
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 3,
+    "fields": {
+        "name": "express48Large",
+        "provider": 5
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 4,
+    "fields": {
+        "name": "CRL2 - Large Letter - Royal Mail 48(No Safe Place)",
+        "provider": 6
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 5,
+    "fields": {
+        "name": "Economy Select (Within EU)",
+        "provider": 4
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 6,
+    "fields": {
+        "name": "International - Parcel - Mini Sign",
+        "provider": 2
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 7,
+    "fields": {
+        "name": "Royal Mail Tracked 24",
+        "provider": 6
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 8,
+    "fields": {
+        "name": "CRL1 - Parcel - Royal Mail 24 (No Safe Place)",
+        "provider": 6
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 9,
+    "fields": {
+        "name": "express48",
+        "provider": 5
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 10,
+    "fields": {
+        "name": "CRL2 - Parcel - Royal Mail 48 (No Safe Place)",
+        "provider": 6
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 11,
+    "fields": {
+        "name": "TPSN - Tracked 48 No Signature",
+        "provider": 6
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 12,
+    "fields": {
+        "name": "Parcel Saturday Next Day (2^71)",
+        "provider": 1
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 13,
+    "fields": {
+        "name": "Parcel - DPD Europe By Road (2 to 3 days) (2^19)",
+        "provider": 1
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 14,
+    "fields": {
+        "name": "Manual Dispatch",
+        "provider": 3
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 15,
+    "fields": {
+        "name": "International - Parcel - Untracked",
+        "provider": 2
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 16,
+    "fields": {
+        "name": "Two Day (2^11)",
+        "provider": 1
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 17,
+    "fields": {
+        "name": "express24",
+        "provider": 5
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 18,
+    "fields": {
+        "name": "euroPriorityHome",
+        "provider": 5
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 19,
+    "fields": {
+        "name": "CRL1 - Large Letter - Royal Mail 24 (No Safe Place)",
+        "provider": 6
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 20,
+    "fields": {
+        "name": "Worldwide Express",
+        "provider": 4
+    }
+}]

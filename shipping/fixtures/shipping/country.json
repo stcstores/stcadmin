@@ -1,0 +1,2671 @@
+[{
+    "model": "shipping.country",
+    "pk": 1,
+    "fields": {
+        "country_ID": "1",
+        "ISO_code": "GB",
+        "name": "United Kingdom",
+        "region": "UK",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 2,
+    "fields": {
+        "country_ID": "2",
+        "ISO_code": "FR",
+        "name": "France",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 3,
+    "fields": {
+        "country_ID": "3",
+        "ISO_code": "DE",
+        "name": "Germany",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 4,
+    "fields": {
+        "country_ID": "4",
+        "ISO_code": "ES",
+        "name": "Spain",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 5,
+    "fields": {
+        "country_ID": "5",
+        "ISO_code": "DK",
+        "name": "Denmark",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 6,
+    "fields": {
+        "country_ID": "6",
+        "ISO_code": "NL",
+        "name": "Netherlands",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 7,
+    "fields": {
+        "country_ID": "7",
+        "ISO_code": "IT",
+        "name": "Italy",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 8,
+    "fields": {
+        "country_ID": "8",
+        "ISO_code": "GR",
+        "name": "Greece",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 9,
+    "fields": {
+        "country_ID": "9",
+        "ISO_code": null,
+        "name": "Abkhazia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 10,
+    "fields": {
+        "country_ID": "10",
+        "ISO_code": "AF",
+        "name": "Afghanistan",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 11,
+    "fields": {
+        "country_ID": "11",
+        "ISO_code": null,
+        "name": "Akrotiri and Dhekelia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 12,
+    "fields": {
+        "country_ID": "12",
+        "ISO_code": null,
+        "name": "Aland",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 13,
+    "fields": {
+        "country_ID": "13",
+        "ISO_code": "AL",
+        "name": "Albania",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 14,
+    "fields": {
+        "country_ID": "14",
+        "ISO_code": "GG",
+        "name": "Alderney",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 15,
+    "fields": {
+        "country_ID": "15",
+        "ISO_code": "DZ",
+        "name": "Algeria",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 16,
+    "fields": {
+        "country_ID": "16",
+        "ISO_code": "AS",
+        "name": "American Samoa",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 17,
+    "fields": {
+        "country_ID": "17",
+        "ISO_code": "AD",
+        "name": "Andorra",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 18,
+    "fields": {
+        "country_ID": "18",
+        "ISO_code": "AO",
+        "name": "Angola",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 19,
+    "fields": {
+        "country_ID": "19",
+        "ISO_code": "AI",
+        "name": "Anguilla",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 20,
+    "fields": {
+        "country_ID": "20",
+        "ISO_code": "AG",
+        "name": "Antigua and Barbuda",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 21,
+    "fields": {
+        "country_ID": "21",
+        "ISO_code": "AR",
+        "name": "Argentina",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 22,
+    "fields": {
+        "country_ID": "22",
+        "ISO_code": "AM",
+        "name": "Armenia",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 23,
+    "fields": {
+        "country_ID": "23",
+        "ISO_code": "AW",
+        "name": "Aruba",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 24,
+    "fields": {
+        "country_ID": "24",
+        "ISO_code": null,
+        "name": "Ashmore and Cartier Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 25,
+    "fields": {
+        "country_ID": "25",
+        "ISO_code": "AU",
+        "name": "Australia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 26,
+    "fields": {
+        "country_ID": "26",
+        "ISO_code": null,
+        "name": "Australian Antarctic Territory",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 27,
+    "fields": {
+        "country_ID": "27",
+        "ISO_code": "AT",
+        "name": "Austria",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 28,
+    "fields": {
+        "country_ID": "28",
+        "ISO_code": "PK",
+        "name": "Azad Kashmir",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 29,
+    "fields": {
+        "country_ID": "29",
+        "ISO_code": "AZ",
+        "name": "Azerbaijan",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 30,
+    "fields": {
+        "country_ID": "30",
+        "ISO_code": "BS",
+        "name": "Bahamas",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 31,
+    "fields": {
+        "country_ID": "31",
+        "ISO_code": "BH",
+        "name": "Bahrain",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 32,
+    "fields": {
+        "country_ID": "32",
+        "ISO_code": "BD",
+        "name": "Bangladesh",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 33,
+    "fields": {
+        "country_ID": "33",
+        "ISO_code": "BB",
+        "name": "Barbados",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 34,
+    "fields": {
+        "country_ID": "34",
+        "ISO_code": "BY",
+        "name": "Belarus",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 35,
+    "fields": {
+        "country_ID": "35",
+        "ISO_code": "BE",
+        "name": "Belgium",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 36,
+    "fields": {
+        "country_ID": "36",
+        "ISO_code": "BZ",
+        "name": "Belize",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 37,
+    "fields": {
+        "country_ID": "37",
+        "ISO_code": "BJ",
+        "name": "Benin",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 38,
+    "fields": {
+        "country_ID": "38",
+        "ISO_code": "BM",
+        "name": "Bermuda",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 39,
+    "fields": {
+        "country_ID": "39",
+        "ISO_code": "BT",
+        "name": "Bhutan",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 40,
+    "fields": {
+        "country_ID": "40",
+        "ISO_code": "BO",
+        "name": "Bolivia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 41,
+    "fields": {
+        "country_ID": "41",
+        "ISO_code": "BA",
+        "name": "Bosnia and Herzegovina",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 42,
+    "fields": {
+        "country_ID": "42",
+        "ISO_code": "BW",
+        "name": "Botswana",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 43,
+    "fields": {
+        "country_ID": "43",
+        "ISO_code": "BR",
+        "name": "Brazil",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 44,
+    "fields": {
+        "country_ID": "44",
+        "ISO_code": null,
+        "name": "British Antarctic Territory",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 45,
+    "fields": {
+        "country_ID": "45",
+        "ISO_code": "IO",
+        "name": "British Indian Ocean Territory",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 46,
+    "fields": {
+        "country_ID": "46",
+        "ISO_code": "VG",
+        "name": "British Virgin Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 47,
+    "fields": {
+        "country_ID": "47",
+        "ISO_code": null,
+        "name": "Brunei",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 48,
+    "fields": {
+        "country_ID": "48",
+        "ISO_code": "BG",
+        "name": "Bulgaria",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 49,
+    "fields": {
+        "country_ID": "49",
+        "ISO_code": "BF",
+        "name": "Burkina Faso",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 50,
+    "fields": {
+        "country_ID": "50",
+        "ISO_code": null,
+        "name": "Burma",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 51,
+    "fields": {
+        "country_ID": "51",
+        "ISO_code": "BI",
+        "name": "Burundi",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 52,
+    "fields": {
+        "country_ID": "52",
+        "ISO_code": "KH",
+        "name": "Cambodia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 53,
+    "fields": {
+        "country_ID": "53",
+        "ISO_code": "CM",
+        "name": "Cameroon",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 54,
+    "fields": {
+        "country_ID": "54",
+        "ISO_code": "KY",
+        "name": "Cayman Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 55,
+    "fields": {
+        "country_ID": "55",
+        "ISO_code": "CA",
+        "name": "Canada",
+        "region": "ROW",
+        "currency": 2
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 56,
+    "fields": {
+        "country_ID": "56",
+        "ISO_code": null,
+        "name": "Cape Verde",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 57,
+    "fields": {
+        "country_ID": "57",
+        "ISO_code": "CF",
+        "name": "Central African Republic",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 58,
+    "fields": {
+        "country_ID": "58",
+        "ISO_code": "TD",
+        "name": "Chad",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 59,
+    "fields": {
+        "country_ID": "59",
+        "ISO_code": "CL",
+        "name": "Chile",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 60,
+    "fields": {
+        "country_ID": "60",
+        "ISO_code": "CN",
+        "name": "China",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 61,
+    "fields": {
+        "country_ID": "61",
+        "ISO_code": "CX",
+        "name": "Christmas Island",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 62,
+    "fields": {
+        "country_ID": "62",
+        "ISO_code": "PF",
+        "name": "Clipperton Island",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 63,
+    "fields": {
+        "country_ID": "63",
+        "ISO_code": "CC",
+        "name": "Cocos (Keeling) Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 64,
+    "fields": {
+        "country_ID": "64",
+        "ISO_code": "CO",
+        "name": "Colombia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 65,
+    "fields": {
+        "country_ID": "65",
+        "ISO_code": "KM",
+        "name": "Comoros",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 66,
+    "fields": {
+        "country_ID": "66",
+        "ISO_code": "CG",
+        "name": "Congo",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 67,
+    "fields": {
+        "country_ID": "67",
+        "ISO_code": "CK",
+        "name": "Cook Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 68,
+    "fields": {
+        "country_ID": "68",
+        "ISO_code": "AQ",
+        "name": "Coral Sea Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 69,
+    "fields": {
+        "country_ID": "69",
+        "ISO_code": "CR",
+        "name": "Costa Rica",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 70,
+    "fields": {
+        "country_ID": "70",
+        "ISO_code": "CI",
+        "name": "C\u00f4te d'Ivoire",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 71,
+    "fields": {
+        "country_ID": "71",
+        "ISO_code": "HR",
+        "name": "Croatia",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 72,
+    "fields": {
+        "country_ID": "72",
+        "ISO_code": "CU",
+        "name": "Cuba",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 73,
+    "fields": {
+        "country_ID": "73",
+        "ISO_code": "CW",
+        "name": "Cura\u00e7ao",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 74,
+    "fields": {
+        "country_ID": "74",
+        "ISO_code": "CY",
+        "name": "Cyprus",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 75,
+    "fields": {
+        "country_ID": "75",
+        "ISO_code": "CZ",
+        "name": "Czech Republic",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 76,
+    "fields": {
+        "country_ID": "76",
+        "ISO_code": "DJ",
+        "name": "Djibouti",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 77,
+    "fields": {
+        "country_ID": "77",
+        "ISO_code": "DM",
+        "name": "Dominica",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 78,
+    "fields": {
+        "country_ID": "78",
+        "ISO_code": "DO",
+        "name": "Dominican Republic",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 79,
+    "fields": {
+        "country_ID": "79",
+        "ISO_code": null,
+        "name": "East Timor",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 80,
+    "fields": {
+        "country_ID": "80",
+        "ISO_code": "EC",
+        "name": "Ecuador",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 81,
+    "fields": {
+        "country_ID": "81",
+        "ISO_code": "EG",
+        "name": "Egypt",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 82,
+    "fields": {
+        "country_ID": "82",
+        "ISO_code": "SV",
+        "name": "El Salvador",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 83,
+    "fields": {
+        "country_ID": "83",
+        "ISO_code": "GQ",
+        "name": "Equatorial Guinea",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 84,
+    "fields": {
+        "country_ID": "84",
+        "ISO_code": "ER",
+        "name": "Eritrea",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 85,
+    "fields": {
+        "country_ID": "85",
+        "ISO_code": "EE",
+        "name": "Estonia",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 86,
+    "fields": {
+        "country_ID": "86",
+        "ISO_code": "ET",
+        "name": "Ethiopia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 87,
+    "fields": {
+        "country_ID": "87",
+        "ISO_code": "FK",
+        "name": "Falkland Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 88,
+    "fields": {
+        "country_ID": "88",
+        "ISO_code": "FO",
+        "name": "Faroe Islands",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 89,
+    "fields": {
+        "country_ID": "89",
+        "ISO_code": "FJ",
+        "name": "Fiji",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 90,
+    "fields": {
+        "country_ID": "90",
+        "ISO_code": "FI",
+        "name": "Finland",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 91,
+    "fields": {
+        "country_ID": "91",
+        "ISO_code": "PF",
+        "name": "French Polynesia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 92,
+    "fields": {
+        "country_ID": "92",
+        "ISO_code": null,
+        "name": "French Southern and Antarctic Lands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 93,
+    "fields": {
+        "country_ID": "93",
+        "ISO_code": "GA",
+        "name": "Gabon",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 94,
+    "fields": {
+        "country_ID": "94",
+        "ISO_code": "GM",
+        "name": "Gambia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 95,
+    "fields": {
+        "country_ID": "95",
+        "ISO_code": "GE",
+        "name": "Georgia",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 96,
+    "fields": {
+        "country_ID": "96",
+        "ISO_code": "GH",
+        "name": "Ghana",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 97,
+    "fields": {
+        "country_ID": "97",
+        "ISO_code": "GI",
+        "name": "Gibraltar",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 98,
+    "fields": {
+        "country_ID": "98",
+        "ISO_code": null,
+        "name": "Gilgit-Baltistan",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 99,
+    "fields": {
+        "country_ID": "99",
+        "ISO_code": "GL",
+        "name": "Greenland",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 100,
+    "fields": {
+        "country_ID": "100",
+        "ISO_code": "GD",
+        "name": "Grenada",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 101,
+    "fields": {
+        "country_ID": "101",
+        "ISO_code": "GU",
+        "name": "Guam",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 102,
+    "fields": {
+        "country_ID": "102",
+        "ISO_code": "GT",
+        "name": "Guatemala",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 103,
+    "fields": {
+        "country_ID": "103",
+        "ISO_code": "GG",
+        "name": "Guernsey",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 104,
+    "fields": {
+        "country_ID": "104",
+        "ISO_code": "GN",
+        "name": "Guinea",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 105,
+    "fields": {
+        "country_ID": "105",
+        "ISO_code": "GW",
+        "name": "Guinea-Bissau",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 106,
+    "fields": {
+        "country_ID": "106",
+        "ISO_code": "GY",
+        "name": "Guyana",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 107,
+    "fields": {
+        "country_ID": "107",
+        "ISO_code": "HT",
+        "name": "Haiti",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 108,
+    "fields": {
+        "country_ID": "108",
+        "ISO_code": "HM",
+        "name": "Heard Island and McDonald Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 109,
+    "fields": {
+        "country_ID": "109",
+        "ISO_code": null,
+        "name": "Herm",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 110,
+    "fields": {
+        "country_ID": "110",
+        "ISO_code": "HN",
+        "name": "Honduras",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 111,
+    "fields": {
+        "country_ID": "111",
+        "ISO_code": "HK",
+        "name": "Hong Kong",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 112,
+    "fields": {
+        "country_ID": "112",
+        "ISO_code": "HU",
+        "name": "Hungary",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 113,
+    "fields": {
+        "country_ID": "113",
+        "ISO_code": "IS",
+        "name": "Iceland",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 114,
+    "fields": {
+        "country_ID": "114",
+        "ISO_code": "IN",
+        "name": "India",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 115,
+    "fields": {
+        "country_ID": "115",
+        "ISO_code": "ID",
+        "name": "Indonesia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 116,
+    "fields": {
+        "country_ID": "116",
+        "ISO_code": null,
+        "name": "Iran",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 117,
+    "fields": {
+        "country_ID": "117",
+        "ISO_code": "IQ",
+        "name": "Iraq",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 118,
+    "fields": {
+        "country_ID": "118",
+        "ISO_code": "IE",
+        "name": "Ireland",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 119,
+    "fields": {
+        "country_ID": "119",
+        "ISO_code": "IM",
+        "name": "Isle of Man",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 120,
+    "fields": {
+        "country_ID": "120",
+        "ISO_code": "IL",
+        "name": "Israel",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 121,
+    "fields": {
+        "country_ID": "121",
+        "ISO_code": "JM",
+        "name": "Jamaica",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 122,
+    "fields": {
+        "country_ID": "122",
+        "ISO_code": "JP",
+        "name": "Japan",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 123,
+    "fields": {
+        "country_ID": "123",
+        "ISO_code": "JE",
+        "name": "Jersey",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 124,
+    "fields": {
+        "country_ID": "124",
+        "ISO_code": "JO",
+        "name": "Jordan",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 125,
+    "fields": {
+        "country_ID": "125",
+        "ISO_code": "KZ",
+        "name": "Kazakhstan",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 126,
+    "fields": {
+        "country_ID": "126",
+        "ISO_code": "KE",
+        "name": "Kenya",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 127,
+    "fields": {
+        "country_ID": "127",
+        "ISO_code": "KI",
+        "name": "Kiribati",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 128,
+    "fields": {
+        "country_ID": "128",
+        "ISO_code": "KR",
+        "name": "South Korea",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 129,
+    "fields": {
+        "country_ID": "129",
+        "ISO_code": "KP",
+        "name": "North Korea",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 130,
+    "fields": {
+        "country_ID": "130",
+        "ISO_code": null,
+        "name": "Kosovo",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 131,
+    "fields": {
+        "country_ID": "131",
+        "ISO_code": "KW",
+        "name": "Kuwait",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 132,
+    "fields": {
+        "country_ID": "132",
+        "ISO_code": "KG",
+        "name": "Kyrgyzstan",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 133,
+    "fields": {
+        "country_ID": "133",
+        "ISO_code": null,
+        "name": "Laos",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 134,
+    "fields": {
+        "country_ID": "134",
+        "ISO_code": "LV",
+        "name": "Latvia",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 135,
+    "fields": {
+        "country_ID": "135",
+        "ISO_code": "LB",
+        "name": "Lebanon",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 136,
+    "fields": {
+        "country_ID": "136",
+        "ISO_code": "LS",
+        "name": "Lesotho",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 137,
+    "fields": {
+        "country_ID": "137",
+        "ISO_code": "LR",
+        "name": "Liberia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 138,
+    "fields": {
+        "country_ID": "138",
+        "ISO_code": "LY",
+        "name": "Libya",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 139,
+    "fields": {
+        "country_ID": "139",
+        "ISO_code": "LI",
+        "name": "Liechtenstein",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 140,
+    "fields": {
+        "country_ID": "140",
+        "ISO_code": "LT",
+        "name": "Lithuania",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 141,
+    "fields": {
+        "country_ID": "141",
+        "ISO_code": "LU",
+        "name": "Luxembourg",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 142,
+    "fields": {
+        "country_ID": "142",
+        "ISO_code": "MO",
+        "name": "Macau",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 143,
+    "fields": {
+        "country_ID": "143",
+        "ISO_code": null,
+        "name": "Macedonia",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 144,
+    "fields": {
+        "country_ID": "144",
+        "ISO_code": "MG",
+        "name": "Madagascar",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 145,
+    "fields": {
+        "country_ID": "145",
+        "ISO_code": "MW",
+        "name": "Malawi",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 146,
+    "fields": {
+        "country_ID": "146",
+        "ISO_code": "MY",
+        "name": "Malaysia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 147,
+    "fields": {
+        "country_ID": "147",
+        "ISO_code": "MV",
+        "name": "Maldives",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 148,
+    "fields": {
+        "country_ID": "148",
+        "ISO_code": "ML",
+        "name": "Mali",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 149,
+    "fields": {
+        "country_ID": "149",
+        "ISO_code": "MT",
+        "name": "Malta",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 150,
+    "fields": {
+        "country_ID": "150",
+        "ISO_code": "MH",
+        "name": "Marshall Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 151,
+    "fields": {
+        "country_ID": "151",
+        "ISO_code": "MR",
+        "name": "Mauritania",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 152,
+    "fields": {
+        "country_ID": "152",
+        "ISO_code": "MU",
+        "name": "Mauritius",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 153,
+    "fields": {
+        "country_ID": "153",
+        "ISO_code": "MX",
+        "name": "Mexico",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 154,
+    "fields": {
+        "country_ID": "154",
+        "ISO_code": "FM",
+        "name": "Micronesia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 155,
+    "fields": {
+        "country_ID": "155",
+        "ISO_code": null,
+        "name": "Moldova",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 156,
+    "fields": {
+        "country_ID": "156",
+        "ISO_code": "MC",
+        "name": "Monaco",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 157,
+    "fields": {
+        "country_ID": "157",
+        "ISO_code": "MN",
+        "name": "Mongolia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 158,
+    "fields": {
+        "country_ID": "158",
+        "ISO_code": "ME",
+        "name": "Montenegro",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 159,
+    "fields": {
+        "country_ID": "159",
+        "ISO_code": "MS",
+        "name": "Montserrat",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 160,
+    "fields": {
+        "country_ID": "160",
+        "ISO_code": "MA",
+        "name": "Morocco",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 161,
+    "fields": {
+        "country_ID": "161",
+        "ISO_code": "MZ",
+        "name": "Mozambique",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 162,
+    "fields": {
+        "country_ID": "162",
+        "ISO_code": "MM",
+        "name": "Myanmar",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 163,
+    "fields": {
+        "country_ID": "163",
+        "ISO_code": "NU",
+        "name": "Nagorno-Karabakh",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 164,
+    "fields": {
+        "country_ID": "164",
+        "ISO_code": "NA",
+        "name": "Namibia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 165,
+    "fields": {
+        "country_ID": "165",
+        "ISO_code": "NR",
+        "name": "Nauru",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 166,
+    "fields": {
+        "country_ID": "166",
+        "ISO_code": "NP",
+        "name": "Nepal",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 167,
+    "fields": {
+        "country_ID": "167",
+        "ISO_code": "NC",
+        "name": "New Caledonia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 168,
+    "fields": {
+        "country_ID": "168",
+        "ISO_code": "NZ",
+        "name": "New Zealand",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 169,
+    "fields": {
+        "country_ID": "169",
+        "ISO_code": "NI",
+        "name": "Nicaragua",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 170,
+    "fields": {
+        "country_ID": "170",
+        "ISO_code": "NE",
+        "name": "Niger",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 171,
+    "fields": {
+        "country_ID": "171",
+        "ISO_code": "NG",
+        "name": "Nigeria",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 172,
+    "fields": {
+        "country_ID": "172",
+        "ISO_code": "NU",
+        "name": "Niue",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 173,
+    "fields": {
+        "country_ID": "173",
+        "ISO_code": "NF",
+        "name": "Norfolk Island",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 174,
+    "fields": {
+        "country_ID": "174",
+        "ISO_code": "CY",
+        "name": "Northern Cyprus",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 175,
+    "fields": {
+        "country_ID": "175",
+        "ISO_code": "MP",
+        "name": "Northern Mariana Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 176,
+    "fields": {
+        "country_ID": "176",
+        "ISO_code": "NO",
+        "name": "Norway",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 177,
+    "fields": {
+        "country_ID": "177",
+        "ISO_code": "OM",
+        "name": "Oman",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 178,
+    "fields": {
+        "country_ID": "178",
+        "ISO_code": "PW",
+        "name": "Palau",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 179,
+    "fields": {
+        "country_ID": "179",
+        "ISO_code": "PS",
+        "name": "Palestine",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 180,
+    "fields": {
+        "country_ID": "180",
+        "ISO_code": "PA",
+        "name": "Panama",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 181,
+    "fields": {
+        "country_ID": "181",
+        "ISO_code": "PG",
+        "name": "Papua New Guinea",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 182,
+    "fields": {
+        "country_ID": "182",
+        "ISO_code": "PY",
+        "name": "Paraguay",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 183,
+    "fields": {
+        "country_ID": "183",
+        "ISO_code": "PE",
+        "name": "Peru",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 184,
+    "fields": {
+        "country_ID": "184",
+        "ISO_code": "PH",
+        "name": "Philippines",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 185,
+    "fields": {
+        "country_ID": "185",
+        "ISO_code": "PN",
+        "name": "Pitcairn Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 186,
+    "fields": {
+        "country_ID": "186",
+        "ISO_code": "PL",
+        "name": "Poland",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 187,
+    "fields": {
+        "country_ID": "187",
+        "ISO_code": "PT",
+        "name": "Portugal",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 188,
+    "fields": {
+        "country_ID": "188",
+        "ISO_code": null,
+        "name": "Pridnestrovskaya Moldavskaya",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 189,
+    "fields": {
+        "country_ID": "189",
+        "ISO_code": "PR",
+        "name": "Puerto Rico",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 190,
+    "fields": {
+        "country_ID": "190",
+        "ISO_code": "QA",
+        "name": "Qatar",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 191,
+    "fields": {
+        "country_ID": "191",
+        "ISO_code": "RO",
+        "name": "Romania",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 192,
+    "fields": {
+        "country_ID": "192",
+        "ISO_code": null,
+        "name": "Ross Dependency",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 193,
+    "fields": {
+        "country_ID": "193",
+        "ISO_code": "RU",
+        "name": "Russian Federation",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 194,
+    "fields": {
+        "country_ID": "194",
+        "ISO_code": "RW",
+        "name": "Rwanda",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 195,
+    "fields": {
+        "country_ID": "195",
+        "ISO_code": "ST",
+        "name": "S\u00e3o Tom\u00e9 and Pr\u00edncipe",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 196,
+    "fields": {
+        "country_ID": "196",
+        "ISO_code": null,
+        "name": "Sahrawi",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 197,
+    "fields": {
+        "country_ID": "197",
+        "ISO_code": "BL",
+        "name": "Saint-Barth\u00e9lemy",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 198,
+    "fields": {
+        "country_ID": "198",
+        "ISO_code": "SH",
+        "name": "Saint Helena",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 199,
+    "fields": {
+        "country_ID": "199",
+        "ISO_code": "KN",
+        "name": "Saint Kitts and Nevis",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 200,
+    "fields": {
+        "country_ID": "200",
+        "ISO_code": "LC",
+        "name": "Saint Lucia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 201,
+    "fields": {
+        "country_ID": "201",
+        "ISO_code": "MF",
+        "name": "Saint Martin",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 202,
+    "fields": {
+        "country_ID": "202",
+        "ISO_code": "PM",
+        "name": "Saint Pierre and Miquelon",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 203,
+    "fields": {
+        "country_ID": "203",
+        "ISO_code": "VC",
+        "name": "Saint Vincent and the Grenadines",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 204,
+    "fields": {
+        "country_ID": "204",
+        "ISO_code": "WS",
+        "name": "Samoa",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 205,
+    "fields": {
+        "country_ID": "205",
+        "ISO_code": "SM",
+        "name": "San Marino",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 206,
+    "fields": {
+        "country_ID": "206",
+        "ISO_code": null,
+        "name": "Sark",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 207,
+    "fields": {
+        "country_ID": "207",
+        "ISO_code": "SA",
+        "name": "Saudi Arabia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 208,
+    "fields": {
+        "country_ID": "208",
+        "ISO_code": "SN",
+        "name": "Senegal",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 209,
+    "fields": {
+        "country_ID": "209",
+        "ISO_code": "RS",
+        "name": "Serbia",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 210,
+    "fields": {
+        "country_ID": "210",
+        "ISO_code": "SC",
+        "name": "Seychelles",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 211,
+    "fields": {
+        "country_ID": "211",
+        "ISO_code": "SL",
+        "name": "Sierra Leone",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 212,
+    "fields": {
+        "country_ID": "212",
+        "ISO_code": "SG",
+        "name": "Singapore",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 213,
+    "fields": {
+        "country_ID": "213",
+        "ISO_code": "MF",
+        "name": "Sint Maarten",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 214,
+    "fields": {
+        "country_ID": "214",
+        "ISO_code": "SK",
+        "name": "Slovakia",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 215,
+    "fields": {
+        "country_ID": "215",
+        "ISO_code": "SI",
+        "name": "Slovenia",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 216,
+    "fields": {
+        "country_ID": "216",
+        "ISO_code": "SB",
+        "name": "Solomon Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 217,
+    "fields": {
+        "country_ID": "217",
+        "ISO_code": "SO",
+        "name": "Somalia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 218,
+    "fields": {
+        "country_ID": "218",
+        "ISO_code": "SO",
+        "name": "Somaliland",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 219,
+    "fields": {
+        "country_ID": "219",
+        "ISO_code": "ZA",
+        "name": "South Africa",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 220,
+    "fields": {
+        "country_ID": "220",
+        "ISO_code": "GS",
+        "name": "South Georgia and the South Sandwich Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 221,
+    "fields": {
+        "country_ID": "221",
+        "ISO_code": null,
+        "name": "South Ossetia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 222,
+    "fields": {
+        "country_ID": "222",
+        "ISO_code": "SS",
+        "name": "South Sudan",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 223,
+    "fields": {
+        "country_ID": "223",
+        "ISO_code": "LK",
+        "name": "Sri Lanka",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 224,
+    "fields": {
+        "country_ID": "224",
+        "ISO_code": "SD",
+        "name": "Sudan",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 225,
+    "fields": {
+        "country_ID": "225",
+        "ISO_code": "SR",
+        "name": "Suriname",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 226,
+    "fields": {
+        "country_ID": "226",
+        "ISO_code": "SZ",
+        "name": "Swaziland",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 227,
+    "fields": {
+        "country_ID": "227",
+        "ISO_code": "SE",
+        "name": "Sweden",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 228,
+    "fields": {
+        "country_ID": "228",
+        "ISO_code": "CH",
+        "name": "Switzerland",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 229,
+    "fields": {
+        "country_ID": "229",
+        "ISO_code": null,
+        "name": "Syria",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 230,
+    "fields": {
+        "country_ID": "230",
+        "ISO_code": "TW",
+        "name": "Taiwan",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 231,
+    "fields": {
+        "country_ID": "231",
+        "ISO_code": "TJ",
+        "name": "Tajikistan",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 232,
+    "fields": {
+        "country_ID": "232",
+        "ISO_code": null,
+        "name": "Tanzania",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 233,
+    "fields": {
+        "country_ID": "233",
+        "ISO_code": "TH",
+        "name": "Thailand",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 234,
+    "fields": {
+        "country_ID": "234",
+        "ISO_code": "TG",
+        "name": "Togo",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 235,
+    "fields": {
+        "country_ID": "235",
+        "ISO_code": "TO",
+        "name": "Tonga",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 236,
+    "fields": {
+        "country_ID": "236",
+        "ISO_code": "TK",
+        "name": "Tokelau",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 237,
+    "fields": {
+        "country_ID": "237",
+        "ISO_code": null,
+        "name": "Transnistria",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 238,
+    "fields": {
+        "country_ID": "238",
+        "ISO_code": "TT",
+        "name": "Trinidad and Tobago",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 239,
+    "fields": {
+        "country_ID": "239",
+        "ISO_code": "TN",
+        "name": "Tunisia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 240,
+    "fields": {
+        "country_ID": "240",
+        "ISO_code": "TR",
+        "name": "Turkey",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 241,
+    "fields": {
+        "country_ID": "241",
+        "ISO_code": "TM",
+        "name": "Turkmenistan",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 242,
+    "fields": {
+        "country_ID": "242",
+        "ISO_code": "TC",
+        "name": "Turks and Caicos Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 243,
+    "fields": {
+        "country_ID": "243",
+        "ISO_code": "TV",
+        "name": "Tuvalu",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 244,
+    "fields": {
+        "country_ID": "244",
+        "ISO_code": "UG",
+        "name": "Uganda",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 245,
+    "fields": {
+        "country_ID": "245",
+        "ISO_code": "UA",
+        "name": "Ukraine",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 246,
+    "fields": {
+        "country_ID": "246",
+        "ISO_code": "AE",
+        "name": "United Arab Emirates",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 247,
+    "fields": {
+        "country_ID": "247",
+        "ISO_code": "US",
+        "name": "United States",
+        "region": "ROW",
+        "currency": 3
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 248,
+    "fields": {
+        "country_ID": "248",
+        "ISO_code": "UY",
+        "name": "Uruguay",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 249,
+    "fields": {
+        "country_ID": "249",
+        "ISO_code": "UZ",
+        "name": "Uzbekistan",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 250,
+    "fields": {
+        "country_ID": "250",
+        "ISO_code": "VU",
+        "name": "Vanuatu",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 251,
+    "fields": {
+        "country_ID": "251",
+        "ISO_code": null,
+        "name": "Vatican City",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 252,
+    "fields": {
+        "country_ID": "252",
+        "ISO_code": null,
+        "name": "Venezuela",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 253,
+    "fields": {
+        "country_ID": "253",
+        "ISO_code": "VN",
+        "name": "Vietnam",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 254,
+    "fields": {
+        "country_ID": "254",
+        "ISO_code": "VI",
+        "name": "Virgin Islands",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 255,
+    "fields": {
+        "country_ID": "255",
+        "ISO_code": "YE",
+        "name": "Yemen",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 256,
+    "fields": {
+        "country_ID": "256",
+        "ISO_code": "WF",
+        "name": "Wallis and Futuna",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 257,
+    "fields": {
+        "country_ID": "257",
+        "ISO_code": "ZM",
+        "name": "Zambia",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 258,
+    "fields": {
+        "country_ID": "258",
+        "ISO_code": "ZW",
+        "name": "Zimbabwe",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 259,
+    "fields": {
+        "country_ID": "259",
+        "ISO_code": "PK",
+        "name": "Pakistan",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 260,
+    "fields": {
+        "country_ID": "260",
+        "ISO_code": "IC",
+        "name": "Canary Islands",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 261,
+    "fields": {
+        "country_ID": "261",
+        "ISO_code": "RE",
+        "name": "Reunion",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 262,
+    "fields": {
+        "country_ID": "262",
+        "ISO_code": "DK",
+        "name": "Denmark",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 263,
+    "fields": {
+        "country_ID": "263",
+        "ISO_code": "GP",
+        "name": "Guadeloupe",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 264,
+    "fields": {
+        "country_ID": "264",
+        "ISO_code": "BE",
+        "name": "Belgium",
+        "region": "EU",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 265,
+    "fields": {
+        "country_ID": "265",
+        "ISO_code": "CA",
+        "name": "Canada Fr",
+        "region": "ROW",
+        "currency": 2
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 266,
+    "fields": {
+        "country_ID": "266",
+        "ISO_code": "GF",
+        "name": "French Guiana",
+        "region": "ROW",
+        "currency": null
+    }
+}, {
+    "model": "shipping.country",
+    "pk": 267,
+    "fields": {
+        "country_ID": "267",
+        "ISO_code": "MQ",
+        "name": "Martinique",
+        "region": "ROW",
+        "currency": null
+    }
+}]
