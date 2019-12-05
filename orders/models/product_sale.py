@@ -2,13 +2,11 @@
 
 from django.db import models
 
-from .order import Order
-
 
 class ProductSale(models.Model):
     """Model for product sales."""
 
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey("Order", on_delete=models.CASCADE)
     product_ID = models.CharField(max_length=25)
     quantity = models.PositiveSmallIntegerField()
     price = models.PositiveSmallIntegerField()

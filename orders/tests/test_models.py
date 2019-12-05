@@ -55,6 +55,10 @@ class TestOrder(STCAdminTest):
             (self.shipping_rule.name, self.shipping_rule.service.name)
         )
 
+        self.product_ID = "2949030"
+        self.product_price = 4.50
+        self.product_quantity = 3
+
     def create_mock_order(
         self,
         order_id=None,
@@ -66,6 +70,7 @@ class TestOrder(STCAdminTest):
         external_transaction_id=None,
         delivery_country_code=None,
         default_cs_rule_name=None,
+        products=None,
     ):
         if order_id is None:
             order_id = self.order_ID
@@ -85,6 +90,8 @@ class TestOrder(STCAdminTest):
             delivery_country_code = self.country.country_ID
         if default_cs_rule_name is None:
             default_cs_rule_name = self.shipping_rule_name
+        if products is None:
+            products = [self.create_mock_product()]
         return Mock(
             order_id=order_id,
             customer_id=customer_id,
@@ -95,7 +102,17 @@ class TestOrder(STCAdminTest):
             external_transaction_id=external_transaction_id,
             delivery_country_code=delivery_country_code,
             default_cs_rule_name=default_cs_rule_name,
+            products=products,
         )
+
+    def create_mock_product(self, product_ID=None, price=None, quantity=None):
+        if product_ID is None:
+            product_ID = self.product_ID
+        if price is None:
+            price = self.product_price
+        if quantity is None:
+            quantity = self.product_quantity
+        return Mock(id=product_ID, price=price, quantity=quantity)
 
     def aware_tz(self, date):
         return make_aware(date, timezone=pytz.timezone("Europe/London"))
@@ -124,18 +141,8 @@ class TestOrder(STCAdminTest):
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 0)
 
     def test_str(self):
-        order = models.Order(
-            order_ID=self.order_ID,
-            customer_ID=self.customer_ID,
-            recieved=self.aware_recieved,
-            dispatched=self.aware_dispatched,
-            channel=self.channel,
-            channel_order_ID=self.channel_order_ID,
-            country=self.country,
-            shipping_rule=self.shipping_rule,
-            shipping_service=self.service,
-        )
-        self.assertEqual(f"Order: {self.order_ID}", str(order))
+        order = models.Order.objects.get(id=1)
+        self.assertEqual(f"Order: {order.order_ID}", str(order))
 
     def test_order_details(self):
         order = self.create_mock_order()
@@ -180,9 +187,8 @@ class TestOrder(STCAdminTest):
     def test_create_new_order(self):
         self.assertFalse(models.Order.objects.filter(order_ID=self.order_ID).exists())
         mock_order = self.create_mock_order()
-        models.Order.create_or_update_order(mock_order)
+        order = models.Order.create_or_update_order(mock_order)
         self.assertTrue(models.Order.objects.filter(order_ID=self.order_ID).exists())
-        order = models.Order.objects.get(order_ID=self.order_ID)
         self.assertEqual(self.order_ID, order.order_ID)
         self.assertEqual(self.customer_ID, order.customer_ID)
         self.assertEqual(self.aware_recieved, order.recieved)
@@ -200,8 +206,7 @@ class TestOrder(STCAdminTest):
             order_ID=self.order_ID, recieved=self.aware_tz(datetime(2019, 4, 3, 7, 23))
         )
         mock_order = self.create_mock_order()
-        models.Order.create_or_update_order(mock_order)
-        order = models.Order.objects.get(order_ID=self.order_ID)
+        order = models.Order.create_or_update_order(mock_order)
         self.assertEqual(self.order_ID, order.order_ID)
         self.assertEqual(self.customer_ID, order.customer_ID)
         self.assertEqual(self.aware_recieved, order.recieved)
@@ -221,7 +226,8 @@ class TestOrder(STCAdminTest):
             order_ID=self.order_ID, recieved=recieved, dispatched=dispatched
         )
         mock_order = self.create_mock_order()
-        models.Order.create_or_update_order(mock_order)
+        returned_value = models.Order.create_or_update_order(mock_order)
+        self.assertIsNone(returned_value)
         order = models.Order.objects.get(order_ID=self.order_ID)
         self.assertEqual(self.order_ID, order.order_ID)
         self.assertIsNone(order.customer_ID)
@@ -270,15 +276,68 @@ class TestOrder(STCAdminTest):
         )
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 1)
 
+    def test_update_sales(self):
+        order = models.Order.objects.create(
+            order_ID=self.order_ID, recieved=self.aware_tz(datetime(2019, 4, 3, 7, 23))
+        )
+        products = [
+            self.create_mock_product(product_ID="3849390", quantity=1, price=6.50),
+            self.create_mock_product(product_ID="5461616", quantity=5, price=12.80),
+            self.create_mock_product(product_ID="9651664", quantity=3, price=0.99),
+        ]
+        mock_order = self.create_mock_order(order_id="939484393", products=products)
+        models.Order.update_sales(order, mock_order)
+        for product in products:
+            self.assertTrue(
+                models.ProductSale.objects.filter(
+                    order=order, product_ID=product.id
+                ).exists()
+            )
+            product_sale = models.ProductSale.objects.get(
+                order=order, product_ID=product.id
+            )
+            self.assertEqual(product_sale.quantity, product.quantity)
+            self.assertEqual(product_sale.price, int(product.price * 100))
+
+    def test_update_sales_with_existing_record(self):
+        order = models.Order.objects.create(
+            order_ID=self.order_ID, recieved=self.aware_tz(datetime(2019, 4, 3, 7, 23))
+        )
+        products = [
+            self.create_mock_product(product_ID="3849390", quantity=1, price=6.50),
+            self.create_mock_product(product_ID="5461616", quantity=5, price=12.80),
+            self.create_mock_product(product_ID="9651664", quantity=3, price=0.99),
+        ]
+        models.ProductSale.objects.create(
+            order=order, product_ID=products[0].id, quantity=2, price=5.99
+        )
+        mock_order = self.create_mock_order(order_id="939484393", products=products)
+        models.Order.update_sales(order, mock_order)
+        for product in products:
+            self.assertTrue(
+                models.ProductSale.objects.filter(
+                    order=order, product_ID=product.id
+                ).exists()
+            )
+            product_sale = models.ProductSale.objects.get(
+                order=order, product_ID=product.id
+            )
+            self.assertEqual(product_sale.quantity, product.quantity)
+            self.assertEqual(product_sale.price, int(product.price * 100))
+
     def test_update(self):
         undispatched_order_IDs = ("39039340", "59403830")
         dispatched_order_IDs = ("294039830", "856939380")
+        product_IDs = ("98119", "18919", "589191", "489191")
+        products = (self.create_mock_product(product_ID=_) for _ in product_IDs)
         order_IDs = undispatched_order_IDs + dispatched_order_IDs
         undispatched_mock_orders = [
-            self.create_mock_order(order_id=_) for _ in undispatched_order_IDs
+            self.create_mock_order(order_id=_, products=[next(products)])
+            for _ in undispatched_order_IDs
         ]
         dispatched_mock_orders = [
-            self.create_mock_order(order_id=_) for _ in dispatched_order_IDs
+            self.create_mock_order(order_id=_, products=[next(products)])
+            for _ in dispatched_order_IDs
         ]
         for order_ID in order_IDs:
             self.assertFalse(models.Order.objects.filter(order_ID=order_ID).exists())
@@ -287,13 +346,41 @@ class TestOrder(STCAdminTest):
             dispatched_mock_orders,
         ]
         models.Order.update()
-        for order_ID in order_IDs:
+        for i, order_ID in enumerate(order_IDs):
             self.assertTrue(models.Order.objects.filter(order_ID=order_ID).exists())
+            order = models.Order.objects.get(order_ID=order_ID)
+            self.assertTrue(
+                models.ProductSale.objects.filter(
+                    order=order, product_ID=product_IDs[i]
+                ).exists()
+            )
         calls = (
             call(order_type=0, number_of_days=0),
             call(order_type=1, number_of_days=1),
         )
         self.mock_CCAPI.get_orders_for_dispatch.assert_has_calls(calls)
+        self.assertEqual(len(self.mock_CCAPI.mock_calls), 2)
+
+    def test_product_sales_are_not_added_for_a_dispatched_order(self):
+        self.assertFalse(models.Order.objects.filter(order_ID=self.order_ID).exists())
+        recieved = self.aware_tz(datetime(2019, 4, 3, 7, 23))
+        dispatched = self.aware_tz(datetime(2019, 4, 3, 12, 47))
+        models.Order.objects.create(
+            order_ID=self.order_ID, recieved=recieved, dispatched=dispatched
+        )
+        mock_product = self.create_mock_product()
+        mock_order = self.create_mock_order(products=[mock_product])
+        self.mock_CCAPI.get_orders_for_dispatch.side_effect = [[mock_order], []]
+        models.Order.update()
+        self.assertTrue(
+            models.Order.objects.filter(order_ID=mock_order.order_id).exists()
+        )
+        order = models.Order.objects.get(order_ID=mock_order.order_id)
+        self.assertFalse(
+            models.ProductSale.objects.filter(
+                order=order, product_ID=mock_product.id
+            ).exists()
+        )
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 2)
 
 

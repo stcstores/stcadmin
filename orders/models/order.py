@@ -9,6 +9,7 @@ from django.utils.timezone import make_aware
 from shipping.models import Country, Service, ShippingRule
 
 from .channel import Channel
+from .product_sale import ProductSale
 
 
 class Order(models.Model):
@@ -57,7 +58,24 @@ class Order(models.Model):
         dispatched_orders = cls.get_dispatched_orders()
         orders = orders_to_dispatch + dispatched_orders
         for order in orders:
-            cls.create_or_update_order(order)
+            order_obj = cls.create_or_update_order(order)
+            if order_obj is not None:
+                cls.update_sales(order_obj, order)
+
+    @classmethod
+    def update_sales(cls, order_obj, order):
+        """Add product sales to the ProductSale model."""
+        for product in order.products:
+            price = int(product.price * 100)
+            sale, _ = ProductSale.objects.get_or_create(
+                order=order_obj,
+                product_ID=product.id,
+                defaults={"quantity": product.quantity, "price": price},
+            )
+            if sale.quantity != product.quantity or sale.price != price:
+                sale.quantity = product.quantity
+                sale.price = price
+                sale.save()
 
     @classmethod
     def get_orders_for_dispatch(cls):
@@ -76,16 +94,23 @@ class Order(models.Model):
     @classmethod
     def create_or_update_order(cls, order):
         """Create or update an order from Cloud Commerce."""
-        already_dispatched = cls.objects.filter(
-            order_ID=order.order_id, dispatched__isnull=False
-        ).exists()
-        if already_dispatched:
-            return
+        try:
+            existing_order = cls.objects.get(order_ID=order.order_id)
+        except cls.DoesNotExist:
+            existing_order = None
+        if existing_order is not None and existing_order.dispatched is not None:
+            # The order exists and already shows as dispatched
+            return None
         order_details = cls.order_details(order)
-        updated = cls.objects.filter(order_ID=order.order_id).update(**order_details)
-        if updated == 0:
-            new_order = cls(**order_details)
-            new_order.save()
+        if existing_order is None:
+            # The order does not exist and will be created
+            new_order = cls.objects.create(**order_details)
+            return new_order
+        else:
+            # The order does exist but has not been dispatched
+            cls.objects.filter(order_ID=order.order_id).update(**order_details)
+            existing_order.refresh_from_db()
+            return existing_order
 
     @classmethod
     def parse_dispatch_date(cls, dispatch_date):
