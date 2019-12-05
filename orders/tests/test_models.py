@@ -41,10 +41,10 @@ class TestOrder(STCAdminTest):
 
         self.order_ID = "3849389383"
         self.customer_ID = "59403"
-        self.recieved = datetime(2019, 11, 3, 12, 23)
-        self.dispatched = datetime(2019, 11, 3, 13, 57)
-        self.aware_recieved = self.aware_tz(self.recieved)
-        self.aware_dispatched = self.aware_tz(self.dispatched)
+        self.recieved_at = datetime(2019, 11, 3, 12, 23)
+        self.dispatched_at = datetime(2019, 11, 3, 13, 57)
+        self.aware_recieved_at = self.aware_tz(self.recieved_at)
+        self.aware_dispatched_at = self.aware_tz(self.dispatched_at)
         self.cancelled = False
         self.channel = models.Channel.objects.create(name="Test Channel")
         self.channel_order_ID = "8504389BHF9393"
@@ -77,9 +77,9 @@ class TestOrder(STCAdminTest):
         if customer_id is None:
             customer_id = self.customer_ID
         if date_recieved is None:
-            date_recieved = self.recieved
+            date_recieved = self.recieved_at
         if dispatch_date is None:
-            dispatch_date = self.dispatched
+            dispatch_date = self.dispatched_at
         if cancelled is None:
             cancelled = self.cancelled
         if channel_name is None:
@@ -121,8 +121,8 @@ class TestOrder(STCAdminTest):
         order = models.Order.objects.create(
             order_ID=self.order_ID,
             customer_ID=self.customer_ID,
-            recieved=self.aware_recieved,
-            dispatched=self.aware_dispatched,
+            recieved_at=self.aware_recieved_at,
+            dispatched_at=self.aware_dispatched_at,
             channel=self.channel,
             channel_order_ID=self.channel_order_ID,
             country=self.country,
@@ -131,8 +131,8 @@ class TestOrder(STCAdminTest):
         )
         self.assertEqual(self.order_ID, order.order_ID)
         self.assertEqual(self.customer_ID, order.customer_ID)
-        self.assertEqual(self.aware_recieved, order.recieved)
-        self.assertEqual(self.aware_dispatched, order.dispatched)
+        self.assertEqual(self.aware_recieved_at, order.recieved_at)
+        self.assertEqual(self.aware_dispatched_at, order.dispatched_at)
         self.assertEqual(self.channel, order.channel)
         self.assertEqual(self.channel_order_ID, order.channel_order_ID)
         self.assertEqual(self.country, order.country)
@@ -152,10 +152,12 @@ class TestOrder(STCAdminTest):
         self.assertEqual(self.order_ID, order_details["order_ID"])
         self.assertIn("customer_ID", order_details)
         self.assertEqual(self.customer_ID, order_details["customer_ID"])
-        self.assertIn("recieved", order_details)
-        self.assertEqual(self.aware_tz(self.recieved), order_details["recieved"])
-        self.assertIn("dispatched", order_details)
-        self.assertEqual(self.aware_tz(self.dispatched), order_details["dispatched"])
+        self.assertIn("recieved_at", order_details)
+        self.assertEqual(self.aware_tz(self.recieved_at), order_details["recieved_at"])
+        self.assertIn("dispatched_at", order_details)
+        self.assertEqual(
+            self.aware_tz(self.dispatched_at), order_details["dispatched_at"]
+        )
         self.assertIn("cancelled", order_details)
         self.assertEqual(self.cancelled, order_details["cancelled"])
         self.assertIn("channel", order_details)
@@ -172,7 +174,8 @@ class TestOrder(STCAdminTest):
 
     def test_parse_dispatch_date(self):
         self.assertEqual(
-            self.aware_dispatched, models.Order.parse_dispatch_date(self.dispatched)
+            self.aware_dispatched_at,
+            models.Order.parse_dispatch_date(self.dispatched_at),
         )
         self.assertIsNone(models.Order.parse_dispatch_date(models.Order.DISPATCH_EPOCH))
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 0)
@@ -191,8 +194,8 @@ class TestOrder(STCAdminTest):
         self.assertTrue(models.Order.objects.filter(order_ID=self.order_ID).exists())
         self.assertEqual(self.order_ID, order.order_ID)
         self.assertEqual(self.customer_ID, order.customer_ID)
-        self.assertEqual(self.aware_recieved, order.recieved)
-        self.assertEqual(self.aware_dispatched, order.dispatched)
+        self.assertEqual(self.aware_recieved_at, order.recieved_at)
+        self.assertEqual(self.aware_dispatched_at, order.dispatched_at)
         self.assertEqual(self.channel, order.channel)
         self.assertEqual(self.channel_order_ID, order.channel_order_ID)
         self.assertEqual(self.country, order.country)
@@ -203,14 +206,15 @@ class TestOrder(STCAdminTest):
     def test_update_order(self):
         self.assertFalse(models.Order.objects.filter(order_ID=self.order_ID).exists())
         models.Order.objects.create(
-            order_ID=self.order_ID, recieved=self.aware_tz(datetime(2019, 4, 3, 7, 23))
+            order_ID=self.order_ID,
+            recieved_at=self.aware_tz(datetime(2019, 4, 3, 7, 23)),
         )
         mock_order = self.create_mock_order()
         order = models.Order.create_or_update_order(mock_order)
         self.assertEqual(self.order_ID, order.order_ID)
         self.assertEqual(self.customer_ID, order.customer_ID)
-        self.assertEqual(self.aware_recieved, order.recieved)
-        self.assertEqual(self.aware_dispatched, order.dispatched)
+        self.assertEqual(self.aware_recieved_at, order.recieved_at)
+        self.assertEqual(self.aware_dispatched_at, order.dispatched_at)
         self.assertEqual(self.channel, order.channel)
         self.assertEqual(self.channel_order_ID, order.channel_order_ID)
         self.assertEqual(self.country, order.country)
@@ -220,10 +224,10 @@ class TestOrder(STCAdminTest):
 
     def test_dispatched_order_does_not_update(self):
         self.assertFalse(models.Order.objects.filter(order_ID=self.order_ID).exists())
-        recieved = self.aware_tz(datetime(2019, 4, 3, 7, 23))
-        dispatched = self.aware_tz(datetime(2019, 4, 3, 12, 47))
+        recieved_at = self.aware_tz(datetime(2019, 4, 3, 7, 23))
+        dispatched_at = self.aware_tz(datetime(2019, 4, 3, 12, 47))
         models.Order.objects.create(
-            order_ID=self.order_ID, recieved=recieved, dispatched=dispatched
+            order_ID=self.order_ID, recieved_at=recieved_at, dispatched_at=dispatched_at
         )
         mock_order = self.create_mock_order()
         returned_value = models.Order.create_or_update_order(mock_order)
@@ -231,8 +235,8 @@ class TestOrder(STCAdminTest):
         order = models.Order.objects.get(order_ID=self.order_ID)
         self.assertEqual(self.order_ID, order.order_ID)
         self.assertIsNone(order.customer_ID)
-        self.assertEqual(recieved, order.recieved)
-        self.assertEqual(dispatched, order.dispatched)
+        self.assertEqual(recieved_at, order.recieved_at)
+        self.assertEqual(dispatched_at, order.dispatched_at)
         self.assertIsNone(order.channel)
         self.assertIsNone(order.channel_order_ID)
         self.assertIsNone(order.country)
@@ -278,7 +282,8 @@ class TestOrder(STCAdminTest):
 
     def test_update_sales(self):
         order = models.Order.objects.create(
-            order_ID=self.order_ID, recieved=self.aware_tz(datetime(2019, 4, 3, 7, 23))
+            order_ID=self.order_ID,
+            recieved_at=self.aware_tz(datetime(2019, 4, 3, 7, 23)),
         )
         products = [
             self.create_mock_product(product_ID="3849390", quantity=1, price=6.50),
@@ -301,7 +306,8 @@ class TestOrder(STCAdminTest):
 
     def test_update_sales_with_existing_record(self):
         order = models.Order.objects.create(
-            order_ID=self.order_ID, recieved=self.aware_tz(datetime(2019, 4, 3, 7, 23))
+            order_ID=self.order_ID,
+            recieved_at=self.aware_tz(datetime(2019, 4, 3, 7, 23)),
         )
         products = [
             self.create_mock_product(product_ID="3849390", quantity=1, price=6.50),
@@ -363,10 +369,10 @@ class TestOrder(STCAdminTest):
 
     def test_product_sales_are_not_added_for_a_dispatched_order(self):
         self.assertFalse(models.Order.objects.filter(order_ID=self.order_ID).exists())
-        recieved = self.aware_tz(datetime(2019, 4, 3, 7, 23))
-        dispatched = self.aware_tz(datetime(2019, 4, 3, 12, 47))
+        recieved_at = self.aware_tz(datetime(2019, 4, 3, 7, 23))
+        dispatched_at = self.aware_tz(datetime(2019, 4, 3, 12, 47))
         models.Order.objects.create(
-            order_ID=self.order_ID, recieved=recieved, dispatched=dispatched
+            order_ID=self.order_ID, recieved_at=recieved_at, dispatched_at=dispatched_at
         )
         mock_product = self.create_mock_product()
         mock_order = self.create_mock_order(products=[mock_product])
@@ -399,7 +405,7 @@ class TestProductSale(STCAdminTest):
         date = models.Order.make_tz_aware(
             datetime(year=2019, month=11, day=4, hour=13, minute=52)
         )
-        order = models.Order.objects.create(order_ID="3849383", recieved=date)
+        order = models.Order.objects.create(order_ID="3849383", recieved_at=date)
         product_ID = "3940393"
         quantity = 5
         price = 2599
@@ -418,7 +424,7 @@ class TestPackingRecord(STCAdminTest):
         date = models.Order.make_tz_aware(
             datetime(year=2019, month=11, day=4, hour=13, minute=52)
         )
-        order = models.Order.objects.create(order_ID="3849383", recieved=date)
+        order = models.Order.objects.create(order_ID="3849383", recieved_at=date)
         user = CloudCommerceUser.objects.create(
             user_id="393",
             stcadmin_user=self.user,

@@ -20,8 +20,8 @@ class Order(models.Model):
 
     order_ID = models.CharField(max_length=12, unique=True, db_index=True)
     customer_ID = models.CharField(max_length=12, blank=True, null=True)
-    recieved = models.DateTimeField()
-    dispatched = models.DateTimeField(blank=True, null=True)
+    recieved_at = models.DateTimeField()
+    dispatched_at = models.DateTimeField(blank=True, null=True)
     cancelled = models.BooleanField(default=False)
     channel = models.ForeignKey(
         Channel, blank=True, null=True, on_delete=models.PROTECT
@@ -67,7 +67,7 @@ class Order(models.Model):
         """Add product sales to the ProductSale model."""
         for product in order.products:
             price = int(product.price * 100)
-            sale, _ = ProductSale.objects.get_or_create(
+            sale, _ = ProductSale._default_manager.get_or_create(
                 order=order_obj,
                 product_ID=product.id,
                 defaults={"quantity": product.quantity, "price": price},
@@ -95,20 +95,20 @@ class Order(models.Model):
     def create_or_update_order(cls, order):
         """Create or update an order from Cloud Commerce."""
         try:
-            existing_order = cls.objects.get(order_ID=order.order_id)
+            existing_order = cls._default_manager.get(order_ID=order.order_id)
         except cls.DoesNotExist:
             existing_order = None
-        if existing_order is not None and existing_order.dispatched is not None:
+        if existing_order is not None and existing_order.dispatched_at is not None:
             # The order exists and already shows as dispatched
             return None
         order_details = cls.order_details(order)
         if existing_order is None:
             # The order does not exist and will be created
-            new_order = cls.objects.create(**order_details)
+            new_order = cls._default_manager.create(**order_details)
             return new_order
         else:
             # The order does exist but has not been dispatched
-            cls.objects.filter(order_ID=order.order_id).update(**order_details)
+            cls._default_manager.filter(order_ID=order.order_id).update(**order_details)
             existing_order.refresh_from_db()
             return existing_order
 
@@ -123,16 +123,16 @@ class Order(models.Model):
     @classmethod
     def order_details(cls, order):
         """Return a dict of order details."""
-        channel, _ = Channel.objects.get_or_create(name=order.channel_name)
-        country = Country.objects.get(country_ID=order.delivery_country_code)
+        channel, _ = Channel._default_manager.get_or_create(name=order.channel_name)
+        country = Country._default_manager.get(country_ID=order.delivery_country_code)
         shipping_rule = cls.get_shipping_rule(order)
         shipping_service = shipping_rule.service
-        dispatched = cls.parse_dispatch_date(order.dispatch_date)
+        dispatched_at = cls.parse_dispatch_date(order.dispatch_date)
         kwargs = {
             "order_ID": order.order_id,
             "customer_ID": order.customer_id,
-            "recieved": cls.make_tz_aware(order.date_recieved),
-            "dispatched": dispatched,
+            "recieved_at": cls.make_tz_aware(order.date_recieved),
+            "dispatched_at": dispatched_at,
             "cancelled": order.cancelled,
             "channel": channel,
             "channel_order_ID": order.external_transaction_id,
@@ -147,6 +147,6 @@ class Order(models.Model):
         """Return the shipping rule used on the order if possible."""
         rule_name = order.default_cs_rule_name.split(" - ")[0]
         try:
-            return ShippingRule.objects.get(name=rule_name)
+            return ShippingRule._default_manager.get(name=rule_name)
         except ShippingRule.DoesNotExist:
             return None
