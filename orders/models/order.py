@@ -12,6 +12,54 @@ from .channel import Channel
 from .product_sale import ProductSale
 
 
+class DispatchedManager(models.Manager):
+    """Manager for dispatched orders."""
+
+    def get_queryset(self):
+        """Return a queryset of dispatched orders."""
+        return super().get_queryset().filter(dispatched_at__isnull=False)
+
+
+class UndispatchedManager(models.Manager):
+    """Manager for undispatched orders."""
+
+    def get_queryset(self):
+        """Return a queryset of undispatched orders."""
+        return super().get_queryset().filter(dispatched_at__isnull=True)
+
+
+class PriorityManager(models.Manager):
+    """Manager for priority orders."""
+
+    def get_queryset(self):
+        """Return a queryset of priority orders."""
+        return super().get_queryset().filter(shipping_rule__priority=True)
+
+
+class NonPriorityManager(models.Manager):
+    """Manager for priority orders."""
+
+    def get_queryset(self):
+        """Return a queryset of non-priority orders."""
+        return super().get_queryset().filter(shipping_rule__priority=False)
+
+
+class UndispatchedPriorityManager(UndispatchedManager):
+    """Manager for undispatched priority orders."""
+
+    def get_queryset(self):
+        """Return a queryset of undispatched priority orders."""
+        return super().get_queryset().filter(shipping_rule__priority=True)
+
+
+class UndispatchedNonPriorityManager(UndispatchedManager):
+    """Manager for undispatched non-priority orders."""
+
+    def get_queryset(self):
+        """Return a queryset of undispatched non-priority orders."""
+        return super().get_queryset().filter(shipping_rule__priority=False)
+
+
 class Order(models.Model):
     """Model for Cloud Commerce Orders."""
 
@@ -36,6 +84,14 @@ class Order(models.Model):
     shipping_service = models.ForeignKey(
         Service, blank=True, null=True, on_delete=models.PROTECT
     )
+
+    objects = models.Manager()
+    dispatched = DispatchedManager()
+    undispatched = UndispatchedManager()
+    priority = PriorityManager()
+    non_priority = NonPriorityManager()
+    undispatched_priority = UndispatchedPriorityManager()
+    undispatched_non_priority = UndispatchedNonPriorityManager()
 
     class Meta:
         """Meta class for the Order model."""

@@ -397,6 +397,44 @@ class TestOrder(STCAdminTest):
         )
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 2)
 
+    def test_dispatched_manager(self):
+        queryset = models.Order.dispatched.all()
+        self.assertEqual(3, queryset.count())
+        for order in queryset:
+            self.assertTrue(order.is_dispatched())
+
+    def test_undispatched_manager(self):
+        queryset = models.Order.undispatched.all()
+        self.assertEqual(17, queryset.count())
+        for order in queryset:
+            self.assertFalse(order.is_dispatched())
+
+    def test_priority_manager(self):
+        queryset = models.Order.priority.all()
+        self.assertEqual(2, queryset.count())
+        for order in queryset:
+            self.assertTrue(order.shipping_rule.priority)
+
+    def test_non_priority_manager(self):
+        queryset = models.Order.non_priority.all()
+        self.assertEqual(18, queryset.count())
+        for order in queryset:
+            self.assertFalse(order.shipping_rule.priority)
+
+    def test_undispatched_priority_manager(self):
+        queryset = models.Order.undispatched_priority.all()
+        self.assertEqual(1, queryset.count())
+        for order in queryset:
+            self.assertTrue(order.shipping_rule.priority)
+            self.assertIsNone(order.dispatched_at)
+
+    def test_undispatched_non_priority_manager(self):
+        queryset = models.Order.undispatched_non_priority.all()
+        self.assertEqual(16, queryset.count())
+        for order in queryset:
+            self.assertFalse(order.shipping_rule.priority)
+            self.assertIsNone(order.dispatched_at)
+
 
 class TestProductSale(STCAdminTest):
     fixtures = (

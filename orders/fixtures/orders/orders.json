@@ -160,7 +160,7 @@
         "channel": 1,
         "channel_order_ID": "206-2250072-0142745",
         "country": 1,
-        "shipping_rule": 2,
+        "shipping_rule": 1,
         "shipping_service": 10
     }
 }, {
@@ -294,8 +294,8 @@
         "cancelled": false,
         "channel": 3,
         "channel_order_ID": "",
-        "country": 75,
-        "shipping_rule": 33,
+        "country": 1,
+        "shipping_rule": 1,
         "shipping_service": 18
     }
 }]

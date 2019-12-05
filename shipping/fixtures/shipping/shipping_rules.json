@@ -5,7 +5,7 @@
         "rule_ID": "9583",
         "name": "Royal Mail Untracked 24 Packet",
         "service": 8,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -25,7 +25,7 @@
         "rule_ID": "9585",
         "name": "Royal Mail Tracked 24 Packet",
         "service": 2,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -45,7 +45,7 @@
         "rule_ID": "9587",
         "name": "Royal Mail 24 Large Letter",
         "service": 19,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -95,7 +95,7 @@
         "rule_ID": "10114",
         "name": "Royal Mail Heavy and Large 24",
         "service": 2,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -105,7 +105,7 @@
         "rule_ID": "10284",
         "name": "DHL Express ROW Customer Selected",
         "service": 20,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -125,7 +125,7 @@
         "rule_ID": "10579",
         "name": "Single 24 Large Letter Item",
         "service": 19,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -135,7 +135,7 @@
         "rule_ID": "10580",
         "name": "Packet (Multiple 24 LL Items)",
         "service": 8,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -145,7 +145,7 @@
         "rule_ID": "11243",
         "name": "DHL Express EU Customer Selected ",
         "service": 5,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -155,7 +155,7 @@
         "rule_ID": "11245",
         "name": "DPD Express EU Customer Selected",
         "service": 13,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -175,7 +175,7 @@
         "rule_ID": "15434",
         "name": "Amazon Prime Next Day Parcel",
         "service": 7,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -245,7 +245,7 @@
         "rule_ID": "21557",
         "name": "DPD Express EU Heavy and Large",
         "service": 13,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -255,7 +255,7 @@
         "rule_ID": "25764",
         "name": "UK Courier (DPD) Saturday Delivery",
         "service": 12,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -265,7 +265,7 @@
         "rule_ID": "26310",
         "name": "DHL Amazon Prime Europe",
         "service": 5,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -275,7 +275,7 @@
         "rule_ID": "26841",
         "name": "PF Express 24",
         "service": 17,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -315,7 +315,7 @@
         "rule_ID": "27352",
         "name": "PF Heavy and Large 24",
         "service": 17,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -325,7 +325,7 @@
         "rule_ID": "27541",
         "name": "PF Priority EU",
         "service": 18,
-        "priority": false,
+        "priority": true,
         "inactive": false
     }
 }]
