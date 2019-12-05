@@ -144,6 +144,14 @@ class TestOrder(STCAdminTest):
         order = models.Order.objects.get(id=1)
         self.assertEqual(f"Order: {order.order_ID}", str(order))
 
+    def test_is_dispatched(self):
+        undispatched_order = models.Order.objects.get(id=1)
+        self.assertIsNone(undispatched_order.dispatched_at)
+        self.assertFalse(undispatched_order.is_dispatched())
+        dispatched_order = models.Order.objects.filter(dispatched_at__isnull=False)[0]
+        self.assertIsNotNone(dispatched_order.dispatched_at)
+        self.assertTrue(dispatched_order.is_dispatched())
+
     def test_order_details(self):
         order = self.create_mock_order()
         order_details = models.Order.order_details(order)

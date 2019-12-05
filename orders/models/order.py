@@ -46,6 +46,10 @@ class Order(models.Model):
     def __str__(self):
         return f"Order: {self.order_ID}"
 
+    def is_dispatched(self):
+        """Return True if the order is dispatched, otherwise return False."""
+        return self.dispatched_at is not None
+
     @classmethod
     def make_tz_aware(cls, d):
         """Make a naive datetime timezone aware."""
