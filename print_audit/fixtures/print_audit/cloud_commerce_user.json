@@ -1,0 +1,31 @@
+[{
+    "model": "print_audit.cloudcommerceuser",
+    "pk": 1,
+    "fields": {
+        "user_id": "74646486",
+        "stcadmin_user": null,
+        "first_name": "Test",
+        "second_name": "User",
+        "hidden": false
+    }
+}, {
+    "model": "print_audit.cloudcommerceuser",
+    "pk": 2,
+    "fields": {
+        "user_id": "646165468",
+        "stcadmin_user": null,
+        "first_name": "",
+        "second_name": "",
+        "hidden": false
+    }
+}, {
+    "model": "print_audit.cloudcommerceuser",
+    "pk": 3,
+    "fields": {
+        "user_id": "86116485",
+        "stcadmin_user": null,
+        "first_name": "",
+        "second_name": "",
+        "hidden": false
+    }
+}]

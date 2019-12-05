@@ -465,6 +465,24 @@ class TestProductSale(STCAdminTest):
 
 
 class TestPackingRecord(STCAdminTest):
+    fixtures = (
+        "print_audit/cloud_commerce_user",
+        "shipping/currency",
+        "shipping/country",
+        "shipping/services",
+        "shipping/shipping_rules",
+        "orders/channels",
+        "orders/orders",
+        "orders/product_sales",
+        "orders/packing_record",
+    )
+
+    def setUp(self):
+        super().setUp()
+        ccapi_patcher = patch("orders.models.packing_record.CCAPI")
+        self.mock_CCAPI = ccapi_patcher.start()
+        self.addCleanup(ccapi_patcher.stop)
+
     def test_create_object(self):
         self.create_user()
         date = models.Order.make_tz_aware(
@@ -482,3 +500,92 @@ class TestPackingRecord(STCAdminTest):
         )
         self.assertEqual(order, packing_record.order)
         self.assertEqual(user, packing_record.packed_by)
+
+    def test_update(self):
+        order = models.Order.dispatched.all()[0]
+        models.Order.objects.exclude(id=order.id).delete()
+        user = CloudCommerceUser.objects.all()[0]
+        models.PackingRecord.objects.all().delete()
+        mock_log = Mock(
+            note=(
+                "Order Dispatched - Date: 05/12/2019 11:08:51 "
+                f"OrderID: {order.order_ID} Override: No"
+            ),
+            added_by_user_ID=user.user_id,
+        )
+        self.mock_CCAPI.customer_logs.return_value = [mock_log]
+        models.PackingRecord.update()
+        self.assertTrue(models.PackingRecord.objects.filter(order=order).exists())
+        record = models.PackingRecord.objects.get(order=order)
+        self.assertEqual(order, record.order)
+        self.assertEqual(user, record.packed_by)
+        self.mock_CCAPI.customer_logs.assert_called_once_with(order.customer_ID)
+        self.assertEqual(1, len(self.mock_CCAPI.mock_calls))
+
+    def test_orders_to_update(self):
+        models.PackingRecord.objects.all().delete()
+        orders = models.PackingRecord._orders_to_update()
+        self.assertEqual(3, len(orders))
+        for order in orders:
+            self.assertTrue(order.is_dispatched())
+            self.assertIsNotNone(order.customer_ID)
+
+    def test_orders_to_update_ignores_null_customer_ID(self):
+        dispatched_orders = models.Order.dispatched.all()
+        invalid_order = dispatched_orders[1]
+        invalid_order.customer_ID = None
+        invalid_order.save()
+        models.PackingRecord.objects.all().delete()
+        orders = models.PackingRecord._orders_to_update()
+        for order in orders:
+            self.assertTrue(order.is_dispatched())
+            self.assertIsNotNone(order.customer_ID)
+        self.assertEqual(2, len(orders))
+
+    def test_orders_to_update_ignores_existing_records(self):
+        dispatched_orders = models.Order.dispatched.all()
+        invalid_order = dispatched_orders[2]
+        models.PackingRecord.objects.exclude(order__id=invalid_order.id).delete()
+        self.assertEqual(1, models.PackingRecord.objects.count())
+        orders = models.PackingRecord._orders_to_update()
+        for order in orders:
+            self.assertTrue(order.is_dispatched())
+            self.assertIsNotNone(order.customer_ID)
+        self.assertEqual(2, len(orders))
+
+    def test_update_order_with_no_logs(self):
+        order = models.Order.dispatched.all()[0]
+        models.PackingRecord.objects.all().delete()
+        self.mock_CCAPI.customer_logs.return_value = []
+        models.PackingRecord._update_order(order)
+        self.assertFalse(models.PackingRecord.objects.exists())
+
+    def test_update_order_with_no_dispatch_logs(self):
+        order = models.Order.dispatched.all()[0]
+        models.PackingRecord.objects.all().delete()
+        mock_log = Mock(
+            note=(
+                "Some Other Note - Date: 05/12/2019 11:08:51 "
+                f"OrderID: {order.order_ID} Override: No"
+            ),
+            added_by_user_ID="4859483",
+        )
+        self.mock_CCAPI.customer_logs.return_value = [mock_log]
+        models.PackingRecord._update_order(order)
+        self.assertFalse(models.PackingRecord.objects.exists())
+
+    def test_update_order_with_new_packer(self):
+        order = models.Order.dispatched.all()[0]
+        models.PackingRecord.objects.all().delete()
+        new_user_ID = "32940383"
+        self.assertFalse(CloudCommerceUser.objects.filter(user_id=new_user_ID).exists())
+        mock_log = Mock(
+            note=(
+                "Order Dispatched - Date: 05/12/2019 11:08:51 "
+                f"OrderID: {order.order_ID} Override: No"
+            ),
+            added_by_user_ID=new_user_ID,
+        )
+        self.mock_CCAPI.customer_logs.return_value = [mock_log]
+        models.PackingRecord._update_order(order)
+        self.assertTrue(CloudCommerceUser.objects.filter(user_id=new_user_ID).exists())
