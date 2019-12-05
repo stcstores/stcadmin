@@ -11,15 +11,16 @@ from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
 class TestChannel(STCAdminTest):
+    fixtures = ("orders/channels",)
+
     def test_create_object(self):
         name = "Test Channel"
         channel = models.Channel.objects.create(name=name)
         self.assertEqual(name, channel.name)
 
     def test_str(self):
-        name = "Test Channel"
-        channel = models.Channel.objects.create(name=name)
-        self.assertEqual(name, str(channel))
+        channel = models.Channel.objects.get(id=1)
+        self.assertEqual(channel.name, str(channel))
 
 
 class TestOrder(STCAdminTest):
@@ -28,6 +29,8 @@ class TestOrder(STCAdminTest):
         "shipping/country",
         "shipping/services",
         "shipping/shipping_rules",
+        "orders/channels",
+        "orders/orders",
     )
 
     def setUp(self):
@@ -295,6 +298,16 @@ class TestOrder(STCAdminTest):
 
 
 class TestProductSale(STCAdminTest):
+    fixtures = (
+        "shipping/currency",
+        "shipping/country",
+        "shipping/services",
+        "shipping/shipping_rules",
+        "orders/channels",
+        "orders/orders",
+        "orders/product_sales",
+    )
+
     def test_create_object(self):
         date = models.Order.make_tz_aware(
             datetime(year=2019, month=11, day=4, hour=13, minute=52)
