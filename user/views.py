@@ -4,6 +4,8 @@ from django.contrib.auth import logout
 from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
+
+from home.models import CloudCommerceUser
 from home.views import UserLoginMixin
 from print_audit import models
 
@@ -21,9 +23,7 @@ class User(UserLoginMixin, TemplateView):
 
     def get_feedback_count(self):
         """Return dict of feedback counts by feedback type for current user."""
-        user = get_object_or_404(
-            models.CloudCommerceUser, stcadmin_user=self.request.user
-        )
+        user = get_object_or_404(CloudCommerceUser, stcadmin_user=self.request.user)
         feedback_types = models.Feedback.objects.all()
         feedback_count = {
             feedback_type: models.UserFeedback.objects.filter(

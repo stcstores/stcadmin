@@ -3,6 +3,7 @@ from django import template
 from django.utils.safestring import mark_safe
 from django.utils.timezone import now
 
+from home.models import CloudCommerceUser
 from print_audit import models
 
 register = template.Library()
@@ -26,7 +27,7 @@ def feedback_count(user, feedback):
 def feedback_badges(user):
     """Return rendered feedback badges."""
     try:
-        user = models.CloudCommerceUser.objects.filter(stcadmin_user=user)[0]
+        user = CloudCommerceUser.objects.filter(stcadmin_user=user)[0]
     except Exception:
         return ""
     feedback_types = models.Feedback.objects.all().order_by("-score")

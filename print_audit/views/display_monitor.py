@@ -6,6 +6,8 @@ from django.http import HttpResponse
 from django.utils.timezone import now
 from django.views import View
 from django.views.generic.base import TemplateView
+
+from home.models import CloudCommerceUser
 from print_audit import models
 
 
@@ -25,7 +27,7 @@ class PackCountMonitor(View):
             date_created__month=now().month,
             date_created__day=now().day,
         )
-        packers = models.CloudCommerceUser.unhidden.all()
+        packers = CloudCommerceUser.unhidden.all()
         pack_count = [
             (user.full_name(), orders.filter(user=user).count()) for user in packers
         ]
