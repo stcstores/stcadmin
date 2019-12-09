@@ -1,57 +1,11 @@
 """Models for print_audit."""
 
 import pytz
-from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils.timezone import is_naive, now
 
-
-class UnHidden(models.Manager):
-    """Manager for Cloud Commerce Users that are not hidden."""
-
-    def get_queryset(self, *args, **kwargs):
-        """Return queryset of Cloud Commerce Users that are not hidden."""
-        queryset = super().get_queryset(*args, **kwargs)
-        return queryset.filter(hidden=False)
-
-
-class CloudCommerceUser(models.Model):
-    """Model for storing details of Cloud Commerce Users."""
-
-    user_id = models.CharField(max_length=10, unique=True)
-    stcadmin_user = models.ForeignKey(
-        User, null=True, blank=True, on_delete=models.CASCADE
-    )
-    first_name = models.CharField(max_length=50)
-    second_name = models.CharField(max_length=50)
-    hidden = models.BooleanField(default=False)
-
-    objects = models.Manager()
-    unhidden = UnHidden()
-
-    class Meta:
-        """Meta class for CloudCommerceUser."""
-
-        verbose_name = "Cloud Commerce User"
-        verbose_name_plural = "Cloud Commerce Users"
-
-    def __repr__(self):
-        return self.full_name()
-
-    def __str__(self):
-        return self.full_name()
-
-    def full_name(self):
-        """Return user's full name."""
-        return "{} {}".format(self.first_name, self.second_name)
-
-    def feedback_count(self, feedback_type):
-        """Return number of feedback objects associated with user."""
-        user_feedback = UserFeedback.objects.filter(
-            user=self, feedback_type=feedback_type
-        )
-        return user_feedback.count()
+from home.models import CloudCommerceUser
 
 
 class CloudCommerceOrder(models.Model):

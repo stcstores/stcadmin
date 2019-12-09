@@ -5,7 +5,7 @@ import logging
 from ccapi import CCAPI
 from django.core.management.base import BaseCommand
 
-from print_audit.models import CloudCommerceUser
+from home.models import CloudCommerceUser
 
 logger = logging.getLogger("management_commands")
 
