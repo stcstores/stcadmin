@@ -4,8 +4,8 @@ from unittest.mock import Mock, call, patch
 import pytz
 from django.utils.timezone import make_aware
 
+from home.models import CloudCommerceUser
 from orders import models
-from print_audit.models import CloudCommerceUser
 from shipping import models as shipping_models
 from stcadmin.tests.stcadmin_test import STCAdminTest
 
@@ -466,7 +466,7 @@ class TestProductSale(STCAdminTest):
 
 class TestPackingRecord(STCAdminTest):
     fixtures = (
-        "print_audit/cloud_commerce_user",
+        "home/cloud_commerce_user",
         "shipping/currency",
         "shipping/country",
         "shipping/services",

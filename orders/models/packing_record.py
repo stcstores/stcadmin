@@ -2,7 +2,7 @@
 from ccapi import CCAPI
 from django.db import models
 
-from print_audit.models import CloudCommerceUser
+from home.models import CloudCommerceUser
 
 from .order import Order
 

@@ -1,5 +1,5 @@
 [{
-    "model": "print_audit.cloudcommerceuser",
+    "model": "home.cloudcommerceuser",
     "pk": 1,
     "fields": {
         "user_id": "74646486",
@@ -9,7 +9,7 @@
         "hidden": false
     }
 }, {
-    "model": "print_audit.cloudcommerceuser",
+    "model": "home.cloudcommerceuser",
     "pk": 2,
     "fields": {
         "user_id": "646165468",
@@ -19,7 +19,7 @@
         "hidden": false
     }
 }, {
-    "model": "print_audit.cloudcommerceuser",
+    "model": "home.cloudcommerceuser",
     "pk": 3,
     "fields": {
         "user_id": "86116485",
