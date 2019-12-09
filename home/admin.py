@@ -20,6 +20,3 @@ class CloudCommerceUserAdmin(admin.ModelAdmin):
     list_display_links = ("full_name",)
     list_editable = ("user_id", "hidden")
     readonly_fields = ("full_name",)
-
-    def __str__(self):
-        return str(self.user_id)
