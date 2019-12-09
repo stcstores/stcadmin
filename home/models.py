@@ -46,10 +46,3 @@ class CloudCommerceUser(models.Model):
     def full_name(self):
         """Return user's full name."""
         return "{} {}".format(self.first_name, self.second_name)
-
-    # def feedback_count(self, feedback_type):
-    #     """Return number of feedback objects associated with user."""
-    #     user_feedback = UserFeedback.objects.filter(
-    #         user=self, feedback_type=feedback_type
-    #     )
-    #     return user_feedback.count()
