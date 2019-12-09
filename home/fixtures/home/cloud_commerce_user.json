@@ -28,4 +28,14 @@
         "second_name": "",
         "hidden": false
     }
+}, {
+    "model": "home.cloudcommerceuser",
+    "pk": 4,
+    "fields": {
+        "user_id": "79116486",
+        "stcadmin_user": null,
+        "first_name": "Hidden",
+        "second_name": "User",
+        "hidden": true
+    }
 }]
