@@ -9,6 +9,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
+from home.models import CloudCommerceUser
 from print_audit import forms, models
 
 from .views import PrintAuditUserMixin
@@ -68,7 +69,7 @@ class UserFeedback(PrintAuditUserMixin, TemplateView):
     def get_models(self):
         """Get users, feedback_types, orders and feedbacks."""
         self.users = sorted(
-            models.CloudCommerceUser.unhidden.all(), key=lambda x: x.full_name()
+            CloudCommerceUser.unhidden.all(), key=lambda x: x.full_name()
         )
         self.feedback_types = models.Feedback.objects.all()
         self.orders = models.CloudCommerceOrder.objects.all()
@@ -104,7 +105,7 @@ class CreateUserFeedback(PrintAuditUserMixin, CreateView):
         initial = super().get_initial()
         user_id = self.kwargs.get("user_id", None)
         if user_id is not None:
-            initial["user"] = get_object_or_404(models.CloudCommerceUser, id=user_id)
+            initial["user"] = get_object_or_404(CloudCommerceUser, id=user_id)
         return initial
 
     def get_form(self, *args, **kwargs):
@@ -177,7 +178,7 @@ class FeedbackList(PrintAuditUserMixin, ListView):
         """Process GET request."""
         user_id = self.request.GET.get("user_id") or None
         if user_id is not None:
-            self.user = get_object_or_404(models.CloudCommerceUser, pk=user_id)
+            self.user = get_object_or_404(CloudCommerceUser, pk=user_id)
         feedback_id = self.request.GET.get("feedback_id") or None
         if feedback_id is not None:
             self.feedback_type = get_object_or_404(models.Feedback, pk=feedback_id)
