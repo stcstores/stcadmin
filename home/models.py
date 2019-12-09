@@ -37,9 +37,6 @@ class CloudCommerceUser(models.Model):
         verbose_name = "Cloud Commerce User"
         verbose_name_plural = "Cloud Commerce Users"
 
-    def __repr__(self):
-        return self.full_name()
-
     def __str__(self):
         return self.full_name()
 
