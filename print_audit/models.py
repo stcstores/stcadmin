@@ -113,8 +113,12 @@ class UserFeedbackMonthlyManager(UserFeedbackManager):
 class UserFeedback(models.Model):
     """Model to link CloudCommerceUser with Feedback."""
 
-    user = models.ForeignKey(CloudCommerceUser, on_delete=models.CASCADE)
-    feedback_type = models.ForeignKey(Feedback, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        CloudCommerceUser, on_delete=models.CASCADE, related_name="old_user"
+    )
+    feedback_type = models.ForeignKey(
+        Feedback, on_delete=models.CASCADE, related_name="old_feedback_type"
+    )
     timestamp = models.DateField(default=timezone.now)
     order_id = models.CharField(max_length=10, blank=True, null=True)
     note = models.TextField(blank=True, null=True)
