@@ -3,7 +3,7 @@
 import pytz
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
-from django.utils.timezone import is_naive, now
+from django.utils import timezone
 
 from home.models import CloudCommerceUser
 
@@ -52,7 +52,7 @@ class CloudCommerceOrder(models.Model):
 
     def localise_datetime(self, date_input):
         """Return localised datetime.datetime object."""
-        if date_input is not None and is_naive(date_input):
+        if date_input is not None and timezone.is_naive(date_input):
             tz = pytz.timezone("Europe/London")
             date_input = date_input.replace(tzinfo=tz)
         return date_input
@@ -104,7 +104,7 @@ class UserFeedbackMonthlyManager(UserFeedbackManager):
 
     def get_queryset(self):
         """Return QuerySet of User Feedback dated in the current month."""
-        current_time = now()
+        current_time = timezone.now()
         return ScoredQuerySet(self.model).filter(
             timestamp__month=current_time.month, timestamp__year=current_time.year
         )
@@ -115,7 +115,7 @@ class UserFeedback(models.Model):
 
     user = models.ForeignKey(CloudCommerceUser, on_delete=models.CASCADE)
     feedback_type = models.ForeignKey(Feedback, on_delete=models.CASCADE)
-    timestamp = models.DateField(default=now)
+    timestamp = models.DateField(default=timezone.now)
     order_id = models.CharField(max_length=10, blank=True, null=True)
     note = models.TextField(blank=True, null=True)
 
@@ -139,7 +139,7 @@ class Breakage(models.Model):
     order_id = models.CharField(max_length=10)
     note = models.TextField(blank=True, null=True)
     packer = models.ForeignKey(CloudCommerceUser, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(default=now)
+    timestamp = models.DateTimeField(default=timezone.now)
 
     class Meta:
         """Meta class for UserFeedback."""

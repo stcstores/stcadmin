@@ -1,6 +1,6 @@
-{% extends "print_audit/base.html" %}
+{% extends "feedback/base.html" %}
 {% load static %}
-{% load print_audit_extras %}
+{% load feedback_extras %}
 
 {% block content %}
 
@@ -13,7 +13,7 @@
 
 <h1>User Feedback</h1>
 
-<form action="" method="POST">{% csrf_token %}
+<form action="" method="GET">
     {{ form.errors }}
     {% for choice in form.dates %}{{ choice }}<label for="{{ choice.id }}">{{ choice.label }}</label>{% endfor %}
     {{ form.dates.errors }}
@@ -29,25 +29,25 @@
         <th>User</th>
         {% for feedback_type in feedback_types %}
         <th colspan="2">
-            <a href="{% url 'print_audit:feedback_list' %}?feedback_id={{ feedback_type.pk }}">{{ feedback_type.name }}</a>
+            <a href="{% url 'feedback:feedback_list' %}?feedback_id={{ feedback_type.pk }}">{{ feedback_type.name }}</a>
         </th>
         {% endfor %}
         <th colspan="2">Packages</th>
     </tr>
     {% for user in users %}
     <tr>
-        <td><a href="{% url 'print_audit:feedback_list' %}?user_id={{ user.pk }}">{{ user }}</a></td>
-        {% for feedback_type in feedback_types %}
+        <td><a href="{% url 'feedback:feedback_list' %}?user_id={{ user.id }}">{{ user.full_name }}</a></td>
+        {% for feedback_type in user.feedback_counts.values %}
             <td>
-                <a href="{% url 'print_audit:feedback_list' %}?feedback_id={{ feedback_type.pk }}&user_id={{ user.pk }}">
-                    <img src="{{ feedback_type.image.url }}" alt="{{ feedback_type.name }}" height="25">
+                <a href="{% url 'feedback:feedback_list' %}?feedback_id={{ feedback_type.pk }}&user_id={{ user.id }}">
+                    <img src="{{ feedback_type.image_url }}" alt="{{ feedback_type.name }}" height="25">
                 </a>
             </td>
-            <td>{% dict_key feedback_counts user.id feedback_type.id %}</td>
+            <td>{{ feedback_type.count }}</td>
         {% endfor %}
         <td><img src="{% static 'images/package.png' %}" alt="Package" height="25"></td>
-        <td>{% dict_key pack_counts user.id %}</td>
-        <td><a href="{% url 'print_audit:create_feedback' user.id %}"><button>Add</button></a></td>
+        <td>{{ user.pack_count }}</td>
+        <td><a href="{% url 'feedback:create_feedback' user.id %}"><button>Add</button></a></td>
     </tr>
     {% endfor %}
 </table>
