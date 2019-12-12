@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     "epos",
     "orders",
     "shipping",
+    "feedback",
     "debug_toolbar",
 ]
 

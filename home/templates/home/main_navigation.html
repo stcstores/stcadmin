@@ -13,6 +13,9 @@
     {% if 'labelmaker' in groups %}
     <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
     {% endif %}
+    {% if 'feedback' in groups %}
+    <li><a href="{% url 'feedback:user_feedback' %}">Feedback</a></li>
+    {% endif %}
     {% if 'print_audit' in groups %}
     <li><a href="{% url 'print_audit:index' %}">Print Audit</a></li>
     {% endif %}

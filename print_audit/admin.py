@@ -22,20 +22,6 @@ class CloudCommerceOrderAdmin(admin.ModelAdmin):
     list_editable = ("user",)
 
 
-@admin.register(models.Feedback)
-class FeedbackAdmin(admin.ModelAdmin):
-    """Model admin for Feedback model."""
-
-    pass
-
-
-@admin.register(models.UserFeedback)
-class UserFeedbackAdmin(admin.ModelAdmin):
-    """Model admin for UserFeedback model."""
-
-    list_display = ("user", "feedback_type", "timestamp")
-
-
 @admin.register(models.Breakage)
 class BreakageAdmin(admin.ModelAdmin):
     """Model admin for Breackage model."""

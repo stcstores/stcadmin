@@ -1,0 +1,81 @@
+[{
+    "model": "feedback.feedback",
+    "pk": 1,
+    "fields": {
+        "name": "Packing Mistake",
+        "image": "feedback/packing_mistake.png",
+        "score": -2
+    }
+}, {
+    "model": "feedback.feedback",
+    "pk": 2,
+    "fields": {
+        "name": "Smiley Face",
+        "image": "feedback/smiley_face.png",
+        "score": 1
+    }
+}, {
+    "model": "feedback.feedback",
+    "pk": 3,
+    "fields": {
+        "name": "Star",
+        "image": "feedback/star.png",
+        "score": 4
+    }
+}, {
+    "model": "feedback.feedback",
+    "pk": 4,
+    "fields": {
+        "name": "Picking Mistake",
+        "image": "feedback/picking_mistake.png",
+        "score": -1
+    }
+}, {
+    "model": "feedback.feedback",
+    "pk": 5,
+    "fields": {
+        "name": "Sick Day",
+        "image": "feedback/sick_day.png",
+        "score": 0
+    }
+}, {
+    "model": "feedback.feedback",
+    "pk": 6,
+    "fields": {
+        "name": "Half Sick Day",
+        "image": "feedback/half_sick_day.png",
+        "score": 0
+    }
+}, {
+    "model": "feedback.feedback",
+    "pk": 7,
+    "fields": {
+        "name": "Listing Mistake",
+        "image": "feedback/listing_mistake.png",
+        "score": -3
+    }
+}, {
+    "model": "feedback.feedback",
+    "pk": 8,
+    "fields": {
+        "name": "General Mistake",
+        "image": "feedback/general_mistake.png",
+        "score": -1
+    }
+}, {
+    "model": "feedback.feedback",
+    "pk": 9,
+    "fields": {
+        "name": "Shitcan",
+        "image": "feedback/shitcan.jpg",
+        "score": 0
+    }
+}, {
+    "model": "feedback.feedback",
+    "pk": 10,
+    "fields": {
+        "name": "Detective",
+        "image": "feedback/detective.png",
+        "score": 0
+    }
+}]
