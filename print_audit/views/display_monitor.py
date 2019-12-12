@@ -7,8 +7,8 @@ from django.utils.timezone import now
 from django.views import View
 from django.views.generic.base import TemplateView
 
+from feedback import models
 from home.models import CloudCommerceUser
-from print_audit import models
 
 
 class DisplayMonitor(TemplateView):

@@ -1,5 +1,5 @@
 [{
-    "model": "print_audit.feedback",
+    "model": "feedback.feedback",
     "pk": 1,
     "fields": {
         "name": "Packing Mistake",
@@ -7,7 +7,7 @@
         "score": -2
     }
 }, {
-    "model": "print_audit.feedback",
+    "model": "feedback.feedback",
     "pk": 2,
     "fields": {
         "name": "Smiley Face",
@@ -15,7 +15,7 @@
         "score": 1
     }
 }, {
-    "model": "print_audit.feedback",
+    "model": "feedback.feedback",
     "pk": 3,
     "fields": {
         "name": "Star",
@@ -23,7 +23,7 @@
         "score": 4
     }
 }, {
-    "model": "print_audit.feedback",
+    "model": "feedback.feedback",
     "pk": 4,
     "fields": {
         "name": "Picking Mistake",
@@ -31,7 +31,7 @@
         "score": -1
     }
 }, {
-    "model": "print_audit.feedback",
+    "model": "feedback.feedback",
     "pk": 5,
     "fields": {
         "name": "Sick Day",
@@ -39,7 +39,7 @@
         "score": 0
     }
 }, {
-    "model": "print_audit.feedback",
+    "model": "feedback.feedback",
     "pk": 6,
     "fields": {
         "name": "Half Sick Day",
@@ -47,7 +47,7 @@
         "score": 0
     }
 }, {
-    "model": "print_audit.feedback",
+    "model": "feedback.feedback",
     "pk": 7,
     "fields": {
         "name": "Listing Mistake",
@@ -55,7 +55,7 @@
         "score": -3
     }
 }, {
-    "model": "print_audit.feedback",
+    "model": "feedback.feedback",
     "pk": 8,
     "fields": {
         "name": "General Mistake",
@@ -63,7 +63,7 @@
         "score": -1
     }
 }, {
-    "model": "print_audit.feedback",
+    "model": "feedback.feedback",
     "pk": 9,
     "fields": {
         "name": "Shitcan",
@@ -71,7 +71,7 @@
         "score": 0
     }
 }, {
-    "model": "print_audit.feedback",
+    "model": "feedback.feedback",
     "pk": 10,
     "fields": {
         "name": "Detective",

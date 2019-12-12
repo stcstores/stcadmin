@@ -4,8 +4,8 @@ from unittest.mock import patch
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
 
+from feedback import models
 from home.models import CloudCommerceUser
-from print_audit import models
 from stcadmin.tests.stcadmin_test import STCAdminTest
 
 

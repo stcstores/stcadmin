@@ -7,8 +7,8 @@ from django import forms
 from django.conf import settings
 from django.utils import timezone
 
+from feedback import models
 from home.models import CloudCommerceUser
-from print_audit import models
 
 
 class FeedbackSearchForm(forms.Form):
