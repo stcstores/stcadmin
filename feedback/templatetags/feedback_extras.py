@@ -14,10 +14,10 @@ def feedback_badges(user):
     """Return rendered feedback badges."""
     feedback_types = models.Feedback.objects.annotate(
         count=Count(
-            "userfeedback",
+            "old_feedback_type",
             filter=Q(
-                userfeedback__user__stcadmin_user=user,
-                userfeedback__timestamp__month=now().month,
+                old_feedback_type__user__stcadmin_user=user,
+                old_feedback_type__timestamp__month=now().month,
             ),
         )
     ).order_by("-score")
