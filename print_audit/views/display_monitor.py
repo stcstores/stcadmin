@@ -9,6 +9,7 @@ from django.views.generic.base import TemplateView
 
 from feedback import models
 from home.models import CloudCommerceUser
+from print_audit.models import CloudCommerceOrder
 
 
 class DisplayMonitor(TemplateView):
@@ -22,7 +23,7 @@ class PackCountMonitor(View):
 
     def get(self, request):
         """Return HttpResponse with pack count data."""
-        orders = models.CloudCommerceOrder.objects.filter(
+        orders = CloudCommerceOrder.objects.filter(
             date_created__year=now().year,
             date_created__month=now().month,
             date_created__day=now().day,
