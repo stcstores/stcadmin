@@ -4,7 +4,7 @@ from django.db.models import Count, Q
 from django.utils.safestring import mark_safe
 from django.utils.timezone import now
 
-from print_audit import models
+from feedback import models
 
 register = template.Library()
 
@@ -14,10 +14,10 @@ def feedback_badges(user):
     """Return rendered feedback badges."""
     feedback_types = models.Feedback.objects.annotate(
         count=Count(
-            "old_feedback_type",
+            "userfeedback",
             filter=Q(
-                old_feedback_type__user__stcadmin_user=user,
-                old_feedback_type__timestamp__month=now().month,
+                userfeedback__user__stcadmin_user=user,
+                userfeedback__timestamp__month=now().month,
             ),
         )
     ).order_by("-score")

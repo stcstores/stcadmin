@@ -10,10 +10,9 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
-from feedback import forms
+from feedback import forms, models
 from home.models import CloudCommerceUser
 from home.views import UserInGroupMixin, UserLoginMixin
-from print_audit import models
 
 
 class FeedbackUserMixin(UserInGroupMixin):

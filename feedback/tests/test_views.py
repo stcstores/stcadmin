@@ -5,9 +5,8 @@ from django.contrib.auth.models import Group
 from django.db.models.query import QuerySet
 from django.shortcuts import reverse
 
-from feedback import forms, views
+from feedback import forms, models, views
 from home.models import CloudCommerceUser
-from print_audit import models
 from stcadmin.tests.stcadmin_test import STCAdminTest, ViewTests
 
 
