@@ -1,6 +1,6 @@
-{% extends "print_audit/base.html" %}
+{% extends "feedback/base.html" %}
 {% load static %}
-{% load print_audit_extras %}
+{% load feedback_extras %}
 
 {% block additional_head %}{{ block.super }}
     <style>
@@ -35,9 +35,9 @@
             <td>{{ feedback.timestamp }}</td>
             <td>{% if feedback.order_id %}{{ feedback.order_id }}{% endif %}</td>
             <td>{% if feedback.note %}{{ feedback.note }}{% endif %}</td>
-            <td><a href="{% url 'print_audit:update_feedback' feedback.id %}"><button>Edit</button></a></td>
+            <td><a href="{% url 'feedback:update_feedback' feedback.id %}"><button>Edit</button></a></td>
             <td>
-                <form style="margin:0;padding:0;" method="POST" class="delete_button" action="{% url 'print_audit:delete_feedback' feedback.id %}">{% csrf_token %}
+                <form style="margin:0;padding:0;" method="POST" class="delete_button" action="{% url 'feedback:delete_feedback' feedback.id %}">{% csrf_token %}
                    <input type="submit" value="Delete">
                 </form>
             </td>
@@ -47,7 +47,7 @@
 </div>
 
 
-<form action="" method="POST" class="feedback_filters">{% csrf_token %}
+<form action="" method="GET" class="feedback_filters">
     <table>
         <tr>
             <th>Showing:</th>

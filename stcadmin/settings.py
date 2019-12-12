@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     "profit_loss",
     "product_editor",
     "epos",
+    "feedback",
     "debug_toolbar",
 ]
 

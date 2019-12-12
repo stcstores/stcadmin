@@ -1,6 +1,6 @@
 {% load static %}
 {% load stcadmin_extras %}
-{% load print_audit_extras %}
+{% load feedback_extras %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,7 +30,7 @@
         <div class="head">
             {% include "home/main_navigation.html" %}
             <div class="header_feedback">
-                {% feedback_badges request.user %}&nbsp;<a href="{% url 'print_audit:feedback_quickview' %}">[ view all feedback ]</a>
+                {% feedback_badges request.user %}&nbsp;<a href="{% url 'feedback:feedback_quickview' %}">[ view all feedback ]</a>
             </div>
             <div class="user_details">
                 <p>Welcome <a href="{% url 'user:user' %}">{{ request.user.username|title }}</a></p>

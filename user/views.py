@@ -4,9 +4,9 @@ from django.contrib.auth import logout
 from django.contrib.auth.views import PasswordChangeView
 from django.views.generic.base import TemplateView
 
+from feedback import models
 from home.models import CloudCommerceUser
 from home.views import UserLoginMixin
-from print_audit import models
 
 
 class User(UserLoginMixin, TemplateView):
