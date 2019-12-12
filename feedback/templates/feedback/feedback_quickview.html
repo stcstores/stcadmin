@@ -1,6 +1,6 @@
-{% extends "print_audit/base.html" %}
+{% extends "feedback/base.html" %}
 {% load static %}
-{% load print_audit_extras %}
+{% load feedback_extras %}
 
 {% block content %}
 
@@ -20,7 +20,7 @@
 
 {% block script %}{{ block.super }}
 <script>
-{% include 'print_audit/get_feedback.html' %}
+{% include 'feedback/get_feedback.html' %}
 
     $(document).ready(function() {get_feedback();});
 </script>
