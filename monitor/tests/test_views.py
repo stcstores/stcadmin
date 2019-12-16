@@ -6,8 +6,8 @@ from stcadmin.tests.stcadmin_test import STCAdminTest, ViewTests
 
 
 class TestDisplayMonitorView(STCAdminTest, ViewTests):
-    URL = "/print_audit/display_monitor/"
-    template = "print_audit/display_monitor.html"
+    URL = "/monitor/"
+    template = "monitor/monitor.html"
 
     def test_get_method(self):
         response = self.make_get_request()
@@ -32,7 +32,7 @@ class TestDisplayMonitorView(STCAdminTest, ViewTests):
 
 class TestPackCountMonitorView(STCAdminTest, ViewTests):
     fixtures = ("home/cloud_commerce_user", "print_audit/cloud_commerce_order")
-    URL = "/print_audit/pack_count_monitor/"
+    URL = "/monitor/pack_count_monitor/"
 
     def test_get_method(self):
         response = self.make_get_request()
@@ -52,7 +52,7 @@ class TestPackCountMonitorView(STCAdminTest, ViewTests):
         response = self.make_post_request()
         self.assertEqual(405, response.status_code)
 
-    @patch("print_audit.views.display_monitor.now")
+    @patch("monitor.views.now")
     def test_response(self, mock_now):
         mock_now.return_value = datetime(2017, 8, 1)
         response = self.make_get_request()
@@ -72,7 +72,7 @@ class TestFeedbackMonitorView(STCAdminTest, ViewTests):
         "feedback/feedback",
         "feedback/user_feedback",
     )
-    URL = "/print_audit/feedback_monitor/"
+    URL = "/monitor/feedback_monitor/"
 
     def test_get_method(self):
         response = self.make_get_request()

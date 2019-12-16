@@ -6,6 +6,7 @@
   <ul>
     <li><a href="{% url 'home:index' %}">Home</a></li>
     <li><a href="{% url 'reference:index' %}">Reference</a></li>
+      <li><a href="{% url 'monitor:monitor' %}">Monitor</a></li>
     {% user_groups user as groups %}
     {% if "inventory" in groups %}
     <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
@@ -41,3 +42,4 @@
   </ul>
 </div>
 {% endblock %}
+

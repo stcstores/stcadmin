@@ -95,6 +95,7 @@ INSTALLED_APPS = [
     "product_editor",
     "epos",
     "feedback",
+    "monitor",
     "debug_toolbar",
 ]
 

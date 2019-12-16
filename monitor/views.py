@@ -1,4 +1,4 @@
-"""Views for display monitor."""
+"""Views the Monitor app."""
 
 import json
 
@@ -15,7 +15,7 @@ from print_audit.models import CloudCommerceOrder
 class DisplayMonitor(TemplateView):
     """View for display monitor."""
 
-    template_name = "print_audit/display_monitor.html"
+    template_name = "monitor/monitor.html"
 
 
 class PackCountMonitor(View):

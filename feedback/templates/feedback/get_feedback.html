@@ -1,7 +1,7 @@
 function get_feedback() {
     $('.pack_count').html('');
     $('.feedback').html('');
-    $.get("{% url 'print_audit:feedback_monitor' %}",
+    $.get("{% url 'monitor:feedback_monitor' %}",
         function(response) {
             var response_data = $.parseJSON(response);
             var data = response_data['data'];

@@ -27,7 +27,7 @@
             function get_pack_count() {
                 $('.pack_count').html('');
                 $('.feedback').html('');
-                $.get("{% url 'print_audit:pack_count_monitor' %}",
+                $.get("{% url 'monitor:pack_count_monitor' %}",
                     function(data) {
                         var data = $.parseJSON(data);
                         for (var i=0; i<data.length; i++) {
