@@ -60,10 +60,13 @@
 
 {% block script %}{{ block.super }}
 <script>
-  {% include 'feedback/get_feedback.html' %}
-
   $(document).ready(function() {
-    get_feedback();
+    $.get("{% url 'monitor:feedback_monitor' %}",
+        function(response) {
+            $('.feedback').html(response);
+            current = 'feedback'
+        }
+    );
   });
 </script>
 {% endblock %}

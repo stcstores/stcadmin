@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from unittest.mock import patch
 
+from feedback.models import Feedback, UserFeedback
 from stcadmin.tests.stcadmin_test import STCAdminTest, ViewTests
 
 
@@ -52,7 +53,7 @@ class TestPackCountMonitorView(STCAdminTest, ViewTests):
         response = self.make_post_request()
         self.assertEqual(405, response.status_code)
 
-    @patch("monitor.views.now")
+    @patch("monitor.views.timezone.now")
     def test_response(self, mock_now):
         mock_now.return_value = datetime(2017, 8, 1)
         response = self.make_get_request()
@@ -73,10 +74,12 @@ class TestFeedbackMonitorView(STCAdminTest, ViewTests):
         "feedback/user_feedback",
     )
     URL = "/monitor/feedback_monitor/"
+    template = "monitor/feedback.html"
 
     def test_get_method(self):
         response = self.make_get_request()
         self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, self.template)
 
     def test_logged_out_user_get(self):
         response = self.make_get_request()
@@ -93,58 +96,58 @@ class TestFeedbackMonitorView(STCAdminTest, ViewTests):
         self.assertEqual(405, response.status_code)
 
     @patch("feedback.models.timezone.now")
-    def test_response(self, mock_now):
-        mock_now.return_value = datetime(2017, 7, 31)
+    def test_context(self, mock_now):
+        mock_date = datetime(2017, 7, 31)
+        mock_now.return_value = mock_date
         response = self.make_get_request()
-        response_data = json.loads(response.content.decode("utf8"))
-        self.assertIsInstance(response_data, dict)
-        self.assertIn("total", response_data)
-        self.assertIn("data", response_data)
-        self.assertIsInstance(response_data["data"], list)
-        for item in response_data["data"]:
-            self.assertIsInstance(item, dict)
-            self.assertIn("name", item)
-            self.assertIsInstance(item["name"], str)
-            self.assertIn("feedback", item)
-            self.assertIsInstance(item["feedback"], list)
-            for feedback in item["feedback"]:
-                self.assertIn("name", feedback)
-                self.assertIsInstance(feedback["name"], str)
-                self.assertIn("image_url", feedback)
-                self.assertIsInstance(feedback["image_url"], str)
-                self.assertIn("ids", feedback)
-                self.assertIsInstance(feedback["ids"], list)
-                for id_item in feedback["ids"]:
-                    self.assertIsInstance(id_item, int)
-                self.assertIn("score", feedback)
-                self.assertIsInstance(feedback["score"], int)
-        expected_data = {
-            "total": -32,
-            "data": [
-                {
-                    "name": "Test User",
-                    "feedback": [
-                        {
-                            "name": "Packing Mistake",
-                            "image_url": "/media/feedback/packing_mistake.png",
-                            "ids": [3, 5, 6, 15, 18],
-                            "score": -2,
-                        }
-                    ],
-                    "score": -10,
-                },
-                {
-                    "name": " ",
-                    "feedback": [
-                        {
-                            "name": "Packing Mistake",
-                            "image_url": "/media/feedback/packing_mistake.png",
-                            "ids": [1, 8, 9, 10, 11, 12, 13, 20, 26, 27, 29],
-                            "score": -2,
-                        }
-                    ],
-                    "score": -22,
-                },
-            ],
-        }
-        self.assertEqual(response_data, expected_data)
+        self.assertTrue(hasattr(response, "context"))
+        self.assertIsNotNone(response.context)
+        self.assertIn("users", response.context)
+        users = response.context["users"]
+        self.assertIsInstance(users, list)
+        self.assertEqual(2, len(users))
+        for user in users:
+            self.assertTrue(hasattr(user, "feedback"))
+            self.assertIsInstance(user.feedback, list)
+            self.assertTrue(len(user.feedback) > 0)
+            for item in user.feedback:
+                self.assertIsInstance(item, tuple)
+                self.assertEqual(2, len(item))
+                self.assertIsInstance(item[0], Feedback)
+                self.assertIsInstance(item[1], range)
+                feedback_count = UserFeedback.objects.filter(
+                    user=user,
+                    feedback_type=item[0],
+                    timestamp__year=mock_date.year,
+                    timestamp__month=mock_date.month,
+                ).count()
+                self.assertEqual(feedback_count, len(list(item[1])))
+            self.assertTrue(hasattr(user, "score"))
+            self.assertIsInstance(user.score, int)
+            user_feedback = UserFeedback.objects.filter(
+                user=user,
+                timestamp__year=mock_date.year,
+                timestamp__month=mock_date.month,
+            )
+            expected_score = sum((_.feedback_type.score for _ in user_feedback))
+            self.assertEqual(expected_score, user.score)
+        self.assertIn("total", response.context)
+        self.assertIsInstance(response.context["total"], int)
+        self.assertEqual(-32, response.context["total"])
+
+    @patch("feedback.models.timezone.now")
+    def test_response(self, mock_now):
+        mock_date = datetime(2017, 7, 31)
+        mock_now.return_value = mock_date
+        response = self.make_get_request()
+        content = response.content.decode("utf8")
+        feedback = UserFeedback.objects.filter(
+            user__hidden=False,
+            timestamp__year=mock_date.year,
+            timestamp__month=mock_date.month,
+        )
+        users = {_.user for _ in feedback}
+        for user in users:
+            self.assertIn(user.full_name(), content)
+        self.assertIn("Total:", content)
+        self.assertIn("-32", content)

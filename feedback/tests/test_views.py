@@ -50,7 +50,7 @@ class TestFeedbackQuickview(FeedbackTest, ViewTests):
         response = self.make_get_request()
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(self.template)
-        self.assertIn("get_feedback();", str(response.content))
+        self.assertIn(reverse("monitor:feedback_monitor"), str(response.content))
 
     def test_user_not_in_group_get(self):
         response = self.make_get_request()

@@ -40,7 +40,17 @@
                 );
             }
 
-            {% include 'feedback/get_feedback.html' %}
+            function get_feedback() {
+                $('.pack_count').html('');
+                $('.feedback').html('');
+                $.get("{% url 'monitor:feedback_monitor' %}",
+                    function(response) {
+                        $('.feedback').html(response);
+                        current = 'feedback'
+                    }
+                );
+            }
+
 
             function toggle() {
                 if (current == 'pack_count') {

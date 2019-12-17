@@ -2,14 +2,14 @@
 
 import json
 
+from django.db.models import Count, F, Q
 from django.http import HttpResponse
-from django.utils.timezone import now
+from django.utils import timezone
 from django.views import View
 from django.views.generic.base import TemplateView
 
 from feedback import models
 from home.models import CloudCommerceUser
-from print_audit.models import CloudCommerceOrder
 
 
 class DisplayMonitor(TemplateView):
@@ -23,47 +23,76 @@ class PackCountMonitor(View):
 
     def get(self, request):
         """Return HttpResponse with pack count data."""
-        orders = CloudCommerceOrder.objects.filter(
-            date_created__year=now().year,
-            date_created__month=now().month,
-            date_created__day=now().day,
+        date = timezone.now()
+        qs = (
+            CloudCommerceUser.unhidden.annotate(
+                pack_count=Count(
+                    "cloudcommerceorder",
+                    filter=Q(
+                        cloudcommerceorder__date_created__year=date.year,
+                        cloudcommerceorder__date_created__month=date.month,
+                        cloudcommerceorder__date_created__day=date.day,
+                    ),
+                )
+            )
+            .filter(pack_count__gt=0)
+            .order_by("-pack_count")
         )
-        packers = CloudCommerceUser.unhidden.all()
-        pack_count = [
-            (user.full_name(), orders.filter(user=user).count()) for user in packers
-        ]
-        pack_count = [count for count in pack_count if count[1] > 0]
-        pack_count.sort(key=lambda x: x[1], reverse=True)
+        pack_count = [[_.full_name(), _.pack_count] for _ in qs]
         return HttpResponse(json.dumps(pack_count))
 
 
-class FeedbackMonitor(View):
+class FeedbackMonitor(TemplateView):
     """View for feedback display."""
 
-    def get(self, request):
-        """Return HttpResponse with feedback data for current month."""
-        all_feedback = models.UserFeedback.this_month.all()
-        users = list(set([f.user for f in all_feedback if not f.user.hidden]))
-        data = []
-        for user in users:
-            user_data = {
-                "name": user.full_name(),
-                "feedback": [],
-                "score": models.UserFeedback.this_month.filter(user=user).score(),
-            }
-            feedback = [f for f in all_feedback if f.user == user]
-            feedback_types = list(set([f.feedback_type for f in feedback]))
-            for f_type in feedback_types:
-                feedback_ids = [fb.id for fb in feedback if fb.feedback_type == f_type]
-                user_data["feedback"].append(
-                    {
-                        "name": f_type.name,
-                        "image_url": f_type.image.url,
-                        "ids": feedback_ids,
-                        "score": f_type.score,
-                    }
+    template_name = "monitor/feedback.html"
+
+    def get_feedback(self):
+        """Return feedback data."""
+        date = timezone.now()
+        feedback = (
+            models.UserFeedback.objects.filter(user__hidden=False)
+            .annotate(cc_user_id=F("user__pk"), feedback_id=F("feedback_type__pk"))
+            .values("cc_user_id", "feedback_id")
+            .annotate(
+                count=Count(
+                    "pk",
+                    filter=Q(timestamp__year=date.year, timestamp__month=date.month),
                 )
-            data.append(user_data)
-        data.sort(key=lambda x: x["score"], reverse=True)
-        response = {"total": models.UserFeedback.this_month.all().score(), "data": data}
-        return HttpResponse(json.dumps(response))
+            )
+            .filter(count__gt=0)
+            .order_by("cc_user_id", "feedback_id")
+        )
+        return feedback
+
+    def get_users(self):
+        """Return a list of users with feedback data."""
+        feedback_types = {_.id: _ for _ in models.Feedback.objects.all()}
+        feedback = self.get_feedback()
+        users = list(CloudCommerceUser.unhidden.all())
+        for user in users:
+            user.score = 0
+            user.feedback = []
+            for record in feedback:
+                if record["cc_user_id"] == user.id:
+                    feedback_type = feedback_types[record["feedback_id"]]
+                    count = record["count"]
+                    user.score += feedback_type.score * count
+                    user.feedback.append((feedback_type, range(count)))
+            user.feedback = sorted(
+                user.feedback, key=lambda x: x[0].score, reverse=True
+            )
+        users = sorted(
+            [user for user in users if user.feedback],
+            key=lambda x: x.score,
+            reverse=True,
+        )
+        return users
+
+    def get_context_data(self, *args, **kwargs):
+        """Return HttpResponse with feedback data for current month."""
+        context = super().get_context_data(*args, **kwargs)
+        users = self.get_users()
+        context["users"] = users
+        context["total"] = sum((user.score for user in users))
+        return context
