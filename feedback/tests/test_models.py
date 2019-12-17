@@ -54,16 +54,6 @@ class TestUserFeedback(STCAdminTest):
             str(feedback),
         )
 
-    def test_scored_queryset(self):
-        queryset = models.UserFeedback.objects.all()
-        total_score = queryset.score()
-        expected_score = sum([_.feedback_type.score for _ in queryset])
-        self.assertEqual(expected_score, total_score)
-        queryset = models.UserFeedback.objects.filter(user__id=1)
-        user_score = queryset.score()
-        expected_score = sum([_.feedback_type.score for _ in queryset])
-        self.assertEqual(expected_score, user_score)
-
     @patch("print_audit.models.timezone.now")
     def test_this_month_manager(self, mock_now):
         mock_time = timezone.make_aware(datetime(2018, 6, 12))
