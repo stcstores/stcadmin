@@ -61,7 +61,7 @@
 {% block script %}{{ block.super }}
 <script>
   $(document).ready(function() {
-    $.get("{% url 'monitor:feedback_monitor' %}",
+    $.get("{% url 'feedback:monitor' %}",
         function(response) {
             $('.feedback').html(response);
             current = 'feedback'

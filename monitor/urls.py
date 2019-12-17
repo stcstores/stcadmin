@@ -13,5 +13,4 @@ urlpatterns = [
         views.PackCountMonitor.as_view(),
         name="pack_count_monitor",
     ),
-    path("feedback_monitor/", views.FeedbackMonitor.as_view(), name="feedback_monitor"),
 ]

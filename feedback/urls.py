@@ -36,4 +36,5 @@ urlpatterns = [
         views.FeedbackDetails.as_view(),
         name="feedback_details",
     ),
+    path("monitor/", views.Monitor.as_view(), name="monitor"),
 ]
