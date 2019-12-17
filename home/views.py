@@ -71,3 +71,9 @@ class Version(TemplateView):
         context["commit_hash"] = self.get_current_commit_hash()
         context["commit_message"] = self.get_current_commit_message()
         return context
+
+
+class DisplayMonitor(TemplateView):
+    """View for display monitor."""
+
+    template_name = "home/monitor.html"

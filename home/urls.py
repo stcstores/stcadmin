@@ -25,5 +25,6 @@ urlpatterns = [
             template_name="home/robots.txt", content_type="text/plain"
         ),
     ),
+    path("monitor/", views.DisplayMonitor.as_view(), name="monitor"),
     path("version/", views.Version.as_view(), name="version"),
 ]

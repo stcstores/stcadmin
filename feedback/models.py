@@ -23,27 +23,7 @@ class Feedback(models.Model):
         return self.name
 
 
-class ScoredQuerySet(models.QuerySet):
-    """Add score method to querysets for UserFeedback model."""
-
-    def score(self):
-        """Return accumulated score for feedback in queryset."""
-        return sum(o.feedback_type.score for o in self.all())
-
-
-class UserFeedbackManager(models.Manager):
-    """
-    Manager for UserFeedback model.
-
-    Replaces QuerySet class with ScoredQuerySet.
-    """
-
-    def get_queryset(self):
-        """Use ScoredQuerySet class in place of QuerySet."""
-        return ScoredQuerySet(self.model)
-
-
-class UserFeedbackMonthlyManager(UserFeedbackManager):
+class UserFeedbackMonthlyManager(models.Manager):
     """
     Manager for UserFeedback.
 
@@ -53,8 +33,12 @@ class UserFeedbackMonthlyManager(UserFeedbackManager):
     def get_queryset(self):
         """Return QuerySet of User Feedback dated in the current month."""
         current_time = timezone.now()
-        return ScoredQuerySet(self.model).filter(
-            timestamp__month=current_time.month, timestamp__year=current_time.year
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                timestamp__month=current_time.month, timestamp__year=current_time.year
+            )
         )
 
 
@@ -67,7 +51,7 @@ class UserFeedback(models.Model):
     order_id = models.CharField(max_length=10, blank=True, null=True)
     note = models.TextField(blank=True, null=True)
 
-    objects = UserFeedbackManager()
+    objects = models.Manager()
     this_month = UserFeedbackMonthlyManager()
 
     class Meta:
