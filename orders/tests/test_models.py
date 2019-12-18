@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from unittest.mock import Mock, call, patch
 
 import pytz
@@ -589,3 +589,97 @@ class TestPackingRecord(STCAdminTest):
         self.mock_CCAPI.customer_logs.return_value = [mock_log]
         models.PackingRecord._update_order(order)
         self.assertTrue(CloudCommerceUser.objects.filter(user_id=new_user_ID).exists())
+
+
+class TestUpdateOrder(STCAdminTest):
+    fixtures = ("orders/order_update",)
+
+    def test_create_object(self):
+        update = models.OrderUpdate.objects.create()
+        self.assertEqual(update.IN_PROGRESS, update.status)
+        self.assertIsNone(update.completed_at)
+        self.assertIsInstance(update.started_at, datetime)
+
+    def test_str(self):
+        date = make_aware(datetime(2019, 12, 3, 12, 33, 27))
+        update = models.OrderUpdate.objects.create(
+            completed_at=date + timedelta(minutes=15),
+            status=models.OrderUpdate.COMPLETE,
+        )
+        update.started_at = date
+        update.save()
+        date_string = date.strftime("%Y-%m-%d %H:%M:%S")
+        expected = f"OrderUpdate {date_string} - Complete"
+        self.assertEqual(str(update), expected)
+
+    @patch("orders.models.update.Order")
+    @patch("orders.models.update.PackingRecord")
+    @patch("orders.models.update.timezone.now")
+    def test_update(self, mock_now, mock_packing_record, mock_order):
+        mock_date = make_aware(datetime(2019, 12, 10))
+        mock_now.return_value = mock_date
+        update = models.OrderUpdate.update()
+        update.refresh_from_db()
+        self.assertEqual(update.COMPLETE, update.status)
+        self.assertEqual(mock_date, update.completed_at)
+        mock_packing_record.update.assert_called_once()
+        mock_order.update.assert_called_once()
+
+    @patch("orders.models.update.Order")
+    @patch("orders.models.update.PackingRecord")
+    @patch("orders.models.update.timezone.now")
+    def test_update_order_error(self, mock_now, mock_packing_record, mock_order):
+        mock_date = make_aware(datetime(2019, 12, 10))
+        mock_now.return_value = mock_date
+        mock_order.update.side_effect = Mock(side_effect=Exception("Test"))
+        update = models.OrderUpdate.update()
+        self.assertEqual(update.ERROR, update.status)
+        self.assertEqual(mock_date, update.completed_at)
+        mock_packing_record.update.assert_not_called()
+
+    @patch("orders.models.update.Order")
+    @patch("orders.models.update.PackingRecord")
+    @patch("orders.models.update.timezone.now")
+    def test_update_packing_record_error(
+        self, mock_now, mock_packing_record, mock_order
+    ):
+        mock_date = make_aware(datetime(2019, 12, 10))
+        mock_now.return_value = mock_date
+        mock_packing_record.update.side_effect = Mock(side_effect=Exception("Test"))
+        update = models.OrderUpdate.update()
+        self.assertEqual(update.ERROR, update.status)
+        self.assertEqual(mock_date, update.completed_at)
+        mock_order.update.assert_called_once()
+        mock_packing_record.update.assert_called_once()
+
+    @patch("orders.models.update.Order")
+    @patch("orders.models.update.PackingRecord")
+    def test_update_already_in_progress(self, mock_packing_record, mock_order):
+        models.OrderUpdate.objects.create()
+        self.assertTrue(models.OrderUpdate.is_in_progress())
+        with self.assertRaises(models.OrderUpdate.OrderUpdateInProgressError):
+            models.OrderUpdate.update()
+        mock_order.update.assert_not_called()
+        mock_packing_record.update.assert_not_called()
+
+    def test_is_in_progress(self):
+        self.assertFalse(
+            models.OrderUpdate.objects.filter(
+                status=models.OrderUpdate.IN_PROGRESS
+            ).exists()
+        )
+        self.assertFalse(models.OrderUpdate.is_in_progress())
+        update = models.OrderUpdate.objects.create()
+        update.status = update.IN_PROGRESS
+        update.save()
+        self.assertTrue(models.OrderUpdate.is_in_progress())
+
+    def test_latest_complete(self):
+        self.assertFalse(models.OrderUpdate.is_in_progress())
+        latest_update = models.OrderUpdate.objects.latest("completed_at")
+        self.assertEqual(latest_update, models.OrderUpdate.latest())
+
+    def test_latest_in_progress(self):
+        self.assertFalse(models.OrderUpdate.is_in_progress())
+        update = models.OrderUpdate.objects.create()
+        self.assertEqual(update, models.OrderUpdate.latest())

@@ -60,3 +60,13 @@ class PackingRecordAdmin(admin.ModelAdmin):
     fields = ("order", "packed_by")
     list_display = ("order", "packed_by")
     list_editable = ("packed_by",)
+
+
+@admin.register(models.OrderUpdate)
+class OrderUpdateAdmin(admin.ModelAdmin):
+    """Admin for the OrderUpdate models."""
+
+    fields = ("status", "started_at", "completed_at")
+    list_display = ("__str__", "status", "started_at", "completed_at")
+    list_editable = ("status",)
+    list_filter = ("status",)
