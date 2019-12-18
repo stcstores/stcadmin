@@ -11,6 +11,9 @@
     {% if "inventory" in groups %}
     <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
     {% endif %}
+    {% if "orders" in groups %}
+    <li><a href="{% url 'orders:index' %}">Orders</a></li>
+    {% endif %}
     {% if 'labelmaker' in groups %}
     <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
     {% endif %}

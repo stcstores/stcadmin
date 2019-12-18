@@ -1,10 +1,10 @@
-{% extends "print_audit/base.html" %}
+{% extends "orders/base.html" %}
 {% load static %}
 
 {% block content %}
 <h1>Breakages</h1>
 <br><br>
-<a href="{% url 'print_audit:add_breakage' %}"><button>Add Breakage</button></a>
+<a href="{% url 'orders:add_breakage' %}"><button>Add Breakage</button></a>
 <table>
     <tr>
         <th>Order ID</th>
@@ -23,12 +23,12 @@
             <td>{{ breakage.note }}</td>
             <td>{{ breakage.timestamp }}</td>
             <td>
-                <a href="{% url 'print_audit:update_breakage' breakage.id %}">
+                <a href="{% url 'orders:update_breakage' breakage.id %}">
                     <button>Edit</button>
                 </a>
             </td>
             <td>
-                <a href="{% url 'print_audit:delete_breakage' breakage.id %}">
+                <a href="{% url 'orders:delete_breakage' breakage.id %}">
                     <button>Delete</button>
                 </a>
             </td>

@@ -64,7 +64,9 @@ class Breakage(models.Model):
     product_sku = models.CharField(max_length=20)
     order_id = models.CharField(max_length=10)
     note = models.TextField(blank=True, null=True)
-    packer = models.ForeignKey(CloudCommerceUser, on_delete=models.CASCADE)
+    packer = models.ForeignKey(
+        CloudCommerceUser, on_delete=models.CASCADE, related_name="old_breakage"
+    )
     timestamp = models.DateTimeField(default=timezone.now)
 
     class Meta:
