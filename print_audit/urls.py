@@ -21,9 +21,4 @@ urlpatterns = [
         views.DeleteBreakage.as_view(),
         name="delete_breakage",
     ),
-    path(
-        "pack_count_monitor/",
-        views.PackCountMonitor.as_view(),
-        name="pack_count_monitor",
-    ),
 ]
