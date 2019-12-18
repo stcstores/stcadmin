@@ -252,6 +252,17 @@ class TestOrder(STCAdminTest):
         self.assertIsNone(order.shipping_service)
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 0)
 
+    def test_invalid_country_code(self):
+        mock_order = self.create_mock_order(delivery_country_code=9999)
+        with self.assertRaises(models.Order.CountryNotRecognisedError):
+            models.Order.create_or_update_order(mock_order)
+
+    def test_invalid_shipping_rule(self):
+        mock_order = self.create_mock_order(default_cs_rule_name="Invalid Rule Name")
+        order = models.Order.create_or_update_order(mock_order)
+        self.assertIsNone(order.shipping_rule)
+        self.assertIsNone(order.shipping_service)
+
     def test_get_orders_for_dispatch(self):
         mock_orders = [
             self.create_mock_order(order_id=_) for _ in ("294039830", "856939380")

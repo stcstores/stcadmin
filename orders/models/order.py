@@ -12,6 +12,17 @@ from .channel import Channel
 from .product_sale import ProductSale
 
 
+class CountryNotRecognisedError(ValueError):
+    """Exception raised when a country cannot be found by country ID."""
+
+    def __init__(self, country_code, order_ID):
+        """Raise exception."""
+        exception_string = (
+            f"Country code {country_code} from order {order_ID} does not exist."
+        )
+        super().__init__(exception_string)
+
+
 class DispatchedManager(models.Manager):
     """Manager for dispatched orders."""
 
@@ -85,6 +96,8 @@ class Order(models.Model):
         Service, blank=True, null=True, on_delete=models.PROTECT
     )
 
+    CountryNotRecognisedError = CountryNotRecognisedError
+
     objects = models.Manager()
     dispatched = DispatchedManager()
     undispatched = UndispatchedManager()
@@ -115,7 +128,7 @@ class Order(models.Model):
     def update(cls, number_of_days=None):
         """Update orders from Cloud Commerce."""
         orders_to_dispatch = cls.get_orders_for_dispatch()
-        dispatched_orders = cls.get_dispatched_orders()
+        dispatched_orders = cls.get_dispatched_orders(number_of_days=number_of_days)
         orders = orders_to_dispatch + dispatched_orders
         for order in orders:
             order_obj = cls.create_or_update_order(order)
@@ -184,9 +197,17 @@ class Order(models.Model):
     def order_details(cls, order):
         """Return a dict of order details."""
         channel, _ = Channel._default_manager.get_or_create(name=order.channel_name)
-        country = Country._default_manager.get(country_ID=order.delivery_country_code)
+        try:
+            country = Country._default_manager.get(
+                country_ID=order.delivery_country_code
+            )
+        except Country.DoesNotExist:
+            raise CountryNotRecognisedError(order.country_code, order.order_id)
         shipping_rule = cls.get_shipping_rule(order)
-        shipping_service = shipping_rule.service
+        if shipping_rule is not None:
+            shipping_service = shipping_rule.service
+        else:
+            shipping_service = None
         dispatched_at = cls.parse_dispatch_date(order.dispatch_date)
         kwargs = {
             "order_ID": order.order_id,
