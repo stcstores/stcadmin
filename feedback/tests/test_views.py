@@ -5,9 +5,11 @@ from unittest.mock import Mock, patch
 from django.contrib.auth.models import Group
 from django.db.models.query import QuerySet
 from django.shortcuts import reverse
+from django.utils import timezone
 
 from feedback import forms, models, views
 from home.models import CloudCommerceUser
+from orders.models import PackingRecord
 from stcadmin.tests.stcadmin_test import STCAdminTest, ViewTests
 
 
@@ -72,6 +74,14 @@ class TestUserFeedback(FeedbackTest, ViewTests):
     template = "feedback/user_feedback.html"
     fixtures = (
         "home/cloud_commerce_user",
+        "shipping/currency",
+        "shipping/country",
+        "shipping/services",
+        "shipping/shipping_rules",
+        "orders/channels",
+        "orders/orders",
+        "orders/product_sales",
+        "orders/packing_record",
         "feedback/feedback",
         "feedback/user_feedback",
     )
@@ -87,14 +97,27 @@ class TestUserFeedback(FeedbackTest, ViewTests):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(self.template)
 
-    def test_content(self):
+    @patch("feedback.forms.timezone.now")
+    def test_content(self, mock_now):
+        mock_date = timezone.make_aware(datetime(2019, 12, 3))
+        mock_now.return_value = mock_date
         response = self.make_get_request()
         content = str(response.content)
         self.assertTrue(CloudCommerceUser.unhidden.exists())
         for user in CloudCommerceUser.unhidden.all():
             self.assertIn(user.full_name(), content)
+            pack_count = PackingRecord.objects.filter(
+                order__dispatched_at__year=mock_date.year,
+                order__dispatched_at__month=mock_date.month,
+                order__dispatched_at__day=mock_date.day,
+                packed_by=user,
+            ).count()
+            self.assertIn(str(pack_count), content)
 
-    def test_context(self):
+    @patch("feedback.forms.timezone.now")
+    def test_context(self, mock_now):
+        mock_date = timezone.make_aware(datetime(2019, 12, 3))
+        mock_now.return_value = mock_date
         response = self.make_get_request()
         self.assertTrue(hasattr(response, "context"))
         self.assertIsNotNone(response.context)
@@ -104,6 +127,7 @@ class TestUserFeedback(FeedbackTest, ViewTests):
         user_ids = CloudCommerceUser.unhidden.values_list("id", flat=True)
         context_ids = [user["id"] for user in users]
         self.assertCountEqual(user_ids, context_ids)
+        self.assertEqual(3, len(users))
         for user in users:
             self.assertIn("feedback_counts", user)
             feedback_counts = user["feedback_counts"]
@@ -126,6 +150,13 @@ class TestUserFeedback(FeedbackTest, ViewTests):
                 models.CloudCommerceUser.objects.get(id=user["id"]).full_name(),
                 user["full_name"],
             )
+            pack_count = PackingRecord.objects.filter(
+                order__dispatched_at__year=mock_date.year,
+                order__dispatched_at__month=mock_date.month,
+                order__dispatched_at__day=mock_date.day,
+                packed_by__id=user["id"],
+            ).count()
+            self.assertEqual(pack_count, user["pack_count"])
         self.assertIn("feedback_types", response.context)
         feedback_types = response.context["feedback_types"]
         self.assertIsInstance(feedback_types, QuerySet)
