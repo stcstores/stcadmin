@@ -22,6 +22,16 @@ class OrderViewTest(STCAdminTest):
         super().remove_group(self.group_name)
 
 
+class TestIndexView(OrderViewTest, ViewTests):
+    URL = "/orders/"
+    template = "orders/index.html"
+
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, self.template)
+
+
 class TestPackCountMonitorView(STCAdminTest, ViewTests):
     fixtures = (
         "home/cloud_commerce_user",
