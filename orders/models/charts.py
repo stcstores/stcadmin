@@ -1,4 +1,4 @@
-"""Charts for print audit app."""
+"""Order charts."""
 
 import datetime
 

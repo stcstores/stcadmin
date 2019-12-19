@@ -7,7 +7,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from home.models import CloudCommerceUser
 from home.views import UserInGroupMixin
-from orders import models
+from orders import forms, models
 
 
 class OrdersUserMixin(UserInGroupMixin):
@@ -99,4 +99,32 @@ class PackCountMonitor(TemplateView):
         )
         pack_count = [[_.full_name(), _.pack_count] for _ in qs]
         context["pack_counts"] = pack_count
+        return context
+
+
+class Charts(OrdersUserMixin, TemplateView):
+    """View for displaying charts."""
+
+    template_name = "orders/charts.html"
+    form_class = forms.ChartSettingsForm
+    DEFAULT_WEEKS_TO_DISPLAY = 80
+
+    def post(self, *args, **kwargs):
+        """Process POST requests in the same way as GET requests."""
+        return self.get(*args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context data for template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["form"] = self.form_class(
+            self.request.POST or None,
+            initial={"number_of_weeks": self.DEFAULT_WEEKS_TO_DISPLAY},
+        )
+        orders_by_week_number_of_weeks = int(
+            self.request.POST.get("number_of_weeks", self.DEFAULT_WEEKS_TO_DISPLAY)
+        )
+        context["orders_by_week_chart"] = models.charts.OrdersByWeek(
+            number_of_weeks=orders_by_week_number_of_weeks
+        )
+        context["orders_by_day_chart"] = models.charts.OrdersByDay()
         return context

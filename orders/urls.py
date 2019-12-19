@@ -24,4 +24,5 @@ urlpatterns = [
         views.DeleteBreakage.as_view(),
         name="delete_breakage",
     ),
+    path("charts/", views.Charts.as_view(), name="charts"),
 ]
