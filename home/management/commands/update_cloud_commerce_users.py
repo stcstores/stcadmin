@@ -1,4 +1,4 @@
-"""Management commands for the Print Audit app."""
+"""Update Cloud Commerce User usernames."""
 
 import logging
 
@@ -13,16 +13,16 @@ logger = logging.getLogger("management_commands")
 class Command(BaseCommand):
     """Update print audit."""
 
-    help = "Updates Print Audit"
+    help = "Update Cloud Commerce User usernames."
 
     def handle(self, *args, **options):
-        """Update print audit."""
+        """Update Cloud Commerce User usernames."""
         try:
             cc_users = CCAPI.get_users()
-            for user in CloudCommerceUser.objects.filter(hidden=False):
+            for user in CloudCommerceUser.unhidden.all():
                 try:
                     cc_user = cc_users[user.user_id]
-                except IndexError:
+                except KeyError:
                     pass
                 else:
                     if cc_user.first_name and cc_user.second_name:
