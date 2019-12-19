@@ -643,7 +643,13 @@ class TestUpdateOrder(STCAdminTest):
         mock_date = make_aware(datetime(2019, 12, 10))
         mock_now.return_value = mock_date
         mock_order.update.side_effect = Mock(side_effect=Exception("Test"))
-        update = models.OrderUpdate.update()
+        with self.assertRaises(Exception):
+            models.OrderUpdate.update()
+        self.assertEqual(
+            1,
+            models.OrderUpdate.objects.filter(status=models.OrderUpdate.ERROR).count(),
+        )
+        update = models.OrderUpdate.objects.get(status=models.OrderUpdate.ERROR)
         self.assertEqual(update.ERROR, update.status)
         self.assertEqual(mock_date, update.completed_at)
         mock_packing_record.update.assert_not_called()
@@ -654,10 +660,19 @@ class TestUpdateOrder(STCAdminTest):
     def test_update_packing_record_error(
         self, mock_now, mock_packing_record, mock_order
     ):
+        self.assertFalse(
+            models.OrderUpdate.objects.filter(status=models.OrderUpdate.ERROR).exists()
+        )
         mock_date = make_aware(datetime(2019, 12, 10))
         mock_now.return_value = mock_date
         mock_packing_record.update.side_effect = Mock(side_effect=Exception("Test"))
-        update = models.OrderUpdate.update()
+        with self.assertRaises(Exception):
+            models.OrderUpdate.update()
+        self.assertEqual(
+            1,
+            models.OrderUpdate.objects.filter(status=models.OrderUpdate.ERROR).count(),
+        )
+        update = models.OrderUpdate.objects.get(status=models.OrderUpdate.ERROR)
         self.assertEqual(update.ERROR, update.status)
         self.assertEqual(mock_date, update.completed_at)
         mock_order.update.assert_called_once()

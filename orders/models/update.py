@@ -57,11 +57,11 @@ class OrderUpdate(models.Model):
             with transaction.atomic():
                 Order.update()
                 PackingRecord.update()
-        except Exception:
+        except Exception as e:
             order_update.mark_error()
+            raise e
         else:
             order_update.mark_complete()
-        order_update.save()
         return order_update
 
     @classmethod

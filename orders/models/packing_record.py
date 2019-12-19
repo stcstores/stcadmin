@@ -28,10 +28,9 @@ class PackingRecord(models.Model):
 
     @classmethod
     def _orders_to_update(cls):
-        missing_records = Order.dispatched.exclude(
-            id__in=cls._default_manager.values_list("order", flat=True)
+        return Order.dispatched.filter(
+            packingrecord__isnull=True, customer_ID__isnull=False
         )
-        return missing_records.exclude(customer_ID__isnull=True)
 
     @classmethod
     def _update_order(cls, order):
