@@ -24,7 +24,6 @@ urlpatterns = [
         "price_calculator/",
         include("price_calculator.urls", namespace="price_calculator"),
     ),
-    path("print_audit/", include("print_audit.urls", namespace="print_audit")),
     path(
         "spring_manifest/", include("spring_manifest.urls", namespace="spring_manifest")
     ),

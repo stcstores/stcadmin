@@ -427,7 +427,6 @@ class TestFeedbackDetails(FeedbackTest, ViewTests):
 class TestFeedbackMonitorView(STCAdminTest, ViewTests):
     fixtures = (
         "home/cloud_commerce_user",
-        "print_audit/cloud_commerce_order",
         "feedback/feedback",
         "feedback/user_feedback",
     )
