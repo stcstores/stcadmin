@@ -1,11 +1,25 @@
 from datetime import datetime
 from unittest.mock import patch
 
+from django.shortcuts import reverse
 from django.utils import timezone
+from django.utils.html import escape
 
 from home.models import CloudCommerceUser
 from orders import models
 from stcadmin.tests.stcadmin_test import STCAdminTest, ViewTests
+
+
+class OrderViewTest(STCAdminTest):
+    group_name = "orders"
+
+    def setUp(self):
+        self.create_user()
+        self.add_group("orders")
+        self.login_user()
+
+    def remove_group(self):
+        super().remove_group(self.group_name)
 
 
 class TestPackCountMonitorView(STCAdminTest, ViewTests):
@@ -62,3 +76,129 @@ class TestPackCountMonitorView(STCAdminTest, ViewTests):
                 packed_by=user,
             ).count()
             self.assertIn(str(pack_count), content)
+
+
+class TestBreakagesView(OrderViewTest, ViewTests):
+    fixtures = ("home/cloud_commerce_user", "orders/breakage")
+
+    URL = "/orders/breakages/"
+    template = "orders/breakages.html"
+
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(self.template)
+
+    def test_context(self):
+        response = self.make_get_request()
+        self.assertTrue(hasattr(response, "context"))
+        self.assertIsNotNone(response.context)
+        self.assertIn("breakages", response.context)
+        breakages = response.context["breakages"]
+        self.assertCountEqual(list(breakages), list(models.Breakage.objects.all()))
+
+    def test_content(self):
+        response = self.make_get_request()
+        content = response.content.decode("utf8")
+        for breakage in models.Breakage.objects.all():
+            self.assertIn(breakage.order_id, content)
+            self.assertIn(breakage.product_sku, content)
+            self.assertIn(escape(breakage.note), content)
+
+
+class TestAddBreakageView(OrderViewTest, ViewTests):
+    fixtures = ("home/cloud_commerce_user", "orders/breakage")
+    URL = "/orders/add_breakage/"
+    template = "orders/breakage_form.html"
+
+    def get_form_data(self):
+        return {
+            "product_sku": "4HJ-UL4-9YT",
+            "order_id": "0238490383",
+            "note": "A breakage note",
+            "packer": 2,
+        }
+
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(self.template)
+
+    def test_post_method(self):
+        form_data = self.get_form_data()
+        self.assertFalse(
+            models.Breakage.objects.filter(order_id=form_data["order_id"]).exists()
+        )
+        response = self.client.post(self.URL, form_data)
+        self.assertRedirects(response, reverse("orders:breakages"))
+        self.assertTrue(
+            models.Breakage.objects.filter(order_id=form_data["order_id"]).exists()
+        )
+        breakage = models.Breakage.objects.get(order_id=form_data["order_id"])
+        self.assertEqual(breakage.product_sku, form_data["product_sku"])
+        self.assertEqual(breakage.order_id, form_data["order_id"])
+        self.assertEqual(breakage.note, form_data["note"])
+        self.assertEqual(breakage.packer.id, form_data["packer"])
+
+
+class TestUpdateBreakageView(OrderViewTest, ViewTests):
+    fixtures = ("home/cloud_commerce_user", "orders/breakage")
+    template = "orders/breakage_form.html"
+
+    def get_URL(self, breakage_ID=None):
+        if breakage_ID is None:
+            breakage_ID = 1
+        return f"/orders/update_breakage/{breakage_ID}/"
+
+    def get_form_data(self):
+        return {
+            "product_sku": "4HJ-UL4-9YT",
+            "order_id": "0238490383",
+            "note": "A breakage note",
+            "packer": 2,
+        }
+
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(self.template)
+
+    def test_content(self):
+        response = self.make_get_request()
+        breakage = models.Breakage.objects.get(id=1)
+        content = response.content.decode("utf8")
+        self.assertIn(breakage.product_sku, content)
+        self.assertIn(breakage.order_id, content)
+        self.assertIn(breakage.note, content)
+        self.assertIn(breakage.packer.full_name(), content)
+
+    def test_post_method(self):
+        form_data = self.get_form_data()
+        response = self.client.post(self.get_URL(), form_data)
+        self.assertRedirects(response, reverse("orders:breakages"))
+        breakage = models.Breakage.objects.get(id=1)
+        self.assertEqual(breakage.product_sku, form_data["product_sku"])
+        self.assertEqual(breakage.order_id, form_data["order_id"])
+        self.assertEqual(breakage.note, form_data["note"])
+        self.assertEqual(breakage.packer.id, form_data["packer"])
+
+
+class TestDeleteBreakageView(OrderViewTest, ViewTests):
+    fixtures = ("home/cloud_commerce_user", "orders/breakage")
+    template = "orders/breakage_confirm_delete.html"
+
+    def get_URL(self, breakage_ID=None):
+        if breakage_ID is None:
+            breakage_ID = 1
+        return f"/orders/delete_breakage/{breakage_ID}/"
+
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(self.template)
+        self.assertTrue(models.Breakage.objects.filter(id=1).exists())
+
+    def test_post_method(self):
+        response = self.make_post_request()
+        self.assertRedirects(response, reverse("orders:breakages"))
+        self.assertFalse(models.Breakage.objects.filter(id=1).exists())

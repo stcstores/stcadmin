@@ -694,3 +694,27 @@ class TestUpdateOrder(STCAdminTest):
         self.assertFalse(models.OrderUpdate.is_in_progress())
         update = models.OrderUpdate.objects.create()
         self.assertEqual(update, models.OrderUpdate.latest())
+
+
+class TestBreakage(STCAdminTest):
+    fixtures = ("home/cloud_commerce_user", "orders/breakage")
+
+    def test_create_object(self):
+        product_sku = "3TF-8BG-HB9"
+        order_id = "384393282"
+        note = "Item Broken"
+        packer = CloudCommerceUser.objects.get(id=1)
+        timestamp = make_aware(datetime(2019, 12, 3))
+        breakage = models.Breakage.objects.create(
+            product_sku=product_sku,
+            order_id=order_id,
+            note=note,
+            packer=packer,
+            timestamp=timestamp,
+        )
+        self.assertEqual(product_sku, breakage.product_sku)
+        self.assertEqual(order_id, breakage.order_id)
+        self.assertEqual(note, breakage.note)
+        self.assertEqual(packer, breakage.packer)
+        self.assertEqual(timestamp, breakage.timestamp)
+        self.assertEqual("3TF-8BG-HB9 on order 384393282", str(breakage))
