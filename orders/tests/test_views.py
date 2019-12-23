@@ -4,9 +4,10 @@ from unittest.mock import patch
 from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.html import escape
+from isoweek import Week
 
 from home.models import CloudCommerceUser
-from orders import models
+from orders import forms, models
 from stcadmin.tests.stcadmin_test import STCAdminTest, ViewTests
 
 
@@ -212,3 +213,63 @@ class TestDeleteBreakageView(OrderViewTest, ViewTests):
         response = self.make_post_request()
         self.assertRedirects(response, reverse("orders:breakages"))
         self.assertFalse(models.Breakage.objects.filter(id=1).exists())
+
+
+class TestChartsView(OrderViewTest, ViewTests):
+    fixtures = (
+        "home/cloud_commerce_user",
+        "shipping/currency",
+        "shipping/country",
+        "shipping/services",
+        "shipping/shipping_rules",
+        "orders/channels",
+        "orders/orders",
+        "orders/product_sales",
+        "orders/packing_record",
+    )
+
+    URL = "/orders/charts/"
+    template = "orders/charts.html"
+
+    @patch("orders.models.charts.Week.thisweek")
+    @patch("orders.models.charts.timezone.now")
+    def test_get_method(self, mock_now, mock_thisweek):
+        mock_date = timezone.make_aware(datetime(2019, 12, 5))
+        mock_now.return_value = mock_date
+        mock_thisweek.return_value = Week(mock_date.year, mock_date.isocalendar()[1])
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, self.template)
+
+    @patch("orders.models.charts.Week.thisweek")
+    @patch("orders.models.charts.timezone.now")
+    def test_context(self, mock_now, mock_thisweek):
+        mock_date = timezone.make_aware(datetime(2019, 12, 5))
+        mock_now.return_value = mock_date
+        mock_thisweek.return_value = Week(mock_date.year, mock_date.isocalendar()[1])
+        response = self.make_get_request()
+        self.assertTrue(hasattr(response, "context"))
+        self.assertIsNotNone(response.context)
+        self.assertIn("form", response.context)
+        self.assertIsInstance(response.context["form"], forms.ChartSettingsForm)
+        self.assertIn("orders_by_week_chart", response.context)
+        self.assertIsInstance(
+            response.context["orders_by_week_chart"], models.charts.OrdersByWeek
+        )
+        self.assertIn("orders_by_day_chart", response.context)
+        self.assertIsInstance(
+            response.context["orders_by_day_chart"], models.charts.OrdersByDay
+        )
+
+    @patch("orders.models.charts.Week.thisweek")
+    @patch("orders.models.charts.timezone.now")
+    def test_post_method(self, mock_now, mock_thisweek):
+        mock_date = timezone.make_aware(datetime(2019, 12, 5))
+        mock_now.return_value = mock_date
+        mock_thisweek.return_value = Week(mock_date.year, mock_date.isocalendar()[1])
+        response = self.client.post(self.URL, {"number_of_weeks": 5})
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(self.template)
+        self.assertEqual(
+            5, len(response.context["orders_by_week_chart"].get_datasets()[0]["data"])
+        )
