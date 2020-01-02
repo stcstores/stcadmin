@@ -24,6 +24,57 @@ class TestChannel(STCAdminTest):
         self.assertEqual(channel.name, str(channel))
 
 
+class TestUrgentSince(STCAdminTest):
+    @patch("orders.models.order.timezone.now")
+    def test_urgent_since_monday(self, mock_now):
+        mock_now.return_value = make_aware(datetime(2019, 12, 23))
+        self.assertEqual(
+            make_aware(datetime(2019, 12, 20)), models.order.urgent_since()
+        )
+
+    @patch("orders.models.order.timezone.now")
+    def test_urgent_since_tuesday(self, mock_now):
+        mock_now.return_value = make_aware(datetime(2019, 12, 24))
+        self.assertEqual(
+            make_aware(datetime(2019, 12, 23)), models.order.urgent_since()
+        )
+
+    @patch("orders.models.order.timezone.now")
+    def test_urgent_since_wednesday(self, mock_now):
+        mock_now.return_value = make_aware(datetime(2019, 12, 25))
+        self.assertEqual(
+            make_aware(datetime(2019, 12, 24)), models.order.urgent_since()
+        )
+
+    @patch("orders.models.order.timezone.now")
+    def test_urgent_since_thursday(self, mock_now):
+        mock_now.return_value = make_aware(datetime(2019, 12, 26))
+        self.assertEqual(
+            make_aware(datetime(2019, 12, 25)), models.order.urgent_since()
+        )
+
+    @patch("orders.models.order.timezone.now")
+    def test_urgent_since_friday(self, mock_now):
+        mock_now.return_value = make_aware(datetime(2019, 12, 27))
+        self.assertEqual(
+            make_aware(datetime(2019, 12, 26)), models.order.urgent_since()
+        )
+
+    @patch("orders.models.order.timezone.now")
+    def test_urgent_since_saturday(self, mock_now):
+        mock_now.return_value = make_aware(datetime(2019, 12, 28))
+        self.assertEqual(
+            make_aware(datetime(2019, 12, 27)), models.order.urgent_since()
+        )
+
+    @patch("orders.models.order.timezone.now")
+    def test_urgent_since_sunday(self, mock_now):
+        mock_now.return_value = make_aware(datetime(2019, 12, 29))
+        self.assertEqual(
+            make_aware(datetime(2019, 12, 27)), models.order.urgent_since()
+        )
+
+
 class TestOrder(STCAdminTest):
     fixtures = (
         "shipping/currency",
@@ -446,6 +497,14 @@ class TestOrder(STCAdminTest):
         for order in queryset:
             self.assertFalse(order.shipping_rule.priority)
             self.assertIsNone(order.dispatched_at)
+
+    @patch("orders.models.order.timezone.now")
+    def test_urgent_manager(self, mock_now):
+        mock_now.return_value = make_aware(datetime(2019, 12, 4))
+        queryset = models.Order.urgent.all()
+        self.assertEqual(2, queryset.count())
+        for order in queryset:
+            self.assertLessEqual(order.recieved_at, models.order.urgent_since())
 
 
 class TestProductSale(STCAdminTest):

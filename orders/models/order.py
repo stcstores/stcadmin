@@ -1,10 +1,10 @@
 """The Order model."""
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytz
 from ccapi import CCAPI
 from django.db import models
-from django.utils.timezone import make_aware
+from django.utils import timezone
 
 from shipping.models import Country, Service, ShippingRule
 
@@ -21,6 +21,16 @@ class CountryNotRecognisedError(ValueError):
             f"Country code {country_code} from order {order_ID} does not exist."
         )
         super().__init__(exception_string)
+
+
+def urgent_since():
+    """Return the date after which undispatched orders are urgent."""
+    day_offsets = {0: 3, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2}
+    now = timezone.now()
+    urgent_cutoff = datetime.combine(
+        (now - timedelta(days=day_offsets[now.weekday()])).date(), datetime.min.time()
+    )
+    return timezone.make_aware(urgent_cutoff)
 
 
 class DispatchedManager(models.Manager):
@@ -71,6 +81,14 @@ class UndispatchedNonPriorityManager(UndispatchedManager):
         return super().get_queryset().filter(shipping_rule__priority=False)
 
 
+class UrgentManager(UndispatchedManager):
+    """Manager for orders recieved before the urgent since date."""
+
+    def get_queryset(self):
+        """Return a queryset of urgent orders."""
+        return super().get_queryset().filter(recieved_at__lte=urgent_since())
+
+
 class Order(models.Model):
     """Model for Cloud Commerce Orders."""
 
@@ -105,6 +123,7 @@ class Order(models.Model):
     non_priority = NonPriorityManager()
     undispatched_priority = UndispatchedPriorityManager()
     undispatched_non_priority = UndispatchedNonPriorityManager()
+    urgent = UrgentManager()
 
     class Meta:
         """Meta class for the Order model."""
@@ -122,7 +141,7 @@ class Order(models.Model):
     @classmethod
     def make_tz_aware(cls, d):
         """Make a naive datetime timezone aware."""
-        return make_aware(d, timezone=pytz.timezone(cls.TIME_ZONE))
+        return timezone.make_aware(d, timezone=pytz.timezone(cls.TIME_ZONE))
 
     @classmethod
     def update(cls, number_of_days=None):

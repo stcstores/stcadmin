@@ -1,4 +1,6 @@
 """Views for the Orders app."""
+from datetime import timedelta
+
 from django.db.models import Count, Q
 from django.shortcuts import reverse
 from django.utils import timezone
@@ -127,4 +129,42 @@ class Charts(OrdersUserMixin, TemplateView):
             number_of_weeks=orders_by_week_number_of_weeks
         )
         context["orders_by_day_chart"] = models.charts.OrdersByDay()
+        return context
+
+
+class UndispatchedOrders(OrdersUserMixin, TemplateView):
+    """Display a count of undispatched orders."""
+
+    template_name = "orders/undispatched.html"
+
+    def urgent_orders(self):
+        """Return a list of order IDs for urgent undispatched orders."""
+        return list(models.Order.urgent.values_list("order_ID", flat=True))
+
+    def priority_orders(self, urgent_orders):
+        """Return a list of order IDs for undispatched priority orders."""
+        priority_orders = models.Order.undispatched_priority.values_list(
+            "order_ID", flat=True
+        )
+        return list(set(priority_orders) - set(urgent_orders))
+
+    def non_priority_orders(self, urgent_orders, priority_orders):
+        """Return a list of order IDs for orders that are not urgent or priority."""
+        undispatched_orders = models.Order.undispatched.filter(
+            recieved_at__gte=timezone.now() - timedelta(days=7)
+        ).values_list("order_ID", flat=True)
+        return list(
+            set(undispatched_orders) - set(urgent_orders) - set(priority_orders)
+        )
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        urgent = self.urgent_orders()
+        priority = self.priority_orders(urgent)
+        non_priority = self.non_priority_orders(urgent, priority)
+        context["total"] = len(urgent) + len(priority) + len(non_priority)
+        context["priority"] = priority
+        context["non_priority"] = non_priority
+        context["urgent"] = urgent
         return context

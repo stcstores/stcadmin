@@ -25,4 +25,9 @@ urlpatterns = [
         name="delete_breakage",
     ),
     path("charts/", views.Charts.as_view(), name="charts"),
+    path(
+        "undispatched_orders/",
+        views.UndispatchedOrders.as_view(),
+        name="undispatched_orders",
+    ),
 ]

@@ -273,3 +273,52 @@ class TestChartsView(OrderViewTest, ViewTests):
         self.assertEqual(
             5, len(response.context["orders_by_week_chart"].get_datasets()[0]["data"])
         )
+
+
+class TestUndispatchedOrdersView(OrderViewTest, ViewTests):
+    fixtures = (
+        "home/cloud_commerce_user",
+        "shipping/currency",
+        "shipping/country",
+        "shipping/services",
+        "shipping/shipping_rules",
+        "orders/channels",
+        "orders/orders",
+        "orders/product_sales",
+        "orders/packing_record",
+    )
+
+    URL = "/orders/undispatched_orders/"
+    template = "orders/undispatched.html"
+
+    @patch("orders.models.charts.Week.thisweek")
+    @patch("orders.models.charts.timezone.now")
+    def test_get_method(self, mock_now, mock_thisweek):
+        mock_date = timezone.make_aware(datetime(2019, 12, 5))
+        mock_now.return_value = mock_date
+        mock_thisweek.return_value = Week(mock_date.year, mock_date.isocalendar()[1])
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, self.template)
+
+    @patch("orders.models.charts.Week.thisweek")
+    @patch("orders.models.charts.timezone.now")
+    def test_context(self, mock_now, mock_thisweek):
+        mock_date = timezone.make_aware(datetime(2019, 12, 5))
+        mock_now.return_value = mock_date
+        mock_thisweek.return_value = Week(mock_date.year, mock_date.isocalendar()[1])
+        response = self.make_get_request()
+        self.assertTrue(hasattr(response, "context"))
+        self.assertIsNotNone(response.context)
+        self.assertIn("total", response.context)
+        self.assertIsInstance(response.context["total"], int)
+        self.assertEqual(17, response.context["total"])
+        self.assertIn("priority", response.context)
+        self.assertIsInstance(response.context["priority"], list)
+        self.assertEqual(0, len(response.context["priority"]))
+        self.assertIn("non_priority", response.context)
+        self.assertIsInstance(response.context["non_priority"], list)
+        self.assertEqual(0, len(response.context["non_priority"]))
+        self.assertIn("urgent", response.context)
+        self.assertIsInstance(response.context["urgent"], list)
+        self.assertEqual(17, len(response.context["urgent"]))
