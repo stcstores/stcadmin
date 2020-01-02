@@ -132,10 +132,10 @@ class Charts(OrdersUserMixin, TemplateView):
         return context
 
 
-class UndispatchedOrders(OrdersUserMixin, TemplateView):
-    """Display a count of undispatched orders."""
+class UndispatchedOrdersData(TemplateView):
+    """Return a list of undispatched order counts."""
 
-    template_name = "orders/undispatched.html"
+    template_name = "orders/undispatched_data.html"
 
     def urgent_orders(self):
         """Return a list of order IDs for urgent undispatched orders."""
@@ -168,3 +168,9 @@ class UndispatchedOrders(OrdersUserMixin, TemplateView):
         context["non_priority"] = non_priority
         context["urgent"] = urgent
         return context
+
+
+class UndispatchedOrders(OrdersUserMixin, TemplateView):
+    """Display a count of undispatched orders."""
+
+    template_name = "orders/undispatched.html"

@@ -1,6 +1,7 @@
 from datetime import datetime
 from unittest.mock import patch
 
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.html import escape
@@ -275,7 +276,7 @@ class TestChartsView(OrderViewTest, ViewTests):
         )
 
 
-class TestUndispatchedOrdersView(OrderViewTest, ViewTests):
+class TestUndispatchedDataView(OrderViewTest, ViewTests):
     fixtures = (
         "home/cloud_commerce_user",
         "shipping/currency",
@@ -288,8 +289,8 @@ class TestUndispatchedOrdersView(OrderViewTest, ViewTests):
         "orders/packing_record",
     )
 
-    URL = "/orders/undispatched_orders/"
-    template = "orders/undispatched.html"
+    URL = "/orders/undispatched_data/"
+    template = "orders/undispatched_data.html"
 
     @patch("orders.models.charts.Week.thisweek")
     @patch("orders.models.charts.timezone.now")
@@ -322,3 +323,37 @@ class TestUndispatchedOrdersView(OrderViewTest, ViewTests):
         self.assertIn("urgent", response.context)
         self.assertIsInstance(response.context["urgent"], list)
         self.assertEqual(17, len(response.context["urgent"]))
+
+    def test_user_not_in_group_get(self):
+        self.remove_group()
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, self.template)
+
+    def test_logged_out_user_get(self):
+        self.client.logout()
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, self.template)
+
+    def test_logged_out_user_post(self):
+        self.client.logout()
+        response = self.make_post_request()
+        self.assertIsInstance(response, HttpResponseNotAllowed)
+
+    def test_user_not_in_group_post(self):
+        self.remove_group()
+        response = self.make_post_request()
+        self.assertIsInstance(response, HttpResponseNotAllowed)
+
+
+class TestUndispatchedOrdersView(OrderViewTest, ViewTests):
+
+    URL = "/orders/undispatched_orders/"
+    template = "orders/undispatched.html"
+
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, self.template)
+        self.assertIn(reverse("orders:undispatched_data"), str(response.content))

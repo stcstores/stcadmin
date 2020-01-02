@@ -26,6 +26,11 @@ urlpatterns = [
     ),
     path("charts/", views.Charts.as_view(), name="charts"),
     path(
+        "undispatched_data/",
+        views.UndispatchedOrdersData.as_view(),
+        name="undispatched_data",
+    ),
+    path(
         "undispatched_orders/",
         views.UndispatchedOrders.as_view(),
         name="undispatched_orders",
