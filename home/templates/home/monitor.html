@@ -2,21 +2,28 @@
 <html>
     <head>
         <link rel="stylesheet" href="{% static 'css/stcadmin.css' %}">
+        <link rel="stylesheet" href="{% static 'css/monitor.css' %}">
+        <link rel="stylesheet" href="{% static 'css/orders.css' %}">
         <title>STC Admin Feedback</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+        <script src="{% static 'scripts/undispatched.js' %}"></script>
     </head>
     <body>
-        <button class="toggle">Toggle</button>&nbsp;
-        <label for="auto_toggle">Auto Toggle</label><input type="checkbox" name="auto_toggle" class="auto_toggle" checked>
-
-        <div>
+        <div class="buttons">
+            <button class="next">Next</button>&nbsp;
+            <label for="auto_advance">Auto Advance</label>
+            <input type="checkbox" name="auto_advance" class="auto_advance" checked>
+        </div>
+        <div class="display">
             <table class="pack_count" id="pack_count"></table>
             <table class="feedback" id="feedback"></table>
+            <div class="undispatched"></div>
         </div>
     </body>
     <script>
         pack_count_URL = "{% url 'orders:pack_count_monitor' %}";
         feedback_URL = "{% url 'feedback:monitor' %}";
+        undispatched_URL = "{% url 'orders:undispatched_data' %}"
     </script>
     <script src="{% static 'scripts/monitor.js'%}"></script>
 </html>

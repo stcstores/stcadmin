@@ -45,9 +45,12 @@ function toggle_non_priority() {
 }
 
 function setup_order_ids() {
-    toggle_urgent();
-    toggle_priority();
-    toggle_non_priority();
+    hide_orders('urgent');
+    hide_orders('priority');
+    hide_orders('non_priority');
+    show_urgent = false;
+    show_priority = false;
+    show_non_priority = false;
     $('#urgent_count').click(function () {
         toggle_urgent();
     });
