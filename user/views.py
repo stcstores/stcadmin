@@ -2,7 +2,8 @@
 
 from django.contrib.auth import logout
 from django.contrib.auth.views import PasswordChangeView
-from django.views.generic.base import TemplateView
+from django.shortcuts import reverse
+from django.views.generic.base import RedirectView, TemplateView
 
 from feedback import models
 from home.models import CloudCommerceUser
@@ -43,10 +44,10 @@ class ChangePassword(UserLoginMixin, PasswordChangeView):
     template_name = "user/change_password.html"
 
 
-class ChangePasswordDone(UserLoginMixin, TemplateView):
+class ChangePasswordDone(UserLoginMixin, RedirectView):
     """Landing page after succesful password update."""
 
-    def post(self, *args, **kwargs):
+    def get_redirect_url(self, *args, **kwargs):
         """Logout user."""
         logout(self.request)
-        return super().post(self, *args, **kwargs)
+        return reverse("home:login_user")
