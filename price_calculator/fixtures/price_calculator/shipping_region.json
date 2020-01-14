@@ -1,0 +1,19 @@
+[{
+    "model": "price_calculator.shippingregion",
+    "pk": 1,
+    "fields": {
+        "name": "Domestic"
+    }
+}, {
+    "model": "price_calculator.shippingregion",
+    "pk": 2,
+    "fields": {
+        "name": "Europe"
+    }
+}, {
+    "model": "price_calculator.shippingregion",
+    "pk": 3,
+    "fields": {
+        "name": "Rest of World"
+    }
+}]

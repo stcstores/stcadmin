@@ -1,0 +1,145 @@
+[{
+    "model": "price_calculator.destinationcountry",
+    "pk": 1,
+    "fields": {
+        "name": "United Kingdom",
+        "currency_code": "GBP",
+        "currency_symbol": "\u00a3",
+        "min_channel_fee": null,
+        "shipping_region": 1,
+        "exchange_rate": 0.0,
+        "sort_order": 1
+    }
+}, {
+    "model": "price_calculator.destinationcountry",
+    "pk": 2,
+    "fields": {
+        "name": "France",
+        "currency_code": "EUR",
+        "currency_symbol": "\u20ac",
+        "min_channel_fee": null,
+        "shipping_region": 2,
+        "exchange_rate": 0.835818,
+        "sort_order": 4
+    }
+}, {
+    "model": "price_calculator.destinationcountry",
+    "pk": 3,
+    "fields": {
+        "name": "Germany",
+        "currency_code": "EUR",
+        "currency_symbol": "\u20ac",
+        "min_channel_fee": null,
+        "shipping_region": 2,
+        "exchange_rate": 0.835818,
+        "sort_order": 5
+    }
+}, {
+    "model": "price_calculator.destinationcountry",
+    "pk": 4,
+    "fields": {
+        "name": "Italy",
+        "currency_code": "EUR",
+        "currency_symbol": "\u20ac",
+        "min_channel_fee": null,
+        "shipping_region": 2,
+        "exchange_rate": 0.835818,
+        "sort_order": 6
+    }
+}, {
+    "model": "price_calculator.destinationcountry",
+    "pk": 5,
+    "fields": {
+        "name": "Spain",
+        "currency_code": "EUR",
+        "currency_symbol": "\u20ac",
+        "min_channel_fee": null,
+        "shipping_region": 2,
+        "exchange_rate": 0.835818,
+        "sort_order": 7
+    }
+}, {
+    "model": "price_calculator.destinationcountry",
+    "pk": 6,
+    "fields": {
+        "name": "United States of America",
+        "currency_code": "USD",
+        "currency_symbol": "$",
+        "min_channel_fee": 100,
+        "shipping_region": 3,
+        "exchange_rate": 0.750193,
+        "sort_order": 8
+    }
+}, {
+    "model": "price_calculator.destinationcountry",
+    "pk": 7,
+    "fields": {
+        "name": "Canada",
+        "currency_code": "CAD",
+        "currency_symbol": "$",
+        "min_channel_fee": 100,
+        "shipping_region": 3,
+        "exchange_rate": 0.570295,
+        "sort_order": 9
+    }
+}, {
+    "model": "price_calculator.destinationcountry",
+    "pk": 8,
+    "fields": {
+        "name": "Mexico",
+        "currency_code": "MXN",
+        "currency_symbol": "$",
+        "min_channel_fee": null,
+        "shipping_region": 3,
+        "exchange_rate": 0.03948,
+        "sort_order": 10
+    }
+}, {
+    "model": "price_calculator.destinationcountry",
+    "pk": 9,
+    "fields": {
+        "name": "Australia",
+        "currency_code": "AUD",
+        "currency_symbol": "$",
+        "min_channel_fee": null,
+        "shipping_region": 3,
+        "exchange_rate": 0.516171,
+        "sort_order": 11
+    }
+}, {
+    "model": "price_calculator.destinationcountry",
+    "pk": 10,
+    "fields": {
+        "name": "Amazon Prime UK",
+        "currency_code": "GBP",
+        "currency_symbol": "\u00a3",
+        "min_channel_fee": null,
+        "shipping_region": 1,
+        "exchange_rate": 0.0,
+        "sort_order": 2
+    }
+}, {
+    "model": "price_calculator.destinationcountry",
+    "pk": 11,
+    "fields": {
+        "name": "Japan",
+        "currency_code": "JPY",
+        "currency_symbol": "\u00a5",
+        "min_channel_fee": null,
+        "shipping_region": 3,
+        "exchange_rate": 0.006856,
+        "sort_order": 12
+    }
+}, {
+    "model": "price_calculator.destinationcountry",
+    "pk": 12,
+    "fields": {
+        "name": "Ireland",
+        "currency_code": "EUR",
+        "currency_symbol": "\u20ac",
+        "min_channel_fee": null,
+        "shipping_region": 2,
+        "exchange_rate": 0.835818,
+        "sort_order": 3
+    }
+}]
