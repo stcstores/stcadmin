@@ -67,7 +67,7 @@ class GetShippingPriceView(InventoryUserMixin, View):
         weight = int(self.request.POST["weight"])
         price = int(self.request.POST["price"])
         self.exchange_rate = self.country.exchange_rate
-        postage_price = models.ShippingPrice.objects.get_price(
+        postage_price = models.ShippingPrice.get_price(
             self.country.name, self.package_type_name(), weight, price
         )
         vat_rates = list(postage_price.vat_rates.values())
@@ -94,13 +94,15 @@ class GetShippingPriceView(InventoryUserMixin, View):
         success=True,
         price=0,
         price_name="",
-        vat_rates=[],
+        vat_rates=None,
         exchange_rate=0,
         currency_code="GBP",
         currency_symbol="£",
         min_channel_fee=0,
     ):
         """Return shipping service information as a JSON string."""
+        if vat_rates is None:
+            vat_rates = []
         data = {
             self.SUCCESS: success,
             self.PRICE: price,
