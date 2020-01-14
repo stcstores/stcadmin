@@ -53,7 +53,7 @@ class TestCountry(STCAdminTest):
 
 
 class TestProvider(STCAdminTest):
-    fixtures = ("shipping/currency", "shipping/country", "shipping/services")
+    fixtures = ("shipping/currency", "shipping/country", "shipping/provider")
 
     def test_create_object(self):
         name = "Test Provider"
@@ -67,7 +67,12 @@ class TestProvider(STCAdminTest):
 
 
 class TestService(STCAdminTest):
-    fixtures = ("shipping/currency", "shipping/country", "shipping/services")
+    fixtures = (
+        "shipping/currency",
+        "shipping/country",
+        "shipping/provider",
+        "shipping/service",
+    )
 
     def test_create_object(self):
         name = "Test Service"
@@ -85,8 +90,9 @@ class TestShippingRule(STCAdminTest):
     fixtures = (
         "shipping/currency",
         "shipping/country",
-        "shipping/services",
-        "shipping/shipping_rules",
+        "shipping/provider",
+        "shipping/service",
+        "shipping/shipping_rule",
     )
 
     def test_create_object(self):

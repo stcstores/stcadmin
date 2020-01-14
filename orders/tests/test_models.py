@@ -12,7 +12,7 @@ from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
 class TestChannel(STCAdminTest):
-    fixtures = ("orders/channels",)
+    fixtures = ("orders/channel",)
 
     def test_create_object(self):
         name = "Test Channel"
@@ -79,10 +79,11 @@ class TestOrder(STCAdminTest):
     fixtures = (
         "shipping/currency",
         "shipping/country",
-        "shipping/services",
-        "shipping/shipping_rules",
-        "orders/channels",
-        "orders/orders",
+        "shipping/provider",
+        "shipping/service",
+        "shipping/shipping_rule",
+        "orders/channel",
+        "orders/order",
     )
 
     def setUp(self):
@@ -511,11 +512,12 @@ class TestProductSale(STCAdminTest):
     fixtures = (
         "shipping/currency",
         "shipping/country",
-        "shipping/services",
-        "shipping/shipping_rules",
-        "orders/channels",
-        "orders/orders",
-        "orders/product_sales",
+        "shipping/provider",
+        "shipping/service",
+        "shipping/shipping_rule",
+        "orders/channel",
+        "orders/order",
+        "orders/product_sale",
     )
 
     def test_create_object(self):
@@ -540,11 +542,12 @@ class TestPackingRecord(STCAdminTest):
         "home/cloud_commerce_user",
         "shipping/currency",
         "shipping/country",
-        "shipping/services",
-        "shipping/shipping_rules",
-        "orders/channels",
-        "orders/orders",
-        "orders/product_sales",
+        "shipping/provider",
+        "shipping/service",
+        "shipping/shipping_rule",
+        "orders/channel",
+        "orders/order",
+        "orders/product_sale",
         "orders/packing_record",
     )
 
@@ -800,11 +803,12 @@ class TestOrdersByDayChart(STCAdminTest):
         "home/cloud_commerce_user",
         "shipping/currency",
         "shipping/country",
-        "shipping/services",
-        "shipping/shipping_rules",
-        "orders/channels",
-        "orders/orders",
-        "orders/product_sales",
+        "shipping/provider",
+        "shipping/service",
+        "shipping/shipping_rule",
+        "orders/channel",
+        "orders/order",
+        "orders/product_sale",
         "orders/packing_record",
     )
 
@@ -862,11 +866,12 @@ class TestOrdersByWeekChart(STCAdminTest):
         "home/cloud_commerce_user",
         "shipping/currency",
         "shipping/country",
-        "shipping/services",
-        "shipping/shipping_rules",
-        "orders/channels",
-        "orders/orders",
-        "orders/product_sales",
+        "shipping/provider",
+        "shipping/service",
+        "shipping/shipping_rule",
+        "orders/channel",
+        "orders/order",
+        "orders/product_sale",
         "orders/packing_record",
     )
 

@@ -1,40 +1,4 @@
 [{
-    "model": "shipping.provider",
-    "pk": 1,
-    "fields": {
-        "name": "DPD"
-    }
-}, {
-    "model": "shipping.provider",
-    "pk": 2,
-    "fields": {
-        "name": "Secured Mail"
-    }
-}, {
-    "model": "shipping.provider",
-    "pk": 3,
-    "fields": {
-        "name": "Manual"
-    }
-}, {
-    "model": "shipping.provider",
-    "pk": 4,
-    "fields": {
-        "name": "DHL"
-    }
-}, {
-    "model": "shipping.provider",
-    "pk": 5,
-    "fields": {
-        "name": "Parcelforce"
-    }
-}, {
-    "model": "shipping.provider",
-    "pk": 6,
-    "fields": {
-        "name": "Royal Mail"
-    }
-}, {
     "model": "shipping.service",
     "pk": 1,
     "fields": {
