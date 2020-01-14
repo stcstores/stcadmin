@@ -27,7 +27,11 @@ class GetShippingPriceView(InventoryUserMixin, View):
     MIN_CHANNEL_FEE = "min_channel_fee"
 
     @method_decorator(csrf_exempt)
-    def dispatch(self, request):
+    def dispatch(self, *args, **kwargs):
+        """Mark view as CSRF exempt."""
+        return super().dispatch(*args, **kwargs)
+
+    def post(self, request):
         """Return shipping prices as JSON or return server error."""
         try:
             json_data = self.get_shipping_price_details()
