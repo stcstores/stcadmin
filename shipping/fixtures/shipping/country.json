@@ -3,88 +3,88 @@
     "pk": 1,
     "fields": {
         "country_ID": "1",
-        "ISO_code": "GB",
         "name": "United Kingdom",
+        "ISO_code": "GB",
         "region": "UK",
-        "currency": null
+        "currency": 1
     }
 }, {
     "model": "shipping.country",
     "pk": 2,
     "fields": {
         "country_ID": "2",
-        "ISO_code": "FR",
         "name": "France",
+        "ISO_code": "FR",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 3,
     "fields": {
         "country_ID": "3",
-        "ISO_code": "DE",
         "name": "Germany",
+        "ISO_code": "DE",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 4,
     "fields": {
         "country_ID": "4",
-        "ISO_code": "ES",
         "name": "Spain",
+        "ISO_code": "ES",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 5,
     "fields": {
         "country_ID": "5",
-        "ISO_code": "DK",
         "name": "Denmark",
+        "ISO_code": "DK",
         "region": "EU",
-        "currency": null
+        "currency": 17
     }
 }, {
     "model": "shipping.country",
     "pk": 6,
     "fields": {
         "country_ID": "6",
-        "ISO_code": "NL",
         "name": "Netherlands",
+        "ISO_code": "NL",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 7,
     "fields": {
         "country_ID": "7",
-        "ISO_code": "IT",
         "name": "Italy",
+        "ISO_code": "IT",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 8,
     "fields": {
         "country_ID": "8",
-        "ISO_code": "GR",
         "name": "Greece",
+        "ISO_code": "GR",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 9,
     "fields": {
         "country_ID": "9",
-        "ISO_code": null,
         "name": "Abkhazia",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -93,8 +93,8 @@
     "pk": 10,
     "fields": {
         "country_ID": "10",
-        "ISO_code": "AF",
         "name": "Afghanistan",
+        "ISO_code": "AF",
         "region": "ROW",
         "currency": null
     }
@@ -103,8 +103,8 @@
     "pk": 11,
     "fields": {
         "country_ID": "11",
-        "ISO_code": null,
         "name": "Akrotiri and Dhekelia",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -113,8 +113,8 @@
     "pk": 12,
     "fields": {
         "country_ID": "12",
-        "ISO_code": null,
         "name": "Aland",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -123,8 +123,8 @@
     "pk": 13,
     "fields": {
         "country_ID": "13",
-        "ISO_code": "AL",
         "name": "Albania",
+        "ISO_code": "AL",
         "region": "EU",
         "currency": null
     }
@@ -133,8 +133,8 @@
     "pk": 14,
     "fields": {
         "country_ID": "14",
-        "ISO_code": "GG",
         "name": "Alderney",
+        "ISO_code": "GG",
         "region": "EU",
         "currency": null
     }
@@ -143,8 +143,8 @@
     "pk": 15,
     "fields": {
         "country_ID": "15",
-        "ISO_code": "DZ",
         "name": "Algeria",
+        "ISO_code": "DZ",
         "region": "ROW",
         "currency": null
     }
@@ -153,8 +153,8 @@
     "pk": 16,
     "fields": {
         "country_ID": "16",
-        "ISO_code": "AS",
         "name": "American Samoa",
+        "ISO_code": "AS",
         "region": "ROW",
         "currency": null
     }
@@ -163,8 +163,8 @@
     "pk": 17,
     "fields": {
         "country_ID": "17",
-        "ISO_code": "AD",
         "name": "Andorra",
+        "ISO_code": "AD",
         "region": "EU",
         "currency": null
     }
@@ -173,8 +173,8 @@
     "pk": 18,
     "fields": {
         "country_ID": "18",
-        "ISO_code": "AO",
         "name": "Angola",
+        "ISO_code": "AO",
         "region": "ROW",
         "currency": null
     }
@@ -183,8 +183,8 @@
     "pk": 19,
     "fields": {
         "country_ID": "19",
-        "ISO_code": "AI",
         "name": "Anguilla",
+        "ISO_code": "AI",
         "region": "ROW",
         "currency": null
     }
@@ -193,8 +193,8 @@
     "pk": 20,
     "fields": {
         "country_ID": "20",
-        "ISO_code": "AG",
         "name": "Antigua and Barbuda",
+        "ISO_code": "AG",
         "region": "ROW",
         "currency": null
     }
@@ -203,18 +203,18 @@
     "pk": 21,
     "fields": {
         "country_ID": "21",
-        "ISO_code": "AR",
         "name": "Argentina",
+        "ISO_code": "AR",
         "region": "ROW",
-        "currency": null
+        "currency": 7
     }
 }, {
     "model": "shipping.country",
     "pk": 22,
     "fields": {
         "country_ID": "22",
-        "ISO_code": "AM",
         "name": "Armenia",
+        "ISO_code": "AM",
         "region": "EU",
         "currency": null
     }
@@ -223,8 +223,8 @@
     "pk": 23,
     "fields": {
         "country_ID": "23",
-        "ISO_code": "AW",
         "name": "Aruba",
+        "ISO_code": "AW",
         "region": "ROW",
         "currency": null
     }
@@ -233,8 +233,8 @@
     "pk": 24,
     "fields": {
         "country_ID": "24",
-        "ISO_code": null,
         "name": "Ashmore and Cartier Islands",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -243,18 +243,18 @@
     "pk": 25,
     "fields": {
         "country_ID": "25",
-        "ISO_code": "AU",
         "name": "Australia",
+        "ISO_code": "AU",
         "region": "ROW",
-        "currency": null
+        "currency": 8
     }
 }, {
     "model": "shipping.country",
     "pk": 26,
     "fields": {
         "country_ID": "26",
-        "ISO_code": null,
         "name": "Australian Antarctic Territory",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -263,18 +263,18 @@
     "pk": 27,
     "fields": {
         "country_ID": "27",
-        "ISO_code": "AT",
         "name": "Austria",
+        "ISO_code": "AT",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 28,
     "fields": {
         "country_ID": "28",
-        "ISO_code": "PK",
         "name": "Azad Kashmir",
+        "ISO_code": "PK",
         "region": "ROW",
         "currency": null
     }
@@ -283,8 +283,8 @@
     "pk": 29,
     "fields": {
         "country_ID": "29",
-        "ISO_code": "AZ",
         "name": "Azerbaijan",
+        "ISO_code": "AZ",
         "region": "EU",
         "currency": null
     }
@@ -293,18 +293,18 @@
     "pk": 30,
     "fields": {
         "country_ID": "30",
-        "ISO_code": "BS",
         "name": "Bahamas",
+        "ISO_code": "BS",
         "region": "ROW",
-        "currency": null
+        "currency": 11
     }
 }, {
     "model": "shipping.country",
     "pk": 31,
     "fields": {
         "country_ID": "31",
-        "ISO_code": "BH",
         "name": "Bahrain",
+        "ISO_code": "BH",
         "region": "ROW",
         "currency": null
     }
@@ -313,8 +313,8 @@
     "pk": 32,
     "fields": {
         "country_ID": "32",
-        "ISO_code": "BD",
         "name": "Bangladesh",
+        "ISO_code": "BD",
         "region": "ROW",
         "currency": null
     }
@@ -323,8 +323,8 @@
     "pk": 33,
     "fields": {
         "country_ID": "33",
-        "ISO_code": "BB",
         "name": "Barbados",
+        "ISO_code": "BB",
         "region": "ROW",
         "currency": null
     }
@@ -333,8 +333,8 @@
     "pk": 34,
     "fields": {
         "country_ID": "34",
-        "ISO_code": "BY",
         "name": "Belarus",
+        "ISO_code": "BY",
         "region": "EU",
         "currency": null
     }
@@ -343,18 +343,18 @@
     "pk": 35,
     "fields": {
         "country_ID": "35",
-        "ISO_code": "BE",
         "name": "Belgium",
+        "ISO_code": "BE",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 36,
     "fields": {
         "country_ID": "36",
-        "ISO_code": "BZ",
         "name": "Belize",
+        "ISO_code": "BZ",
         "region": "ROW",
         "currency": null
     }
@@ -363,8 +363,8 @@
     "pk": 37,
     "fields": {
         "country_ID": "37",
-        "ISO_code": "BJ",
         "name": "Benin",
+        "ISO_code": "BJ",
         "region": "ROW",
         "currency": null
     }
@@ -373,8 +373,8 @@
     "pk": 38,
     "fields": {
         "country_ID": "38",
-        "ISO_code": "BM",
         "name": "Bermuda",
+        "ISO_code": "BM",
         "region": "ROW",
         "currency": null
     }
@@ -383,8 +383,8 @@
     "pk": 39,
     "fields": {
         "country_ID": "39",
-        "ISO_code": "BT",
         "name": "Bhutan",
+        "ISO_code": "BT",
         "region": "ROW",
         "currency": null
     }
@@ -393,8 +393,8 @@
     "pk": 40,
     "fields": {
         "country_ID": "40",
-        "ISO_code": "BO",
         "name": "Bolivia",
+        "ISO_code": "BO",
         "region": "ROW",
         "currency": null
     }
@@ -403,8 +403,8 @@
     "pk": 41,
     "fields": {
         "country_ID": "41",
-        "ISO_code": "BA",
         "name": "Bosnia and Herzegovina",
+        "ISO_code": "BA",
         "region": "EU",
         "currency": null
     }
@@ -413,8 +413,8 @@
     "pk": 42,
     "fields": {
         "country_ID": "42",
-        "ISO_code": "BW",
         "name": "Botswana",
+        "ISO_code": "BW",
         "region": "ROW",
         "currency": null
     }
@@ -423,18 +423,18 @@
     "pk": 43,
     "fields": {
         "country_ID": "43",
-        "ISO_code": "BR",
         "name": "Brazil",
+        "ISO_code": "BR",
         "region": "ROW",
-        "currency": null
+        "currency": 10
     }
 }, {
     "model": "shipping.country",
     "pk": 44,
     "fields": {
         "country_ID": "44",
-        "ISO_code": null,
         "name": "British Antarctic Territory",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -443,8 +443,8 @@
     "pk": 45,
     "fields": {
         "country_ID": "45",
-        "ISO_code": "IO",
         "name": "British Indian Ocean Territory",
+        "ISO_code": "IO",
         "region": "ROW",
         "currency": null
     }
@@ -453,8 +453,8 @@
     "pk": 46,
     "fields": {
         "country_ID": "46",
-        "ISO_code": "VG",
         "name": "British Virgin Islands",
+        "ISO_code": "VG",
         "region": "ROW",
         "currency": null
     }
@@ -463,8 +463,8 @@
     "pk": 47,
     "fields": {
         "country_ID": "47",
-        "ISO_code": null,
         "name": "Brunei",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -473,18 +473,18 @@
     "pk": 48,
     "fields": {
         "country_ID": "48",
-        "ISO_code": "BG",
         "name": "Bulgaria",
+        "ISO_code": "BG",
         "region": "EU",
-        "currency": null
+        "currency": 9
     }
 }, {
     "model": "shipping.country",
     "pk": 49,
     "fields": {
         "country_ID": "49",
-        "ISO_code": "BF",
         "name": "Burkina Faso",
+        "ISO_code": "BF",
         "region": "ROW",
         "currency": null
     }
@@ -493,8 +493,8 @@
     "pk": 50,
     "fields": {
         "country_ID": "50",
-        "ISO_code": null,
         "name": "Burma",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -503,8 +503,8 @@
     "pk": 51,
     "fields": {
         "country_ID": "51",
-        "ISO_code": "BI",
         "name": "Burundi",
+        "ISO_code": "BI",
         "region": "ROW",
         "currency": null
     }
@@ -513,8 +513,8 @@
     "pk": 52,
     "fields": {
         "country_ID": "52",
-        "ISO_code": "KH",
         "name": "Cambodia",
+        "ISO_code": "KH",
         "region": "ROW",
         "currency": null
     }
@@ -523,8 +523,8 @@
     "pk": 53,
     "fields": {
         "country_ID": "53",
-        "ISO_code": "CM",
         "name": "Cameroon",
+        "ISO_code": "CM",
         "region": "ROW",
         "currency": null
     }
@@ -533,8 +533,8 @@
     "pk": 54,
     "fields": {
         "country_ID": "54",
-        "ISO_code": "KY",
         "name": "Cayman Islands",
+        "ISO_code": "KY",
         "region": "ROW",
         "currency": null
     }
@@ -543,18 +543,18 @@
     "pk": 55,
     "fields": {
         "country_ID": "55",
-        "ISO_code": "CA",
         "name": "Canada",
+        "ISO_code": "CA",
         "region": "ROW",
-        "currency": 1
+        "currency": 4
     }
 }, {
     "model": "shipping.country",
     "pk": 56,
     "fields": {
         "country_ID": "56",
-        "ISO_code": null,
         "name": "Cape Verde",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -563,8 +563,8 @@
     "pk": 57,
     "fields": {
         "country_ID": "57",
-        "ISO_code": "CF",
         "name": "Central African Republic",
+        "ISO_code": "CF",
         "region": "ROW",
         "currency": null
     }
@@ -573,8 +573,8 @@
     "pk": 58,
     "fields": {
         "country_ID": "58",
-        "ISO_code": "TD",
         "name": "Chad",
+        "ISO_code": "TD",
         "region": "ROW",
         "currency": null
     }
@@ -583,28 +583,28 @@
     "pk": 59,
     "fields": {
         "country_ID": "59",
-        "ISO_code": "CL",
         "name": "Chile",
+        "ISO_code": "CL",
         "region": "ROW",
-        "currency": null
+        "currency": 13
     }
 }, {
     "model": "shipping.country",
     "pk": 60,
     "fields": {
         "country_ID": "60",
-        "ISO_code": "CN",
         "name": "China",
+        "ISO_code": "CN",
         "region": "ROW",
-        "currency": null
+        "currency": 14
     }
 }, {
     "model": "shipping.country",
     "pk": 61,
     "fields": {
         "country_ID": "61",
-        "ISO_code": "CX",
         "name": "Christmas Island",
+        "ISO_code": "CX",
         "region": "ROW",
         "currency": null
     }
@@ -613,8 +613,8 @@
     "pk": 62,
     "fields": {
         "country_ID": "62",
-        "ISO_code": "PF",
         "name": "Clipperton Island",
+        "ISO_code": "PF",
         "region": "ROW",
         "currency": null
     }
@@ -623,8 +623,8 @@
     "pk": 63,
     "fields": {
         "country_ID": "63",
-        "ISO_code": "CC",
         "name": "Cocos (Keeling) Islands",
+        "ISO_code": "CC",
         "region": "ROW",
         "currency": null
     }
@@ -633,18 +633,18 @@
     "pk": 64,
     "fields": {
         "country_ID": "64",
-        "ISO_code": "CO",
         "name": "Colombia",
+        "ISO_code": "CO",
         "region": "ROW",
-        "currency": null
+        "currency": 15
     }
 }, {
     "model": "shipping.country",
     "pk": 65,
     "fields": {
         "country_ID": "65",
-        "ISO_code": "KM",
         "name": "Comoros",
+        "ISO_code": "KM",
         "region": "ROW",
         "currency": null
     }
@@ -653,8 +653,8 @@
     "pk": 66,
     "fields": {
         "country_ID": "66",
-        "ISO_code": "CG",
         "name": "Congo",
+        "ISO_code": "CG",
         "region": "ROW",
         "currency": null
     }
@@ -663,8 +663,8 @@
     "pk": 67,
     "fields": {
         "country_ID": "67",
-        "ISO_code": "CK",
         "name": "Cook Islands",
+        "ISO_code": "CK",
         "region": "ROW",
         "currency": null
     }
@@ -673,8 +673,8 @@
     "pk": 68,
     "fields": {
         "country_ID": "68",
-        "ISO_code": "AQ",
         "name": "Coral Sea Islands",
+        "ISO_code": "AQ",
         "region": "ROW",
         "currency": null
     }
@@ -683,8 +683,8 @@
     "pk": 69,
     "fields": {
         "country_ID": "69",
-        "ISO_code": "CR",
         "name": "Costa Rica",
+        "ISO_code": "CR",
         "region": "ROW",
         "currency": null
     }
@@ -693,8 +693,8 @@
     "pk": 70,
     "fields": {
         "country_ID": "70",
-        "ISO_code": "CI",
         "name": "C\u00f4te d'Ivoire",
+        "ISO_code": "CI",
         "region": "ROW",
         "currency": null
     }
@@ -703,8 +703,8 @@
     "pk": 71,
     "fields": {
         "country_ID": "71",
-        "ISO_code": "HR",
         "name": "Croatia",
+        "ISO_code": "HR",
         "region": "EU",
         "currency": null
     }
@@ -713,8 +713,8 @@
     "pk": 72,
     "fields": {
         "country_ID": "72",
-        "ISO_code": "CU",
         "name": "Cuba",
+        "ISO_code": "CU",
         "region": "ROW",
         "currency": null
     }
@@ -723,8 +723,8 @@
     "pk": 73,
     "fields": {
         "country_ID": "73",
-        "ISO_code": "CW",
         "name": "Cura\u00e7ao",
+        "ISO_code": "CW",
         "region": "ROW",
         "currency": null
     }
@@ -733,28 +733,28 @@
     "pk": 74,
     "fields": {
         "country_ID": "74",
-        "ISO_code": "CY",
         "name": "Cyprus",
+        "ISO_code": "CY",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 75,
     "fields": {
         "country_ID": "75",
-        "ISO_code": "CZ",
         "name": "Czech Republic",
+        "ISO_code": "CZ",
         "region": "EU",
-        "currency": null
+        "currency": 16
     }
 }, {
     "model": "shipping.country",
     "pk": 76,
     "fields": {
         "country_ID": "76",
-        "ISO_code": "DJ",
         "name": "Djibouti",
+        "ISO_code": "DJ",
         "region": "ROW",
         "currency": null
     }
@@ -763,8 +763,8 @@
     "pk": 77,
     "fields": {
         "country_ID": "77",
-        "ISO_code": "DM",
         "name": "Dominica",
+        "ISO_code": "DM",
         "region": "ROW",
         "currency": null
     }
@@ -773,18 +773,18 @@
     "pk": 78,
     "fields": {
         "country_ID": "78",
-        "ISO_code": "DO",
         "name": "Dominican Republic",
+        "ISO_code": "DO",
         "region": "ROW",
-        "currency": null
+        "currency": 18
     }
 }, {
     "model": "shipping.country",
     "pk": 79,
     "fields": {
         "country_ID": "79",
-        "ISO_code": null,
         "name": "East Timor",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -793,8 +793,8 @@
     "pk": 80,
     "fields": {
         "country_ID": "80",
-        "ISO_code": "EC",
         "name": "Ecuador",
+        "ISO_code": "EC",
         "region": "ROW",
         "currency": null
     }
@@ -803,18 +803,18 @@
     "pk": 81,
     "fields": {
         "country_ID": "81",
-        "ISO_code": "EG",
         "name": "Egypt",
+        "ISO_code": "EG",
         "region": "ROW",
-        "currency": null
+        "currency": 19
     }
 }, {
     "model": "shipping.country",
     "pk": 82,
     "fields": {
         "country_ID": "82",
-        "ISO_code": "SV",
         "name": "El Salvador",
+        "ISO_code": "SV",
         "region": "ROW",
         "currency": null
     }
@@ -823,8 +823,8 @@
     "pk": 83,
     "fields": {
         "country_ID": "83",
-        "ISO_code": "GQ",
         "name": "Equatorial Guinea",
+        "ISO_code": "GQ",
         "region": "ROW",
         "currency": null
     }
@@ -833,8 +833,8 @@
     "pk": 84,
     "fields": {
         "country_ID": "84",
-        "ISO_code": "ER",
         "name": "Eritrea",
+        "ISO_code": "ER",
         "region": "ROW",
         "currency": null
     }
@@ -843,18 +843,18 @@
     "pk": 85,
     "fields": {
         "country_ID": "85",
-        "ISO_code": "EE",
         "name": "Estonia",
+        "ISO_code": "EE",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 86,
     "fields": {
         "country_ID": "86",
-        "ISO_code": "ET",
         "name": "Ethiopia",
+        "ISO_code": "ET",
         "region": "ROW",
         "currency": null
     }
@@ -863,8 +863,8 @@
     "pk": 87,
     "fields": {
         "country_ID": "87",
-        "ISO_code": "FK",
         "name": "Falkland Islands",
+        "ISO_code": "FK",
         "region": "ROW",
         "currency": null
     }
@@ -873,8 +873,8 @@
     "pk": 88,
     "fields": {
         "country_ID": "88",
-        "ISO_code": "FO",
         "name": "Faroe Islands",
+        "ISO_code": "FO",
         "region": "EU",
         "currency": null
     }
@@ -883,28 +883,28 @@
     "pk": 89,
     "fields": {
         "country_ID": "89",
-        "ISO_code": "FJ",
         "name": "Fiji",
+        "ISO_code": "FJ",
         "region": "ROW",
-        "currency": null
+        "currency": 20
     }
 }, {
     "model": "shipping.country",
     "pk": 90,
     "fields": {
         "country_ID": "90",
-        "ISO_code": "FI",
         "name": "Finland",
+        "ISO_code": "FI",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 91,
     "fields": {
         "country_ID": "91",
-        "ISO_code": "PF",
         "name": "French Polynesia",
+        "ISO_code": "PF",
         "region": "ROW",
         "currency": null
     }
@@ -913,8 +913,8 @@
     "pk": 92,
     "fields": {
         "country_ID": "92",
-        "ISO_code": null,
         "name": "French Southern and Antarctic Lands",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -923,8 +923,8 @@
     "pk": 93,
     "fields": {
         "country_ID": "93",
-        "ISO_code": "GA",
         "name": "Gabon",
+        "ISO_code": "GA",
         "region": "ROW",
         "currency": null
     }
@@ -933,8 +933,8 @@
     "pk": 94,
     "fields": {
         "country_ID": "94",
-        "ISO_code": "GM",
         "name": "Gambia",
+        "ISO_code": "GM",
         "region": "ROW",
         "currency": null
     }
@@ -943,8 +943,8 @@
     "pk": 95,
     "fields": {
         "country_ID": "95",
-        "ISO_code": "GE",
         "name": "Georgia",
+        "ISO_code": "GE",
         "region": "EU",
         "currency": null
     }
@@ -953,8 +953,8 @@
     "pk": 96,
     "fields": {
         "country_ID": "96",
-        "ISO_code": "GH",
         "name": "Ghana",
+        "ISO_code": "GH",
         "region": "ROW",
         "currency": null
     }
@@ -963,8 +963,8 @@
     "pk": 97,
     "fields": {
         "country_ID": "97",
-        "ISO_code": "GI",
         "name": "Gibraltar",
+        "ISO_code": "GI",
         "region": "EU",
         "currency": null
     }
@@ -973,8 +973,8 @@
     "pk": 98,
     "fields": {
         "country_ID": "98",
-        "ISO_code": null,
         "name": "Gilgit-Baltistan",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -983,8 +983,8 @@
     "pk": 99,
     "fields": {
         "country_ID": "99",
-        "ISO_code": "GL",
         "name": "Greenland",
+        "ISO_code": "GL",
         "region": "EU",
         "currency": null
     }
@@ -993,8 +993,8 @@
     "pk": 100,
     "fields": {
         "country_ID": "100",
-        "ISO_code": "GD",
         "name": "Grenada",
+        "ISO_code": "GD",
         "region": "ROW",
         "currency": null
     }
@@ -1003,8 +1003,8 @@
     "pk": 101,
     "fields": {
         "country_ID": "101",
-        "ISO_code": "GU",
         "name": "Guam",
+        "ISO_code": "GU",
         "region": "ROW",
         "currency": null
     }
@@ -1013,18 +1013,18 @@
     "pk": 102,
     "fields": {
         "country_ID": "102",
-        "ISO_code": "GT",
         "name": "Guatemala",
+        "ISO_code": "GT",
         "region": "ROW",
-        "currency": null
+        "currency": 21
     }
 }, {
     "model": "shipping.country",
     "pk": 103,
     "fields": {
         "country_ID": "103",
-        "ISO_code": "GG",
         "name": "Guernsey",
+        "ISO_code": "GG",
         "region": "EU",
         "currency": null
     }
@@ -1033,8 +1033,8 @@
     "pk": 104,
     "fields": {
         "country_ID": "104",
-        "ISO_code": "GN",
         "name": "Guinea",
+        "ISO_code": "GN",
         "region": "ROW",
         "currency": null
     }
@@ -1043,8 +1043,8 @@
     "pk": 105,
     "fields": {
         "country_ID": "105",
-        "ISO_code": "GW",
         "name": "Guinea-Bissau",
+        "ISO_code": "GW",
         "region": "ROW",
         "currency": null
     }
@@ -1053,8 +1053,8 @@
     "pk": 106,
     "fields": {
         "country_ID": "106",
-        "ISO_code": "GY",
         "name": "Guyana",
+        "ISO_code": "GY",
         "region": "ROW",
         "currency": null
     }
@@ -1063,8 +1063,8 @@
     "pk": 107,
     "fields": {
         "country_ID": "107",
-        "ISO_code": "HT",
         "name": "Haiti",
+        "ISO_code": "HT",
         "region": "ROW",
         "currency": null
     }
@@ -1073,8 +1073,8 @@
     "pk": 108,
     "fields": {
         "country_ID": "108",
-        "ISO_code": "HM",
         "name": "Heard Island and McDonald Islands",
+        "ISO_code": "HM",
         "region": "ROW",
         "currency": null
     }
@@ -1083,8 +1083,8 @@
     "pk": 109,
     "fields": {
         "country_ID": "109",
-        "ISO_code": null,
         "name": "Herm",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -1093,8 +1093,8 @@
     "pk": 110,
     "fields": {
         "country_ID": "110",
-        "ISO_code": "HN",
         "name": "Honduras",
+        "ISO_code": "HN",
         "region": "ROW",
         "currency": null
     }
@@ -1103,58 +1103,58 @@
     "pk": 111,
     "fields": {
         "country_ID": "111",
-        "ISO_code": "HK",
         "name": "Hong Kong",
+        "ISO_code": "HK",
         "region": "ROW",
-        "currency": null
+        "currency": 22
     }
 }, {
     "model": "shipping.country",
     "pk": 112,
     "fields": {
         "country_ID": "112",
-        "ISO_code": "HU",
         "name": "Hungary",
+        "ISO_code": "HU",
         "region": "EU",
-        "currency": null
+        "currency": 24
     }
 }, {
     "model": "shipping.country",
     "pk": 113,
     "fields": {
         "country_ID": "113",
-        "ISO_code": "IS",
         "name": "Iceland",
+        "ISO_code": "IS",
         "region": "EU",
-        "currency": null
+        "currency": 28
     }
 }, {
     "model": "shipping.country",
     "pk": 114,
     "fields": {
         "country_ID": "114",
-        "ISO_code": "IN",
         "name": "India",
+        "ISO_code": "IN",
         "region": "ROW",
-        "currency": null
+        "currency": 27
     }
 }, {
     "model": "shipping.country",
     "pk": 115,
     "fields": {
         "country_ID": "115",
-        "ISO_code": "ID",
         "name": "Indonesia",
+        "ISO_code": "ID",
         "region": "ROW",
-        "currency": null
+        "currency": 25
     }
 }, {
     "model": "shipping.country",
     "pk": 116,
     "fields": {
         "country_ID": "116",
-        "ISO_code": null,
         "name": "Iran",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -1163,8 +1163,8 @@
     "pk": 117,
     "fields": {
         "country_ID": "117",
-        "ISO_code": "IQ",
         "name": "Iraq",
+        "ISO_code": "IQ",
         "region": "ROW",
         "currency": null
     }
@@ -1173,18 +1173,18 @@
     "pk": 118,
     "fields": {
         "country_ID": "118",
-        "ISO_code": "IE",
         "name": "Ireland",
+        "ISO_code": "IE",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 119,
     "fields": {
         "country_ID": "119",
-        "ISO_code": "IM",
         "name": "Isle of Man",
+        "ISO_code": "IM",
         "region": "EU",
         "currency": null
     }
@@ -1193,18 +1193,18 @@
     "pk": 120,
     "fields": {
         "country_ID": "120",
-        "ISO_code": "IL",
         "name": "Israel",
+        "ISO_code": "IL",
         "region": "ROW",
-        "currency": null
+        "currency": 26
     }
 }, {
     "model": "shipping.country",
     "pk": 121,
     "fields": {
         "country_ID": "121",
-        "ISO_code": "JM",
         "name": "Jamaica",
+        "ISO_code": "JM",
         "region": "ROW",
         "currency": null
     }
@@ -1213,18 +1213,18 @@
     "pk": 122,
     "fields": {
         "country_ID": "122",
-        "ISO_code": "JP",
         "name": "Japan",
+        "ISO_code": "JP",
         "region": "ROW",
-        "currency": null
+        "currency": 29
     }
 }, {
     "model": "shipping.country",
     "pk": 123,
     "fields": {
         "country_ID": "123",
-        "ISO_code": "JE",
         "name": "Jersey",
+        "ISO_code": "JE",
         "region": "EU",
         "currency": null
     }
@@ -1233,8 +1233,8 @@
     "pk": 124,
     "fields": {
         "country_ID": "124",
-        "ISO_code": "JO",
         "name": "Jordan",
+        "ISO_code": "JO",
         "region": "ROW",
         "currency": null
     }
@@ -1243,18 +1243,18 @@
     "pk": 125,
     "fields": {
         "country_ID": "125",
-        "ISO_code": "KZ",
         "name": "Kazakhstan",
+        "ISO_code": "KZ",
         "region": "ROW",
-        "currency": null
+        "currency": 31
     }
 }, {
     "model": "shipping.country",
     "pk": 126,
     "fields": {
         "country_ID": "126",
-        "ISO_code": "KE",
         "name": "Kenya",
+        "ISO_code": "KE",
         "region": "ROW",
         "currency": null
     }
@@ -1263,8 +1263,8 @@
     "pk": 127,
     "fields": {
         "country_ID": "127",
-        "ISO_code": "KI",
         "name": "Kiribati",
+        "ISO_code": "KI",
         "region": "ROW",
         "currency": null
     }
@@ -1273,8 +1273,8 @@
     "pk": 128,
     "fields": {
         "country_ID": "128",
-        "ISO_code": "KR",
         "name": "South Korea",
+        "ISO_code": "KR",
         "region": "ROW",
         "currency": null
     }
@@ -1283,8 +1283,8 @@
     "pk": 129,
     "fields": {
         "country_ID": "129",
-        "ISO_code": "KP",
         "name": "North Korea",
+        "ISO_code": "KP",
         "region": "ROW",
         "currency": null
     }
@@ -1293,8 +1293,8 @@
     "pk": 130,
     "fields": {
         "country_ID": "130",
-        "ISO_code": null,
         "name": "Kosovo",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -1303,8 +1303,8 @@
     "pk": 131,
     "fields": {
         "country_ID": "131",
-        "ISO_code": "KW",
         "name": "Kuwait",
+        "ISO_code": "KW",
         "region": "ROW",
         "currency": null
     }
@@ -1313,8 +1313,8 @@
     "pk": 132,
     "fields": {
         "country_ID": "132",
-        "ISO_code": "KG",
         "name": "Kyrgyzstan",
+        "ISO_code": "KG",
         "region": "ROW",
         "currency": null
     }
@@ -1323,8 +1323,8 @@
     "pk": 133,
     "fields": {
         "country_ID": "133",
-        "ISO_code": null,
         "name": "Laos",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -1333,18 +1333,18 @@
     "pk": 134,
     "fields": {
         "country_ID": "134",
-        "ISO_code": "LV",
         "name": "Latvia",
+        "ISO_code": "LV",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 135,
     "fields": {
         "country_ID": "135",
-        "ISO_code": "LB",
         "name": "Lebanon",
+        "ISO_code": "LB",
         "region": "ROW",
         "currency": null
     }
@@ -1353,8 +1353,8 @@
     "pk": 136,
     "fields": {
         "country_ID": "136",
-        "ISO_code": "LS",
         "name": "Lesotho",
+        "ISO_code": "LS",
         "region": "ROW",
         "currency": null
     }
@@ -1363,8 +1363,8 @@
     "pk": 137,
     "fields": {
         "country_ID": "137",
-        "ISO_code": "LR",
         "name": "Liberia",
+        "ISO_code": "LR",
         "region": "ROW",
         "currency": null
     }
@@ -1373,8 +1373,8 @@
     "pk": 138,
     "fields": {
         "country_ID": "138",
-        "ISO_code": "LY",
         "name": "Libya",
+        "ISO_code": "LY",
         "region": "ROW",
         "currency": null
     }
@@ -1383,8 +1383,8 @@
     "pk": 139,
     "fields": {
         "country_ID": "139",
-        "ISO_code": "LI",
         "name": "Liechtenstein",
+        "ISO_code": "LI",
         "region": "EU",
         "currency": null
     }
@@ -1393,28 +1393,28 @@
     "pk": 140,
     "fields": {
         "country_ID": "140",
-        "ISO_code": "LT",
         "name": "Lithuania",
+        "ISO_code": "LT",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 141,
     "fields": {
         "country_ID": "141",
-        "ISO_code": "LU",
         "name": "Luxembourg",
+        "ISO_code": "LU",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 142,
     "fields": {
         "country_ID": "142",
-        "ISO_code": "MO",
         "name": "Macau",
+        "ISO_code": "MO",
         "region": "ROW",
         "currency": null
     }
@@ -1423,8 +1423,8 @@
     "pk": 143,
     "fields": {
         "country_ID": "143",
-        "ISO_code": null,
         "name": "Macedonia",
+        "ISO_code": null,
         "region": "EU",
         "currency": null
     }
@@ -1433,8 +1433,8 @@
     "pk": 144,
     "fields": {
         "country_ID": "144",
-        "ISO_code": "MG",
         "name": "Madagascar",
+        "ISO_code": "MG",
         "region": "ROW",
         "currency": null
     }
@@ -1443,8 +1443,8 @@
     "pk": 145,
     "fields": {
         "country_ID": "145",
-        "ISO_code": "MW",
         "name": "Malawi",
+        "ISO_code": "MW",
         "region": "ROW",
         "currency": null
     }
@@ -1453,18 +1453,18 @@
     "pk": 146,
     "fields": {
         "country_ID": "146",
-        "ISO_code": "MY",
         "name": "Malaysia",
+        "ISO_code": "MY",
         "region": "ROW",
-        "currency": null
+        "currency": 33
     }
 }, {
     "model": "shipping.country",
     "pk": 147,
     "fields": {
         "country_ID": "147",
-        "ISO_code": "MV",
         "name": "Maldives",
+        "ISO_code": "MV",
         "region": "ROW",
         "currency": null
     }
@@ -1473,8 +1473,8 @@
     "pk": 148,
     "fields": {
         "country_ID": "148",
-        "ISO_code": "ML",
         "name": "Mali",
+        "ISO_code": "ML",
         "region": "ROW",
         "currency": null
     }
@@ -1483,18 +1483,18 @@
     "pk": 149,
     "fields": {
         "country_ID": "149",
-        "ISO_code": "MT",
         "name": "Malta",
+        "ISO_code": "MT",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 150,
     "fields": {
         "country_ID": "150",
-        "ISO_code": "MH",
         "name": "Marshall Islands",
+        "ISO_code": "MH",
         "region": "ROW",
         "currency": null
     }
@@ -1503,8 +1503,8 @@
     "pk": 151,
     "fields": {
         "country_ID": "151",
-        "ISO_code": "MR",
         "name": "Mauritania",
+        "ISO_code": "MR",
         "region": "ROW",
         "currency": null
     }
@@ -1513,8 +1513,8 @@
     "pk": 152,
     "fields": {
         "country_ID": "152",
-        "ISO_code": "MU",
         "name": "Mauritius",
+        "ISO_code": "MU",
         "region": "ROW",
         "currency": null
     }
@@ -1523,18 +1523,18 @@
     "pk": 153,
     "fields": {
         "country_ID": "153",
-        "ISO_code": "MX",
         "name": "Mexico",
+        "ISO_code": "MX",
         "region": "ROW",
-        "currency": null
+        "currency": 32
     }
 }, {
     "model": "shipping.country",
     "pk": 154,
     "fields": {
         "country_ID": "154",
-        "ISO_code": "FM",
         "name": "Micronesia",
+        "ISO_code": "FM",
         "region": "ROW",
         "currency": null
     }
@@ -1543,8 +1543,8 @@
     "pk": 155,
     "fields": {
         "country_ID": "155",
-        "ISO_code": null,
         "name": "Moldova",
+        "ISO_code": null,
         "region": "EU",
         "currency": null
     }
@@ -1553,8 +1553,8 @@
     "pk": 156,
     "fields": {
         "country_ID": "156",
-        "ISO_code": "MC",
         "name": "Monaco",
+        "ISO_code": "MC",
         "region": "EU",
         "currency": null
     }
@@ -1563,8 +1563,8 @@
     "pk": 157,
     "fields": {
         "country_ID": "157",
-        "ISO_code": "MN",
         "name": "Mongolia",
+        "ISO_code": "MN",
         "region": "ROW",
         "currency": null
     }
@@ -1573,8 +1573,8 @@
     "pk": 158,
     "fields": {
         "country_ID": "158",
-        "ISO_code": "ME",
         "name": "Montenegro",
+        "ISO_code": "ME",
         "region": "EU",
         "currency": null
     }
@@ -1583,8 +1583,8 @@
     "pk": 159,
     "fields": {
         "country_ID": "159",
-        "ISO_code": "MS",
         "name": "Montserrat",
+        "ISO_code": "MS",
         "region": "ROW",
         "currency": null
     }
@@ -1593,8 +1593,8 @@
     "pk": 160,
     "fields": {
         "country_ID": "160",
-        "ISO_code": "MA",
         "name": "Morocco",
+        "ISO_code": "MA",
         "region": "ROW",
         "currency": null
     }
@@ -1603,8 +1603,8 @@
     "pk": 161,
     "fields": {
         "country_ID": "161",
-        "ISO_code": "MZ",
         "name": "Mozambique",
+        "ISO_code": "MZ",
         "region": "ROW",
         "currency": null
     }
@@ -1613,8 +1613,8 @@
     "pk": 162,
     "fields": {
         "country_ID": "162",
-        "ISO_code": "MM",
         "name": "Myanmar",
+        "ISO_code": "MM",
         "region": "ROW",
         "currency": null
     }
@@ -1623,8 +1623,8 @@
     "pk": 163,
     "fields": {
         "country_ID": "163",
-        "ISO_code": "NU",
         "name": "Nagorno-Karabakh",
+        "ISO_code": "NU",
         "region": "EU",
         "currency": null
     }
@@ -1633,8 +1633,8 @@
     "pk": 164,
     "fields": {
         "country_ID": "164",
-        "ISO_code": "NA",
         "name": "Namibia",
+        "ISO_code": "NA",
         "region": "ROW",
         "currency": null
     }
@@ -1643,8 +1643,8 @@
     "pk": 165,
     "fields": {
         "country_ID": "165",
-        "ISO_code": "NR",
         "name": "Nauru",
+        "ISO_code": "NR",
         "region": "ROW",
         "currency": null
     }
@@ -1653,8 +1653,8 @@
     "pk": 166,
     "fields": {
         "country_ID": "166",
-        "ISO_code": "NP",
         "name": "Nepal",
+        "ISO_code": "NP",
         "region": "ROW",
         "currency": null
     }
@@ -1663,8 +1663,8 @@
     "pk": 167,
     "fields": {
         "country_ID": "167",
-        "ISO_code": "NC",
         "name": "New Caledonia",
+        "ISO_code": "NC",
         "region": "ROW",
         "currency": null
     }
@@ -1673,18 +1673,18 @@
     "pk": 168,
     "fields": {
         "country_ID": "168",
-        "ISO_code": "NZ",
         "name": "New Zealand",
+        "ISO_code": "NZ",
         "region": "ROW",
-        "currency": null
+        "currency": 35
     }
 }, {
     "model": "shipping.country",
     "pk": 169,
     "fields": {
         "country_ID": "169",
-        "ISO_code": "NI",
         "name": "Nicaragua",
+        "ISO_code": "NI",
         "region": "ROW",
         "currency": null
     }
@@ -1693,8 +1693,8 @@
     "pk": 170,
     "fields": {
         "country_ID": "170",
-        "ISO_code": "NE",
         "name": "Niger",
+        "ISO_code": "NE",
         "region": "ROW",
         "currency": null
     }
@@ -1703,8 +1703,8 @@
     "pk": 171,
     "fields": {
         "country_ID": "171",
-        "ISO_code": "NG",
         "name": "Nigeria",
+        "ISO_code": "NG",
         "region": "ROW",
         "currency": null
     }
@@ -1713,8 +1713,8 @@
     "pk": 172,
     "fields": {
         "country_ID": "172",
-        "ISO_code": "NU",
         "name": "Niue",
+        "ISO_code": "NU",
         "region": "ROW",
         "currency": null
     }
@@ -1723,8 +1723,8 @@
     "pk": 173,
     "fields": {
         "country_ID": "173",
-        "ISO_code": "NF",
         "name": "Norfolk Island",
+        "ISO_code": "NF",
         "region": "ROW",
         "currency": null
     }
@@ -1733,8 +1733,8 @@
     "pk": 174,
     "fields": {
         "country_ID": "174",
-        "ISO_code": "CY",
         "name": "Northern Cyprus",
+        "ISO_code": "CY",
         "region": "EU",
         "currency": null
     }
@@ -1743,8 +1743,8 @@
     "pk": 175,
     "fields": {
         "country_ID": "175",
-        "ISO_code": "MP",
         "name": "Northern Mariana Islands",
+        "ISO_code": "MP",
         "region": "ROW",
         "currency": null
     }
@@ -1753,18 +1753,18 @@
     "pk": 176,
     "fields": {
         "country_ID": "176",
-        "ISO_code": "NO",
         "name": "Norway",
+        "ISO_code": "NO",
         "region": "EU",
-        "currency": null
+        "currency": 34
     }
 }, {
     "model": "shipping.country",
     "pk": 177,
     "fields": {
         "country_ID": "177",
-        "ISO_code": "OM",
         "name": "Oman",
+        "ISO_code": "OM",
         "region": "ROW",
         "currency": null
     }
@@ -1773,8 +1773,8 @@
     "pk": 178,
     "fields": {
         "country_ID": "178",
-        "ISO_code": "PW",
         "name": "Palau",
+        "ISO_code": "PW",
         "region": "ROW",
         "currency": null
     }
@@ -1783,8 +1783,8 @@
     "pk": 179,
     "fields": {
         "country_ID": "179",
-        "ISO_code": "PS",
         "name": "Palestine",
+        "ISO_code": "PS",
         "region": "ROW",
         "currency": null
     }
@@ -1793,18 +1793,18 @@
     "pk": 180,
     "fields": {
         "country_ID": "180",
-        "ISO_code": "PA",
         "name": "Panama",
+        "ISO_code": "PA",
         "region": "ROW",
-        "currency": null
+        "currency": 36
     }
 }, {
     "model": "shipping.country",
     "pk": 181,
     "fields": {
         "country_ID": "181",
-        "ISO_code": "PG",
         "name": "Papua New Guinea",
+        "ISO_code": "PG",
         "region": "ROW",
         "currency": null
     }
@@ -1813,38 +1813,38 @@
     "pk": 182,
     "fields": {
         "country_ID": "182",
-        "ISO_code": "PY",
         "name": "Paraguay",
+        "ISO_code": "PY",
         "region": "ROW",
-        "currency": null
+        "currency": 41
     }
 }, {
     "model": "shipping.country",
     "pk": 183,
     "fields": {
         "country_ID": "183",
-        "ISO_code": "PE",
         "name": "Peru",
+        "ISO_code": "PE",
         "region": "ROW",
-        "currency": null
+        "currency": 37
     }
 }, {
     "model": "shipping.country",
     "pk": 184,
     "fields": {
         "country_ID": "184",
-        "ISO_code": "PH",
         "name": "Philippines",
+        "ISO_code": "PH",
         "region": "ROW",
-        "currency": null
+        "currency": 38
     }
 }, {
     "model": "shipping.country",
     "pk": 185,
     "fields": {
         "country_ID": "185",
-        "ISO_code": "PN",
         "name": "Pitcairn Islands",
+        "ISO_code": "PN",
         "region": "ROW",
         "currency": null
     }
@@ -1853,28 +1853,28 @@
     "pk": 186,
     "fields": {
         "country_ID": "186",
-        "ISO_code": "PL",
         "name": "Poland",
+        "ISO_code": "PL",
         "region": "EU",
-        "currency": null
+        "currency": 40
     }
 }, {
     "model": "shipping.country",
     "pk": 187,
     "fields": {
         "country_ID": "187",
-        "ISO_code": "PT",
         "name": "Portugal",
+        "ISO_code": "PT",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 188,
     "fields": {
         "country_ID": "188",
-        "ISO_code": null,
         "name": "Pridnestrovskaya Moldavskaya",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -1883,8 +1883,8 @@
     "pk": 189,
     "fields": {
         "country_ID": "189",
-        "ISO_code": "PR",
         "name": "Puerto Rico",
+        "ISO_code": "PR",
         "region": "ROW",
         "currency": null
     }
@@ -1893,8 +1893,8 @@
     "pk": 190,
     "fields": {
         "country_ID": "190",
-        "ISO_code": "QA",
         "name": "Qatar",
+        "ISO_code": "QA",
         "region": "ROW",
         "currency": null
     }
@@ -1903,18 +1903,18 @@
     "pk": 191,
     "fields": {
         "country_ID": "191",
-        "ISO_code": "RO",
         "name": "Romania",
+        "ISO_code": "RO",
         "region": "EU",
-        "currency": null
+        "currency": 42
     }
 }, {
     "model": "shipping.country",
     "pk": 192,
     "fields": {
         "country_ID": "192",
-        "ISO_code": null,
         "name": "Ross Dependency",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -1923,18 +1923,18 @@
     "pk": 193,
     "fields": {
         "country_ID": "193",
-        "ISO_code": "RU",
         "name": "Russian Federation",
+        "ISO_code": "RU",
         "region": "ROW",
-        "currency": null
+        "currency": 43
     }
 }, {
     "model": "shipping.country",
     "pk": 194,
     "fields": {
         "country_ID": "194",
-        "ISO_code": "RW",
         "name": "Rwanda",
+        "ISO_code": "RW",
         "region": "ROW",
         "currency": null
     }
@@ -1943,8 +1943,8 @@
     "pk": 195,
     "fields": {
         "country_ID": "195",
-        "ISO_code": "ST",
         "name": "S\u00e3o Tom\u00e9 and Pr\u00edncipe",
+        "ISO_code": "ST",
         "region": "ROW",
         "currency": null
     }
@@ -1953,8 +1953,8 @@
     "pk": 196,
     "fields": {
         "country_ID": "196",
-        "ISO_code": null,
         "name": "Sahrawi",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -1963,8 +1963,8 @@
     "pk": 197,
     "fields": {
         "country_ID": "197",
-        "ISO_code": "BL",
         "name": "Saint-Barth\u00e9lemy",
+        "ISO_code": "BL",
         "region": "ROW",
         "currency": null
     }
@@ -1973,8 +1973,8 @@
     "pk": 198,
     "fields": {
         "country_ID": "198",
-        "ISO_code": "SH",
         "name": "Saint Helena",
+        "ISO_code": "SH",
         "region": "ROW",
         "currency": null
     }
@@ -1983,8 +1983,8 @@
     "pk": 199,
     "fields": {
         "country_ID": "199",
-        "ISO_code": "KN",
         "name": "Saint Kitts and Nevis",
+        "ISO_code": "KN",
         "region": "ROW",
         "currency": null
     }
@@ -1993,8 +1993,8 @@
     "pk": 200,
     "fields": {
         "country_ID": "200",
-        "ISO_code": "LC",
         "name": "Saint Lucia",
+        "ISO_code": "LC",
         "region": "ROW",
         "currency": null
     }
@@ -2003,8 +2003,8 @@
     "pk": 201,
     "fields": {
         "country_ID": "201",
-        "ISO_code": "MF",
         "name": "Saint Martin",
+        "ISO_code": "MF",
         "region": "ROW",
         "currency": null
     }
@@ -2013,8 +2013,8 @@
     "pk": 202,
     "fields": {
         "country_ID": "202",
-        "ISO_code": "PM",
         "name": "Saint Pierre and Miquelon",
+        "ISO_code": "PM",
         "region": "ROW",
         "currency": null
     }
@@ -2023,8 +2023,8 @@
     "pk": 203,
     "fields": {
         "country_ID": "203",
-        "ISO_code": "VC",
         "name": "Saint Vincent and the Grenadines",
+        "ISO_code": "VC",
         "region": "ROW",
         "currency": null
     }
@@ -2033,8 +2033,8 @@
     "pk": 204,
     "fields": {
         "country_ID": "204",
-        "ISO_code": "WS",
         "name": "Samoa",
+        "ISO_code": "WS",
         "region": "ROW",
         "currency": null
     }
@@ -2043,8 +2043,8 @@
     "pk": 205,
     "fields": {
         "country_ID": "205",
-        "ISO_code": "SM",
         "name": "San Marino",
+        "ISO_code": "SM",
         "region": "EU",
         "currency": null
     }
@@ -2053,8 +2053,8 @@
     "pk": 206,
     "fields": {
         "country_ID": "206",
-        "ISO_code": null,
         "name": "Sark",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -2063,18 +2063,18 @@
     "pk": 207,
     "fields": {
         "country_ID": "207",
-        "ISO_code": "SA",
         "name": "Saudi Arabia",
+        "ISO_code": "SA",
         "region": "ROW",
-        "currency": null
+        "currency": 44
     }
 }, {
     "model": "shipping.country",
     "pk": 208,
     "fields": {
         "country_ID": "208",
-        "ISO_code": "SN",
         "name": "Senegal",
+        "ISO_code": "SN",
         "region": "ROW",
         "currency": null
     }
@@ -2083,8 +2083,8 @@
     "pk": 209,
     "fields": {
         "country_ID": "209",
-        "ISO_code": "RS",
         "name": "Serbia",
+        "ISO_code": "RS",
         "region": "EU",
         "currency": null
     }
@@ -2093,8 +2093,8 @@
     "pk": 210,
     "fields": {
         "country_ID": "210",
-        "ISO_code": "SC",
         "name": "Seychelles",
+        "ISO_code": "SC",
         "region": "ROW",
         "currency": null
     }
@@ -2103,8 +2103,8 @@
     "pk": 211,
     "fields": {
         "country_ID": "211",
-        "ISO_code": "SL",
         "name": "Sierra Leone",
+        "ISO_code": "SL",
         "region": "ROW",
         "currency": null
     }
@@ -2113,18 +2113,18 @@
     "pk": 212,
     "fields": {
         "country_ID": "212",
-        "ISO_code": "SG",
         "name": "Singapore",
+        "ISO_code": "SG",
         "region": "ROW",
-        "currency": null
+        "currency": 46
     }
 }, {
     "model": "shipping.country",
     "pk": 213,
     "fields": {
         "country_ID": "213",
-        "ISO_code": "MF",
         "name": "Sint Maarten",
+        "ISO_code": "MF",
         "region": "ROW",
         "currency": null
     }
@@ -2133,28 +2133,28 @@
     "pk": 214,
     "fields": {
         "country_ID": "214",
-        "ISO_code": "SK",
         "name": "Slovakia",
+        "ISO_code": "SK",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 215,
     "fields": {
         "country_ID": "215",
-        "ISO_code": "SI",
         "name": "Slovenia",
+        "ISO_code": "SI",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 216,
     "fields": {
         "country_ID": "216",
-        "ISO_code": "SB",
         "name": "Solomon Islands",
+        "ISO_code": "SB",
         "region": "ROW",
         "currency": null
     }
@@ -2163,8 +2163,8 @@
     "pk": 217,
     "fields": {
         "country_ID": "217",
-        "ISO_code": "SO",
         "name": "Somalia",
+        "ISO_code": "SO",
         "region": "ROW",
         "currency": null
     }
@@ -2173,8 +2173,8 @@
     "pk": 218,
     "fields": {
         "country_ID": "218",
-        "ISO_code": "SO",
         "name": "Somaliland",
+        "ISO_code": "SO",
         "region": "ROW",
         "currency": null
     }
@@ -2183,18 +2183,18 @@
     "pk": 219,
     "fields": {
         "country_ID": "219",
-        "ISO_code": "ZA",
         "name": "South Africa",
+        "ISO_code": "ZA",
         "region": "ROW",
-        "currency": null
+        "currency": 53
     }
 }, {
     "model": "shipping.country",
     "pk": 220,
     "fields": {
         "country_ID": "220",
-        "ISO_code": "GS",
         "name": "South Georgia and the South Sandwich Islands",
+        "ISO_code": "GS",
         "region": "ROW",
         "currency": null
     }
@@ -2203,8 +2203,8 @@
     "pk": 221,
     "fields": {
         "country_ID": "221",
-        "ISO_code": null,
         "name": "South Ossetia",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -2213,8 +2213,8 @@
     "pk": 222,
     "fields": {
         "country_ID": "222",
-        "ISO_code": "SS",
         "name": "South Sudan",
+        "ISO_code": "SS",
         "region": "ROW",
         "currency": null
     }
@@ -2223,8 +2223,8 @@
     "pk": 223,
     "fields": {
         "country_ID": "223",
-        "ISO_code": "LK",
         "name": "Sri Lanka",
+        "ISO_code": "LK",
         "region": "ROW",
         "currency": null
     }
@@ -2233,8 +2233,8 @@
     "pk": 224,
     "fields": {
         "country_ID": "224",
-        "ISO_code": "SD",
         "name": "Sudan",
+        "ISO_code": "SD",
         "region": "ROW",
         "currency": null
     }
@@ -2243,8 +2243,8 @@
     "pk": 225,
     "fields": {
         "country_ID": "225",
-        "ISO_code": "SR",
         "name": "Suriname",
+        "ISO_code": "SR",
         "region": "ROW",
         "currency": null
     }
@@ -2253,8 +2253,8 @@
     "pk": 226,
     "fields": {
         "country_ID": "226",
-        "ISO_code": "SZ",
         "name": "Swaziland",
+        "ISO_code": "SZ",
         "region": "ROW",
         "currency": null
     }
@@ -2263,28 +2263,28 @@
     "pk": 227,
     "fields": {
         "country_ID": "227",
-        "ISO_code": "SE",
         "name": "Sweden",
+        "ISO_code": "SE",
         "region": "EU",
-        "currency": null
+        "currency": 45
     }
 }, {
     "model": "shipping.country",
     "pk": 228,
     "fields": {
         "country_ID": "228",
-        "ISO_code": "CH",
         "name": "Switzerland",
+        "ISO_code": "CH",
         "region": "ROW",
-        "currency": null
+        "currency": 12
     }
 }, {
     "model": "shipping.country",
     "pk": 229,
     "fields": {
         "country_ID": "229",
-        "ISO_code": null,
         "name": "Syria",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -2293,18 +2293,18 @@
     "pk": 230,
     "fields": {
         "country_ID": "230",
-        "ISO_code": "TW",
         "name": "Taiwan",
+        "ISO_code": "TW",
         "region": "ROW",
-        "currency": null
+        "currency": 49
     }
 }, {
     "model": "shipping.country",
     "pk": 231,
     "fields": {
         "country_ID": "231",
-        "ISO_code": "TJ",
         "name": "Tajikistan",
+        "ISO_code": "TJ",
         "region": "EU",
         "currency": null
     }
@@ -2313,8 +2313,8 @@
     "pk": 232,
     "fields": {
         "country_ID": "232",
-        "ISO_code": null,
         "name": "Tanzania",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -2323,18 +2323,18 @@
     "pk": 233,
     "fields": {
         "country_ID": "233",
-        "ISO_code": "TH",
         "name": "Thailand",
+        "ISO_code": "TH",
         "region": "ROW",
-        "currency": null
+        "currency": 47
     }
 }, {
     "model": "shipping.country",
     "pk": 234,
     "fields": {
         "country_ID": "234",
-        "ISO_code": "TG",
         "name": "Togo",
+        "ISO_code": "TG",
         "region": "ROW",
         "currency": null
     }
@@ -2343,8 +2343,8 @@
     "pk": 235,
     "fields": {
         "country_ID": "235",
-        "ISO_code": "TO",
         "name": "Tonga",
+        "ISO_code": "TO",
         "region": "ROW",
         "currency": null
     }
@@ -2353,8 +2353,8 @@
     "pk": 236,
     "fields": {
         "country_ID": "236",
-        "ISO_code": "TK",
         "name": "Tokelau",
+        "ISO_code": "TK",
         "region": "ROW",
         "currency": null
     }
@@ -2363,8 +2363,8 @@
     "pk": 237,
     "fields": {
         "country_ID": "237",
-        "ISO_code": null,
         "name": "Transnistria",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -2373,8 +2373,8 @@
     "pk": 238,
     "fields": {
         "country_ID": "238",
-        "ISO_code": "TT",
         "name": "Trinidad and Tobago",
+        "ISO_code": "TT",
         "region": "ROW",
         "currency": null
     }
@@ -2383,8 +2383,8 @@
     "pk": 239,
     "fields": {
         "country_ID": "239",
-        "ISO_code": "TN",
         "name": "Tunisia",
+        "ISO_code": "TN",
         "region": "ROW",
         "currency": null
     }
@@ -2393,18 +2393,18 @@
     "pk": 240,
     "fields": {
         "country_ID": "240",
-        "ISO_code": "TR",
         "name": "Turkey",
+        "ISO_code": "TR",
         "region": "EU",
-        "currency": null
+        "currency": 48
     }
 }, {
     "model": "shipping.country",
     "pk": 241,
     "fields": {
         "country_ID": "241",
-        "ISO_code": "TM",
         "name": "Turkmenistan",
+        "ISO_code": "TM",
         "region": "EU",
         "currency": null
     }
@@ -2413,8 +2413,8 @@
     "pk": 242,
     "fields": {
         "country_ID": "242",
-        "ISO_code": "TC",
         "name": "Turks and Caicos Islands",
+        "ISO_code": "TC",
         "region": "ROW",
         "currency": null
     }
@@ -2423,8 +2423,8 @@
     "pk": 243,
     "fields": {
         "country_ID": "243",
-        "ISO_code": "TV",
         "name": "Tuvalu",
+        "ISO_code": "TV",
         "region": "ROW",
         "currency": null
     }
@@ -2433,8 +2433,8 @@
     "pk": 244,
     "fields": {
         "country_ID": "244",
-        "ISO_code": "UG",
         "name": "Uganda",
+        "ISO_code": "UG",
         "region": "ROW",
         "currency": null
     }
@@ -2443,48 +2443,48 @@
     "pk": 245,
     "fields": {
         "country_ID": "245",
-        "ISO_code": "UA",
         "name": "Ukraine",
+        "ISO_code": "UA",
         "region": "EU",
-        "currency": null
+        "currency": 50
     }
 }, {
     "model": "shipping.country",
     "pk": 246,
     "fields": {
         "country_ID": "246",
-        "ISO_code": "AE",
         "name": "United Arab Emirates",
+        "ISO_code": "AE",
         "region": "ROW",
-        "currency": null
+        "currency": 6
     }
 }, {
     "model": "shipping.country",
     "pk": 247,
     "fields": {
         "country_ID": "247",
-        "ISO_code": "US",
         "name": "United States",
+        "ISO_code": "US",
         "region": "ROW",
-        "currency": 1
+        "currency": 2
     }
 }, {
     "model": "shipping.country",
     "pk": 248,
     "fields": {
         "country_ID": "248",
-        "ISO_code": "UY",
         "name": "Uruguay",
+        "ISO_code": "UY",
         "region": "ROW",
-        "currency": null
+        "currency": 51
     }
 }, {
     "model": "shipping.country",
     "pk": 249,
     "fields": {
         "country_ID": "249",
-        "ISO_code": "UZ",
         "name": "Uzbekistan",
+        "ISO_code": "UZ",
         "region": "ROW",
         "currency": null
     }
@@ -2493,8 +2493,8 @@
     "pk": 250,
     "fields": {
         "country_ID": "250",
-        "ISO_code": "VU",
         "name": "Vanuatu",
+        "ISO_code": "VU",
         "region": "ROW",
         "currency": null
     }
@@ -2503,8 +2503,8 @@
     "pk": 251,
     "fields": {
         "country_ID": "251",
-        "ISO_code": null,
         "name": "Vatican City",
+        "ISO_code": null,
         "region": "EU",
         "currency": null
     }
@@ -2513,8 +2513,8 @@
     "pk": 252,
     "fields": {
         "country_ID": "252",
-        "ISO_code": null,
         "name": "Venezuela",
+        "ISO_code": null,
         "region": "ROW",
         "currency": null
     }
@@ -2523,18 +2523,18 @@
     "pk": 253,
     "fields": {
         "country_ID": "253",
-        "ISO_code": "VN",
         "name": "Vietnam",
+        "ISO_code": "VN",
         "region": "ROW",
-        "currency": null
+        "currency": 52
     }
 }, {
     "model": "shipping.country",
     "pk": 254,
     "fields": {
         "country_ID": "254",
-        "ISO_code": "VI",
         "name": "Virgin Islands",
+        "ISO_code": "VI",
         "region": "ROW",
         "currency": null
     }
@@ -2543,8 +2543,8 @@
     "pk": 255,
     "fields": {
         "country_ID": "255",
-        "ISO_code": "YE",
         "name": "Yemen",
+        "ISO_code": "YE",
         "region": "ROW",
         "currency": null
     }
@@ -2553,8 +2553,8 @@
     "pk": 256,
     "fields": {
         "country_ID": "256",
-        "ISO_code": "WF",
         "name": "Wallis and Futuna",
+        "ISO_code": "WF",
         "region": "ROW",
         "currency": null
     }
@@ -2563,8 +2563,8 @@
     "pk": 257,
     "fields": {
         "country_ID": "257",
-        "ISO_code": "ZM",
         "name": "Zambia",
+        "ISO_code": "ZM",
         "region": "ROW",
         "currency": null
     }
@@ -2573,8 +2573,8 @@
     "pk": 258,
     "fields": {
         "country_ID": "258",
-        "ISO_code": "ZW",
         "name": "Zimbabwe",
+        "ISO_code": "ZW",
         "region": "ROW",
         "currency": null
     }
@@ -2583,18 +2583,18 @@
     "pk": 259,
     "fields": {
         "country_ID": "259",
-        "ISO_code": "PK",
         "name": "Pakistan",
+        "ISO_code": "PK",
         "region": "ROW",
-        "currency": null
+        "currency": 39
     }
 }, {
     "model": "shipping.country",
     "pk": 260,
     "fields": {
         "country_ID": "260",
-        "ISO_code": "IC",
         "name": "Canary Islands",
+        "ISO_code": "IC",
         "region": "EU",
         "currency": null
     }
@@ -2603,8 +2603,8 @@
     "pk": 261,
     "fields": {
         "country_ID": "261",
-        "ISO_code": "RE",
         "name": "Reunion",
+        "ISO_code": "RE",
         "region": "ROW",
         "currency": null
     }
@@ -2613,18 +2613,18 @@
     "pk": 262,
     "fields": {
         "country_ID": "262",
-        "ISO_code": "DK",
         "name": "Denmark",
+        "ISO_code": "DK",
         "region": "EU",
-        "currency": null
+        "currency": 17
     }
 }, {
     "model": "shipping.country",
     "pk": 263,
     "fields": {
         "country_ID": "263",
-        "ISO_code": "GP",
         "name": "Guadeloupe",
+        "ISO_code": "GP",
         "region": "ROW",
         "currency": null
     }
@@ -2633,18 +2633,18 @@
     "pk": 264,
     "fields": {
         "country_ID": "264",
-        "ISO_code": "BE",
         "name": "Belgium",
+        "ISO_code": "BE",
         "region": "EU",
-        "currency": null
+        "currency": 3
     }
 }, {
     "model": "shipping.country",
     "pk": 265,
     "fields": {
         "country_ID": "265",
-        "ISO_code": "CA",
         "name": "Canada Fr",
+        "ISO_code": "CA",
         "region": "ROW",
         "currency": 1
     }
@@ -2653,8 +2653,8 @@
     "pk": 266,
     "fields": {
         "country_ID": "266",
-        "ISO_code": "GF",
         "name": "French Guiana",
+        "ISO_code": "GF",
         "region": "ROW",
         "currency": null
     }
@@ -2663,8 +2663,8 @@
     "pk": 267,
     "fields": {
         "country_ID": "267",
-        "ISO_code": "MQ",
         "name": "Martinique",
+        "ISO_code": "MQ",
         "region": "ROW",
         "currency": null
     }

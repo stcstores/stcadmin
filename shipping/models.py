@@ -8,6 +8,7 @@ class Currency(models.Model):
     name = models.CharField(max_length=255, unique=True)
     code = models.CharField(max_length=5, unique=True)
     exchange_rate = models.DecimalField(max_digits=6, decimal_places=3)
+    symbol = models.CharField(max_length=5, default="$")
 
     class Meta:
         """Meta class for Currency."""

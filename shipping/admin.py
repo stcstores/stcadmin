@@ -8,9 +8,9 @@ from shipping import models
 class CurrencyAdmin(admin.ModelAdmin):
     """Model Admin for shipping.Currency."""
 
-    fields = ("name", "code", "exchange_rate")
-    list_display = ("name", "code", "exchange_rate")
-    list_editable = ("code", "exchange_rate")
+    fields = ("name", "code", "exchange_rate", "symbol")
+    list_display = ("name", "code", "exchange_rate", "symbol")
+    list_editable = ("code", "exchange_rate", "symbol")
 
 
 @admin.register(models.Country)
