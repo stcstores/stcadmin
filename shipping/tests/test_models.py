@@ -1,4 +1,5 @@
 from decimal import Decimal
+from unittest.mock import Mock, patch
 
 from shipping import models
 from stcadmin.tests.stcadmin_test import STCAdminTest
@@ -21,6 +22,21 @@ class TestCurrency(STCAdminTest):
     def test_str_(self):
         currency = models.Currency.objects.get(id=1)
         self.assertEqual(currency.name, str(currency))
+
+    @patch("shipping.models.requests.get")
+    def test_update(self, mock_get):
+        rates = {currency.code: 5 for currency in models.Currency.objects.all()}
+        data = {"rates": rates}
+        response = Mock()
+        response.json.return_value = data
+        mock_get.return_value = response
+        models.Currency.update()
+        mock_get.assert_called_once_with(models.Currency.EXCHANGE_RATE_URL)
+        response.raise_for_status.assert_called_once()
+        response.json.assert_called_once()
+        self.assertEqual(3, len(mock_get.mock_calls))
+        for currency in models.Currency.objects.all():
+            self.assertEqual(float(currency.exchange_rate), 1 / 5)
 
 
 class TestCountry(STCAdminTest):

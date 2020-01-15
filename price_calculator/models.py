@@ -3,6 +3,8 @@
 from django.db import models
 from django.db.models import Q
 
+from shipping.models import Country
+
 
 class ShippingRegion(models.Model):
     """Model for shipping regions."""
@@ -24,13 +26,13 @@ class DestinationCountry(models.Model):
     """Model for countries to ship to."""
 
     name = models.CharField(max_length=50, unique=True)
-    currency_code = models.CharField(max_length=4, default="GBP")
-    currency_symbol = models.CharField(max_length=1, default="£")
+    country = models.ForeignKey(
+        Country, on_delete=models.PROTECT, null=True, blank=True
+    )
     min_channel_fee = models.IntegerField(null=True, blank=True)
     shipping_region = models.ForeignKey(
         ShippingRegion, on_delete=models.CASCADE, null=True, blank=True
     )
-    exchange_rate = models.FloatField()
     sort_order = models.IntegerField(default=0)
 
     class Meta:
@@ -49,6 +51,21 @@ class DestinationCountry(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def currency_code(self):
+        """Return the countries currency code."""
+        return self.country.currency.code
+
+    @property
+    def currency_symbol(self):
+        """Return the countries currency symbol."""
+        return self.country.currency.symbol
+
+    @property
+    def exchange_rate(self):
+        """Return the countries currency exhange rate to GBP."""
+        return self.country.currency.exchange_rate
 
 
 class PackageType(models.Model):

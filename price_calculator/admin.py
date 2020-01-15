@@ -16,32 +16,15 @@ class ShippingRegionAdmin(admin.ModelAdmin):
 class DestinationCountryAdmin(admin.ModelAdmin):
     """Model admin for DestinationCountry model."""
 
-    fields = (
-        "name",
-        "currency_code",
-        "currency_symbol",
-        "min_channel_fee",
-        "shipping_region",
-        "exchange_rate",
-        "sort_order",
-    )
+    fields = ("name", "country", "min_channel_fee", "shipping_region", "sort_order")
     list_display = (
         "name",
-        "currency_code",
-        "currency_symbol",
+        "country",
         "min_channel_fee",
         "shipping_region",
-        "exchange_rate",
         "sort_order",
     )
-    list_editable = (
-        "currency_code",
-        "currency_symbol",
-        "min_channel_fee",
-        "shipping_region",
-        "exchange_rate",
-        "sort_order",
-    )
+    list_editable = ("country", "min_channel_fee", "shipping_region", "sort_order")
     search_fields = ("name",)
 
 

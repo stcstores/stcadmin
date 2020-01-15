@@ -1,9 +1,12 @@
 """Shipping Models."""
+import requests
 from django.db import models
 
 
 class Currency(models.Model):
     """Model for currencies."""
+
+    EXCHANGE_RATE_URL = "https://api.exchangerate-api.com/v4/latest/GBP"
 
     name = models.CharField(max_length=255, unique=True)
     code = models.CharField(max_length=5, unique=True)
@@ -18,6 +21,16 @@ class Currency(models.Model):
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def update(cls):
+        """Update the exchange rates."""
+        response = requests.get(cls.EXCHANGE_RATE_URL)
+        response.raise_for_status()
+        rates = response.json()["rates"]
+        for currency in cls._default_manager.all():
+            currency.exchange_rate = 1 / rates[currency.code]
+            currency.save()
 
 
 class Country(models.Model):

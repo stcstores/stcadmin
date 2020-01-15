@@ -66,7 +66,7 @@ class GetShippingPriceView(InventoryUserMixin, View):
         )
         weight = int(self.request.POST["weight"])
         price = int(self.request.POST["price"])
-        self.exchange_rate = self.country.exchange_rate
+        self.exchange_rate = float(self.country.exchange_rate)
         postage_price = models.ShippingPrice.get_price(
             self.country.name, self.package_type_name(), weight, price
         )

@@ -17,32 +17,48 @@ class TestShippingRegion(STCAdminTest):
 
 class TestDestinationCountry(STCAdminTest):
     fixtures = (
+        "shipping/currency",
+        "shipping/country",
         "price_calculator/shipping_region",
         "price_calculator/destination_country",
     )
 
     def test_create_object(self):
         name = "New Land"
+        country = models.Country.objects.get(id=1)
         min_channel_fee = 9
         shipping_region = models.ShippingRegion.objects.get(id=1)
-        exchange_rate = 1.3
-        country = models.DestinationCountry.objects.create(
+        destination_country = models.DestinationCountry.objects.create(
             name=name,
+            country=country,
             min_channel_fee=min_channel_fee,
             shipping_region=shipping_region,
-            exchange_rate=exchange_rate,
         )
-        self.assertEqual(name, country.name)
-        self.assertEqual("GBP", country.currency_code)
-        self.assertEqual("£", country.currency_symbol)
-        self.assertEqual(min_channel_fee, country.min_channel_fee)
-        self.assertEqual(shipping_region, country.shipping_region)
-        self.assertEqual(exchange_rate, country.exchange_rate)
-        self.assertEqual(0, country.sort_order)
+        self.assertEqual(name, destination_country.name)
+        self.assertEqual(country, destination_country.country)
+        self.assertEqual(min_channel_fee, destination_country.min_channel_fee)
+        self.assertEqual(shipping_region, destination_country.shipping_region)
+        self.assertEqual(0, destination_country.sort_order)
 
     def test_str_method(self):
         country = models.DestinationCountry.objects.get(id=1)
         self.assertEqual(str(country), country.name)
+
+    def test_currency_code(self):
+        destination = models.DestinationCountry.objects.get(id=1)
+        self.assertEqual(destination.country.currency.code, destination.currency_code)
+
+    def test_currency_symbol(self):
+        destination = models.DestinationCountry.objects.get(id=1)
+        self.assertEqual(
+            destination.country.currency.symbol, destination.currency_symbol
+        )
+
+    def test_exchange_rate(self):
+        destination = models.DestinationCountry.objects.get(id=1)
+        self.assertEqual(
+            destination.country.currency.exchange_rate, destination.exchange_rate
+        )
 
 
 class TestPackageType(STCAdminTest):
@@ -97,6 +113,8 @@ class TestChannelFee(STCAdminTest):
 
 class TestShippingPrice(STCAdminTest):
     fixtures = (
+        "shipping/currency",
+        "shipping/country",
         "price_calculator/shipping_region",
         "price_calculator/destination_country",
         "price_calculator/package_type",
@@ -201,6 +219,8 @@ class TestShippingPrice(STCAdminTest):
 
 class TestShippingPriceGetPriceMethod(STCAdminTest):
     fixtures = (
+        "shipping/currency",
+        "shipping/country",
         "price_calculator/shipping_region",
         "price_calculator/destination_country",
         "price_calculator/package_type",
