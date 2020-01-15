@@ -24,7 +24,6 @@ class TestPriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
     fixtures = (
         "shipping/currency",
         "shipping/country",
-        "price_calculator/shipping_region",
         "price_calculator/destination_country",
         "price_calculator/package_type",
         "price_calculator/vat_rate",
@@ -62,7 +61,6 @@ class TestRangePriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
     fixtures = (
         "shipping/currency",
         "shipping/country",
-        "price_calculator/shipping_region",
         "price_calculator/destination_country",
         "price_calculator/package_type",
         "price_calculator/vat_rate",
@@ -115,7 +113,6 @@ class TestGetShippingPriceView(PriceCalculatorViewTest, ViewTests):
     fixtures = (
         "shipping/currency",
         "shipping/country",
-        "price_calculator/shipping_region",
         "price_calculator/destination_country",
         "price_calculator/package_type",
         "price_calculator/vat_rate",

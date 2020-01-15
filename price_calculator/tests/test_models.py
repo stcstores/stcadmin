@@ -2,24 +2,10 @@ from price_calculator import models
 from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
-class TestShippingRegion(STCAdminTest):
-    fixtures = ("price_calculator/shipping_region",)
-
-    def test_create_object(self):
-        name = "Test Region"
-        region = models.ShippingRegion.objects.create(name=name)
-        self.assertEqual(name, region.name)
-
-    def test_str_method(self):
-        region = models.ShippingRegion.objects.get(id=1)
-        self.assertEqual(str(region), region.name)
-
-
 class TestDestinationCountry(STCAdminTest):
     fixtures = (
         "shipping/currency",
         "shipping/country",
-        "price_calculator/shipping_region",
         "price_calculator/destination_country",
     )
 
@@ -27,17 +13,12 @@ class TestDestinationCountry(STCAdminTest):
         name = "New Land"
         country = models.Country.objects.get(id=1)
         min_channel_fee = 9
-        shipping_region = models.ShippingRegion.objects.get(id=1)
         destination_country = models.DestinationCountry.objects.create(
-            name=name,
-            country=country,
-            min_channel_fee=min_channel_fee,
-            shipping_region=shipping_region,
+            name=name, country=country, min_channel_fee=min_channel_fee
         )
         self.assertEqual(name, destination_country.name)
         self.assertEqual(country, destination_country.country)
         self.assertEqual(min_channel_fee, destination_country.min_channel_fee)
-        self.assertEqual(shipping_region, destination_country.shipping_region)
         self.assertEqual(0, destination_country.sort_order)
 
     def test_str_method(self):
@@ -115,7 +96,6 @@ class TestShippingPrice(STCAdminTest):
     fixtures = (
         "shipping/currency",
         "shipping/country",
-        "price_calculator/shipping_region",
         "price_calculator/destination_country",
         "price_calculator/package_type",
         "price_calculator/vat_rate",
@@ -221,7 +201,6 @@ class TestShippingPriceGetPriceMethod(STCAdminTest):
     fixtures = (
         "shipping/currency",
         "shipping/country",
-        "price_calculator/shipping_region",
         "price_calculator/destination_country",
         "price_calculator/package_type",
         "price_calculator/vat_rate",

@@ -5,26 +5,13 @@ from django.contrib import admin
 from price_calculator import models
 
 
-@admin.register(models.ShippingRegion)
-class ShippingRegionAdmin(admin.ModelAdmin):
-    """Model admin for the ShippingRegion model."""
-
-    fields = ("name",)
-
-
 @admin.register(models.DestinationCountry)
 class DestinationCountryAdmin(admin.ModelAdmin):
     """Model admin for DestinationCountry model."""
 
     fields = ("name", "country", "min_channel_fee", "shipping_region", "sort_order")
-    list_display = (
-        "name",
-        "country",
-        "min_channel_fee",
-        "shipping_region",
-        "sort_order",
-    )
-    list_editable = ("country", "min_channel_fee", "shipping_region", "sort_order")
+    list_display = ("name", "country", "min_channel_fee", "sort_order")
+    list_editable = ("country", "min_channel_fee", "sort_order")
     search_fields = ("name",)
 
 

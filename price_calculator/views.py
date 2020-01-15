@@ -43,7 +43,7 @@ class GetShippingPriceView(InventoryUserMixin, View):
         """Return the package type name."""
         int_shipping = self.request.POST["international_shipping"]
         if (
-            self.country.shipping_region.name != "Domestic"
+            self.country.country.region != self.country.country.UK
             and int_shipping == "Express"
         ):
             package_type_name = int_shipping

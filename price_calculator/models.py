@@ -6,22 +6,6 @@ from django.db.models import Q
 from shipping.models import Country
 
 
-class ShippingRegion(models.Model):
-    """Model for shipping regions."""
-
-    name = models.CharField(max_length=50)
-
-    class Meta:
-        """Meta class for ShippingRegion."""
-
-        verbose_name = "Shipping Region"
-        verbose_name_plural = "Shipping Regions"
-        ordering = ("name",)
-
-    def __str__(self):
-        return self.name
-
-
 class DestinationCountry(models.Model):
     """Model for countries to ship to."""
 
@@ -30,9 +14,6 @@ class DestinationCountry(models.Model):
         Country, on_delete=models.PROTECT, null=True, blank=True
     )
     min_channel_fee = models.IntegerField(null=True, blank=True)
-    shipping_region = models.ForeignKey(
-        ShippingRegion, on_delete=models.CASCADE, null=True, blank=True
-    )
     sort_order = models.IntegerField(default=0)
 
     class Meta:
