@@ -4,6 +4,7 @@
 class BaseValidationCheck:
     """Base class for validation checks."""
 
+    abstract = False
     name = ""
     level = None
 
