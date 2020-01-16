@@ -6,23 +6,8 @@ class _Level:
         self.name = str(name)
         self.level = int(level)
 
-    def __lt__(self, other):
-        return int(self) < int(other)
-
     def __gt__(self, other):
         return int(self) > int(other)
-
-    def __ge__(self, other):
-        return int(self) >= int(other)
-
-    def __le__(self, other):
-        return int(self) <= int(other)
-
-    def __ne__(self, other):
-        return int(self) != int(other)
-
-    def __eq__(self, other):
-        return int(self) == int(other)
 
     def __int__(self):
         return self.level
@@ -63,7 +48,7 @@ class Levels:
         if level is None:
             return objects
         else:
-            return [_ for _ in objects if cls.get(_.level) >= cls.get(level)]
+            return [_ for _ in objects if int(_.level) >= cls.get(level).level]
 
     @classmethod
     def get(cls, identifier):
@@ -74,8 +59,8 @@ class Levels:
         """
         if isinstance(identifier, _Level):
             return identifier
-        elif isinstance(identifier, int):
+        elif isinstance(identifier, int) and identifier in cls.numeric:
             return cls.numeric[identifier]
-        elif isinstance(identifier, str):
+        elif isinstance(identifier, str) and identifier.lower() in cls.names:
             return cls.names[identifier.lower()]
         raise ValueError("Level instance not recognised.")

@@ -37,6 +37,8 @@ class ValidationRunner:
         self.failed_validations.append(validation_check)
         if validation_check.level in self.levels:
             self.levels[validation_check.level].append(validation_check)
+        else:
+            raise ValueError("validation_check.level is not valid.")
 
 
 class ModelValidationRunner(ValidationRunner):
