@@ -37,7 +37,7 @@ class BaseValidationCheck:
             self.error_message = self.format_error_message(**test_data)
             self.validation_runner.add_failed_validation(self)
 
-    def is_valid(self, object, validation_runner):
+    def is_valid(self, *args, **kwargs):
         """Return True if the object passes the validation tests, otherwise False."""
         raise NotImplementedError()
 

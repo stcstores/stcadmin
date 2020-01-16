@@ -186,3 +186,28 @@ class TestLogoutView(STCAdminTest):
         response = self.client.get(self.URL)
         self.assertRedirects(response, "/login/")
         self.assertFalse(self.user_logged_in())
+
+
+class TestDisplayMonitorView(STCAdminTest, ViewTests):
+    URL = "/monitor/"
+    template = "home/monitor.html"
+
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(self.template)
+
+    def test_logged_out_user_get(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(self.template)
+
+    def test_user_not_in_group_get(self):
+        pass
+
+    def test_user_not_in_group_post(self):
+        pass
+
+    def test_logged_out_user_post(self):
+        response = self.make_post_request()
+        self.assertEqual(405, response.status_code)
