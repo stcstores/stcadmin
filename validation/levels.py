@@ -48,7 +48,7 @@ class Levels:
         if level is None:
             return objects
         else:
-            return [_ for _ in objects if cls.get(_.level) >= cls.get(level)]
+            return [_ for _ in objects if int(_.level) >= cls.get(level).level]
 
     @classmethod
     def get(cls, identifier):
@@ -59,8 +59,8 @@ class Levels:
         """
         if isinstance(identifier, _Level):
             return identifier
-        elif isinstance(identifier, int):
+        elif isinstance(identifier, int) and identifier in cls.numeric:
             return cls.numeric[identifier]
-        elif isinstance(identifier, str):
+        elif isinstance(identifier, str) and identifier.lower() in cls.names:
             return cls.names[identifier.lower()]
         raise ValueError("Level instance not recognised.")
