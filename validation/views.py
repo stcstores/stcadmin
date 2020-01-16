@@ -13,7 +13,7 @@ class ValidationUserMixin(UserInGroupMixin):
     groups = ["validation"]
 
 
-class BaseValidationList(TemplateView, ValidationUserMixin):
+class BaseValidationList(ValidationUserMixin, TemplateView):
     """Base view class for lists of validation errors."""
 
     def get_context_data(self, *args, **kwargs):
