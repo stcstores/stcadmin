@@ -12,10 +12,6 @@ from validation.run_validation import RunModelValidation
 class ValidationCheck(BaseValidationCheck):
     mock_subclass = Mock(level=Levels.FORMATTING)
 
-    @classmethod
-    def __subclasses__(cls):
-        return [cls.mock_subclass]
-
     def is_valid(*args, **kwargs):
         return True
 
@@ -153,13 +149,16 @@ class TestLevels(STCAdminTest):
 
 
 class TestObjectValidator(STCAdminTest):
-    def test_init(self):
+    @patch("validation.object_vaidators.all_subclasses")
+    def test_init(self, mock_all_subclasses):
+        mock_subclass = Mock()
+        mock_all_subclasses.return_value = {mock_subclass}
         runner = ValidationRunner()
         validator = ObjectValidator(runner)
         self.assertEqual([], validator.error_messages)
         self.assertEqual([], validator.invalid_objects)
         self.assertEqual(runner, validator.validation_runner)
-        self.assertEqual([ValidationCheck.mock_subclass], validator.validation_checks)
+        self.assertEqual({mock_subclass}, validator.validation_checks)
 
     def test_get_test_objects(self):
         runner = ValidationRunner()
@@ -167,15 +166,16 @@ class TestObjectValidator(STCAdminTest):
         with self.assertRaises(NotImplementedError):
             validator.get_test_objects(runner)
 
-    def test_validate_all_method(self):
+    @patch("validation.object_vaidators.all_subclasses")
+    def test_validate_all_method(self, mock_all_subclasses):
+        mock_subclass = Mock()
+        mock_all_subclasses.return_value = {mock_subclass}
         mock_object = Mock()
         runner = ValidationRunner()
         validator = ObjectValidator(runner)
         validator.get_test_objects = lambda x: [mock_object]
         validator.validate_all()
-        ValidationCheck.mock_subclass.assert_called_once_with(
-            validator, runner, mock_object
-        )
+        mock_subclass.assert_called_once_with(validator, runner, mock_object)
 
 
 class TestValidationRunner(STCAdminTest):
@@ -194,7 +194,10 @@ class TestValidationRunner(STCAdminTest):
         self.assertIn(ObjectValidator.name, validators)
         self.assertIsInstance(validators[ObjectValidator.name], ObjectValidator)
 
-    def test_validate(self):
+    @patch("validation.object_vaidators.all_subclasses")
+    def test_validate(self, mock_all_subclasses):
+        mock_subclass = Mock()
+        mock_all_subclasses.return_value = {mock_subclass}
         mock_object = Mock()
         runner = ValidationRunner()
         runner.validator_classes = [ObjectValidator]
@@ -202,7 +205,7 @@ class TestValidationRunner(STCAdminTest):
         validator = runner.validators[ObjectValidator.name]
         validator.get_test_objects = lambda x: [mock_object]
         runner.validate()
-        ValidationCheck.mock_subclass.assert_called_with(validator, runner, mock_object)
+        mock_subclass.assert_called_with(validator, runner, mock_object)
 
     def test_error_messages(self):
         runner = ValidationRunner()
