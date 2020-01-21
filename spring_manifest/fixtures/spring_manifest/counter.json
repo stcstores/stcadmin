@@ -1,0 +1,8 @@
+[{
+    "model": "spring_manifest.counter",
+    "pk": 1,
+    "fields": {
+        "name": "Secured Mail Docket Number",
+        "count": 0
+    }
+}]

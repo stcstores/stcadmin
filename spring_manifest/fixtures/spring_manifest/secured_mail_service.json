@@ -1,0 +1,49 @@
+[{
+    "model": "spring_manifest.securedmailservice",
+    "pk": 1,
+    "fields": {
+        "shipping_service": 6,
+        "on_item_advice": true,
+        "on_manifest": false,
+        "on_docket": true,
+        "docket_service": "International Tracked",
+        "format": "Packets",
+        "proof_of_delivery": "S"
+    }
+}, {
+    "model": "spring_manifest.securedmailservice",
+    "pk": 2,
+    "fields": {
+        "shipping_service": 5,
+        "on_item_advice": false,
+        "on_manifest": true,
+        "on_docket": true,
+        "docket_service": "International Untracked",
+        "format": "Packets",
+        "proof_of_delivery": null
+    }
+}, {
+    "model": "spring_manifest.securedmailservice",
+    "pk": 3,
+    "fields": {
+        "shipping_service": 7,
+        "on_item_advice": false,
+        "on_manifest": false,
+        "on_docket": true,
+        "docket_service": "Pre-Barcoded Unsorted and Untracked (DSA)",
+        "format": "Large Letter",
+        "proof_of_delivery": null
+    }
+}, {
+    "model": "spring_manifest.securedmailservice",
+    "pk": 4,
+    "fields": {
+        "shipping_service": 8,
+        "on_item_advice": false,
+        "on_manifest": false,
+        "on_docket": true,
+        "docket_service": "Pre-Barcoded Unsorted and Untracked (DSA)",
+        "format": "Packets",
+        "proof_of_delivery": null
+    }
+}]
