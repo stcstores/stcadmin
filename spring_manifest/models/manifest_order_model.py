@@ -174,7 +174,7 @@ class ManifestOrder(models.Model):
         """Return the Secured Mail service used by the order or None."""
         try:
             return SecuredMailService.objects.get(shipping_service=self.service)
-        except self.DoesNotExist:
+        except SecuredMailService.DoesNotExist:
             return None
 
     @property
