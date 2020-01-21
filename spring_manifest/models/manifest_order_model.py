@@ -4,7 +4,7 @@ import pytz
 from ccapi import CCAPI
 from django.db import models
 from django.db.models import Sum
-from django.utils.timezone import is_naive
+from django.utils import timezone
 
 from .cloud_commerce_country_id import CloudCommerceCountryID
 from .manifest_model import Manifest
@@ -113,9 +113,8 @@ class ManifestOrder(models.Model):
 
     def localise_datetime(self, date_input):
         """Localise datetime."""
-        if date_input is not None and is_naive(date_input):
-            tz = pytz.timezone("Europe/London")
-            date_input = date_input.replace(tzinfo=tz)
+        if date_input is not None and timezone.is_naive(date_input):
+            date_input = timezone.make_aware(date_input)
         return date_input
 
     def add_to_manifest(self, manifest):
