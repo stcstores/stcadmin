@@ -1,6 +1,7 @@
 """ManifestOrder model."""
 
-import pytz
+from collections import defaultdict
+
 from ccapi import CCAPI
 from django.db import models
 from django.db.models import Sum
@@ -141,13 +142,11 @@ class ManifestOrder(models.Model):
 
     def get_item_dict(self):
         """Return product IDs and quantities according to database."""
-        quantities = {}
+        quantities = defaultdict(int)
         for package in self.manifestpackage_set.all():
             for item in package.manifestitem_set.all():
-                if item.item_id not in quantities:
-                    quantities[item.item_id] = 0
                 quantities[item.item_id] += item.quantity
-        return quantities
+        return dict(quantities)
 
     def check_items(self):
         """Return True products and quantities match Cloud Commerce."""
