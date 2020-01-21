@@ -162,22 +162,6 @@ class ManifestOrder(models.Model):
             Sum("quantity")
         )["quantity__sum"]
 
-    def update_packages(self, package_data):
-        """Update package information associated with this order."""
-        from .manifest_package_model import ManifestPackage
-        from .manifest_item_model import ManifestItem
-
-        self.clear_packages()
-        for package_number, package in enumerate(package_data):
-            package_obj = ManifestPackage(order=self, package_number=package_number)
-            package_obj.save()
-            for item_data in package:
-                item_id, quantity = item_data
-                item = ManifestItem(
-                    package=package_obj, item_id=item_id, quantity=quantity
-                )
-                item.save()
-
     @property
     def packages(self):
         """Return all related packages."""

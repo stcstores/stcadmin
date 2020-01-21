@@ -80,14 +80,6 @@ class Manifest(models.Model):
         if self.errors:
             return self.errors.split("\n")
 
-    def tracked_count(self):
-        """Return number of orders on manifest using Secured Mail Tracked."""
-        return self.manifestorder_set.filter(service="SMIT").count()
-
-    def untracked_count(self):
-        """Return number of orders on manifest using Secured Mail Untracked."""
-        return self.manifestorder_set.filter(service="SMIU").count()
-
 
 class ManifestUpdate(models.Model):
     """Records of manifest updates."""
