@@ -1,12 +1,12 @@
 """URL patters for manifest app."""
 
 from django.urls import path
+
 from spring_manifest import views
 
 app_name = "spring_manifest"
 
 urlpatterns = [
-    path("", views.Index.as_view(), name="index"),
     path("manifest/<int:manifest_id>/", views.ManifestView.as_view(), name="manifest"),
     path(
         "file_manifest/<int:manifest_id>/",

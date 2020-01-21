@@ -14,6 +14,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import FormView
+
 from home.views import UserInGroupMixin
 from spring_manifest import forms, models
 
@@ -24,10 +25,19 @@ class SpringUserMixin(UserInGroupMixin):
     groups = ["manifests"]
 
 
-class Index(SpringUserMixin, TemplateView):
-    """View for manifest index page."""
+class ManifestListView(SpringUserMixin, TemplateView):
+    """View for list of manifests."""
 
-    template_name = "spring_manifest/index.html"
+    template_name = "spring_manifest/manifest_list.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["current_manifests"] = models.Manifest.unfiled.all()
+        context["previous_manifests"] = models.Manifest.filed.all()[:50]
+        context["unmanifested_orders"] = models.ManifestOrder.unmanifested.all()
+        context["update"] = models.get_manifest_update()
+        return context
 
 
 class UpdateOrderView(SpringUserMixin, FormView):
@@ -83,21 +93,6 @@ class UpdateOrderView(SpringUserMixin, FormView):
         if form.changed_data:
             messages.add_message(self.request, messages.SUCCESS, "Order Updated.")
         return super().form_valid(form)
-
-
-class ManifestListView(SpringUserMixin, TemplateView):
-    """View for list of manifests."""
-
-    template_name = "spring_manifest/manifest_list.html"
-
-    def get_context_data(self, *args, **kwargs):
-        """Return context for template."""
-        context = super().get_context_data(*args, **kwargs)
-        context["current_manifests"] = models.Manifest.unfiled.all()
-        context["previous_manifests"] = models.Manifest.filed.all()[:50]
-        context["unmanifested_orders"] = models.ManifestOrder.unmanifested.all()
-        context["update"] = models.get_manifest_update()
-        return context
 
 
 class ManifestView(SpringUserMixin, TemplateView):
