@@ -2,7 +2,6 @@
 
 from django.db import models
 from django.utils import timezone
-from django.utils.timezone import now
 
 from .manifest_type_model import ManifestType
 
@@ -42,7 +41,7 @@ class Manifest(models.Model):
     manifest_type = models.ForeignKey(
         ManifestType, on_delete=models.SET_NULL, null=True, blank=True
     )
-    time_created = models.DateTimeField(default=now)
+    time_created = models.DateTimeField(auto_now_add=True)
     time_filed = models.DateTimeField(blank=True, null=True)
     manifest_file = models.FileField(upload_to="manifests", blank=True, null=True)
     item_advice_file = models.FileField(upload_to="item_advice", blank=True, null=True)
@@ -73,7 +72,7 @@ class Manifest(models.Model):
 
     def file_manifest(self):
         """Set time_filed to current time."""
-        self.time_filed = now()
+        self.time_filed = timezone.now()
         self.save()
 
     def get_error_list(self):
