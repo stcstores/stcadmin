@@ -2,6 +2,7 @@
 
 from django import forms
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
+
 from spring_manifest import models
 
 
@@ -71,14 +72,14 @@ class UpdateOrderForm(forms.ModelForm):
     def save(self, commit=True):
         """Update database."""
         order = super().save(commit=False)
-        if "service" in self.changed_data:
-            order.manifest = models.get_manifest_by_service(self.data["service"])
+        service = models.ManifestService.objects.get(id=self.data["service"])
+        order.manifest = models.get_manifest_by_service(service)
         if "delay" in self.data:
             order.manifest = None
         elif "cancel" in self.data:
             order.manifest = None
             order.canceled = True
-        elif "uncancel" or "undelay" in self.data:
+        elif "uncancel" in self.data or "undelay" in self.data:
             order.manifest = models.get_manifest_by_service(order.service)
             order.canceled = False
         return super().save(commit=commit)
