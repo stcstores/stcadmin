@@ -53,7 +53,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "7d5cc04784e544a1f1d704833317da1b8ed909aa"
+            "ref": "9cbb74e277a6d58c3f9ed3260aedd95240f8d696"
         },
         "certifi": {
             "hashes": [
@@ -191,7 +191,7 @@
         "labeler": {
             "editable": true,
             "git": "https://github.com/lukeshiner/labeler.git",
-            "ref": "eca282de669e89efb03ad1e345e230f022a0e89d"
+            "ref": "49a370aa328a570352025b4b4709e1b82f1a5abe"
         },
         "list-input": {
             "editable": true,
@@ -260,7 +260,7 @@
         "order-profit": {
             "editable": true,
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "b8943fc65d3487911a6c4ea723494ab29c43d21e"
+            "ref": "fb8eec64c74dcb6f27ccf459ccbe1a0411d34de7"
         },
         "packaging": {
             "hashes": [
@@ -857,11 +857,11 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:9f8d44f4722b3d06b41afaeb8d177cfbe0700f8351b1fc755dd27eedaa3eb9e0",
-                "sha256:f5d3d0e07333119fe7d4af4ce122362dc4053cdd34a71d2766290cf5369c64ad"
+                "sha256:1d122e8be54d1a709e56f82e2d85dcba3018313d64647f38a91aec88c239b600",
+                "sha256:c13d1943c63e599b98cf118fcb9703e4d7bde7caa9a432567bcdcae4bf512d20"
             ],
             "index": "pypi",
-            "version": "==5.3.3"
+            "version": "==5.3.4"
         },
         "pytest-cov": {
             "hashes": [
