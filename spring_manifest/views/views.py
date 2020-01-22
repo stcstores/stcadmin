@@ -241,9 +241,9 @@ class SendSecuredMailManifest(SpringUserMixin, RedirectView):
         manifest_email = EmailMessage(
             f"Seaton Trading Company Manifest {manifest}",
             "",
-            "error_logging@stcstores.co.uk",
+            settings.DEFAULT_FROM_EMAIL,
             [settings.SECURED_MAIL_MANIFEST_EMAIL_ADDRESS],
-            reply_to=["info@stcstores.co.uk"],
+            reply_to=[settings.DEFAULT_FROM_EMAIL],
             attachments=[
                 (
                     os.path.basename(manifest.manifest_file.name),
@@ -255,7 +255,7 @@ class SendSecuredMailManifest(SpringUserMixin, RedirectView):
         docket_email = EmailMessage(
             f"Seaton Trading Company Docket {manifest}",
             "",
-            "error_logging@stcstores.co.uk",
+            settings.DEFAULT_FROM_EMAIL,
             [settings.SECURED_MAIL_DOCKET_EMAIL_ADDRESS],
             attachments=[
                 (
