@@ -7,7 +7,7 @@ import time
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import EmailMessage
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -17,6 +17,8 @@ from django.views.generic.edit import FormView
 
 from home.views import UserInGroupMixin
 from spring_manifest import forms, models
+
+from .file_manifest.securedmail import FileSecuredMailManifest, SecuredMailManifestFile
 
 
 class SpringUserMixin(UserInGroupMixin):
@@ -73,12 +75,7 @@ class UpdateOrderView(SpringUserMixin, FormView):
 
     def get_object(self):
         """Return order to be updated."""
-        order = get_object_or_404(models.ManifestOrder, id=self.kwargs.get("order_pk"))
-        if order.manifest is not None:
-            self.manifest_id = order.manifest.id
-        else:
-            self.manifest_id = None
-        return order
+        return get_object_or_404(models.ManifestOrder, id=self.kwargs.get("order_pk"))
 
     def get_context_data(self, *args, **kwargs):
         """Return context for template."""
@@ -90,8 +87,7 @@ class UpdateOrderView(SpringUserMixin, FormView):
         """Update database."""
         self.form = form
         form.save()
-        if form.changed_data:
-            messages.add_message(self.request, messages.SUCCESS, "Order Updated.")
+        messages.add_message(self.request, messages.SUCCESS, "Order Updated.")
         return super().form_valid(form)
 
 
@@ -201,6 +197,10 @@ class OrderExists(SpringUserMixin, View):
 class UpdateManifest(SpringUserMixin, RedirectView):
     """Trigger a manifest update and return to the previous page."""
 
+    def post(self, *args, **kwargs):
+        """Disallow POST requests."""
+        return HttpResponseNotAllowed((("GET",)))
+
     def get_redirect_url(self, *args, **kwargs):
         """Redirect to the provided URL."""
         self.update_manifest()
@@ -217,6 +217,14 @@ class UpdateManifest(SpringUserMixin, RedirectView):
 class SendSecuredMailManifest(SpringUserMixin, RedirectView):
     """Send the Secured Mail manifest files to Secured Mail."""
 
+    def get(self, *args, **kwargs):
+        """Disallow GET requests."""
+        return HttpResponseNotAllowed((("POST",)))
+
+    def post(self, *args, **kwargs):
+        """Allow GET requests."""
+        return super().get(*args, **kwargs)
+
     def get_redirect_url(self, *args, **kwargs):
         """Email files and return redirect to the manifest page."""
         self.send_manifest_files()
@@ -227,8 +235,6 @@ class SendSecuredMailManifest(SpringUserMixin, RedirectView):
 
     def send_manifest_files(self):
         """Send the Secured Mail manifest files to Secured Mail."""
-        from .file_manifest.securedmail import SecuredMailManifestFile
-
         number_of_bags = self.request.POST.get("number_of_bags")
         manifest = models.Manifest.objects.get(id=self.request.POST.get("manifest_id"))
         SecuredMailManifestFile.add_bag_number(manifest, number_of_bags)
@@ -263,3 +269,52 @@ class SendSecuredMailManifest(SpringUserMixin, RedirectView):
         docket_email.send()
         manifest.files_sent = True
         manifest.save()
+
+
+class FileManifestView(SpringUserMixin, RedirectView):
+    """File a manifest."""
+
+    def post(self, *args, **kwargs):
+        """Disallow POST requests."""
+        return HttpResponseNotAllowed((("GET",)))
+
+    @staticmethod
+    def file_manifest(manifest):
+        """File manifest using appropriate FileManifest class."""
+        if manifest.manifest_type.name == "Secured Mail":
+            FileSecuredMailManifest(manifest)
+        else:
+            raise Exception(
+                "Unknown manifest type {} for manifest {}".format(
+                    manifest.manifest_type, manifest.id
+                )
+            )
+
+    def get_manifest(self):
+        """Return requested manifest."""
+        manifest_id = self.kwargs["manifest_id"]
+        manifest = get_object_or_404(models.Manifest, pk=manifest_id)
+        if manifest.status != manifest.FAILED and manifest.manifest_file:
+            return None
+        return manifest
+
+    def process_manifest(self):
+        """Set manifest as in progress and start thread to file it."""
+        manifest = self.get_manifest()
+        if manifest is not None:
+            t = threading.Thread(target=self.file_manifest, args=[manifest])
+            t.setDaemon(True)
+            t.start()
+            time.sleep(3)
+        else:
+            messages.add_message(
+                self.request, messages.ERROR, "Manifest already filed."
+            )
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Return URL to redirect to after manifest process starts."""
+        self.process_manifest()
+        return reverse_lazy(
+            "spring_manifest:manifest",
+            kwargs={"manifest_id": self.kwargs["manifest_id"]},
+        )
