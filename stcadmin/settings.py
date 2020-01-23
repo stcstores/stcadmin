@@ -75,7 +75,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "orderable",
+    "adminsortable2",
     "validation",
     "formtools",
     "stcadmin",

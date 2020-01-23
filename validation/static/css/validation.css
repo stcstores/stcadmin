@@ -73,3 +73,7 @@
 .error_filter.hide {
 	background: #555;
 }
+
+.valdiation_error_table {
+  font-family: 'Source Code Pro', monospace;
+}

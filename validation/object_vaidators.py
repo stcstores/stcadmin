@@ -2,6 +2,14 @@
 from .levels import Levels
 
 
+def all_subclasses(cls):
+    """Return all subclasses of cls recursivly."""
+    subclasses = set(cls.__subclasses__()).union(
+        [s for c in cls.__subclasses__() for s in all_subclasses(c)]
+    )
+    return set([_ for _ in subclasses if not _.abstract])
+
+
 class BaseObjectValidator:
     """Base class for object validators."""
 
@@ -12,9 +20,7 @@ class BaseObjectValidator:
         self.error_messages = []
         self.invalid_objects = []
         self.validation_runner = validation_runner
-        self.validation_checks = [
-            _ for _ in self.validation_check_class.__subclasses__()
-        ]
+        self.validation_checks = all_subclasses(self.validation_check_class)
 
     def get_test_objects(self, validation_runner):
         """Return a list of objects to validate."""
