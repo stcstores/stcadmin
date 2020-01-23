@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7d1d515e87112d0598bfbdf34af1b73186cfef89bfbb338c445cfe686e54bf15"
+            "sha256": "b54411108c86925d2174a45f5315ea81bc621895ce2a0577234ebbd7096aacaa"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -53,7 +53,7 @@
         "ccapi": {
             "editable": true,
             "git": "https://github.com/stcstores/ccapi.git",
-            "ref": "9cbb74e277a6d58c3f9ed3260aedd95240f8d696"
+            "ref": "3a22a3ca028fcc55e5e80b9a1b7aa7ebc9ae1700"
         },
         "certifi": {
             "hashes": [
@@ -83,6 +83,13 @@
             ],
             "index": "pypi",
             "version": "==3.0.2"
+        },
+        "django-admin-sortable2": {
+            "hashes": [
+                "sha256:1366cb159439aa28472639dc1f33d6370a56d4c3efbe3def854d953aaa6bbd24"
+            ],
+            "index": "pypi",
+            "version": "==0.7.5"
         },
         "django-debug-toolbar": {
             "hashes": [
@@ -115,14 +122,6 @@
             ],
             "index": "pypi",
             "version": "==1.4.1"
-        },
-        "django-orderable": {
-            "hashes": [
-                "sha256:1659ee05fac8b0b1e6f6703d037d1386bb78ee6482c1110b614ced4ecee6f0c3",
-                "sha256:50155acadb47d8e02ae23700c0eb1272480da1aa8b73f961c9be01e9d0592702"
-            ],
-            "index": "pypi",
-            "version": "==6.0.1"
         },
         "docutils": {
             "hashes": [
@@ -191,7 +190,7 @@
         "labeler": {
             "editable": true,
             "git": "https://github.com/lukeshiner/labeler.git",
-            "ref": "49a370aa328a570352025b4b4709e1b82f1a5abe"
+            "ref": "723cfca0a70b27c4c1ac47ea566391e162c306a0"
         },
         "list-input": {
             "editable": true,
@@ -260,7 +259,7 @@
         "order-profit": {
             "editable": true,
             "git": "https://github.com/stcstores/order_profit.git",
-            "ref": "fb8eec64c74dcb6f27ccf459ccbe1a0411d34de7"
+            "ref": "ccc095360d992cd733b882a75cdba89cefff020d"
         },
         "packaging": {
             "hashes": [
@@ -509,10 +508,10 @@
         },
         "urllib3": {
             "hashes": [
-                "sha256:a8a318824cc77d1fd4b2bec2ded92646630d7fe8619497b142c84a9e6f5a7293",
-                "sha256:f3c5fd51747d450d4dcf6f923c81f78f811aab8205fda64b0aba34a4e48b0745"
+                "sha256:2f3db8b19923a873b3e5256dc9c2dedfa883e33d87c690d9c7913e1f40673cdc",
+                "sha256:87716c2d2a7121198ebcb7ce7cccf6ce5e9ba539041cfbaeecfb641dc0bf6acc"
             ],
-            "version": "==1.25.7"
+            "version": "==1.25.8"
         },
         "xlsxwriter": {
             "hashes": [
@@ -970,10 +969,10 @@
         },
         "urllib3": {
             "hashes": [
-                "sha256:a8a318824cc77d1fd4b2bec2ded92646630d7fe8619497b142c84a9e6f5a7293",
-                "sha256:f3c5fd51747d450d4dcf6f923c81f78f811aab8205fda64b0aba34a4e48b0745"
+                "sha256:2f3db8b19923a873b3e5256dc9c2dedfa883e33d87c690d9c7913e1f40673cdc",
+                "sha256:87716c2d2a7121198ebcb7ce7cccf6ce5e9ba539041cfbaeecfb641dc0bf6acc"
             ],
-            "version": "==1.25.7"
+            "version": "==1.25.8"
         },
         "wcwidth": {
             "hashes": [

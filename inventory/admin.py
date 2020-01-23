@@ -1,7 +1,7 @@
 """ModelAdmin classes for the inventory app."""
 
+from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
-from orderable.admin import OrderableAdmin
 
 from inventory import models
 
@@ -14,9 +14,6 @@ class STCAdminImageAdmin(admin.ModelAdmin):
     list_display = ["id", "__str__", "range_id", "image"]
     list_display_links = ("__str__",)
     list_editable = ("range_id", "image")
-
-    def __repr__(self):
-        return str(self.name)
 
 
 @admin.register(models.Barcode)
@@ -34,9 +31,6 @@ class BarcodeAdmin(admin.ModelAdmin):
     )
     search_fields = ("barcode", "used_for")
     list_filter = ("available", "used_by")
-
-    def __repr__(self):
-        return str(self.barcode)
 
 
 @admin.register(models.Warehouse)
@@ -129,12 +123,6 @@ class ProductOptionAdmin(admin.ModelAdmin):
     search_fields = ("name", "product_option_ID")
 
 
-class OrderableProductOptionAdmin(OrderableAdmin, ProductOptionAdmin):
-    """Model admin for orderable product options."""
-
-    list_display = ProductOptionAdmin.list_display + ("sort_order_display",)
-
-
 @admin.register(models.Department)
 class DepartmentAdmin(ProductOptionAdmin):
     """Model admin for the Department model."""
@@ -146,14 +134,14 @@ class DepartmentAdmin(ProductOptionAdmin):
 
 
 @admin.register(models.PackageType)
-class PackageTypeAdmin(OrderableProductOptionAdmin):
+class PackageTypeAdmin(SortableAdminMixin, ProductOptionAdmin):
     """Model admin for the PackageType model."""
 
     pass
 
 
 @admin.register(models.InternationalShipping)
-class InternationalShippingAdmin(OrderableProductOptionAdmin):
+class InternationalShippingAdmin(SortableAdminMixin, ProductOptionAdmin):
     """Model admin for the InternationalShipping model."""
 
     pass
