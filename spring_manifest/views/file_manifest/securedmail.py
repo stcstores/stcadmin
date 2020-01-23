@@ -1,11 +1,11 @@
 """FileSecuredMailManifest class."""
 
-import datetime
 import io
 import os
 
 import openpyxl
 from django.core.files import File
+from django.utils import timezone
 
 from spring_manifest import models
 
@@ -66,7 +66,8 @@ class FileSecuredMailManifest(FileManifest):
         """Increase docket number."""
         self.increment_docket_number()
 
-    def increment_docket_number(self):
+    @staticmethod
+    def increment_docket_number():
         """Update Docket number in database."""
         counter = models.Counter.objects.get(name="Secured Mail Docket Number")
         counter.count += 1
@@ -121,7 +122,7 @@ class SecuredMailManifestFile:
         ws[cls.ITEM_COL + cls.TRACKED_ROW] = len(tracked_orders)
         ws[cls.WEIGHT_COL + cls.TRACKED_ROW] = tracked_weight
         ws[cls.REFERENCE_CELL] = str(manifest)
-        ws[cls.DATE_CELL] = datetime.datetime.now().strftime("%d/%m/%Y")
+        ws[cls.DATE_CELL] = timezone.now().strftime("%d/%m/%Y")
         return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
 
     @classmethod
@@ -228,4 +229,4 @@ class SecuredMailDocketFile:
     @staticmethod
     def get_date():
         """Return current date as string."""
-        return datetime.datetime.now().strftime("%d/%m/%Y")
+        return timezone.now().strftime("%d/%m/%Y")
