@@ -2,23 +2,24 @@
 
 from ccapi import CCAPI
 from django.db import models
-from orderable.models import Orderable
 
 from .locations import Bay, Warehouse
 
 
-class ProductOption(Orderable):
+class ProductOption(models.Model):
     """Model for variation and listing product options."""
 
     name = models.CharField(max_length=50, unique=True)
     product_option_ID = models.CharField(max_length=20, unique=True)
     inactive = models.BooleanField(default=False)
+    ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
 
-    class Meta(Orderable.Meta):
+    class Meta:
         """Meta class for the ProductOption model."""
 
         verbose_name = "Product Option"
         verbose_name_plural = "Product Options"
+        ordering = ["ordering"]
 
     def __str__(self):
         return self.name
@@ -125,15 +126,6 @@ class BaseNonListingProductOptionModel(BaseProductOptionValueModel):
         return CCAPI.create_option_value(cls.PRODUCT_OPTION_ID, value)
 
 
-class OrderableProductOptionModel(Orderable, BaseNonListingProductOptionModel):
-    """Orderable abstract model for product options."""
-
-    class Meta(Orderable.Meta, BaseNonListingProductOptionModel.Meta):
-        """Meata class for OrderableProductOptionModel."""
-
-        abstract = True
-
-
 class Department(BaseNonListingProductOptionModel):
     """Model for departments."""
 
@@ -142,7 +134,7 @@ class Department(BaseNonListingProductOptionModel):
 
     abriviation = models.CharField(max_length=3, blank=True, null=True)
 
-    class Meta(BaseNonListingProductOptionModel.Meta):
+    class Meta:
         """Meta class for Department."""
 
         verbose_name = "Department"
@@ -163,32 +155,36 @@ class Department(BaseNonListingProductOptionModel):
             return None
 
 
-class PackageType(OrderableProductOptionModel):
+class PackageType(BaseNonListingProductOptionModel):
     """Model for package types."""
 
     PRODUCT_OPTION_ID = 33852
     PRODUCT_OPTION_NAME = "Package Type"
 
-    large_letter_compatible = models.BooleanField()
+    large_letter_compatible = models.BooleanField(default=False)
+    ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
 
-    class Meta(OrderableProductOptionModel.Meta):
+    class Meta:
         """Meta class for PackageType."""
 
         verbose_name = "Package Type"
         verbose_name_plural = "Package Types"
+        ordering = ["ordering"]
 
 
-class InternationalShipping(OrderableProductOptionModel):
+class InternationalShipping(BaseNonListingProductOptionModel):
     """Model for international shipping."""
 
     PRODUCT_OPTION_ID = 37272
     PRODUCT_OPTION_NAME = "International Shipping"
+    ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
 
-    class Meta(OrderableProductOptionModel.Meta):
+    class Meta:
         """Meta class for InternationalShipping."""
 
         verbose_name = "International Shipping"
         verbose_name_plural = "International Shipping"
+        ordering = ["ordering"]
 
 
 class Brand(BaseNonListingProductOptionModel):
@@ -197,7 +193,7 @@ class Brand(BaseNonListingProductOptionModel):
     PRODUCT_OPTION_ID = 34321
     PRODUCT_OPTION_NAME = "Brand"
 
-    class Meta(BaseNonListingProductOptionModel.Meta):
+    class Meta:
         """Meta class for InternationalShipping."""
 
         verbose_name = "34321"
@@ -210,26 +206,28 @@ class Manufacturer(BaseNonListingProductOptionModel):
     PRODUCT_OPTION_ID = 34322
     PRODUCT_OPTION_NAME = "Manufacturer"
 
-    class Meta(BaseNonListingProductOptionModel.Meta):
+    class Meta:
         """Meta class for InternationalShipping."""
 
         verbose_name = "Manufacturer"
         verbose_name_plural = "Manufacturers"
 
 
-class Gender(OrderableProductOptionModel):
+class Gender(BaseNonListingProductOptionModel):
     """Model for Amazon genders."""
 
     PRODUCT_OPTION_ID = 42556
     PRODUCT_OPTION_NAME = "Gender"
 
     readable_name = models.CharField(max_length=50)
+    ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
 
-    class Meta(OrderableProductOptionModel.Meta):
+    class Meta:
         """Meta class for PackageType."""
 
         verbose_name = "Gender"
         verbose_name_plural = "Genders"
+        ordering = ["ordering"]
 
     def __str__(self):
         return self.readable_name

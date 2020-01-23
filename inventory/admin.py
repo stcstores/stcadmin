@@ -1,7 +1,7 @@
 """ModelAdmin classes for the inventory app."""
 
+from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
-from orderable.admin import OrderableAdmin
 
 from inventory import models
 
@@ -76,7 +76,7 @@ class StockChangeAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.ProductExport)
-class ProductOptionAdminProductExportAdmin(admin.ModelAdmin):
+class ProductExportAdmin(admin.ModelAdmin):
     """Model admin for the Product Export model."""
 
     fields = ("name", "timestamp", "export_file")
@@ -120,14 +120,6 @@ class BaseNonListingProductOptionModel(admin.ModelAdmin):
     search_fields = ("name", "product_option_value_ID")
 
 
-class OrderableProductOptionAdmin(OrderableAdmin, BaseNonListingProductOptionModel):
-    """Model admin for orderable product options."""
-
-    list_display = BaseNonListingProductOptionModel.list_display + (
-        "sort_order_display",
-    )
-
-
 @admin.register(models.Department)
 class DepartmentAdmin(BaseNonListingProductOptionModel):
     """Model admin for the Department model."""
@@ -151,20 +143,20 @@ class DepartmentAdmin(BaseNonListingProductOptionModel):
 
 
 @admin.register(models.PackageType)
-class PackageTypeAdmin(OrderableProductOptionAdmin):
+class PackageTypeAdmin(SortableAdminMixin, BaseNonListingProductOptionModel):
     """Model admin for the PackageType model."""
 
-    fields = OrderableProductOptionAdmin.fields + ("large_letter_compatible",)
-    list_display = OrderableProductOptionAdmin.list_display + (
+    fields = BaseNonListingProductOptionModel.fields + ("large_letter_compatible",)
+    list_display = BaseNonListingProductOptionModel.list_display + (
         "large_letter_compatible",
     )
-    list_editable = OrderableProductOptionAdmin.list_editable + (
+    list_editable = BaseNonListingProductOptionModel.list_editable + (
         "large_letter_compatible",
     )
 
 
 @admin.register(models.InternationalShipping)
-class InternationalShippingAdmin(OrderableProductOptionAdmin):
+class InternationalShippingAdmin(SortableAdminMixin, BaseNonListingProductOptionModel):
     """Model admin for the InternationalShipping model."""
 
     pass
@@ -215,17 +207,11 @@ class ProductRangeAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.ProductOption)
-class ProductOptionAdmin(OrderableAdmin):
+class ProductOptionAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the Product Option model."""
 
     fields = ("name", "product_option_ID", "inactive")
-    list_display = (
-        "__str__",
-        "name",
-        "product_option_ID",
-        "inactive",
-        "sort_order_display",
-    )
+    list_display = ("__str__", "name", "product_option_ID", "inactive")
     list_editable = ("name", "product_option_ID", "inactive")
     search_fields = ("name", "product_option_ID")
     list_filter = ("inactive",)
@@ -243,17 +229,11 @@ class ProductOptionValueAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.VATRate)
-class VATRateAdmin(OrderableAdmin):
+class VATRateAdmin(SortableAdminMixin, BaseNonListingProductOptionModel):
     """Model admin for the VATRate model."""
 
     fields = ("VAT_rate_ID", "name", "percentage")
-    list_display = (
-        "__str__",
-        "VAT_rate_ID",
-        "name",
-        "percentage",
-        "sort_order_display",
-    )
+    list_display = ("__str__", "VAT_rate_ID", "name", "percentage")
     list_editable = ("VAT_rate_ID", "name", "percentage")
 
 
@@ -346,12 +326,12 @@ class ProductOptionValueLinkAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Gender)
-class GenderAdmin(OrderableProductOptionAdmin):
+class GenderAdmin(SortableAdminMixin, BaseNonListingProductOptionModel):
     """Model admin for the PackageType model."""
 
-    fields = OrderableProductOptionAdmin.fields + ("readable_name",)
-    list_display = OrderableProductOptionAdmin.list_display + ("readable_name",)
-    list_editable = OrderableProductOptionAdmin.list_editable + ("readable_name",)
+    fields = BaseNonListingProductOptionModel.fields + ("readable_name",)
+    list_display = BaseNonListingProductOptionModel.list_display + ("readable_name",)
+    list_editable = BaseNonListingProductOptionModel.list_editable + ("readable_name",)
 
 
 @admin.register(models.ProductImage)

@@ -2,7 +2,7 @@
   "model": "inventory.productoption",
   "pk": 1,
   "fields": {
-    "sort_order": 0,
+    "ordering": 0,
     "name": "Size",
     "product_option_ID": "32123",
     "inactive": false
@@ -11,7 +11,7 @@
   "model": "inventory.productoption",
   "pk": 2,
   "fields": {
-    "sort_order": 1,
+    "ordering": 1,
     "name": "Colour",
     "product_option_ID": "32130",
     "inactive": false
@@ -20,7 +20,7 @@
   "model": "inventory.productoption",
   "pk": 3,
   "fields": {
-    "sort_order": 2,
+    "ordering": 2,
     "name": "Model",
     "product_option_ID": "32142",
     "inactive": false
@@ -29,7 +29,7 @@
   "model": "inventory.productoption",
   "pk": 4,
   "fields": {
-    "sort_order": 3,
+    "ordering": 3,
     "name": "Design",
     "product_option_ID": "32129",
     "inactive": false
@@ -176,7 +176,7 @@
   "model": "inventory.packagetype",
   "pk": 1,
   "fields": {
-    "sort_order": 1,
+    "ordering": 1,
     "product_option_value_ID": "398540",
     "name": "Basic Shipping",
     "inactive": false,
@@ -186,7 +186,7 @@
   "model": "inventory.packagetype",
   "pk": 2,
   "fields": {
-    "sort_order": 2,
+    "ordering": 2,
     "product_option_value_ID": "398456",
     "name": "Express Shipping",
     "inactive": false,
@@ -196,7 +196,7 @@
   "model": "inventory.internationalshipping",
   "pk": 1,
   "fields": {
-    "sort_order": 1,
+    "ordering": 1,
     "product_option_value_ID": "26578",
     "name": "Standard",
     "inactive": false
@@ -205,7 +205,7 @@
   "model": "inventory.internationalshipping",
   "pk": 2,
   "fields": {
-    "sort_order": 2,
+    "ordering": 2,
     "product_option_value_ID": "26587",
     "name": "Express",
     "inactive": false
@@ -246,7 +246,7 @@
   "model": "inventory.gender",
   "pk": 1,
   "fields": {
-    "sort_order": 1,
+    "ordering": 1,
     "product_option_value_ID": "416164",
     "name": "mens",
     "inactive": false,
@@ -256,7 +256,7 @@
   "model": "inventory.gender",
   "pk": 2,
   "fields": {
-    "sort_order": 2,
+    "ordering": 2,
     "product_option_value_ID": "416115",
     "name": "womens",
     "inactive": false,
@@ -294,7 +294,7 @@
   "model": "inventory.vatrate",
   "pk": 1,
   "fields": {
-    "sort_order": 1,
+    "ordering": 1,
     "VAT_rate_ID": "0",
     "name": "Basic",
     "percentage": 0.2
@@ -303,7 +303,7 @@
   "model": "inventory.vatrate",
   "pk": 2,
   "fields": {
-    "sort_order": 2,
+    "ordering": 2,
     "VAT_rate_ID": "5",
     "name": "VAT Free",
     "percentage": 0.0
