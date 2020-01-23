@@ -2,7 +2,7 @@
     "model": "spring_manifest.manifest",
     "pk": 1,
     "fields": {
-        "manifest_type": 2,
+        "manifest_type": 1,
         "time_created": "2017-10-12T00:01:00Z",
         "time_filed": "2017-10-12T00:01:00Z",
         "manifest_file": "manifests/SpringManifest_UnTracked_2017-10-12.xlsx",
@@ -17,7 +17,7 @@
     "model": "spring_manifest.manifest",
     "pk": 2,
     "fields": {
-        "manifest_type": 2,
+        "manifest_type": 1,
         "time_created": "2017-10-13T00:01:00Z",
         "time_filed": "2017-10-13T00:01:00Z",
         "manifest_file": "manifests/SpringManifest_UnTracked_2017-10-13.xlsx",
@@ -32,7 +32,7 @@
     "model": "spring_manifest.manifest",
     "pk": 3,
     "fields": {
-        "manifest_type": 2,
+        "manifest_type": 1,
         "time_created": "2017-10-16T00:01:00Z",
         "time_filed": "2017-10-16T00:01:00Z",
         "manifest_file": "manifests/SpringManifest_UnTracked_2017-10-16.xlsx",
