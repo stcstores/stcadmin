@@ -2,7 +2,6 @@
 
 from ccapi import CCAPI
 from django.db import models
-from orderable.models import Orderable
 
 from .locations import Bay, Warehouse
 
@@ -55,15 +54,6 @@ class ProductOptionModel(models.Model):
         return CCAPI.get_option_value_id(cls.PRODUCT_OPTION_ID, name, create=True)
 
 
-class OrderableProductOptionModel(Orderable, ProductOptionModel):
-    """Orderable abstract model for product options."""
-
-    class Meta(Orderable.Meta, ProductOptionModel.Meta):
-        """Meata class for OrderableProductOptionModel."""
-
-        abstract = True
-
-
 class Department(ProductOptionModel):
     """Model for departments."""
 
@@ -93,27 +83,31 @@ class Department(ProductOptionModel):
             return None
 
 
-class PackageType(OrderableProductOptionModel):
+class PackageType(ProductOptionModel):
     """Model for package types."""
 
     PRODUCT_OPTION_ID = 33852
     PRODUCT_OPTION_NAME = "Package Type"
+    ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
 
-    class Meta(OrderableProductOptionModel.Meta):
+    class Meta:
         """Meta class for PackageType."""
 
         verbose_name = "Package Type"
         verbose_name_plural = "Package Types"
+        ordering = ("ordering",)
 
 
-class InternationalShipping(OrderableProductOptionModel):
+class InternationalShipping(ProductOptionModel):
     """Model for international shipping."""
 
     PRODUCT_OPTION_ID = 37272
     PRODUCT_OPTION_NAME = "International Shipping"
+    ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
 
-    class Meta(OrderableProductOptionModel.Meta):
+    class Meta:
         """Meta class for InternationalShipping."""
 
         verbose_name = "International Shipping"
         verbose_name_plural = "International Shipping"
+        ordering = ("ordering",)
