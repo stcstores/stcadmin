@@ -5,7 +5,6 @@ import io
 import os
 
 import openpyxl
-from django.contrib import messages
 from django.core.files import File
 
 from spring_manifest import models
@@ -38,10 +37,6 @@ class FileSecuredMailManifest(FileManifest):
             self.manifest.status = self.manifest.FAILED
             self.manifest.save()
 
-    def invalid_country_message(self, order):
-        """Return message for invalid countries."""
-        return "Order {}: Country {} info invalid.".format(order, order.country)
-
     @staticmethod
     def get_packages_for_orders(orders):
         """Return a list of packages belonging to the passed orders."""
@@ -65,23 +60,6 @@ class FileSecuredMailManifest(FileManifest):
         docket_file = SecuredMailDocketFile(self.manifest, packages)
         self.manifest.docket_file.save(
             str(self.manifest) + "_docket.xlsx", File(docket_file)
-        )
-
-    def get_date_string(self):
-        """Return currenct date as string."""
-        return datetime.datetime.now().strftime("%Y-%m-%d")
-
-    def add_success_messages(self, manifest):
-        """Create success message."""
-        orders = manifest.manifestorder_set.all()
-        package_count = sum(o.manifestpackage_set.count() for o in orders)
-        order_count = len(orders)
-        messages.add_message(
-            self.request,
-            messages.SUCCESS,
-            "Manifest file created with {} packages for {} orders".format(
-                package_count, order_count
-            ),
         )
 
     def cleanup(self):
