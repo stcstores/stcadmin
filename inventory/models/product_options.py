@@ -160,6 +160,7 @@ class PackageType(BaseNonListingProductOptionModel):
 
     PRODUCT_OPTION_ID = 33852
     PRODUCT_OPTION_NAME = "Package Type"
+    ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
 
     large_letter_compatible = models.BooleanField(default=False)
     ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
