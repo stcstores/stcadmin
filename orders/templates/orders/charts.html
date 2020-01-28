@@ -1,0 +1,43 @@
+{% extends "orders/base.html" %}
+{% load static %}
+
+{% block additional_head %}
+<script src="{% static 'scripts/Chart.bundle.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<style>
+    .chart {
+        width: 80%;
+    }
+</style>
+
+<div>
+  <form action="" method="POST">{% csrf_token %}
+  <table>
+    <tr>
+      <th>{{ form.number_of_weeks.label }}</th>
+      <td>
+        {% if form.number_of_weeks.errors %}
+          <ul>
+            {% for error in form.number_of_weeks.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {{ form.number_of_weeks }}
+      </td>
+    </tr>
+    <tr><td colspan="2"><button type="submit">Submit</button></td></tr>
+  </table>
+</form>
+</div>
+
+<div class="chart" id="orders_by_week_chart">
+    {{ orders_by_week_chart.as_html }}
+</div>
+<br>
+<div class="chart" id="orders_by_week_chart">
+    {{ orders_by_day_chart.as_html }}
+</div>
+{% endblock %}

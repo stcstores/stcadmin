@@ -85,7 +85,6 @@ INSTALLED_APPS = [
     "user",
     "inventory",
     "list_input",
-    "print_audit",
     "spring_manifest",
     "price_calculator",
     "django_markup",
@@ -94,6 +93,8 @@ INSTALLED_APPS = [
     "profit_loss",
     "product_editor",
     "epos",
+    "orders",
+    "shipping",
     "feedback",
     "debug_toolbar",
 ]

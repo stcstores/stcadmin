@@ -67,10 +67,10 @@ class UserFeedback(FeedbackUserMixin, TemplateView):
             CloudCommerceUser.unhidden.order_by("first_name", "second_name")
             .annotate(
                 pack_count=Count(
-                    "cloudcommerceorder",
+                    "packingrecord",
                     filter=Q(
-                        cloudcommerceorder__date_created__gte=date_from,
-                        cloudcommerceorder__date_created__lte=date_to
+                        packingrecord__order__dispatched_at__gte=date_from,
+                        packingrecord__order__dispatched_at__lte=date_to
                         + datetime.timedelta(days=1),
                     ),
                 )
