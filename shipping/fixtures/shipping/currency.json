@@ -452,15 +452,6 @@
     "model": "shipping.currency",
     "pk": 52,
     "fields": {
-        "name": "Vietnamese Dong",
-        "code": "VND",
-        "exchange_rate": "0.000",
-        "symbol": "₫"
-    }
-}, {
-    "model": "shipping.currency",
-    "pk": 53,
-    "fields": {
         "name": "South African Rand",
         "code": "ZAR",
         "exchange_rate": "0.000",

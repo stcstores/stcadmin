@@ -107,7 +107,7 @@ class TestOrder(STCAdminTest):
         self.shipping_rule_name = " - ".join(
             (self.shipping_rule.name, self.shipping_rule.service.name)
         )
-
+        self.tracking_number = "ABC009008"
         self.product_ID = "2949030"
         self.product_price = 4.50
         self.product_quantity = 3
@@ -123,6 +123,7 @@ class TestOrder(STCAdminTest):
         external_transaction_id=None,
         delivery_country_code=None,
         default_cs_rule_name=None,
+        tracking_code=None,
         products=None,
     ):
         if order_id is None:
@@ -143,6 +144,8 @@ class TestOrder(STCAdminTest):
             delivery_country_code = self.country.country_ID
         if default_cs_rule_name is None:
             default_cs_rule_name = self.shipping_rule_name
+        if tracking_code is None:
+            tracking_code = self.tracking_number
         if products is None:
             products = [self.create_mock_product()]
         return Mock(
@@ -155,6 +158,7 @@ class TestOrder(STCAdminTest):
             external_transaction_id=external_transaction_id,
             delivery_country_code=delivery_country_code,
             default_cs_rule_name=default_cs_rule_name,
+            tracking_code=tracking_code,
             products=products,
         )
 
@@ -191,6 +195,7 @@ class TestOrder(STCAdminTest):
         self.assertEqual(self.country, order.country)
         self.assertEqual(self.shipping_rule, order.shipping_rule)
         self.assertEqual(self.service, order.shipping_service)
+        self.assertIsNone(order.tracking_number)
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 0)
 
     def test_str(self):
@@ -232,6 +237,8 @@ class TestOrder(STCAdminTest):
         self.assertIn("shipping_service", order_details)
         self.assertEqual(self.service, order_details["shipping_service"])
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 0)
+        self.assertIn("tracking_number", order_details)
+        self.assertEqual(self.tracking_number, order_details["tracking_number"])
 
     def test_parse_dispatch_date(self):
         self.assertEqual(
@@ -262,6 +269,7 @@ class TestOrder(STCAdminTest):
         self.assertEqual(self.country, order.country)
         self.assertEqual(self.shipping_rule, order.shipping_rule)
         self.assertEqual(self.service, order.shipping_service)
+        self.assertEqual(self.tracking_number, order.tracking_number)
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 0)
 
     def test_update_order(self):

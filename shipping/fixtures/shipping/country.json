@@ -2186,7 +2186,7 @@
         "name": "South Africa",
         "ISO_code": "ZA",
         "region": "ROW",
-        "currency": 53
+        "currency": 52
     }
 }, {
     "model": "shipping.country",

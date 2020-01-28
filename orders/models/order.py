@@ -113,6 +113,7 @@ class Order(models.Model):
     shipping_service = models.ForeignKey(
         Service, blank=True, null=True, on_delete=models.PROTECT
     )
+    tracking_number = models.CharField(max_length=255, blank=True, null=True)
 
     CountryNotRecognisedError = CountryNotRecognisedError
 
@@ -239,6 +240,7 @@ class Order(models.Model):
             "country": country,
             "shipping_rule": shipping_rule,
             "shipping_service": shipping_service,
+            "tracking_number": order.tracking_code or None,
         }
         return kwargs
 

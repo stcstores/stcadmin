@@ -28,6 +28,7 @@ class OrderAdmin(admin.ModelAdmin):
         "country",
         "shipping_rule",
         "shipping_service",
+        "tracking_number",
     )
     list_display = (
         "__str__",
@@ -41,6 +42,7 @@ class OrderAdmin(admin.ModelAdmin):
         "country",
         "shipping_rule",
         "shipping_service",
+        "tracking_number",
     )
     list_editable = ("cancelled", "shipping_rule", "shipping_service")
 
