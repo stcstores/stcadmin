@@ -1,0 +1,17 @@
+{% extends "orders/base.html" %}
+{% load static %}
+
+{% block content %}
+<h1>Orders</h1>
+<div class="site_index">
+    <p>From here you can access:</p>
+    <ul class="app">
+        <li><a href="{% url 'orders:breakages' %}">Breakages</a></li>
+        <p>Add or view order breakages.</p>
+    </ul>
+    <ul class="app">
+        <li><a href="{% url 'orders:charts' %}">Charts</a></li>
+        <p>View Charts.</p>
+    </ul>
+</div>
+{% endblock %}

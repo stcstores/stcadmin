@@ -1,0 +1,35 @@
+.undispatched {
+    font-size: 2em;
+}
+
+.order_count {
+    display: flex;
+    flex-direction: row;
+}
+
+.name,
+.count,
+.toggle {
+    margin: 0.5em;
+}
+
+.order_ids {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 80%;
+}
+
+.order_id {
+    font-size: 0.5em;
+    margin-right: 1em;
+}
+
+#urgent {
+    color: red;
+    font-weight: bold;
+}
+
+#priority {
+    color: red;
+}

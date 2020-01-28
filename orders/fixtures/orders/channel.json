@@ -1,0 +1,25 @@
+[{
+    "model": "orders.channel",
+    "pk": 1,
+    "fields": {
+        "name": "Amazon"
+    }
+}, {
+    "model": "orders.channel",
+    "pk": 2,
+    "fields": {
+        "name": "Ebay"
+    }
+}, {
+    "model": "orders.channel",
+    "pk": 3,
+    "fields": {
+        "name": "TelephoneOrders"
+    }
+}, {
+    "model": "orders.channel",
+    "pk": 4,
+    "fields": {
+        "name": "WooCommerce"
+    }
+}]

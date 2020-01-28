@@ -1,0 +1,271 @@
+[{
+    "model": "orders.productsale",
+    "pk": 1,
+    "fields": {
+        "order": 1,
+        "product_ID": "55296746",
+        "quantity": 1,
+        "price": 2458
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 2,
+    "fields": {
+        "order": 2,
+        "product_ID": "55300015",
+        "quantity": 1,
+        "price": 1399
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 3,
+    "fields": {
+        "order": 3,
+        "product_ID": "55360136",
+        "quantity": 1,
+        "price": 999
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 4,
+    "fields": {
+        "order": 4,
+        "product_ID": "55365010",
+        "quantity": 1,
+        "price": 2119
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 5,
+    "fields": {
+        "order": 5,
+        "product_ID": "55365389",
+        "quantity": 1,
+        "price": 708
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 6,
+    "fields": {
+        "order": 6,
+        "product_ID": "55366384",
+        "quantity": 1,
+        "price": 899
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 7,
+    "fields": {
+        "order": 7,
+        "product_ID": "55370268",
+        "quantity": 1,
+        "price": 1199
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 8,
+    "fields": {
+        "order": 8,
+        "product_ID": "55370798",
+        "quantity": 1,
+        "price": 2999
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 9,
+    "fields": {
+        "order": 9,
+        "product_ID": "55382761",
+        "quantity": 1,
+        "price": 3042
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 10,
+    "fields": {
+        "order": 10,
+        "product_ID": "55382779",
+        "quantity": 1,
+        "price": 892
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 11,
+    "fields": {
+        "order": 11,
+        "product_ID": "55384322",
+        "quantity": 1,
+        "price": 640
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 12,
+    "fields": {
+        "order": 12,
+        "product_ID": "55389234",
+        "quantity": 1,
+        "price": 1998
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 13,
+    "fields": {
+        "order": 13,
+        "product_ID": "55400339",
+        "quantity": 1,
+        "price": 2297
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 14,
+    "fields": {
+        "order": 14,
+        "product_ID": "55400775",
+        "quantity": 1,
+        "price": 2325
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 15,
+    "fields": {
+        "order": 15,
+        "product_ID": "55400824",
+        "quantity": 1,
+        "price": 2154
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 16,
+    "fields": {
+        "order": 15,
+        "product_ID": "55400823",
+        "quantity": 1,
+        "price": 1982
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 17,
+    "fields": {
+        "order": 16,
+        "product_ID": "55402270",
+        "quantity": 1,
+        "price": 1553
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 18,
+    "fields": {
+        "order": 17,
+        "product_ID": "55405472",
+        "quantity": 1,
+        "price": 1404
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 19,
+    "fields": {
+        "order": 17,
+        "product_ID": "55405473",
+        "quantity": 1,
+        "price": 1463
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 20,
+    "fields": {
+        "order": 18,
+        "product_ID": "55409399",
+        "quantity": 1,
+        "price": 1495
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 21,
+    "fields": {
+        "order": 19,
+        "product_ID": "55409897",
+        "quantity": 1,
+        "price": 2199
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 22,
+    "fields": {
+        "order": 20,
+        "product_ID": "55413112",
+        "quantity": 2,
+        "price": 1750
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 23,
+    "fields": {
+        "order": 20,
+        "product_ID": "55413115",
+        "quantity": 5,
+        "price": 500
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 24,
+    "fields": {
+        "order": 20,
+        "product_ID": "55413109",
+        "quantity": 2,
+        "price": 1200
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 25,
+    "fields": {
+        "order": 20,
+        "product_ID": "55413114",
+        "quantity": 2,
+        "price": 1800
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 26,
+    "fields": {
+        "order": 20,
+        "product_ID": "55413108",
+        "quantity": 10,
+        "price": 2150
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 27,
+    "fields": {
+        "order": 20,
+        "product_ID": "55413116",
+        "quantity": 5,
+        "price": 2150
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 28,
+    "fields": {
+        "order": 20,
+        "product_ID": "55413113",
+        "quantity": 4,
+        "price": 1800
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 29,
+    "fields": {
+        "order": 20,
+        "product_ID": "55413110",
+        "quantity": 10,
+        "price": 2000
+    }
+}, {
+    "model": "orders.productsale",
+    "pk": 30,
+    "fields": {
+        "order": 20,
+        "product_ID": "55413111",
+        "quantity": 10,
+        "price": 1650
+    }
+}]
