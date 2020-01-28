@@ -18,11 +18,7 @@ class CloudCommerceUser(models.Model):
 
     user_id = models.CharField(max_length=10, unique=True)
     stcadmin_user = models.ForeignKey(
-        User,
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-        related_name="_stcadmin_user",
+        User, null=True, blank=True, on_delete=models.CASCADE
     )
     first_name = models.CharField(max_length=50)
     second_name = models.CharField(max_length=50)

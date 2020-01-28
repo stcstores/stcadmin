@@ -54,7 +54,7 @@ class TestUserFeedback(STCAdminTest):
             str(feedback),
         )
 
-    @patch("print_audit.models.timezone.now")
+    @patch("feedback.models.timezone.now")
     def test_this_month_manager(self, mock_now):
         mock_time = timezone.make_aware(datetime(2018, 6, 12))
         mock_now.return_value = mock_time
