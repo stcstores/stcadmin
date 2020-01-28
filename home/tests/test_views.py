@@ -67,8 +67,8 @@ class TestIndexView(STCAdminTest, ViewTests):
             ("inventory", "Inventory"),
             ("labelmaker", "Labelmaker"),
             ("manifests", "Manifests"),
-            ("print_audit", "Print Audit"),
-            ("profit_loss", "Print Audit"),
+            ("orders", "Orders"),
+            ("profit_loss", "Profit Loss"),
             ("stock_check", "Stock Check"),
         ]
         for group_name, nav_item in groups:

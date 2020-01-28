@@ -3,34 +3,17 @@
 from django.db import models
 from django.db.models import Q
 
-
-class ShippingRegion(models.Model):
-    """Model for shipping regions."""
-
-    name = models.CharField(max_length=50)
-
-    class Meta:
-        """Meta class for ShippingRegion."""
-
-        verbose_name = "Shipping Region"
-        verbose_name_plural = "Shipping Regions"
-        ordering = ("name",)
-
-    def __str__(self):
-        return self.name
+from shipping.models import Country
 
 
 class DestinationCountry(models.Model):
     """Model for countries to ship to."""
 
     name = models.CharField(max_length=50, unique=True)
-    currency_code = models.CharField(max_length=4, default="GBP")
-    currency_symbol = models.CharField(max_length=1, default="£")
-    min_channel_fee = models.IntegerField(null=True, blank=True)
-    shipping_region = models.ForeignKey(
-        ShippingRegion, on_delete=models.CASCADE, null=True, blank=True
+    country = models.ForeignKey(
+        Country, on_delete=models.PROTECT, null=True, blank=True
     )
-    exchange_rate = models.FloatField()
+    min_channel_fee = models.IntegerField(null=True, blank=True)
     sort_order = models.IntegerField(default=0)
 
     class Meta:
@@ -49,6 +32,21 @@ class DestinationCountry(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def currency_code(self):
+        """Return the countries currency code."""
+        return self.country.currency.code
+
+    @property
+    def currency_symbol(self):
+        """Return the countries currency symbol."""
+        return self.country.currency.symbol
+
+    @property
+    def exchange_rate(self):
+        """Return the countries currency exhange rate to GBP."""
+        return self.country.currency.exchange_rate
 
 
 class PackageType(models.Model):

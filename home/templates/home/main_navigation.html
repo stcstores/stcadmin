@@ -11,14 +11,14 @@
     {% if "inventory" in groups %}
     <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
     {% endif %}
+    {% if "orders" in groups %}
+    <li><a href="{% url 'orders:index' %}">Orders</a></li>
+    {% endif %}
     {% if 'labelmaker' in groups %}
     <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
     {% endif %}
     {% if 'feedback' in groups %}
     <li><a href="{% url 'feedback:user_feedback' %}">Feedback</a></li>
-    {% endif %}
-    {% if 'print_audit' in groups %}
-    <li><a href="{% url 'print_audit:index' %}">Print Audit</a></li>
     {% endif %}
     {% if 'manifests' in groups %}
     <li><a href="{% url 'spring_manifest:manifest_list' %}">Manifests</a></li>

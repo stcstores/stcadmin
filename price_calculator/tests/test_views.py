@@ -22,7 +22,8 @@ class PriceCalculatorViewTest(STCAdminTest):
 
 class TestPriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
     fixtures = (
-        "price_calculator/shipping_region",
+        "shipping/currency",
+        "shipping/country",
         "price_calculator/destination_country",
         "price_calculator/package_type",
         "price_calculator/vat_rate",
@@ -58,7 +59,8 @@ class TestPriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
 
 class TestRangePriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
     fixtures = (
-        "price_calculator/shipping_region",
+        "shipping/currency",
+        "shipping/country",
         "price_calculator/destination_country",
         "price_calculator/package_type",
         "price_calculator/vat_rate",
@@ -109,7 +111,8 @@ class TestRangePriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
 
 class TestGetShippingPriceView(PriceCalculatorViewTest, ViewTests):
     fixtures = (
-        "price_calculator/shipping_region",
+        "shipping/currency",
+        "shipping/country",
         "price_calculator/destination_country",
         "price_calculator/package_type",
         "price_calculator/vat_rate",
@@ -180,7 +183,8 @@ class TestGetShippingPriceView(PriceCalculatorViewTest, ViewTests):
 
     def test_international(self):
         form_data = self.get_form_data()
-        form_data["country"] = models.DestinationCountry.objects.get(id=3)
+        country = models.DestinationCountry.objects.get(id=3)
+        form_data["country"] = country
         form_data["international_shipping"] = "Express"
         response = self.client.post(self.URL, form_data)
         content = response.content.decode("utf8")
@@ -195,16 +199,17 @@ class TestGetShippingPriceView(PriceCalculatorViewTest, ViewTests):
                     {"cc_id": 5, "id": 1, "name": "20% VAT", "percentage": 20},
                     {"cc_id": 0, "id": 2, "name": "VAT Free", "percentage": 0},
                 ],
-                "exchange_rate": 0.835818,
-                "currency_code": "EUR",
-                "currency_symbol": "€",
+                "exchange_rate": country.exchange_rate,
+                "currency_code": country.currency_code,
+                "currency_symbol": country.currency_symbol,
                 "min_channel_fee": 0,
             },
         )
 
     def test_min_channel_fee(self):
         form_data = self.get_form_data()
-        form_data["country"] = models.DestinationCountry.objects.get(id=6)
+        country = models.DestinationCountry.objects.get(id=6)
+        form_data["country"] = country
         response = self.client.post(self.URL, form_data)
         content = response.content.decode("utf8")
         data = json.loads(content)
@@ -215,9 +220,9 @@ class TestGetShippingPriceView(PriceCalculatorViewTest, ViewTests):
                 "price": 248,
                 "price_name": "SMIU USA",
                 "vat_rates": [],
-                "exchange_rate": 0.750193,
-                "currency_code": "USD",
-                "currency_symbol": "$",
-                "min_channel_fee": 75,
+                "exchange_rate": country.exchange_rate,
+                "currency_code": country.currency_code,
+                "currency_symbol": country.currency_symbol,
+                "min_channel_fee": country.min_channel_fee * country.exchange_rate,
             },
         )
