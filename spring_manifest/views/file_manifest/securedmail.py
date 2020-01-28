@@ -2,6 +2,7 @@
 
 import io
 import os
+from tempfile import NamedTemporaryFile
 
 import openpyxl
 from django.core.files import File
@@ -74,6 +75,15 @@ class FileSecuredMailManifest(FileManifest):
         counter.save()
 
 
+def workbook_to_bytes(workbook):
+    """Return an openpyxl workbook as a BytesIO stream."""
+    with NamedTemporaryFile() as tmp:
+        workbook.save(tmp.name)
+        tmp.seek(0)
+        stream = tmp.read()
+    return io.BytesIO(stream)
+
+
 class SecuredMailManifestFile:
     """Create a Secured Mail Manifest file."""
 
@@ -123,7 +133,7 @@ class SecuredMailManifestFile:
         ws[cls.WEIGHT_COL + cls.TRACKED_ROW] = tracked_weight
         ws[cls.REFERENCE_CELL] = str(manifest)
         ws[cls.DATE_CELL] = timezone.now().strftime("%d/%m/%Y")
-        return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
+        return workbook_to_bytes(wb)
 
     @classmethod
     def add_bag_number(cls, manifest, number_of_bags):
@@ -132,7 +142,7 @@ class SecuredMailManifestFile:
         wb = openpyxl.load_workbook(manifest_file)
         ws = wb.active
         ws[cls.BAG_CELL] = number_of_bags
-        manifest_file = io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
+        manifest_file = workbook_to_bytes(wb)
         manifest.manifest_file.save(
             str(manifest) + "_manifest.xlsx", File(manifest_file)
         )
@@ -182,7 +192,7 @@ class SecuredMailDocketFile:
         self.worksheet = self.workbook.active
         self.packages = packages
         self.write_worksheet(self)
-        return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(self.workbook))
+        return workbook_to_bytes(self.workbook)
 
     def write_worksheet(self):
         """Write data to the worksheet."""
