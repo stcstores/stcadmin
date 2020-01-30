@@ -1,18 +1,20 @@
 """Models for manifests."""
 
+import logging
+
+from ccapi import CCAPI
+from django.db import transaction
+
 from .cloud_commerce_country_id import CloudCommerceCountryID  # NOQA
 from .cloud_commerce_shipping_rule import CloudCommerceShippingRule  # NOQA
-from .secured_mail_destination_model import SecuredMailDestination  # NOQA
+from .counter_model import Counter  # NOQA
+from .manifest_item_model import ManifestItem  # NOQA
 from .manifest_model import Manifest, ManifestUpdate  # NOQA
 from .manifest_order_model import ManifestOrder  # NOQA
 from .manifest_package_model import ManifestPackage  # NOQA
-from .manifest_item_model import ManifestItem  # NOQA
-from .service_models import ManifestService, SecuredMailService  # NOQA
-from .counter_model import Counter  # NOQA
 from .manifest_type_model import ManifestType  # NOQA
-from django.db import transaction
-from ccapi import CCAPI
-import logging
+from .secured_mail_destination_model import SecuredMailDestination  # NOQA
+from .service_models import ManifestService, SecuredMailService  # NOQA
 
 logger = logging.getLogger("file_manifest")
 

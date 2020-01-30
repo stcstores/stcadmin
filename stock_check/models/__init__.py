@@ -1,11 +1,15 @@
 """Models for the Stock Check app."""
 
-from .stock_check import Product, ProductBay  # NOQA
-from inventory.models import Bay, Warehouse  # NOQA
-from ccapi import CCAPI
-import cc_products
 import sys
 
+import cc_products
+from ccapi import CCAPI
+
+from inventory.models import Bay, Warehouse
+
+from .stock_check import Product, ProductBay
+
+__all__ = ["Product", "ProductBay", "Bay", "Warehouse", "update_stock_check"]
 
 API_ATTEMPTS = 500
 
