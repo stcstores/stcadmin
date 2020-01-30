@@ -425,6 +425,7 @@ class TestOrder(STCAdminTest):
             self.create_mock_order(order_id=_, products=[next(products)])
             for _ in dispatched_order_IDs
         ]
+        self.mock_CCAPI.recent_orders_for_customer.return_value = {}
         for order_ID in order_IDs:
             self.assertFalse(models.Order.objects.filter(order_ID=order_ID).exists())
         self.mock_CCAPI.get_orders_for_dispatch.side_effect = [
@@ -440,12 +441,22 @@ class TestOrder(STCAdminTest):
                     order=order, product_ID=product_IDs[i]
                 ).exists()
             )
-        calls = (
+        get_orders_calls = [
             call(order_type=0, number_of_days=0),
             call(order_type=1, number_of_days=1),
+        ]
+        self.mock_CCAPI.get_orders_for_dispatch.assert_has_calls(get_orders_calls)
+        recent_orders_calls = [
+            call(customer_ID=order.customer_ID)
+            for order in models.Order.objects.filter(
+                dispatched_at__isnull=True, cancelled=False
+            )
+        ]
+        self.mock_CCAPI.recent_orders_for_customer.assert_has_calls(recent_orders_calls)
+        self.assertEqual(
+            len(self.mock_CCAPI.mock_calls),
+            len(get_orders_calls) + len(recent_orders_calls),
         )
-        self.mock_CCAPI.get_orders_for_dispatch.assert_has_calls(calls)
-        self.assertEqual(len(self.mock_CCAPI.mock_calls), 2)
 
     def test_product_sales_are_not_added_for_a_dispatched_order(self):
         self.assertFalse(models.Order.objects.filter(order_ID=self.order_ID).exists())
@@ -467,7 +478,6 @@ class TestOrder(STCAdminTest):
                 order=order, product_ID=mock_product.id
             ).exists()
         )
-        self.assertEqual(len(self.mock_CCAPI.mock_calls), 2)
 
     def test_dispatched_manager(self):
         queryset = models.Order.dispatched.all()
@@ -514,6 +524,49 @@ class TestOrder(STCAdminTest):
         self.assertEqual(2, queryset.count())
         for order in queryset:
             self.assertLessEqual(order.recieved_at, models.order.urgent_since())
+
+    def test_check_cancelled(self,):
+        order = models.Order.objects.filter(
+            cancelled=False, dispatched_at__isnull=True, customer_ID__isnull=False
+        )[0]
+        mock_recent_order = Mock(
+            order_id=order.order_ID, CANCELLED="Cancelled", status="Cancelled"
+        )
+        self.mock_CCAPI.recent_orders_for_customer.return_value = {
+            order.order_ID: mock_recent_order
+        }
+        order.check_cancelled()
+        order.refresh_from_db()
+        self.mock_CCAPI.recent_orders_for_customer.assert_called_once_with(
+            customer_ID=order.customer_ID
+        )
+        self.assertTrue(order.cancelled)
+
+    def test_check_cancelled_with_no_customer_ID(self):
+        order = models.Order.objects.filter(
+            cancelled=False, dispatched_at__isnull=True, customer_ID__isnull=False
+        )[0]
+        mock_recent_order = Mock(
+            order_id=order.order_ID, CANCELLED="Cancelled", status="Open"
+        )
+        self.mock_CCAPI.recent_orders_for_customer.return_value = {
+            order.order_ID: mock_recent_order
+        }
+        order.check_cancelled()
+        order.refresh_from_db()
+        self.mock_CCAPI.recent_orders_for_customer.assert_called_once_with(
+            customer_ID=order.customer_ID
+        )
+        self.assertFalse(order.cancelled)
+
+    def test_check_cancelled_with_uncancelled_order(self):
+        order = models.Order.objects.get(id=1)
+        order.dispatched_at = None
+        order.customer_ID = None
+        order.cancelled = False
+        order.save()
+        order.check_cancelled()
+        self.assertEqual(0, len(self.mock_CCAPI.mock_calls))
 
 
 class TestProductSale(STCAdminTest):
