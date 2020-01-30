@@ -5,11 +5,11 @@ import sys
 import cc_products
 from ccapi import CCAPI
 
-from inventory.models import Bay, Warehouse  # NOQA
+from inventory.models import Bay
 
-from .stock_check import Product, ProductBay, StockCheckProduct  # NOQA
+from .stock_check import ProductBay, StockCheckProduct
 
-__all__ = ["Product", "ProductBay", "Bay", "Warehouse", "update_stock_check"]
+__all__ = ["StockCheckProduct", "ProductBay", "update_stock_check"]
 
 API_ATTEMPTS = 500
 
