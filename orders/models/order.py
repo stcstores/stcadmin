@@ -46,7 +46,9 @@ class UndispatchedManager(models.Manager):
 
     def get_queryset(self):
         """Return a queryset of undispatched orders."""
-        return super().get_queryset().filter(dispatched_at__isnull=True)
+        return (
+            super().get_queryset().filter(dispatched_at__isnull=True, cancelled=False)
+        )
 
 
 class PriorityManager(models.Manager):
@@ -54,7 +56,9 @@ class PriorityManager(models.Manager):
 
     def get_queryset(self):
         """Return a queryset of priority orders."""
-        return super().get_queryset().filter(shipping_rule__priority=True)
+        return (
+            super().get_queryset().filter(shipping_rule__priority=True, cancelled=False)
+        )
 
 
 class NonPriorityManager(models.Manager):
@@ -62,7 +66,11 @@ class NonPriorityManager(models.Manager):
 
     def get_queryset(self):
         """Return a queryset of non-priority orders."""
-        return super().get_queryset().filter(shipping_rule__priority=False)
+        return (
+            super()
+            .get_queryset()
+            .filter(shipping_rule__priority=False, cancelled=False)
+        )
 
 
 class UndispatchedPriorityManager(UndispatchedManager):

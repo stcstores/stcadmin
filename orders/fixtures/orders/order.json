@@ -318,4 +318,20 @@
         "shipping_service": 18,
         "tracking_number": "T04894846116"
     }
+}, {
+    "model": "orders.order",
+    "pk": 21,
+    "fields": {
+        "order_ID": "45878944",
+        "customer_ID": "40832846",
+        "recieved_at": "2019-12-03T09:25:00Z",
+        "dispatched_at": null,
+        "cancelled": true,
+        "channel": 1,
+        "channel_order_ID": "112-9169783-6885020",
+        "country": 247,
+        "shipping_rule": 19,
+        "shipping_service": 15,
+        "tracking_number": null
+    }
 }]
