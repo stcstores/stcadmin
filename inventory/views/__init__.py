@@ -1,20 +1,55 @@
 """Views for inventory app."""
 
-from .views import *  # NOQA
-from .api import *  # NOQA
-from .descriptions import DescriptionsView  # NOQA
-from .images import ImageFormView, DeleteSTCAdminImage  # NOQA
-from .locations import LocationFormView  # NOQA
-from .print_barcodes import PrintBarcodeLabels, BarcodePDF  # NOQA
-from .product import ProductView  # NOQA
-from .productrange import ProductRangeView  # NOQA
-from .productsearch import ProductSearchView  # NOQA
-from .suppliers import (  # NOQA
-    Suppliers,
-    Supplier,
+from .api import (
+    DeleteImage,
+    GetNewRangeSKUView,
+    GetNewSKUView,
+    GetStockForProductView,
+    SetImageOrderView,
+    UpdateStockLevelView,
+)
+from .descriptions import DescriptionsView
+from .images import DeleteSTCAdminImage, ImageFormView
+from .locations import LocationFormView
+from .print_barcodes import BarcodePDF, PrintBarcodeLabels
+from .product import ProductView
+from .productrange import ProductRangeView
+from .productsearch import ProductSearchView
+from .suppliers import (
     CreateSupplier,
-    ToggleSupplierActive,
-    UpdateSupplierContact,
     CreateSupplierContact,
     DeleteSupplierContact,
+    Supplier,
+    Suppliers,
+    ToggleSupplierActive,
+    UpdateSupplierContact,
 )
+from .views import CreateBayView, InventoryUserMixin, SKUGeneratorView
+
+__all__ = [
+    "DeleteImage",
+    "GetNewRangeSKUView",
+    "GetNewSKUView",
+    "GetStockForProductView",
+    "SetImageOrderView",
+    "UpdateStockLevelView",
+    "DescriptionsView",
+    "DeleteSTCAdminImage",
+    "ImageFormView",
+    "LocationFormView",
+    "BarcodePDF",
+    "PrintBarcodeLabels",
+    "ProductView",
+    "ProductRangeView",
+    "ProductSearchView",
+    "CreateSupplier",
+    "CreateSupplierContact",
+    "DeleteSupplierContact",
+    "Supplier",
+    "Suppliers",
+    "ToggleSupplierActive",
+    "UpdateSupplierContact",
+    "CreateBayView",
+    "InventoryUserMixin",
+    "SKUGeneratorView",
+]
