@@ -11,7 +11,7 @@ re-init:
 	make init
 
 production-init:
-	make clear-environment
+	-i make clear-environment
 	make update-environment
 	poetry install --no-dev
 
