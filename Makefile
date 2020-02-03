@@ -11,12 +11,8 @@ re-init:
 	make init
 
 production-init:
-	-i make clear-environment
-	make update-environment
-	poetry install --no-dev
-
-update-environment:
 	poetry run pip install --upgrade pip
+	poetry install --no-dev
 
 deploy:
 	cd deploy_tools && poetry run fab deploy:host=stcstores@stcadmin.stcstores.co.uk
