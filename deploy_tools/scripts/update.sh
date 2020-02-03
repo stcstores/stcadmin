@@ -81,11 +81,11 @@ make docs
 
 # Update static files.
 printf "\nCollecting static files...\n"
-pipenv run python manage.py collectstatic --noinput
+poetry run python manage.py collectstatic --noinput
 
 # Migrate the database.
 printf "\nMigrating database...\n"
-pipenv run python manage.py migrate --noinput
+poetry run python manage.py migrate --noinput
 
 # Restart the site with the new version.
 printf "\nRestarting service...\n"
