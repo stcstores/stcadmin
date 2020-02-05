@@ -7,7 +7,6 @@ from .views import (
     ManifestView,
     OrderExists,
     SendSecuredMailManifest,
-    SplitOrderView,
     UpdateManifest,
     UpdateOrderView,
 )
@@ -19,7 +18,6 @@ __all__ = [
     "ManifestView",
     "OrderExists",
     "SendSecuredMailManifest",
-    "SplitOrderView",
     "UpdateManifest",
     "UpdateOrderView",
 ]

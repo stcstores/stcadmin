@@ -58,10 +58,6 @@ class UpdateOrderView(SpringUserMixin, FormView):
 
     def get_success_url(self):
         """Return URL to redirect to after order is updated."""
-        if "split" in self.form.data:
-            return reverse_lazy(
-                "spring_manifest:split_order", kwargs={"order_pk": self.object.id}
-            )
         if "return" in self.form.data:
             if self.object.manifest:
                 return reverse_lazy(
@@ -127,52 +123,6 @@ class CanceledOrdersView(SpringUserMixin, TemplateView):
             manifest__isnull=True, canceled=True
         )
         return context
-
-
-class SplitOrderView(SpringUserMixin, FormView):
-    """View for splitting orders."""
-
-    form_class = forms.PackageFormset
-    template_name = "spring_manifest/split_order.html"
-
-    def get_form_kwargs(self):
-        """Return kwargs for form."""
-        kwargs = super().get_form_kwargs()
-        self.order = get_object_or_404(
-            models.ManifestOrder, id=self.kwargs.get("order_pk")
-        )
-        kwargs["instance"] = self.order
-        return kwargs
-
-    def get_success_url(self):
-        """Return URL to redirect to after order has been updated."""
-        if "return_to_order" in self.form.data:
-            return reverse_lazy(
-                "spring_manifest:update_order", kwargs={"order_pk": self.order.id}
-            )
-        return reverse_lazy(
-            "spring_manifest:split_order", kwargs={"order_pk": self.order.id}
-        )
-
-    def form_valid(self, form):
-        """Update database."""
-        self.form = form
-        form.save()
-        form.clear_empty_packages()
-        if "add_package" in self.request.POST:
-            form.add_package()
-        if not self.order.check_items():
-            messages.add_message(
-                self.request, messages.WARNING, "Item Quantity Discrepency."
-            )
-        return super().form_valid(form)
-
-    def get_context_data(self, *args, **kwargs):
-        """Return context for template."""
-        context_data = super().get_context_data(*args, **kwargs)
-        context_data["order"] = self.order
-        context_data["children_formset"] = context_data.pop("form")
-        return context_data
 
 
 class OrderExists(SpringUserMixin, View):

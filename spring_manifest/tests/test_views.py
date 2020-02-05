@@ -145,14 +145,14 @@ class TestCanceledOrdersView(ManifestViewTest, ViewTests):
             manifest__isnull=True, canceled=False
         )
         self.assertEqual(
-            list(unmanifested_orders), list(response.context["unmanifested_orders"]),
+            list(unmanifested_orders), list(response.context["unmanifested_orders"])
         )
         self.assertIn("canceled_orders", response.context)
         canceled_orders = models.ManifestOrder.canceled_orders.filter(
             manifest__isnull=True, canceled=True
         )
         self.assertEqual(
-            list(canceled_orders), list(response.context["canceled_orders"]),
+            list(canceled_orders), list(response.context["canceled_orders"])
         )
 
 
@@ -225,7 +225,7 @@ class TestSendSecuredMailManifestView(ManifestViewTest, ViewTests):
     @patch("spring_manifest.views.views.models")
     def test_post_method(self, mock_models, mock_SecuredMailManifestFile):
         manifest_file = Mock(
-            open=Mock(return_value=Mock(read=Mock(return_value=b"file contents"))),
+            open=Mock(return_value=Mock(read=Mock(return_value=b"file contents")))
         )
         manifest_file.name = "manifest_file.xlsx"
         docket_file = Mock(
@@ -336,7 +336,7 @@ class TestFileManifestView(ManifestViewTest, ViewTests):
         self.assertRedirects(
             response,
             reverse_lazy(
-                "spring_manifest:manifest", kwargs={"manifest_id": manifest.id},
+                "spring_manifest:manifest", kwargs={"manifest_id": manifest.id}
             ),
         )
 
@@ -442,7 +442,7 @@ class TestUpdateOrderView(ManifestViewTest, ViewTests):
         self.assertRedirects(
             response,
             reverse_lazy(
-                "spring_manifest:manifest", kwargs={"manifest_id": order.manifest_id},
+                "spring_manifest:manifest", kwargs={"manifest_id": order.manifest_id}
             ),
             fetch_redirect_response=False,
         )
@@ -462,18 +462,5 @@ class TestUpdateOrderView(ManifestViewTest, ViewTests):
         self.assertRedirects(
             response,
             reverse_lazy("spring_manifest:canceled_orders"),
-            fetch_redirect_response=False,
-        )
-
-    def test_split(self):
-        order = models.ManifestOrder.objects.get(id=1)
-        order.save()
-        response = self.client.post(
-            self.get_URL(),
-            {"country": order.country.id, "service": order.service.id, "split": True},
-        )
-        self.assertRedirects(
-            response,
-            reverse_lazy("spring_manifest:split_order", kwargs={"order_pk": order.id}),
             fetch_redirect_response=False,
         )

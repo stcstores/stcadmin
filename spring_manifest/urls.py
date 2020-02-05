@@ -20,11 +20,6 @@ urlpatterns = [
     ),
     path("manifest_list/", views.ManifestListView.as_view(), name="manifest_list"),
     path(
-        "split_order/<int:order_pk>/",
-        views.SplitOrderView.as_view(),
-        name="split_order",
-    ),
-    path(
         "canceled_orders/", views.CanceledOrdersView.as_view(), name="canceled_orders"
     ),
     path("order_exists/", views.OrderExists.as_view(), name="order_exists"),
