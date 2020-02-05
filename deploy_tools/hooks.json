@@ -1,0 +1,23 @@
+[{
+	"id": "stcadmin-github-push",
+	"execute-command": "/var/webhook/scripts/stcadmin-github-push.sh",
+	"command-working-directory": "/home/stcstores/",
+	"parse-arguments-as-json": ["ref"],
+	"pass-arguments-to-command": [{
+		"source": "payload",
+		"name": "ref"
+	}, {
+		"source": "payload",
+		"name": "after"
+	}],
+	"trigger-rule": {
+		"match": {
+			"type": "payload-hash-sha1",
+			"secret": "SECRET",
+			"parameter": {
+				"source": "header",
+				"name": "X-Hub-Signature"
+			}
+		}
+	}
+}]

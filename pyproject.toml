@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "stcadmin"
+version = "0.1.0"
+description = ""
+authors = ["Luke Shiner <luke@lukeshiner.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+gunicorn = "^20.0.4"
+django = "^3.0.3"
+django-formtools = "^2.2"
+django-markup = "^1.4.1"
+django-jchart = "^0.4.2"
+django-admin-sortable2 = "^0.7.5"
+django-debug-toolbar = "^2.2"
+psycopg2-binary = "^2.8.4"
+pytz = "^2019.3"
+humanize = "^0.5.1"
+sphinx = "^2.3.1"
+sphinx_rtd_theme = "^0.4.3"
+tabler = "^2.4.0"
+toml = "^0.10.0"
+xlsxwriter = "^1.2.7"
+openpyxl = "^3.0.3"
+isoweek = "^1.3.3"
+ccapi = {git = "https://github.com/stcstores/ccapi.git"}
+cc-products = {git = "https://github.com/stcstores/cc_products.git"}
+order-profit = {git = "https://github.com/stcstores/order_profit.git"}
+labeler = {git = "https://github.com/lukeshiner/labeler.git"}
+list-input = {git = "https://github.com/lukeshiner/list_input.git"}
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.3.5"
+pytest-django = "^3.8.0"
+pytest-cov = "^2.8.1"
+coveralls = "^1.10.0"
+black = "^19.10b0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

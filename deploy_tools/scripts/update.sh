@@ -41,7 +41,7 @@ printf "Default python executable: `which python`\n"
 printf "Current commit: `git log -n 1 --pretty=format:'%h %s'`\n\n"
 
 # Ensure the environment is built with a predictable path.
-export PIPENV_VENV_IN_PROJECT=true
+export POETRY_VIRTUALENVS_IN_PROJECT=true
 
 #Update git repo
 printf "\nCleaning git repo...\n"
@@ -81,11 +81,11 @@ make docs
 
 # Update static files.
 printf "\nCollecting static files...\n"
-pipenv run python manage.py collectstatic --noinput
+poetry run python manage.py collectstatic --noinput
 
 # Migrate the database.
 printf "\nMigrating database...\n"
-pipenv run python manage.py migrate --noinput
+poetry run python manage.py migrate --noinput
 
 # Restart the site with the new version.
 printf "\nRestarting service...\n"

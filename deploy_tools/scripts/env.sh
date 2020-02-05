@@ -8,3 +8,4 @@ export DOMAIN
 
 # shellcheck source=/home/$USER/.pythonpaths
 source ~/.pythonpaths  # Set path to python executables.
+source ~/.poetry/env

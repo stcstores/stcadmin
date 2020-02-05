@@ -1,36 +1,30 @@
 .PHONY: docs
 
 init:
-	pip install pipenv --upgrade
-	pipenv sync --dev
+	poetry install
 
 clear-environment:
-	pipenv --rm || true
+	poetry env remove python
 
 re-init:
 	make clear-environment
 	make init
 
 production-init:
-	make clear-environment
-	make update-environment
-	pipenv sync
-
-update-environment:
-	pip install pipenv --upgrade
-	pipenv run pip install --upgrade pip
+	poetry run pip install --upgrade pip
+	poetry install --no-dev
 
 deploy:
-	cd deploy_tools && pipenv run fab deploy:host=stcstores@stcadmin.stcstores.co.uk
+	cd deploy_tools && poetry run fab deploy:host=stcstores@stcadmin.stcstores.co.uk
 
 staging-deploy:
-	cd deploy_tools && pipenv run fab deploy:host=stcstores@staging.stcadmin.stcstores.co.uk
+	cd deploy_tools && poetry run fab deploy:host=stcstores@staging.stcadmin.stcstores.co.uk
 
 docs:
-	cd reference/help && pipenv run make html
+	cd reference/help && poetry run make html
 
 lock:
-	pipenv lock -d
+	poetry lock
 
 test:
-	pipenv run python manage.py test
+	poetry run python manage.py test
