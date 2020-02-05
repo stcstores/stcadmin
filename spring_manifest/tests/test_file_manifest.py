@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import Mock, patch
 
+import openpyxl
 from django.conf import settings
 from django.test import override_settings
 from django.utils import timezone
@@ -268,3 +269,26 @@ class TestFileSecuredMailManifest(STCAdminTest):
         securedmail.FileSecuredMailManifest.increment_docket_number()
         counter.refresh_from_db()
         self.assertEqual(docket_number + 1, counter.count)
+
+    @patch("django.utils.timezone.now", mock_now)
+    @patch(
+        "spring_manifest.views.file_manifest.file_manifest.models.close_manifest",
+        close_manifest,
+    )
+    @patch(
+        "spring_manifest.views.file_manifest.securedmail.FileSecuredMailManifest.valid"
+    )
+    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+    def test_add_bag_number(self, mock_valid):
+        number_of_bags = 37
+        mock_valid.return_value = True
+        securedmail.FileSecuredMailManifest(self.manifest)
+        self.manifest.refresh_from_db()
+        securedmail.SecuredMailManifestFile.add_bag_number(
+            self.manifest, number_of_bags
+        )
+        wb = openpyxl.load_workbook(self.manifest.manifest_file)
+        ws = wb.active
+        self.assertEqual(
+            (ws[securedmail.SecuredMailManifestFile.BAG_CELL]).value, number_of_bags
+        )
