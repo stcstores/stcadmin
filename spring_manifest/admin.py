@@ -1,6 +1,7 @@
 """Model admins for manifest app."""
 
 from django.contrib import admin
+
 from spring_manifest import models
 
 
@@ -20,9 +21,6 @@ class CloudCommerceCountryIDAdmin(admin.ModelAdmin):
     list_editable = ("name", "iso_code", "currency_code", "secured_mail_destination")
     search_fields = ("name", "secured_mail_destination__name")
     list_filter = ("secured_mail_destination__name",)
-
-    def __repr__(self):
-        return str(self.name)
 
 
 @admin.register(models.Manifest)
@@ -84,9 +82,6 @@ class ManifestOrderAdmin(admin.ModelAdmin):
     list_editable = ("canceled", "service")
     list_filter = ("date_recieved", "service", "dispatch_date", "manifest")
     search_fields = ("order_id", "customer_name", "date_recieved", "dispatch_date")
-
-    def __repr__(self):
-        return str(self.order_id)
 
 
 @admin.register(models.ManifestPackage)
