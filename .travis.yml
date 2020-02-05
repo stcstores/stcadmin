@@ -18,7 +18,7 @@ before_script:
   - psql -c "CREATE DATABASE stcadmin;" -U postgres
 
 script:
-  - pipenv run pytest
+  - poetry run pytest
   - coveralls
 
 notifications:
