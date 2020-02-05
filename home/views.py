@@ -3,6 +3,7 @@
 import subprocess
 import sys
 
+import pkg_resources
 from django import get_version as get_django_version
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -42,16 +43,11 @@ class Version(TemplateView):
 
     def get_pip_packages(self):
         """Return a list of installed pip packages."""
-        packages = self.get_command_response("pipenv run pip freeze").split("\n")
-        return [self.parse_package(package) for package in packages if package]
+        return [self.parse_package(package) for package in pkg_resources.working_set]
 
     def parse_package(self, package_string):
         """Return a package name from pip freeze as a tuple of name and version."""
-        if "git+" in package_string:
-            name, ref = package_string.split("@")
-            version = ref.split("#")[0]
-        else:
-            name, version = package_string.split("==")
+        name, version = str(package_string).split(" ")
         return {"name": name, "version": version}
 
     def get_current_commit_hash(self):

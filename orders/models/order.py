@@ -46,7 +46,9 @@ class UndispatchedManager(models.Manager):
 
     def get_queryset(self):
         """Return a queryset of undispatched orders."""
-        return super().get_queryset().filter(dispatched_at__isnull=True)
+        return (
+            super().get_queryset().filter(dispatched_at__isnull=True, cancelled=False)
+        )
 
 
 class PriorityManager(models.Manager):
@@ -54,7 +56,9 @@ class PriorityManager(models.Manager):
 
     def get_queryset(self):
         """Return a queryset of priority orders."""
-        return super().get_queryset().filter(shipping_rule__priority=True)
+        return (
+            super().get_queryset().filter(shipping_rule__priority=True, cancelled=False)
+        )
 
 
 class NonPriorityManager(models.Manager):
@@ -62,7 +66,11 @@ class NonPriorityManager(models.Manager):
 
     def get_queryset(self):
         """Return a queryset of non-priority orders."""
-        return super().get_queryset().filter(shipping_rule__priority=False)
+        return (
+            super()
+            .get_queryset()
+            .filter(shipping_rule__priority=False, cancelled=False)
+        )
 
 
 class UndispatchedPriorityManager(UndispatchedManager):
@@ -139,6 +147,17 @@ class Order(models.Model):
         """Return True if the order is dispatched, otherwise return False."""
         return self.dispatched_at is not None
 
+    def check_cancelled(self):
+        """Check if the order has been cancelled and update the cancelled attribute."""
+        if self.cancelled is True or self.customer_ID is None:
+            return
+        recent_orders = CCAPI.recent_orders_for_customer(customer_ID=self.customer_ID)
+        if self.order_ID in recent_orders:
+            order = recent_orders[self.order_ID]
+            if order.status == order.CANCELLED:
+                self.cancelled = True
+                self.save()
+
     @classmethod
     def make_tz_aware(cls, d):
         """Make a naive datetime timezone aware."""
@@ -154,6 +173,7 @@ class Order(models.Model):
             order_obj = cls.create_or_update_order(order)
             if order_obj is not None:
                 cls.update_sales(order_obj, order)
+        cls.update_cancelled_orders(orders_to_dispatch)
 
     @classmethod
     def update_sales(cls, order_obj, order):
@@ -169,6 +189,16 @@ class Order(models.Model):
                 sale.quantity = product.quantity
                 sale.price = price
                 sale.save()
+
+    @classmethod
+    def update_cancelled_orders(cls, orders_to_dispatch):
+        """Mark cancelled orders."""
+        undispatched_order_IDs = [order.order_id for order in orders_to_dispatch]
+        unaccounted_orders = cls._default_manager.filter(
+            cancelled=False, dispatched_at__isnull=True
+        ).exclude(order_ID__in=undispatched_order_IDs)
+        for order in unaccounted_orders:
+            order.check_cancelled()
 
     @classmethod
     def get_orders_for_dispatch(cls):

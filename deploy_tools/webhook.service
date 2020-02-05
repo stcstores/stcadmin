@@ -1,0 +1,11 @@
+[Unit]
+Description=Webhook server
+
+[Service]
+Restart=on-failure
+User=USERNAME
+WorkingDirectory=/home/USERNAME
+ExecStart=/home/USERNAME/go/bin/webhook -hooks /var/webhook/hooks.json -hotreload -verbose
+
+[Install]
+WantedBy=multi-user.target

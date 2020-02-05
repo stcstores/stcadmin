@@ -11,14 +11,14 @@ install:
   - mkdir ../config
   - cp travis_config.toml ../config/config.toml
   - echo 'SECRET_KEY = "^)_u+s3-340oy0!12y)1o=5%4un+$66w%g@h^fxzq_o-=#@di1"' >> ../config/secret_key.toml
-  - pip install pipenv --upgrade
-  - pipenv sync --dev
+  - pip install poetry
+  - poetry install
 
 before_script:
   - psql -c "CREATE DATABASE stcadmin;" -U postgres
 
 script:
-  - pipenv run pytest
+  - poetry run pytest
   - coveralls
 
 notifications:
