@@ -83,6 +83,12 @@ $ sudo systemctl enable gunicorn-<sitename>.service
 $ sudo systemctl start gunicorn-<sitename>.service
 ```
 
+Allow the service to be restarted without a password by adding the following to the sudoers file with `visudo`.
+
+```
+<username> ALL=NOPASSWORD: /bin/systemctl restart gunicorn.<domain>.service
+```
+
 ## Get SSL Certificates
 
 SSL certificates can be provided by Let's Encrypt, using certbot:
