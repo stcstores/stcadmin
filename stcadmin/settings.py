@@ -232,7 +232,7 @@ LOGGING = {
             "propagate": False,
         },
         "file_manifest": {
-            "handlers": ["error_file_handler", "mail_admins"],
+            "handlers": ["stdout", "error_file_handler", "mail_admins"],
             "level": "ERROR",
             "propagate": False,
         },

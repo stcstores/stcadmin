@@ -1,10 +1,11 @@
 """ManifestOrder model."""
 
-import pytz
+from collections import defaultdict
+
 from ccapi import CCAPI
 from django.db import models
 from django.db.models import Sum
-from django.utils.timezone import is_naive
+from django.utils import timezone
 
 from .cloud_commerce_country_id import CloudCommerceCountryID
 from .manifest_model import Manifest
@@ -113,9 +114,8 @@ class ManifestOrder(models.Model):
 
     def localise_datetime(self, date_input):
         """Localise datetime."""
-        if date_input is not None and is_naive(date_input):
-            tz = pytz.timezone("Europe/London")
-            date_input = date_input.replace(tzinfo=tz)
+        if date_input is not None and timezone.is_naive(date_input):
+            date_input = timezone.make_aware(date_input)
         return date_input
 
     def add_to_manifest(self, manifest):
@@ -142,13 +142,11 @@ class ManifestOrder(models.Model):
 
     def get_item_dict(self):
         """Return product IDs and quantities according to database."""
-        quantities = {}
+        quantities = defaultdict(int)
         for package in self.manifestpackage_set.all():
             for item in package.manifestitem_set.all():
-                if item.item_id not in quantities:
-                    quantities[item.item_id] = 0
                 quantities[item.item_id] += item.quantity
-        return quantities
+        return dict(quantities)
 
     def check_items(self):
         """Return True products and quantities match Cloud Commerce."""
@@ -162,22 +160,6 @@ class ManifestOrder(models.Model):
             Sum("quantity")
         )["quantity__sum"]
 
-    def update_packages(self, package_data):
-        """Update package information associated with this order."""
-        from .manifest_package_model import ManifestPackage
-        from .manifest_item_model import ManifestItem
-
-        self.clear_packages()
-        for package_number, package in enumerate(package_data):
-            package_obj = ManifestPackage(order=self, package_number=package_number)
-            package_obj.save()
-            for item_data in package:
-                item_id, quantity = item_data
-                item = ManifestItem(
-                    package=package_obj, item_id=item_id, quantity=quantity
-                )
-                item.save()
-
     @property
     def packages(self):
         """Return all related packages."""
@@ -190,7 +172,7 @@ class ManifestOrder(models.Model):
         """Return the Secured Mail service used by the order or None."""
         try:
             return SecuredMailService.objects.get(shipping_service=self.service)
-        except self.DoesNotExist:
+        except SecuredMailService.DoesNotExist:
             return None
 
     @property

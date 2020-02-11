@@ -1,4 +1,23 @@
 """Views for manifest app."""
 
-from .views import *  # NOQA
-from .file_manifest import FileManifestView  # NOQA
+from .views import (
+    CanceledOrdersView,
+    FileManifestView,
+    ManifestListView,
+    ManifestView,
+    OrderExists,
+    SendSecuredMailManifest,
+    UpdateManifest,
+    UpdateOrderView,
+)
+
+__all__ = [
+    "CanceledOrdersView",
+    "FileManifestView",
+    "ManifestListView",
+    "ManifestView",
+    "OrderExists",
+    "SendSecuredMailManifest",
+    "UpdateManifest",
+    "UpdateOrderView",
+]

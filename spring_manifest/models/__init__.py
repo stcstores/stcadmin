@@ -41,11 +41,6 @@ def get_manifest_by_service(service):
     return get_manifest(service.manifest_type)
 
 
-def get_manifest_for_order(order):
-    """Return the correct current manifest for order."""
-    return get_manifest_by_service(order.service)
-
-
 def get_orders(courier_rule_id, number_of_days=1):
     """Return current orders matching courier_rule_id."""
     return CCAPI.get_orders_for_dispatch(
