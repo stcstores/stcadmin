@@ -34,4 +34,10 @@
     "fields": {
         "name": "Royal Mail"
     }
+}, {
+    "model": "shipping.provider",
+    "pk": 7,
+    "fields": {
+        "name": "Whistl"
+    }
 }]

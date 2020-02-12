@@ -6,15 +6,15 @@
         "name": "Royal Mail Untracked 24 Packet",
         "service": 8,
         "priority": true,
-        "inactive": false
+        "inactive": true
     }
 }, {
     "model": "shipping.shippingrule",
     "pk": 2,
     "fields": {
         "rule_ID": "9584",
-        "name": "Royal Mail Untracked 48 Packet",
-        "service": 10,
+        "name": "Whistl Untracked 48 Packet",
+        "service": 23,
         "priority": false,
         "inactive": false
     }
@@ -23,8 +23,8 @@
     "pk": 3,
     "fields": {
         "rule_ID": "9585",
-        "name": "Royal Mail Tracked 24 Packet",
-        "service": 2,
+        "name": "Whistl Tracked 24 Packet",
+        "service": 22,
         "priority": true,
         "inactive": false
     }
@@ -33,8 +33,8 @@
     "pk": 4,
     "fields": {
         "rule_ID": "9586",
-        "name": "Royal Mail Tracked 48 Packet",
-        "service": 11,
+        "name": "Whistl Tracked 48 Packet",
+        "service": 23,
         "priority": false,
         "inactive": false
     }
@@ -53,8 +53,8 @@
     "pk": 6,
     "fields": {
         "rule_ID": "9588",
-        "name": "Royal Mail 48 Large Letter",
-        "service": 4,
+        "name": "Whistl 48 Large Letter",
+        "service": 21,
         "priority": false,
         "inactive": false
     }
@@ -73,8 +73,8 @@
     "pk": 8,
     "fields": {
         "rule_ID": "9814",
-        "name": "Royal Mail Heavy and Large 48",
-        "service": 11,
+        "name": "Whistl Heavy and Large 48",
+        "service": 23,
         "priority": false,
         "inactive": false
     }
@@ -93,8 +93,8 @@
     "pk": 10,
     "fields": {
         "rule_ID": "10114",
-        "name": "Royal Mail Heavy and Large 24",
-        "service": 2,
+        "name": "Whistl Heavy and Large 24",
+        "service": 22,
         "priority": true,
         "inactive": false
     }
@@ -143,7 +143,7 @@
     "pk": 15,
     "fields": {
         "rule_ID": "11243",
-        "name": "DHL Express EU Customer Selected ",
+        "name": "DHL Express EU Customer Selected",
         "service": 5,
         "priority": true,
         "inactive": false
@@ -224,7 +224,7 @@
     "fields": {
         "rule_ID": "18780",
         "name": "Single 48 Large Letter Item",
-        "service": 4,
+        "service": 21,
         "priority": false,
         "inactive": false
     }
@@ -234,7 +234,7 @@
     "fields": {
         "rule_ID": "18781",
         "name": "Packet (Multiple 48 LL Items)",
-        "service": 10,
+        "service": 21,
         "priority": false,
         "inactive": false
     }

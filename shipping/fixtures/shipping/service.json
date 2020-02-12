@@ -138,4 +138,25 @@
         "name": "Worldwide Express",
         "provider": 4
     }
+}, {
+    "model": "shipping.service",
+    "pk": 21,
+    "fields": {
+        "name": "INSIGHT - Mainland UK",
+        "provider": 7
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 22,
+    "fields": {
+        "name": "TRACKED24 - TRACKED24 - 24 Non POD",
+        "provider": 7
+    }
+}, {
+    "model": "shipping.service",
+    "pk": 23,
+    "fields": {
+        "name": "TRACKED48 - TRACKED48 - 48 Non POD",
+        "provider": 7
+    }
 }]
