@@ -481,7 +481,7 @@ class TestOrder(STCAdminTest):
 
     def test_dispatched_manager(self):
         queryset = models.Order.dispatched.all()
-        self.assertEqual(3, queryset.count())
+        self.assertEqual(11, queryset.count())
         for order in queryset:
             self.assertTrue(order.is_dispatched())
 
@@ -493,7 +493,7 @@ class TestOrder(STCAdminTest):
 
     def test_priority_manager(self):
         queryset = models.Order.priority.all()
-        self.assertEqual(2, queryset.count())
+        self.assertEqual(10, queryset.count())
         for order in queryset:
             self.assertTrue(order.shipping_rule.priority)
 
@@ -660,7 +660,7 @@ class TestPackingRecord(STCAdminTest):
     def test_orders_to_update(self):
         models.PackingRecord.objects.all().delete()
         orders = models.PackingRecord._orders_to_update()
-        self.assertEqual(3, len(orders))
+        self.assertEqual(11, len(orders))
         for order in orders:
             self.assertTrue(order.is_dispatched())
             self.assertIsNotNone(order.customer_ID)
@@ -675,7 +675,7 @@ class TestPackingRecord(STCAdminTest):
         for order in orders:
             self.assertTrue(order.is_dispatched())
             self.assertIsNotNone(order.customer_ID)
-        self.assertEqual(2, len(orders))
+        self.assertEqual(10, len(orders))
 
     def test_orders_to_update_ignores_existing_records(self):
         dispatched_orders = models.Order.dispatched.all()
@@ -686,7 +686,7 @@ class TestPackingRecord(STCAdminTest):
         for order in orders:
             self.assertTrue(order.is_dispatched())
             self.assertIsNotNone(order.customer_ID)
-        self.assertEqual(2, len(orders))
+        self.assertEqual(10, len(orders))
 
     def test_update_order_with_no_logs(self):
         order = models.Order.dispatched.all()[0]
@@ -904,10 +904,7 @@ class TestOrdersByDayChart(STCAdminTest):
         )
         for key, value in orders.items():
             self.assertIsInstance(key, date)
-            if key == date(2019, 12, 3):
-                self.assertEqual(value, 3)
-            else:
-                self.assertEqual(value, 0)
+        self.assertEqual(8, orders[date(2019, 12, 3)])
 
     @patch("orders.models.charts.timezone.now")
     def test_datasets(self, mock_now):
@@ -918,7 +915,9 @@ class TestOrdersByDayChart(STCAdminTest):
         self.assertEqual(1, len(datasets))
         dataset = datasets[0]
         expected_data = [0 for i in range(chart.DAYS_TO_DISPLAY)]
-        expected_data[-2] = 3
+        expected_data[28] = 1
+        expected_data[58] = 8
+        expected_data[59] = 2
         self.assertEqual(expected_data, dataset["data"])
 
 
@@ -965,7 +964,7 @@ class TestOrdersByWeekChart(STCAdminTest):
                 Week(2019, 46): 0,
                 Week(2019, 47): 0,
                 Week(2019, 48): 0,
-                Week(2019, 49): 3,
+                Week(2019, 49): 10,
             },
             order_counts,
         )
@@ -978,4 +977,4 @@ class TestOrdersByWeekChart(STCAdminTest):
         datasets = chart.get_datasets()
         self.assertEqual(1, len(datasets))
         dataset = datasets[0]
-        self.assertEqual([0, 0, 0, 0, 3], dataset["data"])
+        self.assertEqual([0, 0, 0, 0, 10], dataset["data"])

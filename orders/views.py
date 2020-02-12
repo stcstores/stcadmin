@@ -6,6 +6,7 @@ from django.shortcuts import reverse
 from django.utils import timezone
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.list import ListView
 
 from home.models import CloudCommerceUser
 from home.views import UserInGroupMixin
@@ -174,3 +175,37 @@ class UndispatchedOrders(OrdersUserMixin, TemplateView):
     """Display a count of undispatched orders."""
 
     template_name = "orders/undispatched.html"
+
+
+class OrderList(OrdersUserMixin, ListView):
+    """Display a filterable list of orders."""
+
+    template_name = "orders/order_list.html"
+    model = models.Order
+    paginate_by = 10
+    form_class = forms.OrderListFilter
+
+    def get(self, *args, **kwargs):
+        """Instanciate the form."""
+        self.form = self.form_class(self.request.GET)
+        return super().get(*args, **kwargs)
+
+    def get_queryset(self):
+        """Return a queryset of orders based on GET data."""
+        if self.form.is_valid():
+            return self.form.get_queryset()
+        return []
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the template context."""
+        context = super().get_context_data(*args, **kwargs)
+        context["form"] = self.form
+        return context
+
+    def query_kwargs(self, data):
+        """Return a dict of filter kwargs."""
+        kwargs = {}
+        kwargs["country"] = data["country"]
+        kwargs["recieved_at__gte"] = data.get("recieved_from")
+        kwargs["recieved_at__lte"] = data.get("recieved_to")
+        return {key: value for key, value in kwargs.items() if value is not None}

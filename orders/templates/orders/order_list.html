@@ -1,0 +1,45 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+
+<form action="" method="GET">
+    <table class="filter">
+        {{ form.as_table }}
+        <tr>
+            <td colspan="2">
+            {% if page_obj.has_previous %}
+                <button name="page" value="1">First</button>
+                <button name="page" value="{{ page_obj.previous_page_number }}">Previous</button>
+            {% endif %}
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            {% if page_obj.has_next %}
+                <button name="page" value="{{ page_obj.next_page_number }}">Next</button>
+                <button name="page" value="{{ page_obj.paginator.num_pages }}">Last</button>
+            {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><button>Filter</button></td>
+        </tr>
+    </table>
+</form>
+
+<h2>Orders:</h2>
+
+<table class="orders">
+    <tr>
+        <th>Order ID</th>
+        <th>Tracking Number</th>
+        <th>Shipping Rule</th>
+        <th>Date Recieved</th>
+    </tr>
+{% for order in object_list %}
+    <tr class="order">
+        <th>{{ order.order_ID}} </th>
+        <td>{{ order.tracking_number }}</td>
+        <td>{{ order.shipping_rule.name }}</td>
+        <td>{{ order.recieved_at|date:"Y-m-d" }}</td>
+    </tr>
+{% endfor %}
+
+{% endblock content %}

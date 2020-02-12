@@ -35,4 +35,5 @@ urlpatterns = [
         views.UndispatchedOrders.as_view(),
         name="undispatched_orders",
     ),
+    path("order_list/", views.OrderList.as_view(), name="order_list"),
 ]
