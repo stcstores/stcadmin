@@ -1,3 +1,5 @@
+import csv
+import io
 from datetime import datetime, timedelta
 from unittest.mock import patch
 
@@ -435,7 +437,7 @@ class TestShippingMethodsView(OrderViewTest, ViewTests):
         for order in orders:
             self.assertEqual(order.country, country)
 
-    def test_filter_recieved_at(self):
+    def test_filter_by_date(self):
         recieved_from = make_aware(datetime(2019, 12, 3))
         recieved_to = make_aware(datetime(2019, 12, 4))
         response = self.client.get(
@@ -456,3 +458,63 @@ class TestShippingMethodsView(OrderViewTest, ViewTests):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(self.template)
         self.assertFalse(response.context["form"].is_valid())
+
+
+class TestExportOrdersView(OrderViewTest, ViewTests):
+    fixtures = (
+        "home/cloud_commerce_user",
+        "shipping/currency",
+        "shipping/country",
+        "shipping/provider",
+        "shipping/service",
+        "shipping/shipping_rule",
+        "orders/channel",
+        "orders/order",
+        "orders/product_sale",
+    )
+
+    URL = "/orders/export_orders/"
+
+    def read_csv(self, response):
+        rows = list(
+            csv.reader(io.StringIO(response.content.decode("utf8")), delimiter=",")
+        )
+        return rows[0], rows[1:]
+
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        header, rows = self.read_csv(response)
+        self.assertEqual(views.ExportOrders.header, header)
+        self.assertEqual(models.Order.dispatched.count(), len(rows))
+
+    def test_filter_country(self):
+        country = Country.objects.get(name="United Kingdom")
+        response = self.client.get(self.URL, {"country": country.id})
+        header, rows = self.read_csv(response)
+        self.assertEqual(
+            models.Order.dispatched.filter(country=country).count(), len(rows)
+        )
+
+    def test_filter_by_date(self):
+        recieved_from = make_aware(datetime(2019, 12, 3))
+        recieved_to = make_aware(datetime(2019, 12, 4))
+        response = self.client.get(
+            self.URL,
+            {
+                "recieved_from": recieved_from.strftime("%Y-%m-%d"),
+                "recieved_to": recieved_to.strftime("%Y-%m-%d"),
+            },
+        )
+        header, rows = self.read_csv(response)
+        self.assertEqual(
+            models.Order.dispatched.filter(
+                recieved_at__gte=recieved_from,
+                recieved_at__lte=recieved_to + timedelta(days=1),
+            ).count(),
+            len(rows),
+        )
+
+    def test_invalid_form(self):
+        response = self.client.get(self.URL, {"country": 999999})
+        self.assertEqual(404, response.status_code)

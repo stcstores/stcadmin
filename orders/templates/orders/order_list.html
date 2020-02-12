@@ -2,9 +2,37 @@
 
 {% block content %}
 
+<h1>Orders</h1>
+
 <form action="" method="GET">
     <table class="filter">
         {{ form.as_table }}
+       
+        <tr>
+            <td colspan="2"> 
+                <button>Filter</button>
+                <button formaction="{% url 'orders:export_orders' %}">Export</button>
+            </td>
+        </tr>
+    </table>
+
+    <table class="orders">
+        <tr>
+            <th>Order ID</th>
+            <th>Tracking Number</th>
+            <th>Shipping Rule</th>
+            <th>Date Recieved</th>
+        </tr>
+    {% for order in object_list %}
+        <tr class="order">
+            <th>{{ order.order_ID}} </th>
+            <td>{{ order.tracking_number }}</td>
+            <td>{{ order.shipping_rule.name }}</td>
+            <td>{{ order.recieved_at|date:"Y-m-d" }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    <table>
         <tr>
             <td colspan="2">
             {% if page_obj.has_previous %}
@@ -18,28 +46,6 @@
             {% endif %}
             </td>
         </tr>
-        <tr>
-            <td colspan="2"><button>Filter</button></td>
-        </tr>
     </table>
 </form>
-
-<h2>Orders:</h2>
-
-<table class="orders">
-    <tr>
-        <th>Order ID</th>
-        <th>Tracking Number</th>
-        <th>Shipping Rule</th>
-        <th>Date Recieved</th>
-    </tr>
-{% for order in object_list %}
-    <tr class="order">
-        <th>{{ order.order_ID}} </th>
-        <td>{{ order.tracking_number }}</td>
-        <td>{{ order.shipping_rule.name }}</td>
-        <td>{{ order.recieved_at|date:"Y-m-d" }}</td>
-    </tr>
-{% endfor %}
-
 {% endblock content %}

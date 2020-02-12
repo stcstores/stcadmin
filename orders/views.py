@@ -1,10 +1,13 @@
 """Views for the Orders app."""
+import csv
+import io
 from datetime import timedelta
 
 from django.db.models import Count, Q
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import reverse
 from django.utils import timezone
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
@@ -202,10 +205,39 @@ class OrderList(OrdersUserMixin, ListView):
         context["form"] = self.form
         return context
 
-    def query_kwargs(self, data):
-        """Return a dict of filter kwargs."""
-        kwargs = {}
-        kwargs["country"] = data["country"]
-        kwargs["recieved_at__gte"] = data.get("recieved_from")
-        kwargs["recieved_at__lte"] = data.get("recieved_to")
-        return {key: value for key, value in kwargs.items() if value is not None}
+
+class ExportOrders(OrdersUserMixin, View):
+    """Create a .csv export of order data."""
+
+    form_class = forms.OrderListFilter
+    header = ["order_ID", "tracking_number", "shipping_rule", "date_recieved"]
+
+    def get(self, *args, **kwargs):
+        """Return an HttpResponse contaning the export or a 404 status."""
+        form = self.form_class(self.request.GET)
+        if form.is_valid():
+            contents = self.make_csv(form.get_queryset())
+            response = HttpResponse(contents, content_type="text/csv")
+            filename = f"order_export_{timezone.now().strftime('%Y-%m-%d')}.csv"
+            response["Content-Disposition"] = f"attachment; filename={filename}"
+            return response
+        return HttpResponseNotFound()
+
+    def make_csv(self, orders):
+        """Return the export as a CSV string."""
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(self.header)
+        for order in orders:
+            row = self.make_row(order)
+            writer.writerow(row)
+        return output.getvalue()
+
+    def make_row(self, order):
+        """Return a row of order data."""
+        return [
+            order.order_ID,
+            order.tracking_number,
+            order.shipping_rule,
+            order.recieved_at.strftime("%Y-%m-%d"),
+        ]
