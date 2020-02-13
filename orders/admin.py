@@ -27,7 +27,7 @@ class OrderAdmin(admin.ModelAdmin):
         "channel_order_ID",
         "country",
         "shipping_rule",
-        "shipping_service",
+        "courier_service",
         "tracking_number",
     )
     list_display = (
@@ -41,10 +41,10 @@ class OrderAdmin(admin.ModelAdmin):
         "channel_order_ID",
         "country",
         "shipping_rule",
-        "shipping_service",
+        "courier_service",
         "tracking_number",
     )
-    list_editable = ("cancelled", "shipping_rule", "shipping_service")
+    list_editable = ("cancelled", "shipping_rule", "courier_service")
 
 
 @admin.register(models.ProductSale)

@@ -11,7 +11,7 @@
         "channel_order_ID": "114-2045969-6636225",
         "country": 247,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": null
     }
 }, {
@@ -27,7 +27,7 @@
         "channel_order_ID": "405-9355598-8526756",
         "country": 2,
         "shipping_rule": 20,
-        "shipping_service": 1,
+        "courier_service": 1,
         "tracking_number": null
     }
 }, {
@@ -43,7 +43,7 @@
         "channel_order_ID": "113-5804103-4157008",
         "country": 247,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": "T06546515615"
     }
 }, {
@@ -59,7 +59,7 @@
         "channel_order_ID": "112-9169783-6885020",
         "country": 247,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": null
     }
 }, {
@@ -75,7 +75,7 @@
         "channel_order_ID": "408-4192119-2680333",
         "country": 2,
         "shipping_rule": 20,
-        "shipping_service": 1,
+        "courier_service": 1,
         "tracking_number": null
     }
 }, {
@@ -91,7 +91,7 @@
         "channel_order_ID": "702-6596413-9661813",
         "country": 55,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": "T07894651561"
     }
 }, {
@@ -107,7 +107,7 @@
         "channel_order_ID": "249-9655443-1385425",
         "country": 25,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": null
     }
 }, {
@@ -123,7 +123,7 @@
         "channel_order_ID": "503-6469637-3507039",
         "country": 25,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": null
     }
 }, {
@@ -139,7 +139,7 @@
         "channel_order_ID": "305-7766252-9124356",
         "country": 3,
         "shipping_rule": 20,
-        "shipping_service": 1,
+        "courier_service": 1,
         "tracking_number": null
     }
 }, {
@@ -155,7 +155,7 @@
         "channel_order_ID": "403-9910486-5559564",
         "country": 2,
         "shipping_rule": 20,
-        "shipping_service": 1,
+        "courier_service": 1,
         "tracking_number": null
     }
 }, {
@@ -171,7 +171,7 @@
         "channel_order_ID": "206-2250072-0142745",
         "country": 1,
         "shipping_rule": 1,
-        "shipping_service": 10,
+        "courier_service": 10,
         "tracking_number": "T09941615165"
     }
 }, {
@@ -187,7 +187,7 @@
         "channel_order_ID": "202-8067490-4825126",
         "country": 1,
         "shipping_rule": 2,
-        "shipping_service": 10,
+        "courier_service": 10,
         "tracking_number": null
     }
 }, {
@@ -203,7 +203,7 @@
         "channel_order_ID": "112-8652097-9808214",
         "country": 247,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": null
     }
 }, {
@@ -219,7 +219,7 @@
         "channel_order_ID": "113-9572638-4797061",
         "country": 247,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": null
     }
 }, {
@@ -235,7 +235,7 @@
         "channel_order_ID": "113-1142923-4639449",
         "country": 247,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": "T04981619981"
     }
 }, {
@@ -251,7 +251,7 @@
         "channel_order_ID": "114-6831778-7556246",
         "country": 247,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": null
     }
 }, {
@@ -267,7 +267,7 @@
         "channel_order_ID": "114-5729478-8125065",
         "country": 247,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": null
     }
 }, {
@@ -283,7 +283,7 @@
         "channel_order_ID": "114-4226994-3060204",
         "country": 247,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": "T0849616165"
     }
 }, {
@@ -299,7 +299,7 @@
         "channel_order_ID": "16-04229-59250",
         "country": 247,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": null
     }
 }, {
@@ -315,7 +315,7 @@
         "channel_order_ID": "",
         "country": 1,
         "shipping_rule": 1,
-        "shipping_service": 18,
+        "courier_service": 18,
         "tracking_number": "T04894846116"
     }
 }, {
@@ -331,7 +331,7 @@
         "channel_order_ID": "112-9169783-6885020",
         "country": 247,
         "shipping_rule": 19,
-        "shipping_service": 15,
+        "courier_service": 15,
         "tracking_number": null
     }
 }]

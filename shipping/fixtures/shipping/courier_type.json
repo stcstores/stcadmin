@@ -1,0 +1,100 @@
+[{
+    "model": "shipping.couriertype",
+    "pk": 1,
+    "fields": {
+        "courier_type_ID": "7",
+        "name": "DPD",
+        "provider": 1,
+        "inactive": false
+    }
+}, {
+    "model": "shipping.couriertype",
+    "pk": 2,
+    "fields": {
+        "courier_type_ID": "32",
+        "name": "The Delivery Group",
+        "provider": 2,
+        "inactive": false
+    }
+}, {
+    "model": "shipping.couriertype",
+    "pk": 3,
+    "fields": {
+        "courier_type_ID": "6",
+        "name": "Manual",
+        "provider": 3,
+        "inactive": false
+    }
+}, {
+    "model": "shipping.couriertype",
+    "pk": 4,
+    "fields": {
+        "courier_type_ID": "10",
+        "name": "DHL",
+        "provider": 4,
+        "inactive": false
+    }
+}, {
+    "model": "shipping.couriertype",
+    "pk": 5,
+    "fields": {
+        "courier_type_ID": "4",
+        "name": "Parcelforce",
+        "provider": 5,
+        "inactive": false
+    }
+}, {
+    "model": "shipping.couriertype",
+    "pk": 6,
+    "fields": {
+        "courier_type_ID": "25",
+        "name": "Royal Mail by Intersoft",
+        "provider": 6,
+        "inactive": false
+    }
+}, {
+    "model": "shipping.couriertype",
+    "pk": 7,
+    "fields": {
+        "courier_type_ID": "20",
+        "name": "Amazon Logistics",
+        "provider": 6,
+        "inactive": false
+    }
+}, {
+    "model": "shipping.couriertype",
+    "pk": 8,
+    "fields": {
+        "courier_type_ID": "2",
+        "name": "DPD Local",
+        "provider": 1,
+        "inactive": false
+    }
+}, {
+    "model": "shipping.couriertype",
+    "pk": 9,
+    "fields": {
+        "courier_type_ID": "13",
+        "name": "Royal Mail by netdespatch",
+        "provider": 6,
+        "inactive": false
+    }
+}, {
+    "model": "shipping.couriertype",
+    "pk": 10,
+    "fields": {
+        "courier_type_ID": "33",
+        "name": "Whistl",
+        "provider": 7,
+        "inactive": false
+    }
+}, {
+    "model": "shipping.couriertype",
+    "pk": 11,
+    "fields": {
+        "courier_type_ID": "35",
+        "name": "ITD Global",
+        "provider": 8,
+        "inactive": false
+    }
+}]

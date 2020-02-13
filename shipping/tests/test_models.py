@@ -82,24 +82,103 @@ class TestProvider(STCAdminTest):
         self.assertEqual(provider.name, str(provider))
 
 
-class TestService(STCAdminTest):
+class TestCourierType(STCAdminTest):
     fixtures = (
         "shipping/currency",
         "shipping/country",
         "shipping/provider",
-        "shipping/service",
+        "shipping/courier_type",
     )
 
     def test_create_object(self):
-        name = "Test Service"
-        provider = models.Provider.objects.create(name="Test Provider")
-        service = models.Service.objects.create(name=name, provider=provider)
-        self.assertEqual(name, service.name)
-        self.assertEqual(provider, service.provider)
+        courier_type_ID = "202"
+        name = "New Courier Type"
+        provider = models.Provider.objects.get(id=1)
+        courier_type = models.CourierType.objects.create(
+            courier_type_ID=courier_type_ID, name=name, provider=provider
+        )
+        self.assertEqual(courier_type_ID, courier_type.courier_type_ID)
+        self.assertEqual(name, courier_type.name)
+        self.assertEqual(provider, courier_type.provider)
+        self.assertFalse(courier_type.inactive)
 
     def test_str(self):
-        service = models.Service.objects.get(id=1)
-        self.assertEqual(service.name, str(service))
+        courier_type = models.CourierType.objects.get(id=1)
+        self.assertEqual(courier_type.name, str(courier_type))
+
+
+class TestCourier(STCAdminTest):
+    fixtures = (
+        "shipping/currency",
+        "shipping/country",
+        "shipping/provider",
+        "shipping/courier_type",
+        "shipping/courier",
+    )
+
+    def test_create_object(self):
+        courier_ID = "1493"
+        name = "New Courier"
+        courier_type = models.CourierType.objects.get(id=1)
+        courier = models.Courier.objects.create(
+            courier_type=courier_type, name=name, courier_ID=courier_ID
+        )
+        self.assertEqual(courier_ID, courier.courier_ID)
+        self.assertEqual(name, courier.name)
+        self.assertEqual(courier_type, courier.courier_type)
+        self.assertFalse(courier.inactive)
+
+    def test_str(self):
+        courier = models.Courier.objects.get(id=1)
+        self.assertEqual(f"{courier.courier_ID}: {courier.name}", str(courier))
+
+    def test_create_with_nulls(self):
+        courier_ID = "1493"
+        courier = models.Courier.objects.create(courier_ID=courier_ID)
+        self.assertEqual(courier_ID, courier.courier_ID)
+        self.assertIsNone(courier.name)
+        self.assertIsNone(courier.courier_type)
+        self.assertFalse(courier.inactive)
+
+
+class TestCourierService(STCAdminTest):
+    fixtures = (
+        "shipping/currency",
+        "shipping/country",
+        "shipping/provider",
+        "shipping/courier_type",
+        "shipping/courier",
+        "shipping/courier_service",
+    )
+
+    def test_create_object(self):
+        courier_service_ID = "28493"
+        name = "New Courier Service"
+        courier = models.Courier.objects.get(id=1)
+        courier_service = models.CourierService.objects.create(
+            courier_service_ID=courier_service_ID, name=name, courier=courier
+        )
+        self.assertEqual(courier_service_ID, courier_service.courier_service_ID)
+        self.assertEqual(name, courier_service.name)
+        self.assertEqual(courier, courier_service.courier)
+        self.assertFalse(courier_service.inactive)
+
+    def test_str(self):
+        courier_service = models.CourierService.objects.get(id=1)
+        self.assertEqual(
+            f"{courier_service.courier_service_ID}: {courier_service.name}",
+            str(courier_service),
+        )
+
+    def test_create_with_nulls(self):
+        courier_service_ID = "28493"
+        courier_service = models.CourierService.objects.create(
+            courier_service_ID=courier_service_ID
+        )
+        self.assertEqual(courier_service_ID, courier_service.courier_service_ID)
+        self.assertIsNone(courier_service.name)
+        self.assertIsNone(courier_service.courier)
+        self.assertFalse(courier_service.inactive)
 
 
 class TestShippingRule(STCAdminTest):
@@ -107,24 +186,140 @@ class TestShippingRule(STCAdminTest):
         "shipping/currency",
         "shipping/country",
         "shipping/provider",
-        "shipping/service",
+        "shipping/courier_type",
+        "shipping/courier",
+        "shipping/courier_service",
         "shipping/shipping_rule",
     )
 
+    def mock_cc_rule(
+        self,
+        rule_ID,
+        name="Mock Rule",
+        priority=False,
+        courier_ID="57",
+        courier_service_ID="2564",
+    ):
+        mock_rule = Mock(
+            id=rule_ID,
+            is_priority=int(priority),
+            courier_services_group_id=courier_ID,
+            courier_services_rule_id=courier_service_ID,
+        )
+        mock_rule.name = name
+        return mock_rule
+
     def test_create_object(self):
-        provider = models.Provider.objects.create(name="Test Provider")
-        service = models.Service.objects.create(name="Test Service", provider=provider)
+        courier_service = models.CourierService.objects.create(name="Test Service")
         name = "Test Shipping Rule"
         rule_ID = "38493"
         shipping_rule = models.ShippingRule.objects.create(
-            name=name, rule_ID=rule_ID, service=service
+            name=name, rule_ID=rule_ID, courier_service=courier_service
         )
         self.assertEqual(name, shipping_rule.name)
         self.assertEqual(rule_ID, shipping_rule.rule_ID)
-        self.assertEqual(service, shipping_rule.service)
+        self.assertEqual(courier_service, shipping_rule.courier_service)
         self.assertFalse(shipping_rule.priority)
         self.assertFalse(shipping_rule.inactive)
 
     def test_str(self):
         rule = models.ShippingRule.objects.get(id=1)
         self.assertEqual(rule.name, str(rule))
+
+    @patch("shipping.models.CCAPI")
+    def test_update_marks_inactive(self, mock_CCAPI):
+        models.ShippingRule.objects.filter(id__gt=1).delete()
+        models.ShippingRule.objects.update(inactive=False)
+        mock_CCAPI.get_courier_rules.return_value = []
+        models.ShippingRule.update()
+        mock_CCAPI.get_courier_rules.assert_called_once()
+        self.assertEqual(1, len(mock_CCAPI.mock_calls))
+        self.assertTrue(models.ShippingRule.objects.get(id=1).inactive)
+
+    @patch("shipping.models.CCAPI")
+    def test_update_marks_active(self, mock_CCAPI):
+        models.ShippingRule.objects.filter(id__gt=1).delete()
+        models.ShippingRule.objects.update(inactive=True)
+        rule = models.ShippingRule.objects.get(id=1)
+        cc_rule = self.mock_cc_rule(rule_ID=rule.rule_ID)
+        mock_CCAPI.get_courier_rules.return_value = [cc_rule]
+        models.ShippingRule.update()
+        mock_CCAPI.get_courier_rules.assert_called_once()
+        self.assertEqual(1, len(mock_CCAPI.mock_calls))
+        rule.refresh_from_db()
+        self.assertFalse(rule.inactive)
+
+    @patch("shipping.models.CCAPI")
+    def test_update_creates_rule(self, mock_CCAPI):
+        rule_ID = "948416"
+        self.assertFalse(models.ShippingRule.objects.filter(rule_ID=rule_ID).exists())
+        cc_rule = self.mock_cc_rule(rule_ID=rule_ID)
+        mock_CCAPI.get_courier_rules.return_value = [cc_rule]
+        models.ShippingRule.update()
+        mock_CCAPI.get_courier_rules.assert_called_once()
+        self.assertEqual(1, len(mock_CCAPI.mock_calls))
+        self.assertTrue(models.ShippingRule.objects.filter(rule_ID=rule_ID).exists())
+        rule = models.ShippingRule.objects.get(rule_ID=rule_ID)
+        self.assertEqual(cc_rule.name, rule.name)
+        self.assertIsNotNone(rule.courier_service)
+        self.assertEqual(bool(cc_rule.is_priority), rule.priority)
+        self.assertFalse(rule.inactive)
+
+    @patch("shipping.models.CCAPI")
+    def test_update_uses_existing_courier_service(self, mock_CCAPI):
+        rule_ID = "948416"
+        models.ShippingRule.objects.all().delete()
+        courier_service = models.CourierService.objects.get(id=1)
+        cc_rule = self.mock_cc_rule(
+            rule_ID=rule_ID,
+            courier_ID=courier_service.courier.courier_ID,
+            courier_service_ID=courier_service.courier_service_ID,
+        )
+        mock_CCAPI.get_courier_rules.return_value = [cc_rule]
+        models.ShippingRule.update()
+        mock_CCAPI.get_courier_rules.assert_called_once()
+        self.assertEqual(1, len(mock_CCAPI.mock_calls))
+        self.assertTrue(models.ShippingRule.objects.filter(rule_ID=rule_ID).exists())
+        rule = models.ShippingRule.objects.get(rule_ID=rule_ID)
+        self.assertEqual(courier_service, rule.courier_service)
+
+    @patch("shipping.models.CCAPI")
+    def test_update_creates_new_courier_service(self, mock_CCAPI):
+        rule_ID = "948416"
+        models.ShippingRule.objects.all().delete()
+        courier_service_ID = "956816"
+        courier_ID = "9548"
+        self.assertFalse(
+            models.CourierService.objects.filter(
+                courier_service_ID=courier_service_ID
+            ).exists()
+        )
+        self.assertFalse(models.Courier.objects.filter(courier_ID=courier_ID).exists())
+        cc_rule = self.mock_cc_rule(
+            rule_ID=rule_ID,
+            courier_ID=courier_ID,
+            courier_service_ID=courier_service_ID,
+        )
+        mock_CCAPI.get_courier_rules.return_value = [cc_rule]
+        models.ShippingRule.update()
+        mock_CCAPI.get_courier_rules.assert_called_once()
+        self.assertEqual(1, len(mock_CCAPI.mock_calls))
+        self.assertTrue(models.ShippingRule.objects.filter(rule_ID=rule_ID).exists())
+        rule = models.ShippingRule.objects.get(rule_ID=rule_ID)
+        self.assertTrue(models.Courier.objects.filter(courier_ID=courier_ID).exists())
+        courier = models.Courier.objects.get(courier_ID=courier_ID)
+        self.assertIsNone(courier.name)
+        self.assertIsNone(courier.courier_type)
+        self.assertFalse(courier.inactive)
+        self.assertTrue(
+            models.CourierService.objects.filter(
+                courier_service_ID=courier_service_ID
+            ).exists()
+        )
+        courier_service = models.CourierService.objects.get(
+            courier_service_ID=courier_service_ID
+        )
+        self.assertIsNone(courier_service.name)
+        self.assertEqual(courier, courier_service.courier)
+        self.assertFalse(courier_service.inactive)
+        self.assertEqual(courier_service, rule.courier_service)
