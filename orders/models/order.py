@@ -6,7 +6,7 @@ from ccapi import CCAPI
 from django.db import models
 from django.utils import timezone
 
-from shipping.models import Country, Service, ShippingRule
+from shipping.models import Country, CourierService, ShippingRule
 
 from .channel import Channel
 from .product_sale import ProductSale
@@ -118,8 +118,8 @@ class Order(models.Model):
     shipping_rule = models.ForeignKey(
         ShippingRule, blank=True, null=True, on_delete=models.PROTECT
     )
-    shipping_service = models.ForeignKey(
-        Service, blank=True, null=True, on_delete=models.PROTECT
+    courier_service = models.ForeignKey(
+        CourierService, blank=True, null=True, on_delete=models.PROTECT
     )
     tracking_number = models.CharField(max_length=255, blank=True, null=True)
 
@@ -255,9 +255,9 @@ class Order(models.Model):
             raise CountryNotRecognisedError(order.country_code, order.order_id)
         shipping_rule = cls.get_shipping_rule(order)
         if shipping_rule is not None:
-            shipping_service = shipping_rule.service
+            courier_service = shipping_rule.courier_service
         else:
-            shipping_service = None
+            courier_service = None
         dispatched_at = cls.parse_dispatch_date(order.dispatch_date)
         kwargs = {
             "order_ID": order.order_id,
@@ -269,7 +269,7 @@ class Order(models.Model):
             "channel_order_ID": order.external_transaction_id,
             "country": country,
             "shipping_rule": shipping_rule,
-            "shipping_service": shipping_service,
+            "courier_service": courier_service,
             "tracking_number": order.tracking_code or None,
         }
         return kwargs
