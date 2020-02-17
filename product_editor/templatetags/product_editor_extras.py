@@ -1,7 +1,8 @@
 """Template tags for Product Editor."""
 
-import product_editor.editor_manager.manager
 from django import template
+
+import product_editor.editor_manager.manager
 
 register = template.Library()
 

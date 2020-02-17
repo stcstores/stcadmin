@@ -6,6 +6,7 @@ import os
 from django.conf import settings
 from django.shortcuts import redirect
 from django.views.generic.edit import FormView, View
+
 from inventory.views import InventoryUserMixin
 from product_editor import editor_manager, forms
 

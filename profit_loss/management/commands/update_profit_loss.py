@@ -10,6 +10,7 @@ Usage:
 import logging
 
 from django.core.management.base import BaseCommand
+
 from profit_loss.models import UpdateOrderProfit
 
 logger = logging.getLogger("management_commands")

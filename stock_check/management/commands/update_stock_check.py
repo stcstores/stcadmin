@@ -4,8 +4,9 @@ import logging
 import sys
 
 from django.core.management.base import BaseCommand
-from stock_check import models
 from tabler import XLSX, Table
+
+from stock_check import models
 
 logger = logging.getLogger("management_commands")
 

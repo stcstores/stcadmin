@@ -2,6 +2,7 @@
 
 from django.shortcuts import render
 from django.views.generic.edit import FormView
+
 from inventory.forms import ProductSearchForm
 
 from .views import InventoryUserMixin
