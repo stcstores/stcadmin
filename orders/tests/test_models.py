@@ -732,7 +732,7 @@ class TestPackingRecord(STCAdminTest):
         self.assertTrue(CloudCommerceUser.objects.filter(user_id=new_user_ID).exists())
 
 
-class TestUpdateOrder(STCAdminTest):
+class TestOrderUpdate(STCAdminTest):
     fixtures = ("orders/order_update",)
 
     def test_create_object(self):
@@ -818,6 +818,20 @@ class TestUpdateOrder(STCAdminTest):
         mock_order.update.assert_not_called()
         mock_packing_record.update.assert_not_called()
 
+    @patch("orders.models.update.Order")
+    @patch("orders.models.update.PackingRecord")
+    def test_timeout(self, mock_packing_record, mock_order):
+        update = models.OrderUpdate.objects.create(
+            status=models.OrderUpdate.IN_PROGRESS
+        )
+        update.started_at -= timedelta(hours=2)
+        update.save()
+        models.OrderUpdate.update()
+        update.refresh_from_db()
+        self.assertEqual(update.ERROR, update.status)
+        mock_order.update.assert_called()
+        mock_packing_record.update.assert_called()
+
     def test_is_in_progress(self):
         self.assertFalse(
             models.OrderUpdate.objects.filter(
@@ -829,6 +843,24 @@ class TestUpdateOrder(STCAdminTest):
         update.status = update.IN_PROGRESS
         update.save()
         self.assertTrue(models.OrderUpdate.is_in_progress())
+
+    def test_timeout_updates(self):
+        update = models.OrderUpdate.objects.create(
+            status=models.OrderUpdate.IN_PROGRESS
+        )
+        update.started_at -= timedelta(hours=2)
+        update.save()
+        models.OrderUpdate.timeout_update()
+        update.refresh_from_db()
+        self.assertEqual(update.ERROR, update.status)
+        update = models.OrderUpdate.objects.create(
+            status=models.OrderUpdate.IN_PROGRESS
+        )
+        update.started_at -= timedelta(minutes=10)
+        update.save()
+        models.OrderUpdate.timeout_update()
+        update.refresh_from_db()
+        self.assertEqual(update.IN_PROGRESS, update.status)
 
     def test_latest_complete(self):
         self.assertFalse(models.OrderUpdate.is_in_progress())
