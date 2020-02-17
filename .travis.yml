@@ -19,6 +19,7 @@ before_script:
 
 script:
   - flake8 .
+  - isort --recursive -c
   - poetry run pytest
   - coveralls
 
