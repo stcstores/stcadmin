@@ -219,7 +219,15 @@ class ExportOrders(OrdersUserMixin, View):
     """Create a .csv export of order data."""
 
     form_class = forms.OrderListFilter
-    header = ["order_ID", "tracking_number", "shipping_rule", "date_recieved"]
+    header = [
+        "order_ID",
+        "date_recieved",
+        "country",
+        "channel",
+        "tracking_number",
+        "shipping_rule",
+        "courier_service",
+    ]
 
     def get(self, *args, **kwargs):
         """Return an HttpResponse contaning the export or a 404 status."""
@@ -246,7 +254,10 @@ class ExportOrders(OrdersUserMixin, View):
         """Return a row of order data."""
         return [
             order.order_ID,
-            order.tracking_number,
-            order.shipping_rule,
             order.recieved_at.strftime("%Y-%m-%d"),
+            order.country.name,
+            order.channel.name,
+            order.tracking_number,
+            order.shipping_rule.name,
+            order.courier_service.name,
         ]
