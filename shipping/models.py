@@ -155,6 +155,7 @@ class ShippingRule(models.Model):
 
         verbose_name = "Shipping Rule"
         verbose_name_plural = "Shipping Rules"
+        ordering = ("inactive", "name")
 
     def __str__(self):
         return self.name
