@@ -392,7 +392,7 @@ class TestUndispatchedOrdersView(OrderViewTest, ViewTests):
         self.assertIn(reverse("orders:undispatched_data"), str(response.content))
 
 
-class TestShippingMethodsView(OrderViewTest, ViewTests):
+class TestOrderListsView(OrderViewTest, ViewTests):
     fixtures = (
         "home/cloud_commerce_user",
         "shipping/currency",
@@ -421,7 +421,6 @@ class TestShippingMethodsView(OrderViewTest, ViewTests):
         self.assertTrue(hasattr(response, "context"))
         self.assertIsNotNone(response.context)
         self.assertIn("object_list", response.context)
-        self.assertEqual(self.paginate_by, len(response.context["object_list"]))
 
     def test_content(self):
         response = self.make_get_request()
@@ -460,6 +459,11 @@ class TestShippingMethodsView(OrderViewTest, ViewTests):
         for order in orders:
             self.assertGreaterEqual(order.recieved_at, recieved_from)
             self.assertLessEqual(order.recieved_at, recieved_to + timedelta(days=1))
+
+    def test_filter_by_order_id(self):
+        order = models.Order.dispatched.all()[0]
+        response = self.client.get(self.URL, {"order_ID": order.order_ID})
+        self.assertEqual(list(response.context["object_list"]), [order])
 
     def test_invalid_form(self):
         response = self.client.get(self.URL, {"country": 999999})

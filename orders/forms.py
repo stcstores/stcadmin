@@ -19,6 +19,7 @@ class ChartSettingsForm(forms.Form):
 class OrderListFilter(forms.Form):
     """Form for filtering the shipping method list."""
 
+    order_ID = forms.CharField(required=False)
     country = forms.ModelChoiceField(Country.objects.all(), required=False)
     recieved_from = forms.DateField(
         required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
@@ -41,10 +42,12 @@ class OrderListFilter(forms.Form):
 
     def query_kwargs(self, data):
         """Return a dict of filter kwargs."""
-        kwargs = {}
-        kwargs["country"] = data["country"]
-        kwargs["recieved_at__gte"] = data.get("recieved_from")
-        kwargs["recieved_at__lte"] = data.get("recieved_to")
+        kwargs = {
+            "country": data.get("country"),
+            "recieved_at__gte": data.get("recieved_from"),
+            "recieved_at__lte": data.get("recieved_to"),
+            "order_ID": data.get("order_ID") or None,
+        }
         return {key: value for key, value in kwargs.items() if value is not None}
 
     def get_queryset(self):
