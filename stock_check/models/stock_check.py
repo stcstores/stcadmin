@@ -1,6 +1,7 @@
 """Models for Stock Check app."""
 
 from django.db import models
+
 from inventory.models import Bay
 
 

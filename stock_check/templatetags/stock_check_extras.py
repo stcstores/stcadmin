@@ -1,6 +1,7 @@
 """Template tags for the Stock Check app."""
 
 from django import template
+
 from stock_check import models
 
 register = template.Library()

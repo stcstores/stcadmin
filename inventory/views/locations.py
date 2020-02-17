@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
+
 from inventory.forms import DepartmentForm, LocationsFormSet
 from product_editor.editor_manager import ProductEditorBase
 
