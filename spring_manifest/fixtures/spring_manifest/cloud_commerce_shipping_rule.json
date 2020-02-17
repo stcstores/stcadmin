@@ -1,0 +1,241 @@
+[{
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 1,
+    "fields": {
+        "name": "Secured Mail Untracked ROW",
+        "full_name": "Secured Mail Untracked ROW - Manual Dispatch",
+        "rule_id": 16416
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 2,
+    "fields": {
+        "name": "Secured Mail Untracked EU",
+        "full_name": "Secured Mail Untracked EU - Manual Dispatch",
+        "rule_id": 16417
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 3,
+    "fields": {
+        "name": "Secured Mail International Tracked",
+        "full_name": "Secured Mail International Tracked - Secured Mail",
+        "rule_id": 16419
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 4,
+    "fields": {
+        "name": "Royal Mail Untracked 24 Packet",
+        "full_name": "Royal Mail Untracked 24 Packet - Royal Mail netdespatch Untracked 24",
+        "rule_id": 9583
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 5,
+    "fields": {
+        "name": "Royal Mail Untracked 48 Packet",
+        "full_name": "Royal Mail Untracked 48 Packet - Royal Mail netdespatch Untracked 48",
+        "rule_id": 9584
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 6,
+    "fields": {
+        "name": "Royal Mail Tracked 24 Packet",
+        "full_name": "Royal Mail Tracked 24 Packet - Royal Mail netdespatch Tracked 24",
+        "rule_id": 9585
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 7,
+    "fields": {
+        "name": "Royal Mail Tracked 48 Packet",
+        "full_name": "Royal Mail Tracked 48 Packet - Royal Mail netdespatch Tracked 48",
+        "rule_id": 9586
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 8,
+    "fields": {
+        "name": "Royal Mail 24 Large Letter",
+        "full_name": "Royal Mail 24 Large Letter - Royal Mail netdespatch Untracked 24",
+        "rule_id": 9587
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 9,
+    "fields": {
+        "name": "Royal Mail 48 Large Letter",
+        "full_name": "Royal Mail 48 Large Letter - Royal Mail netdespatch Untracked 48",
+        "rule_id": 9588
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 10,
+    "fields": {
+        "name": "DHL",
+        "full_name": "DHL - Manual Dispatch",
+        "rule_id": 9723
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 11,
+    "fields": {
+        "name": "Royal Mail Heavy and Large 48",
+        "full_name": "Royal Mail Heavy and Large 48 - Royal Mail netdespatch Tracked 48",
+        "rule_id": 9814
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 12,
+    "fields": {
+        "name": "ERROR",
+        "full_name": "ERROR - Manual Dispatch",
+        "rule_id": 10008
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 13,
+    "fields": {
+        "name": "Royal Mail Heavy and Large 24",
+        "full_name": "Royal Mail Heavy and Large 24 - Royal Mail netdespatch Tracked 24",
+        "rule_id": 10114
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 14,
+    "fields": {
+        "name": "DHL Express ROW Customer Selected",
+        "full_name": "DHL Express ROW Customer Selected - DHL Worldwide Express",
+        "rule_id": 10284
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 15,
+    "fields": {
+        "name": "DHL Express ROW Heavy and Large",
+        "full_name": "DHL Express ROW Heavy and Large - DHL Worldwide Express",
+        "rule_id": 10390
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 16,
+    "fields": {
+        "name": "Single OV Aqua Shoe",
+        "full_name": "Single OV Aqua Shoe - Royal Mail netdespatch Untracked 48",
+        "rule_id": 10579
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 17,
+    "fields": {
+        "name": "Multiple OV Aqua Shoes",
+        "full_name": "Multiple OV Aqua Shoes - Royal Mail netdespatch Untracked 48",
+        "rule_id": 10580
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 18,
+    "fields": {
+        "name": "DHL Express EU Customer Selected",
+        "full_name": "DHL Express EU Customer Selected - DHL Domestic Economy",
+        "rule_id": 11243
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 19,
+    "fields": {
+        "name": "DPD Express EU Customer Selected",
+        "full_name": "DPD Express EU Customer Selected - Interlink International",
+        "rule_id": 11245
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 20,
+    "fields": {
+        "name": "UK Courier (Parcel Force)",
+        "full_name": "UK Courier (Parcel Force) - Manual Dispatch",
+        "rule_id": 11422
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 21,
+    "fields": {
+        "name": "Amazon Prime Next Day Parcel \u2013 Amazon_ROYAL_MAIL",
+        "full_name": "Amazon Prime Next Day Parcel \u2013 Amazon_ROYAL_MAIL",
+        "rule_id": 15434
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 22,
+    "fields": {
+        "name": "Amazon Prime Next Day Parcel \u2013 Amazon_ROYAL_MAIL",
+        "full_name": "Amazon Prime Next Day Parcel \u2013 Amazon_ROYAL_MAIL",
+        "rule_id": 15435
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 23,
+    "fields": {
+        "name": "Amazon Prime 3 to 5 Day Parcel \u2013 Amazon_ROYAL_MAIL",
+        "full_name": "Amazon Prime 3 to 5 Day Parcel \u2013 Amazon_ROYAL_MAIL",
+        "rule_id": 15436
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 24,
+    "fields": {
+        "name": "DPD Express Ireland",
+        "full_name": "DPD Express Ireland - Interlink Parcel",
+        "rule_id": 46886
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 25,
+    "fields": {
+        "name": "Secured Mail Test Packet",
+        "full_name": "Secured Mail Test Packet - Secured Mail",
+        "rule_id": 18333
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 26,
+    "fields": {
+        "name": "Secured Mail Royal Mail Packet",
+        "full_name": "Secured Mail Royal Mail Packet - Secured Mail",
+        "rule_id": 18777
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 27,
+    "fields": {
+        "name": "Secured Mail Royal Mail Large Letter",
+        "full_name": "Secured Mail Royal Mail Large Letter - Secured Mail",
+        "rule_id": 18779
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 28,
+    "fields": {
+        "name": "Secured Mail Royal Mail Single Large Letter Item",
+        "full_name": "Secured Mail Royal Mail Single Large Letter Item - Secured Mail",
+        "rule_id": 18780
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 29,
+    "fields": {
+        "name": "Secured Mail Royal Mail Multiple Large Letter Items",
+        "full_name": "Secured Mail Royal Mail Multiple Large Letter Items - Secured Mail",
+        "rule_id": 18781
+    }
+}, {
+    "model": "spring_manifest.cloudcommerceshippingrule",
+    "pk": 30,
+    "fields": {
+        "name": "Secured Mail International Tracked Heavy",
+        "full_name": "Secured Mail International Tracked Heavy - Secured Mail",
+        "rule_id": 24903
+    }
+}]

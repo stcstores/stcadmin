@@ -1,11 +1,15 @@
 """Views for the Orders app."""
+import csv
+import io
 from datetime import timedelta
 
 from django.db.models import Count, Q
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import reverse
 from django.utils import timezone
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.list import ListView
 
 from home.models import CloudCommerceUser
 from home.views import UserInGroupMixin
@@ -174,3 +178,75 @@ class UndispatchedOrders(OrdersUserMixin, TemplateView):
     """Display a count of undispatched orders."""
 
     template_name = "orders/undispatched.html"
+
+
+class OrderList(OrdersUserMixin, ListView):
+    """Display a filterable list of orders."""
+
+    template_name = "orders/order_list.html"
+    model = models.Order
+    paginate_by = 50
+    orphans = 3
+    form_class = forms.OrderListFilter
+
+    def get(self, *args, **kwargs):
+        """Instanciate the form."""
+        self.form = self.form_class(self.request.GET)
+        return super().get(*args, **kwargs)
+
+    def get_queryset(self):
+        """Return a queryset of orders based on GET data."""
+        if self.form.is_valid():
+            return self.form.get_queryset()
+        return []
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the template context."""
+        context = super().get_context_data(*args, **kwargs)
+        context["form"] = self.form
+        context["page_range"] = self.get_page_range(context["paginator"])
+        return context
+
+    def get_page_range(self, paginator):
+        """Return a list of pages to link to."""
+        if paginator.num_pages < 11:
+            return list(range(1, paginator.num_pages + 1))
+        else:
+            return list(range(1, 11)) + [paginator.num_pages]
+
+
+class ExportOrders(OrdersUserMixin, View):
+    """Create a .csv export of order data."""
+
+    form_class = forms.OrderListFilter
+    header = ["order_ID", "tracking_number", "shipping_rule", "date_recieved"]
+
+    def get(self, *args, **kwargs):
+        """Return an HttpResponse contaning the export or a 404 status."""
+        form = self.form_class(self.request.GET)
+        if form.is_valid():
+            contents = self.make_csv(form.get_queryset())
+            response = HttpResponse(contents, content_type="text/csv")
+            filename = f"order_export_{timezone.now().strftime('%Y-%m-%d')}.csv"
+            response["Content-Disposition"] = f"attachment; filename={filename}"
+            return response
+        return HttpResponseNotFound()
+
+    def make_csv(self, orders):
+        """Return the export as a CSV string."""
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(self.header)
+        for order in orders:
+            row = self.make_row(order)
+            writer.writerow(row)
+        return output.getvalue()
+
+    def make_row(self, order):
+        """Return a row of order data."""
+        return [
+            order.order_ID,
+            order.tracking_number,
+            order.shipping_rule,
+            order.recieved_at.strftime("%Y-%m-%d"),
+        ]

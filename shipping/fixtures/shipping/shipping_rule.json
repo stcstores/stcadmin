@@ -4,9 +4,9 @@
     "fields": {
         "rule_ID": "9583",
         "name": "Royal Mail Untracked 24 Packet",
-        "service": 8,
+        "courier_service": 377,
         "priority": true,
-        "inactive": false
+        "inactive": true
     }
 }, {
     "model": "shipping.shippingrule",
@@ -14,7 +14,7 @@
     "fields": {
         "rule_ID": "9584",
         "name": "Royal Mail Untracked 48 Packet",
-        "service": 10,
+        "courier_service": 382,
         "priority": false,
         "inactive": false
     }
@@ -24,7 +24,7 @@
     "fields": {
         "rule_ID": "9585",
         "name": "Royal Mail Tracked 24 Packet",
-        "service": 2,
+        "courier_service": 484,
         "priority": true,
         "inactive": false
     }
@@ -34,7 +34,7 @@
     "fields": {
         "rule_ID": "9586",
         "name": "Royal Mail Tracked 48 Packet",
-        "service": 11,
+        "courier_service": 486,
         "priority": false,
         "inactive": false
     }
@@ -44,7 +44,7 @@
     "fields": {
         "rule_ID": "9587",
         "name": "Royal Mail 24 Large Letter",
-        "service": 19,
+        "courier_service": 375,
         "priority": true,
         "inactive": false
     }
@@ -54,7 +54,7 @@
     "fields": {
         "rule_ID": "9588",
         "name": "Royal Mail 48 Large Letter",
-        "service": 4,
+        "courier_service": 380,
         "priority": false,
         "inactive": false
     }
@@ -64,7 +64,7 @@
     "fields": {
         "rule_ID": "9723",
         "name": "Manual Label",
-        "service": 14,
+        "courier_service": 58,
         "priority": false,
         "inactive": false
     }
@@ -74,7 +74,7 @@
     "fields": {
         "rule_ID": "9814",
         "name": "Royal Mail Heavy and Large 48",
-        "service": 11,
+        "courier_service": 486,
         "priority": false,
         "inactive": false
     }
@@ -84,7 +84,7 @@
     "fields": {
         "rule_ID": "10008",
         "name": "ERROR",
-        "service": 14,
+        "courier_service": 58,
         "priority": false,
         "inactive": false
     }
@@ -94,7 +94,7 @@
     "fields": {
         "rule_ID": "10114",
         "name": "Royal Mail Heavy and Large 24",
-        "service": 2,
+        "courier_service": 484,
         "priority": true,
         "inactive": false
     }
@@ -104,7 +104,7 @@
     "fields": {
         "rule_ID": "10284",
         "name": "DHL Express ROW Customer Selected",
-        "service": 20,
+        "courier_service": 100,
         "priority": true,
         "inactive": false
     }
@@ -114,8 +114,8 @@
     "fields": {
         "rule_ID": "10390",
         "name": "DHL Express ROW Heavy and Large",
-        "service": 20,
-        "priority": false,
+        "courier_service": 100,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -124,8 +124,8 @@
     "fields": {
         "rule_ID": "10579",
         "name": "Single 24 Large Letter Item",
-        "service": 19,
-        "priority": true,
+        "courier_service": 375,
+        "priority": false,
         "inactive": false
     }
 }, {
@@ -134,8 +134,8 @@
     "fields": {
         "rule_ID": "10580",
         "name": "Packet (Multiple 24 LL Items)",
-        "service": 8,
-        "priority": true,
+        "courier_service": 377,
+        "priority": false,
         "inactive": false
     }
 }, {
@@ -143,8 +143,8 @@
     "pk": 15,
     "fields": {
         "rule_ID": "11243",
-        "name": "DHL Express EU Customer Selected ",
-        "service": 5,
+        "name": "DHL Express EU Customer Selected",
+        "courier_service": 98,
         "priority": true,
         "inactive": false
     }
@@ -154,7 +154,7 @@
     "fields": {
         "rule_ID": "11245",
         "name": "DPD Express EU Customer Selected",
-        "service": 13,
+        "courier_service": 300,
         "priority": true,
         "inactive": false
     }
@@ -164,8 +164,8 @@
     "fields": {
         "rule_ID": "11422",
         "name": "UK Courier Parcelforce",
-        "service": 17,
-        "priority": false,
+        "courier_service": 31,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -174,7 +174,7 @@
     "fields": {
         "rule_ID": "15434",
         "name": "Amazon Prime Next Day Parcel",
-        "service": 7,
+        "courier_service": 339,
         "priority": true,
         "inactive": false
     }
@@ -184,7 +184,7 @@
     "fields": {
         "rule_ID": "16416",
         "name": "Secured Mail Untracked ROW",
-        "service": 15,
+        "courier_service": 506,
         "priority": false,
         "inactive": false
     }
@@ -194,7 +194,7 @@
     "fields": {
         "rule_ID": "16417",
         "name": "Secured Mail Untracked EU",
-        "service": 1,
+        "courier_service": 58,
         "priority": false,
         "inactive": false
     }
@@ -204,7 +204,7 @@
     "fields": {
         "rule_ID": "16419",
         "name": "Secured Mail International Tracked",
-        "service": 6,
+        "courier_service": 505,
         "priority": false,
         "inactive": false
     }
@@ -214,8 +214,8 @@
     "fields": {
         "rule_ID": "16886",
         "name": "DPD Express Ireland",
-        "service": 16,
-        "priority": false,
+        "courier_service": 304,
+        "priority": true,
         "inactive": false
     }
 }, {
@@ -224,7 +224,7 @@
     "fields": {
         "rule_ID": "18780",
         "name": "Single 48 Large Letter Item",
-        "service": 4,
+        "courier_service": 380,
         "priority": false,
         "inactive": false
     }
@@ -234,7 +234,7 @@
     "fields": {
         "rule_ID": "18781",
         "name": "Packet (Multiple 48 LL Items)",
-        "service": 10,
+        "courier_service": 382,
         "priority": false,
         "inactive": false
     }
@@ -244,7 +244,7 @@
     "fields": {
         "rule_ID": "21557",
         "name": "DPD Express EU Heavy and Large",
-        "service": 13,
+        "courier_service": 300,
         "priority": true,
         "inactive": false
     }
@@ -254,7 +254,7 @@
     "fields": {
         "rule_ID": "25764",
         "name": "UK Courier (DPD) Saturday Delivery",
-        "service": 12,
+        "courier_service": 18,
         "priority": true,
         "inactive": false
     }
@@ -264,7 +264,7 @@
     "fields": {
         "rule_ID": "26310",
         "name": "DHL Amazon Prime Europe",
-        "service": 5,
+        "courier_service": 98,
         "priority": true,
         "inactive": false
     }
@@ -274,7 +274,7 @@
     "fields": {
         "rule_ID": "26841",
         "name": "PF Express 24",
-        "service": 17,
+        "courier_service": 31,
         "priority": true,
         "inactive": false
     }
@@ -284,7 +284,7 @@
     "fields": {
         "rule_ID": "26842",
         "name": "PF Express 48",
-        "service": 9,
+        "courier_service": 40,
         "priority": false,
         "inactive": false
     }
@@ -294,7 +294,7 @@
     "fields": {
         "rule_ID": "26843",
         "name": "PF Express 48 Large",
-        "service": 3,
+        "courier_service": 41,
         "priority": false,
         "inactive": false
     }
@@ -304,7 +304,7 @@
     "fields": {
         "rule_ID": "27351",
         "name": "PF Heavy and Large 48",
-        "service": 9,
+        "courier_service": 40,
         "priority": false,
         "inactive": false
     }
@@ -314,7 +314,7 @@
     "fields": {
         "rule_ID": "27352",
         "name": "PF Heavy and Large 24",
-        "service": 17,
+        "courier_service": 31,
         "priority": true,
         "inactive": false
     }
@@ -324,7 +324,17 @@
     "fields": {
         "rule_ID": "27541",
         "name": "PF Priority EU",
-        "service": 18,
+        "courier_service": 314,
+        "priority": true,
+        "inactive": false
+    }
+}, {
+    "model": "shipping.shippingrule",
+    "pk": 34,
+    "fields": {
+        "rule_ID": "27985",
+        "name": "PF Express 24 Large",
+        "courier_service": 34,
         "priority": true,
         "inactive": false
     }

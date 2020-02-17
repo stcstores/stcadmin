@@ -1,7 +1,7 @@
 [{
 	"id": "stcadmin-github-push",
 	"execute-command": "/var/webhook/scripts/stcadmin-github-push.sh",
-	"command-working-directory": "/home/stcstores/",
+	"command-working-directory": "/home/USERNAME/",
 	"parse-arguments-as-json": ["ref"],
 	"pass-arguments-to-command": [{
 		"source": "payload",

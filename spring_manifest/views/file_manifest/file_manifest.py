@@ -3,8 +3,6 @@
 import logging
 import sys
 
-from django.conf import settings
-
 from spring_manifest import models
 
 logger = logging.getLogger("file_manifest")
@@ -31,29 +29,15 @@ class FileManifest:
         self.manifest.save()
         try:
             self.process_manifest()
-        except Exception as e:
-            self.add_error("An error occured.")
+        except Exception:
+            self.add_error("Error processing manifest.")
             logger.error(
                 "Manifest Error: %s", " ".join(sys.argv), exc_info=sys.exc_info()
             )
-            if settings.DEBUG:
-                raise e
 
-    def file_manifest(self, manifest):
-        """File manifest."""
+    def process_manifest(self):
+        """Complete the manifest."""
         raise NotImplementedError
-
-    def save_manifest_file(self, manifest, rows):
-        """Save manifest file to database."""
-        raise NotImplementedError
-
-    def save_docket_file(self, *args, **kwargs):
-        """Save docket file to database."""
-        pass
-
-    def save_item_advice_file(self, *args, **kwargs):
-        """Save item advice file to database."""
-        pass
 
     def add_error(self, message):
         """Add error message to manifest."""
@@ -61,7 +45,8 @@ class FileManifest:
         self.manifest.errors += "{}\n".format(message)
         self.manifest.save()
 
-    def get_order_weight(self, order):
+    @staticmethod
+    def get_order_weight(order):
         """Return weight of order in KG."""
         weight_grams = sum(
             [product.per_item_weight * product.quantity for product in order.products]
@@ -69,14 +54,6 @@ class FileManifest:
         weight_kg = weight_grams / 1000
         return weight_kg
 
-    def send_file(self, manifest):
-        """Send manifest file to shipping provider."""
-        pass
-
     def valid(self):
         """Return True if manifest has no errors and is not marked failed."""
         return self.manifest.status != self.manifest.FAILED and not self.manifest.errors
-
-    def cleanup(self):
-        """Subclass this method to do things after manifest is filed."""
-        pass

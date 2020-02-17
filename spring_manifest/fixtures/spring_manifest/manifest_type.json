@@ -1,0 +1,19 @@
+[{
+    "model": "spring_manifest.manifesttype",
+    "pk": 1,
+    "fields": {
+        "name": "Secured Mail"
+    }
+}, {
+    "model": "spring_manifest.manifesttype",
+    "pk": 2,
+    "fields": {
+        "name": "Spring Untracked"
+    }
+}, {
+    "model": "spring_manifest.manifesttype",
+    "pk": 3,
+    "fields": {
+        "name": "Spring Tracked"
+    }
+}]

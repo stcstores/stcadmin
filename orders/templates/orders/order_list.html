@@ -1,0 +1,41 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+
+<h1>Orders</h1>
+
+<form action="" method="GET">
+    <div class="filter">
+        {{ form.as_p }}
+        <p>
+            <button>Filter</button>
+            <button formaction="{% url 'orders:export_orders' %}">Export</button>
+        </p>
+    </div>
+    <p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
+    {% include 'orders/pagination_navigation.html' %}
+    <table class="orders">
+        <tr>
+            <th>Order ID</th>
+            <th>Date Recieved</th>
+            <th>Country</th>
+            <th>Channel</th>
+            <th>Tracking Number</th>
+            <th>Shipping Rule</th>
+            <th>Courier Service</th>
+        </tr>
+    {% for order in object_list %}
+        <tr class="order">
+            <th>{{ order.order_ID }} </th>
+            <td>{{ order.recieved_at|date:"Y-m-d" }}</td>
+            <td>{{ order.country }}</td>
+            <td>{{ order.channel }}</td>
+            <td>{{ order.tracking_number }}</td>
+            <td>{{ order.shipping_rule.name }}</td>
+            <td>{{ order.courier_service }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    {% include 'orders/pagination_navigation.html' %}
+</form>
+{% endblock content %}

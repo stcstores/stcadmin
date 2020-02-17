@@ -1,0 +1,61 @@
+[{
+    "model": "spring_manifest.manifest",
+    "pk": 1,
+    "fields": {
+        "manifest_type": 1,
+        "time_created": "2017-10-12T00:01:00Z",
+        "time_filed": "2017-10-12T00:01:00Z",
+        "manifest_file": "manifests/SpringManifest_UnTracked_2017-10-12.xlsx",
+        "item_advice_file": "",
+        "docket_file": "",
+        "status": "filed",
+        "closed": true,
+        "files_sent": true,
+        "errors": null
+    }
+}, {
+    "model": "spring_manifest.manifest",
+    "pk": 2,
+    "fields": {
+        "manifest_type": 1,
+        "time_created": "2017-10-13T00:01:00Z",
+        "time_filed": "2017-10-13T00:01:00Z",
+        "manifest_file": "manifests/SpringManifest_UnTracked_2017-10-13.xlsx",
+        "item_advice_file": "",
+        "docket_file": "",
+        "status": "filed",
+        "closed": true,
+        "files_sent": true,
+        "errors": null
+    }
+}, {
+    "model": "spring_manifest.manifest",
+    "pk": 3,
+    "fields": {
+        "manifest_type": 1,
+        "time_created": "2017-10-16T00:01:00Z",
+        "time_filed": "2017-10-16T00:01:00Z",
+        "manifest_file": "manifests/SpringManifest_UnTracked_2017-10-16.xlsx",
+        "item_advice_file": "",
+        "docket_file": "",
+        "status": "filed",
+        "closed": true,
+        "files_sent": true,
+        "errors": null
+    }
+}, {
+    "model": "spring_manifest.manifest",
+    "pk": 4,
+    "fields": {
+        "manifest_type": 1,
+        "time_created": "2020-01-17T16:07:12.992Z",
+        "time_filed": null,
+        "manifest_file": "",
+        "item_advice_file": "",
+        "docket_file": "",
+        "status": "unfiled",
+        "closed": false,
+        "files_sent": false,
+        "errors": null
+    }
+}]

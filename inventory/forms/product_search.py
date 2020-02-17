@@ -1,6 +1,5 @@
 """Forms for product search page."""
 
-
 from django import forms
 from django.contrib.postgres.search import SearchVector
 

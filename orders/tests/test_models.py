@@ -80,7 +80,9 @@ class TestOrder(STCAdminTest):
         "shipping/currency",
         "shipping/country",
         "shipping/provider",
-        "shipping/service",
+        "shipping/courier_type",
+        "shipping/courier",
+        "shipping/courier_service",
         "shipping/shipping_rule",
         "orders/channel",
         "orders/order",
@@ -103,9 +105,9 @@ class TestOrder(STCAdminTest):
         self.channel_order_ID = "8504389BHF9393"
         self.country = shipping_models.Country.objects.get(id=1)
         self.shipping_rule = shipping_models.ShippingRule.objects.get(id=1)
-        self.service = self.shipping_rule.service
+        self.courier_service = self.shipping_rule.courier_service
         self.shipping_rule_name = " - ".join(
-            (self.shipping_rule.name, self.shipping_rule.service.name)
+            (self.shipping_rule.name, self.shipping_rule.courier_service.name)
         )
         self.tracking_number = "ABC009008"
         self.product_ID = "2949030"
@@ -184,7 +186,7 @@ class TestOrder(STCAdminTest):
             channel_order_ID=self.channel_order_ID,
             country=self.country,
             shipping_rule=self.shipping_rule,
-            shipping_service=self.service,
+            courier_service=self.courier_service,
         )
         self.assertEqual(self.order_ID, order.order_ID)
         self.assertEqual(self.customer_ID, order.customer_ID)
@@ -194,7 +196,7 @@ class TestOrder(STCAdminTest):
         self.assertEqual(self.channel_order_ID, order.channel_order_ID)
         self.assertEqual(self.country, order.country)
         self.assertEqual(self.shipping_rule, order.shipping_rule)
-        self.assertEqual(self.service, order.shipping_service)
+        self.assertEqual(self.courier_service, order.courier_service)
         self.assertIsNone(order.tracking_number)
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 0)
 
@@ -234,8 +236,8 @@ class TestOrder(STCAdminTest):
         self.assertEqual(self.country, order_details["country"])
         self.assertIn("shipping_rule", order_details)
         self.assertEqual(self.shipping_rule, order_details["shipping_rule"])
-        self.assertIn("shipping_service", order_details)
-        self.assertEqual(self.service, order_details["shipping_service"])
+        self.assertIn("courier_service", order_details)
+        self.assertEqual(self.courier_service, order_details["courier_service"])
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 0)
         self.assertIn("tracking_number", order_details)
         self.assertEqual(self.tracking_number, order_details["tracking_number"])
@@ -268,7 +270,7 @@ class TestOrder(STCAdminTest):
         self.assertEqual(self.channel_order_ID, order.channel_order_ID)
         self.assertEqual(self.country, order.country)
         self.assertEqual(self.shipping_rule, order.shipping_rule)
-        self.assertEqual(self.service, order.shipping_service)
+        self.assertEqual(self.courier_service, order.courier_service)
         self.assertEqual(self.tracking_number, order.tracking_number)
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 0)
 
@@ -288,7 +290,7 @@ class TestOrder(STCAdminTest):
         self.assertEqual(self.channel_order_ID, order.channel_order_ID)
         self.assertEqual(self.country, order.country)
         self.assertEqual(self.shipping_rule, order.shipping_rule)
-        self.assertEqual(self.service, order.shipping_service)
+        self.assertEqual(self.courier_service, order.courier_service)
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 0)
 
     def test_dispatched_order_does_not_update(self):
@@ -310,7 +312,7 @@ class TestOrder(STCAdminTest):
         self.assertIsNone(order.channel_order_ID)
         self.assertIsNone(order.country)
         self.assertIsNone(order.shipping_rule)
-        self.assertIsNone(order.shipping_service)
+        self.assertIsNone(order.courier_service)
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 0)
 
     def test_invalid_country_code(self):
@@ -322,7 +324,7 @@ class TestOrder(STCAdminTest):
         mock_order = self.create_mock_order(default_cs_rule_name="Invalid Rule Name")
         order = models.Order.create_or_update_order(mock_order)
         self.assertIsNone(order.shipping_rule)
-        self.assertIsNone(order.shipping_service)
+        self.assertIsNone(order.courier_service)
 
     def test_get_orders_for_dispatch(self):
         mock_orders = [
@@ -481,7 +483,7 @@ class TestOrder(STCAdminTest):
 
     def test_dispatched_manager(self):
         queryset = models.Order.dispatched.all()
-        self.assertEqual(3, queryset.count())
+        self.assertEqual(11, queryset.count())
         for order in queryset:
             self.assertTrue(order.is_dispatched())
 
@@ -493,7 +495,7 @@ class TestOrder(STCAdminTest):
 
     def test_priority_manager(self):
         queryset = models.Order.priority.all()
-        self.assertEqual(2, queryset.count())
+        self.assertEqual(10, queryset.count())
         for order in queryset:
             self.assertTrue(order.shipping_rule.priority)
 
@@ -574,7 +576,9 @@ class TestProductSale(STCAdminTest):
         "shipping/currency",
         "shipping/country",
         "shipping/provider",
-        "shipping/service",
+        "shipping/courier_type",
+        "shipping/courier",
+        "shipping/courier_service",
         "shipping/shipping_rule",
         "orders/channel",
         "orders/order",
@@ -604,7 +608,9 @@ class TestPackingRecord(STCAdminTest):
         "shipping/currency",
         "shipping/country",
         "shipping/provider",
-        "shipping/service",
+        "shipping/courier_type",
+        "shipping/courier",
+        "shipping/courier_service",
         "shipping/shipping_rule",
         "orders/channel",
         "orders/order",
@@ -660,7 +666,7 @@ class TestPackingRecord(STCAdminTest):
     def test_orders_to_update(self):
         models.PackingRecord.objects.all().delete()
         orders = models.PackingRecord._orders_to_update()
-        self.assertEqual(3, len(orders))
+        self.assertEqual(11, len(orders))
         for order in orders:
             self.assertTrue(order.is_dispatched())
             self.assertIsNotNone(order.customer_ID)
@@ -675,7 +681,7 @@ class TestPackingRecord(STCAdminTest):
         for order in orders:
             self.assertTrue(order.is_dispatched())
             self.assertIsNotNone(order.customer_ID)
-        self.assertEqual(2, len(orders))
+        self.assertEqual(10, len(orders))
 
     def test_orders_to_update_ignores_existing_records(self):
         dispatched_orders = models.Order.dispatched.all()
@@ -686,7 +692,7 @@ class TestPackingRecord(STCAdminTest):
         for order in orders:
             self.assertTrue(order.is_dispatched())
             self.assertIsNotNone(order.customer_ID)
-        self.assertEqual(2, len(orders))
+        self.assertEqual(10, len(orders))
 
     def test_update_order_with_no_logs(self):
         order = models.Order.dispatched.all()[0]
@@ -726,7 +732,7 @@ class TestPackingRecord(STCAdminTest):
         self.assertTrue(CloudCommerceUser.objects.filter(user_id=new_user_ID).exists())
 
 
-class TestUpdateOrder(STCAdminTest):
+class TestOrderUpdate(STCAdminTest):
     fixtures = ("orders/order_update",)
 
     def test_create_object(self):
@@ -812,6 +818,20 @@ class TestUpdateOrder(STCAdminTest):
         mock_order.update.assert_not_called()
         mock_packing_record.update.assert_not_called()
 
+    @patch("orders.models.update.Order")
+    @patch("orders.models.update.PackingRecord")
+    def test_timeout(self, mock_packing_record, mock_order):
+        update = models.OrderUpdate.objects.create(
+            status=models.OrderUpdate.IN_PROGRESS
+        )
+        update.started_at -= timedelta(hours=2)
+        update.save()
+        models.OrderUpdate.update()
+        update.refresh_from_db()
+        self.assertEqual(update.ERROR, update.status)
+        mock_order.update.assert_called()
+        mock_packing_record.update.assert_called()
+
     def test_is_in_progress(self):
         self.assertFalse(
             models.OrderUpdate.objects.filter(
@@ -823,6 +843,24 @@ class TestUpdateOrder(STCAdminTest):
         update.status = update.IN_PROGRESS
         update.save()
         self.assertTrue(models.OrderUpdate.is_in_progress())
+
+    def test_timeout_updates(self):
+        update = models.OrderUpdate.objects.create(
+            status=models.OrderUpdate.IN_PROGRESS
+        )
+        update.started_at -= timedelta(hours=2)
+        update.save()
+        models.OrderUpdate.timeout_update()
+        update.refresh_from_db()
+        self.assertEqual(update.ERROR, update.status)
+        update = models.OrderUpdate.objects.create(
+            status=models.OrderUpdate.IN_PROGRESS
+        )
+        update.started_at -= timedelta(minutes=10)
+        update.save()
+        models.OrderUpdate.timeout_update()
+        update.refresh_from_db()
+        self.assertEqual(update.IN_PROGRESS, update.status)
 
     def test_latest_complete(self):
         self.assertFalse(models.OrderUpdate.is_in_progress())
@@ -865,7 +903,9 @@ class TestOrdersByDayChart(STCAdminTest):
         "shipping/currency",
         "shipping/country",
         "shipping/provider",
-        "shipping/service",
+        "shipping/courier_type",
+        "shipping/courier",
+        "shipping/courier_service",
         "shipping/shipping_rule",
         "orders/channel",
         "orders/order",
@@ -904,10 +944,7 @@ class TestOrdersByDayChart(STCAdminTest):
         )
         for key, value in orders.items():
             self.assertIsInstance(key, date)
-            if key == date(2019, 12, 3):
-                self.assertEqual(value, 3)
-            else:
-                self.assertEqual(value, 0)
+        self.assertEqual(8, orders[date(2019, 12, 3)])
 
     @patch("orders.models.charts.timezone.now")
     def test_datasets(self, mock_now):
@@ -918,7 +955,9 @@ class TestOrdersByDayChart(STCAdminTest):
         self.assertEqual(1, len(datasets))
         dataset = datasets[0]
         expected_data = [0 for i in range(chart.DAYS_TO_DISPLAY)]
-        expected_data[-2] = 3
+        expected_data[28] = 1
+        expected_data[58] = 8
+        expected_data[59] = 2
         self.assertEqual(expected_data, dataset["data"])
 
 
@@ -928,7 +967,9 @@ class TestOrdersByWeekChart(STCAdminTest):
         "shipping/currency",
         "shipping/country",
         "shipping/provider",
-        "shipping/service",
+        "shipping/courier_type",
+        "shipping/courier",
+        "shipping/courier_service",
         "shipping/shipping_rule",
         "orders/channel",
         "orders/order",
@@ -965,7 +1006,7 @@ class TestOrdersByWeekChart(STCAdminTest):
                 Week(2019, 46): 0,
                 Week(2019, 47): 0,
                 Week(2019, 48): 0,
-                Week(2019, 49): 3,
+                Week(2019, 49): 10,
             },
             order_counts,
         )
@@ -978,4 +1019,4 @@ class TestOrdersByWeekChart(STCAdminTest):
         datasets = chart.get_datasets()
         self.assertEqual(1, len(datasets))
         dataset = datasets[0]
-        self.assertEqual([0, 0, 0, 0, 3], dataset["data"])
+        self.assertEqual([0, 0, 0, 0, 10], dataset["data"])

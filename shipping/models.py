@@ -1,5 +1,6 @@
 """Shipping Models."""
 import requests
+from ccapi import CCAPI
 from django.db import models
 
 
@@ -66,6 +67,7 @@ class Provider(models.Model):
     """Model for shipping providers."""
 
     name = models.CharField(max_length=255, unique=True)
+    inactive = models.BooleanField(default=False)
 
     class Meta:
         """Meta class for shipping.Provider."""
@@ -77,29 +79,74 @@ class Provider(models.Model):
         return self.name
 
 
-class Service(models.Model):
-    """Model for shipping services."""
+class CourierType(models.Model):
+    """Model for Cloud Commerce courier types."""
 
-    name = models.CharField(max_length=255)
-    provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
+    courier_type_ID = models.CharField(max_length=12, unique=True, db_index=True)
+    name = models.CharField(max_length=255, unique=True)
+    provider = models.ForeignKey(
+        Provider, null=True, blank=True, on_delete=models.PROTECT
+    )
+    inactive = models.BooleanField(default=False)
 
     class Meta:
-        """Meta class for shipping.Service."""
+        """Meta class for shipping.CourierType."""
 
-        verbose_name = "Service"
-        verbose_name_plural = "Services"
-        unique_together = ("name", "provider")
+        verbose_name = "Courier Type"
+        verbose_name_plural = "Courier Types"
 
     def __str__(self):
         return self.name
 
 
+class Courier(models.Model):
+    """Model for Cloud Commerce courier types."""
+
+    courier_ID = models.CharField(max_length=12, unique=True, db_index=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    courier_type = models.ForeignKey(
+        CourierType, on_delete=models.PROTECT, null=True, blank=True
+    )
+    inactive = models.BooleanField(default=False)
+
+    class Meta:
+        """Meta class for shipping.CourierType."""
+
+        verbose_name = "Courier"
+        verbose_name_plural = "Couriers"
+
+    def __str__(self):
+        return f"{self.courier_ID}: {self.name}"
+
+
+class CourierService(models.Model):
+    """Model for Cloud Commerce courier types."""
+
+    courier_service_ID = models.CharField(max_length=12, unique=True, db_index=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    courier = models.ForeignKey(
+        Courier, on_delete=models.PROTECT, null=True, blank=True
+    )
+    inactive = models.BooleanField(default=False)
+
+    class Meta:
+        """Meta class for shipping.CourierType."""
+
+        verbose_name = "Courier Service"
+        verbose_name_plural = "Couriers Services"
+
+    def __str__(self):
+        return f"{self.courier_service_ID}: {self.name}"
+
+
 class ShippingRule(models.Model):
     """Model for Shipping Rules."""
 
-    rule_ID = models.CharField(max_length=10, unique=True)
+    rule_ID = models.CharField(max_length=10, unique=True, db_index=True)
     name = models.CharField(max_length=255, unique=True)
-    service = models.ForeignKey(Service, on_delete=models.PROTECT)
+    courier_service = models.ForeignKey(
+        CourierService, blank=True, null=True, on_delete=models.PROTECT
+    )
     priority = models.BooleanField(default=False)
     inactive = models.BooleanField(default=False)
 
@@ -111,3 +158,42 @@ class ShippingRule(models.Model):
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def update(cls):
+        """Update shipping rules from Cloud Commerce."""
+        rules = CCAPI.get_courier_rules()
+        cls._remove_defunct_rules(rules)
+        for cc_rule in rules:
+            cls._create_or_update_from_cc_rule(cc_rule)
+
+    @classmethod
+    def _remove_defunct_rules(cls, rules):
+        rule_ids = [rule.id for rule in rules]
+        cls.objects.exclude(rule_ID__in=rule_ids).update(inactive=True)
+
+    @classmethod
+    def _get_rule_kwargs(cls, cc_rule):
+        courier, _ = Courier.objects.get_or_create(
+            courier_ID=str(cc_rule.courier_services_group_id)
+        )
+        courier_service, _ = CourierService.objects.get_or_create(
+            courier_service_ID=str(cc_rule.courier_services_rule_id),
+            defaults={"courier": courier},
+        )
+        return {
+            "rule_ID": cc_rule.id,
+            "name": cc_rule.name,
+            "courier_service": courier_service,
+            "priority": bool(cc_rule.is_priority),
+            "inactive": False,
+        }
+
+    @classmethod
+    def _create_or_update_from_cc_rule(cls, cc_rule):
+        kwargs = cls._get_rule_kwargs(cc_rule)
+        queryset = cls.objects.filter(rule_ID=cc_rule.id)
+        if queryset.exists():
+            queryset.update(**kwargs)
+        else:
+            cls.objects.create(**kwargs)

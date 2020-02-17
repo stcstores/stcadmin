@@ -1,12 +1,12 @@
 """FileSecuredMailManifest class."""
 
-import datetime
 import io
 import os
+from tempfile import NamedTemporaryFile
 
 import openpyxl
-from django.contrib import messages
 from django.core.files import File
+from django.utils import timezone
 
 from spring_manifest import models
 
@@ -38,10 +38,6 @@ class FileSecuredMailManifest(FileManifest):
             self.manifest.status = self.manifest.FAILED
             self.manifest.save()
 
-    def invalid_country_message(self, order):
-        """Return message for invalid countries."""
-        return "Order {}: Country {} info invalid.".format(order, order.country)
-
     @staticmethod
     def get_packages_for_orders(orders):
         """Return a list of packages belonging to the passed orders."""
@@ -67,32 +63,25 @@ class FileSecuredMailManifest(FileManifest):
             str(self.manifest) + "_docket.xlsx", File(docket_file)
         )
 
-    def get_date_string(self):
-        """Return currenct date as string."""
-        return datetime.datetime.now().strftime("%Y-%m-%d")
-
-    def add_success_messages(self, manifest):
-        """Create success message."""
-        orders = manifest.manifestorder_set.all()
-        package_count = sum(o.manifestpackage_set.count() for o in orders)
-        order_count = len(orders)
-        messages.add_message(
-            self.request,
-            messages.SUCCESS,
-            "Manifest file created with {} packages for {} orders".format(
-                package_count, order_count
-            ),
-        )
-
     def cleanup(self):
         """Increase docket number."""
         self.increment_docket_number()
 
-    def increment_docket_number(self):
+    @staticmethod
+    def increment_docket_number():
         """Update Docket number in database."""
         counter = models.Counter.objects.get(name="Secured Mail Docket Number")
         counter.count += 1
         counter.save()
+
+
+def workbook_to_bytes(workbook):
+    """Return an openpyxl workbook as a BytesIO stream."""
+    with NamedTemporaryFile() as tmp:
+        workbook.save(tmp.name)
+        tmp.seek(0)
+        stream = tmp.read()
+    return io.BytesIO(stream)
 
 
 class SecuredMailManifestFile:
@@ -143,8 +132,8 @@ class SecuredMailManifestFile:
         ws[cls.ITEM_COL + cls.TRACKED_ROW] = len(tracked_orders)
         ws[cls.WEIGHT_COL + cls.TRACKED_ROW] = tracked_weight
         ws[cls.REFERENCE_CELL] = str(manifest)
-        ws[cls.DATE_CELL] = datetime.datetime.now().strftime("%d/%m/%Y")
-        return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
+        ws[cls.DATE_CELL] = timezone.now().strftime("%d/%m/%Y")
+        return workbook_to_bytes(wb)
 
     @classmethod
     def add_bag_number(cls, manifest, number_of_bags):
@@ -153,7 +142,7 @@ class SecuredMailManifestFile:
         wb = openpyxl.load_workbook(manifest_file)
         ws = wb.active
         ws[cls.BAG_CELL] = number_of_bags
-        manifest_file = io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(wb))
+        manifest_file = workbook_to_bytes(wb)
         manifest.manifest_file.save(
             str(manifest) + "_manifest.xlsx", File(manifest_file)
         )
@@ -203,7 +192,7 @@ class SecuredMailDocketFile:
         self.worksheet = self.workbook.active
         self.packages = packages
         self.write_worksheet(self)
-        return io.BytesIO(openpyxl.writer.excel.save_virtual_workbook(self.workbook))
+        return workbook_to_bytes(self.workbook)
 
     def write_worksheet(self):
         """Write data to the worksheet."""
@@ -250,4 +239,4 @@ class SecuredMailDocketFile:
     @staticmethod
     def get_date():
         """Return current date as string."""
-        return datetime.datetime.now().strftime("%d/%m/%Y")
+        return timezone.now().strftime("%d/%m/%Y")

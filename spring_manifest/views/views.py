@@ -7,15 +7,18 @@ import time
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import EmailMessage
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import FormView
+
 from home.views import UserInGroupMixin
 from spring_manifest import forms, models
+
+from .file_manifest.securedmail import FileSecuredMailManifest, SecuredMailManifestFile
 
 
 class SpringUserMixin(UserInGroupMixin):
@@ -24,10 +27,19 @@ class SpringUserMixin(UserInGroupMixin):
     groups = ["manifests"]
 
 
-class Index(SpringUserMixin, TemplateView):
-    """View for manifest index page."""
+class ManifestListView(SpringUserMixin, TemplateView):
+    """View for list of manifests."""
 
-    template_name = "spring_manifest/index.html"
+    template_name = "spring_manifest/manifest_list.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["current_manifests"] = models.Manifest.unfiled.all()
+        context["previous_manifests"] = models.Manifest.filed.all()[:50]
+        context["unmanifested_orders"] = models.ManifestOrder.unmanifested.all()
+        context["update"] = models.get_manifest_update()
+        return context
 
 
 class UpdateOrderView(SpringUserMixin, FormView):
@@ -46,10 +58,6 @@ class UpdateOrderView(SpringUserMixin, FormView):
 
     def get_success_url(self):
         """Return URL to redirect to after order is updated."""
-        if "split" in self.form.data:
-            return reverse_lazy(
-                "spring_manifest:split_order", kwargs={"order_pk": self.object.id}
-            )
         if "return" in self.form.data:
             if self.object.manifest:
                 return reverse_lazy(
@@ -63,12 +71,7 @@ class UpdateOrderView(SpringUserMixin, FormView):
 
     def get_object(self):
         """Return order to be updated."""
-        order = get_object_or_404(models.ManifestOrder, id=self.kwargs.get("order_pk"))
-        if order.manifest is not None:
-            self.manifest_id = order.manifest.id
-        else:
-            self.manifest_id = None
-        return order
+        return get_object_or_404(models.ManifestOrder, id=self.kwargs.get("order_pk"))
 
     def get_context_data(self, *args, **kwargs):
         """Return context for template."""
@@ -80,24 +83,8 @@ class UpdateOrderView(SpringUserMixin, FormView):
         """Update database."""
         self.form = form
         form.save()
-        if form.changed_data:
-            messages.add_message(self.request, messages.SUCCESS, "Order Updated.")
+        messages.add_message(self.request, messages.SUCCESS, "Order Updated.")
         return super().form_valid(form)
-
-
-class ManifestListView(SpringUserMixin, TemplateView):
-    """View for list of manifests."""
-
-    template_name = "spring_manifest/manifest_list.html"
-
-    def get_context_data(self, *args, **kwargs):
-        """Return context for template."""
-        context = super().get_context_data(*args, **kwargs)
-        context["current_manifests"] = models.Manifest.unfiled.all()
-        context["previous_manifests"] = models.Manifest.filed.all()[:50]
-        context["unmanifested_orders"] = models.ManifestOrder.unmanifested.all()
-        context["update"] = models.get_manifest_update()
-        return context
 
 
 class ManifestView(SpringUserMixin, TemplateView):
@@ -138,52 +125,6 @@ class CanceledOrdersView(SpringUserMixin, TemplateView):
         return context
 
 
-class SplitOrderView(SpringUserMixin, FormView):
-    """View for splitting orders."""
-
-    form_class = forms.PackageFormset
-    template_name = "spring_manifest/split_order.html"
-
-    def get_form_kwargs(self):
-        """Return kwargs for form."""
-        kwargs = super().get_form_kwargs()
-        self.order = get_object_or_404(
-            models.ManifestOrder, id=self.kwargs.get("order_pk")
-        )
-        kwargs["instance"] = self.order
-        return kwargs
-
-    def get_success_url(self):
-        """Return URL to redirect to after order has been updated."""
-        if "return_to_order" in self.form.data:
-            return reverse_lazy(
-                "spring_manifest:update_order", kwargs={"order_pk": self.order.id}
-            )
-        return reverse_lazy(
-            "spring_manifest:split_order", kwargs={"order_pk": self.order.id}
-        )
-
-    def form_valid(self, form):
-        """Update database."""
-        self.form = form
-        form.save()
-        form.clear_empty_packages()
-        if "add_package" in self.request.POST:
-            form.add_package()
-        if not self.order.check_items():
-            messages.add_message(
-                self.request, messages.WARNING, "Item Quantity Discrepency."
-            )
-        return super().form_valid(form)
-
-    def get_context_data(self, *args, **kwargs):
-        """Return context for template."""
-        context_data = super().get_context_data(*args, **kwargs)
-        context_data["order"] = self.order
-        context_data["children_formset"] = context_data.pop("form")
-        return context_data
-
-
 class OrderExists(SpringUserMixin, View):
     """View to check if an order ID exists."""
 
@@ -206,6 +147,10 @@ class OrderExists(SpringUserMixin, View):
 class UpdateManifest(SpringUserMixin, RedirectView):
     """Trigger a manifest update and return to the previous page."""
 
+    def post(self, *args, **kwargs):
+        """Disallow POST requests."""
+        return HttpResponseNotAllowed((("GET",)))
+
     def get_redirect_url(self, *args, **kwargs):
         """Redirect to the provided URL."""
         self.update_manifest()
@@ -222,6 +167,14 @@ class UpdateManifest(SpringUserMixin, RedirectView):
 class SendSecuredMailManifest(SpringUserMixin, RedirectView):
     """Send the Secured Mail manifest files to Secured Mail."""
 
+    def get(self, *args, **kwargs):
+        """Disallow GET requests."""
+        return HttpResponseNotAllowed((("POST",)))
+
+    def post(self, *args, **kwargs):
+        """Allow GET requests."""
+        return super().get(*args, **kwargs)
+
     def get_redirect_url(self, *args, **kwargs):
         """Email files and return redirect to the manifest page."""
         self.send_manifest_files()
@@ -232,17 +185,15 @@ class SendSecuredMailManifest(SpringUserMixin, RedirectView):
 
     def send_manifest_files(self):
         """Send the Secured Mail manifest files to Secured Mail."""
-        from .file_manifest.securedmail import SecuredMailManifestFile
-
         number_of_bags = self.request.POST.get("number_of_bags")
         manifest = models.Manifest.objects.get(id=self.request.POST.get("manifest_id"))
         SecuredMailManifestFile.add_bag_number(manifest, number_of_bags)
         manifest_email = EmailMessage(
             f"Seaton Trading Company Manifest {manifest}",
             "",
-            "error_logging@stcstores.co.uk",
+            settings.DEFAULT_FROM_EMAIL,
             [settings.SECURED_MAIL_MANIFEST_EMAIL_ADDRESS],
-            reply_to=["info@stcstores.co.uk"],
+            reply_to=[settings.DEFAULT_FROM_EMAIL],
             attachments=[
                 (
                     os.path.basename(manifest.manifest_file.name),
@@ -254,7 +205,7 @@ class SendSecuredMailManifest(SpringUserMixin, RedirectView):
         docket_email = EmailMessage(
             f"Seaton Trading Company Docket {manifest}",
             "",
-            "error_logging@stcstores.co.uk",
+            settings.DEFAULT_FROM_EMAIL,
             [settings.SECURED_MAIL_DOCKET_EMAIL_ADDRESS],
             attachments=[
                 (
@@ -268,3 +219,52 @@ class SendSecuredMailManifest(SpringUserMixin, RedirectView):
         docket_email.send()
         manifest.files_sent = True
         manifest.save()
+
+
+class FileManifestView(SpringUserMixin, RedirectView):
+    """File a manifest."""
+
+    def post(self, *args, **kwargs):
+        """Disallow POST requests."""
+        return HttpResponseNotAllowed((("GET",)))
+
+    @staticmethod
+    def file_manifest(manifest):
+        """File manifest using appropriate FileManifest class."""
+        if manifest.manifest_type.name == "Secured Mail":
+            FileSecuredMailManifest(manifest)
+        else:
+            raise Exception(
+                "Unknown manifest type {} for manifest {}".format(
+                    manifest.manifest_type, manifest.id
+                )
+            )
+
+    def get_manifest(self):
+        """Return requested manifest."""
+        manifest_id = self.kwargs["manifest_id"]
+        manifest = get_object_or_404(models.Manifest, pk=manifest_id)
+        if manifest.status != manifest.FAILED and manifest.manifest_file:
+            return None
+        return manifest
+
+    def process_manifest(self):
+        """Set manifest as in progress and start thread to file it."""
+        manifest = self.get_manifest()
+        if manifest is not None:
+            t = threading.Thread(target=self.file_manifest, args=[manifest])
+            t.setDaemon(True)
+            t.start()
+            time.sleep(3)
+        else:
+            messages.add_message(
+                self.request, messages.ERROR, "Manifest already filed."
+            )
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Return URL to redirect to after manifest process starts."""
+        self.process_manifest()
+        return reverse_lazy(
+            "spring_manifest:manifest",
+            kwargs={"manifest_id": self.kwargs["manifest_id"]},
+        )

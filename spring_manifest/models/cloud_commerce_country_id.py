@@ -1,17 +1,8 @@
 """CloudCommerceCountryID model."""
 
 from django.db import models
-from django.db.models import Q
 
 from .secured_mail_destination_model import SecuredMailDestination
-
-
-class IncompleteCountryManager(models.Manager):
-    """Manager for countries with missing information."""
-
-    def get_queryset(self):
-        """Return queryset of countries with missing information."""
-        return super().get_queryset().filter(Q(iso_code="") | Q(zone=None))
 
 
 class CloudCommerceCountryID(models.Model):
@@ -28,7 +19,6 @@ class CloudCommerceCountryID(models.Model):
     currency_code = models.CharField(max_length=4, blank=True, null=True)
 
     objects = models.Manager()
-    incomplete = IncompleteCountryManager()
 
     class Meta:
         """Meta class for CloudCommerceCountryID."""
