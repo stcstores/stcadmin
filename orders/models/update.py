@@ -1,5 +1,7 @@
 """OrderUpdate stores records of order updates."""
 
+import datetime
+
 from django.db import models, transaction
 from django.utils import timezone
 
@@ -17,6 +19,8 @@ class OrderUpdateInProgressError(Exception):
 
 class OrderUpdate(models.Model):
     """Manages order updates from Cloud Commerce."""
+
+    TIMEOUT = datetime.timedelta(hours=1)
 
     COMPLETE = "Complete"
     IN_PROGRESS = "In Progress"
@@ -65,9 +69,17 @@ class OrderUpdate(models.Model):
         return order_update
 
     @classmethod
+    def timeout_update(cls):
+        """Set the status of updates older than TIMEOUT to ERROR."""
+        cls.objects.filter(started_at__lte=timezone.now() - cls.TIMEOUT).update(
+            status=cls.ERROR
+        )
+
+    @classmethod
     def is_in_progress(cls):
-        """Return True if an update is in progress, otherwise return False."""
-        return cls._default_manager.filter(status=cls.IN_PROGRESS).exists()
+        """Return True if an update is in progress, else return False."""
+        cls.timeout_update()
+        return cls.objects.filter(status=cls.IN_PROGRESS).exists()
 
     @classmethod
     def latest(cls):
