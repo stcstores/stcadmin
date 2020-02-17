@@ -1,7 +1,7 @@
 """
-Update Orders management command.
+Update Exchange Rates managment command.
 
-Updates the orders.Order and orders.PackingRecord models from Cloud Commerce.
+Update the exchange rates in the shipping.Currency model.
 """
 
 import logging
@@ -16,12 +16,12 @@ logger = logging.getLogger("management_commands")
 class Command(BaseCommand):
     """Update orders models."""
 
-    help = "Update orders and packing records."
+    help = "Update currency exchange rates."
 
     def handle(self, *args, **options):
         """Update orders."""
         try:
             Currency.update()
         except Exception as e:
-            logger.exception("Error updating Orders")
+            logger.exception("Error updating currency exchange rates")
             raise e

@@ -40,4 +40,10 @@
     "fields": {
         "name": "Whistl"
     }
+}, {
+    "model": "shipping.provider",
+    "pk": 8,
+    "fields": {
+        "name": "ITD Global"
+    }
 }]

@@ -32,20 +32,39 @@ class ProviderAdmin(admin.ModelAdmin):
     list_editable = ("name",)
 
 
-@admin.register(models.Service)
-class ServiceAdmin(admin.ModelAdmin):
-    """Model Admin for shipping.Service."""
+@admin.register(models.CourierType)
+class CourierTypeAdmin(admin.ModelAdmin):
+    """Model Admin for shipping.CourierType."""
 
-    fields = ("name", "provider")
-    list_display = ("__str__", "name", "provider")
-    list_editable = ("name", "provider")
+    fields = ("courier_type_ID", "name", "provider", "inactive")
+    list_display = ("__str__", "courier_type_ID", "name", "provider", "inactive")
+    list_editable = ("name", "courier_type_ID", "provider", "inactive")
+
+
+@admin.register(models.Courier)
+class CourierAdmin(admin.ModelAdmin):
+    """Model Admin for shipping.Courier."""
+
+    fields = ("courier_ID", "name", "courier_type", "inactive")
+    list_display = ("__str__", "courier_ID", "name", "courier_type", "inactive")
+    list_editable = ("courier_ID", "name", "courier_type", "inactive")
+    list_filter = ("courier_type",)
+
+
+@admin.register(models.CourierService)
+class CourierServiceAdmin(admin.ModelAdmin):
+    """Model Admin for shipping.CourierService."""
+
+    fields = ("courier_service_ID", "name", "courier", "inactive")
+    list_display = ("__str__", "courier_service_ID", "name", "courier", "inactive")
+    list_editable = ("courier_service_ID", "name", "courier", "inactive")
+    list_filter = ("courier",)
 
 
 @admin.register(models.ShippingRule)
 class ShippingRuleAdmin(admin.ModelAdmin):
     """Model Admmin for shipping.ShippingRule."""
 
-    fields = ("rule_ID", "name", "service", "inactive")
-    list_display = ("__str__", "rule_ID", "name", "service", "inactive")
-    list_editable = ("rule_ID", "name", "service", "inactive")
-    list_filter = ("service", "service__provider")
+    fields = ("rule_ID", "name", "courier_service", "inactive")
+    list_display = ("__str__", "rule_ID", "name", "courier_service", "inactive")
+    list_editable = ("rule_ID", "name", "courier_service", "inactive")
