@@ -10,6 +10,7 @@ Command: python management.py check_location_integrity.
 import logging
 
 from django.core.management.base import BaseCommand
+
 from inventory.models import check_location_integrity
 
 logger = logging.getLogger("management_commands")

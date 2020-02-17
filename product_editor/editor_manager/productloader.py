@@ -26,9 +26,10 @@ class ProductLoader(ProductEditorBase):
                 self, self.product_range.products[0]
             )
         elif self.data[self.TYPE] == self.VARIATION:
-            self.data[self.VARIATION_OPTIONS], self.data[
-                self.UNUSED_VARIATIONS
-            ] = self.get_variation_options(self, self.product_range)
+            (
+                self.data[self.VARIATION_OPTIONS],
+                self.data[self.UNUSED_VARIATIONS],
+            ) = self.get_variation_options(self, self.product_range)
             self.data[self.EXISTING_VARIATIONS] = self.data[self.VARIATION_OPTIONS]
             self.data[self.VARIATION_INFO] = self.get_variation_info(
                 self, self.product_range

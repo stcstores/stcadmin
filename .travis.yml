@@ -18,6 +18,9 @@ before_script:
   - psql -c "CREATE DATABASE stcadmin;" -U postgres
 
 script:
+  - flake8 .
+  - isort --recursive -c
+  - black --check .
   - poetry run pytest
   - coveralls
 

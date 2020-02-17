@@ -4,6 +4,7 @@ from ccapi import CCAPI
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+
 from inventory import forms
 
 from .views import InventoryUserMixin
@@ -20,7 +21,7 @@ class ProductRangeView(InventoryUserMixin, FormView):
         self.range_id = self.kwargs.get("range_id")
         try:
             self.product_range = CCAPI.get_range(self.range_id)
-        except Exception as e:
+        except Exception:
             return self.range_error()
         if self.product_range is None or self.product_range.id == 0:
             return self.range_error()

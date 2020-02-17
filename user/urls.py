@@ -1,8 +1,8 @@
 """URL patterns for the User app."""
 
-from user import views as user_views
-
 from django.urls import path
+
+from user import views as user_views
 
 app_name = "user"
 urlpatterns = [

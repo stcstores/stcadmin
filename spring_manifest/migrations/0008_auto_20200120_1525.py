@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('spring_manifest', '0007_add_manifest_files_sent_field'),
-    ]
+    dependencies = [("spring_manifest", "0007_add_manifest_files_sent_field")]
 
     operations = [
         migrations.AlterField(
-            model_name='manifest',
-            name='time_created',
+            model_name="manifest",
+            name="time_created",
             field=models.DateTimeField(auto_now_add=True),
-        ),
+        )
     ]

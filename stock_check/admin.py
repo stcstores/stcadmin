@@ -1,6 +1,7 @@
 """Model Admin for Stock Check app."""
 
 from django.contrib import admin
+
 from stock_check import models
 
 

@@ -3,6 +3,7 @@
 import logging
 
 from django.core.management.base import BaseCommand
+
 from spring_manifest.models import update_manifest_orders
 
 logger = logging.getLogger("management_commands")
