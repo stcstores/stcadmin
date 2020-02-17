@@ -1,7 +1,7 @@
 import csv
 import io
 from datetime import datetime, timedelta
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import reverse
@@ -392,7 +392,7 @@ class TestUndispatchedOrdersView(OrderViewTest, ViewTests):
         self.assertIn(reverse("orders:undispatched_data"), str(response.content))
 
 
-class TestOrderListsView(OrderViewTest, ViewTests):
+class TestOrderListView(OrderViewTest, ViewTests):
     fixtures = (
         "home/cloud_commerce_user",
         "shipping/currency",
@@ -464,6 +464,15 @@ class TestOrderListsView(OrderViewTest, ViewTests):
         order = models.Order.dispatched.all()[0]
         response = self.client.get(self.URL, {"order_ID": order.order_ID})
         self.assertEqual(list(response.context["object_list"]), [order])
+
+    def test_page_range(self):
+        paginator = Mock(num_pages=5)
+        self.assertEqual([1, 2, 3, 4, 5], views.OrderList().get_page_range(paginator))
+        paginator.num_pages = 55
+        self.assertEqual(
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 55],
+            views.OrderList().get_page_range(paginator),
+        )
 
     def test_invalid_form(self):
         response = self.client.get(self.URL, {"country": 999999})

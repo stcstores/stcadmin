@@ -1,0 +1,32 @@
+<div class="pagination_navigation">
+    <div>
+        <button {% if page_obj.has_previous %}name="page" value="1"{% else %}disabled{% endif %}>
+            First
+        </button>
+        <button {% if page_obj.has_previous %}name="page" value="{{ page_obj.previous_page_number }}"{% else %}disabled{% endif %}>
+            Previous
+        </button>
+    </div>
+    <div>
+        <div>
+            {% for page_number in page_range %}
+                {% if page_number > 10 %}...{% endif %}
+                <button name="page" value="{{page_number}}"{% if page_number == page_obj.number %} disabled{% endif %} >
+                    {{page_number}}
+                </button>
+            {% endfor %}
+        </div>
+        <div>
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </div>
+    </div>
+    <div>
+        
+        <button {% if page_obj.has_next %}name="page" value="{{ page_obj.next_page_number }}"{% else %}disabled{% endif %}>
+            Next
+        </button>
+        <button {% if page_obj.has_next %} name="page" value="{{ page_obj.paginator.num_pages }}"{% else %}disabled{% endif %}>
+            Last
+        </button>
+    </div>
+</div>

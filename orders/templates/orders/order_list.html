@@ -5,47 +5,37 @@
 <h1>Orders</h1>
 
 <form action="" method="GET">
-    <table class="filter">
-        {{ form.as_table }}
-       
-        <tr>
-            <td colspan="2"> 
-                <button>Filter</button>
-                <button formaction="{% url 'orders:export_orders' %}">Export</button>
-            </td>
-        </tr>
-    </table>
-
+    <div class="filter">
+        {{ form.as_p }}
+        <p>
+            <button>Filter</button>
+            <button formaction="{% url 'orders:export_orders' %}">Export</button>
+        </p>
+    </div>
+    <p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
+    {% include 'orders/pagination_navigation.html' %}
     <table class="orders">
         <tr>
             <th>Order ID</th>
+            <th>Date Recieved</th>
+            <th>Country</th>
+            <th>Channel</th>
             <th>Tracking Number</th>
             <th>Shipping Rule</th>
-            <th>Date Recieved</th>
+            <th>Courier Service</th>
         </tr>
     {% for order in object_list %}
         <tr class="order">
-            <th>{{ order.order_ID}} </th>
+            <th>{{ order.order_ID }} </th>
+            <td>{{ order.recieved_at|date:"Y-m-d" }}</td>
+            <td>{{ order.country }}</td>
+            <td>{{ order.channel }}</td>
             <td>{{ order.tracking_number }}</td>
             <td>{{ order.shipping_rule.name }}</td>
-            <td>{{ order.recieved_at|date:"Y-m-d" }}</td>
+            <td>{{ order.courier_service }}</td>
         </tr>
     {% endfor %}
     </table>
-    <table>
-        <tr>
-            <td colspan="2">
-            {% if page_obj.has_previous %}
-                <button name="page" value="1">First</button>
-                <button name="page" value="{{ page_obj.previous_page_number }}">Previous</button>
-            {% endif %}
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-            {% if page_obj.has_next %}
-                <button name="page" value="{{ page_obj.next_page_number }}">Next</button>
-                <button name="page" value="{{ page_obj.paginator.num_pages }}">Last</button>
-            {% endif %}
-            </td>
-        </tr>
-    </table>
+    {% include 'orders/pagination_navigation.html' %}
 </form>
 {% endblock content %}

@@ -185,7 +185,8 @@ class OrderList(OrdersUserMixin, ListView):
 
     template_name = "orders/order_list.html"
     model = models.Order
-    paginate_by = 10
+    paginate_by = 50
+    orphans = 3
     form_class = forms.OrderListFilter
 
     def get(self, *args, **kwargs):
@@ -203,7 +204,15 @@ class OrderList(OrdersUserMixin, ListView):
         """Return the template context."""
         context = super().get_context_data(*args, **kwargs)
         context["form"] = self.form
+        context["page_range"] = self.get_page_range(context["paginator"])
         return context
+
+    def get_page_range(self, paginator):
+        """Return a list of pages to link to."""
+        if paginator.num_pages < 11:
+            return list(range(1, paginator.num_pages + 1))
+        else:
+            return list(range(1, 11)) + [paginator.num_pages]
 
 
 class ExportOrders(OrdersUserMixin, View):
