@@ -1,14 +1,19 @@
-from datetime import datetime
-from unittest.mock import patch
+import csv
+import io
+from datetime import datetime, timedelta
+from unittest.mock import Mock, patch
 
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import reverse
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.html import escape
+from django.utils.timezone import make_aware
 from isoweek import Week
 
 from home.models import CloudCommerceUser
-from orders import forms, models
+from orders import forms, models, views
+from shipping.models import Country
 from stcadmin.tests.stcadmin_test import STCAdminTest, ViewTests
 
 
@@ -22,6 +27,25 @@ class OrderViewTest(STCAdminTest):
 
     def remove_group(self):
         super().remove_group(self.group_name)
+
+
+class TestSectionNavigation(STCAdminTest):
+    links = [
+        ("Orders", "orders:index"),
+        ("Breakages", "orders:breakages"),
+        ("Charts", "orders:charts"),
+        ("Undispatched Orders", "orders:undispatched_orders"),
+        ("Order List", "orders:order_list"),
+    ]
+
+    def test_links(self):
+        content = render_to_string("orders/section_navigation.html")
+        self.assertIn('<div class="section_navigation">', content)
+        links = [
+            f'<a href="{reverse(viewname)}">{text}</a>' for text, viewname in self.links
+        ]
+        for link in links:
+            self.assertIn(link, content)
 
 
 class TestIndexView(OrderViewTest, ViewTests):
@@ -366,3 +390,154 @@ class TestUndispatchedOrdersView(OrderViewTest, ViewTests):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, self.template)
         self.assertIn(reverse("orders:undispatched_data"), str(response.content))
+
+
+class TestOrderListView(OrderViewTest, ViewTests):
+    fixtures = (
+        "home/cloud_commerce_user",
+        "shipping/currency",
+        "shipping/country",
+        "shipping/provider",
+        "shipping/courier_type",
+        "shipping/courier",
+        "shipping/courier_service",
+        "shipping/shipping_rule",
+        "orders/channel",
+        "orders/order",
+        "orders/product_sale",
+    )
+
+    URL = "/orders/order_list/"
+    template = "orders/order_list.html"
+    paginate_by = views.OrderList.paginate_by
+
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(self.template)
+
+    def test_context(self):
+        response = self.make_get_request()
+        self.assertTrue(hasattr(response, "context"))
+        self.assertIsNotNone(response.context)
+        self.assertIn("object_list", response.context)
+
+    def test_content(self):
+        response = self.make_get_request()
+        content = str(response.content)
+        self.assertIn('<div class="section_navigation">', content)
+        orders = models.Order.dispatched.order_by("-recieved_at")[: self.paginate_by]
+        orders[0].tracking_number = "RM_7845938393"
+        for order in orders:
+            self.assertIn(order.order_ID, content)
+            if order.tracking_number:
+                self.assertIn(order.tracking_number, content)
+            self.assertIn(order.shipping_rule.name, content)
+            self.assertIn(order.recieved_at.strftime("%Y-%m-%d"), content)
+
+    def test_filter_country(self):
+        country = Country.objects.get(name="United Kingdom")
+        response = self.client.get(self.URL, {"country": country.id})
+        self.assertTrue(response.context["form"].is_valid())
+        orders = response.context["object_list"]
+        self.assertGreater(len(orders), 0)
+        for order in orders:
+            self.assertEqual(order.country, country)
+
+    def test_filter_by_date(self):
+        recieved_from = make_aware(datetime(2019, 12, 3))
+        recieved_to = make_aware(datetime(2019, 12, 4))
+        response = self.client.get(
+            self.URL,
+            {
+                "recieved_from": recieved_from.strftime("%Y-%m-%d"),
+                "recieved_to": recieved_to.strftime("%Y-%m-%d"),
+            },
+        )
+        self.assertTrue(response.context["form"].is_valid())
+        orders = response.context["object_list"]
+        for order in orders:
+            self.assertGreaterEqual(order.recieved_at, recieved_from)
+            self.assertLessEqual(order.recieved_at, recieved_to + timedelta(days=1))
+
+    def test_filter_by_order_id(self):
+        order = models.Order.dispatched.all()[0]
+        response = self.client.get(self.URL, {"order_ID": order.order_ID})
+        self.assertEqual(list(response.context["object_list"]), [order])
+
+    def test_page_range(self):
+        paginator = Mock(num_pages=5)
+        self.assertEqual([1, 2, 3, 4, 5], views.OrderList().get_page_range(paginator))
+        paginator.num_pages = 55
+        self.assertEqual(
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 55],
+            views.OrderList().get_page_range(paginator),
+        )
+
+    def test_invalid_form(self):
+        response = self.client.get(self.URL, {"country": 999999})
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(self.template)
+        self.assertFalse(response.context["form"].is_valid())
+
+
+class TestExportOrdersView(OrderViewTest, ViewTests):
+    fixtures = (
+        "home/cloud_commerce_user",
+        "shipping/currency",
+        "shipping/country",
+        "shipping/provider",
+        "shipping/courier_type",
+        "shipping/courier",
+        "shipping/courier_service",
+        "shipping/shipping_rule",
+        "orders/channel",
+        "orders/order",
+        "orders/product_sale",
+    )
+
+    URL = "/orders/export_orders/"
+
+    def read_csv(self, response):
+        rows = list(
+            csv.reader(io.StringIO(response.content.decode("utf8")), delimiter=",")
+        )
+        return rows[0], rows[1:]
+
+    def test_get_method(self):
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        header, rows = self.read_csv(response)
+        self.assertEqual(views.ExportOrders.header, header)
+        self.assertEqual(models.Order.dispatched.count(), len(rows))
+
+    def test_filter_country(self):
+        country = Country.objects.get(name="United Kingdom")
+        response = self.client.get(self.URL, {"country": country.id})
+        header, rows = self.read_csv(response)
+        self.assertEqual(
+            models.Order.dispatched.filter(country=country).count(), len(rows)
+        )
+
+    def test_filter_by_date(self):
+        recieved_from = make_aware(datetime(2019, 12, 3))
+        recieved_to = make_aware(datetime(2019, 12, 4))
+        response = self.client.get(
+            self.URL,
+            {
+                "recieved_from": recieved_from.strftime("%Y-%m-%d"),
+                "recieved_to": recieved_to.strftime("%Y-%m-%d"),
+            },
+        )
+        header, rows = self.read_csv(response)
+        self.assertEqual(
+            models.Order.dispatched.filter(
+                recieved_at__gte=recieved_from,
+                recieved_at__lte=recieved_to + timedelta(days=1),
+            ).count(),
+            len(rows),
+        )
+
+    def test_invalid_form(self):
+        response = self.client.get(self.URL, {"country": 999999})
+        self.assertEqual(404, response.status_code)
