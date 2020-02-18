@@ -1,5 +1,9 @@
+import json
+import tempfile
 from decimal import Decimal
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, patch
+
+from django.test import override_settings
 
 from shipping import models
 from stcadmin.tests.stcadmin_test import STCAdminTest
@@ -27,7 +31,7 @@ class TestCurrency(STCAdminTest):
     def test_update(self, mock_get):
         rates = {currency.code: 5 for currency in models.Currency.objects.all()}
         data = {"rates": rates}
-        response = Mock()
+        response = MagicMock()
         response.json.return_value = data
         mock_get.return_value = response
         models.Currency.update()
@@ -200,7 +204,7 @@ class TestShippingRule(STCAdminTest):
         courier_ID="57",
         courier_service_ID="2564",
     ):
-        mock_rule = Mock(
+        mock_rule = MagicMock(
             id=rule_ID,
             is_priority=int(priority),
             courier_services_group_id=courier_ID,
@@ -208,6 +212,13 @@ class TestShippingRule(STCAdminTest):
         )
         mock_rule.name = name
         return mock_rule
+
+    def mock_rules(self, rules, json=None):
+        if json is None:
+            json = []
+        mock_rules = MagicMock(json=json)
+        mock_rules.__iter__.return_value = rules
+        return mock_rules
 
     def test_create_object(self):
         courier_service = models.CourierService.objects.create(name="Test Service")
@@ -227,37 +238,37 @@ class TestShippingRule(STCAdminTest):
         self.assertEqual(rule.name, str(rule))
 
     @patch("shipping.models.CCAPI")
+    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_update_marks_inactive(self, mock_CCAPI):
         models.ShippingRule.objects.filter(id__gt=1).delete()
         models.ShippingRule.objects.update(inactive=False)
-        mock_CCAPI.get_courier_rules.return_value = []
+        mock_CCAPI.get_courier_rules.return_value = self.mock_rules([])
         models.ShippingRule.update()
         mock_CCAPI.get_courier_rules.assert_called_once()
-        self.assertEqual(1, len(mock_CCAPI.mock_calls))
         self.assertTrue(models.ShippingRule.objects.get(id=1).inactive)
 
     @patch("shipping.models.CCAPI")
+    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_update_marks_active(self, mock_CCAPI):
         models.ShippingRule.objects.filter(id__gt=1).delete()
         models.ShippingRule.objects.update(inactive=True)
         rule = models.ShippingRule.objects.get(id=1)
         cc_rule = self.mock_cc_rule(rule_ID=rule.rule_ID)
-        mock_CCAPI.get_courier_rules.return_value = [cc_rule]
+        mock_CCAPI.get_courier_rules.return_value = self.mock_rules([cc_rule])
         models.ShippingRule.update()
         mock_CCAPI.get_courier_rules.assert_called_once()
-        self.assertEqual(1, len(mock_CCAPI.mock_calls))
         rule.refresh_from_db()
         self.assertFalse(rule.inactive)
 
     @patch("shipping.models.CCAPI")
+    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_update_creates_rule(self, mock_CCAPI):
         rule_ID = "948416"
         self.assertFalse(models.ShippingRule.objects.filter(rule_ID=rule_ID).exists())
         cc_rule = self.mock_cc_rule(rule_ID=rule_ID)
-        mock_CCAPI.get_courier_rules.return_value = [cc_rule]
+        mock_CCAPI.get_courier_rules.return_value = self.mock_rules([cc_rule])
         models.ShippingRule.update()
         mock_CCAPI.get_courier_rules.assert_called_once()
-        self.assertEqual(1, len(mock_CCAPI.mock_calls))
         self.assertTrue(models.ShippingRule.objects.filter(rule_ID=rule_ID).exists())
         rule = models.ShippingRule.objects.get(rule_ID=rule_ID)
         self.assertEqual(cc_rule.name, rule.name)
@@ -266,6 +277,7 @@ class TestShippingRule(STCAdminTest):
         self.assertFalse(rule.inactive)
 
     @patch("shipping.models.CCAPI")
+    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_update_uses_existing_courier_service(self, mock_CCAPI):
         rule_ID = "948416"
         models.ShippingRule.objects.all().delete()
@@ -275,15 +287,30 @@ class TestShippingRule(STCAdminTest):
             courier_ID=courier_service.courier.courier_ID,
             courier_service_ID=courier_service.courier_service_ID,
         )
-        mock_CCAPI.get_courier_rules.return_value = [cc_rule]
+        mock_CCAPI.get_courier_rules.return_value = self.mock_rules([cc_rule])
         models.ShippingRule.update()
         mock_CCAPI.get_courier_rules.assert_called_once()
-        self.assertEqual(1, len(mock_CCAPI.mock_calls))
         self.assertTrue(models.ShippingRule.objects.filter(rule_ID=rule_ID).exists())
         rule = models.ShippingRule.objects.get(rule_ID=rule_ID)
         self.assertEqual(courier_service, rule.courier_service)
 
     @patch("shipping.models.CCAPI")
+    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+    def test_backup_file_saved(self, mock_CCAPI):
+        cc_rule = self.mock_cc_rule(rule_ID="981684")
+        data = {"Shipping Rule": cc_rule.name}
+        mock_CCAPI.get_courier_rules.return_value = self.mock_rules(
+            [cc_rule], json=data
+        )
+        models.ShippingRule.update()
+        file_path = models.ShippingRule._backup_path()
+        self.assertTrue(file_path.exists)
+        with open(file_path) as f:
+            saved_data = json.load(f)
+        self.assertDictEqual(data, saved_data)
+
+    @patch("shipping.models.CCAPI")
+    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
     def test_update_creates_new_courier_service(self, mock_CCAPI):
         rule_ID = "948416"
         models.ShippingRule.objects.all().delete()
@@ -300,10 +327,9 @@ class TestShippingRule(STCAdminTest):
             courier_ID=courier_ID,
             courier_service_ID=courier_service_ID,
         )
-        mock_CCAPI.get_courier_rules.return_value = [cc_rule]
+        mock_CCAPI.get_courier_rules.return_value = self.mock_rules([cc_rule])
         models.ShippingRule.update()
         mock_CCAPI.get_courier_rules.assert_called_once()
-        self.assertEqual(1, len(mock_CCAPI.mock_calls))
         self.assertTrue(models.ShippingRule.objects.filter(rule_ID=rule_ID).exists())
         rule = models.ShippingRule.objects.get(rule_ID=rule_ID)
         self.assertTrue(models.Courier.objects.filter(courier_ID=courier_ID).exists())

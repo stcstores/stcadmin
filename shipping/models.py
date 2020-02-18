@@ -1,7 +1,12 @@
 """Shipping Models."""
+import json
+from pathlib import Path
+
 import requests
 from ccapi import CCAPI
+from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 
 class Currency(models.Model):
@@ -164,9 +169,23 @@ class ShippingRule(models.Model):
     def update(cls):
         """Update shipping rules from Cloud Commerce."""
         rules = CCAPI.get_courier_rules()
+        cls._backup_rules(rules)
         cls._remove_defunct_rules(rules)
-        for cc_rule in rules:
-            cls._create_or_update_from_cc_rule(cc_rule)
+        for rule in rules:
+            cls._create_or_update_from_cc_rule(rule)
+
+    @classmethod
+    def _backup_path(cls):
+        filename = f"shipping_rules_{timezone.now().strftime('%Y-%m-%d')}.json"
+        return Path(settings.MEDIA_ROOT) / "shipping_rules" / filename
+
+    @classmethod
+    def _backup_rules(cls, rules):
+        path = cls._backup_path()
+        directory = path.parent
+        directory.mkdir(parents=True, exist_ok=True)
+        with path.open("w") as f:
+            json.dump(rules.json, f, indent=4, sort_keys=True)
 
     @classmethod
     def _remove_defunct_rules(cls, rules):
