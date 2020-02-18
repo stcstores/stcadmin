@@ -516,7 +516,7 @@ ccapi = "branch master"
 tabler = "^2.4.0"
 
 [package.source]
-reference = "dd686874a4a5c292fdd1488241023e7f4dfe17a2"
+reference = "00a21867a38891201ca852d357ff29afaa1ede17"
 type = "git"
 url = "https://github.com/stcstores/order_profit.git"
 [[package]]
