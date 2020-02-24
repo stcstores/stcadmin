@@ -31,9 +31,13 @@ class PrintBarcodeLabels(InventoryUserMixin, TemplateView):
 class BarcodePDF(InventoryUserMixin, View):
     """Create PDF document containing barcode labels."""
 
+    def get(self, *args, **kwargs):
+        """Disallow GET requests."""
+        return HttpResponse(status=405)
+
     def post(self, *args, **kwargs):
         """Handle POST HTTP request."""
-        data = self.get_label_data()
+        data = self.get_label_data(self.request.POST.get("data"))
         response = HttpResponse(content_type="application/pdf")
         response["Content-Disposition"] = 'filename="labels.pdf"'
         label_format = labeler.BarcodeLabelFormat
@@ -43,9 +47,8 @@ class BarcodePDF(InventoryUserMixin, View):
         canvas.save()
         return response
 
-    def get_label_data(self):
+    def get_label_data(self, json_data):
         """Get data for barcode labels."""
-        json_data = self.request.POST.get("data")
         data = json.loads(json_data)
         barcode_data = []
         for product in data:

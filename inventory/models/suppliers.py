@@ -5,10 +5,10 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 
-from .product_options import ProductOptionModel
+from .product_options import BaseNonListingProductOptionModel
 
 
-class Supplier(ProductOptionModel):
+class Supplier(BaseNonListingProductOptionModel):
     """Model for suppliers."""
 
     PRODUCT_OPTION_ID = 35131
@@ -17,7 +17,7 @@ class Supplier(ProductOptionModel):
     factory_ID = models.CharField(max_length=20, unique=True)
     inactive = models.BooleanField(default=False)
 
-    class Meta(ProductOptionModel.Meta):
+    class Meta(BaseNonListingProductOptionModel.Meta):
         """Meta class for Supplier."""
 
         verbose_name = "Supplier"
@@ -33,8 +33,7 @@ class Supplier(ProductOptionModel):
 
         Create a Product Option and Factory in Cloud Commerce if neither exist.
         """
-        if self.product_option_ID == "" or self.factory_ID == "":
-            self.product_option_ID = self.create_product_option(self.name)
+        if not self.factory_ID:
             self.factory_ID = self.create_factory(self.name)
         super().save(*args, **kwargs)
 
@@ -91,3 +90,8 @@ class SupplierContact(models.Model):
             raise ValidationError(
                 "At least one of (name, email, phone) must not be empty"
             )
+
+    def save(self, *args, **kwargs):
+        """Validate the instance and save it."""
+        self.full_clean()
+        return super().save(*args, **kwargs)

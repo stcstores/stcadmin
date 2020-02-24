@@ -25,12 +25,6 @@ def ccp_product_page(range_id, product_id):
 
 
 @register.simple_tag
-def ccp_order_page(order_id, customer_id):
-    """Return Cloud Commerce URL for a order."""
-    return URLs.order_url(SUBDOMAIN, order_id, customer_id)
-
-
-@register.simple_tag
 def warehouses():
     """Return dict containing Warehouses and bays."""
     warehouses = models.Warehouse.used_warehouses.all()

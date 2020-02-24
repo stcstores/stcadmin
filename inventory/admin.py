@@ -6,16 +6,6 @@ from django.contrib import admin
 from inventory import models
 
 
-@admin.register(models.STCAdminImage)
-class STCAdminImageAdmin(admin.ModelAdmin):
-    """ModelAdmin for the STCAdminImage model."""
-
-    fields = ["range_id", "image"]
-    list_display = ["id", "__str__", "range_id", "image"]
-    list_display_links = ("__str__",)
-    list_editable = ("range_id", "image")
-
-
 @admin.register(models.Barcode)
 class BarcodeAdmin(admin.ModelAdmin):
     """ModelAdmin for the Barcode model."""
@@ -97,9 +87,15 @@ class ProductOptionAdminProductExportAdmin(admin.ModelAdmin):
 class SupplierAdmin(admin.ModelAdmin):
     """Model admin for the Supplier model."""
 
-    fields = ("name", "product_option_ID", "factory_ID", "inactive")
-    list_display = ("__str__", "name", "product_option_ID", "factory_ID", "inactive")
-    list_editable = ("name", "product_option_ID", "factory_ID", "inactive")
+    fields = ("name", "product_option_value_ID", "factory_ID", "inactive")
+    list_display = (
+        "__str__",
+        "name",
+        "product_option_value_ID",
+        "factory_ID",
+        "inactive",
+    )
+    list_editable = ("name", "product_option_value_ID", "factory_ID", "inactive")
     search_fields = ("name",)
 
 
@@ -117,20 +113,32 @@ class SupplierContactAdmin(admin.ModelAdmin):
 class ProductOptionAdmin(admin.ModelAdmin):
     """Model admin for the ProductOptionModel abstract model."""
 
-    fields = ("name", "product_option_ID", "inactive")
-    list_display = ("__str__", "name", "product_option_ID", "inactive")
-    list_editable = ("name", "product_option_ID", "inactive")
-    search_fields = ("name", "product_option_ID")
+    fields = ("name", "product_option_value_ID", "inactive")
+    list_display = ("__str__", "name", "product_option_value_ID", "inactive")
+    list_editable = ("name", "product_option_value_ID", "inactive")
+    search_fields = ("name", "product_option_value_ID")
 
 
 @admin.register(models.Department)
 class DepartmentAdmin(ProductOptionAdmin):
     """Model admin for the Department model."""
 
-    fields = ("name", "abriviation", "product_option_ID", "inactive")
-    list_display = ("__str__", "name", "abriviation", "product_option_ID", "inactive")
-    list_editable = ("name", "name", "abriviation", "product_option_ID", "inactive")
-    search_fields = ("name", "abriviation", "product_option_ID")
+    fields = ("name", "abriviation", "product_option_value_ID", "inactive")
+    list_display = (
+        "__str__",
+        "name",
+        "abriviation",
+        "product_option_value_ID",
+        "inactive",
+    )
+    list_editable = (
+        "name",
+        "name",
+        "abriviation",
+        "product_option_value_ID",
+        "inactive",
+    )
+    search_fields = ("name", "abriviation", "product_option_value_ID")
 
 
 @admin.register(models.PackageType)

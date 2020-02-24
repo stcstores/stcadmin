@@ -8,18 +8,6 @@ from product_editor.forms import fields
 from product_editor.forms.fields import Description, Title
 
 
-class ProductRangeForm(forms.Form):
-    """Form for editing a Product Range."""
-
-    end_of_line = forms.BooleanField(
-        required=False,
-        help_text=(
-            "Ranges are maked as <b>end of line</b> if the entire range is"
-            " out of stock and unlikely to be re-ordered."
-        ),
-    )
-
-
 class DescriptionForm(forms.Form):
     """Form for editing attributes that are the same across a range."""
 
@@ -98,13 +86,6 @@ class ImagesForm(forms.Form):
             attrs={"multiple": True, "accept": ".jpg, .png"}
         ),
     )
-    stcadmin_images = forms.ImageField(
-        required=False,
-        label="STC Admin Images",
-        widget=forms.ClearableFileInput(
-            attrs={"multiple": True, "accept": ".jpg, .png"}
-        ),
-    )
 
 
 class ProductForm(ProductEditorBase, forms.Form):
@@ -172,7 +153,7 @@ class ProductForm(ProductEditorBase, forms.Form):
         bays = [bay for bay in models.Bay.objects.filter(bay_ID__in=self.product.bays)]
         warehouses = list(set([bay.warehouse for bay in bays]))
         if len(warehouses) > 1:
-            self.add_error(self.LOCATIONS, "Mixed warehouses.")
+            self.add_error(self.LOCATION, "Mixed warehouses.")
         elif len(warehouses) == 1:
             initial[self.LOCATION] = {
                 self.WAREHOUSE: warehouses[0].warehouse_ID,

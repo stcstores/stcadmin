@@ -3,7 +3,7 @@
     "pk": 1,
     "fields": {
         "name": "Baum Trading",
-        "product_option_ID": "3758697",
+        "product_option_value_ID": "3758697",
         "factory_ID": "4518",
         "inactive": false
     }
@@ -12,7 +12,7 @@
     "pk": 2,
     "fields": {
         "name": "KS Brands",
-        "product_option_ID": "3758718",
+        "product_option_value_ID": "3758718",
         "factory_ID": "4582",
         "inactive": false
     }
@@ -21,7 +21,7 @@
     "pk": 3,
     "fields": {
         "name": "Aargee",
-        "product_option_ID": "5341795",
+        "product_option_value_ID": "5341795",
         "factory_ID": "9947",
         "inactive": false
     }
@@ -30,7 +30,7 @@
     "pk": 4,
     "fields": {
         "name": "Unused Supplier",
-        "product_option_ID": "4946416",
+        "product_option_value_ID": "4946416",
         "factory_ID": "651516",
         "inactive": false
     }

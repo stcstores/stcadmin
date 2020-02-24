@@ -327,7 +327,7 @@ class Department(fieldtypes.SingleSelectize):
             department = models.Warehouse.used_warehouses.get(
                 warehouse_ID=int(value)
             ).warehouse_ID
-        except models.Warehouse.DoesNotExist:
+        except (models.Warehouse.DoesNotExist, ValueError):
             raise forms.ValidationError("Deparment not recognised")
         return department
 
@@ -397,11 +397,11 @@ class Location(fieldtypes.SelectizeField):
         for bay_ID in value:
             try:
                 bays.append(models.Bay.objects.get(bay_ID=bay_ID))
-            except models.DoesNotExist:
+            except models.Bay.DoesNotExist:
                 raise forms.ValidationError("Bay not recognised")
-        filtered_bays = [_ for _ in bays if "Backup" not in _.name and not _.default]
+        filtered_bays = [_ for _ in bays if "Backup" not in _.name and not _.is_default]
         if filtered_bays:
-            bays = [b for b in bays if not b.default]
+            bays = [b for b in bays if not b.is_default]
         if len(set([bay.warehouse for bay in bays])) > 1:
             raise forms.ValidationError("Bays from multiple warehouses selected.")
         value = [b.bay_ID for b in bays]

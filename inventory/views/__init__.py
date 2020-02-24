@@ -9,7 +9,7 @@ from .api import (
     UpdateStockLevelView,
 )
 from .descriptions import DescriptionsView
-from .images import DeleteSTCAdminImage, ImageFormView
+from .images import ImageFormView
 from .locations import LocationFormView
 from .print_barcodes import BarcodePDF, PrintBarcodeLabels
 from .product import ProductView
@@ -34,7 +34,6 @@ __all__ = [
     "SetImageOrderView",
     "UpdateStockLevelView",
     "DescriptionsView",
-    "DeleteSTCAdminImage",
     "ImageFormView",
     "LocationFormView",
     "BarcodePDF",
