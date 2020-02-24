@@ -6,18 +6,50 @@ from django.db import models
 from .locations import Bay, Warehouse
 
 
-class ProductOptionModel(models.Model):
+class BaseProductOptionValueModel(models.Model):
+    """Abstract model for Cloud Commerce Product Option Values."""
+
+    product_option_value_ID = models.CharField(max_length=20, unique=True)
+
+    class Meta:
+        """Meta class for the BaseProductOptionModel abstract model."""
+
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        """Create or update the Department object.
+
+        Create a Product Option in Cloud Commerce if self.product_option_value_ID is empty.
+        """
+        if self.product_option_value_ID == "":
+            self.product_option_value_ID = self.create_CC_product_option(self.value)
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_product_options(cls):
+        """Return all Cloud Commerce Product Options for this model."""
+        return CCAPI.get_product_options()[cls.PRODUCT_OPTION_NAME]
+
+    def create_CC_product_option(self, value):
+        """
+        Return the ID of the Department Product Option matching name.
+
+        If it does not exist it will be created.
+        """
+        return CCAPI.create_option_value(self.product_option.product_option_ID, value)
+
+
+class BaseNonListingProductOptionModel(BaseProductOptionValueModel):
     """Abstract model for Cloud Commerce Product Options."""
 
     PRODUCT_OPTION_ID = None
     PRODUCT_OPTION_NAME = None
 
     name = models.CharField(max_length=50, unique=True)
-    product_option_ID = models.CharField(max_length=20, unique=True)
     inactive = models.BooleanField(default=False)
 
     class Meta:
-        """Meta class for the ProductOptionModel abstract model."""
+        """Meta class for the BaseProductOptionModel abstract model."""
 
         abstract = True
         ordering = ("inactive", "name")
@@ -30,31 +62,22 @@ class ProductOptionModel(models.Model):
         """Return True if the department is active, otherwise return False."""
         return not self.inactive
 
-    def save(self, *args, **kwargs):
-        """Create or update the Department object.
-
-        Create a Product Option in Cloud Commerce if self.product_option_ID is empty.
-        """
-        if self.product_option_ID == "":
-            self.product_option_ID = self.create_product_option(self.name)
-        super().save(*args, **kwargs)
+    @property
+    def value(self):
+        """Return self.name for compatibility with BaseProductOptionValueModel."""
+        return self.name
 
     @classmethod
-    def get_product_options(cls):
-        """Return all Cloud Commerce Product Options for this model."""
-        return CCAPI.get_product_options()[cls.PRODUCT_OPTION_NAME]
-
-    @classmethod
-    def create_product_option(cls, name):
+    def create_CC_product_option(cls, value):
         """
         Return the ID of the Department Product Option matching name.
 
         If it does not exist it will be created.
         """
-        return CCAPI.get_option_value_id(cls.PRODUCT_OPTION_ID, name, create=True)
+        return CCAPI.create_option_value(cls.PRODUCT_OPTION_ID, value)
 
 
-class Department(ProductOptionModel):
+class Department(BaseNonListingProductOptionModel):
     """Model for departments."""
 
     PRODUCT_OPTION_ID = 34325
@@ -62,7 +85,7 @@ class Department(ProductOptionModel):
 
     abriviation = models.CharField(max_length=3, blank=True, null=True)
 
-    class Meta(ProductOptionModel.Meta):
+    class Meta:
         """Meta class for Department."""
 
         verbose_name = "Department"
@@ -83,11 +106,14 @@ class Department(ProductOptionModel):
             return None
 
 
-class PackageType(ProductOptionModel):
+class PackageType(BaseNonListingProductOptionModel):
     """Model for package types."""
 
     PRODUCT_OPTION_ID = 33852
     PRODUCT_OPTION_NAME = "Package Type"
+    ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
+
+    large_letter_compatible = models.BooleanField(default=False)
     ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
 
     class Meta:
@@ -95,10 +121,10 @@ class PackageType(ProductOptionModel):
 
         verbose_name = "Package Type"
         verbose_name_plural = "Package Types"
-        ordering = ("ordering",)
+        ordering = ["ordering"]
 
 
-class InternationalShipping(ProductOptionModel):
+class InternationalShipping(BaseNonListingProductOptionModel):
     """Model for international shipping."""
 
     PRODUCT_OPTION_ID = 37272
@@ -110,4 +136,4 @@ class InternationalShipping(ProductOptionModel):
 
         verbose_name = "International Shipping"
         verbose_name_plural = "International Shipping"
-        ordering = ("ordering",)
+        ordering = ["ordering"]

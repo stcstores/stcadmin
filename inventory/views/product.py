@@ -17,8 +17,8 @@ class ProductView(InventoryUserMixin, FormView):
     template_name = "inventory/product.html"
     form_class = forms.ProductForm
 
-    def dispatch(self, *args, **kwargs):
-        """Process HTTP request."""
+    def get_form_kwargs(self):
+        """Return kwargs for form."""
         self.product_id = self.kwargs.get("product_id")
         self.product = cc_products.get_product(self.product_id)
         self.product_range = self.product.product_range
@@ -31,10 +31,6 @@ class ProductView(InventoryUserMixin, FormView):
             for option in self.option_data
             if option.option_name in self.option_names
         }
-        return super().dispatch(*args, **kwargs)
-
-    def get_form_kwargs(self):
-        """Return kwargs for form."""
         kwargs = super().get_form_kwargs()
         kwargs["product"] = self.product
         kwargs["product_range"] = self.product_range
@@ -56,15 +52,11 @@ class ProductView(InventoryUserMixin, FormView):
         context_data = super().get_context_data(*args, **kwargs)
         context_data["product"] = self.product
         context_data["product_range"] = self.product.product_range
-        if "Linn Title" in self.option_names:
-            context_data["linnworks_title"] = self.product.linn_title
-        if "Linn SKU" in self.option_names:
-            context_data["linnworks_sku"] = self.product.linn_sku
         department = self.product.department
         try:
             warehouse = models.Warehouse.objects.get(name=department)
         except models.Warehouse.DoesNotExist:
             context_data["warehouse_bays"] = []
         else:
-            context_data["warehouse_bays"] = warehouse.bay_set.all()
+            context_data["warehouse_bays"] = list(warehouse.bay_set.all())
         return context_data

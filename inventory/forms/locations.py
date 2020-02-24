@@ -1,7 +1,7 @@
 """Forms for updating product locations."""
 
-import cc_products
 from django import forms
+from django.core.exceptions import ValidationError
 
 from inventory import models
 from product_editor.editor_manager import ProductEditorBase
@@ -24,19 +24,13 @@ class DepartmentForm(forms.Form):
     def get_initial(self):
         """Return initial values for form."""
         initial = {}
+        department = self.product_range.department
         try:
-            department = self.product_range.department
-        except cc_products.exceptions.DepartmentError:
-            department = None
-        if department is None:
+            department_id = models.Warehouse.used_warehouses.get(
+                name=department
+            ).warehouse_ID
+        except models.Warehouse.DoesNotExist:
             department_id = None
-        else:
-            try:
-                department_id = models.Warehouse.used_warehouses.get(
-                    name=department
-                ).warehouse_ID
-            except models.Warehouse.DoesNotExist:
-                department_id = None
         initial[self.DEPARTMENT] = department_id
         return initial
 
@@ -82,48 +76,27 @@ class LocationsForm(forms.Form):
         initial[self.STOCK_LEVEL] = self.product.stock_level
         bays = [bay for bay in models.Bay.objects.filter(bay_ID__in=self.product.bays)]
         warehouses = list(set([bay.warehouse for bay in bays]))
-        if len(warehouses) > 1:
-            self.add_error(self.LOCATIONS, "Mixed warehouses.")
-        elif len(warehouses) == 1:
+        if warehouses:
             initial[self.LOCATIONS] = {
                 self.WAREHOUSE: warehouses[0].warehouse_ID,
                 self.BAYS: [bay.bay_ID for bay in bays],
             }
         return initial
 
-    def get_warehouse_for_bays(self, bay_IDs):
-        """Return warehouse for bay_IDs."""
-        if len(bay_IDs) == 0:
-            return None
-        bays = models.Bay.objects.filter(
-            bay_ID__in=[int(bay_ID) for bay_ID in bay_IDs]
-        ).all()
-        if all([bay.warehouse == bays[0].warehouse for bay in bays]):
-            return bays[0].warehouse
-        return None
-
     def clean(self):
         """Add list of bay IDs to cleaned data."""
         cleaned_data = super().clean()
         cleaned_data.pop(self.PRODUCT_NAME)
         cleaned_data.pop(self.STOCK_LEVEL)
-        bays = self.cleaned_data[self.LOCATIONS][self.BAYS]
-        if len(bays) == 0:
-            bays = [self.warehouse.default_bay.bay_ID]
+        if self.LOCATIONS not in cleaned_data:
+            raise ValidationError("Invalid Location")
+        bays = cleaned_data[self.LOCATIONS][self.BAYS]
         cleaned_data[self.LOCATIONS][self.BAYS] = bays
         return cleaned_data
 
     def save(self):
         """Update product with new bays."""
         self.product.bays = self.cleaned_data[self.LOCATIONS][self.BAYS]
-
-    def get_context_data(self, *args, **kwargs):
-        """Return cotext for template."""
-        context = super().get_context_data(*args, **kwargs)
-        context["bays"] = [
-            bay.name for bay in models.Bay.objects.filter(bay_ID__in=self.product.bays)
-        ]
-        return context
 
 
 class LocationsFormSet(KwargFormSet):

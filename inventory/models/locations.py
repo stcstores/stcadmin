@@ -1,5 +1,6 @@
 """Models for storing Warehouse Bay Locations."""
 
+
 import os
 import sys
 
@@ -45,12 +46,12 @@ class Warehouse(models.Model):
     @property
     def bays(self):
         """Return all bays in this warehouse except the default bay."""
-        return self.bay_set.exclude(name=self.name)
+        return self.bay_set.exclude(is_default=True)
 
     @property
     def default_bay(self):
         """Return the default bay for this warehouse."""
-        return self.bay_set.get(name=self.name)
+        return self.bay_set.get(is_default=True)
 
 
 class NonDefaultBaysManager(models.Manager):
@@ -68,6 +69,7 @@ class Bay(models.Model):
     bay_ID = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255, unique=True)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
+    is_default = models.BooleanField(default=False)
 
     objects = models.Manager()
     non_default = NonDefaultBaysManager()
@@ -77,14 +79,17 @@ class Bay(models.Model):
 
         verbose_name = "Bay"
         verbose_name_plural = "Bays"
+        ordering = ("-is_default", "name")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["warehouse"],
+                condition=models.Q(is_default=True),
+                name="single_default_bay_per_warehouse",
+            )
+        ]
 
     def __str__(self):
         return "{} - {}".format(self.warehouse, self.name)
-
-    @property
-    def default(self):
-        """Return True if the bay is the default bay for it's warehouse."""
-        return self.name == self.warehouse.name
 
     @staticmethod
     def backup_bay_name(*, bay_name, department, backup_location):
@@ -98,6 +103,18 @@ class Bay(models.Model):
             bay_name=name, department=department, backup_location=backup_location
         )
         return cls(name=backup_name, warehouse=department)
+
+    @property
+    def is_backup(self):
+        """Return True if the bay is a backup bay, otherwise False."""
+        return "Backup" in self.name
+
+    @property
+    def is_primary(self):
+        """Return True if the bay is a primary bay, otherwise False."""
+        if not self.is_backup and not self.is_default:
+            return True
+        return False
 
     def save(self, *args, **kwargs):
         """Create the bay in Cloud Commerce if it has no ID."""

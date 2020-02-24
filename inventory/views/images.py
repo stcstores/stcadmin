@@ -1,6 +1,7 @@
 """Views for handeling Product Images."""
 
 import json
+from collections import defaultdict
 
 from ccapi import CCAPI
 from django.shortcuts import get_object_or_404
@@ -31,33 +32,34 @@ class ImageFormView(InventoryUserMixin, FormView):
     template_name = "inventory/images.html"
     form_class = ImagesForm
 
-    def dispatch(self, *args, **kwargs):
-        """Process HTTP request."""
+    def get_products(self):
+        """Retrive product details from Cloud Commerce."""
         self.range_id = self.kwargs.get("range_id")
         self.product_range = CCAPI.get_range(self.range_id)
         self.products = self.product_range.products
         for product in self.products:
             product.images = product.get_images()
-        return super().dispatch(*args, **kwargs)
 
-    def get_context_data(self, *args, **kwargs):
-        """Get template context data."""
-        context = super().get_context_data(*args, **kwargs)
-        context["product_range"] = self.product_range
-        context["products"] = self.products
+    def get_options(self):
+        """Return a dict of applicable product options."""
         options = {
-            o.option_name: {}
+            o.option_name: defaultdict(list)
             for o in self.product_range.options
             if o.is_web_shop_select
         }
         for product in self.products:
             for o in [x for x in product.options if x.value]:
                 if o.option_name in options:
-                    value = o.value.value
-                    if value in options[o.option_name]:
-                        options[o.option_name][value].append(product.id)
-                    else:
-                        options[o.option_name][value] = [product.id]
+                    options[o.option_name] = o.value.value
+        return options
+
+    def get_context_data(self, *args, **kwargs):
+        """Get template context data."""
+        self.get_products()
+        options = self.get_options()
+        context = super().get_context_data(*args, **kwargs)
+        context["product_range"] = self.product_range
+        context["products"] = self.products
         context["options"] = options
         context["stcadmin_images"] = STCAdminImage.objects.filter(
             range_id=self.range_id
@@ -70,6 +72,7 @@ class ImageFormView(InventoryUserMixin, FormView):
 
     def form_valid(self, form):
         """Process form request and return HttpResponse."""
+        self.get_products()
         product_ids = json.loads(form.cleaned_data["product_ids"])
         cc_files = self.request.FILES.getlist("cloud_commerce_images")
         stcadmin_images = self.request.FILES.getlist("stcadmin_images")

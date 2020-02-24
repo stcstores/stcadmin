@@ -163,7 +163,7 @@ class ProductSearchForm(forms.Form):
         help_text="Hide ranges with no items in stock.",
     )
 
-    selectable_options = (
+    selectable_options = [
         "WooCategory1",
         "WooCategory2",
         "WooCategory3",
@@ -173,7 +173,7 @@ class ProductSearchForm(forms.Form):
         "Discontinued",
         "Package Type",
         "International Shipping",
-    )
+    ]
 
     def __init__(self, *args, **kwargs):
         """Add advanced option field."""
@@ -194,8 +194,7 @@ class ProductSearchForm(forms.Form):
         self.fields["advanced_option"] = OptionSelectField(
             label="Product Option",
             required=False,
-            help_text="Search for products with a particular \
-                <b>Product Option</b>",
+            help_text="Search for products with a particular <b>Product Option</b>",
             option_choices=option_choices,
             option_value_choices=option_value_choices,
             option_matches=option_matches,
@@ -204,9 +203,9 @@ class ProductSearchForm(forms.Form):
     def clean(self):
         """Clean submitted data."""
         cleaned_data = super().clean()
-        if cleaned_data["search_type"] == self.BASIC:
+        if cleaned_data.get("search_type") == self.BASIC:
             cleaned_data = self.clean_basic_search(cleaned_data)
-        elif cleaned_data["search_type"] == self.ADVANCED:
+        elif cleaned_data.get("search_type") == self.ADVANCED:
             cleaned_data = self.clean_advanced_search(cleaned_data)
         else:
             raise ValidationError("No valid search type supplied.")
@@ -229,8 +228,8 @@ class ProductSearchForm(forms.Form):
     def clean_advanced_search(self, data):
         """Add ranges according to advanced search."""
         search_text = data.get("advanced_search_text")
-        option_id = data.get("advanced_option", None)
-        if len(search_text) == 0 and option_id == 0:
+        option_id = data.get("advanced_option")
+        if not search_text and not option_id:
             raise ValidationError(
                 "Either search text or an option must be supplied for "
                 "Advanced Search"
