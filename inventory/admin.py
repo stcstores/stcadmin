@@ -6,16 +6,6 @@ from django.contrib import admin
 from inventory import models
 
 
-@admin.register(models.STCAdminImage)
-class STCAdminImageAdmin(admin.ModelAdmin):
-    """ModelAdmin for the STCAdminImage model."""
-
-    fields = ["range_id", "image"]
-    list_display = ["id", "__str__", "range_id", "image"]
-    list_display_links = ("__str__",)
-    list_editable = ("range_id", "image")
-
-
 @admin.register(models.Barcode)
 class BarcodeAdmin(admin.ModelAdmin):
     """ModelAdmin for the Barcode model."""

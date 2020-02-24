@@ -4,26 +4,12 @@ import json
 from collections import defaultdict
 
 from ccapi import CCAPI
-from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic.base import RedirectView
 from django.views.generic.edit import FormView
 
 from inventory.forms import ImagesForm
-from inventory.models import STCAdminImage
 
 from .views import InventoryUserMixin
-
-
-class DeleteSTCAdminImage(InventoryUserMixin, RedirectView):
-    """Delete image from Product."""
-
-    def get_redirect_url(self, image_id):
-        """Return URL to redirect to."""
-        stcadmin_image = get_object_or_404(STCAdminImage, pk=image_id)
-        range_id = stcadmin_image.range_id
-        stcadmin_image.delete()
-        return reverse_lazy("inventory:images", kwargs={"range_id": range_id})
 
 
 class ImageFormView(InventoryUserMixin, FormView):
@@ -36,6 +22,7 @@ class ImageFormView(InventoryUserMixin, FormView):
         """Retrive product details from Cloud Commerce."""
         self.range_id = self.kwargs.get("range_id")
         self.product_range = CCAPI.get_range(self.range_id)
+        print(self.product_range)
         self.products = self.product_range.products
         for product in self.products:
             product.images = product.get_images()
@@ -61,9 +48,7 @@ class ImageFormView(InventoryUserMixin, FormView):
         context["product_range"] = self.product_range
         context["products"] = self.products
         context["options"] = options
-        context["stcadmin_images"] = STCAdminImage.objects.filter(
-            range_id=self.range_id
-        )
+        print(context["product_range"])
         return context
 
     def get_success_url(self):
@@ -75,10 +60,7 @@ class ImageFormView(InventoryUserMixin, FormView):
         self.get_products()
         product_ids = json.loads(form.cleaned_data["product_ids"])
         cc_files = self.request.FILES.getlist("cloud_commerce_images")
-        stcadmin_images = self.request.FILES.getlist("stcadmin_images")
         for image in cc_files:
             image_file = image
             CCAPI.upload_image(product_ids=product_ids, image_file=image_file)
-        for image in stcadmin_images:
-            STCAdminImage(range_id=self.range_id, image=image).save()
         return super().form_valid(form)

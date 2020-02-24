@@ -25,11 +25,6 @@ inventory_urlpatterns = [
     ),
     path("sku_generator/", views.SKUGeneratorView.as_view(), name="sku_generator"),
     path(
-        "delete_stcadmin_image/<int:image_id>/",
-        views.DeleteSTCAdminImage.as_view(),
-        name="delete_stcadmin_image",
-    ),
-    path(
         "print_barcodes/<int:range_id>/",
         views.PrintBarcodeLabels.as_view(),
         name="print_barcodes",
