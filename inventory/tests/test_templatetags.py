@@ -33,20 +33,6 @@ class TestCCPProductPage(STCAdminTest):
         self.assertEqual(return_value, result)
 
 
-class TestCCPOrderPage(STCAdminTest):
-    @patch("inventory.templatetags.inventory_extras.URLs")
-    def test_ccp_product_page(self, mock_URLs):
-        order_ID = "464615616"
-        customer_ID = "586114466"
-        return_value = inventory_extras.SUBDOMAIN + order_ID + customer_ID
-        mock_URLs.order_url.return_value = return_value
-        result = inventory_extras.ccp_order_page(order_ID, customer_ID)
-        mock_URLs.order_url.assert_called_once_with(
-            inventory_extras.SUBDOMAIN, order_ID, customer_ID
-        )
-        self.assertEqual(return_value, result)
-
-
 class TestWarehouses(STCAdminTest):
     @classmethod
     def setUpTestData(cls):

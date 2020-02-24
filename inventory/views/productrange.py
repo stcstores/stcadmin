@@ -3,26 +3,31 @@
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import FormView
 
 from inventory import forms, models
 
 from .views import InventoryUserMixin
 
 
-class ProductRangeView(InventoryUserMixin, FormView):
+class ProductRangeView(InventoryUserMixin, TemplateView):
     """Product Range page view."""
 
     template_name = "inventory/product_range/product_range.html"
     form_class = forms.ProductRangeForm
 
-    def dispatch(self, *args, **kwargs):
+    def get(self, *args, **kwargs):
         """Process HTTP request."""
+        self.get_range()
+        if self.product_range is None or self.product_range.id == 0:
+            return self.range_error()
+        return super().get(*args, **kwargs)
+
+    def get_range(self):
+        """Get product range details from Cloud Commerce."""
         self.range_id = self.kwargs.get("range_id")
         self.product_range = get_object_or_404(
             models.ProductRange, range_ID=self.kwargs["range_id"]
         )
-        return super().dispatch(*args, **kwargs)
 
     def get_initial(self):
         """Get initial data for form."""

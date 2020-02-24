@@ -44,13 +44,16 @@ class LocationFormView(InventoryUserMixin, TemplateView):
                 for p in self.product_range.products()
             ],
         )
-        if self.formset.is_valid():
-            for form in self.formset:
-                form.save()
-            messages.add_message(self.request, messages.SUCCESS, "Locations Updated")
-            return redirect(self.get_success_url())
-        else:
-            return super().get(*args, **kwargs)
+        if self.department_form.is_valid():
+            self.department_form.save()
+            if self.bay_formset.is_valid():
+                for form in self.bay_formset:
+                    form.save()
+                messages.add_message(
+                    self.request, messages.SUCCESS, "Locations Updated"
+                )
+                return redirect(self.get_success_url())
+        return super().get(*args, **kwargs)
 
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""

@@ -6,10 +6,12 @@ from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
 class TestProductImage(STCAdminTest, fixtures.SingleProductRangeFixture):
-    fixtures = fixtures.SingleProductRangeFixture.fixtures
+    fixtures = fixtures.SingleProductRangeFixture.fixtures + (
+        "inventory/product_image",
+    )
 
     @patch("inventory.models.product_image.CCAPI")
-    def test_update_CC_image_order_method(self, mock_CCAPI):
+    def test_create_object(self, mock_CCAPI):
         image_IDs = ["380929", "284930", "402928", "2948729"]
         for i, image_ID in enumerate(image_IDs):
             models.ProductImage(
@@ -19,7 +21,16 @@ class TestProductImage(STCAdminTest, fixtures.SingleProductRangeFixture):
                 URL=f"http://image_server.com/{image_ID}.jpg",
                 position=i,
             ).save()
-        models.ProductImage.update_CC_image_order(self.product)
+
+    @patch("inventory.models.product_image.CCAPI")
+    def test_update_image_order(self, mock_CCAPI):
+        product = models.Product.objects.get(id=1)
+        image_IDs = list(
+            models.ProductImage.objects.filter(product=product).values_list(
+                "image_ID", flat=True
+            )
+        )
+        models.ProductImage.update_CC_image_order(product)
         mock_CCAPI.set_image_order.assert_called_once_with(
-            product_id=self.product.product_ID, image_ids=image_IDs
+            product_id=product.product_ID, image_ids=image_IDs
         )

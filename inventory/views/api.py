@@ -15,31 +15,31 @@ from inventory import models
 from .views import InventoryUserMixin
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class GetNewSKUView(InventoryUserMixin, View):
     """Return new Product SKU."""
 
-    @method_decorator(csrf_exempt)
-    def post(self, request):
-        """Process HTTP request."""
+    def post(*args, **kwargs):
+        """Return a new product SKU."""
         sku = CCAPI.get_sku(range_sku=False)
         return HttpResponse(sku)
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class GetNewRangeSKUView(InventoryUserMixin, View):
     """Return new Product Range SKU."""
 
-    @method_decorator(csrf_exempt)
-    def post(self, request):
+    def post(self, *args, **kwargs):
         """Process HTTP request."""
         sku = CCAPI.get_sku(range_sku=True)
         return HttpResponse(sku)
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class UpdateStockLevelView(InventoryUserMixin, View):
     """Update product stock level."""
 
-    @method_decorator(csrf_exempt)
-    def post(self, request):
+    def post(self, *args, **kwargs):
         """Process HTTP request."""
         product_ID = self.request.POST["product_ID"]
         product = get_object_or_404(models.Product, product_ID=product_ID)
@@ -63,12 +63,12 @@ class GetStockLevelView(InventoryUserMixin, View):
         return HttpResponse(json.dumps(response_data))
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class SetImageOrderView(InventoryUserMixin, View):
     """Change order of images for a product."""
 
-    @method_decorator(csrf_exempt)
     @transaction.atomic
-    def post(self, request):
+    def post(self, *args, **kwargs):
         """Process HTTP request."""
         try:
             data = json.loads(self.request.body)
@@ -86,11 +86,11 @@ class SetImageOrderView(InventoryUserMixin, View):
         return HttpResponse("ok")
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class DeleteImage(InventoryUserMixin, View):
     """Remove image from a product."""
 
-    @method_decorator(csrf_exempt)
-    def post(self, request):
+    def post(self, *args, **kwargs):
         """Process HTTP request."""
         try:
             data = json.loads(self.request.body)

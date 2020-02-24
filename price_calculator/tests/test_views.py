@@ -60,7 +60,7 @@ class TestPriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
 class TestRangePriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
     fixtures = (
         "inventory/product_requirements",
-        "inventory/locations",
+        "inventory/location",
         "inventory/variation_product_range",
         "shipping/currency",
         "shipping/country",

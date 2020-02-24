@@ -515,8 +515,22 @@ class TestExportOrdersView(OrderViewTest, ViewTests):
         country = Country.objects.get(name="United Kingdom")
         response = self.client.get(self.URL, {"country": country.id})
         header, rows = self.read_csv(response)
+        self.assertEqual(views.ExportOrders.header, header)
         self.assertEqual(
             models.Order.dispatched.filter(country=country).count(), len(rows)
+        )
+        order = models.Order.objects.get(order_ID=rows[0][0])
+        self.assertEqual(
+            [
+                order.order_ID,
+                order.recieved_at.strftime("%Y-%m-%d"),
+                order.country.name,
+                order.channel.name,
+                order.tracking_number,
+                order.shipping_rule.name,
+                order.courier_service.name,
+            ],
+            rows[0],
         )
 
     def test_filter_by_date(self):

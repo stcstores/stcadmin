@@ -1,11 +1,24 @@
 from unittest.mock import Mock, patch
 
+from django.contrib.auth.models import Group
+
 from inventory import forms, models
 from inventory.tests import fixtures
 from inventory.views import views
 from stcadmin.tests.stcadmin_test import STCAdminTest, ViewTests
 
-from .inventory_view_test import InventoryViewTest
+
+class InventoryViewTest(STCAdminTest):
+    group_name = "inventory"
+
+    def setUp(self):
+        self.create_user()
+        group = Group.objects.get(name=self.group_name)
+        group.user_set.add(self.user)
+        self.login_user()
+
+    def remove_group(self):
+        super().remove_group(self.group_name)
 
 
 class TestInventoryUserMixin(STCAdminTest):

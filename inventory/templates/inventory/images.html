@@ -20,15 +20,10 @@
         vertical-align: middle;
     }
 
-    .delete_image, .delete_stcadmin_image {
+    .delete_image, {
         font-weight: bold;
         color: red;
         font-size: 1.1em;
-    }
-
-    .stcadmin_image {
-        display: inline-block;
-        text-align: center;
     }
 </style>
 
@@ -66,24 +61,6 @@
         </tr>
     {% endfor %}
 </table>
-{% if stcadmin_images %}
-<br>
-<h3>STC Admin Images</h3>
-<div>
-    {% for image in stcadmin_images %}
-        <div class="stcadmin_image">
-            <a class="image_id" href="{{ image.image.url }}" target="_blank">
-                <img src="{{ image.image.url }}" alt="{{ image.id }}" height="100">
-            </a>
-            <p>
-                <a href="{% url 'inventory:delete_stcadmin_image' image.id %}">
-                    <button class="delete_stcadmin_image">&times;</button>
-                </a>
-            </p>
-        </div>
-    {% endfor %}
-</div>
-{% endif %}
 {% endblock %}
 
 {% block script %}{{ block.super }}
@@ -192,10 +169,6 @@ $(document).ready(function() {
     });
 
     $('#{{ form.cloud_commerce_images.auto_id }}').change(function() {
-        $(this).closest('form').submit();
-    });
-
-    $('#{{ form.stcadmin_images.auto_id }}').change(function() {
         $(this).closest('form').submit();
     });
 

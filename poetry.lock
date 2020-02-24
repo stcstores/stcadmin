@@ -123,7 +123,7 @@ pyyaml = "^5.3"
 requests = "^2.22.0"
 
 [package.source]
-reference = "e78d7175ec583a20c41f30091eca802a9691af47"
+reference = "2cc37f239bf649e4e157be23f2e4717a7824aa31"
 type = "git"
 url = "https://github.com/stcstores/ccapi.git"
 [[package]]
@@ -176,7 +176,7 @@ description = "Show coverage stats online via coveralls.io"
 name = "coveralls"
 optional = false
 python-versions = "*"
-version = "1.11.0"
+version = "1.11.1"
 
 [package.dependencies]
 coverage = ">=3.6,<6.0"
@@ -516,7 +516,7 @@ ccapi = "branch master"
 tabler = "^2.4.0"
 
 [package.source]
-reference = "dd686874a4a5c292fdd1488241023e7f4dfe17a2"
+reference = "00a21867a38891201ca852d357ff29afaa1ede17"
 type = "git"
 url = "https://github.com/stcstores/order_profit.git"
 [[package]]
@@ -1048,8 +1048,8 @@ coverage = [
     {file = "coverage-5.0.3.tar.gz", hash = "sha256:77afca04240c40450c331fa796b3eab6f1e15c5ecf8bf2b8bee9706cd5452fef"},
 ]
 coveralls = [
-    {file = "coveralls-1.11.0-py2.py3-none-any.whl", hash = "sha256:0a102a9326933e23213f29103b08f148c97fc3128292c3aa24fae1e773940650"},
-    {file = "coveralls-1.11.0.tar.gz", hash = "sha256:b4b21b15f4a5297794b5393cc40f720ef70c50f20772325d26965d96000ce0ca"},
+    {file = "coveralls-1.11.1-py2.py3-none-any.whl", hash = "sha256:4b6bfc2a2a77b890f556bc631e35ba1ac21193c356393b66c84465c06218e135"},
+    {file = "coveralls-1.11.1.tar.gz", hash = "sha256:67188c7ec630c5f708c31552f2bcdac4580e172219897c4136504f14b823132f"},
 ]
 defusedxml = [
     {file = "defusedxml-0.6.0-py2.py3-none-any.whl", hash = "sha256:6687150770438374ab581bb7a1b327a847dd9c5749e396102de3fad4e8a3ef93"},

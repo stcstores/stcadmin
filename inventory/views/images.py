@@ -10,7 +10,6 @@ from django.views.generic.edit import FormView
 
 from inventory import models
 from inventory.forms import ImagesForm
-from inventory.models import cloud_commerce_importer
 
 from .views import InventoryUserMixin
 
@@ -21,14 +20,13 @@ class ImageFormView(InventoryUserMixin, FormView):
     template_name = "inventory/product_range/images.html"
     form_class = ImagesForm
 
-    def dispatch(self, *args, **kwargs):
-        """Process HTTP request."""
+    def get_products(self):
+        """Retrive product details from Cloud Commerce."""
         self.range_id = self.kwargs.get("range_id")
         self.product_range = get_object_or_404(
             models.ProductRange, range_ID=self.range_id
         )
         self.products = self.product_range.product_set.all()
-        return super().dispatch(*args, **kwargs)
 
     def get_options(self):
         """Return variation data for the products."""
@@ -64,5 +62,7 @@ class ImageFormView(InventoryUserMixin, FormView):
         for image_file in cc_files:
             CCAPI.upload_image(product_ids=product_IDs, image_file=image_file)
         for product in products:
-            cloud_commerce_importer.import_product_images_from_cloud_commerce(product)
+            models.cloud_commerce_importer.import_product_images_from_cloud_commerce(
+                product
+            )
         return super().form_valid(form)

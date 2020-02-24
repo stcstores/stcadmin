@@ -2,7 +2,7 @@ from inventory import models
 
 
 class LocationsFixture:
-    fixtures = ("inventory/locations",)
+    fixtures = ("inventory/location",)
 
     @property
     def warehouse_1(self):

@@ -10,7 +10,7 @@ from inventory.tests import fixtures
 from product_editor.editor_manager import ProductEditorBase
 from stcadmin.tests.stcadmin_test import ViewTests
 
-from .inventory_view_test import InventoryViewTest
+from .test_views import InventoryViewTest
 
 
 class TestContinueView(InventoryViewTest, fixtures.MultipleRangesFixture, ViewTests):

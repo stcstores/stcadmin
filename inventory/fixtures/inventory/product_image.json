@@ -1,0 +1,21 @@
+[{
+    "model": "inventory.productimage",
+    "pk": 1,
+    "fields": {
+        "image_ID": "235324324",
+        "product": 1,
+        "filename": "image.jpg",
+        "URL": "http://server.example.com/image.jpg",
+        "position": 1
+    }
+}, {
+    "model": "inventory.productimage",
+    "pk": 2,
+    "fields": {
+        "image_ID": "235364646",
+        "product": 1,
+        "filename": "image_2.jpg",
+        "URL": "http://server.example.com/image.jpg",
+        "position": 2
+    }
+}]
