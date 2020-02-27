@@ -31,6 +31,7 @@ urlpatterns = [
     path("epos/", include("epos.urls", namespace="epos")),
     path("feedback/", include("feedback.urls", namespace="feedback")),
     path("orders/", include("orders.urls", namespace="orders")),
+    path("fnac/", include("fnac.urls", namespace="fnac")),
     path("", include("home.urls", namespace="home")),
     path(
         "password_change_done/",
