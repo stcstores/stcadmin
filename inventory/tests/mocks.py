@@ -84,6 +84,21 @@ class MockProductOption:
             yield value
 
 
+class MockProductOptions:
+    def __init__(self, options=None):
+        self.options = options or [MockProductOption()]
+        self.option_lookup = {option.option_name: option for option in self.options}
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return self.options[key]
+        return self.option_lookup[key]
+
+    def __iter_(self):
+        for option in self.options:
+            yield option
+
+
 class MockProductOptionValue:
     def __init__(self, id=None, value=None, option_name=None):
         self.id = id or get_id()
@@ -129,25 +144,34 @@ class MockCCProductsSupplier:
 
 class MockCCProductProductOptions:
     def __init__(self, options=None):
-        options = options or [MockProductOption()]
+        options = options or [MockProductOptionValue()]
         self.options = {option.option_name: option for option in options}
 
     def __getitem__(self, key):
+        if isinstance(key, int):
+            return list(self.options.values())[key]
         return self.options[key]
 
     def __setitem__(self, key, value):
         self.options[key] = value
+
+    def __iter__(self):
+        for option in list(self.options.values()):
+            yield option.option_name, option.value
 
 
 class MockCCProductsProduct:
     def __init__(
         self,
         id=None,
-        name=None,
-        full_name=None,
+        name="Mock Product",
+        full_name="Mock Product - Red - Green",
         product_range=None,
+        barcode="153487314813",
+        brand="Test Brand",
+        manufacturer="Test Manufacturer",
         stock_level=5,
-        vat_rate=None,
+        vat_rate=5,
         retail_price=24.95,
         price=12.50,
         purcahse_price=5.75,
@@ -156,21 +180,25 @@ class MockCCProductsProduct:
         length=150,
         height=335,
         weight=100,
-        package_type=None,
+        package_type="Large Letter",
         supplier=None,
-        supplier_sku=None,
-        department=None,
+        supplier_sku="TY84938",
+        department="Sports",
         options=None,
         amazon_bullets=None,
         amazon_search_terms=None,
+        gender="mens",
     ):
         self.id = id or get_id()
-        self.name = name or "Mock Product"
-        self.full_name = full_name or "Mock Product - Red - Green"
+        self.name = name
+        self.full_name = full_name
         self.product_range = product_range or MockCCProductsProductRange()
         self.range_id = self.product_range.id
+        self.barcode = barcode
+        self.brand = brand
+        self.manufacturer = manufacturer
         self.stock_level = stock_level
-        self.vat_rate = vat_rate or 5
+        self.vat_rate = vat_rate
         self.price = price
         self.bays = bays or [get_id()]
         self.width = width
@@ -179,10 +207,10 @@ class MockCCProductsProduct:
         self.weight = weight
         self.purchase_price = purcahse_price
         self.retail_price = retail_price
-        self.package_type = package_type or "Large Letter"
+        self.package_type = package_type
         self.supplier = supplier or MockCCProductsSupplier()
-        self.supplier_sku = supplier_sku or "TY84938"
-        self.department = department or "Sports"
+        self.supplier_sku = supplier_sku
+        self.department = department
         self.options = (
             MockCCProductProductOptions(options) or MockCCProductProductOptions()
         )
@@ -199,3 +227,4 @@ class MockCCProductsProduct:
             "Light",
             "Well rounded",
         ]
+        self.gender = gender

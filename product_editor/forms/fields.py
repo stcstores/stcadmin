@@ -295,8 +295,8 @@ class PackageType(fieldtypes.SingleSelectize):
     def get_choices():
         """Return choices for field."""
         package_types = [
-            (service.value, service.value)
-            for service in CCAPI.get_option_values("33852")
+            (service.name, service.name)
+            for service in models.PackageType.objects.filter(inactive=False)
         ]
         return [("", "")] + package_types
 
