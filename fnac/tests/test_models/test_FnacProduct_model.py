@@ -81,16 +81,29 @@ def test_FnacProduct_brand_field(make_fnac_product):
 
 
 @pytest.mark.django_db
-def test_FnacProduct_size_field(make_fnac_product, make_size):
-    size = make_size()
-    product = make_fnac_product(size=size)
-    assert product.size == size
+def test_FnacProduct_english_size_field(make_fnac_product):
+    english_size = "Medium"
+    product = make_fnac_product(english_size=english_size)
+    assert product.english_size == english_size
 
 
 @pytest.mark.django_db
-def test_FnacProduct_size_field_can_be_null(make_fnac_product):
-    product = make_fnac_product(size=None)
-    assert product.size is None
+def test_FnacProduct_english_size_field_can_be_null(make_fnac_product):
+    product = make_fnac_product(english_size=None)
+    assert product.english_size is None
+
+
+@pytest.mark.django_db
+def test_FnacProduct_french_size_field(make_fnac_product, make_size):
+    french_size = make_size()
+    product = make_fnac_product(french_size=french_size)
+    assert product.french_size == french_size
+
+
+@pytest.mark.django_db
+def test_FnacProduct_french_size_field_can_be_null(make_fnac_product):
+    product = make_fnac_product(french_size=None)
+    assert product.french_size is None
 
 
 @pytest.mark.django_db
