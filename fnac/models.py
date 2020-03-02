@@ -44,7 +44,7 @@ class FnacProduct(models.Model):
     fnac_range = models.ForeignKey(FnacRange, on_delete=models.CASCADE)
     barcode = models.CharField(max_length=15)
     description = models.TextField()
-    price = models.PositiveIntegerField()
+    price = models.PositiveIntegerField(blank=True, null=True)
     brand = models.CharField(max_length=255)
     colour = models.CharField(max_length=255)
     size = models.ForeignKey(Size, on_delete=models.PROTECT, blank=True, null=True)

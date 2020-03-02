@@ -68,6 +68,12 @@ def test_FnacProduct_price_field(make_fnac_product):
 
 
 @pytest.mark.django_db
+def test_FnacProduct_price_field_can_be_null(make_fnac_product):
+    product = make_fnac_product(price=None)
+    assert product.price is None
+
+
+@pytest.mark.django_db
 def test_FnacProduct_brand_field(make_fnac_product):
     brand = "Stockist"
     product = make_fnac_product(brand=brand)
