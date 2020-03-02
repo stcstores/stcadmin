@@ -48,3 +48,37 @@ def make_fnac_range(make_category):
         return fnac_range
 
     return _fnac_range
+
+
+@pytest.fixture
+def make_fnac_product(make_fnac_range):
+    def _make_fnac_product(
+        name="Test Product",
+        sku="ABC-678-CDF",
+        fnac_range=None,
+        barcode="985161566",
+        description="A product\nIt's good.",
+        colour="Red",
+        price=455,
+        brand="Stock Inc",
+        stock_level=54,
+        do_not_create=False,
+        created=False,
+    ):
+        fnac_product = models.FnacProduct(
+            name=name,
+            sku=sku,
+            fnac_range=fnac_range or make_fnac_range(),
+            barcode=barcode,
+            description=description,
+            colour=colour,
+            price=price,
+            brand=brand,
+            stock_level=stock_level,
+            do_not_create=do_not_create,
+            created=created,
+        )
+        fnac_product.save()
+        return fnac_product
+
+    return _make_fnac_product

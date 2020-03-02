@@ -34,3 +34,22 @@ class FnacRange(models.Model):
 
     def __str__(self):
         return f"{self.sku} - {self.name}"
+
+
+class FnacProduct(models.Model):
+    """Model for FNAC products."""
+
+    name = models.CharField(max_length=255, unique=True)
+    sku = models.CharField(max_length=255, unique=True)
+    fnac_range = models.ForeignKey(FnacRange, on_delete=models.CASCADE)
+    barcode = models.CharField(max_length=15)
+    description = models.TextField()
+    price = models.PositiveIntegerField()
+    brand = models.CharField(max_length=255)
+    colour = models.CharField(max_length=255)
+    stock_level = models.IntegerField()
+    do_not_create = models.BooleanField(default=False)
+    created = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.sku} - {self.name}"
