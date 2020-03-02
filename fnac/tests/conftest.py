@@ -82,3 +82,23 @@ def make_fnac_product(make_fnac_range):
         return fnac_product
 
     return _make_fnac_product
+
+
+@pytest.fixture
+def make_translation(make_fnac_product):
+    def _make_translation(
+        product=None,
+        name="Nom on Francais",
+        description="Un Product\nBien",
+        colour="Rouge",
+    ):
+        translation = models.Translation(
+            product=product or make_fnac_product(),
+            name=name,
+            description=description,
+            colour=colour,
+        )
+        translation.save()
+        return translation
+
+    return _make_translation

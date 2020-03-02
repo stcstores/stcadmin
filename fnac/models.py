@@ -53,3 +53,15 @@ class FnacProduct(models.Model):
 
     def __str__(self):
         return f"{self.sku} - {self.name}"
+
+
+class Translation(models.Model):
+    """Model for FNAC product name, description and colour translations."""
+
+    product = models.OneToOneField(FnacProduct, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    colour = models.CharField(max_length=255)
+
+    def __repr__(self):
+        return f"<Translations for {self.product}>"
