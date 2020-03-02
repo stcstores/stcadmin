@@ -29,7 +29,7 @@ class FnacRangeAdmin(admin.ModelAdmin):
 
     fields = ("name", "sku", "category")
     list_display = ("__str__", "name", "sku", "category")
-    list_editable = ("__str__", "name", "sku", "category")
+    list_editable = ("name", "sku", "category")
 
 
 @admin.register(models.FnacProduct)

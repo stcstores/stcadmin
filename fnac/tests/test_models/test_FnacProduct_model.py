@@ -17,14 +17,6 @@ def test_FnacProduct_has_sku(make_fnac_product):
 
 
 @pytest.mark.django_db
-def test_FnacProduct_name_field_is_unique(make_fnac_product):
-    name = "Test Name"
-    make_fnac_product(name=name)
-    with pytest.raises(IntegrityError):
-        make_fnac_product(name=name)
-
-
-@pytest.mark.django_db
 def test_FnacProduct_sku_field_is_unique(make_fnac_product):
     sku = "RNG_ABC-DEF-123"
     make_fnac_product(sku=sku)

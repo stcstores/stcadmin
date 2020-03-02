@@ -46,12 +46,18 @@ class ProductExport(models.Model):
         return Table(self.export_file.path)
 
     @classmethod
+    def latest_export(cls):
+        """Return the latest product export."""
+        return cls.objects.latest("timestamp")
+
+    @classmethod
     def save_new_export(cls, path=None):
         """Create, download and save a Cloud Commerce Pro product export.
 
         Args:
             path (pathlib.Path): The path to save the export. If it is a directory the
                 export name will be used as a file name.
+
         """
         export_info = cls._new_export()
         cls._save_export_file(export_info, path)
