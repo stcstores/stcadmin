@@ -75,6 +75,19 @@ def test_FnacProduct_brand_field(make_fnac_product):
 
 
 @pytest.mark.django_db
+def test_FnacProduct_size_field(make_fnac_product, make_size):
+    size = make_size()
+    product = make_fnac_product(size=size)
+    assert product.size == size
+
+
+@pytest.mark.django_db
+def test_FnacProduct_size_field_can_be_null(make_fnac_product):
+    product = make_fnac_product(size=None)
+    assert product.size is None
+
+
+@pytest.mark.django_db
 def test_FnacProduct_stock_level_field(make_fnac_product):
     stock_level = 63
     product = make_fnac_product(stock_level=stock_level)
