@@ -46,7 +46,7 @@ class FnacProduct(models.Model):
     description = models.TextField()
     price = models.PositiveIntegerField(blank=True, null=True)
     brand = models.CharField(max_length=255)
-    colour = models.CharField(max_length=255)
+    colour = models.CharField(max_length=255, blank=True, null=True)
     english_size = models.CharField(max_length=255, blank=True, null=True)
     french_size = models.ForeignKey(
         Size, on_delete=models.PROTECT, blank=True, null=True

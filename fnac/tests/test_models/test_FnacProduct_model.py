@@ -61,6 +61,12 @@ def test_FnacProduct_colour_field(make_fnac_product):
 
 
 @pytest.mark.django_db
+def test_FnacProduct_colour_field_can_be_null(make_fnac_product):
+    product = make_fnac_product(colour=None)
+    assert product.colour is None
+
+
+@pytest.mark.django_db
 def test_FnacProduct_price_field(make_fnac_product):
     price = 5511
     product = make_fnac_product(price=price)
