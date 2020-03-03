@@ -240,3 +240,11 @@ def test_clean_brand(brand, expected):
 )
 def test_clean_images(image_field_contents, expected):
     assert models._InventoryUpdate.clean_images(image_field_contents) == expected
+
+
+@pytest.mark.django_db
+def test_update_inventory_accepts_update_file(inventory_file):
+    sku = "999-999-999"
+    inventory_file[0]["RNG_SKU"] = sku
+    models.update_inventory(inventory_file=inventory_file)
+    assert models.FnacRange.objects.filter(sku=sku).count() == 1

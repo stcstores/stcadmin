@@ -77,9 +77,9 @@ class Translation(models.Model):
         return f"<Translations for {self.product}>"
 
 
-def update_inventory():
+def update_inventory(inventory_file=None):
     """Update FnacRange and FnacProduct from an inventory export."""
-    _InventoryUpdate()
+    _InventoryUpdate(inventory_file=inventory_file)
 
 
 class _InventoryUpdate:
@@ -95,8 +95,9 @@ class _InventoryUpdate:
     STOCK_COLUMN = "VAR_Stock"
     IMAGE_COLUMN = "VAR_IMG"
 
-    def __init__(self):
+    def __init__(self, inventory_file=None):
         self.updated_range_skus = []
+        self.inventory_file = inventory_file or self.get_inventory_file()
         self.update_products()
 
     @staticmethod
@@ -104,8 +105,7 @@ class _InventoryUpdate:
         return ProductExport.latest_export().as_table()
 
     def update_products(self):
-        inventory = self.get_inventory_file()
-        for row in inventory:
+        for row in self.inventory_file:
             fnac_range = self.create_or_update_range_from_inventory_row(row)
             self.create_or_update_product_from_inventory_row(row, fnac_range)
 
