@@ -1,5 +1,6 @@
 """Models for the fnac app."""
 
+from django.conf import settings
 from django.db import models
 
 from inventory.models import ProductExport
@@ -93,6 +94,7 @@ class _InventoryUpdate:
     BRAND_COLUMN = "OPT_Brand"
     SIZE_COLUMN = "OPT_Size_DRD"
     STOCK_COLUMN = "VAR_Stock"
+    IMAGE_COLUMN = "VAR_IMG"
 
     def __init__(self):
         self.updated_range_skus = []
@@ -143,6 +145,7 @@ class _InventoryUpdate:
         return {"name": row[self.RANGE_NAME_COLUMN], "sku": row[self.RANGE_SKU_COLUMN]}
 
     def get_fnac_product_kwargs(self, row):
+        images = self.clean_images(row[self.IMAGE_COLUMN])
         return {
             "name": row[self.NAME_COLUMN],
             "sku": row[self.SKU_COLUMN],
@@ -152,6 +155,10 @@ class _InventoryUpdate:
             "brand": self.clean_brand(row[self.BRAND_COLUMN]),
             "english_size": row[self.SIZE_COLUMN],
             "stock_level": row[self.STOCK_COLUMN],
+            "image_1": images[0],
+            "image_2": images[1],
+            "image_3": images[2],
+            "image_4": images[3],
         }
 
     @staticmethod
@@ -172,3 +179,13 @@ class _InventoryUpdate:
         if not brand or brand == "Unbranded":
             return "Aucun"
         return brand
+
+    @staticmethod
+    def clean_images(image_field_contents):
+        images = [
+            settings.CC_IMAGE_URL + image.strip()
+            for image in image_field_contents.split("|")
+        ]
+        while len(images) < 4:
+            images.append("")
+        return images[:4]
