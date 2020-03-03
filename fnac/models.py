@@ -1,6 +1,5 @@
 """Models for the fnac app."""
 
-from django.conf import settings
 from django.db import models
 
 from inventory.models import ProductExport
@@ -55,10 +54,10 @@ class FnacProduct(models.Model):
         Size, on_delete=models.PROTECT, blank=True, null=True
     )
     stock_level = models.IntegerField()
-    image_1 = models.URLField()
-    image_2 = models.URLField()
-    image_3 = models.URLField()
-    image_4 = models.URLField()
+    image_1 = models.CharField(max_length=20, blank=True)
+    image_2 = models.CharField(max_length=20, blank=True)
+    image_3 = models.CharField(max_length=20, blank=True)
+    image_4 = models.CharField(max_length=20, blank=True)
     do_not_create = models.BooleanField(default=False)
     created = models.BooleanField(default=False)
 
@@ -182,10 +181,7 @@ class _InventoryUpdate:
 
     @staticmethod
     def clean_images(image_field_contents):
-        images = [
-            settings.CC_IMAGE_URL + image.strip()
-            for image in image_field_contents.split("|")
-        ]
+        images = [image.strip() for image in image_field_contents.split("|")]
         while len(images) < 4:
             images.append("")
         return images[:4]

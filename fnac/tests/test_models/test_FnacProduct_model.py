@@ -4,7 +4,7 @@ from django.db.utils import IntegrityError
 
 @pytest.fixture
 def test_image_url():
-    return "https://image.cdn.com/92849.jpg"
+    return "92849.jpg"
 
 
 @pytest.mark.django_db

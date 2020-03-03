@@ -2,7 +2,6 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
-from django.conf import settings
 from tabler import Table
 
 from fnac import models
@@ -135,12 +134,12 @@ def test_fnac_product_stock_level_set(created_fnac_product, inventory_file):
 
 @pytest.mark.django_db
 def test_fnac_product_image_1_field_set(created_fnac_product, inventory_file):
-    assert created_fnac_product.image_1 == settings.CC_IMAGE_URL + "19796021.jpg"
+    assert created_fnac_product.image_1 == "19796021.jpg"
 
 
 @pytest.mark.django_db
 def test_fnac_product_image_2_field_set(created_fnac_product, inventory_file):
-    assert created_fnac_product.image_2 == settings.CC_IMAGE_URL + "33125872.jpg"
+    assert created_fnac_product.image_2 == "33125872.jpg"
 
 
 @pytest.mark.django_db
@@ -213,52 +212,27 @@ def test_clean_brand(brand, expected):
 @pytest.mark.parametrize(
     "image_field_contents,expected",
     [
-        ("9481616416.jpg", [settings.CC_IMAGE_URL + "9481616416.jpg", "", "", ""]),
+        ("9481616416.jpg", ["9481616416.jpg", "", "", ""]),
         (
             "9481616416.jpg|94816418916.jpg",
-            [
-                settings.CC_IMAGE_URL + "9481616416.jpg",
-                settings.CC_IMAGE_URL + "94816418916.jpg",
-                "",
-                "",
-            ],
+            ["9481616416.jpg", "94816418916.jpg", "", ""],
         ),
         (
             "9481616416.jpg|48941818949.jpg|94198418189.jpg",
-            [
-                settings.CC_IMAGE_URL + "9481616416.jpg",
-                settings.CC_IMAGE_URL + "48941818949.jpg",
-                settings.CC_IMAGE_URL + "94198418189.jpg",
-                "",
-            ],
+            ["9481616416.jpg", "48941818949.jpg", "94198418189.jpg", ""],
         ),
         (
             "9481616416.jpg|81891849419.jpg|48941894981.jpg|89418948491.jpg",
-            [
-                settings.CC_IMAGE_URL + "9481616416.jpg",
-                settings.CC_IMAGE_URL + "81891849419.jpg",
-                settings.CC_IMAGE_URL + "48941894981.jpg",
-                settings.CC_IMAGE_URL + "89418948491.jpg",
-            ],
+            ["9481616416.jpg", "81891849419.jpg", "48941894981.jpg", "89418948491.jpg"],
         ),
-        ("9481616416.jpg ", [settings.CC_IMAGE_URL + "9481616416.jpg", "", "", ""]),
+        ("9481616416.jpg ", ["9481616416.jpg", "", "", ""]),
         (
             "9481616416.jpg|81891849419.jpg|48941894981.jpg|89418948491.jpg|98418949481.jpg",
-            [
-                settings.CC_IMAGE_URL + "9481616416.jpg",
-                settings.CC_IMAGE_URL + "81891849419.jpg",
-                settings.CC_IMAGE_URL + "48941894981.jpg",
-                settings.CC_IMAGE_URL + "89418948491.jpg",
-            ],
+            ["9481616416.jpg", "81891849419.jpg", "48941894981.jpg", "89418948491.jpg"],
         ),
         (
             " 9481616416.jpg | 48941818949.jpg | 94198418189.jpg \n",
-            [
-                settings.CC_IMAGE_URL + "9481616416.jpg",
-                settings.CC_IMAGE_URL + "48941818949.jpg",
-                settings.CC_IMAGE_URL + "94198418189.jpg",
-                "",
-            ],
+            ["9481616416.jpg", "48941818949.jpg", "94198418189.jpg", ""],
         ),
     ],
 )

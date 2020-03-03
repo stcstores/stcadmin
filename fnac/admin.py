@@ -48,6 +48,10 @@ class FnacProductAdmin(admin.ModelAdmin):
         "english_size",
         "french_size",
         "stock_level",
+        "image_1",
+        "image_2",
+        "image_3",
+        "image_4",
         "do_not_create",
         "created",
     )
