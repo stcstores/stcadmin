@@ -4,8 +4,9 @@ from django import forms
 from django.contrib.postgres.search import SearchVector
 
 from inventory import models
-from product_editor.forms import fields
-from product_editor.forms.widgets import HorizontalRadio
+from inventory.forms import fields
+
+from .widgets import HorizontalRadio
 
 
 class ProductSearchForm(forms.Form):

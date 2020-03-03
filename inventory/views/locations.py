@@ -7,7 +7,7 @@ from django.views.generic.base import TemplateView
 
 from inventory import models
 from inventory.forms import LocationsFormSet
-from product_editor.editor_manager import ProductEditorBase
+from inventory.forms.base import ProductEditorBase
 
 from .views import InventoryUserMixin
 

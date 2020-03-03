@@ -2,8 +2,8 @@ import json
 from unittest.mock import Mock, patch
 
 from inventory import forms, models
+from inventory.forms.base import ProductEditorBase
 from inventory.tests import fixtures
-from product_editor.editor_manager import ProductEditorBase
 
 from .form_test import FormTest
 

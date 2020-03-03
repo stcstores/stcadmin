@@ -5,25 +5,25 @@ import json
 from django import forms
 from django.utils.safestring import mark_safe
 
-from product_editor.editor_manager import ProductEditorBase
+from .base import ProductEditorBase
 
 
 class HorizontalRadio(forms.RadioSelect):
     """Widget for radio buttons layed out horizontally."""
 
-    template_name = "product_editor/widgets/horizontal_radio.html"
+    template_name = "inventory/widgets/horizontal_radio.html"
 
 
 class BaseSelectizeWidget:
     """Base class for widgets using selectize.js."""
 
-    template_name = "product_editor/widgets/selectize.html"
+    template_name = "inventory/widgets/selectize.html"
 
 
 class MultipleSelectizeWidget(forms.SelectMultiple):
     """Widget for selectize fields allowing multiple values."""
 
-    template_name = "product_editor/widgets/selectize.html"
+    template_name = "inventory/widgets/selectize.html"
 
     def __init__(self, *args, **kwargs):
         """Set selectize options."""
@@ -59,7 +59,7 @@ class SingleSelectizeWidget(BaseSelectizeWidget, forms.Select):
 class VATPriceWidget(forms.MultiWidget):
     """Widget for VATPrice field."""
 
-    template_name = "product_editor/widgets/vat_price.html"
+    template_name = "inventory/widgets/vat_price.html"
     required = True
 
     VAT_RATE = ProductEditorBase.VAT_RATE
@@ -97,7 +97,7 @@ class VATPriceWidget(forms.MultiWidget):
 class WarehouseBayWidget(forms.MultiWidget):
     """Widget for WarehouseBay field."""
 
-    template_name = "product_editor/widgets/warehouse_bay.html"
+    template_name = "inventory/widgets/warehouse_bay.html"
     required = False
     is_required = False
 
@@ -155,7 +155,7 @@ class WarehouseBayWidget(forms.MultiWidget):
 class DimensionsWidget(forms.MultiWidget):
     """Widget for Dimensions field."""
 
-    template_name = "product_editor/widgets/dimensions.html"
+    template_name = "inventory/widgets/dimensions.html"
     required = False
     is_required = False
 

@@ -6,9 +6,10 @@ from django.db import transaction
 
 from inventory import models
 from inventory.cloud_commerce_updater import PartialRangeUpdater
-from product_editor.editor_manager import ProductEditorBase
-from product_editor.forms import fields
+from inventory.forms import fields
 from stcadmin.forms import KwargFormSet
+
+from .base import ProductEditorBase
 
 
 class ProductRangeForm(forms.Form):

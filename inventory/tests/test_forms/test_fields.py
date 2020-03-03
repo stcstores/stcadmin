@@ -7,9 +7,9 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from inventory import models
+from inventory.forms import fields
+from inventory.forms.base import ProductEditorBase
 from inventory.tests import fixtures
-from product_editor.editor_manager import ProductEditorBase
-from product_editor.forms import fields
 from stcadmin.tests.stcadmin_test import STCAdminTest
 
 

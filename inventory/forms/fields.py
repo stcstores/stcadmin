@@ -6,9 +6,9 @@ from django import forms
 from list_input import ListInput
 
 from inventory import models
-from product_editor.editor_manager import ProductEditorBase
 
 from . import fieldtypes, widgets
+from .base import ProductEditorBase
 from .fieldtypes import Validators
 
 

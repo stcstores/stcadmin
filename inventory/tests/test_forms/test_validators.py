@@ -2,7 +2,7 @@
 
 from django.core.exceptions import ValidationError
 
-from product_editor.forms.fieldtypes import Validators
+from inventory.forms.fieldtypes import Validators
 from stcadmin.tests.stcadmin_test import STCAdminTest
 
 

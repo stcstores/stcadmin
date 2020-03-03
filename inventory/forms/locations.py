@@ -3,9 +3,10 @@
 from django import forms
 
 from inventory.cloud_commerce_updater import ProductUpdater
-from product_editor.editor_manager import ProductEditorBase
-from product_editor.forms.fields import WarehouseBayField
 from stcadmin.forms import KwargFormSet
+
+from .base import ProductEditorBase
+from .fields import WarehouseBayField
 
 
 class LocationsForm(forms.Form):

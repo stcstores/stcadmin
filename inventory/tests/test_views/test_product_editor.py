@@ -6,8 +6,8 @@ from django.contrib.messages import get_messages
 from django.shortcuts import reverse
 
 from inventory import forms, models
+from inventory.forms.base import ProductEditorBase
 from inventory.tests import fixtures
-from product_editor.editor_manager import ProductEditorBase
 from stcadmin.tests.stcadmin_test import ViewTests
 
 from .test_views import InventoryViewTest
