@@ -1,0 +1,109 @@
+[{
+    "model": "inventory.bay",
+    "pk": 1,
+    "fields": {
+        "bay_ID": "384839",
+        "name": "Home",
+        "warehouse": 1,
+        "is_default": true
+    }
+}, {
+    "model": "inventory.bay",
+    "pk": 2,
+    "fields": {
+        "bay_ID": "646161",
+        "name": "Sports",
+        "warehouse": 2,
+        "is_default": true
+    }
+}, {
+    "model": "inventory.bay",
+    "pk": 3,
+    "fields": {
+        "bay_ID": "3458641",
+        "name": "W1 Bay 1",
+        "warehouse": 1,
+        "is_default": false
+    }
+}, {
+    "model": "inventory.bay",
+    "pk": 4,
+    "fields": {
+        "bay_ID": "3458642",
+        "name": "W1 Bay 2",
+        "warehouse": 1,
+        "is_default": false
+    }
+}, {
+    "model": "inventory.bay",
+    "pk": 5,
+    "fields": {
+        "bay_ID": "3458643",
+        "name": "W1 Bay 3",
+        "warehouse": 1,
+        "is_default": false
+    }
+}, {
+    "model": "inventory.bay",
+    "pk": 6,
+    "fields": {
+        "bay_ID": "3458644",
+        "name": "W1 Bay 4",
+        "warehouse": 1,
+        "is_default": false
+    }
+}, {
+    "model": "inventory.bay",
+    "pk": 7,
+    "fields": {
+        "bay_ID": "3458645",
+        "name": "W1 Bay 5",
+        "warehouse": 1,
+        "is_default": false
+    }
+}, {
+    "model": "inventory.bay",
+    "pk": 8,
+    "fields": {
+        "bay_ID": "8134564",
+        "name": "W2 Bay 1",
+        "warehouse": 2,
+        "is_default": false
+    }
+}, {
+    "model": "inventory.bay",
+    "pk": 9,
+    "fields": {
+        "bay_ID": "8134565",
+        "name": "W2 Bay 2",
+        "warehouse": 2,
+        "is_default": false
+    }
+}, {
+    "model": "inventory.bay",
+    "pk": 10,
+    "fields": {
+        "bay_ID": "8134566",
+        "name": "W2 Bay 3",
+        "warehouse": 2,
+        "is_default": false
+    }
+}, {
+    "model": "inventory.bay",
+    "pk": 11,
+    "fields": {
+        "bay_ID": "8134567",
+        "name": "W2 Bay 4",
+        "warehouse": 2,
+        "is_default": false
+    }
+}, {
+    "model": "inventory.bay",
+    "pk": 12,
+    "fields": {
+        "bay_ID": "8134568",
+        "name": "W2 Bay 5",
+        "warehouse": 2,
+        "is_default": false
+    }
+}]
