@@ -145,7 +145,7 @@ class _InventoryUpdate:
             "barcode": self.clean_barcode(row[self.BARCODE_COLUMN]),
             "description": row[self.DESCRIPTION_COLUMN],
             "colour": row[self.COLOUR_COLUMN],
-            "brand": row[self.BRAND_COLUMN],
+            "brand": self.clean_brand(row[self.BRAND_COLUMN]),
             "english_size": row[self.SIZE_COLUMN],
             "stock_level": row[self.STOCK_COLUMN],
         }
@@ -162,3 +162,9 @@ class _InventoryUpdate:
             if len(barcode) == 12:
                 return f"0{barcode}"
         return ""
+
+    @staticmethod
+    def clean_brand(brand):
+        if not brand or brand == "Unbranded":
+            return "Aucun"
+        return brand

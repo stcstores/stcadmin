@@ -59,7 +59,7 @@ def test_fnac_products_are_created(inventory_file):
 
 @pytest.mark.django_db
 def test_fnac_range_name_set(created_fnac_range, inventory_file):
-    assert created_fnac_range.name == inventory_file[0]["RNG_Name"]
+    assert created_fnac_range.name == "Adults Christmas Reindeer Slippers"
 
 
 @pytest.mark.django_db
@@ -69,37 +69,62 @@ def test_fnac_range_category_is_null(created_fnac_range):
 
 @pytest.mark.django_db
 def test_fnac_product_name_set(created_fnac_product, inventory_file):
-    assert created_fnac_product.name == inventory_file[0]["VAR_Name"]
+    assert created_fnac_product.name == "Adults Christmas Reindeer Slippers"
 
 
 @pytest.mark.django_db
 def test_fnac_product_barcode_set(created_fnac_product, inventory_file):
-    assert created_fnac_product.barcode == inventory_file[0]["VAR_Barcode"]
+    assert created_fnac_product.barcode == "8944099045578"
 
 
 @pytest.mark.django_db
 def test_fnac_product_description_set(created_fnac_product, inventory_file):
-    assert created_fnac_product.description == inventory_file[0]["VAR_Description"]
+    assert created_fnac_product.description == "\n".join(
+        [
+            "<ul>",
+            " <li>",
+            "  Adults unisex novelty Christmas slippers.",
+            " </li>",
+            " <li>",
+            "  Upper = Low plush pile, Sole = pin dot grip.",
+            "  <br/>",
+            "  <br/>",
+            "  For sizing in US and Australia please use outer sole measurements as a guide.",
+            "  <br/>",
+            "  <br/>",
+            '  Small is approx UK 3-4, EU 36-37, Outer sole length 9.5"',
+            "  <br/>",
+            '  Medium is approx UK 5-6, EU 38-39, Outer sole length 10"',
+            "  <br/>",
+            '  Large is approx UK 7-8, EU 40-41, Outer sole length 10.5"',
+            "  <br/>",
+            '  XL is approx UK 9-10, EU 43-44, Outer sole length 11"',
+            "  <br/>",
+            '  XXL is approx UK 11-12, EU 45-46, Outer sole length 11.5"',
+            " </li>",
+            "</ul>",
+        ]
+    )
 
 
 @pytest.mark.django_db
 def test_fnac_product_colour_set(created_fnac_product, inventory_file):
-    assert created_fnac_product.colour == inventory_file[0]["OPT_Colour_DRD"]
+    assert created_fnac_product.colour is None
 
 
 @pytest.mark.django_db
 def test_fnac_product_brand_set(created_fnac_product, inventory_file):
-    assert created_fnac_product.brand == inventory_file[0]["OPT_Brand"]
+    assert created_fnac_product.brand == "Aucun"
 
 
 @pytest.mark.django_db
 def test_fnac_product_english_size_set(created_fnac_product, inventory_file):
-    assert created_fnac_product.english_size == inventory_file[0]["OPT_Size_DRD"]
+    assert created_fnac_product.english_size == "Large (UK 7-8)"
 
 
 @pytest.mark.django_db
 def test_fnac_product_stock_level_set(created_fnac_product, inventory_file):
-    assert created_fnac_product.stock_level == int(inventory_file[0]["VAR_Stock"])
+    assert created_fnac_product.stock_level == 0
 
 
 @pytest.mark.django_db
@@ -145,3 +170,17 @@ def test_fnac_range_is_updated(created_fnac_range, inventory_file):
 )
 def test_clean_barcode(barcode, expected):
     assert models._InventoryUpdate.clean_barcode(barcode) == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "brand,expected",
+    [
+        ("Stock Inc", "Stock Inc"),
+        ("", "Aucun"),
+        (None, "Aucun"),
+        ("Unbranded", "Aucun"),
+    ],
+)
+def test_clean_brand(brand, expected):
+    assert models._InventoryUpdate.clean_brand(brand) == expected
