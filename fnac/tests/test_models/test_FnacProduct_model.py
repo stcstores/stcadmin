@@ -1,6 +1,8 @@
 import pytest
 from django.db.utils import IntegrityError
 
+from fnac import models
+
 
 @pytest.fixture
 def test_image_url():
@@ -180,3 +182,23 @@ def test_FnacProduct_created_field(make_fnac_product):
 def test_FnacProduct_str(make_fnac_product):
     fnac_product = make_fnac_product(sku="ABC-DEF-123", name="Test Name")
     assert str(fnac_product) == "ABC-DEF-123 - Test Name"
+
+
+@pytest.mark.django_db
+def test_out_of_stock_method(make_fnac_range, make_fnac_product):
+    fnac_range = make_fnac_range()
+    make_fnac_product(sku="493-HNF-339", stock_level=5, fnac_range=fnac_range)
+    out_of_stock = make_fnac_product(
+        sku="AKE-833-DKE", stock_level=0, fnac_range=fnac_range
+    )
+    assert list(models.FnacProduct.out_of_stock()) == [out_of_stock]
+
+
+@pytest.mark.django_db
+def test_in_stock_method(make_fnac_range, make_fnac_product):
+    fnac_range = make_fnac_range()
+    in_stock = make_fnac_product(
+        sku="493-HNF-339", stock_level=5, fnac_range=fnac_range
+    )
+    make_fnac_product(sku="AKE-833-DKE", stock_level=0, fnac_range=fnac_range)
+    assert list(models.FnacProduct.in_stock()) == [in_stock]

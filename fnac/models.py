@@ -64,6 +64,16 @@ class FnacProduct(models.Model):
     def __str__(self):
         return f"{self.sku} - {self.name}"
 
+    @classmethod
+    def out_of_stock(cls):
+        """Return a queryset of out of stock products."""
+        return cls.objects.filter(stock_level=0)
+
+    @classmethod
+    def in_stock(cls):
+        """Return a quyerset of in stock products."""
+        return cls.objects.filter(stock_level__gt=0)
+
 
 class Translation(models.Model):
     """Model for FNAC product name, description and colour translations."""
