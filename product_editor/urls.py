@@ -62,7 +62,7 @@ urlpatterns = [
     ),
     path("clear_product/", views.ClearNewProduct.as_view(), name="clear_product"),
     path(
-        "clear_product/<int:range_id>",
+        "clear_product/<int:range_id>/",
         views.ClearEditedProduct.as_view(),
         name="clear_product",
     ),

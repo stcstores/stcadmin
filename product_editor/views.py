@@ -60,7 +60,7 @@ class EditProductView:
 class ClearProduct(InventoryUserMixin, View):
     """Clear product from session and redirect."""
 
-    def dispatch(self, *args, **kwargs):
+    def get(self, *args, **kwargs):
         """Process request."""
         self.manager = self.get_manager(*args, **kwargs)
         self.manager.clear_session()

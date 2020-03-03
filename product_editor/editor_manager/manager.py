@@ -215,9 +215,7 @@ class EditProductManager(BaseProductManager):
         self.data = self.session.get(self.SESSION_KEY, None)
         if not self.data or not self.range_id == self.data.get(self.RANGE_ID):
             self.load_product_data()
-        else:
-            return
-            self.load_product_data()  # TEMP
+        return None
 
     def set_pages(self):
         """Create pages."""

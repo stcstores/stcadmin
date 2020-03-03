@@ -36,8 +36,8 @@ class WarehouseAdmin(admin.ModelAdmin):
 class BayAdmin(admin.ModelAdmin):
     """ModelAdmin for the Bay model."""
 
-    fields = ("bay_ID", "name", "warehouse")
-    list_display = ("bay_ID", "__str__", "name", "warehouse")
+    fields = ("bay_ID", "name", "warehouse", "is_default")
+    list_display = ("bay_ID", "__str__", "name", "warehouse", "is_default")
     search_fields = ("name",)
     list_filter = ("warehouse",)
 

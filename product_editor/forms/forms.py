@@ -20,7 +20,6 @@ class BasicInfo(ProductForm):
 
     def __init__(self, *args, **kwargs):
         """Get fields for form."""
-        self.options = CCAPI.get_product_options()
         super().__init__(*args, **kwargs)
         self.fields[self.TITLE] = fields.Title()
         self.fields[self.DEPARTMENT] = fields.Department()

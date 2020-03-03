@@ -1,0 +1,73 @@
+[{
+    "model": "inventory.department",
+    "pk": 1,
+    "fields": {
+        "product_option_value_ID": "3758666",
+        "name": "Barcode",
+        "inactive": true,
+        "abriviation": null
+    }
+}, {
+    "model": "inventory.department",
+    "pk": 2,
+    "fields": {
+        "product_option_value_ID": "3329960",
+        "name": "Allsorts",
+        "inactive": false,
+        "abriviation": "AS"
+    }
+}, {
+    "model": "inventory.department",
+    "pk": 3,
+    "fields": {
+        "product_option_value_ID": "3329963",
+        "name": "Sports Shop",
+        "inactive": false,
+        "abriviation": "SS"
+    }
+}, {
+    "model": "inventory.department",
+    "pk": 4,
+    "fields": {
+        "product_option_value_ID": "3329982",
+        "name": "Surewear",
+        "inactive": false,
+        "abriviation": "SW"
+    }
+}, {
+    "model": "inventory.department",
+    "pk": 5,
+    "fields": {
+        "product_option_value_ID": "3330297",
+        "name": "Country Gifts",
+        "inactive": false,
+        "abriviation": "CG"
+    }
+}, {
+    "model": "inventory.department",
+    "pk": 6,
+    "fields": {
+        "product_option_value_ID": "3330696",
+        "name": "Warehouse",
+        "inactive": false,
+        "abriviation": "WH"
+    }
+}, {
+    "model": "inventory.department",
+    "pk": 7,
+    "fields": {
+        "product_option_value_ID": "3331109",
+        "name": "Top To Toe",
+        "inactive": true,
+        "abriviation": "TTT"
+    }
+}, {
+    "model": "inventory.department",
+    "pk": 8,
+    "fields": {
+        "product_option_value_ID": "3334803",
+        "name": "Ski Gear",
+        "inactive": true,
+        "abriviation": null
+    }
+}]
