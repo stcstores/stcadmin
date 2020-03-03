@@ -54,6 +54,10 @@ class FnacProduct(models.Model):
         Size, on_delete=models.PROTECT, blank=True, null=True
     )
     stock_level = models.IntegerField()
+    image_1 = models.URLField()
+    image_2 = models.URLField()
+    image_3 = models.URLField()
+    image_4 = models.URLField()
     do_not_create = models.BooleanField(default=False)
     created = models.BooleanField(default=False)
 

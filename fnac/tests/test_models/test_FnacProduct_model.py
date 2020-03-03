@@ -2,6 +2,11 @@ import pytest
 from django.db.utils import IntegrityError
 
 
+@pytest.fixture
+def test_image_url():
+    return "https://image.cdn.com/92849.jpg"
+
+
 @pytest.mark.django_db
 def test_FnacProduct_has_name(make_fnac_product):
     name = "Test Name"
@@ -109,6 +114,54 @@ def test_FnacProduct_stock_level_field(make_fnac_product):
     stock_level = 63
     product = make_fnac_product(stock_level=stock_level)
     assert product.stock_level == stock_level
+
+
+@pytest.mark.django_db
+def test_FnacProduct_image_1_field(make_fnac_product, test_image_url):
+    product = make_fnac_product(image_1=test_image_url)
+    assert product.image_1 == test_image_url
+
+
+@pytest.mark.django_db
+def test_FnacProduct_image_1_field_can_be_empty(make_fnac_product):
+    product = make_fnac_product(image_1="")
+    assert product.image_1 == ""
+
+
+@pytest.mark.django_db
+def test_FnacProduct_image_2_field(make_fnac_product, test_image_url):
+    product = make_fnac_product(image_2=test_image_url)
+    assert product.image_2 == test_image_url
+
+
+@pytest.mark.django_db
+def test_FnacProduct_image_2_field_can_be_empty(make_fnac_product):
+    product = make_fnac_product(image_2="")
+    assert product.image_2 == ""
+
+
+@pytest.mark.django_db
+def test_FnacProduct_image_3_field(make_fnac_product, test_image_url):
+    product = make_fnac_product(image_3=test_image_url)
+    assert product.image_3 == test_image_url
+
+
+@pytest.mark.django_db
+def test_FnacProduct_image_3_field_can_be_empty(make_fnac_product):
+    product = make_fnac_product(image_3="")
+    assert product.image_3 == ""
+
+
+@pytest.mark.django_db
+def test_FnacProduct_image_4_field(make_fnac_product, test_image_url):
+    product = make_fnac_product(image_4=test_image_url)
+    assert product.image_4 == test_image_url
+
+
+@pytest.mark.django_db
+def test_FnacProduct_image_4_field_can_be_empty(make_fnac_product):
+    product = make_fnac_product(image_4="")
+    assert product.image_4 == ""
 
 
 @pytest.mark.django_db

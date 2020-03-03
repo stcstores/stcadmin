@@ -64,6 +64,10 @@ def make_fnac_product(make_fnac_range):
         english_size=None,
         french_size=None,
         stock_level=54,
+        image_1="https://image.imagesource.com/118.jpg",
+        image_2="https://image.imagesource.com/152.jpg",
+        image_3="https://image.imagesource.com/220.jpg",
+        image_4="",
         do_not_create=False,
         created=False,
     ):
@@ -79,6 +83,10 @@ def make_fnac_product(make_fnac_range):
             english_size=english_size,
             french_size=french_size,
             stock_level=stock_level,
+            image_1=image_1,
+            image_2=image_2,
+            image_3=image_3,
+            image_4=image_4,
             do_not_create=do_not_create,
             created=created,
         )
