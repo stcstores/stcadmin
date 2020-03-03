@@ -24,11 +24,10 @@ def test_FnacRange_has_category(make_fnac_range, make_category):
 
 
 @pytest.mark.django_db
-def test_FnacRange_name_field_is_unique(make_fnac_range):
+def test_FnacRange_name_field_is_not_unique(make_fnac_range):
     name = "Test Name"
-    make_fnac_range(name=name)
-    with pytest.raises(IntegrityError):
-        make_fnac_range(name=name)
+    make_fnac_range(sku="RNG_ZXV-898-POP", name=name)
+    make_fnac_range(sku="RNG_HGN-832-YUN", name=name)
 
 
 @pytest.mark.django_db
