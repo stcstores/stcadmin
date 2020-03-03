@@ -40,14 +40,6 @@ def test_Category_name_can_be_empty(make_category):
 
 
 @pytest.mark.django_db
-def test_Category_name_field_unique(make_category):
-    name = "Test Name"
-    make_category(name=name, english="One", french="Un")
-    with pytest.raises(IntegrityError):
-        make_category(name=name, english="Two", french="Deux")
-
-
-@pytest.mark.django_db
 def test_Category_english_field_unique(make_category):
     english = "Test Category"
     make_category(name="One", english=english, french="Un")
