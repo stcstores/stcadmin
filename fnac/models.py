@@ -181,7 +181,10 @@ class _InventoryUpdate:
 
     @staticmethod
     def clean_images(image_field_contents):
-        images = [image.strip() for image in image_field_contents.split("|")]
+        if image_field_contents:
+            images = [image.strip() for image in image_field_contents.split("|")]
+        else:
+            images = []
         while len(images) < 4:
             images.append("")
         return images[:4]

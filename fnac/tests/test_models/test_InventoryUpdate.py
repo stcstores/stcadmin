@@ -234,6 +234,8 @@ def test_clean_brand(brand, expected):
             " 9481616416.jpg | 48941818949.jpg | 94198418189.jpg \n",
             ["9481616416.jpg", "48941818949.jpg", "94198418189.jpg", ""],
         ),
+        (None, ["", "", "", ""]),
+        ("", ["", "", "", ""]),
     ],
 )
 def test_clean_images(image_field_contents, expected):
