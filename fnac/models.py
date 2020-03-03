@@ -101,7 +101,7 @@ class _InventoryUpdate:
 
     @staticmethod
     def get_inventory_file():
-        return ProductExport.latest_export("timestamp").as_table()
+        return ProductExport.latest_export().as_table()
 
     def update_products(self):
         inventory = self.get_inventory_file()

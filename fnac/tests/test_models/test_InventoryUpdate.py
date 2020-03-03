@@ -14,10 +14,10 @@ def inventory_file():
 
 @pytest.fixture(scope="module")
 def mock_latest_inventory_file(inventory_file):
-    with patch("fnac.models.ProductExport") as mock_product_export_model:
+    with patch("fnac.models.ProductExport", autospec=True) as mock_ProductExport:
         mock_product_export = Mock()
         mock_product_export.as_table.return_value = inventory_file
-        mock_product_export_model.latest_export.return_value = mock_product_export
+        mock_ProductExport.latest_export.return_value = mock_product_export
         yield
 
 
