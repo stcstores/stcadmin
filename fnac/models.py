@@ -149,7 +149,7 @@ class _InventoryUpdate:
             "name": row[self.NAME_COLUMN],
             "sku": row[self.SKU_COLUMN],
             "barcode": self.clean_barcode(row[self.BARCODE_COLUMN]),
-            "description": row[self.DESCRIPTION_COLUMN],
+            "description": row[self.DESCRIPTION_COLUMN] or "",
             "colour": row[self.COLOUR_COLUMN],
             "brand": self.clean_brand(row[self.BRAND_COLUMN]),
             "english_size": row[self.SIZE_COLUMN],
