@@ -1,5 +1,7 @@
+import factory
 import pytest
 from django.core.management import call_command
+from pytest_factoryboy import register
 
 from fnac import models
 
@@ -18,99 +20,64 @@ def fnac_db_fixtures(add_fixture):
     add_fixture("shipping/currency")
 
 
-@pytest.fixture
-def make_category():
-    def _category(
-        name="Test Category", english="Category Name", french="Le Typology Nom"
-    ):
-        category = models.Category(name=name, english=english, french=french)
-        category.save()
-        return category
+@register
+class CategoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Category
 
-    return _category
+    name = factory.Sequence(lambda n: f"Test Category {n}")
+    english = factory.Sequence(lambda n: f"English Category {n}")
+    french = factory.Sequence(lambda n: f"Category en Francais {n}")
 
 
-@pytest.fixture
-def make_size():
-    def _size(name="Large"):
-        size = models.Size(name=name)
-        size.save()
-        return size
+@register
+class SizeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Size
 
-    return _size
+    name = factory.Sequence(lambda n: f"Test Size {n}")
 
 
-@pytest.fixture
-def make_fnac_range(make_category):
-    def _fnac_range(name="Test", sku="RNG_123-HBC-3D2", category=None):
-        fnac_range = models.FnacRange(name=name, sku=sku, category=category)
-        fnac_range.save()
-        return fnac_range
+@register
+class FnacRangeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.FnacRange
 
-    return _fnac_range
-
-
-@pytest.fixture
-def make_fnac_product(make_fnac_range):
-    def _make_fnac_product(
-        name="Test Product",
-        sku="ABC-678-CDF",
-        fnac_range=None,
-        barcode="985161566",
-        description="A product\nIt's good.",
-        colour="Red",
-        price=455,
-        brand="Stock Inc",
-        english_size=None,
-        french_size=None,
-        stock_level=54,
-        image_1="81916118.jpg",
-        image_2="152411896.jpg",
-        image_3="9489220.jpg",
-        image_4="",
-        do_not_create=False,
-        created=False,
-    ):
-        fnac_product = models.FnacProduct(
-            name=name,
-            sku=sku,
-            fnac_range=fnac_range or make_fnac_range(),
-            barcode=barcode,
-            description=description,
-            colour=colour,
-            price=price,
-            brand=brand,
-            english_size=english_size,
-            french_size=french_size,
-            stock_level=stock_level,
-            image_1=image_1,
-            image_2=image_2,
-            image_3=image_3,
-            image_4=image_4,
-            do_not_create=do_not_create,
-            created=created,
-        )
-        fnac_product.save()
-        return fnac_product
-
-    return _make_fnac_product
+    name = "Test"
+    sku = factory.Sequence(lambda n: f"RNG_123-HBC-3D{n}")
+    category = None
 
 
-@pytest.fixture
-def make_translation(make_fnac_product):
-    def _make_translation(
-        product=None,
-        name="Nom on Francais",
-        description="Un Product\nBien",
-        colour="Rouge",
-    ):
-        translation = models.Translation(
-            product=product or make_fnac_product(),
-            name=name,
-            description=description,
-            colour=colour,
-        )
-        translation.save()
-        return translation
+@register
+class FnacProductFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.FnacProduct
 
-    return _make_translation
+    name = ("Test Product",)
+    sku = factory.Sequence(lambda n: f"ABC-678-CD{n}")
+    fnac_range = factory.SubFactory(FnacRangeFactory)
+    barcode = "985161566"
+    description = "A product\nIt's good."
+    colour = "Red"
+    price = 455
+    brand = "Stock Inc"
+    english_size = None
+    french_size = None
+    stock_level = 54
+    image_1 = "81916118.jpg"
+    image_2 = "152411896.jpg"
+    image_3 = "9489220.jpg"
+    image_4 = ""
+    do_not_create = False
+    created = False
+
+
+@register
+class TranslationFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Translation
+
+    product = factory.SubFactory(FnacProductFactory)
+    name = factory.Sequence(lambda n: f"Nom on Francais {n}")
+    description = "Un Product\nBien"
+    colour = "Rouge"

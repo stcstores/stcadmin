@@ -3,53 +3,56 @@ from django.db.utils import IntegrityError
 
 
 @pytest.mark.django_db
-def test_Category_has_name(make_category):
-    category = make_category()
-    assert category.name == "Test Category"
+def test_Category_has_name(category_factory):
+    name = "Test Category"
+    category = category_factory.create(name=name)
+    assert category.name == name
 
 
 @pytest.mark.django_db
-def test_Category_has_english(make_category):
-    category = make_category()
-    assert category.english == "Category Name"
+def test_Category_has_english(category_factory):
+    english = "Category Name"
+    category = category_factory.create(english=english)
+    assert category.english == english
 
 
 @pytest.mark.django_db
-def test_Category_has_french(make_category):
-    category = make_category()
-    assert category.french == "Le Typology Nom"
+def test_Category_has_french(category_factory):
+    french = "Le Typology Nom"
+    category = category_factory.create(french=french)
+    assert category.french == french
 
 
 @pytest.mark.django_db
-def test_Category_str_is_name_when_not_empty(make_category):
-    category = make_category(name="Test Name")
+def test_Category_str_is_name_when_not_empty(category_factory):
+    category = category_factory.create(name="Test Name")
     assert str(category) == "Test Name"
 
 
 @pytest.mark.django_db
-def test_Category_str_defaults_to_english_when_name_is_empty(make_category):
-    category = make_category(name="", english="Sports")
+def test_Category_str_defaults_to_english_when_name_is_empty(category_factory):
+    category = category_factory.create(name="", english="Sports")
     assert str(category) == "Sports"
 
 
 @pytest.mark.django_db
-def test_Category_name_can_be_empty(make_category):
-    category = make_category(name="")
+def test_Category_name_can_be_empty(category_factory):
+    category = category_factory.create(name="")
     category.save()
     assert category.name == ""
 
 
 @pytest.mark.django_db
-def test_Category_english_field_unique(make_category):
+def test_Category_english_field_unique(category_factory):
     english = "Test Category"
-    make_category(name="One", english=english, french="Un")
+    category_factory.create(english=english)
     with pytest.raises(IntegrityError):
-        make_category(name="Two", english=english, french="Deux")
+        category_factory.create(english=english)
 
 
 @pytest.mark.django_db
-def test_Category_french_field_unique(make_category):
+def test_Category_french_field_unique(category_factory):
     french = "Typologie"
-    make_category(name="One", english="One", french=french)
+    category_factory.create(french=french)
     with pytest.raises(IntegrityError):
-        make_category(name="One", english="Two", french=french)
+        category_factory.create(french=french)
