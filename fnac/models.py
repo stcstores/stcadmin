@@ -120,6 +120,12 @@ class FnacProductManager(models.Manager):
         """Return a queryset of products without a price."""
         return self.get_queryset().filter(description="")
 
+    def missing_inventory_information(self):
+        """Return a queryset of products missing description, barcode or images."""
+        return (
+            self.missing_description() | self.barcode_invalid() | self.missing_image()
+        )
+
 
 class ToCreateManager(FnacProductManager):
     """Model manager for FnacProducts that need to be added to FNAC."""

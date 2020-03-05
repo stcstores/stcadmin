@@ -327,6 +327,30 @@ def test_to_create_manager(fnac_product_factory, product_kwargs, returned):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize(
+    "product_kwargs,returned",
+    [
+        (
+            {
+                "description": "Description",
+                "barcode": "5449762114",
+                "image_1": "img.jpg",
+            },
+            False,
+        ),
+        ({"description": "", "barcode": "5449762114", "image_1": "img.jpg"}, True,),
+        ({"description": "Description", "barcode": "", "image_1": "img.jpg"}, True,),
+        ({"description": "Description", "barcode": "5449762114", "image_1": ""}, True,),
+    ],
+)
+def test_missing_inventory_information(fnac_product_factory, product_kwargs, returned):
+    product = fnac_product_factory.create(**product_kwargs)
+    assert (
+        product in models.FnacProduct.objects.missing_inventory_information()
+    ) is returned
+
+
+@pytest.mark.django_db
 def test_to_create_manager_subclasses_FnacProductManager(fnac_product_factory):
     product = fnac_product_factory.create(stock_level=0)
     assert list(models.FnacProduct.objects.out_of_stock()) == [product]
