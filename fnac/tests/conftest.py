@@ -53,7 +53,7 @@ class FnacProductFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.FnacProduct
 
-    name = ("Test Product",)
+    name = factory.Sequence(lambda n: f"Test Product {n}")
     sku = factory.Sequence(lambda n: f"ABC-678-CD{n}")
     fnac_range = factory.SubFactory(FnacRangeFactory)
     barcode = "985161566"
