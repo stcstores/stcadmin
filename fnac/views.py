@@ -30,3 +30,15 @@ class MissingInventoryInfo(FnacUserMixin, TemplateView):
             "products"
         ] = models.FnacProduct.to_create.missing_inventory_information()
         return context
+
+
+class MissingPrice(FnacUserMixin, TemplateView):
+    """View for displaying products that cannot be listed on FNAC because they do not have a price."""
+
+    template_name = "fnac/missing_prices.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return template context."""
+        context = super().get_context_data(*args, **kwargs)
+        context["products"] = models.FnacProduct.to_create.missing_price()
+        return context

@@ -1,0 +1,12 @@
+<h1>Missing Prices</h1>
+
+<p>The following products cannot be listed on FNAC because they are missing prices:</p>
+
+<div class="products">
+    {% for product in products %}
+    <div class="product">
+        <div class="sku">{{product.sku}}</div>
+        <div class="name">{{product.name}}</div>
+    </div>
+    {% endfor %}
+</div>

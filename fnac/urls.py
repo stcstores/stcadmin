@@ -12,4 +12,5 @@ urlpatterns = [
         views.MissingInventoryInfo.as_view(),
         name="missing_inventory_info",
     ),
+    path("missing_price/", views.MissingPrice.as_view(), name="missing_price",),
 ]
