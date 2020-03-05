@@ -39,6 +39,36 @@ class FnacRange(models.Model):
         return f"{self.sku} - {self.name}"
 
 
+class FnacProductManager(models.Manager):
+    """Model Manger for the FnacProduct model."""
+
+    def out_of_stock(self):
+        """Return a queryset of out of stock products."""
+        return self.get_queryset().filter(stock_level=0)
+
+    def in_stock(self):
+        """Return a queryset of in stock products."""
+        return self.get_queryset().filter(stock_level__gt=0)
+
+    def translated(self):
+        """Return a queryset of products that have been translated."""
+        return self.get_queryset().filter(
+            Q(translation__isnull=False)
+            & ~Q(translation__name="")
+            & ~Q(translation__description="")
+            & ~Q(~Q(colour="") & Q(translation__colour=""))
+        )
+
+    def not_translated(self):
+        """Retrun a queryset of products that have not been translated."""
+        return self.get_queryset().filter(
+            Q(translation__isnull=True)
+            | Q(translation__name="")
+            | Q(translation__description="")
+            | Q(~Q(colour="") & Q(translation__colour=""))
+        )
+
+
 class FnacProduct(models.Model):
     """Model for FNAC products."""
 
@@ -62,38 +92,10 @@ class FnacProduct(models.Model):
     do_not_create = models.BooleanField(default=False)
     created = models.BooleanField(default=False)
 
+    objects = FnacProductManager()
+
     def __str__(self):
         return f"{self.sku} - {self.name}"
-
-    @classmethod
-    def out_of_stock(cls):
-        """Return a queryset of out of stock products."""
-        return cls.objects.filter(stock_level=0)
-
-    @classmethod
-    def in_stock(cls):
-        """Return a queryset of in stock products."""
-        return cls.objects.filter(stock_level__gt=0)
-
-    @classmethod
-    def translated(cls):
-        """Return a queryset of products that have been translated."""
-        return cls.objects.filter(
-            Q(translation__isnull=False)
-            & ~Q(translation__name="")
-            & ~Q(translation__description="")
-            & ~Q(~Q(colour="") & Q(translation__colour=""))
-        )
-
-    @classmethod
-    def not_translated(cls):
-        """Retrun a queryset of products that have not been translated."""
-        return cls.objects.filter(
-            Q(translation__isnull=True)
-            | Q(translation__name="")
-            | Q(translation__description="")
-            | Q(~Q(colour="") & Q(translation__colour=""))
-        )
 
 
 class Translation(models.Model):
