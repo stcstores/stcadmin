@@ -121,3 +121,191 @@ def test_not_translated_does_not_return_when_neither_translation_or_product_have
     product = fnac_product_factory.create(colour="")
     translation_factory.create(product=product, colour="")
     assert product not in models.FnacProduct.objects.not_translated()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("barcode,returned", [("954123687121", True), ("", False)])
+def test_barcode_valid(fnac_product_factory, barcode, returned):
+    product = fnac_product_factory.create(barcode=barcode)
+    assert (product in models.FnacProduct.objects.barcode_valid()) is returned
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("barcode,returned", [("954123687121", False), ("", True)])
+def test_barcode_invalid(fnac_product_factory, barcode, returned):
+    product = fnac_product_factory.create(barcode=barcode)
+    assert (product in models.FnacProduct.objects.barcode_invalid()) is returned
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("image,returned", [("954123687121.jpg", True), ("", False)])
+def test_has_image(fnac_product_factory, image, returned):
+    product = fnac_product_factory.create(image_1=image)
+    assert (product in models.FnacProduct.objects.has_image()) is returned
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("image,returned", [("954123687121.jpg", False), ("", True)])
+def test_missing_image(fnac_product_factory, image, returned):
+    product = fnac_product_factory.create(image_1=image)
+    assert (product in models.FnacProduct.objects.missing_image()) is returned
+
+
+@pytest.mark.django_db
+def test_size_valid_returns_when_product_has_no_english_size_and_no_french_size(
+    fnac_product_factory,
+):
+    product = fnac_product_factory.create(english_size="", french_size=None)
+    assert product in models.FnacProduct.objects.size_valid()
+
+
+@pytest.mark.django_db
+def test_size_valid_does_not_return_when_product_has_english_size_but_not_french_size(
+    fnac_product_factory,
+):
+    product = fnac_product_factory.create(english_size="Red", french_size=None)
+    assert product not in models.FnacProduct.objects.size_valid()
+
+
+@pytest.mark.django_db
+def test_size_valid_returns_when_product_has_no_english_size_but_does_have_french_size(
+    fnac_product_factory, size_factory
+):
+    french_size = size_factory(name="Rouge")
+    product = fnac_product_factory.create(english_size="", french_size=french_size)
+    assert product in models.FnacProduct.objects.size_valid()
+
+
+@pytest.mark.django_db
+def test_size_valid_returns_when_product_has_no_english_and_french_size(
+    fnac_product_factory, size_factory
+):
+    french_size = size_factory(name="Rouge")
+    product = fnac_product_factory.create(english_size="Red", french_size=french_size)
+    assert product in models.FnacProduct.objects.size_valid()
+
+
+@pytest.mark.django_db
+def test_size_invalid_does_not_return_when_product_has_no_english_size_and_no_french_size(
+    fnac_product_factory,
+):
+    product = fnac_product_factory.create(english_size="", french_size=None)
+    assert product not in models.FnacProduct.objects.size_invalid()
+
+
+@pytest.mark.django_db
+def test_size_invalid_returns_when_product_has_english_size_but_not_french_size(
+    fnac_product_factory,
+):
+    product = fnac_product_factory.create(english_size="Red", french_size=None)
+    assert product in models.FnacProduct.objects.size_invalid()
+
+
+@pytest.mark.django_db
+def test_size_invalid_does_not_return_when_product_has_no_english_size_but_does_have_french_size(
+    fnac_product_factory, size_factory
+):
+    french_size = size_factory(name="Rouge")
+    product = fnac_product_factory.create(english_size="", french_size=french_size)
+    assert product not in models.FnacProduct.objects.size_invalid()
+
+
+@pytest.mark.django_db
+def test_size_invalid_does_not_return_when_product_has_english_size_and_french_size(
+    fnac_product_factory, size_factory
+):
+    french_size = size_factory(name="Rouge")
+    product = fnac_product_factory.create(english_size="Red", french_size=french_size)
+    assert product not in models.FnacProduct.objects.size_invalid()
+
+
+@pytest.mark.django_db
+def test_has_category_returns_when_product_has_category(
+    category_factory, fnac_range_factory, fnac_product_factory
+):
+    category = category_factory.create()
+    fnac_range = fnac_range_factory.create(category=category)
+    product = fnac_product_factory.create(fnac_range=fnac_range)
+    assert product in models.FnacProduct.objects.has_category()
+
+
+@pytest.mark.django_db
+def test_has_category_does_not_return_when_product_has_no_category(
+    fnac_range_factory, fnac_product_factory
+):
+    fnac_range = fnac_range_factory.create(category=None)
+    product = fnac_product_factory.create(fnac_range=fnac_range)
+    assert product not in models.FnacProduct.objects.has_category()
+
+
+@pytest.mark.django_db
+def test_missing_category_returns_when_product_has_no_category(
+    fnac_range_factory, fnac_product_factory
+):
+    fnac_range = fnac_range_factory.create(category=None)
+    product = fnac_product_factory.create(fnac_range=fnac_range)
+    assert product in models.FnacProduct.objects.missing_category()
+
+
+@pytest.mark.django_db
+def test_missing_category_does_not_return_when_product_has_category(
+    category_factory, fnac_range_factory, fnac_product_factory
+):
+    category = category_factory.create()
+    fnac_range = fnac_range_factory.create(category=category)
+    product = fnac_product_factory.create(fnac_range=fnac_range)
+    assert product not in models.FnacProduct.objects.missing_category()
+
+
+@pytest.mark.django_db
+def test_has_price_returns_when_product_has_price(fnac_product_factory):
+    product = fnac_product_factory.create(price=550)
+    assert product in models.FnacProduct.objects.has_price()
+
+
+@pytest.mark.django_db
+def test_has_price_does_not_return_when_product_has_no_price(fnac_product_factory):
+    product = fnac_product_factory.create(price=None)
+    assert product not in models.FnacProduct.objects.has_price()
+
+
+@pytest.mark.django_db
+def test_missing_price_returns_when_product_has_no_price(fnac_product_factory):
+    product = fnac_product_factory.create(price=None)
+    assert product in models.FnacProduct.objects.missing_price()
+
+
+@pytest.mark.django_db
+def test_missing_price_does_not_return_when_product_has_price(fnac_product_factory):
+    product = fnac_product_factory.create(price=550)
+    assert product not in models.FnacProduct.objects.missing_price()
+
+
+@pytest.mark.django_db
+def test_has_description_returns_when_product_has_description(fnac_product_factory):
+    product = fnac_product_factory.create(description="Description")
+    assert product in models.FnacProduct.objects.has_description()
+
+
+@pytest.mark.django_db
+def test_has_description_does_not_return_when_product_has_no_description(
+    fnac_product_factory,
+):
+    product = fnac_product_factory.create(description="")
+    assert product not in models.FnacProduct.objects.has_description()
+
+
+@pytest.mark.django_db
+def test_missing_description_returns_when_product_has_no_description(
+    fnac_product_factory,
+):
+    product = fnac_product_factory.create(description="")
+    assert product in models.FnacProduct.objects.missing_description()
+
+
+@pytest.mark.django_db
+def test_missing_description_does_not_return_when_product_has_description(
+    fnac_product_factory,
+):
+    product = fnac_product_factory.create(description="Description")
+    assert product not in models.FnacProduct.objects.missing_description()

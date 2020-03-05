@@ -68,6 +68,58 @@ class FnacProductManager(models.Manager):
             | Q(~Q(colour="") & Q(translation__colour=""))
         )
 
+    def barcode_valid(self):
+        """Return a queryset of products with valid barcodes."""
+        return self.get_queryset().exclude(barcode="")
+
+    def barcode_invalid(self):
+        """Return a queryset of products with valid barcodes."""
+        return self.get_queryset().filter(barcode="")
+
+    def has_image(self):
+        """Return a queryset of products with at least one image."""
+        return self.get_queryset().exclude(image_1="")
+
+    def missing_image(self):
+        """Return a queryset of products without an image."""
+        return self.get_queryset().filter(image_1="")
+
+    def size_valid(self):
+        """Return a queryset of products with valid size information."""
+        return self.get_queryset().exclude(
+            ~Q(english_size="") & Q(french_size__isnull=True)
+        )
+
+    def size_invalid(self):
+        """Return a queryset of products with invalid size information."""
+        return self.get_queryset().filter(
+            ~Q(english_size="") & Q(french_size__isnull=True)
+        )
+
+    def has_category(self):
+        """Return a queryset of products with categories."""
+        return self.get_queryset().filter(fnac_range__category__isnull=False)
+
+    def missing_category(self):
+        """Return a queryset of products without categories."""
+        return self.get_queryset().filter(fnac_range__category__isnull=True)
+
+    def has_price(self):
+        """Return a queryset of products with prices."""
+        return self.get_queryset().filter(price__isnull=False)
+
+    def missing_price(self):
+        """Return a queryset of products without a price."""
+        return self.get_queryset().filter(price__isnull=True)
+
+    def has_description(self):
+        """Return a queryset of products with prices."""
+        return self.get_queryset().exclude(description="")
+
+    def missing_description(self):
+        """Return a queryset of products without a price."""
+        return self.get_queryset().filter(description="")
+
 
 class FnacProduct(models.Model):
     """Model for FNAC products."""
