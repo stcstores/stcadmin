@@ -1,6 +1,7 @@
 """Models for the fnac app."""
 
 from django.db import models
+from django.db.models import Q
 
 from inventory.models import ProductExport
 
@@ -71,8 +72,28 @@ class FnacProduct(models.Model):
 
     @classmethod
     def in_stock(cls):
-        """Return a quyerset of in stock products."""
+        """Return a queryset of in stock products."""
         return cls.objects.filter(stock_level__gt=0)
+
+    @classmethod
+    def translated(cls):
+        """Return a queryset of products that have been translated."""
+        return cls.objects.filter(
+            Q(translation__isnull=False)
+            & ~Q(translation__name="")
+            & ~Q(translation__description="")
+            & ~Q(~Q(colour="") & Q(translation__colour=""))
+        )
+
+    @classmethod
+    def not_translated(cls):
+        """Retrun a queryset of products that have not been translated."""
+        return cls.objects.filter(
+            Q(translation__isnull=True)
+            | Q(translation__name="")
+            | Q(translation__description="")
+            | Q(~Q(colour="") & Q(translation__colour=""))
+        )
 
 
 class Translation(models.Model):
