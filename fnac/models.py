@@ -121,6 +121,14 @@ class FnacProductManager(models.Manager):
         return self.get_queryset().filter(description="")
 
 
+class ToCreateManager(FnacProductManager):
+    """Model manager for FnacProducts that need to be added to FNAC."""
+
+    def get_queryset(self):
+        """Return a queryset of products that have not been created and not marked do not create."""
+        return super().get_queryset().filter(created=False, do_not_create=False)
+
+
 class FnacProduct(models.Model):
     """Model for FNAC products."""
 
@@ -145,6 +153,7 @@ class FnacProduct(models.Model):
     created = models.BooleanField(default=False)
 
     objects = FnacProductManager()
+    to_create = ToCreateManager()
 
     def __str__(self):
         return f"{self.sku} - {self.name}"

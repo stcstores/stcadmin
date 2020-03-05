@@ -309,3 +309,24 @@ def test_missing_description_does_not_return_when_product_has_description(
 ):
     product = fnac_product_factory.create(description="Description")
     assert product not in models.FnacProduct.objects.missing_description()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "product_kwargs,returned",
+    [
+        ({"do_not_create": False, "created": False}, True),
+        ({"do_not_create": True, "created": False}, False),
+        ({"do_not_create": False, "created": True}, False),
+        ({"do_not_create": True, "created": True}, False),
+    ],
+)
+def test_to_create_manager(fnac_product_factory, product_kwargs, returned):
+    product = fnac_product_factory(**product_kwargs)
+    assert (product in models.FnacProduct.to_create.all()) is returned
+
+
+@pytest.mark.django_db
+def test_to_create_manager_subclasses_FnacProductManager(fnac_product_factory):
+    product = fnac_product_factory.create(stock_level=0)
+    assert list(models.FnacProduct.objects.out_of_stock()) == [product]
