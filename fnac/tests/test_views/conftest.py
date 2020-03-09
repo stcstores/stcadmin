@@ -44,3 +44,11 @@ def valid_get_request(group_logged_in_client):
         return group_logged_in_client.get(url)
 
     return _valid_get_request
+
+
+@pytest.fixture
+def valid_post_request(group_logged_in_client):
+    def _valid_post_request(*args, **kwargs):
+        return group_logged_in_client.post(*args, **kwargs)
+
+    return _valid_post_request

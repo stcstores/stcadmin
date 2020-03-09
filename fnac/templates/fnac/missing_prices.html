@@ -3,10 +3,15 @@
 <p>The following products cannot be listed on FNAC because they are missing prices:</p>
 
 <div class="products">
-    {% for product in products %}
+    <form action="" method="POST">{% csrf_token %}
+    {{form.management_form}}
+    {% for product_form in form %}
     <div class="product">
-        <div class="sku">{{product.sku}}</div>
-        <div class="name">{{product.name}}</div>
+        <div class="sku">{{product_form.instance.sku}}</div>
+        <div class="name">{{product_form.instance.name}}</div>
+        <div class="name">{{product_form.instance.price}}</div>
+        {{product_form.as_p}}
     </div>
     {% endfor %}
+    </form>
 </div>
