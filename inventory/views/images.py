@@ -22,7 +22,6 @@ class ImageFormView(InventoryUserMixin, FormView):
         """Retrive product details from Cloud Commerce."""
         self.range_id = self.kwargs.get("range_id")
         self.product_range = CCAPI.get_range(self.range_id)
-        print(self.product_range)
         self.products = self.product_range.products
         for product in self.products:
             product.images = product.get_images()
@@ -37,18 +36,22 @@ class ImageFormView(InventoryUserMixin, FormView):
         for product in self.products:
             for o in [x for x in product.options if x.value]:
                 if o.option_name in options:
-                    options[o.option_name] = o.value.value
+                    value = o.value.value
+                    if value in options[o.option_name]:
+                        options[o.option_name][value].append(product.id)
+                    else:
+                        options[o.option_name][value] = [product.id]
+        for key, value in options.items():
+            options[key] = dict(value)
         return options
 
     def get_context_data(self, *args, **kwargs):
         """Get template context data."""
         self.get_products()
-        options = self.get_options()
         context = super().get_context_data(*args, **kwargs)
         context["product_range"] = self.product_range
         context["products"] = self.products
-        context["options"] = options
-        print(context["product_range"])
+        context["options"] = self.get_options()
         return context
 
     def get_success_url(self):

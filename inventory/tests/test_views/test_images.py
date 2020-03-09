@@ -58,7 +58,7 @@ class TestImageFormView(InventoryViewTest, ViewTests):
         )
         self.mock_CCAPI.get_range.return_value = product_range
         response = self.make_get_request()
-        self.assertEqual({"Size": "Small"}, response.context["options"])
+        self.assertEqual({"Size": {"Small": [product.id]}}, response.context["options"])
         self.assertEqual(product_range, response.context["product_range"])
         self.assertEqual([product], response.context["products"])
         self.assertEqual([], product.images)
@@ -73,3 +73,56 @@ class TestImageFormView(InventoryViewTest, ViewTests):
             response = self.client.post(self.get_URL(), data=data)
             self.mock_CCAPI.upload_image.assert_called_once()
         self.assertRedirects(response, self.get_URL())
+
+    def test_content(self):
+        range_options = mocks.MockCCAPIProductRangeOptions(
+            options=[
+                mocks.MockProductOption(option_name="Size", is_web_shop_select=True),
+                mocks.MockProductOption(option_name="Colour", is_web_shop_select=True),
+            ]
+        )
+        small_red = mocks.MockCCAPIProduct(
+            options=[
+                mocks.MockCCAPIProductProductOption(
+                    option_name="Size",
+                    value=mocks.MockProductOptionValue(
+                        value="Small", option_name="Size"
+                    ),
+                ),
+                mocks.MockCCAPIProductProductOption(
+                    option_name="Colour",
+                    value=mocks.MockProductOptionValue(
+                        value="Colour", option_name="Red"
+                    ),
+                ),
+            ]
+        )
+        large_green = mocks.MockCCAPIProduct(
+            options=[
+                mocks.MockCCAPIProductProductOption(
+                    option_name="Size",
+                    value=mocks.MockProductOptionValue(
+                        value="Large", option_name="Size"
+                    ),
+                ),
+                mocks.MockCCAPIProductProductOption(
+                    option_name="Colour",
+                    value=mocks.MockProductOptionValue(
+                        value="Green", option_name="Colour"
+                    ),
+                ),
+            ]
+        )
+        products = [small_red, large_green]
+        product_range = mocks.MockCCAPIProductRange(
+            products=products, options=range_options
+        )
+        self.mock_CCAPI.get_range.return_value = product_range
+        response = self.make_get_request()
+        content = response.content.decode("utf8")
+        for product in products:
+            assert product.name in content
+        assert "Large" in content
+        assert "Small" in content
+        assert "Red" in content
+        assert "Green" in content

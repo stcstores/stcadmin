@@ -6,13 +6,6 @@ def get_id():
     return random.randint(100000, 999999)
 
 
-def attach_property(instance, prop_name, propr):
-    class_name = instance.__class__.__name__ + "Child"
-    child_class = type(class_name, (instance.__class__,), {prop_name: propr})
-
-    instance.__class__ = child_class
-
-
 class MockCCAPIProductRangeOptions:
     def __init__(self, options=None):
         self.options = options or [MockProductOption()]
