@@ -4,14 +4,14 @@
 
 <div class="products">
     <form action="" method="POST">{% csrf_token %}
-    {{form.management_form}}
-    {% for product_form in form %}
-    <div class="product">
-        <div class="sku">{{product_form.instance.sku}}</div>
-        <div class="name">{{product_form.instance.name}}</div>
-        <div class="name">{{product_form.instance.price}}</div>
-        {{product_form.as_p}}
-    </div>
-    {% endfor %}
+        {{form.management_form}}
+        {% for product_form in form %}
+        <div class="product">
+            <div class="sku">{{product_form.instance.sku}}</div>
+            <div class="name">{{product_form.instance.name}}</div>
+            {{product_form.as_p}}
+        </div>
+        {% endfor %}
+        <button>Update</button>
     </form>
 </div>

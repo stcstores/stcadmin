@@ -37,7 +37,7 @@ def post_data(invalid_products):
         "form-MAX_NUM_FORMS": product_count,
     }
     for i, product in enumerate(invalid_products):
-        form_data.update({f"form-{i}-id": product.id, f"form-{i}-price": 556})
+        form_data.update({f"form-{i}-id": product.id, f"form-{i}-price": 5.56})
     return form_data
 
 
@@ -146,3 +146,12 @@ def test_invalid_post_status_code(
 ):
     assert invalid_post_response.status_code == 200
     assert "price" in invalid_post_response.content.decode("utf8")
+
+
+@pytest.mark.django_db
+def test_price_is_not_required(
+    valid_products, invalid_products, valid_post_request, url, post_data
+):
+    post_data["form-1-price"] = ""
+    response = valid_post_request(url, post_data)
+    assert response.status_code == 302

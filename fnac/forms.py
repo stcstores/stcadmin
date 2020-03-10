@@ -14,6 +14,15 @@ class MissingPricesForm(forms.ModelForm):
         model = models.FnacProduct
         fields = ["price"]
 
+    price = forms.DecimalField(min_value=0, decimal_places=2, required=False)
+
+    def clean_price(self):
+        """Return the price as an integer."""
+        price = self.cleaned_data.get("price")
+        if price is not None:
+            price = int(self.cleaned_data["price"] * 100)
+        return price
+
 
 class MissingPricesFormset(forms.BaseModelFormSet):
     """Formset for adding missing prices to FnacProduct objects."""
