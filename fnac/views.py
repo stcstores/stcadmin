@@ -66,9 +66,8 @@ class MissingPriceSize(FnacUserMixin, FormView):
 
     def form_valid(self, formset):
         """Save forms and redirect."""
-        if formset.is_valid():
-            for form in formset:
-                form.save()
+        for form in formset:
+            form.save()
         return super().form_valid(formset)
 
     def get_success_url(self):
@@ -84,9 +83,8 @@ class MissingCategory(FnacUserMixin, FormView):
 
     def form_valid(self, formset):
         """Save forms and redirect."""
-        if formset.is_valid():
-            for form in formset:
-                form.save()
+        for form in formset:
+            form.save()
         return super().form_valid(formset)
 
     def get_success_url(self):
