@@ -109,6 +109,7 @@ ccapi = "branch master"
 reference = "035e2d6014eb637750af0bc29b1423e9b870afdc"
 type = "git"
 url = "https://github.com/stcstores/cc_products.git"
+
 [[package]]
 category = "main"
 description = ""
@@ -126,6 +127,7 @@ requests = "^2.22.0"
 reference = "2cc37f239bf649e4e157be23f2e4717a7824aa31"
 type = "git"
 url = "https://github.com/stcstores/ccapi.git"
+
 [[package]]
 category = "main"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -433,6 +435,7 @@ reportlab = "^3.5.34"
 reference = "e295fad867816c0a0942c7acd3a536c761a5c77d"
 type = "git"
 url = "https://github.com/lukeshiner/labeler.git"
+
 [[package]]
 category = "main"
 description = ""
@@ -448,6 +451,7 @@ django = "^3.0.3"
 reference = "42b0e2df3d39ab8921904c1ba3eab0763adf586d"
 type = "git"
 url = "https://github.com/lukeshiner/list_input.git"
+
 [[package]]
 category = "main"
 description = "Load me later. A lazy plugin management system."
@@ -516,7 +520,7 @@ ccapi = "branch master"
 tabler = "^2.4.0"
 
 [package.source]
-reference = "00a21867a38891201ca852d357ff29afaa1ede17"
+reference = "94b734e9bac115aa7ce6f195f197e2a3410e2d7e"
 type = "git"
 url = "https://github.com/stcstores/order_profit.git"
 [[package]]
