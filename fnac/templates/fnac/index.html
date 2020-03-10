@@ -1,1 +1,40 @@
-<h1>Hello</h1>
+<h1>FNAC</h1>
+
+<table>
+    <tr>
+        <td>Created</td>
+        <td>{{created_product_count}}</td>
+    </tr>
+    <tr>
+        <td>
+            <a href="{% url 'fnac:missing_inventory_info' %}">
+                Missing Inventory Information
+            </a>
+        </td>
+        <td>{{missing_inventory_info_count}}</td>
+    </tr>
+    <tr>
+        <td>
+            <a href="{% url 'fnac:missing_category' %}">
+                Missing Category
+            </a>
+        </td>
+        <td>{{missing_category_count}}</td>
+    </tr>
+    <tr>
+        <td>
+            <a href="{% url 'fnac:missing_price_size' %}">
+                Missing Price or Size
+            </a>
+        </td>
+        <td>{{missing_price_size_count}}</td>
+    </tr>
+    <tr>
+        <td>Marked not to create</td>
+        <td>{{do_not_create_count}}</td>
+    </tr>
+    <tr>
+        <td>Out of stock</td>
+        <td>{{out_of_stock_count}}</td>
+    </tr>
+</table>

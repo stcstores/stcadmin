@@ -45,7 +45,7 @@ class FnacRangeFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"Test Range {n}")
     sku = factory.Sequence(lambda n: f"RNG_123-HBC-3D{n}")
-    category = None
+    category = factory.SubFactory(CategoryFactory)
 
 
 @register

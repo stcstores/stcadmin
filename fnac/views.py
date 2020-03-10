@@ -19,6 +19,30 @@ class Index(FnacUserMixin, TemplateView):
 
     template_name = "fnac/index.html"
 
+    def get_context_data(self, *args, **kwargs):
+        """Return template context data."""
+        context = super().get_context_data(*args, **kwargs)
+        context["created_product_count"] = models.FnacProduct.objects.filter(
+            created=True
+        ).count()
+        context[
+            "missing_inventory_info_count"
+        ] = models.FnacProduct.objects.missing_inventory_information().count()
+        context[
+            "missing_category_count"
+        ] = models.FnacProduct.objects.missing_category().count()
+        context["missing_price_size_count"] = (
+            models.FnacProduct.objects.missing_price()
+            | models.FnacProduct.objects.size_invalid()
+        ).count()
+        context["do_not_create_count"] = models.FnacProduct.objects.filter(
+            do_not_create=True
+        ).count()
+        context["out_of_stock_count"] = models.FnacProduct.objects.filter(
+            stock_level=0
+        ).count()
+        return context
+
 
 class MissingInventoryInfo(FnacUserMixin, TemplateView):
     """View for displaying products that are not listed on FNAC due to missing inventory info."""
