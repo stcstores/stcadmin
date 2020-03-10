@@ -45,3 +45,32 @@ class MissingPriceSizeFormset(forms.BaseModelFormSet):
         self.can_delete = False
         self.validate_max = False
         self.validate_min = False
+
+
+class MissingCategoryForm(forms.ModelForm):
+    """Form for setting product categories."""
+
+    class Meta:
+        """Meta clas for MissingCategoryForm."""
+
+        model = models.FnacRange
+        fields = ["category"]
+
+
+class MissingCategoryFormset(forms.BaseModelFormSet):
+    """Formset for adding missing categories to FnacRange objects."""
+
+    def __init__(self, *args, **kwargs):
+        """Set up formset."""
+        super().__init__(*args, **kwargs)
+        self.form = MissingCategoryForm
+        self.model = models.FnacRange
+        self.queryset = models.FnacRange.objects.missing_category()
+        self.min_num = self.queryset.count()
+        self.max_num = self.queryset.count()
+        self.absolute_max = self.queryset.count()
+        self.extra = 0
+        self.can_order = False
+        self.can_delete = False
+        self.validate_max = False
+        self.validate_min = False

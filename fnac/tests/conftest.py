@@ -43,7 +43,7 @@ class FnacRangeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.FnacRange
 
-    name = "Test"
+    name = factory.Sequence(lambda n: f"Test Range {n}")
     sku = factory.Sequence(lambda n: f"RNG_123-HBC-3D{n}")
     category = None
 

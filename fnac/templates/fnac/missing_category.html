@@ -1,0 +1,41 @@
+{% load static %}
+
+<head>
+    <link rel="stylesheet" href="{% static 'css/fnac.css' %}">
+</head>
+
+<body>
+    <h1>Missing Categories</h1>
+
+    <p>The following products cannot be listed on FNAC because they are missing a category:</p>
+
+    <div class="products">
+        <form action="" method="POST">{% csrf_token %}
+            {{form.management_form}}
+            {% if form.errors %}
+            <div class="error">
+                {{form.errors}}
+            </div>
+            {% endif %}
+            <button>Update</button>
+            {% for range_form in form %}
+            <div class="product">
+                <div class="product_identification">
+                    <div class="sku">{{range_form.instance.sku}}</div>
+                    <div class="name">{{range_form.instance.name}}</div>
+                </div>
+                <div class="category">
+                    <label for="{{range_form.category.name}}">{{range_form.category.label}}</label>
+                    {{range_form.category}}
+                    {{range_form.category.errors}}
+                </div>
+                {{range_form.id.as_hidden}}
+                <div class="errors">
+                    {{range_form.errors}}
+                </div>
+            </div>
+            {% endfor %}
+            <button>Update</button>
+        </form>
+    </div>
+</body>
