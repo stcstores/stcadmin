@@ -1,30 +1,28 @@
-{% load static %}
+{% extends 'fnac/base.html' %}
 
-<head>
-    <link rel="stylesheet" href="{% static 'css/fnac.css' %}">
-</head>
+{% block content %}
 
-<body>
-    <h1>Missing Inventory Information</h1>
+<h1>Missing Inventory Information</h1>
 
-    <p>The following products cannot be listed on FNAC because they are missing the following information:</p>
-    <ul>
-        <li>Description</li>
-        <li>Barcode</li>
-        <li>Images</li>
-    </ul>
-    <p>Please ensure these items are present and valid in the inventory.</p>
-    <p>It is possible that the product has a barcode but that it is not 12 - 13 digits in length.</p>
+<p>The following products cannot be listed on FNAC because they are missing the following information:</p>
+<ul>
+    <li>Description</li>
+    <li>Barcode</li>
+    <li>Images</li>
+</ul>
+<p>Please ensure these items are present and valid in the inventory.</p>
+<p>It is possible that the product has a barcode but that it is not 12 - 13 digits in length.</p>
 
 
-    <div class="products">
-        {% for product in products %}
-        <div class="product">
-            <div class="product_identification">
-                <div class="sku">{{product.sku}}</div>
-                <div class="name">{{product.name}}</div>
-            </div>
+<div class="products">
+    {% for product in products %}
+    <div class="product">
+        <div class="product_identification">
+            <div class="sku">{{product.sku}}</div>
+            <div class="name">{{product.name}}</div>
         </div>
-        {% endfor %}
     </div>
-</body>
+    {% endfor %}
+</div>
+
+{% endblock content %}

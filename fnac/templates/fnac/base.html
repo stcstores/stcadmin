@@ -1,13 +1,11 @@
 {% extends 'home/base.html' %}
+{% load static %}
+
+{% block additional_head %}
+<link rel="stylesheet" href="{% static 'css/fnac.css' %}">
+{% endblock additional_head %}
 
 {% block section_navigation %}
     {% include "fnac/section_navigation.html" %}
 {% endblock %}
-
-{% block content %}
-
-<h1>FNAC</h1>
-
-{% endblock content %}
-
 

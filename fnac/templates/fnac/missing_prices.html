@@ -1,46 +1,44 @@
-{% load static %}
+{% extends 'fnac/base.html' %}
 
-<head>
-    <link rel="stylesheet" href="{% static 'css/fnac.css' %}">
-</head>
+{% block content %}
 
-<body>
-    <h1>Missing Prices or Sizes</h1>
+<h1>Missing Prices or Sizes</h1>
 
-    <p>The following products cannot be listed on FNAC because they are missing prices or sizes:</p>
+<p>The following products cannot be listed on FNAC because they are missing prices or sizes:</p>
 
-    <div class="products">
-        <form action="" method="POST">{% csrf_token %}
-            {{form.management_form}}
-            {% for product_form in form %}
-            <button>Update</button>
-            <div class="product">
-                <div class="product_identification">
-                    <div class="sku">{{product_form.instance.sku}}</div>
-                    <div class="name">{{product_form.instance.name}}</div>
-                </div>
-                <div class="price">
-                    <label for="{{product_form.price.name}}">{{product_form.price.label}}</label>
-                    {{product_form.price}}
-                    {{product_form.price.errors}}
-                </div>
-                <div class="size">
-                    {% if product_form.instance.english_size == None %}
-                    {{product_form.french_size.as_hidden}}
-                    {% else %}
-                    <label for="{{product_form.french_size.name}}">{{product_form.french_size.label}}</label>
-                    {{product_form.instance.english_size}}
-                    {{product_form.french_size}}
-                    {{product_form.french_size.errors}}
-                    {% endif %}
-                </div>
-                {{product_form.id.as_hidden}}
-                <div class="errors">
-                    {{product_form.errors}}
-                </div>
+<div class="products">
+    <form action="" method="POST">{% csrf_token %}
+        {{form.management_form}}
+        <button>Update</button>
+        {% for product_form in form %}
+        <div class="product">
+            <div class="product_identification">
+                <div class="sku">{{product_form.instance.sku}}</div>
+                <div class="name">{{product_form.instance.name}}</div>
             </div>
-            {% endfor %}
-            <button>Update</button>
-        </form>
-    </div>
-</body>
+            <div class="price">
+                <label for="{{product_form.price.name}}">{{product_form.price.label}}</label>
+                {{product_form.price}}
+                {{product_form.price.errors}}
+            </div>
+            <div class="size">
+                {% if product_form.instance.english_size == None %}
+                {{product_form.french_size.as_hidden}}
+                {% else %}
+                <label for="{{product_form.french_size.name}}">{{product_form.french_size.label}}</label>
+                {{product_form.instance.english_size}}
+                {{product_form.french_size}}
+                {{product_form.french_size.errors}}
+                {% endif %}
+            </div>
+            {{product_form.id.as_hidden}}
+            <div class="errors">
+                {{product_form.errors}}
+            </div>
+        </div>
+        {% endfor %}
+        <button>Update</button>
+    </form>
+</div>
+
+{% endblock content %}

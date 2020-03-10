@@ -32,6 +32,9 @@
     {% if 'epos' in groups %}
     <li><a href="{% url 'epos:index' %}">EPOS</a></li>
     {% endif %}
+    {% if 'fnac' in groups %}
+    <li><a href="{% url 'fnac:index' %}">FNAC</a></li>
+    {% endif %}
     {% if 'validation' in groups %}
     <li><a href="{% url 'validation:home' %}">Validation</a></li>
     {% endif %}
