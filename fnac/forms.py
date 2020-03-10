@@ -5,16 +5,17 @@ from django import forms
 from fnac import models
 
 
-class MissingPricesForm(forms.ModelForm):
+class MissingPriceSizeForm(forms.ModelForm):
     """Form for setting prices to FnacProduct objects."""
 
     class Meta:
         """Meta class for MissingPricesForm."""
 
         model = models.FnacProduct
-        fields = ["price"]
+        fields = ["price", "french_size"]
 
     price = forms.DecimalField(min_value=0, decimal_places=2, required=False)
+    french_size = forms.ModelChoiceField(models.Size.objects.all(), required=False)
 
     def clean_price(self):
         """Return the price as an integer."""
@@ -24,16 +25,17 @@ class MissingPricesForm(forms.ModelForm):
         return price
 
 
-class MissingPricesFormset(forms.BaseModelFormSet):
+class MissingPriceSizeFormset(forms.BaseModelFormSet):
     """Formset for adding missing prices to FnacProduct objects."""
 
     def __init__(self, *args, **kwargs):
         """Set up formset."""
         super().__init__(*args, **kwargs)
-        self.form = MissingPricesForm
+        self.form = MissingPriceSizeForm
         self.model = models.FnacProduct
-        self.queryset = models.FnacProduct.objects.filter(price__isnull=True).order_by(
-            "pk"
+        self.queryset = (
+            models.FnacProduct.objects.size_invalid()
+            | models.FnacProduct.objects.missing_price()
         )
         self.min_num = self.queryset.count()
         self.max_num = self.queryset.count()

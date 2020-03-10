@@ -34,11 +34,11 @@ class MissingInventoryInfo(FnacUserMixin, TemplateView):
         return context
 
 
-class MissingPrice(FnacUserMixin, FormView):
+class MissingPriceSize(FnacUserMixin, FormView):
     """View for displaying products that cannot be listed on FNAC because they do not have a price."""
 
     template_name = "fnac/missing_prices.html"
-    form_class = forms.MissingPricesFormset
+    form_class = forms.MissingPriceSizeFormset
 
     def form_valid(self, formset):
         """Save forms and redirect."""

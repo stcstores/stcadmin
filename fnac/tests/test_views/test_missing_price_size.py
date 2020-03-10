@@ -4,7 +4,7 @@ from django.shortcuts import reverse
 
 @pytest.fixture
 def url():
-    return "/fnac/missing_price/"
+    return "/fnac/missing_price_size/"
 
 
 @pytest.fixture
@@ -29,7 +29,12 @@ def valid_get_response_content(valid_get_response):
 
 
 @pytest.fixture
-def post_data(invalid_products):
+def new_size(size_factory):
+    return size_factory.create()
+
+
+@pytest.fixture
+def post_data(invalid_products, new_size):
     product_count = len(invalid_products)
     form_data = {
         "form-TOTAL_FORMS": product_count,
@@ -37,18 +42,33 @@ def post_data(invalid_products):
         "form-MAX_NUM_FORMS": product_count,
     }
     for i, product in enumerate(invalid_products):
-        form_data.update({f"form-{i}-id": product.id, f"form-{i}-price": 5.56})
+        form_data.update(
+            {
+                f"form-{i}-id": product.id,
+                f"form-{i}-price": 5.56,
+                f"form-{i}-french_size": new_size.id,
+            }
+        )
     return form_data
 
 
 @pytest.fixture
-def invalid_products(fnac_product_factory):
-    return [fnac_product_factory.create(price=None) for i in range(5)]
+def invalid_products(fnac_product_factory, size_factory):
+    return [
+        fnac_product_factory.create(price=None, french_size=None),
+        fnac_product_factory.create(price=None, french_size=size_factory.create()),
+        fnac_product_factory.create(price=958, french_size=None),
+        fnac_product_factory.create(price=685, french_size=None),
+        fnac_product_factory.create(price=None, french_size=None),
+    ]
 
 
 @pytest.fixture
-def valid_products(fnac_product_factory):
-    return [fnac_product_factory.create() for i in range(5)]
+def valid_products(fnac_product_factory, size_factory):
+    return [
+        fnac_product_factory.create(price=1265, french_size=size_factory.create())
+        for i in range(5)
+    ]
 
 
 @pytest.fixture
@@ -92,7 +112,7 @@ def test_logged_in_group_post(
 
 
 def test_heading(valid_get_response_content):
-    text = "<h1>Missing Prices</h1>"
+    text = "<h1>Missing Prices or Sizes</h1>"
     assert text in valid_get_response_content
 
 
@@ -141,6 +161,15 @@ def test_prices_updated(valid_products, invalid_products, valid_post_response):
 
 
 @pytest.mark.django_db
+def test_french_size_updated(
+    valid_products, invalid_products, valid_post_response, new_size
+):
+    for product in invalid_products:
+        product.refresh_from_db()
+        assert product.french_size == new_size
+
+
+@pytest.mark.django_db
 def test_invalid_post_status_code(
     valid_products, invalid_products, invalid_post_response
 ):
@@ -153,5 +182,14 @@ def test_price_is_not_required(
     valid_products, invalid_products, valid_post_request, url, post_data
 ):
     post_data["form-1-price"] = ""
+    response = valid_post_request(url, post_data)
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_size_is_not_required(
+    valid_products, invalid_products, valid_post_request, url, post_data
+):
+    post_data["form-1-french_size"] = ""
     response = valid_post_request(url, post_data)
     assert response.status_code == 302

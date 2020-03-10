@@ -61,8 +61,8 @@ class FnacProductFactory(factory.django.DjangoModelFactory):
     colour = "Red"
     price = 455
     brand = "Stock Inc"
-    english_size = None
-    french_size = None
+    english_size = "UK 5"
+    french_size = factory.SubFactory(SizeFactory)
     stock_level = 54
     image_1 = "81916118.jpg"
     image_2 = "152411896.jpg"

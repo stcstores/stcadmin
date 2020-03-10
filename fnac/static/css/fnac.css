@@ -1,0 +1,31 @@
+.products {
+    display: flex;
+    flex-direction: column;
+}
+
+.product {
+    display: flex;
+    flex-direction: row;
+    margin: 0.25em;
+    border: 3px solid #dedede;
+    border-radius: 20px
+}
+
+.product:nth-child(even) {
+    background-color: #eee;
+}
+
+.product:nth-child(odd) {
+    background-color: #ddd;
+}
+
+.product div {
+    display: flex;
+    flex-direction: column;
+    margin: 1em;
+}
+
+.product_identification div {
+    margin: 0;
+    padding: 0;
+}
