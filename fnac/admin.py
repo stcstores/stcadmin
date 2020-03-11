@@ -77,6 +77,6 @@ class FnacProductAdmin(admin.ModelAdmin):
 class TranslationAdmin(admin.ModelAdmin):
     """Model admin for fnac.Translation."""
 
-    fields = ("name", "description", "colour")
+    fields = ("product", "name", "description", "colour")
     list_display = ("product", "name", "description", "colour")
     list_editable = ("name", "description", "colour")

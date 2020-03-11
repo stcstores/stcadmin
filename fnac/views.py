@@ -41,6 +41,12 @@ class Index(FnacUserMixin, TemplateView):
         context["out_of_stock_count"] = models.FnacProduct.objects.filter(
             stock_level=0
         ).count()
+        context[
+            "missing_translations_count"
+        ] = models.FnacProduct.objects.not_translated().count()
+        context[
+            "ready_to_create_count"
+        ] = models.FnacProduct.objects.ready_to_create().count()
         return context
 
 
@@ -52,9 +58,7 @@ class MissingInventoryInfo(FnacUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return template context."""
         context = super().get_context_data(*args, **kwargs)
-        context[
-            "products"
-        ] = models.FnacProduct.to_create.missing_inventory_information()
+        context["products"] = models.FnacProduct.objects.missing_inventory_information()
         return context
 
 

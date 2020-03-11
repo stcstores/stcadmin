@@ -1,6 +1,8 @@
 import pytest
 from django.shortcuts import reverse
 
+from fnac import models
+
 
 @pytest.fixture
 def url():
@@ -63,8 +65,11 @@ def test_links_to_missing_category(valid_get_response_content):
 
 
 @pytest.fixture
-def products(fnac_range_factory, fnac_product_factory, size_factory):
-    return [
+def products(
+    fnac_range_factory, fnac_product_factory, size_factory, translation_factory
+):
+    products = [
+        fnac_product_factory.create(),
         fnac_product_factory.create(created=True),
         fnac_product_factory.create(description=""),
         fnac_product_factory.create(price=None),
@@ -77,6 +82,9 @@ def products(fnac_range_factory, fnac_product_factory, size_factory):
         fnac_product_factory.create(stock_level=0),
         fnac_product_factory.create(),
     ]
+    for product in products[1:]:
+        translation_factory.create(product=product)
+    return products
 
 
 @pytest.mark.django_db
@@ -107,3 +115,15 @@ def test_do_not_create_count_in_context(products, valid_get_response):
 @pytest.mark.django_db
 def test_out_of_stock_count_in_context(products, valid_get_response):
     assert valid_get_response.context["out_of_stock_count"] == 1
+
+
+@pytest.mark.django_db
+def test_missing_translations_count_in_context(products, valid_get_response):
+    assert valid_get_response.context["missing_translations_count"] == 1
+
+
+@pytest.mark.django_db
+def test_ready_to_create_count_in_context(products, valid_get_response):
+    print(products)
+    print(models.FnacProduct.objects.ready_to_create())
+    assert valid_get_response.context["ready_to_create_count"] == 1
