@@ -34,7 +34,11 @@
         <td>{{missing_price_size_count}}</td>
     </tr>
     <tr>
-        <td>Not Translated</td>
+        <td>
+            <a href="{% url 'fnac:translations' %}">
+                Not Translated
+            </a>
+        </td>
         <td>{{missing_translations_count}}</td>
     </tr>
     <tr>

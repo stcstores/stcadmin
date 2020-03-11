@@ -6,6 +6,7 @@ PAGES = [
     reverse("fnac:missing_inventory_info"),
     reverse("fnac:missing_price_size"),
     reverse("fnac:missing_category"),
+    reverse("fnac:translations"),
 ]
 
 

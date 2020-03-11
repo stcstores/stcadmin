@@ -1,0 +1,14 @@
+{% extends 'fnac/base.html' %}
+
+{% block content %}
+
+<h1>Add Translations</h1>
+
+<p>Products requiring translation: {{missing_translations_count}}</p>
+
+<form action="" method="POST">{% csrf_token %}
+    {{ form.as_p }}
+    <button>Add Translations</button>
+</form>
+
+{% endblock content %}

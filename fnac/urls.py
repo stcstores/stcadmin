@@ -18,4 +18,5 @@ urlpatterns = [
         name="missing_price_size",
     ),
     path("missing_category/", views.MissingCategory.as_view(), name="missing_category"),
+    path("translations/", views.Translations.as_view(), name="translations"),
 ]

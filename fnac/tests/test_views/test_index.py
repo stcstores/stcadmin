@@ -53,15 +53,19 @@ def test_url_heading(valid_get_response_content):
 
 
 def test_links_to_missing_inventory_info(valid_get_response_content):
-    assert reverse("fnac:missing_inventory_info") in valid_get_response_content
+    assert valid_get_response_content.count(reverse("fnac:missing_inventory_info")) == 2
 
 
 def test_links_to_missing_price_size(valid_get_response_content):
-    assert reverse("fnac:missing_price_size") in valid_get_response_content
+    assert valid_get_response_content.count(reverse("fnac:missing_price_size")) == 2
 
 
 def test_links_to_missing_category(valid_get_response_content):
-    assert reverse("fnac:missing_category") in valid_get_response_content
+    assert valid_get_response_content.count(reverse("fnac:missing_category")) == 2
+
+
+def test_links_to_translations(valid_get_response_content):
+    assert valid_get_response_content.count(reverse("fnac:translations")) == 2
 
 
 @pytest.fixture

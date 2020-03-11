@@ -94,3 +94,27 @@ class MissingCategory(FnacUserMixin, FormView):
     def get_success_url(self):
         """Return the URL to redirect to if forms submission is successful."""
         return reverse("fnac:index")
+
+
+class Translations(FnacUserMixin, FormView):
+    """View for updating translations."""
+
+    template_name = "fnac/translations.html"
+    form_class = forms.TranslationsForm
+
+    def get_context_data(self, *args, **kwargs):
+        """Return template context data."""
+        context = super().get_context_data(*args, **kwargs)
+        context[
+            "missing_translations_count"
+        ] = models.FnacProduct.objects.not_translated().count()
+        return context
+
+    def form_valid(self, form):
+        """Create new translations."""
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the URL to redirect to if forms submission is successful."""
+        return reverse("fnac:index")
