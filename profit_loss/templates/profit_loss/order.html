@@ -8,7 +8,9 @@
 {% block content %}
 <h1>Order: {{ order.order_id }}</h1>
 <a href="{% ccp_order_page order.order_id order.customer_id %}" target="_blank">View on Cloud Commerce</a>
+{% if order.error %}
 <h1 class="error">An error occured processing the details of this order</h1>
+{% endif %}
 <table>
     <tr><th>Department</th><td>{{ order.department }}</td></tr>
     <tr><th>Destination</th><td>{{ order.country.name }}</td></tr>
