@@ -128,7 +128,7 @@ class TestOrder(STCAdminTest):
         default_cs_rule_name=None,
         tracking_code=None,
         products=None,
-        can_be_processed=None,
+        can_process_order=None,
     ):
         if order_id is None:
             order_id = self.order_ID
@@ -152,8 +152,8 @@ class TestOrder(STCAdminTest):
             tracking_code = self.tracking_number
         if products is None:
             products = [self.create_mock_product()]
-        if can_be_processed is None:
-            can_be_processed = not self.ignored
+        if can_process_order is None:
+            can_process_order = not self.ignored
         return Mock(
             order_id=order_id,
             customer_id=customer_id,
@@ -166,7 +166,7 @@ class TestOrder(STCAdminTest):
             default_cs_rule_name=default_cs_rule_name,
             tracking_code=tracking_code,
             products=products,
-            can_be_processed=can_be_processed,
+            can_process_order=can_process_order,
         )
 
     def create_mock_product(self, product_ID=None, price=None, quantity=None):
@@ -460,7 +460,7 @@ class TestOrder(STCAdminTest):
         recent_orders_calls = [
             call(customer_ID=order.customer_ID)
             for order in models.Order.objects.filter(
-                dispatched_at__isnull=True, cancelled=False
+                dispatched_at__isnull=True, cancelled=False, ignored=False
             )
         ]
         self.mock_CCAPI.recent_orders_for_customer.assert_has_calls(recent_orders_calls)
@@ -592,6 +592,7 @@ class TestOrder(STCAdminTest):
         order.dispatched_at = None
         order.customer_ID = None
         order.cancelled = False
+        order.ignored = False
         order.save()
         order.check_cancelled()
         self.assertEqual(0, len(self.mock_CCAPI.mock_calls))
