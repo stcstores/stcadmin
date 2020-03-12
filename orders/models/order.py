@@ -201,7 +201,7 @@ class Order(models.Model):
         """Mark cancelled orders."""
         undispatched_order_IDs = [order.order_id for order in orders_to_dispatch]
         unaccounted_orders = cls._default_manager.filter(
-            cancelled=False, dispatched_at__isnull=True
+            cancelled=False, dispatched_at__isnull=True, ignored=False
         ).exclude(order_ID__in=undispatched_order_IDs)
         for order in unaccounted_orders:
             order.check_cancelled()
