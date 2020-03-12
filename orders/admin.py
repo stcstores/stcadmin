@@ -23,7 +23,7 @@ class OrderAdmin(admin.ModelAdmin):
         "recieved_at",
         "dispatched_at",
         "cancelled",
-        "can_process_order",
+        "ignored",
         "channel",
         "channel_order_ID",
         "country",
@@ -38,7 +38,7 @@ class OrderAdmin(admin.ModelAdmin):
         "recieved_at",
         "dispatched_at",
         "cancelled",
-        "can_process_order",
+        "ignored",
         "channel",
         "channel_order_ID",
         "country",
@@ -46,12 +46,7 @@ class OrderAdmin(admin.ModelAdmin):
         "courier_service",
         "tracking_number",
     )
-    list_editable = (
-        "cancelled",
-        "can_process_order",
-        "shipping_rule",
-        "courier_service",
-    )
+    list_editable = ("cancelled", "ignored", "shipping_rule", "courier_service")
 
 
 @admin.register(models.ProductSale)
