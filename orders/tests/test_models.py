@@ -536,7 +536,7 @@ class TestOrder(STCAdminTest):
         for order in queryset:
             self.assertLessEqual(order.recieved_at, models.order.urgent_since())
 
-    def test_check_cancelled(self,):
+    def test_check_cancelled_marks_cancelled(self):
         order = models.Order.objects.filter(
             cancelled=False, dispatched_at__isnull=True, customer_ID__isnull=False
         )[0]
@@ -552,6 +552,21 @@ class TestOrder(STCAdminTest):
             customer_ID=order.customer_ID
         )
         self.assertTrue(order.cancelled)
+
+    def test_check_cancelled_marks_ignored(self):
+        order = models.Order.objects.filter(
+            cancelled=False, dispatched_at__isnull=True, customer_ID__isnull=False
+        )[0]
+        mock_recent_order = Mock(order_id=order.order_ID, status="ignored")
+        self.mock_CCAPI.recent_orders_for_customer.return_value = {
+            order.order_ID: mock_recent_order
+        }
+        order.check_cancelled()
+        order.refresh_from_db()
+        self.mock_CCAPI.recent_orders_for_customer.assert_called_once_with(
+            customer_ID=order.customer_ID
+        )
+        self.assertFalse(order.can_process_order)
 
     def test_check_cancelled_with_no_customer_ID(self):
         order = models.Order.objects.filter(

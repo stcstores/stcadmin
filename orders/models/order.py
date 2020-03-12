@@ -160,6 +160,9 @@ class Order(models.Model):
             if order.status == order.CANCELLED:
                 self.cancelled = True
                 self.save()
+            elif order.status == order.IGNORED:
+                self.can_process_order = False
+                self.save()
 
     @classmethod
     def make_tz_aware(cls, d):
