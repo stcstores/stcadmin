@@ -49,7 +49,7 @@ class UndispatchedManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .filter(dispatched_at__isnull=True, cancelled=False, can_process_order=True)
+            .filter(dispatched_at__isnull=True, cancelled=False, ignored=False)
         )
 
 
@@ -110,7 +110,7 @@ class Order(models.Model):
     recieved_at = models.DateTimeField()
     dispatched_at = models.DateTimeField(blank=True, null=True)
     cancelled = models.BooleanField(default=False)
-    can_process_order = models.BooleanField(default=True)
+    ignored = models.BooleanField(default=False)
     channel = models.ForeignKey(
         Channel, blank=True, null=True, on_delete=models.PROTECT
     )
@@ -159,6 +159,9 @@ class Order(models.Model):
             order = recent_orders[self.order_ID]
             if order.status == order.CANCELLED:
                 self.cancelled = True
+                self.save()
+            elif order.status == order.IGNORED:
+                self.ignored = True
                 self.save()
 
     @classmethod
@@ -274,7 +277,7 @@ class Order(models.Model):
             "shipping_rule": shipping_rule,
             "courier_service": courier_service,
             "tracking_number": order.tracking_code or None,
-            "can_process_order": order.can_process_order,
+            "ignored": not order.can_process_order,
         }
         return kwargs
 

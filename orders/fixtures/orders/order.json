@@ -13,7 +13,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -30,7 +30,7 @@
         "shipping_rule": 20,
         "courier_service": 1,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -47,7 +47,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": "T06546515615",
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -64,7 +64,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -81,7 +81,7 @@
         "shipping_rule": 20,
         "courier_service": 1,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -98,7 +98,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": "T07894651561",
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -115,7 +115,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -132,7 +132,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -149,7 +149,7 @@
         "shipping_rule": 20,
         "courier_service": 1,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -166,7 +166,7 @@
         "shipping_rule": 20,
         "courier_service": 1,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -183,7 +183,7 @@
         "shipping_rule": 1,
         "courier_service": 10,
         "tracking_number": "T09941615165",
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -200,7 +200,7 @@
         "shipping_rule": 2,
         "courier_service": 10,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -217,7 +217,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -234,7 +234,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -251,7 +251,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": "T04981619981",
-        "can_process_order": false
+        "ignored": true
     }
 }, {
     "model": "orders.order",
@@ -268,7 +268,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -285,7 +285,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -302,7 +302,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": "T0849616165",
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -319,7 +319,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -336,7 +336,7 @@
         "shipping_rule": 1,
         "courier_service": 18,
         "tracking_number": "T04894846116",
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -353,7 +353,7 @@
         "shipping_rule": 19,
         "courier_service": 15,
         "tracking_number": null,
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -370,7 +370,7 @@
         "shipping_rule": 1,
         "courier_service": 18,
         "tracking_number": "T04894846187",
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -387,7 +387,7 @@
         "shipping_rule": 1,
         "courier_service": 18,
         "tracking_number": "T04894848944",
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -404,7 +404,7 @@
         "shipping_rule": 1,
         "courier_service": 18,
         "tracking_number": "T04894849541",
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -421,7 +421,7 @@
         "shipping_rule": 1,
         "courier_service": 18,
         "tracking_number": "T04894849841",
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -438,7 +438,7 @@
         "shipping_rule": 1,
         "courier_service": 18,
         "tracking_number": "T04894844545",
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -455,7 +455,7 @@
         "shipping_rule": 1,
         "courier_service": 18,
         "tracking_number": "T0489484616",
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -472,7 +472,7 @@
         "shipping_rule": 1,
         "courier_service": 18,
         "tracking_number": "T04894842115",
-        "can_process_order": true
+        "ignored": false
     }
 }, {
     "model": "orders.order",
@@ -489,6 +489,6 @@
         "shipping_rule": 1,
         "courier_service": 18,
         "tracking_number": "T048948498115",
-        "can_process_order": true
+        "ignored": false
     }
 }]
