@@ -47,7 +47,9 @@ class UndispatchedManager(models.Manager):
     def get_queryset(self):
         """Return a queryset of undispatched orders."""
         return (
-            super().get_queryset().filter(dispatched_at__isnull=True, cancelled=False)
+            super()
+            .get_queryset()
+            .filter(dispatched_at__isnull=True, cancelled=False, can_process_order=True)
         )
 
 
@@ -108,6 +110,7 @@ class Order(models.Model):
     recieved_at = models.DateTimeField()
     dispatched_at = models.DateTimeField(blank=True, null=True)
     cancelled = models.BooleanField(default=False)
+    can_process_order = models.BooleanField(default=True)
     channel = models.ForeignKey(
         Channel, blank=True, null=True, on_delete=models.PROTECT
     )
@@ -271,6 +274,7 @@ class Order(models.Model):
             "shipping_rule": shipping_rule,
             "courier_service": courier_service,
             "tracking_number": order.tracking_code or None,
+            "can_process_order": order.can_process_order,
         }
         return kwargs
 
