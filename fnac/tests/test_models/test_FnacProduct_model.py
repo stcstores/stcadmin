@@ -58,9 +58,9 @@ def test_FnacProduct_colour_field(fnac_product_factory):
 
 
 @pytest.mark.django_db
-def test_FnacProduct_colour_field_can_be_null(fnac_product_factory):
-    product = fnac_product_factory.create(colour=None)
-    assert product.colour is None
+def test_FnacProduct_colour_field_can_be_empty(fnac_product_factory):
+    product = fnac_product_factory.create(colour="")
+    assert product.colour == ""
 
 
 @pytest.mark.django_db

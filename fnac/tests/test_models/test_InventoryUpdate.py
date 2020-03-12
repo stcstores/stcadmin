@@ -102,7 +102,7 @@ def test_fnac_product_description_set(created_fnac_product, inventory_file):
 
 
 def test_fnac_product_colour_set(created_fnac_product, inventory_file):
-    assert created_fnac_product.colour is None
+    assert created_fnac_product.colour == ""
 
 
 def test_fnac_product_colour_set_when_available():

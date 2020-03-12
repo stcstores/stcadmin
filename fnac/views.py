@@ -1,6 +1,8 @@
 """Views for the fnac app."""
 
+from django import http
 from django.shortcuts import reverse
+from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
@@ -118,3 +120,18 @@ class Translations(FnacUserMixin, FormView):
     def get_success_url(self):
         """Return the URL to redirect to if forms submission is successful."""
         return reverse("fnac:index")
+
+
+class TranslationsExport(FnacUserMixin, View):
+    """Download an XLSX file for translation."""
+
+    def get(*args, **kwargs):
+        """Return an HttpResponse object with the XLSX export."""
+        export_file = models.translations_export()
+        response = http.HttpResponse(
+            export_file,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sh",
+        )
+        response["Content-Disposition"] = 'attachment; filename="to_translate.xlsx"'
+
+        return response

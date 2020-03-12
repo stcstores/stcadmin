@@ -80,6 +80,9 @@ def test_in_stock_method(fnac_product_factory, product_kwargs, returned):
         ({"colour": ""}, {"colour": "", "name": ""}, False),
         ({"colour": "", "created": True}, {}, False),
         ({"colour": "", "do_not_create": True}, {}, False),
+        ({"description": ""}, {}, False),
+        ({"barcode": ""}, {}, False),
+        ({"image_1": ""}, {}, False),
     ],
 )
 def test_translated_method(
@@ -119,6 +122,9 @@ def test_translated_method(
         ({}, {"description": ""}, True),
         ({"colour": "", "created": True}, {}, False),
         ({"colour": "", "do_not_create": True}, {}, False),
+        ({"description": ""}, {}, False),
+        ({"barcode": ""}, {}, False),
+        ({"image_1": ""}, {}, False),
     ],
 )
 def test_not_translated_method(

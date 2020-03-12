@@ -182,4 +182,54 @@ def test_invalid_sku_input(products, url, valid_post_request, translation_import
     products[0].save()
     response = valid_post_request(url, {"translations": translation_import_text})
     assert response.status_code == 200
-    assert "No product with SKU 5AM-8UM-7AN exists" in response.content.decode("utf8")
+    assert "No FnacProduct matching SKU 5AM-8UM-7AN exists" in response.content.decode(
+        "utf8"
+    )
+
+
+@pytest.mark.django_db
+def test_export_link_in_contents_if_translations_required(
+    products, valid_get_response_content
+):
+    assert reverse("fnac:translations_export") in valid_get_response_content
+
+
+def test_export_link_not_in_contents_if_translations_not_required(
+    valid_get_response_content,
+):
+    assert reverse("fnac:translations_export") not in valid_get_response_content
+    assert "No translations required" in valid_get_response_content
+
+
+@pytest.mark.django_db
+def test_existing_translations_are_updated(
+    translation_factory, url, valid_post_request
+):
+    translation = translation_factory.create()
+    product = translation.product
+    translation_text = "\r\n".join(
+        [
+            "SKU \tTitre \tCouleur \tLa description \t¬",
+            f"{product.sku} \tProduit un titre \trouge \tUne description d'un produit\t¬",
+        ]
+    )
+    valid_post_request(url, {"translations": translation_text})
+    translation.refresh_from_db()
+    assert translation.product == product
+    assert translation.name == "Produit un titre"
+    assert translation.colour == "rouge"
+    assert translation.description == "Une description d'un produit"
+
+
+@pytest.mark.django_db
+def test_invalid_text_import(fnac_product_factory, url, valid_post_request):
+    product = fnac_product_factory.create()
+    translation_text = "\r\n".join(
+        [
+            "SKU \tTitre \tCouleur \tLa description \t¬",
+            f"{product.sku} \tProduit un titre rouge Une description d'un produit\t¬",
+        ]
+    )
+    response = valid_post_request(url, {"translations": translation_text})
+    assert response.status_code == 200
+    assert "Error parsing translation text" in response.content.decode("utf8")

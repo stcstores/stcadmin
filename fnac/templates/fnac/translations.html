@@ -4,7 +4,30 @@
 
 <h1>Add Translations</h1>
 
+
+{% if missing_translations_count > 0 %}
+
 <p>Products requiring translation: {{missing_translations_count}}</p>
+<p>Adding translations:</p>
+<ul>
+    <li>Download a Translation Export.</li>
+    <li>Go to <a href="https://translate.google.co.uk">Google Translate</a>.</li>
+    <li>Click Documents.</li>
+    <li>Select English and French as the languages to translate from and to.</li>
+    <li>Click Browse your computer and upload the Translation Export.</li>
+    <li>Select all the text on the resulting page with Ctrl+A.</li>
+    <li>Paste the text into the translations box below and click Add Translations.</li>
+</ul>
+
+<a href="{% url 'fnac:translations_export' %}">
+    <button>Translation Export</button>
+</a>
+
+{% else %}
+
+<p>No translations required.</p>
+
+{% endif %}
 
 <form action="" method="POST">{% csrf_token %}
     {{ form.as_p }}

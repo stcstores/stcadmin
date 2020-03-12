@@ -19,4 +19,9 @@ urlpatterns = [
     ),
     path("missing_category/", views.MissingCategory.as_view(), name="missing_category"),
     path("translations/", views.Translations.as_view(), name="translations"),
+    path(
+        "translations_export/",
+        views.TranslationsExport.as_view(),
+        name="translations_export",
+    ),
 ]
