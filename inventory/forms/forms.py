@@ -1,6 +1,7 @@
 """Forms for inventory app."""
 
 from django import forms
+from django.core.exceptions import ValidationError
 
 from inventory import models
 from product_editor.editor_manager import ProductEditorBase
@@ -59,20 +60,30 @@ class CreateBayForm(forms.Form):
             data["backup_location"] = models.Warehouse.objects.get(
                 warehouse_ID=data["location"]
             )
-            self.new_bay = models.Bay.new_backup_bay(
+            name = models.Bay.objects.backup_bay_name(
                 name=data["name"],
                 department=data["warehouse"],
                 backup_location=data["backup_location"],
             )
         else:
-            self.new_bay = models.Bay(name=data["name"], warehouse=data["warehouse"])
-        self.new_bay.clean()
-        self.new_bay.validate_unique()
+            name = data["name"]
+        if models.Bay.objects.filter(name=name).exists():
+            raise ValidationError(f"A Bay named {name} already exists")
         return data
 
     def save(self):
         """Create Warehouse Bay."""
-        self.new_bay.save()
+        data = self.cleaned_data
+        if data["bay_type"] == self.BACKUP:
+            self.new_bay = models.Bay.objects.new_backup_bay(
+                name=data["name"],
+                department=data["warehouse"],
+                backup_location=data["backup_location"],
+            )
+        else:
+            self.new_bay = models.Bay.objects.new_bay(
+                name=data["name"], warehouse=data["warehouse"]
+            )
 
 
 class ImagesForm(forms.Form):

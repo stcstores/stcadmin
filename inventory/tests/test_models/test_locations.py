@@ -1,5 +1,8 @@
 from unittest.mock import Mock, patch
 
+import pytest
+from django.core.exceptions import ValidationError
+
 from inventory import models
 from stcadmin.tests.stcadmin_test import STCAdminTest
 
@@ -74,25 +77,25 @@ class TestBays(CreateBays, STCAdminTest):
         self.assertEqual(bay.warehouse, self.warehouse_1)
         self.assertFalse(bay.is_default)
         self.assertEqual(str(bay), "Warehouse 1 - New Bay")
-        mock_CCAPI.get_bay_id.assert_not_called()
+        mock_CCAPI.add_bay_to_warehouse.assert_not_called()
 
     @patch("inventory.models.locations.CCAPI")
     def test_create_bay_without_ID(self, mock_CCAPI):
-        mock_CCAPI.get_bay_id.return_value = "846156"
-        models.Bay(warehouse=self.warehouse_1, name="New Bay").save()
+        mock_CCAPI.add_bay_to_warehouse.return_value = "846156"
+        models.Bay.objects.new_bay(name="New Bay", warehouse=self.warehouse_1)
         bay = models.Bay.objects.get(bay_ID="846156")
         self.assertEqual(bay.name, "New Bay")
         self.assertEqual(bay.warehouse, self.warehouse_1)
         self.assertFalse(bay.is_default)
         self.assertEqual(str(bay), "Warehouse 1 - New Bay")
-        mock_CCAPI.get_bay_id.assert_called_once_with(
-            "New Bay", "Warehouse 1", create=True
+        mock_CCAPI.add_bay_to_warehouse.assert_called_once_with(
+            bay="New Bay", warehouse_id=self.warehouse_1.warehouse_ID
         )
 
     @patch("inventory.models.locations.CCAPI")
     def test_create_backup_bay(self, mock_CCAPI):
-        mock_CCAPI.get_bay_id.return_value = "846156"
-        bay = models.Bay.new_backup_bay(
+        mock_CCAPI.add_bay_to_warehouse.return_value = "846156"
+        bay = models.Bay.objects.new_backup_bay(
             name="New Bay",
             department=self.warehouse_1,
             backup_location=self.warehouse_2,
@@ -100,23 +103,36 @@ class TestBays(CreateBays, STCAdminTest):
         self.assertEqual(bay.name, "WH1 Backup Warehouse 2 New Bay")
         self.assertEqual(bay.warehouse, self.warehouse_1)
         self.assertFalse(bay.is_default)
-        mock_CCAPI.get_bay_id.assert_not_called()
+        mock_CCAPI.add_bay_to_warehouse.assert_called_once_with(
+            bay="WH1 Backup Warehouse 2 New Bay",
+            warehouse_id=self.warehouse_1.warehouse_ID,
+        )
 
     @patch("inventory.models.locations.CCAPI")
     def test_create_bay_with_error_getting_ID(self, mock_CCAPI):
-        mock_CCAPI.get_bay_id.return_value = None
+        mock_CCAPI.add_bay_to_warehouse.return_value = None
         with self.assertRaises(Exception):
-            models.Bay(warehouse=self.warehouse_1, name="New Bay").save()
-        mock_CCAPI.get_bay_id.assert_called_once_with(
-            "New Bay", "Warehouse 1", create=True
+            models.Bay.objects.new_bay(name="New Bay", warehouse=self.warehouse_1)
+        mock_CCAPI.add_bay_to_warehouse.assert_called_once_with(
+            bay="New Bay", warehouse_id=self.warehouse_1.warehouse_ID
         )
 
     def test_backup_bay_name_method(self):
         self.assertEqual(
-            models.Bay.backup_bay_name(
-                bay_name="New Bay",
+            models.Bay.objects.backup_bay_name(
+                name="New Bay",
                 department=self.warehouse_1,
                 backup_location=self.warehouse_2,
             ),
             "WH1 Backup Warehouse 2 New Bay",
         )
+
+    @patch("inventory.models.locations.CCAPI")
+    def test_bays_with_duplicate_names_cannot_be_created(self, mock_CCAPI):
+        mock_CCAPI.add_bay_to_warehouse.return_value = "846156"
+        existing_bay = self.warehouse_1.bays.all()[0]
+        with pytest.raises(ValidationError):
+            models.Bay.objects.new_bay(
+                name=existing_bay.name, warehouse=self.warehouse_1
+            )
+        mock_CCAPI.add_bay_to_warehouse.assert_not_called()
