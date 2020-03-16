@@ -47,7 +47,9 @@ class UndispatchedManager(models.Manager):
     def get_queryset(self):
         """Return a queryset of undispatched orders."""
         return (
-            super().get_queryset().filter(dispatched_at__isnull=True, cancelled=False)
+            super()
+            .get_queryset()
+            .filter(dispatched_at__isnull=True, cancelled=False, ignored=False)
         )
 
 
@@ -108,6 +110,7 @@ class Order(models.Model):
     recieved_at = models.DateTimeField()
     dispatched_at = models.DateTimeField(blank=True, null=True)
     cancelled = models.BooleanField(default=False)
+    ignored = models.BooleanField(default=False)
     channel = models.ForeignKey(
         Channel, blank=True, null=True, on_delete=models.PROTECT
     )
@@ -157,6 +160,9 @@ class Order(models.Model):
             if order.status == order.CANCELLED:
                 self.cancelled = True
                 self.save()
+            elif order.status == order.IGNORED:
+                self.ignored = True
+                self.save()
 
     @classmethod
     def make_tz_aware(cls, d):
@@ -195,7 +201,7 @@ class Order(models.Model):
         """Mark cancelled orders."""
         undispatched_order_IDs = [order.order_id for order in orders_to_dispatch]
         unaccounted_orders = cls._default_manager.filter(
-            cancelled=False, dispatched_at__isnull=True
+            cancelled=False, dispatched_at__isnull=True, ignored=False
         ).exclude(order_ID__in=undispatched_order_IDs)
         for order in unaccounted_orders:
             order.check_cancelled()
@@ -271,6 +277,7 @@ class Order(models.Model):
             "shipping_rule": shipping_rule,
             "courier_service": courier_service,
             "tracking_number": order.tracking_code or None,
+            "ignored": not order.can_process_order,
         }
         return kwargs
 

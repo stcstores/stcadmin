@@ -6,6 +6,7 @@ import sys
 
 from ccapi import CCAPI
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from tabler import Table
 
@@ -54,7 +55,85 @@ class Warehouse(models.Model):
         return self.bay_set.get(is_default=True)
 
 
-class NonDefaultBaysManager(models.Manager):
+class BayManager(models.Manager):
+    """Manager for the inventory.Bay model."""
+
+    def new_bay(self, name, warehouse):
+        """
+        Create a new bay in Cloud Commerce.
+
+        Kwargs:
+            name (str): The name of the new bay.
+            warehouse (inventory.models.Warehouse): The warehouse to which the bay
+                will belong.
+
+        Returns:
+            inventory.Bay
+
+        Raises:
+            ValidationError: If a Bay already exists with a matching name.
+
+        """
+        if self.get_queryset().filter(name=name).exists():
+            raise ValidationError(f"A Bay named {name} already exists.")
+        bay_ID = self._create_bay_in_cloud_commerce(
+            name=name, warehouse_id=warehouse.warehouse_ID
+        )
+        bay = Bay(bay_ID=bay_ID, name=name, warehouse=warehouse)
+        bay.save()
+        return bay
+
+    def new_backup_bay(self, name, department, backup_location):
+        """
+        Return a new backup bay in Cloud Commerce.
+
+        Kwargs:
+            name (str): The name of the new bay.
+            department (inventory.models.Warehouse): The default warehouse of the
+                department to which products in this bay belong.
+            backup_location (inventory.models.Warehouse): The Warehouse representing
+                the physical location of the bay.
+
+        Returns:
+            inventory.Bay
+
+        Raises:
+            ValidationError: If a Bay already exists with a matching name.
+
+
+        """
+        backup_name = self.backup_bay_name(
+            name=name, department=department, backup_location=backup_location
+        )
+        return self.new_bay(name=backup_name, warehouse=department)
+
+    def _create_bay_in_cloud_commerce(self, name, warehouse_id):
+        """
+        Create a new bay in Cloud Commerce.
+
+        Args:
+            name (str): The name of the bay.
+            warehouse_id (str): The Cloud Commerce ID of the warehouse to which the bay
+                will be added.
+
+        Returns:
+            (str): The ID of the newly created bay.
+
+        """
+        try:
+            bay_ID = CCAPI.add_bay_to_warehouse(bay=name, warehouse_id=warehouse_id)
+        except Exception:
+            raise Exception("Error creating new bay in Cloud Commerce")
+        if bay_ID is None:
+            raise Exception("Error creating new bay in Cloud Commerce")
+        return str(bay_ID)
+
+    def backup_bay_name(self, *, name, department, backup_location):
+        """Return the name for a backup bay."""
+        return f"{department.abriviation} Backup {backup_location.name} {name}"
+
+
+class NonDefaultBaysManager(BayManager):
     """Manager for non default Bays."""
 
     def get_queryset(self):
@@ -71,7 +150,7 @@ class Bay(models.Model):
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
     is_default = models.BooleanField(default=False)
 
-    objects = models.Manager()
+    objects = BayManager()
     non_default = NonDefaultBaysManager()
 
     class Meta:
@@ -91,19 +170,6 @@ class Bay(models.Model):
     def __str__(self):
         return "{} - {}".format(self.warehouse, self.name)
 
-    @staticmethod
-    def backup_bay_name(*, bay_name, department, backup_location):
-        """Return the name for a backup bay."""
-        return f"{department.abriviation} Backup {backup_location.name} {bay_name}"
-
-    @classmethod
-    def new_backup_bay(cls, name, department, backup_location):
-        """Return a new Bay instance named as a backup bay."""
-        backup_name = cls.backup_bay_name(
-            bay_name=name, department=department, backup_location=backup_location
-        )
-        return cls(name=backup_name, warehouse=department)
-
     @property
     def is_backup(self):
         """Return True if the bay is a backup bay, otherwise False."""
@@ -115,24 +181,6 @@ class Bay(models.Model):
         if not self.is_backup and not self.is_default:
             return True
         return False
-
-    def save(self, *args, **kwargs):
-        """Create the bay in Cloud Commerce if it has no ID."""
-        if not self.bay_ID:
-            self.bay_ID = self.get_CC_ID()
-        super().save(*args, **kwargs)
-
-    def get_CC_ID(self):
-        """
-        Return the Cloud Commerce ID for this bay.
-
-        If it does not exist in Cloud Commerce it will be created.
-        """
-        bay_ID = CCAPI.get_bay_id(self.name, self.warehouse.name, create=True)
-        if bay_ID:
-            return bay_ID
-        else:
-            raise Exception("Error creating new bay in Cloud Commerce")
 
 
 class LocationIntegrityCheck:

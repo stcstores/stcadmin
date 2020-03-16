@@ -101,6 +101,7 @@ class TestOrder(STCAdminTest):
         self.aware_recieved_at = self.aware_tz(self.recieved_at)
         self.aware_dispatched_at = self.aware_tz(self.dispatched_at)
         self.cancelled = False
+        self.ignored = False
         self.channel = models.Channel.objects.create(name="Test Channel")
         self.channel_order_ID = "8504389BHF9393"
         self.country = shipping_models.Country.objects.get(id=1)
@@ -127,6 +128,7 @@ class TestOrder(STCAdminTest):
         default_cs_rule_name=None,
         tracking_code=None,
         products=None,
+        can_process_order=None,
     ):
         if order_id is None:
             order_id = self.order_ID
@@ -150,6 +152,8 @@ class TestOrder(STCAdminTest):
             tracking_code = self.tracking_number
         if products is None:
             products = [self.create_mock_product()]
+        if can_process_order is None:
+            can_process_order = not self.ignored
         return Mock(
             order_id=order_id,
             customer_id=customer_id,
@@ -162,6 +166,7 @@ class TestOrder(STCAdminTest):
             default_cs_rule_name=default_cs_rule_name,
             tracking_code=tracking_code,
             products=products,
+            can_process_order=can_process_order,
         )
 
     def create_mock_product(self, product_ID=None, price=None, quantity=None):
@@ -199,6 +204,8 @@ class TestOrder(STCAdminTest):
         self.assertEqual(self.courier_service, order.courier_service)
         self.assertIsNone(order.tracking_number)
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 0)
+        self.assertFalse(order.cancelled)
+        self.assertFalse(order.ignored)
 
     def test_str(self):
         order = models.Order.objects.get(id=1)
@@ -241,6 +248,8 @@ class TestOrder(STCAdminTest):
         self.assertEqual(len(self.mock_CCAPI.mock_calls), 0)
         self.assertIn("tracking_number", order_details)
         self.assertEqual(self.tracking_number, order_details["tracking_number"])
+        self.assertIn("ignored", order_details)
+        self.assertEqual(self.ignored, order_details["ignored"])
 
     def test_parse_dispatch_date(self):
         self.assertEqual(
@@ -451,7 +460,7 @@ class TestOrder(STCAdminTest):
         recent_orders_calls = [
             call(customer_ID=order.customer_ID)
             for order in models.Order.objects.filter(
-                dispatched_at__isnull=True, cancelled=False
+                dispatched_at__isnull=True, cancelled=False, ignored=False
             )
         ]
         self.mock_CCAPI.recent_orders_for_customer.assert_has_calls(recent_orders_calls)
@@ -489,7 +498,7 @@ class TestOrder(STCAdminTest):
 
     def test_undispatched_manager(self):
         queryset = models.Order.undispatched.all()
-        self.assertEqual(17, queryset.count())
+        self.assertEqual(16, queryset.count())
         for order in queryset:
             self.assertFalse(order.is_dispatched())
 
@@ -514,7 +523,7 @@ class TestOrder(STCAdminTest):
 
     def test_undispatched_non_priority_manager(self):
         queryset = models.Order.undispatched_non_priority.all()
-        self.assertEqual(16, queryset.count())
+        self.assertEqual(15, queryset.count())
         for order in queryset:
             self.assertFalse(order.shipping_rule.priority)
             self.assertIsNone(order.dispatched_at)
@@ -527,7 +536,7 @@ class TestOrder(STCAdminTest):
         for order in queryset:
             self.assertLessEqual(order.recieved_at, models.order.urgent_since())
 
-    def test_check_cancelled(self,):
+    def test_check_cancelled_marks_cancelled(self):
         order = models.Order.objects.filter(
             cancelled=False, dispatched_at__isnull=True, customer_ID__isnull=False
         )[0]
@@ -543,6 +552,23 @@ class TestOrder(STCAdminTest):
             customer_ID=order.customer_ID
         )
         self.assertTrue(order.cancelled)
+
+    def test_check_cancelled_marks_ignored(self):
+        order = models.Order.objects.filter(
+            cancelled=False, dispatched_at__isnull=True, customer_ID__isnull=False
+        )[0]
+        mock_recent_order = Mock(
+            order_id=order.order_ID, IGNORED="ignored", status="ignored"
+        )
+        self.mock_CCAPI.recent_orders_for_customer.return_value = {
+            order.order_ID: mock_recent_order
+        }
+        order.check_cancelled()
+        order.refresh_from_db()
+        self.mock_CCAPI.recent_orders_for_customer.assert_called_once_with(
+            customer_ID=order.customer_ID
+        )
+        self.assertTrue(order.ignored)
 
     def test_check_cancelled_with_no_customer_ID(self):
         order = models.Order.objects.filter(
@@ -566,6 +592,7 @@ class TestOrder(STCAdminTest):
         order.dispatched_at = None
         order.customer_ID = None
         order.cancelled = False
+        order.ignored = False
         order.save()
         order.check_cancelled()
         self.assertEqual(0, len(self.mock_CCAPI.mock_calls))

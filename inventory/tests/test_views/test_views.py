@@ -69,7 +69,7 @@ class TestCreateBayView(InventoryViewTest, ViewTests):
     @patch("inventory.models.locations.CCAPI")
     def test_post_method(self, mock_CCAPI):
         bay_ID = "846156"
-        mock_CCAPI.get_bay_id.return_value = bay_ID
+        mock_CCAPI.add_bay_to_warehouse.return_value = bay_ID
         warehouse = models.Warehouse.objects.get(id=1)
         name = "New Bay"
         bay_type = "primary"
@@ -80,16 +80,17 @@ class TestCreateBayView(InventoryViewTest, ViewTests):
         }
         response = self.client.post(self.URL, data)
         self.assertRedirects(response, self.URL)
-        self.assertTrue(
+        assert (
             models.Bay.objects.filter(
                 bay_ID=bay_ID, name=name, warehouse=warehouse
             ).exists()
+            is True
         )
 
     @patch("inventory.models.locations.CCAPI")
     def test_post_create_backup_bay(self, mock_CCAPI):
         bay_ID = "846156"
-        mock_CCAPI.get_bay_id.return_value = bay_ID
+        mock_CCAPI.add_bay_to_warehouse.return_value = bay_ID
         warehouse = models.Warehouse.objects.get(id=1)
         location = models.Warehouse.objects.get(id=2)
         name = "New Bay"

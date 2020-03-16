@@ -346,7 +346,7 @@ class TestUndispatchedDataView(OrderViewTest, ViewTests):
         self.assertIsNotNone(response.context)
         self.assertIn("total", response.context)
         self.assertIsInstance(response.context["total"], int)
-        self.assertEqual(17, response.context["total"])
+        self.assertEqual(16, response.context["total"])
         self.assertIn("priority", response.context)
         self.assertIsInstance(response.context["priority"], list)
         self.assertEqual(0, len(response.context["priority"]))
@@ -355,7 +355,7 @@ class TestUndispatchedDataView(OrderViewTest, ViewTests):
         self.assertEqual(0, len(response.context["non_priority"]))
         self.assertIn("urgent", response.context)
         self.assertIsInstance(response.context["urgent"], list)
-        self.assertEqual(17, len(response.context["urgent"]))
+        self.assertEqual(16, len(response.context["urgent"]))
 
     def test_user_not_in_group_get(self):
         self.remove_group()

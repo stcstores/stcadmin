@@ -9,7 +9,7 @@ from price_calculator import models
 class DestinationCountryAdmin(admin.ModelAdmin):
     """Model admin for DestinationCountry model."""
 
-    fields = ("name", "country", "min_channel_fee", "shipping_region", "sort_order")
+    fields = ("name", "country", "min_channel_fee", "sort_order")
     list_display = ("name", "country", "min_channel_fee", "sort_order")
     list_editable = ("country", "min_channel_fee", "sort_order")
     search_fields = ("name",)

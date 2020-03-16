@@ -71,7 +71,7 @@ class SupplierProductOptionIDMatches(SupplierProductOptionValidationCheck):
         model_object = kwargs["model_object"]
         if model_object is None:
             return True
-        if str(model_object.product_option_ID) != str(kwargs["test_object"].id):
+        if str(model_object.product_option_value_ID) != str(kwargs["test_object"].id):
             return False
         else:
             return True
@@ -82,5 +82,5 @@ class SupplierProductOptionIDMatches(SupplierProductOptionValidationCheck):
         model_object = kwargs["model_object"]
         return (
             f'Supplier "{test_object.value}" Product Option ID "{test_object.id}"'
-            f' does not match database ID "{model_object.product_option_ID}".'
+            f' does not match database ID "{model_object.product_option_value_ID}".'
         )
