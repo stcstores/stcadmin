@@ -124,7 +124,7 @@ pyyaml = "^5.3"
 requests = "^2.22.0"
 
 [package.source]
-reference = "8463656f4b9d0de615a35b6f4baa2bb155f26587"
+reference = "9a390801a3649ce7615ad75af12b919c5465eef8"
 type = "git"
 url = "https://github.com/stcstores/ccapi.git"
 [[package]]
