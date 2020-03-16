@@ -55,4 +55,12 @@
     </tr>
 </table>
 
+<div>
+{% if ready_to_create_count > 0 %}
+    <a href="{% url 'fnac:new_product_file' %}">
+        <button>Download New Product File</button>
+    </a>
+{% endif %}
+</div>
+
 {% endblock content %}
