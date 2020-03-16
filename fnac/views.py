@@ -127,7 +127,7 @@ class TranslationsExport(FnacUserMixin, View):
 
     def get(*args, **kwargs):
         """Return an HttpResponse object with the XLSX export."""
-        export_file = models.translations_export()
+        export_file = models.Translation.objects.translations_export()
         response = http.HttpResponse(
             export_file,
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sh",

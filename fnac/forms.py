@@ -87,14 +87,13 @@ class TranslationsForm(forms.Form):
         """Prevent empty form submissions."""
         text = self.cleaned_data.get("translations")
         try:
-            translations = models.translations_from_text(text)
-        except models.TranslationProductNotFound as e:
+            translations = models.Translation.objects.translations_from_text(text)
+        except models.Translation.TranslationProductNotFound as e:
             raise ValidationError(str(e))
         except Exception as e:
             raise ValidationError(f"Error parsing translation text: {e}.")
         if len(translations) == 0:
             raise ValidationError("No translations found.")
-        print(translations)
         return translations
 
     @transaction.atomic

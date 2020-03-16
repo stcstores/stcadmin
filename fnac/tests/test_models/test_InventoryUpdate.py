@@ -14,7 +14,9 @@ def inventory_file():
 
 @pytest.fixture(scope="module")
 def mock_latest_inventory_file(inventory_file):
-    with patch("fnac.models.ProductExport", autospec=True) as mock_ProductExport:
+    with patch(
+        "fnac.models.inventory_update.ProductExport", autospec=True
+    ) as mock_ProductExport:
         mock_product_export = Mock()
         mock_product_export.as_table.return_value = inventory_file
         mock_ProductExport.latest_export.return_value = mock_product_export
@@ -39,7 +41,8 @@ def created_fnac_product(inventory_file):
 
 
 def test_get_inventory_file():
-    assert isinstance(models._InventoryUpdate.get_inventory_file(), Table)
+    inventory_file = models.inventory_update._InventoryUpdate.get_inventory_file()
+    assert isinstance(inventory_file, Table)
 
 
 def test_fnac_range_is_created(inventory_file):
@@ -173,7 +176,7 @@ def test_fnac_range_is_updated(created_fnac_range, inventory_file):
     ],
 )
 def test_clean_barcode(barcode, expected):
-    assert models._InventoryUpdate.clean_barcode(barcode) == expected
+    assert models.inventory_update._InventoryUpdate.clean_barcode(barcode) == expected
 
 
 @pytest.mark.parametrize(
@@ -186,7 +189,7 @@ def test_clean_barcode(barcode, expected):
     ],
 )
 def test_clean_brand(brand, expected):
-    assert models._InventoryUpdate.clean_brand(brand) == expected
+    assert models.inventory_update._InventoryUpdate.clean_brand(brand) == expected
 
 
 @pytest.mark.parametrize(
@@ -219,7 +222,10 @@ def test_clean_brand(brand, expected):
     ],
 )
 def test_clean_images(image_field_contents, expected):
-    assert models._InventoryUpdate.clean_images(image_field_contents) == expected
+    assert (
+        models.inventory_update._InventoryUpdate.clean_images(image_field_contents)
+        == expected
+    )
 
 
 def test_update_inventory_accepts_update_file(inventory_file):
