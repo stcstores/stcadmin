@@ -133,5 +133,18 @@ class TranslationsExport(FnacUserMixin, View):
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sh",
         )
         response["Content-Disposition"] = 'attachment; filename="to_translate.xlsx"'
+        return response
 
+
+class NewProductFile(FnacUserMixin, View):
+    """View for exporting new product import files for FNAC."""
+
+    def get(*args, **kwargs):
+        """Return an HttpResponse object with the XLSX export."""
+        export_file = models.create_new_product_upload()
+        response = http.HttpResponse(
+            export_file,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sh",
+        )
+        response["Content-Disposition"] = 'attachment; filename="mirakl_products.xlsx"'
         return response

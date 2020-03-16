@@ -24,4 +24,5 @@ urlpatterns = [
         views.TranslationsExport.as_view(),
         name="translations_export",
     ),
+    path("new_product_file/", views.NewProductFile.as_view(), name="new_product_file"),
 ]

@@ -4,6 +4,7 @@ from .category import Category
 from .fnac_product import FnacProduct
 from .fnac_range import FnacRange
 from .inventory_update import update_inventory
+from .product_upload import create_new_product_upload
 from .size import Size
 from .translation import Translation
 
@@ -12,6 +13,7 @@ __all__ = [
     "FnacProduct",
     "FnacRange",
     "update_inventory",
+    "create_new_product_upload",
     "Size",
     "Translation",
 ]
