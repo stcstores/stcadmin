@@ -81,3 +81,11 @@ class TranslationFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Nom on Francais {n}")
     description = "Un Product\nBien"
     colour = "Rouge"
+
+
+@register
+class CommentFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Comment
+
+    comment = "A description of the shipping times\n2 days"

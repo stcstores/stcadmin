@@ -7,6 +7,7 @@ from .inventory_update import update_inventory
 from .product_upload import create_new_product_upload
 from .size import Size
 from .translation import Translation
+from .update_upload import Comment, create_update_upload
 
 __all__ = [
     "Category",
@@ -16,4 +17,6 @@ __all__ = [
     "create_new_product_upload",
     "Size",
     "Translation",
+    "Comment",
+    "create_update_upload",
 ]
