@@ -1,0 +1,21 @@
+{% extends 'fnac/base.html' %}
+
+{% block content %}
+
+<h1>Shipping Comment</h1>
+
+<p>
+    The shipping comment appears on all FNAC listings and is used to describe the
+    expected shipping time and can be used to provide any other important information
+    that applies to all our products. It is updated with the product update file.
+</p>
+<p>
+    It must be entered in french.
+</p>
+
+<form action="" method="POST">{% csrf_token %}
+    {{ form.as_p }}
+    <button>Update Shipping Comment</button>
+</form>
+
+{% endblock content %}

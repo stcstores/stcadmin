@@ -4,7 +4,7 @@ from django import http
 from django.shortcuts import reverse
 from django.views import View
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, UpdateView
 
 from fnac import forms, models
 from home.views import UserInGroupMixin
@@ -159,3 +159,25 @@ class UpdateFile(FnacUserMixin, View):
         response = http.HttpResponse(export_file.getvalue(), content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="FNAC_offers.csv"'
         return response
+
+
+class ShippingComment(FnacUserMixin, UpdateView):
+    """View for the Shipping Comment."""
+
+    template_name = "fnac/shipping_comment.html"
+    model_class = models.Comment
+    fields = ("comment",)
+
+    def get_object(self):
+        """Return kwargs for the form."""
+        return self.model_class.objects.get_comment()
+
+    def form_valid(self, form):
+        """Create new translations."""
+        print("form_valid")
+        models.Comment.objects.set_comment_text(form.cleaned_data["comment"])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the URL to redirect to if forms submission is successful."""
+        return reverse("fnac:index")

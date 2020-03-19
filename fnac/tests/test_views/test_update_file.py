@@ -3,10 +3,17 @@ from io import StringIO
 
 import pytest
 
+from fnac.models import Comment
+
 
 @pytest.fixture
-def comment(comment_factory):
-    return comment_factory.create(comment="Shipping Time\n2 Working Days")
+def comment_text():
+    return "Shipping Time\n2 Working Days"
+
+
+@pytest.fixture
+def comment(comment_text):
+    return Comment.objects.set_comment_text(comment_text)
 
 
 @pytest.fixture
@@ -79,13 +86,13 @@ def test_response_header(product, valid_get_response_content):
 
 
 @pytest.mark.django_db
-def test_response_row(product, comment, export_row):
+def test_response_row(product, comment, export_row, comment_text):
     cell_values = [
         product.barcode,
         product.sku,
         str(product.stock_level),
         f"{float(product.price)/100:.2f}",
-        comment.comment,
+        comment_text,
     ]
     for value in cell_values:
         assert value in export_row

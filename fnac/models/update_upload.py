@@ -11,15 +11,21 @@ from .fnac_product import FnacProduct
 class CommentManager(models.Manager):
     """Manager for the FnacComment model."""
 
-    def set_comment(self, text):
+    def get_comment(self):
+        """Return the comment object."""
+        comment, _ = self.get_or_create(id=1)
+        return comment
+
+    def set_comment_text(self, text):
         """Update the FNAC comment."""
-        comment, _ = self.get_or_create()
+        comment = self.get_comment()
         comment.comment = text
         comment.save()
 
-    def get_comment(self):
+    def get_comment_text(self):
         """Return the comment."""
-        return self.get_queryset().get().comment
+        comment = self.get_comment()
+        return comment.comment
 
 
 class Comment(models.Model):
@@ -92,7 +98,7 @@ class _ProductUpdate:
         return FnacProduct.objects.filter(created=True)
 
     def create(self):
-        self.comment = Comment.objects.get_comment()
+        self.comment = Comment.objects.get_comment_text()
         rows = [self.HEADER]
         for product in self.get_products():
             rows.append(self.get_row_for_product(product))
