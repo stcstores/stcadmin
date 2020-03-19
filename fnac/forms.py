@@ -101,3 +101,13 @@ class TranslationsForm(forms.Form):
         """Save the translations."""
         for translation in self.cleaned_data["translations"]:
             translation.save()
+
+
+class CreatedProductsForm(forms.Form):
+    """Form for marking products that have been created."""
+
+    export_file = forms.FileField()
+
+    def save(self):
+        """Mark created products."""
+        models.process_mirakl_export(self.cleaned_data["export_file"])

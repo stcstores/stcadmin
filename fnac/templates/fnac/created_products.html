@@ -1,0 +1,24 @@
+{% extends 'fnac/base.html' %}
+
+{% block content %}
+
+<h1>Mark Created Products</h1>
+
+<p>
+    Upload a Mirakl product export to mark products as created. These products will then
+    be included in updates.
+</p>
+<p>
+    To produce a product export login to <a href="http://fnac-prod.mirakl.net">mirakl.net</a>
+    and navigate to My Inventory > Catalogue Management. Go to the Published tab and 
+    select all the products. Ensure you select all products, not just the ones on the
+    current page. Click Generate Export File. Once the file has been created click
+    Download Last Export File Generated and upload the resulting file below.
+</p>
+
+<form action="" method="POST">{% csrf_token %}
+    {{ form.as_p }}
+    <button>Upload</button>
+</form>
+
+{% endblock content %}

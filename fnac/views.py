@@ -174,8 +174,23 @@ class ShippingComment(FnacUserMixin, UpdateView):
 
     def form_valid(self, form):
         """Create new translations."""
-        print("form_valid")
         models.Comment.objects.set_comment_text(form.cleaned_data["comment"])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the URL to redirect to if forms submission is successful."""
+        return reverse("fnac:index")
+
+
+class CreatedProducts(FnacUserMixin, FormView):
+    """View for uploading Mirak product exports to mark created products."""
+
+    template_name = "fnac/created_products.html"
+    form_class = forms.CreatedProductsForm
+
+    def form_valid(self, form):
+        """Mark created products."""
+        form.save()
         return super().form_valid(form)
 
     def get_success_url(self):
