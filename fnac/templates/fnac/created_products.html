@@ -16,7 +16,7 @@
     Download Last Export File Generated and upload the resulting file below.
 </p>
 
-<form action="" method="POST">{% csrf_token %}
+<form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
     {{ form.as_p }}
     <button>Upload</button>
 </form>
