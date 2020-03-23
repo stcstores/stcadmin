@@ -5,6 +5,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 import openpyxl
+from django.conf import settings
 
 from .fnac_product import FnacProduct
 
@@ -87,10 +88,10 @@ class _ProductUpload:
             self.BRAND: product.brand,
             self.COLOUR: product.translation.colour,
             self.SIZE: product.french_size.name,
-            self.IMAGES[0]: product.image_1,
-            self.IMAGES[1]: product.image_2,
-            self.IMAGES[2]: product.image_3,
-            self.IMAGES[3]: product.image_4,
+            self.IMAGES[0]: self.image_url + product.image_1,
+            self.IMAGES[1]: self.image_url + product.image_2,
+            self.IMAGES[2]: self.image_url + product.image_3,
+            self.IMAGES[3]: self.image_url + product.image_4,
         }
 
     def add_row(self, worksheet, row_number, row_data):
@@ -118,6 +119,7 @@ class _ProductUpload:
 
     def create(self):
         template = openpyxl.load_workbook(self.TEMPLATE_PATH)
+        self.image_url = settings.CC_IMAGE_URL
         self.header = [
             self.worksheet_row(template.active, 0),
             self.worksheet_row(template.active, 1),
@@ -125,7 +127,7 @@ class _ProductUpload:
         workbook = openpyxl.Workbook()
         worksheet = workbook.active
         self.add_header(worksheet, self.header)
-        for row_number, product in enumerate(self.get_products(), 3):
+        for row_number, product in enumerate(self.get_products(), len(self.header) + 1):
             row_data = self.get_row_for_product(product)
             self.add_row(worksheet, row_number, row_data)
         return self.workbook_to_bytes(workbook)

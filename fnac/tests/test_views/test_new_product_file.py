@@ -2,6 +2,7 @@ from io import BytesIO
 
 import openpyxl
 import pytest
+from django.conf import settings
 
 
 @pytest.fixture
@@ -87,9 +88,9 @@ def test_response_row(product, export_row):
         product.brand,
         product.translation.colour,
         product.french_size.name,
-        product.image_1,
-        product.image_2,
-        product.image_3,
+        settings.CC_IMAGE_URL + product.image_1,
+        settings.CC_IMAGE_URL + product.image_2,
+        settings.CC_IMAGE_URL + product.image_3,
     ]
     for value in cell_values:
         assert value in export_row
