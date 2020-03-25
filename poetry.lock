@@ -219,7 +219,7 @@ description = "Generic drag-and-drop sorting for the List, the Stacked- and the 
 name = "django-admin-sortable2"
 optional = false
 python-versions = "*"
-version = "0.7.5"
+version = "0.7.6"
 
 [package.dependencies]
 Django = ">=1.8,<3.1"
@@ -967,7 +967,7 @@ python-versions = "*"
 version = "1.2.7"
 
 [metadata]
-content-hash = "c5d243183f5c77eb3c8de50a9ae6aa5d3bdc299521b1a4dd2d5df2930f8f9b3a"
+content-hash = "136d243b2be588806a9a7f68c0015c5f0d253a730e5287d53570b75832b201f1"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -1068,7 +1068,7 @@ django = [
     {file = "Django-3.0.3.tar.gz", hash = "sha256:2f1ba1db8648484dd5c238fb62504777b7ad090c81c5f1fd8d5eb5ec21b5f283"},
 ]
 django-admin-sortable2 = [
-    {file = "django-admin-sortable2-0.7.5.tar.gz", hash = "sha256:1366cb159439aa28472639dc1f33d6370a56d4c3efbe3def854d953aaa6bbd24"},
+    {file = "django-admin-sortable2-0.7.6.tar.gz", hash = "sha256:caf158310cba75888d5e2494f0a7e52b9b43b90d22e12798023bbe8dae51243b"},
 ]
 django-debug-toolbar = [
     {file = "django-debug-toolbar-2.2.tar.gz", hash = "sha256:eabbefe89881bbe4ca7c980ff102e3c35c8e8ad6eb725041f538988f2f39a943"},
