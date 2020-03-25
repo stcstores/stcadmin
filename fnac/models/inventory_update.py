@@ -81,7 +81,7 @@ class _InventoryUpdate:
             "description": row[self.DESCRIPTION_COLUMN] or "",
             "colour": row[self.COLOUR_COLUMN] or "",
             "brand": self.clean_brand(row[self.BRAND_COLUMN]),
-            "english_size": row[self.SIZE_COLUMN],
+            "english_size": row[self.SIZE_COLUMN] or "",
             "stock_level": row[self.STOCK_COLUMN],
             "image_1": images[0],
             "image_2": images[1],

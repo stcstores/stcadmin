@@ -77,6 +77,10 @@ class _ProductUpload:
     }
 
     def get_row_for_product(self, product):
+        if product.french_size is not None:
+            size = product.french_size.name
+        else:
+            size = ""
         return {
             self.SKU: product.sku,
             self.NAME: product.translation.name,
@@ -87,11 +91,8 @@ class _ProductUpload:
             self.BARCODE: product.barcode,
             self.BRAND: product.brand,
             self.COLOUR: product.translation.colour,
-            self.SIZE: product.french_size.name,
-            self.IMAGES[0]: self.image_url + product.image_1,
-            self.IMAGES[1]: self.image_url + product.image_2,
-            self.IMAGES[2]: self.image_url + product.image_3,
-            self.IMAGES[3]: self.image_url + product.image_4,
+            self.SIZE: size,
+            self.IMAGES[0]: self.image_uri(product.image_1),
         }
 
     def add_row(self, worksheet, row_number, row_data):

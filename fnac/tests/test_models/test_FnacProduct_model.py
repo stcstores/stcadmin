@@ -92,8 +92,8 @@ def test_FnacProduct_english_size_field(fnac_product_factory):
 
 @pytest.mark.django_db
 def test_FnacProduct_english_size_field_can_be_null(fnac_product_factory):
-    product = fnac_product_factory.create(english_size=None)
-    assert product.english_size is None
+    product = fnac_product_factory.create(english_size="")
+    assert product.english_size == ""
 
 
 @pytest.mark.django_db
