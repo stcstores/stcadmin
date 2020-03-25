@@ -30,7 +30,7 @@ labeler = {git = "https://github.com/lukeshiner/labeler.git"}
 list-input = {git = "https://github.com/lukeshiner/list_input.git"}
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.3.5"
+pytest = "^5.4.1"
 pytest-django = "^3.8.0"
 pytest-cov = "^2.8.1"
 coveralls = "^1.10.0"
