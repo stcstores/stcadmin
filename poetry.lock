@@ -127,6 +127,7 @@ requests = "^2.22.0"
 reference = "9a390801a3649ce7615ad75af12b919c5465eef8"
 type = "git"
 url = "https://github.com/stcstores/ccapi.git"
+
 [[package]]
 category = "main"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -352,11 +353,14 @@ tornado = ["tornado (>=0.2)"]
 
 [[package]]
 category = "main"
-description = "python humanize utilities"
+description = "Python humanize utilities"
 name = "humanize"
 optional = false
-python-versions = "*"
-version = "0.5.1"
+python-versions = ">=3.5"
+version = "2.2.0"
+
+[package.extras]
+tests = ["freezegun", "pytest", "pytest-cov"]
 
 [[package]]
 category = "main"
@@ -963,7 +967,7 @@ python-versions = "*"
 version = "1.2.7"
 
 [metadata]
-content-hash = "da4d3bb0fb0392f1ed14a14b548e2f35bf002848ed5b015034bfa074a7c2b532"
+content-hash = "c5d243183f5c77eb3c8de50a9ae6aa5d3bdc299521b1a4dd2d5df2930f8f9b3a"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -1109,7 +1113,8 @@ gunicorn = [
     {file = "gunicorn-20.0.4.tar.gz", hash = "sha256:1904bb2b8a43658807108d59c3f3d56c2b6121a701161de0ddf9ad140073c626"},
 ]
 humanize = [
-    {file = "humanize-0.5.1.tar.gz", hash = "sha256:a43f57115831ac7c70de098e6ac46ac13be00d69abbf60bdcac251344785bb19"},
+    {file = "humanize-2.2.0-py3-none-any.whl", hash = "sha256:0b3157df0f3fcdcb7611180d305a23fd4b6290eb23586e058762f8576348fbab"},
+    {file = "humanize-2.2.0.tar.gz", hash = "sha256:de8ef6ffee618a9d369b3d1fb1359780ccaa2cc76a0e777c6ff21f04d19a0eb8"},
 ]
 idna = [
     {file = "idna-2.8-py2.py3-none-any.whl", hash = "sha256:ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c"},
