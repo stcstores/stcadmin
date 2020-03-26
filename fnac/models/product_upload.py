@@ -93,7 +93,15 @@ class _ProductUpload:
             self.COLOUR: product.translation.colour,
             self.SIZE: size,
             self.IMAGES[0]: self.image_uri(product.image_1),
+            self.IMAGES[1]: self.image_uri(product.image_2),
+            self.IMAGES[2]: self.image_uri(product.image_3),
+            self.IMAGES[3]: self.image_uri(product.image_4),
         }
+
+    def image_uri(self, image_path):
+        if image_path:
+            return self.image_url + image_path
+        return ""
 
     def add_row(self, worksheet, row_number, row_data):
         for key, value in row_data.items():
