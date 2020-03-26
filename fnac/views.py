@@ -11,7 +11,7 @@ from home.views import UserInGroupMixin
 
 
 class FnacUserMixin(UserInGroupMixin):
-    """View mixin to ensure user is in the print audit group."""
+    """View mixin to ensure user is in the fnac group."""
 
     groups = ["fnac"]
 
@@ -24,32 +24,65 @@ class Index(FnacUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return template context data."""
         context = super().get_context_data(*args, **kwargs)
-        context["created_product_count"] = models.FnacProduct.objects.filter(
-            created=True
-        ).count()
-        context[
-            "missing_inventory_info_count"
-        ] = models.FnacProduct.objects.missing_inventory_information().count()
-        context[
-            "missing_category_count"
-        ] = models.FnacProduct.objects.missing_category().count()
-        context["missing_price_size_count"] = (
-            models.FnacProduct.objects.missing_price()
-            | models.FnacProduct.objects.size_invalid()
-        ).count()
-        context["do_not_create_count"] = models.FnacProduct.objects.filter(
-            do_not_create=True
-        ).count()
-        context["out_of_stock_count"] = models.FnacProduct.objects.filter(
-            stock_level=0
-        ).count()
-        context[
-            "missing_translations_count"
-        ] = models.FnacProduct.objects.not_translated().count()
-        context[
-            "ready_to_create_count"
-        ] = models.FnacProduct.objects.ready_to_create().count()
+        to_be_created = models.FnacProduct.objects.to_be_created()
+        context["created_product_count"] = self.created_product_count()
+        context["missing_inventory_info_count"] = self.missing_inventory_info_count(
+            to_be_created
+        )
+        context["missing_category_count"] = self.missing_category_count(to_be_created)
+        context["missing_price_size_count"] = self.missing_price_size_count(
+            to_be_created
+        )
+        context["do_not_create_count"] = self.do_not_create_count()
+        context["out_of_stock_count"] = self.out_of_stock_count()
+        context["missing_translations_count"] = self.missing_translations_count(
+            to_be_created
+        )
+        context["ready_to_create_count"] = self.ready_to_create_count()
         return context
+
+    def created_product_count(self):
+        """Return the number of products that have been created."""
+        return models.FnacProduct.objects.filter(created=True).count()
+
+    def missing_inventory_info_count(self, to_be_created):
+        """Return the number of products missing inventory information."""
+        return to_be_created.intersection(
+            models.FnacProduct.objects.missing_inventory_information()
+        ).count()
+
+    def missing_category_count(self, to_be_created):
+        """Return the number of products without categories."""
+        return (to_be_created & models.FnacProduct.objects.missing_category()).count()
+
+    def missing_price_size_count(self, to_be_created):
+        """Return the number of products missing size or price information."""
+        return to_be_created.intersection(
+            models.FnacProduct.objects.missing_price().union(
+                models.FnacProduct.objects.size_invalid()
+            )
+        ).count()
+
+    def do_not_create_count(self):
+        """Return the number of products marked do not create."""
+        return models.FnacProduct.objects.filter(do_not_create=True).count()
+
+    def out_of_stock_count(self):
+        """Return the number of products that are out of stock."""
+        return (
+            models.FnacProduct.objects.not_do_not_create()
+            & models.FnacProduct.objects.out_of_stock()
+        ).count()
+
+    def missing_translations_count(self, to_be_created):
+        """Return the number of products that are missing translation information."""
+        return to_be_created.intersection(
+            models.FnacProduct.objects.not_translated()
+        ).count()
+
+    def ready_to_create_count(self):
+        """Return the number of products that are ready to be created."""
+        return models.FnacProduct.objects.ready_to_create().count()
 
 
 class MissingInventoryInfo(FnacUserMixin, TemplateView):

@@ -1,8 +1,6 @@
 import pytest
 from django.shortcuts import reverse
 
-from fnac import models
-
 
 @pytest.fixture
 def url():
@@ -24,18 +22,20 @@ def products(
     fnac_range_factory, fnac_product_factory, size_factory, translation_factory
 ):
     products = [
-        fnac_product_factory.create(),
-        fnac_product_factory.create(created=True),
-        fnac_product_factory.create(description=""),
-        fnac_product_factory.create(price=None),
-        fnac_product_factory.create(french_size=None, price=556),
-        fnac_product_factory.create(french_size=None, price=None),
+        fnac_product_factory.create(name="Missing Translation"),
+        fnac_product_factory.create(created=True, name="Already created"),
+        fnac_product_factory.create(description="", name="Missing description"),
+        fnac_product_factory.create(price=None, name="Missing price"),
         fnac_product_factory.create(
-            fnac_range=fnac_range_factory.create(category=None)
+            english_size="Large", french_size=None, price=556, name="Missing size"
         ),
-        fnac_product_factory.create(do_not_create=True),
-        fnac_product_factory.create(stock_level=0),
-        fnac_product_factory.create(),
+        fnac_product_factory.create(price=None, name="Missing price"),
+        fnac_product_factory.create(
+            fnac_range=fnac_range_factory.create(category=None, name="Missing category")
+        ),
+        fnac_product_factory.create(do_not_create=True, name="Marked do not create"),
+        fnac_product_factory.create(stock_level=0, name="Out of stock"),
+        fnac_product_factory.create(name="Valid 2"),
     ]
     for product in products[1:]:
         translation_factory.create(product=product)
@@ -139,6 +139,4 @@ def test_missing_translations_count_in_context(products, valid_get_response):
 
 @pytest.mark.django_db
 def test_ready_to_create_count_in_context(products, valid_get_response):
-    print(products)
-    print(models.FnacProduct.objects.ready_to_create())
     assert valid_get_response.context["ready_to_create_count"] == 1

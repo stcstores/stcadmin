@@ -109,7 +109,7 @@ class _ProductUpload:
             worksheet.cell(column=column_number, row=row_number, value=value)
 
     def get_products(self):
-        return FnacProduct.objects.ready_to_create()
+        return FnacProduct.objects.valid_information()
 
     def get_format(self, product):
         for format_string, match_words in self.formats.items():
@@ -136,7 +136,8 @@ class _ProductUpload:
         workbook = openpyxl.Workbook()
         worksheet = workbook.active
         self.add_header(worksheet, self.header)
-        for row_number, product in enumerate(self.get_products(), len(self.header) + 1):
+        products = self.get_products()
+        for row_number, product in enumerate(products, len(self.header) + 1):
             row_data = self.get_row_for_product(product)
             self.add_row(worksheet, row_number, row_data)
         return self.workbook_to_bytes(workbook)

@@ -35,9 +35,8 @@ class MissingPriceSizeFormset(forms.BaseModelFormSet):
         super().__init__(*args, **kwargs)
         self.form = MissingPriceSizeForm
         self.model = models.FnacProduct
-        self.queryset = (
-            models.FnacProduct.objects.size_invalid()
-            | models.FnacProduct.objects.missing_price()
+        self.queryset = self.model.objects.to_be_created() & (
+            self.model.objects.size_invalid() | self.model.objects.missing_price()
         )
         self.min_num = self.queryset.count()
         self.max_num = self.queryset.count()
@@ -67,7 +66,10 @@ class MissingCategoryFormset(forms.BaseModelFormSet):
         super().__init__(*args, **kwargs)
         self.form = MissingCategoryForm
         self.model = models.FnacRange
-        self.queryset = models.FnacRange.objects.missing_category()
+        to_be_created = models.FnacProduct.objects.to_be_created()
+        self.queryset = models.FnacRange.objects.missing_category().filter(
+            fnacproduct__in=to_be_created
+        )
         self.min_num = self.queryset.count()
         self.max_num = self.queryset.count()
         self.absolute_max = self.queryset.count()

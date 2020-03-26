@@ -10,22 +10,26 @@ from .size import Size
 class FnacProductManager(models.Manager):
     """Model Manger for the FnacProduct model."""
 
+    def not_do_not_create(self):
+        """Return a queryset of products where do_not_create is False."""
+        return self.get_queryset().filter(do_not_create=False)
+
     def to_be_created(self):
         """Return a queryset of products that have not been created or marked to not create."""
-        return self.get_queryset().filter(created=False, do_not_create=False)
+        return self.not_do_not_create().filter(created=False, stock_level__gt=0)
 
     def out_of_stock(self):
         """Return a queryset of out of stock products."""
-        return self.to_be_created().filter(stock_level=0)
+        return self.not_do_not_create().filter(stock_level=0)
 
     def in_stock(self):
         """Return a queryset of in stock products."""
-        return self.to_be_created().filter(stock_level__gt=0)
+        return self.not_do_not_create().filter(stock_level__gt=0)
 
     def translated(self):
         """Return a queryset of products that have been translated."""
         return (
-            self.to_be_created()
+            self.not_do_not_create()
             .filter(
                 Q(translation__isnull=False)
                 & ~Q(translation__name="")
@@ -38,7 +42,7 @@ class FnacProductManager(models.Manager):
     def not_translated(self):
         """Retrun a queryset of products that have not been translated."""
         return (
-            self.to_be_created()
+            self.not_do_not_create()
             .filter(
                 Q(translation__isnull=True)
                 | Q(translation__name="")
@@ -50,74 +54,78 @@ class FnacProductManager(models.Manager):
 
     def barcode_valid(self):
         """Return a queryset of products with valid barcodes."""
-        return self.to_be_created().exclude(barcode="")
+        return self.not_do_not_create().exclude(barcode="")
 
     def barcode_invalid(self):
         """Return a queryset of products with valid barcodes."""
-        return self.to_be_created().filter(barcode="")
+        return self.not_do_not_create().filter(barcode="")
 
     def has_image(self):
         """Return a queryset of products with at least one image."""
-        return self.to_be_created().exclude(image_1="")
+        return self.not_do_not_create().exclude(image_1="")
 
     def missing_image(self):
         """Return a queryset of products without an image."""
-        return self.to_be_created().filter(image_1="")
+        return self.not_do_not_create().filter(image_1="")
 
     def size_valid(self):
         """Return a queryset of products with valid size information."""
-        return self.to_be_created().exclude(
+        return self.not_do_not_create().exclude(
             ~Q(english_size="") & Q(french_size__isnull=True)
         )
 
     def size_invalid(self):
         """Return a queryset of products with invalid size information."""
-        return self.to_be_created().filter(
+        return self.not_do_not_create().filter(
             ~Q(english_size="") & Q(french_size__isnull=True)
         )
 
     def has_category(self):
         """Return a queryset of products with categories."""
-        return self.to_be_created().filter(fnac_range__category__isnull=False)
+        return self.not_do_not_create().filter(fnac_range__category__isnull=False)
 
     def missing_category(self):
         """Return a queryset of products without categories."""
-        return self.to_be_created().filter(fnac_range__category__isnull=True)
+        return self.not_do_not_create().filter(fnac_range__category__isnull=True)
 
     def has_price(self):
         """Return a queryset of products with prices."""
-        return self.to_be_created().filter(price__isnull=False)
+        return self.not_do_not_create().filter(price__isnull=False)
 
     def missing_price(self):
         """Return a queryset of products without a price."""
-        return self.to_be_created().filter(price__isnull=True)
+        return self.not_do_not_create().filter(price__isnull=True)
 
     def has_description(self):
         """Return a queryset of products with prices."""
-        return self.to_be_created().exclude(description="")
+        return self.not_do_not_create().exclude(description="")
 
     def missing_description(self):
         """Return a queryset of products without a price."""
-        return self.to_be_created().filter(description="")
+        return self.not_do_not_create().filter(description="")
 
     def missing_inventory_information(self):
         """Return a queryset of products missing description, barcode or images."""
-        return (
-            self.missing_description() | self.barcode_invalid() | self.missing_image()
+        return self.not_do_not_create().intersection(
+            self.missing_description().union(
+                self.barcode_invalid(), self.missing_image()
+            )
+        )
+
+    def valid_information(self):
+        """Return a queryset of products that have all required information for FNAC."""
+        return self.translated().intersection(
+            self.barcode_valid(),
+            self.has_image(),
+            self.size_valid(),
+            self.has_category(),
+            self.has_price(),
+            self.has_description(),
         )
 
     def ready_to_create(self):
         """Return a queryset of products that are ready to be listed on FNAC."""
-        return (
-            self.in_stock()
-            & self.translated()
-            & self.barcode_valid()
-            & self.has_image()
-            & self.size_valid()
-            & self.has_category()
-            & self.has_price()
-            & self.has_description()
-        )
+        return self.to_be_created().intersection(self.valid_information())
 
 
 class FnacProduct(models.Model):

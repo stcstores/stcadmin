@@ -7,10 +7,14 @@ from fnac import models
 @pytest.mark.parametrize(
     "product_kwargs,returned",
     [
-        ({"created": False, "do_not_create": False}, True),
-        ({"created": True, "do_not_create": False}, False),
-        ({"created": False, "do_not_create": True}, False),
-        ({"created": True, "do_not_create": True}, False),
+        ({"created": False, "do_not_create": False, "stock_level": 5}, True),
+        ({"created": True, "do_not_create": False, "stock_level": 5}, False),
+        ({"created": False, "do_not_create": True, "stock_level": 5}, False),
+        ({"created": True, "do_not_create": True, "stock_level": 5}, False),
+        ({"created": False, "do_not_create": False, "stock_level": 0}, False),
+        ({"created": True, "do_not_create": False, "stock_level": 0}, False),
+        ({"created": False, "do_not_create": True, "stock_level": 0}, False),
+        ({"created": True, "do_not_create": True, "stock_level": 0}, False),
     ],
 )
 def test_to_be_created_method(fnac_product_factory, product_kwargs, returned):
@@ -23,7 +27,7 @@ def test_to_be_created_method(fnac_product_factory, product_kwargs, returned):
     "product_kwargs,returned",
     [
         ({"created": False, "do_not_create": False, "stock_level": 0}, True),
-        ({"created": True, "do_not_create": False, "stock_level": 0}, False),
+        ({"created": True, "do_not_create": False, "stock_level": 0}, True),
         ({"created": False, "do_not_create": True, "stock_level": 0}, False),
         ({"created": True, "do_not_create": True, "stock_level": 0}, False),
         ({"created": False, "do_not_create": False, "stock_level": 5}, False),
@@ -46,7 +50,7 @@ def test_out_of_stock_method(fnac_product_factory, product_kwargs, returned):
         ({"created": False, "do_not_create": True, "stock_level": 0}, False),
         ({"created": True, "do_not_create": True, "stock_level": 0}, False),
         ({"created": False, "do_not_create": False, "stock_level": 5}, True),
-        ({"created": True, "do_not_create": False, "stock_level": 5}, False),
+        ({"created": True, "do_not_create": False, "stock_level": 5}, True),
         ({"created": False, "do_not_create": True, "stock_level": 5}, False),
         ({"created": True, "do_not_create": True, "stock_level": 5}, False),
     ],
@@ -68,7 +72,7 @@ def test_in_stock_method(fnac_product_factory, product_kwargs, returned):
         ({"created": True}, None, False),
         ({"do_not_create": True}, None, False),
         ({"created": True, "do_not_create": True}, None, False),
-        ({"created": True}, {}, False),
+        ({"created": True}, {}, True),
         ({"do_not_create": True}, {}, False),
         ({"created": True, "do_not_create": True}, {}, False),
         ({}, {"name": ""}, False),
@@ -78,7 +82,7 @@ def test_in_stock_method(fnac_product_factory, product_kwargs, returned):
         ({"colour": "Red"}, {"name": ""}, False),
         ({"colour": "Red"}, {"colour": "", "name": ""}, False),
         ({"colour": ""}, {"colour": "", "name": ""}, False),
-        ({"colour": "", "created": True}, {}, False),
+        ({"colour": "", "created": True}, {}, True),
         ({"colour": "", "do_not_create": True}, {}, False),
         ({"description": ""}, {}, False),
         ({"barcode": ""}, {}, False),
@@ -112,7 +116,7 @@ def test_translated_method(
         ({"colour": ""}, {}, False),
         ({"colour": "Red"}, {}, False),
         ({"colour": ""}, {"colour": ""}, False),
-        ({"created": True}, None, False),
+        ({"created": True}, None, True),
         ({"do_not_create": True}, None, False),
         ({"created": True, "do_not_create": True}, None, False),
         ({"created": True}, {}, False),
@@ -146,7 +150,7 @@ def test_not_translated_method(
     [
         ({"barcode": "954123687121"}, True),
         ({"barcode": ""}, False),
-        ({"barcode": "954123687121", "created": True}, False),
+        ({"barcode": "954123687121", "created": True}, True),
         ({"barcode": "954123687121", "do_not_create": True}, False),
     ],
 )
@@ -176,7 +180,7 @@ def test_barcode_invalid(fnac_product_factory, product_kwargs, returned):
     [
         ({"image_1": "954123687121.jpg"}, True),
         ({"image_1": ""}, False),
-        ({"image_1": "954123687121.jpg", "created": True}, False),
+        ({"image_1": "954123687121.jpg", "created": True}, True),
         ({"image_1": "954123687121.jpg", "do_not_create": True}, False),
     ],
 )
@@ -208,7 +212,7 @@ def test_missing_image(fnac_product_factory, product_kwargs, returned):
         ({"english_size": ""}, None, True),
         ({"english_size": ""}, {"name": "Rouge"}, True),
         ({"english_size": "Red"}, None, False),
-        ({"english_size": "Red", "created": True}, {"name": "Rouge"}, False),
+        ({"english_size": "Red", "created": True}, {"name": "Rouge"}, True),
         ({"english_size": "Red", "do_not_create": True}, {"name": "Rouge"}, False),
     ],
 )
@@ -252,7 +256,7 @@ def test_size_invalid(
     [
         ({}, True, True),
         ({}, False, False),
-        ({"created": True}, True, False),
+        ({"created": True}, True, True),
         ({"do_not_create": True}, True, False),
         ({"created": True}, False, False),
         ({"do_not_create": True}, False, False),
@@ -283,7 +287,7 @@ def test_has_category(
         ({}, True, False),
         ({"created": True}, True, False),
         ({"do_not_create": True}, True, False),
-        ({"created": True}, False, False),
+        ({"created": True}, False, True),
         ({"do_not_create": True}, False, False),
     ],
 )
@@ -310,9 +314,7 @@ def test_missing_category(
     [
         ({"price": 550}, True),
         ({"price": None}, False),
-        ({"created": True}, False),
-        ({"do_not_create": True}, False),
-        ({"created": True}, False),
+        ({"created": True}, True),
         ({"do_not_create": True}, False),
     ],
 )
@@ -329,8 +331,6 @@ def test_has_price(fnac_product_factory, product_kwargs, returned):
         ({"price": 550}, False),
         ({"created": True}, False),
         ({"do_not_create": True}, False),
-        ({"created": True}, False),
-        ({"do_not_create": True}, False),
     ],
 )
 def test_missing_price(fnac_product_factory, product_kwargs, returned):
@@ -344,10 +344,9 @@ def test_missing_price(fnac_product_factory, product_kwargs, returned):
     [
         ({"description": "product description"}, True),
         ({"description": ""}, False),
-        ({"created": True}, False),
+        ({"created": True}, True),
         ({"do_not_create": True}, False),
-        ({"created": True}, False),
-        ({"do_not_create": True}, False),
+        ({"created": True}, True),
     ],
 )
 def test_has_description(fnac_product_factory, product_kwargs, returned):
@@ -364,7 +363,6 @@ def test_has_description(fnac_product_factory, product_kwargs, returned):
         ({"created": True}, False),
         ({"do_not_create": True}, False),
         ({"created": True}, False),
-        ({"do_not_create": True}, False),
     ],
 )
 def test_missing_description(fnac_product_factory, product_kwargs, returned):
@@ -403,7 +401,7 @@ def test_missing_description(fnac_product_factory, product_kwargs, returned):
                 "image_1": "img.jpg",
                 "created": True,
             },
-            False,
+            True,
         ),
     ],
 )
