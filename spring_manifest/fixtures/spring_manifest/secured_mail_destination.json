@@ -9,43 +9,43 @@
     "model": "spring_manifest.securedmaildestination",
     "pk": 2,
     "fields": {
-        "name": "Candada",
-        "manifest_row_number": 10
+        "name": "Canada",
+        "manifest_row_number": 13
     }
 }, {
     "model": "spring_manifest.securedmaildestination",
     "pk": 3,
     "fields": {
         "name": "Isreal",
-        "manifest_row_number": 11
+        "manifest_row_number": 17
     }
 }, {
     "model": "spring_manifest.securedmaildestination",
     "pk": 4,
     "fields": {
         "name": "France",
-        "manifest_row_number": 12
+        "manifest_row_number": 14
     }
 }, {
     "model": "spring_manifest.securedmaildestination",
     "pk": 5,
     "fields": {
         "name": "Germany",
-        "manifest_row_number": 13
+        "manifest_row_number": 15
     }
 }, {
     "model": "spring_manifest.securedmaildestination",
     "pk": 6,
     "fields": {
         "name": "Austraila",
-        "manifest_row_number": 14
+        "manifest_row_number": 10
     }
 }, {
     "model": "spring_manifest.securedmaildestination",
     "pk": 7,
     "fields": {
         "name": "Mexico",
-        "manifest_row_number": 15
+        "manifest_row_number": 19
     }
 }, {
     "model": "spring_manifest.securedmaildestination",
@@ -59,34 +59,41 @@
     "pk": 9,
     "fields": {
         "name": "Belgium",
-        "manifest_row_number": 17
+        "manifest_row_number": 12
     }
 }, {
     "model": "spring_manifest.securedmaildestination",
     "pk": 10,
     "fields": {
         "name": "Austria",
-        "manifest_row_number": 18
+        "manifest_row_number": 11
     }
 }, {
     "model": "spring_manifest.securedmaildestination",
     "pk": 11,
     "fields": {
         "name": "Rest of EU",
-        "manifest_row_number": 20
+        "manifest_row_number": 21
     }
 }, {
     "model": "spring_manifest.securedmaildestination",
     "pk": 12,
     "fields": {
         "name": "Rest of World",
-        "manifest_row_number": 21
+        "manifest_row_number": 22
     }
 }, {
     "model": "spring_manifest.securedmaildestination",
     "pk": 13,
     "fields": {
         "name": "Italy",
-        "manifest_row_number": 19
+        "manifest_row_number": 18
+    }
+}, {
+    "model": "spring_manifest.securedmaildestination",
+    "pk": 14,
+    "fields": {
+        "name": "Netherlands",
+        "manifest_row_number": 20
     }
 }]
