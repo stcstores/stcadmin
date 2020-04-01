@@ -70,14 +70,14 @@ class FnacProductManager(models.Manager):
 
     def size_valid(self):
         """Return a queryset of products with valid size information."""
-        return self.not_do_not_create().exclude(
-            ~Q(english_size="") & Q(french_size__isnull=True)
+        return self.not_do_not_create().filter(
+            Q(created=True) | ~Q(~Q(english_size="") & Q(french_size__isnull=True))
         )
 
     def size_invalid(self):
         """Return a queryset of products with invalid size information."""
         return self.not_do_not_create().filter(
-            ~Q(english_size="") & Q(french_size__isnull=True)
+            ~Q(english_size="") & Q(french_size__isnull=True) & Q(created=False)
         )
 
     def has_category(self):

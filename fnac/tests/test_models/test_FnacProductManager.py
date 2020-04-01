@@ -208,12 +208,25 @@ def test_missing_image(fnac_product_factory, product_kwargs, returned):
 @pytest.mark.parametrize(
     "product_kwargs,size_kwargs,returned",
     [
-        ({"english_size": "Red"}, {"name": "Rouge"}, True),
-        ({"english_size": ""}, None, True),
-        ({"english_size": ""}, {"name": "Rouge"}, True),
-        ({"english_size": "Red"}, None, False),
         ({"english_size": "Red", "created": True}, {"name": "Rouge"}, True),
-        ({"english_size": "Red", "do_not_create": True}, {"name": "Rouge"}, False),
+        ({"english_size": "Red", "created": False}, {"name": "Rouge"}, True),
+        ({"english_size": "", "created": True}, None, True),
+        ({"english_size": "", "created": False}, None, True),
+        ({"english_size": "", "created": True}, {"name": "Rouge"}, True),
+        ({"english_size": "", "created": False}, {"name": "Rouge"}, True),
+        ({"english_size": "Red", "created": True}, None, True),
+        ({"english_size": "Red", "created": False}, None, False),
+        ({"english_size": "Red", "created": True}, {"name": "Rouge"}, True),
+        (
+            {"english_size": "Red", "do_not_create": True, "created": True},
+            {"name": "Rouge"},
+            False,
+        ),
+        (
+            {"english_size": "Red", "do_not_create": True, "created": False},
+            {"name": "Rouge"},
+            False,
+        ),
     ],
 )
 def test_size_valid(
@@ -232,9 +245,12 @@ def test_size_valid(
     "product_kwargs,size_kwargs,returned",
     [
         ({"english_size": "Red"}, None, True),
-        ({"english_size": "Red"}, {"name": "Rouge"}, False),
-        ({"english_size": ""}, None, False),
-        ({"english_size": ""}, {"name": "Rouge"}, False),
+        ({"english_size": "Red", "created": True}, {"name": "Rouge"}, False),
+        ({"english_size": "Red", "created": False}, {"name": "Rouge"}, False),
+        ({"english_size": "", "created": False}, None, False),
+        ({"english_size": "", "created": True}, None, False),
+        ({"english_size": "", "created": False}, {"name": "Rouge"}, False),
+        ({"english_size": "", "created": True}, {"name": "Rouge"}, False),
         ({"english_size": "Red", "created": True}, {"name": "Rouge"}, False),
         ({"english_size": "Red", "do_not_create": True}, {"name": "Rouge"}, False),
     ],
