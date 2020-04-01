@@ -4,7 +4,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Gadgets / Other gadgets",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Autre moyen gadget"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Autre moyen gadget",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -12,7 +13,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Gadgets / Other small gadget",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Autre petit gadget"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Autre petit gadget",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -20,7 +22,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Gadgets / Flying Gadgets",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Gadget volant"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Gadget volant",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -28,7 +31,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies & Derivatives / Gadgets / Wholesale USB Gadgets",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Gros Gadget USB"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Gros Gadget USB",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -36,7 +40,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Gadgets / Medium USB Gadget",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Moyen Gadget USB"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Moyen Gadget USB",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -44,7 +49,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Gadgets / Pendulum and Clock",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Pendule et horloge"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Pendule et horloge",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -52,7 +58,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Gadgets / Small USB Gadgets",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Petit Gadget USB"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Petit Gadget USB",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -60,7 +67,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Gadgets / Keychains",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Porte-clef"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Porte-clef",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -68,7 +76,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Gadgets / Robots",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Robots"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Robots",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -76,39 +85,26 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Gadgets / Cars / Boats",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Voiture / Bateau"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Gadgets/Voiture / Bateau",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
     "pk": 13,
     "fields": {
-        "name": "",
+        "name": "Bath Accessories",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Bath accessories",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Accessoires de bain"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 14,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Stickers / Magnets",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Autocollant / Magnets"
+        "french": "Produits non \u00e9ditoriaux/Bricolage/Cuisines et salles de bain/BRICOLAGE/Accessoires salles de bain et WC/Autre accessoires salles de bain et wc",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
     "pk": 15,
     "fields": {
-        "name": "",
+        "name": "Gadgets",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Other gadget",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Autre moyen gadget"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 16,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Other small gadget",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Autre petit gadget"
+        "french": "Produits non \u00e9ditoriaux/Gadgets Produits d\u00e9riv\u00e9s et Posters/GADGET GOODIES/Gadgets et goodies/Autre gadget",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -116,23 +112,17 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Other Derivative",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Autre produit d\u00e9riv\u00e9"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Autre produit d\u00e9riv\u00e9",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
     "pk": 18,
     "fields": {
-        "name": "",
+        "name": "Badges",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Badge",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Badge"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 19,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Jewelry",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Bijoux"
+        "french": "Produits non \u00e9ditoriaux/Gadgets Produits d\u00e9riv\u00e9s et Posters/GADGET GOODIES/Gadgets et goodies/Pins et badges",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -140,7 +130,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Belt Buckle",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Boucle de ceinture"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Boucle de ceinture",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -148,7 +139,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Beach towel",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Drap de plage"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Drap de plage",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -156,7 +148,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Patch",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Ecusson"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Ecusson",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -164,15 +157,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Big Figurine",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Grande Figurine"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 25,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Card Game",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Jeu de cartes"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Grande Figurine",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -180,7 +166,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Decorative Object",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Objet de d\u00e9coration"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Objet de d\u00e9coration",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -188,7 +175,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Bed Linen",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Parures de lit"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Parures de lit",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -196,7 +184,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Plush",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Peluche"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Peluche",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -204,7 +193,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Pendants",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Pendentif"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Pendentif",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -212,7 +202,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Pendulum and Clock",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Pendule et horloge"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Pendule et horloge",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -220,7 +211,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Small decorative object",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Petit objet de d\u00e9coration"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Petit objet de d\u00e9coration",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -228,15 +220,17 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Pins",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Pins"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Pins",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
     "pk": 33,
     "fields": {
-        "name": "",
+        "name": "Keychains",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Keychains",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Porte-clef"
+        "french": "Produits non \u00e9ditoriaux/Gadgets Produits d\u00e9riv\u00e9s et Posters/GADGET GOODIES/Gadgets et goodies/Porte clef",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -244,7 +238,8 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Portfolio",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Portefeuille"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Portefeuille",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -252,15 +247,17 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Press kit",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Press kit"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Press kit",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
     "pk": 36,
     "fields": {
-        "name": "",
+        "name": "Accessories",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Bag",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Sac"
+        "french": "Produits non \u00e9ditoriaux/Gadgets Produits d\u00e9riv\u00e9s et Posters/GADGET GOODIES/V\u00eatements goodies/Accessoires goodies",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -268,175 +265,17 @@
     "fields": {
         "name": "",
         "english": "GADGET / Gadgets, Goodies and Derivatives / Goodies / Dishes",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Vaisselle"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 38,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Accessories",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Accessoires"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 39,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Bath accessories",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Accessoires de bain"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 40,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Other Derivative",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Autre produit d\u00e9riv\u00e9"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 41,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Jacket",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Blouson"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 42,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and By-products / Clothing / Belt buckle",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Boucle de ceinture"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 43,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Cap",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Casquette"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 44,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Belt",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Ceinture"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 45,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Hat",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Chapeau"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 46,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Shoes",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Chaussures"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 47,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Shirts",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Chemise"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 48,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Tie",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Cravate"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 49,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Scarf",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Echarpe"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 50,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Lingerie H / F",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Lingerie H/F"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 51,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Pants",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Pantalon"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 52,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Dress",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Robe"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 53,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Short",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Short"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 54,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Sweatshirt",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/Sweatshirt"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 55,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / T-Shirt",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/T-Shirt"
+        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/Goodies/Vaisselle",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
     "pk": 56,
     "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Clothing",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/V\u00eatement"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 57,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Baby clothes",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/V\u00eatement b\u00e9b\u00e9"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 58,
-    "fields": {
-        "name": "",
-        "english": "GADGET / Gadgets, Goodies and Derivatives / Clothing / Children's clothing",
-        "french": "GADGET/Gadgets, Goodies et Produits d\u00e9riv\u00e9s/V\u00eatements/V\u00eatement enfant"
+        "name": "Clothing",
+        "english": "Non-editorial products / Gadgets Derivatives and Posters / GADGET GOODIES / Goodies clothes / Other goodies clothes",
+        "french": "Produits non \u00e9ditoriaux/Gadgets Produits d\u00e9riv\u00e9s et Posters/GADGET GOODIES/V\u00eatements goodies/Autre v\u00eatements goodies",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -444,7 +283,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Other early learning games / Arches",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Arches"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Arches",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -452,7 +292,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Other early learning games / Other awakening games",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Autres jeux d'\u00e9veil"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Autres jeux d'\u00e9veil",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -460,7 +301,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Other Awakening Games / Cubes",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Cubes"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Cubes",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -468,7 +310,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Other early learning games / Recessed",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Encastrement"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Encastrement",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -476,7 +319,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Other early learning games / Rattle",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Hochet"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Hochet",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -484,7 +328,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Other early learning games / Early learning games",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Jeux d'\u00e9veil"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Jeux d'\u00e9veil",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -492,7 +337,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Other play games / Stacking toys",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Jouet empilable"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Jouet empilable",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -500,7 +346,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Other play games / Bath toy",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Jouet pour le bain"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Jouet pour le bain",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -508,7 +355,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Other play games / Push and pull toys",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Jouets \u00e0 tirer ou \u00e0 pousser"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Jouets \u00e0 tirer ou \u00e0 pousser",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -516,7 +364,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Other Awakening Games / Bearer",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Porteur"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Porteur",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -524,7 +373,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Other early learning games / Playmat",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Tapis d'\u00e9veil"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Tapis d'\u00e9veil",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -532,7 +382,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Other early learning games / Trotters",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Trotteurs"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Autres jeux d'\u00e9veil/Trotteurs",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -540,7 +391,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Circuits and vehicles / Accessories for circuits and vehicles",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Accessoires circuits et v\u00e9hicules"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Accessoires circuits et v\u00e9hicules",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -548,7 +400,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Circuits and vehicles / Other circuits and vehicles",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Autre circuits et v\u00e9hicules"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Autre circuits et v\u00e9hicules",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -556,7 +409,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Circuits and vehicles / Other trains",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Autres trains"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Autres trains",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -564,7 +418,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Circuits and vehicles / Other radio controlled vehicles",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Autres v\u00e9hicules radio command\u00e9s"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Autres v\u00e9hicules radio command\u00e9s",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -572,7 +427,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Circuits and vehicles / Plane",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Avion"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Avion",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -580,7 +436,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Circuits and vehicles / Boat",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Bateau"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Bateau",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -588,7 +445,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Circuits and vehicles / Radio controlled boat",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Bateau radio command\u00e9"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Bateau radio command\u00e9",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -596,7 +454,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Circuits and vehicles / Truck",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Camion"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Camion",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -604,7 +463,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Circuits and vehicles / Trains",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Circuit trains"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Circuit trains",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -612,7 +472,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Circuits and vehicles / Cars circuit",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Circuit voitures"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Circuit voitures",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -620,7 +481,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Circuits and vehicles / Toy garage",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Garage jouet"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Garage jouet",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -628,7 +490,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Circuits and vehicles / Helicopter",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/H\u00e9licopt\u00e8re"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/H\u00e9licopt\u00e8re",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -636,7 +499,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOYS GAMES / Games & Toys / Circuits & Vehicles / Radio Controlled Helicopter",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/H\u00e9licopt\u00e8re radio command\u00e9"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/H\u00e9licopt\u00e8re radio command\u00e9",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -644,7 +508,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Circuits and Vehicles / Electric Train",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Train \u00e9lectrique"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Train \u00e9lectrique",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -652,7 +517,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Circuits and vehicles / Cars",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Voiture"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Voiture",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -660,7 +526,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Circuits and vehicles / Radio controlled car",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Voiture radio command\u00e9e"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Circuits et v\u00e9hicules/Voiture radio command\u00e9e",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -668,7 +535,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Toys & Games / Costumes and Feasts / Costume Accessory",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Accessoire de d\u00e9guisement"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Accessoire de d\u00e9guisement",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -676,7 +544,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Fancy Dress / Party Supplies",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Article de f\u00eate"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Article de f\u00eate",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -684,7 +553,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Costumes & Parties / Other Costume",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Autre d\u00e9guisement"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Autre d\u00e9guisement",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -692,7 +562,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Fancy Dress / Other Costumes",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Autre d\u00e9guisements et f\u00eates"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Autre d\u00e9guisements et f\u00eates",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -700,7 +571,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Fancy dress and parties / Jewelry",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Bijoux"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Bijoux",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -708,7 +580,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Fancy Dress / Adult Fancy Dress",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/D\u00e9guisement adulte"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/D\u00e9guisement adulte",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -716,7 +589,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Fancy dress and party / Child costume",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/D\u00e9guisement enfant"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/D\u00e9guisement enfant",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -724,7 +598,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Fancy dress and party / Makeup",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Maquillage"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Maquillage",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -732,7 +607,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Fancy dress and party / Masks",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Masques"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Masques",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -740,7 +616,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Fancy Dress & Party / Disguise Set",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Panoplie de d\u00e9guisement"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/D\u00e9guisements et f\u00eates/Panoplie de d\u00e9guisement",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -748,7 +625,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Figurines & Replicas / Other Figurines & Replicas",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Autres figurines et r\u00e9pliques"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Autres figurines et r\u00e9pliques",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -756,7 +634,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Figurines & Replicas / Bust",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Buste"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Buste",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -764,7 +643,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Figurines & Replicas / Dioramas",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Dioramas"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Dioramas",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -772,7 +652,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Figurines and replicas / Large figurine",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Grande figurine"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Grande figurine",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -780,7 +661,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOYS GAMES / Games & Toys / Figurines & Replicas / Medium Figurine",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Moyenne figurine"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Moyenne figurine",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -788,7 +670,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Figurines and replicas / Small figurine",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Petite figurine"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Petite figurine",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -796,7 +679,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Figurines & Replicas / Soldiers",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Soldats"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Soldats",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -804,7 +688,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Minifigures & Replicas / Statuette",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Statuette"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Figurines et r\u00e9pliques/Statuette",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -812,7 +697,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Creative games / Table accessories and desk",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Accessoire tableau et pupitre"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Accessoire tableau et pupitre",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -820,7 +706,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Other Creative Games",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Autres jeux cr\u00e9atifs"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Autres jeux cr\u00e9atifs",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -828,7 +715,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Colored Pencils & Felt Pens",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Crayon de couleur et feutres"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Crayon de couleur et feutres",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -836,7 +724,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Creative Cooking",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Cuisine cr\u00e9ative"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Cuisine cr\u00e9ative",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -844,7 +733,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Candle Game",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Jeu bougie"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Jeu bougie",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -852,7 +742,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Creative Kit",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Kit cr\u00e9atif"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Kit cr\u00e9atif",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -860,7 +751,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Mandalas",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Mandalas"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Mandalas",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -868,7 +760,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Mosaic",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Mosa\u00efque"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Mosa\u00efque",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -876,7 +769,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Origami",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Origami"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Origami",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -884,7 +778,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Fragrance & Cosmetics",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Parfum et cosm\u00e9tique"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Parfum et cosm\u00e9tique",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -892,7 +787,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Creative games / Painting",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Peinture"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Peinture",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -900,7 +796,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Pearl",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Perle"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Perle",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -908,7 +805,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Pottery",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Poterie"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Poterie",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -916,7 +814,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Pyrograveur",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Pyrograveur"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Pyrograveur",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -924,7 +823,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Children's Modeling Clay",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/P\u00e2te \u00e0 modeler pour enfant"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/P\u00e2te \u00e0 modeler pour enfant",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -932,7 +832,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Salt Paste",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/P\u00e2te \u00e0 sel"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/P\u00e2te \u00e0 sel",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -940,7 +841,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Creative Games / Board & Podium",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Tableau et pupitre"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux cr\u00e9atifs/Tableau et pupitre",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -948,7 +850,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Imitation Games / DIY Workshop",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Atelier de bricolage"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Atelier de bricolage",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -956,7 +859,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Imitation Games / Other Imitation Games",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Autre jeux d'imitation"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Autre jeux d'imitation",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -964,7 +868,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Imitation games / Other magic",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Autres magies"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Autres magies",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -972,7 +877,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Imitation Games / Magic Box",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Coffret de magie"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Coffret de magie",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -980,7 +886,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Imitation Games / Kitchen",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Cuisine"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Cuisine",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -988,7 +895,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Imitation Games / Musical Instruments",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Instruments de musiques"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Instruments de musiques",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -996,7 +904,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Imitation Games / Gardening",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Jardinage"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Jardinage",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1004,7 +913,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Imitation Games / Puppetry",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Marionnette"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Marionnette",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1012,7 +922,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Imitation games / Mistress",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Ma\u00eetresse"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Ma\u00eetresse",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1020,7 +931,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Imitation games / Household cleaning",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/M\u00e9nage nettoyage"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/M\u00e9nage nettoyage",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1028,7 +940,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Imitation Games / Doctor Set",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Panoplie du docteur"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Panoplie du docteur",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1036,7 +949,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Imitation Games / Puppet Theater",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Th\u00e9atre pour marionnette"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux d'imitation/Th\u00e9atre pour marionnette",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1044,7 +958,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Coffee & Poker Games / Arcade",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de caf\u00e9 et poker/Arcade"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de caf\u00e9 et poker/Arcade",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1052,7 +967,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Coffee & Poker Games / Other Coffee Game",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de caf\u00e9 et poker/Autre jeu de caf\u00e9"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de caf\u00e9 et poker/Autre jeu de caf\u00e9",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1060,7 +976,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Coffee and poker games / Billiards",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de caf\u00e9 et poker/Billard"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de caf\u00e9 et poker/Billard",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1068,7 +985,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Coffee & Poker Games / Jukeboxes",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de caf\u00e9 et poker/Juke-Box"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de caf\u00e9 et poker/Juke-Box",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1076,7 +994,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Coffee & Poker Games / Poker",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de caf\u00e9 et poker/Poker"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de caf\u00e9 et poker/Poker",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1084,7 +1003,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Construction Games / Construction Game Accessory",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de construction/Accessoire de jeu de contruction"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de construction/Accessoire de jeu de contruction",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1092,7 +1012,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Construction toys / Other construction games",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de construction/Autres jeux de construction"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de construction/Autres jeux de construction",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1100,7 +1021,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Construction toys / Magnetic building set",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de construction/Jeu de construction magn\u00e9tique"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de construction/Jeu de construction magn\u00e9tique",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1108,7 +1030,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Construction toys / Lego",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de construction/Lego"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de construction/Lego",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1116,7 +1039,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Construction toys / Meccano",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de construction/Meccano"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de construction/Meccano",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1124,7 +1048,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Construction toys / Playmobil",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de construction/Playmobil"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de construction/Playmobil",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1132,7 +1057,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Outdoor games / Other outdoor game",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Autre jeu de plein air"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Autre jeu de plein air",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1140,7 +1066,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Outdoor games / Sandbox",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Bac \u00e0 sable"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Bac \u00e0 sable",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1148,7 +1075,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Outdoor games / Swing and gantry",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Balan\u00e7oire et portique multi-activit\u00e9s"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Balan\u00e7oire et portique multi-activit\u00e9s",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1156,7 +1084,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Outdoor Games / Balls & Accessories",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Billes et accessoires"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Billes et accessoires",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1164,7 +1093,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Outdoor Games / Balance Bike",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Draisienne"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Draisienne",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1172,7 +1102,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Outdoor Games / Inflatable Play & Pool",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Jeu et piscine gonflable"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Jeu et piscine gonflable",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1180,7 +1111,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Outdoor Games / Ball Games",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Jeux de balle"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Jeux de balle",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1188,7 +1120,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Outdoor games / Beach games",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Jeux de plage"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Jeux de plage",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1196,7 +1129,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Outdoor games / Garden houses",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Maisons de jardin"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Maisons de jardin",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1204,7 +1138,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Outdoor games / Skates and rollerblades",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Patinettes et rollers"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Patinettes et rollers",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1212,7 +1147,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Outdoor Games / Tricycles",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Tricycles"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/Tricycles",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1220,7 +1156,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Outdoor games / Foot pedal",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/V\u00e9hicule \u00e0 p\u00e9dale"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/V\u00e9hicule \u00e0 p\u00e9dale",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1228,7 +1165,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Outdoor games / Children's electric vehicle",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/V\u00e9hicule \u00e9lectrique pour enfant"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de plein air/V\u00e9hicule \u00e9lectrique pour enfant",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1236,7 +1174,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / Other Board Game",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Autre jeu de soci\u00e9t\u00e9"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Autre jeu de soci\u00e9t\u00e9",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1244,7 +1183,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / Puzzles",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Casse-t\u00eate"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Casse-t\u00eate",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1252,7 +1192,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / Multi-Game Box",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Coffret multi-jeux"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Coffret multi-jeux",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1260,7 +1201,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / Skill Games",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu d'adresse"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu d'adresse",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1268,7 +1210,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / Chess",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu d'\u00e9checs"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu d'\u00e9checs",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1276,7 +1219,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / Card Game",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu de cartes"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu de cartes",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1284,7 +1228,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / General Culture Game",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu de culture g\u00e9n\u00e9rale"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu de culture g\u00e9n\u00e9rale",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1292,7 +1237,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / Pawn Game",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu de pions"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu de pions",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1300,7 +1246,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / Role Playing",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu de r\u00f4les"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu de r\u00f4les",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1308,7 +1255,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / Strategy Game",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu de strat\u00e9gie"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeu de strat\u00e9gie",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1316,7 +1264,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / TV Games TV or movie series",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeux TV s\u00e9rie TV ou film"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeux TV s\u00e9rie TV ou film",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1324,7 +1273,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / Classic Games",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeux classiques"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeux classiques",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1332,7 +1282,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / Travel Games",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeux de voyage"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeux de voyage",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1340,7 +1291,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / Room Games",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeux d\u2019ambiance"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Jeux d\u2019ambiance",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1348,7 +1300,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Board Games / Smoke & Snow Machines",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Machines \u00e0 fum\u00e9e et neige"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux de soci\u00e9t\u00e9/Machines \u00e0 fum\u00e9e et neige",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1356,7 +1309,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Educational & Electronic Games / Cameras",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Appareils photos"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Appareils photos",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1364,7 +1318,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Educational & Electronic Games / Other Educational & Electronic Games",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Autre jeux \u00e9ducatifs et \u00e9lectroniques"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Autre jeux \u00e9ducatifs et \u00e9lectroniques",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1372,7 +1327,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Educational and electronic games / Figures and calculation",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Chiffres et calcul"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Chiffres et calcul",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1380,7 +1336,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Educational & Electronic Games / Puzzle Game",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jeu de r\u00e9flexion"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jeu de r\u00e9flexion",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1388,7 +1345,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Educational & Electronic Games / Discovery Game",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jeu d\u00e9couverte"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jeu d\u00e9couverte",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1396,7 +1354,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Educational & Electronic Games / Junior Game",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jeu junior"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jeu junior",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1404,7 +1363,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Educational & Electronic Games / Science Games",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jeux scientifiques"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jeux scientifiques",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1412,7 +1372,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Educational & Electronic Games / Multimedia Toy",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jouet multim\u00e9dia"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jouet multim\u00e9dia",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1420,7 +1381,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Educational & Electronic Games / Musical Toy",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jouet musical"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jouet musical",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1428,7 +1390,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Educational & Electronic Games / Toys to Handle",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jouets \u00e0 manipuler"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Jouets \u00e0 manipuler",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1436,7 +1399,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Educational and electronic games / Memo and domino loto",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Loto m\u00e9mo et domino"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Loto m\u00e9mo et domino",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1444,7 +1408,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Educational & Electronic Games / Educational Computer",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Ordinateur \u00e9ducatif"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Ordinateur \u00e9ducatif",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1452,7 +1417,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Educational & Electronic Games / Robots",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Robots"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Robots",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1460,7 +1426,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Educational & Electronic Games / Educational Tablets",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Tablettes educatives"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Tablettes educatives",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1468,7 +1435,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Educational & Electronic Games / Walkie Talkie",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Talkie Walkie"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jeux \u00e9ducatifs et \u00e9lectroniques/Talkie Walkie",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1476,7 +1444,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Wooden toys / Other wooden toys",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Autres jouets en bois"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Autres jouets en bois",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1484,7 +1453,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOYS GAMES / Games & Toys / Wooden Toys / Wooden Train Track & Accessories",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Circuit et accessoires train en bois"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Circuit et accessoires train en bois",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1492,7 +1462,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Wooden Toys / Wood Cubes",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Cubes bois"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Cubes bois",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1500,7 +1471,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Wooden Toys / Wooden Recess",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Encastrement en bois"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Encastrement en bois",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1508,7 +1480,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Wooden Toys / Wooden Rock Toys",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Jouets \u00e0 bascule en bois"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Jouets \u00e0 bascule en bois",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1516,7 +1489,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Wooden Toys / Wooden Pull & Push Toys",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Jouets \u00e0 tirer ou \u00e0 pousser en bois"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Jouets \u00e0 tirer ou \u00e0 pousser en bois",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1524,7 +1498,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Wooden Toys / Wood Carrier",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Porteur Bois"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Jouets en bois/Porteur Bois",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1532,7 +1507,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Model making / Model making Accessory",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Mod\u00e9lisme/Accessoire mod\u00e9lisme"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Mod\u00e9lisme/Accessoire mod\u00e9lisme",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1540,7 +1516,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Model making / Other model making",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Mod\u00e9lisme/Autre mod\u00e9lisme"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Mod\u00e9lisme/Autre mod\u00e9lisme",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1548,7 +1525,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Model making / Model making",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Mod\u00e9lisme/Maquette"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Mod\u00e9lisme/Maquette",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1556,7 +1534,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Model making / Model",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Mod\u00e9lisme/Mod\u00e8le r\u00e9duit"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Mod\u00e9lisme/Mod\u00e8le r\u00e9duit",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1564,7 +1543,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Model building / Charger and charger motor",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Mod\u00e9lisme/Moteur accus et chargeur"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Mod\u00e9lisme/Moteur accus et chargeur",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1572,7 +1552,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Model making / Radio control and servos",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Mod\u00e9lisme/Radiocommande et servos"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Mod\u00e9lisme/Radiocommande et servos",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1580,7 +1561,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOYS GAMES / Games & Toys / Stuffed Dolls & Soft Toys / Doll Accessory",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Accessoire poup\u00e9e"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Accessoire poup\u00e9e",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1588,15 +1570,17 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Stuffed Dolls & Soft Toys / Stuffed Animal",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Animal en peluche"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Animal en peluche",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
     "pk": 203,
     "fields": {
-        "name": "",
+        "name": "Plush Toys",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Stuffed dolls and comforters / Other stuffed animals",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Autre peluche"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Autre peluche",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1604,7 +1588,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Plush dolls and comforters / Doudou",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Doudou"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Doudou",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1612,7 +1597,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Plush dolls and comforters / Dolls",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Landaux de poup\u00e9e"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Landaux de poup\u00e9e",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1620,7 +1606,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Stuffed Dolls & Soft Toys / Doll House",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Maison de poup\u00e9e"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Maison de poup\u00e9e",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1628,7 +1615,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Plush dolls and comforters / Teddy bear",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Ours en peluche"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Ours en peluche",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1636,7 +1624,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Plush dolls and comforters / Unusual soft toy",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Peluche insolite"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Peluche insolite",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1644,7 +1633,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Plush dolls and comforters / Interactive soft toy",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Peluche interactive"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Peluche interactive",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1652,7 +1642,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Plush dolls and comforters / Plush character",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Personnage en peluche"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Personnage en peluche",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1660,7 +1651,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Stuffed dolls and comforters / Poupon",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Poupon"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Poupon",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1668,7 +1660,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Plush dolls and comforters / Doll",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Poup\u00e9e"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Poup\u00e9e",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1676,7 +1669,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Stuffed Dolls & Soft Toys / Doll Stroller",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Poussette de poup\u00e9e"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Poussette de poup\u00e9e",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1684,7 +1678,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOYS GAMES / Games and toys / Stuffed dolls and comforters / Miniatures universe",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Univers miniature"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Peluches poup\u00e9es et doudous/Univers miniature",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1692,7 +1687,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Puzzle / 100-300 pieces",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/100-300 pi\u00e8ces"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/100-300 pi\u00e8ces",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1700,7 +1696,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Jigsaw / 1000 pieces",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/1000 pi\u00e8ces"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/1000 pi\u00e8ces",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1708,7 +1705,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Puzzle / 2000-5000 pieces",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/2000-5000 pi\u00e8ces"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/2000-5000 pi\u00e8ces",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1716,7 +1714,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Puzzle / 500-750 pieces",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/500-750 pi\u00e8ces"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/500-750 pi\u00e8ces",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1724,7 +1723,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Puzzle / Other puzzle",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/Autre puzzle"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/Autre puzzle",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1732,7 +1732,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Puzzle / Over 6000 Pieces",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/Plus de 6000 pi\u00e8ces"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/Plus de 6000 pi\u00e8ces",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1740,7 +1741,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / TOY GAMES / Games and toys / Puzzle / 3D Puzzle",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/Puzzle 3D"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/Puzzle 3D",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1748,7 +1750,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Puzzle / Child Puzzle",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/Puzzle enfant"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/Puzzle enfant",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1756,7 +1759,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / TOY GAMES / Games & Toys / Puzzle / Puzzleball",
-        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/Puzzleball"
+        "french": "Produits non \u00e9ditoriaux/JEUX JOUETS/Jeux et jouets/Puzzle/Puzzleball",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1764,7 +1768,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home & Lifestyle / LIFESTYLE HOME / Decorative objects / Bathroom accessories / Other bath accessories",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Accessoires de bain/Autre accessoires de bain"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Accessoires de bain/Autre accessoires de bain",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1772,7 +1777,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Bathroom accessories / Sweeper and toilet bowl",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Accessoires de bain/Balayette et abbat wc"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Accessoires de bain/Balayette et abbat wc",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1780,7 +1786,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Bath accessories / Tumbler and toothbrush holder",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Accessoires de bain/Gobelet et porte brosse \u00e0 dents"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Accessoires de bain/Gobelet et porte brosse \u00e0 dents",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1788,7 +1795,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Bath accessories / Laundry basket",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Accessoires de bain/Panier \u00e0 linge"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Accessoires de bain/Panier \u00e0 linge",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1796,7 +1804,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home & lifestyle / LIFESTYLE HOME / Decorative objects / Bathroom accessories / Soap dish and dispenser",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Accessoires de bain/Porte savon et distributeur"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Accessoires de bain/Porte savon et distributeur",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1804,7 +1813,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Bathroom accessories / Bathroom waste bin",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Accessoires de bain/Poubelle de salle de bain"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Accessoires de bain/Poubelle de salle de bain",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1812,7 +1822,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Candle and scent candle holder / Candle and scented candle holder",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Bougeoir bougie et senteur/Autre bougeoir bougie et senteur"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Bougeoir bougie et senteur/Autre bougeoir bougie et senteur",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1820,7 +1831,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Candle and scent candleholder / Candleholder",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Bougeoir bougie et senteur/Bougeoir"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Bougeoir bougie et senteur/Bougeoir",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1828,7 +1840,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Candle and scent candleholder / Candle",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Bougeoir bougie et senteur/Bougie"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Bougeoir bougie et senteur/Bougie",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1836,7 +1849,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Candle and scent candle holder / Table candles",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Bougeoir bougie et senteur/Bougies de table"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Bougeoir bougie et senteur/Bougies de table",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1844,7 +1858,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Candle and scent candle holder / Candle holders and candle holders",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Bougeoir bougie et senteur/Photophores et bougeoirs"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Bougeoir bougie et senteur/Photophores et bougeoirs",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1852,7 +1867,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Candle and scented candle / scent",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Bougeoir bougie et senteur/Senteur"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Bougeoir bougie et senteur/Senteur",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1860,7 +1876,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Wall decor / Other wall decor",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Autre d\u00e9coration murale"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Autre d\u00e9coration murale",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1868,7 +1885,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Wall decor / Picture frame",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Cadre avec image"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Cadre avec image",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1876,7 +1894,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home & Lifestyle / LIFESTYLE HOME / Decorative Items / Wall Decor / Frame Only",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Cadre seul"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Cadre seul",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1884,7 +1903,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home & lifestyle / LIFESTYLE HOME / Decorative objects / Wall decor / Clock",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Horloge"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Horloge",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1892,7 +1912,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Wall decor / Stickers",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Stickers"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Stickers",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1900,7 +1921,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Wall decor / Table",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Tableau"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Tableau",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1908,7 +1930,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Wall decoration / Canvas",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Toile"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/D\u00e9coration murale/Toile",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1916,7 +1939,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home & lifestyle / LIFESTYLE HOME / Decorative objects / Mirror / Other mirror",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Miroir/Autre miroir"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Miroir/Autre miroir",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1924,7 +1948,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Mirror / Mirror",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Miroir/Miroir"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Miroir/Miroir",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1932,15 +1957,17 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Mirror / Standing mirror",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Miroir/Miroir sur pied"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Miroir/Miroir sur pied",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
     "pk": 246,
     "fields": {
-        "name": "",
+        "name": "Ornaments",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Tableware / Other decoration accessories",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Autre accessoires de d\u00e9coration"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Autre accessoires de d\u00e9coration",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1948,7 +1975,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Tableware / Other items to ask",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Autre objet \u00e0 poser"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Autre objet \u00e0 poser",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1956,7 +1984,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Objet \u00e0 poser / Photo frame",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Cadre photo"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Cadre photo",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1964,7 +1993,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Tableware / Cup",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Coupe"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Coupe",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1972,7 +2002,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Tableware / Christmas decoration",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/D\u00e9coration de Noel"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/D\u00e9coration de Noel",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1980,7 +2011,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Objet \u00e0 poser / Miscellaneous objects",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Objets divers"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Objets divers",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1988,7 +2020,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Tableware / Statue",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Statue"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Statue",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -1996,7 +2029,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Objet \u00e0 poser / Vase",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Vase"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Objet \u00e0 poser/Vase",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2004,23 +2038,17 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Home and lifestyle / LIFESTYLE HOME / Decorative objects / Artificial plants / Artificial plant",
-        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Plantes artificielles/Plante artificielle"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 255,
-    "fields": {
-        "name": "",
-        "english": "Non-editorial products / Small household appliances / KITCHEN ACCESSORIES / Tableware / Kitchen tableware",
-        "french": "Produits non \u00e9ditoriaux/Petit \u00e9lectrom\u00e9nager/APPAREIL ACCESSOIRE DE CUISINE/Art de la table/Cuisine art de table"
+        "french": "Produits non \u00e9ditoriaux/Maison et lifestyle/MAISON LIFESTYLE/Objets de d\u00e9coration/Plantes artificielles/Plante artificielle",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
     "pk": 256,
     "fields": {
-        "name": "",
+        "name": "Cooking Accessories",
         "english": "Non-editorial products / Small Appliances / KITCHEN APPLIANCE ACCESSORIES / Kitchen utensils and accessories / Kitchen accessories",
-        "french": "Produits non \u00e9ditoriaux/Petit \u00e9lectrom\u00e9nager/APPAREIL ACCESSOIRE DE CUISINE/Ustensiles et accessoires de cuisine/Accessoires de cuisine"
+        "french": "Produits non \u00e9ditoriaux/PEM accessoire/ACCESSOIRE CUISINE/Accessoire cuisine/Accessoire de cuisine",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2028,7 +2056,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Camping and hiking / Sleeping / Camping floor mats",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Camping et randonn\u00e9e/Couchages/Tapis de sol de camping"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Camping et randonn\u00e9e/Couchages/Tapis de sol de camping",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2036,7 +2065,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Camping and hiking / Camping and hiking equipment / Other camping and hiking equipment",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Camping et randonn\u00e9e/Mat\u00e9riels de camping et randonn\u00e9e/Autre mat\u00e9riels de camping et randonn\u00e9e"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Camping et randonn\u00e9e/Mat\u00e9riels de camping et randonn\u00e9e/Autre mat\u00e9riels de camping et randonn\u00e9e",
+        "requires_colour": true
     }
 }, {
     "model": "fnac.category",
@@ -2044,7 +2074,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Camping and hiking / Camping furniture / Chair and camping chair",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Camping et randonn\u00e9e/Mobilier de camping/Chaise et fauteuil de camping"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Camping et randonn\u00e9e/Mobilier de camping/Chaise et fauteuil de camping",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2052,7 +2083,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Camping and hiking / Camping furniture / Camping furniture",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Camping et randonn\u00e9e/Mobilier de camping/Mobilier de camping"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Camping et randonn\u00e9e/Mobilier de camping/Mobilier de camping",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2060,7 +2092,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Camping and hiking / Camping furniture / Camping table",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Camping et randonn\u00e9e/Mobilier de camping/Table de camping"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Camping et randonn\u00e9e/Mobilier de camping/Table de camping",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2068,7 +2101,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Hunting and fishing / Inflatable boat / Inflatable boat",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/Bateau pneumatique/Bateau pneumatique"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/Bateau pneumatique/Bateau pneumatique",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2076,7 +2110,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Hunting & Fishing / Hunting / Hunters Accessories",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/Chasse/Accessoires du chasseur"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/Chasse/Accessoires du chasseur",
+        "requires_colour": true
     }
 }, {
     "model": "fnac.category",
@@ -2084,7 +2119,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Hunting & Fishing / Hunting / Caller & Caller",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/Chasse/Appeau et appelant"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/Chasse/Appeau et appelant",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2092,7 +2128,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Leisure / SPORT / Hunting and Fishing / Hunting / Hunting Belt",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/Chasse/Ceinture de chasse"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/Chasse/Ceinture de chasse",
+        "requires_colour": true
     }
 }, {
     "model": "fnac.category",
@@ -2100,7 +2137,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Leisure / SPORT / Hunting and Fishing / Fishing / Fisherman's Accessories",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Accessoires du p\u00eacheur"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Accessoires du p\u00eacheur",
+        "requires_colour": true
     }
 }, {
     "model": "fnac.category",
@@ -2108,7 +2146,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Hunting and fishing / Fishing / Bait",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/App\u00e2t"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/App\u00e2t",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2116,7 +2155,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Leisure / SPORT / Hunting and Fishing / Fishing / Bottom Line",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Bas de ligne"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Bas de ligne",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2124,7 +2164,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Hunting and fishing / Fishing / Fishing rod",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Canne \u00e0 p\u00eache"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Canne \u00e0 p\u00eache",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2132,7 +2173,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Hunting & Fishing / Fishing / Fishing Belt",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Ceinture de p\u00eache"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Ceinture de p\u00eache",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2140,7 +2182,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Hunting and fishing / Fishing / Rod and reel set",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Ensemble canne et moulinet"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Ensemble canne et moulinet",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2148,7 +2191,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Hunting and fishing / Fishing / Landing net",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Epuisette"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Epuisette",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2156,7 +2200,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Hunting and fishing / Fishing / Float and cork",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Flotteur et bouchon"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Flotteur et bouchon",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2164,7 +2209,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Hunting and fishing / Fishing / Fish hook",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Hame\u00e7on"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Hame\u00e7on",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2172,7 +2218,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Hunting and fishing / Fishing / Lure",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Leurre"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Leurre",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2180,7 +2227,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Hunting & Fishing / Fishing / Nylon Line & Braid",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Ligne nylon et tresse"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Ligne nylon et tresse",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2188,7 +2236,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Hunting & Fishing / Fishing / Reel",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Moulinet"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Moulinet",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2196,7 +2245,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Hunting and fishing / Fishing / Fishing tackle",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Plomb de p\u00eache"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Plomb de p\u00eache",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2204,7 +2254,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Leisure / SPORT / Hunting and Fishing / Fishing / Fly and fly silk",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Soie mouche et mouche"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Soie mouche et mouche",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2212,7 +2263,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Leisure / SPORT / Hunting and Fishing / Fishing / Cane Support",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Support de canne"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Support de canne",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2220,7 +2272,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Hunting & Fishing / Fishing / Winch",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Treuil"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Chasse et p\u00eache/P\u00eache/Treuil",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2228,7 +2281,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Spas and saunas pools / Swimming pool equipment / Buoy and armband",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Piscines spas et saunas/Equipements de piscine/Bou\u00e9e et brassard"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Piscines spas et saunas/Equipements de piscine/Bou\u00e9e et brassard",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2236,7 +2290,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Water Sports Accessories / Water Sports Accessories",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Accessoires de sports nautiques/Accessoires de sports nautiques"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Accessoires de sports nautiques/Accessoires de sports nautiques",
+        "requires_colour": true
     }
 }, {
     "model": "fnac.category",
@@ -2244,7 +2299,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Water Sports Accessories / Other Water Sports Accessories",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Accessoires de sports nautiques/Autre accessoires de sports nautiques"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Accessoires de sports nautiques/Autre accessoires de sports nautiques",
+        "requires_colour": true
     }
 }, {
     "model": "fnac.category",
@@ -2252,7 +2308,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Water Sports Accessories / Wetsuits & Shorts",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Accessoires de sports nautiques/Combinaison et shortie"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Accessoires de sports nautiques/Combinaison et shortie",
+        "requires_colour": true
     }
 }, {
     "model": "fnac.category",
@@ -2260,7 +2317,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Water sports / Watersports accessories / Rope and pallet",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Accessoires de sports nautiques/Corde et pallonier"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Accessoires de sports nautiques/Corde et pallonier",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2268,7 +2326,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Water Sports Accessories / Life Jackets",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Accessoires de sports nautiques/Gilet de sauvetage"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Accessoires de sports nautiques/Gilet de sauvetage",
+        "requires_colour": true
     }
 }, {
     "model": "fnac.category",
@@ -2276,7 +2335,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Canoes & Kayaks - Accessories / Accessories & Maintenance",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks - Accessoires/Accessoires et maintenance"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks - Accessoires/Accessoires et maintenance",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2284,7 +2344,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Recreation / SPORT / Watersports / Canoes and kayaks - Accessories / Other canoes and kayaks - accessories",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks - Accessoires/Autre cano\u00ebs et kayaks - accessoires"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks - Accessoires/Autre cano\u00ebs et kayaks - accessoires",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2292,7 +2353,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Watersports / Canoes & Kayaks - Accessories / Skirts",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks - Accessoires/Jupe"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks - Accessoires/Jupe",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2300,7 +2362,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Watersports / Canoes & Kayaks - Accessories / Paddle",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks - Accessoires/Pagaie"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks - Accessoires/Pagaie",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2308,7 +2371,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Canoes & Kayaks / Other Canoes & Kayaks",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks/Autre cano\u00ebs et kayaks"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks/Autre cano\u00ebs et kayaks",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2316,7 +2380,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Canoes & Kayaks / Canoe",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks/Cano\u00eb"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks/Cano\u00eb",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2324,7 +2389,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Watersports / Canoes & Kayaks / Kayaking",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks/Kayak"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Cano\u00ebs et kayaks/Kayak",
+        "requires_colour": true
     }
 }, {
     "model": "fnac.category",
@@ -2332,7 +2398,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Jet Ski / Jet Ski",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Jet ski/Jet ski"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Jet ski/Jet ski",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2340,7 +2407,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Kitesurfing / Kitesurfing Kite",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Kitesurf/Aile de kitesurf"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Kitesurf/Aile de kitesurf",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2348,7 +2416,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Water sports / Kitesurfing / Kitesurfing harness",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Kitesurf/Harnais de kitesurf"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Kitesurf/Harnais de kitesurf",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2356,7 +2425,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Leisure / SPORT / Water Sports / Swimming and aquagym / Other swimming and water aerobics",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Natation et aquagym/Autre natation et aquagym"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Natation et aquagym/Autre natation et aquagym",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2364,7 +2434,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Water sports / Swimming and aqua gym / Swimming cap",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Natation et aquagym/Bonnet de bain"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Natation et aquagym/Bonnet de bain",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2372,7 +2443,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Recreation / SPORT / Water Sports / Swimming and water aerobics / Earplugs and nose pliers",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Natation et aquagym/Bouchons d'oreilles et pince nez"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Natation et aquagym/Bouchons d'oreilles et pince nez",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2380,7 +2452,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Leisure / SPORT / Water Sports / Swimming and aquagym / Swimming goggles",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Natation et aquagym/Lunettes de natation"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Natation et aquagym/Lunettes de natation",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2388,7 +2461,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Leisure / SPORT / Water Sports / Swimming and aquagym / Water aerobics equipment",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Natation et aquagym/Mat\u00e9riel d'aquagym"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Natation et aquagym/Mat\u00e9riel d'aquagym",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2396,7 +2470,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Recreation / SPORT / Water Sports / Paddle / Other paddle",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Paddle/Autre paddle"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Paddle/Autre paddle",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2404,7 +2479,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Recreation / SPORT / Water Sports / Paddle / Paddle paddle",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Paddle/Pagaie de paddle"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Paddle/Pagaie de paddle",
+        "requires_colour": true
     }
 }, {
     "model": "fnac.category",
@@ -2412,7 +2488,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Water sports / Windsurfing / Windsurfing accessories",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planche \u00e0 voile/Accessoires de planches \u00e0 voile"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planche \u00e0 voile/Accessoires de planches \u00e0 voile",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2420,7 +2497,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Leisure / SPORT / Water Sports / Windsurfing / Windsurfing fin",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planche \u00e0 voile/Aileron de planche \u00e0 voile"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planche \u00e0 voile/Aileron de planche \u00e0 voile",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2428,7 +2506,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Windsurfing / Windsurfing Harness",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planche \u00e0 voile/Harnais de planche \u00e0 voile"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planche \u00e0 voile/Harnais de planche \u00e0 voile",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2436,7 +2515,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Recreation / SPORT / Water Sports / Windsurfing / Free Sailing",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planche \u00e0 voile/Voile libre"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planche \u00e0 voile/Voile libre",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2444,7 +2524,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Watersports Boards / Other Watersports Boards",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Autre planches de sports nautiques"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Autre planches de sports nautiques",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2452,7 +2533,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Watersports Boards / Bodyboard",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Bodyboard"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Bodyboard",
+        "requires_colour": true
     }
 }, {
     "model": "fnac.category",
@@ -2460,7 +2542,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Recreation / SPORT / Water Sports / Watersports Boards / Kneeboard",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Kneeboard"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Kneeboard",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2468,7 +2551,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Watersports Boards / Wakeboard Pack",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Pack de wakeboard"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Pack de wakeboard",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2476,7 +2560,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Water sports / Watersports boards / Kitesurf board",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Planche de kitesurf"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Planche de kitesurf",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2484,7 +2569,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Watersports Boards / Paddle Board",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Planche de paddle"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Planche de paddle",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2492,7 +2578,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Water sports / Watersports boards / Windsurf board",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Planche de planche \u00e0 voile"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Planche de planche \u00e0 voile",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2500,7 +2587,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Leisure / SPORT / Water Sports / Watersports Boards / Surfboard",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Planche de surf"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Planche de surf",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2508,7 +2596,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Recreation / SPORT / Water Sports / Watersports Boards / Inflatable Board",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Planche gonflable"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Planche gonflable",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2516,7 +2605,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Watersports Boards / Skimboard",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Skimboard"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Skimboard",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2524,7 +2614,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Watersports Boards / Wakeboard",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Wakeboard"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Planches de sports nautiques/Wakeboard",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2532,7 +2623,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Recreation / SPORT / Water Sports / Diving / Lestage",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Plong\u00e9e/Lestage"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Plong\u00e9e/Lestage",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2540,7 +2632,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Diving / Diving Mask",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Plong\u00e9e/Masque de plong\u00e9e"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Plong\u00e9e/Masque de plong\u00e9e",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2548,7 +2641,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Diving / Diving Gear",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Plong\u00e9e/Mat\u00e9riel de plong\u00e9e"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Plong\u00e9e/Mat\u00e9riel de plong\u00e9e",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2556,7 +2650,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Recreation / SPORT / Water Sports / Diving / Flippers",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Plong\u00e9e/Palmes"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Plong\u00e9e/Palmes",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2564,7 +2659,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Diving / Underwater Scooter",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Plong\u00e9e/Scooter sous marin"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Plong\u00e9e/Scooter sous marin",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2572,7 +2668,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Diving / Diving Snorkel",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Plong\u00e9e/Tuba de plong\u00e9e"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Plong\u00e9e/Tuba de plong\u00e9e",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2580,7 +2677,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Recreation / SPORT / Water Sports / Waterskiing / Trailer buoy",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Ski nautique/Bou\u00e9e tractable"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Ski nautique/Bou\u00e9e tractable",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2588,7 +2686,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Water sports / Water skiing / Water skis",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Ski nautique/Skis nautiques"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Ski nautique/Skis nautiques",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2596,7 +2695,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Recreation / SPORT / Water Sports / Surf / Surf Accessories",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Surf/Accessoires de surf"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Surf/Accessoires de surf",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2604,7 +2704,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Recreation / SPORT / Water Sports / Surf / Surf Drift",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Surf/D\u00e9rive de surf"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Surf/D\u00e9rive de surf",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2612,7 +2713,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Surf / Board Cover",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Surf/Housse de planche"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Surf/Housse de planche",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2620,7 +2722,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and Recreation / SPORT / Water Sports / Surf / Leash",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Surf/Leash"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Surf/Leash",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2628,7 +2731,8 @@
     "fields": {
         "name": "",
         "english": "Non-editorial products / Sports and leisure / SPORT / Water sports / Surf / Surf wax",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Surf/Surf wax"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Surf/Surf wax",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2636,7 +2740,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Wakeboarding / Wakeboard Fin",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Wakeboard/Aileron de wakeboard"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Wakeboard/Aileron de wakeboard",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2644,7 +2749,8 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Wakeboard / Wakeboard Binding",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Wakeboard/Fixation pour wakeboard"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Wakeboard/Fixation pour wakeboard",
+        "requires_colour": false
     }
 }, {
     "model": "fnac.category",
@@ -2652,22 +2758,7 @@
     "fields": {
         "name": "",
         "english": "Non-Editorial Products / Sports & Recreation / SPORT / Water Sports / Water Polo / Aim of Water Polo",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Water-polo/But de water-polo"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 336,
-    "fields": {
-        "name": "",
-        "english": "Non-editorial products / Sports and Recreation / SPORTSWEAR / Sportswear / Suits and overalls / Diving suits",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/VETEMENTS DE SPORT/V\u00eatements de sport/Combinaisons et salopettes de sport/Combinaison de plong\u00e9e"
-    }
-}, {
-    "model": "fnac.category",
-    "pk": 337,
-    "fields": {
-        "name": "",
-        "english": "Non-editorial products / Sports and Recreation / SPORTSWEAR / Sportswear / Suits and overalls / Surf suit",
-        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/VETEMENTS DE SPORT/V\u00eatements de sport/Combinaisons et salopettes de sport/Combinaison de surf"
+        "french": "Produits non \u00e9ditoriaux/Sports et Loisirs/SPORT/Sports nautiques/Water-polo/But de water-polo",
+        "requires_colour": false
     }
 }]

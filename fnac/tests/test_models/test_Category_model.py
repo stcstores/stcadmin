@@ -24,6 +24,12 @@ def test_Category_has_french(category_factory):
 
 
 @pytest.mark.django_db
+def test_Category_has_requires_colour(category_factory):
+    category = category_factory.create(requires_colour=True)
+    assert category.requires_colour is True
+
+
+@pytest.mark.django_db
 def test_Category_str_is_name_when_not_empty(category_factory):
     category = category_factory.create(name="Test Name")
     assert str(category) == "Test Name"

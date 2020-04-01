@@ -28,6 +28,7 @@ class CategoryFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Test Category {n}")
     english = factory.Sequence(lambda n: f"English Category {n}")
     french = factory.Sequence(lambda n: f"Category en Francais {n}")
+    requires_colour = False
 
 
 @register
