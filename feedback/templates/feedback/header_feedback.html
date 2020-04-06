@@ -1,0 +1,20 @@
+{% load feedback_extras %}
+
+{% feedback_badges request.user as feedback_types %}
+
+My Feedback
+<table class="table table-sm">
+    {% for feedback_type in feedback_types %}
+        <td>
+            <img src="{{ feedback_type.image.url }}" alt="{{ feedback_type.name }}" height="15">
+        </td>
+    {% endfor %}
+    </tr>
+    <tr>
+    {% for feedback_type in feedback_types %}
+        <td>
+            {{ feedback_type.count }}
+        </td>
+    {% endfor %}
+    </tr>
+</table>

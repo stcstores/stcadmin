@@ -89,9 +89,9 @@ class ProductSearchForm(forms.Form):
     INCLUDE = "include"
     EXCLUSIVE = "exclusive"
     END_OF_LINE_CHOICES = (
-        (EXCLUDE, "Exclude"),
-        (INCLUDE, "Include"),
-        (EXCLUSIVE, "Exclusive"),
+        (EXCLUDE, "Hide"),
+        (INCLUDE, "Show"),
+        (EXCLUSIVE, "Only End of Line"),
     )
 
     BASIC = "basic"
@@ -135,11 +135,11 @@ class ProductSearchForm(forms.Form):
     )
 
     end_of_line = forms.ChoiceField(
-        widget=HorizontalRadio(),
+        widget=HorizontalRadio(attrs={"class": "form-check-input"}),
         choices=END_OF_LINE_CHOICES,
         required=False,
         label="Hide End of Line",
-        help_text="Hide End of Line Episodes",
+        help_text="Hide End of Line Products",
         initial=EXCLUDE,
     )
 

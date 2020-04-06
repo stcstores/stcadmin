@@ -58,7 +58,6 @@ class TestIndexView(STCAdminTest, ViewTests):
         self.assertIn("<h1>STC Admin</h1>", str(response.content))
         self.assertIn("Inventory", str(response.content))
         self.assertNotIn("Labelmaker", str(response.content))
-        self.assertIn('class="homepage_feedback', str(response.content))
 
     def test_navbar(self):
         groups = [

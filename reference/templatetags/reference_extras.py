@@ -27,6 +27,6 @@ def help_button(page=None, anchor=None):
     """Return html for help button."""
     url = help_url(page, anchor)
     return mark_safe(
-        '<a href="{}" target="_blank"><button class="help_button">Help'
+        '<a href="{}" target="_blank"><button class="help_button btn btn-sm btn-primary">Help'
         "</button></a>".format(url)
     )

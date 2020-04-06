@@ -11,50 +11,59 @@
 </style>
 {% user_groups user as groups %}
 <h1>STC Admin</h1>
-<div class="site_index">
-  <p>From here you can access:</p>
-  <ul class='app'>
-    <li><a href="{% url 'reference:index' %}">Reference</a></li>
-    <p>Access reference material.</p>
+<div class="row">
+  <div class="col-sm-8">
+    <p>From here you can access:</p>
+    <ul class='app'>
+      <li><a href="{% url 'reference:index' %}">Reference</a></li>
+      <p>Access reference material.</p>
 
-    {% if "inventory" in groups %}
-    <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
-    <p>Tools for working with Cloud Commerce Inventory</p>
-    <ul class="section">
-      <li><a href="{% url 'inventory:product_search' %}">Product Search</a></li>
-      <p>Find products in the Inventory</p>
-      <li><a href="{% url 'product_editor:basic_info' %}">New Product</a></li>
-      <p>Create a new <a href="{% url 'product_editor:basic_info' %}"> product</a>.</p>
-      <li><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>
-      <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
+      {% if "inventory" in groups %}
+      <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
+      <p>Tools for working with Cloud Commerce Inventory</p>
+      <ul class="section">
+        <li><a href="{% url 'inventory:product_search' %}">Product Search</a></li>
+        <p>Find products in the Inventory</p>
+        <li><a href="{% url 'product_editor:basic_info' %}">New Product</a></li>
+        <p>Create a new <a href="{% url 'product_editor:basic_info' %}"> product</a>.</p>
+        <li><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>
+        <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
+      </ul>
+      {% endif %}
+
+      {% if group.name == 'labelmaker' %}
+      <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
+      <p>Make printable product labels.</p>
+      {% endif %}
+
+      {% if 'manifests' in groups %}
+      <li><a href="{% url 'spring_manifest:manifest_list' %}">Spring</a></li>
+      <p>Send Spring manifest</p>
+      {% endif %}
+
+      {% if 'admin' in groups %}
+      <li><a href="/admin/">Admin</a></li>
+      <p>Tools for administering STC Admin.</p>
+      <ul class="section">
+        <li>View and edit database tables.</li>
+        <li>Manage users and groups.</li>
+      </ul>
+      {% endif %}
+
     </ul>
-    {% endif %}
+  </div>
 
-    {% if group.name == 'labelmaker' %}
-    <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
-    <p>Make printable product labels.</p>
-    {% endif %}
+  <div>
+      <div class="header_feedback">
+        {% include 'feedback/header_feedback.html' %}
+    </div>
+    <div>
+      All Feedback
+      <table class="table" id="feedback">
 
-    {% if 'manifests' in groups %}
-    <li><a href="{% url 'spring_manifest:manifest_list' %}">Spring</a></li>
-    <p>Send Spring manifest</p>
-    {% endif %}
-
-    {% if 'admin' in groups %}
-    <li><a href="/admin/">Admin</a></li>
-    <p>Tools for administering STC Admin.</p>
-    <ul class="section">
-      <li>View and edit database tables.</li>
-      <li>Manage users and groups.</li>
-    </ul>
-    {% endif %}
-
-  </ul>
-</div>
-<div class="homepage_feedback">
-  <table class="feedback" id="feedback">
-
-  </table>
+      </table>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
@@ -63,7 +72,7 @@
   $(document).ready(function() {
     $.get("{% url 'feedback:monitor' %}",
         function(response) {
-            $('.feedback').html(response);
+            $('#feedback').html(response);
             current = 'feedback'
         }
     );

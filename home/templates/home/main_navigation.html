@@ -2,44 +2,42 @@
 {% load reference_extras %}
 
 {% block main_navigation %}
-<div class="main_navigation">
-  <ul>
-    <li><a href="{% url 'home:index' %}">Home</a></li>
-    <li><a href="{% url 'reference:index' %}">Reference</a></li>
-      <li><a href="{% url 'home:monitor' %}">Monitor</a></li>
-    {% user_groups user as groups %}
-    {% if "inventory" in groups %}
-    <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
-    {% endif %}
-    {% if "orders" in groups %}
-    <li><a href="{% url 'orders:index' %}">Orders</a></li>
-    {% endif %}
-    {% if 'labelmaker' in groups %}
-    <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
-    {% endif %}
-    {% if 'feedback' in groups %}
-    <li><a href="{% url 'feedback:user_feedback' %}">Feedback</a></li>
-    {% endif %}
-    {% if 'manifests' in groups %}
-    <li><a href="{% url 'spring_manifest:manifest_list' %}">Manifests</a></li>
-    {% endif %}
-    {% if 'stock_check' in groups %}
-    <li><a href="{% url 'stock_check:warehouses' %}">Stock Check</a></li>
-    {% endif %}
-    {% if 'profit_loss' in groups %}
-    <li><a href="{% url 'profit_loss:orders' %}">Profit Loss</a></li>
-    {% endif %}
-    {% if 'epos' in groups %}
-    <li><a href="{% url 'epos:index' %}">EPOS</a></li>
-    {% endif %}
-    {% if 'validation' in groups %}
-    <li><a href="{% url 'validation:home' %}">Validation</a></li>
-    {% endif %}
-    <li><a href="{% help_url %}">Help</a></li>
-    {% if 'admin' in groups %}
-    <li><a href="/admin/">Admin</a></li>
-    {% endif %}
-  </ul>
-</div>
+<ul class="navbar-nav mr-auto">
+  <li class="nav-item"><a class="nav-link" href="{% url 'home:index' %}">Home</a></li>
+  <li class="nav-item"><a class="nav-link" href="{% url 'reference:index' %}">Reference</a></li>
+  <li class="nav-item"><a class="nav-link" href="{% url 'home:monitor' %}">Monitor</a></li>
+  {% user_groups user as groups %}
+  {% if "inventory" in groups %}
+  <li class="nav-item"><a class="nav-link" href="{% url 'inventory:product_search' %}">Inventory</a></li>
+  {% endif %}
+  {% if "orders" in groups %}
+  <li class="nav-item"><a class="nav-link" href="{% url 'orders:index' %}">Orders</a></li>
+  {% endif %}
+  {% if 'labelmaker' in groups %}
+  <li class="nav-item"><a class="nav-link" href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
+  {% endif %}
+  {% if 'feedback' in groups %}
+  <li class="nav-item"><a class="nav-link" href="{% url 'feedback:user_feedback' %}">Feedback</a></li>
+  {% endif %}
+  {% if 'manifests' in groups %}
+  <li class="nav-item"><a class="nav-link" href="{% url 'spring_manifest:manifest_list' %}">Manifests</a></li>
+  {% endif %}
+  {% if 'stock_check' in groups %}
+  <li class="nav-item"><a class="nav-link" href="{% url 'stock_check:warehouses' %}">Stock Check</a></li>
+  {% endif %}
+  {% if 'profit_loss' in groups %}
+  <li class="nav-item"><a class="nav-link" href="{% url 'profit_loss:orders' %}">Profit Loss</a></li>
+  {% endif %}
+  {% if 'epos' in groups %}
+  <li class="nav-item"><a class="nav-link" href="{% url 'epos:index' %}">EPOS</a></li>
+  {% endif %}
+  {% if 'validation' in groups %}
+  <li class="nav-item"><a class="nav-link" href="{% url 'validation:home' %}">Validation</a></li>
+  {% endif %}
+  <li class="nav-item"><a class="nav-link" href="{% help_url %}">Help</a></li>
+  {% if 'admin' in groups %}
+  <li class="nav-item"><a class="nav-link" href="/admin/">Admin</a></li>
+  {% endif %}
+</ul>
 {% endblock %}
 

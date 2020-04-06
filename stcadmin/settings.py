@@ -76,7 +76,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "adminsortable2",
-    "validation",
+    "crispy_forms",
     "formtools",
     "stcadmin",
     "home",
@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     "orders",
     "shipping",
     "feedback",
+    "validation",
     "debug_toolbar",
 ]
 
@@ -281,6 +282,8 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 DOCS_ROOT = os.path.join(SOURCE_DIR, "docs", "build", "html")
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "home:index"

@@ -5,10 +5,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{% static 'css/stcadmin.css' %}">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    {% comment %} <link rel="stylesheet" href="{% static 'css/stcadmin.css' %}"> {% endcomment %}
     <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    {% comment %} <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script> {% endcomment %}
     <script src="{% static 'scripts/jquery.cookie.js' %}"></script>
     <script src="{% static 'scripts/stcadmin.js' %}"></script>
     <script src="{% static 'scripts/jquery.qtip.min.js' %}"></script>
@@ -20,36 +23,54 @@
     <script src="{% static 'scripts/awesomplete.min.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Code+Pro" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     {% block additional_head %}{% endblock %}
     <title>STCAdmin - {% block page_title %}{% endblock %}</title>
 </head>
 <body>
-    <div class="container">
-        <div class="head">
+    <div class="container-fluid p-0">
+        <div class="navbar navbar-expand-md navbar-dark bg-dark">
+            <a href="{% url 'home:index' %}" class="navbar-brand">STC Admin</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main_navigation" aria-controls="main_navigation" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="main_navigation">
             {% include "home/main_navigation.html" %}
-            <div class="header_feedback">
-                {% feedback_badges request.user %}&nbsp;<a href="{% url 'feedback:feedback_quickview' %}">[ view all feedback ]</a>
             </div>
-            <div class="user_details">
-                <p>Welcome <a href="{% url 'user:user' %}">{{ request.user.username|title }}</a></p>
-                <a href="{% url 'home:logout_user' %}">Logout</a>
-            </div>
-            {% block section_navigation %}{% endblock %}
-            {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                    {% endfor %}
+            <div class="navbar">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="user_dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user"></i> {{ request.user.username|title }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="user_dropdown">
+                            <a class="dropdown-item" href="{% url 'user:user' %}">My account</a>
+                            <a class="dropdown-item" href="{% url 'home:logout_user' %}">Log out</a>
+                        </div>
+                    </li>
                 </ul>
-            {% endif %}
+            </div>
         </div>
-        <div class="content">
-            {% block content %}
-            {% endblock %}
+        
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+        <div class="container">
+            {% block section_navigation %}{% endblock %}
+            {% block content %}{% endblock %}
         </div>
+        
         {% block footer %}{% endblock %}
+        
+        {% block script %}{% endblock %}
+    
     </div>
-    {% block script %}{% endblock %}
     <script>
         $(document).ready(function() {
             $('.tooltip').each(function() {
@@ -68,5 +89,6 @@
             });
         });
     </script>
+
 </body>
 </html>

@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
     $('.stock_update_button').each(function () {
         var button = $(this);
@@ -6,45 +6,47 @@ $(document).ready(function() {
         button.click(update_stock_button(product_id));
     });
 
-    $('.show_hide_products').click(function() {
+    $('.show_hide_products').click(function () {
         var range_id = $(this).attr('id').replace('show_hide_products_', '');
-        var table = $('#products_table_' + range_id);
-        toggle_table(table);
+        var product_lists = $('#products_' + range_id);
+        toggle_products(product_lists);
     });
 
-    $('#show_hide_all').click(function() {
-        var tables = $('.products_table');
-        if (tables.first().css('display') === 'none') {
-            tables.each(function() {
-                show_table($(this));
+    $('#show_hide_all').click(function () {
+        var product_lists = $('.product_list');
+        if (product_lists.first().is(":hidden")) {
+            product_lists.each(function () {
+                show_products($(this));
             });
         } else {
-            tables.each(function() {
-                hide_table($(this));
+            product_lists.each(function () {
+                hide_products($(this));
             });
         }
     });
 
-    function toggle_table(table) {
-        if (table.css('display') === 'none') {
-            show_table(table);
-        } else if (table.css('display') === 'block') {
-            hide_table(table);
+    function toggle_products(product_list) {
+        if (product_list.is(":hidden")) {
+            show_products(product_list)
+        } else if (product_list.is(":visible")) {
+            hide_products(product_list);
         }
     }
 
-    function show_table(table) {
-        var range_id = table.attr('id').replace('products_table_', '');
-        var show_hide = $('#show_hide_products_' + range_id);
-        table.css('display', 'block');
-        show_hide.text('[[ hide ]]');
+    function show_products(product_list) {
+        var range_id = product_list.attr('id').replace('products_', '');
+        var icon = $('#product_collapse_icon_' + range_id);
+        product_list.show();
+        icon.removeClass("fa-chevron-circle-right");
+        icon.addClass("fa-chevron-circle-down");
     }
 
-    function hide_table(table) {
-        var range_id = table.attr('id').replace('products_table_', '');
-        var show_hide = $('#show_hide_products_' + range_id);
-        table.css('display', 'none');
-        show_hide.text('[[ show ]]');
+    function hide_products(product_list) {
+        var range_id = product_list.attr('id').replace('products_', '');
+        var icon = $('#product_collapse_icon_' + range_id);
+        product_list.hide();
+        icon.removeClass("fa-chevron-circle-down");
+        icon.addClass("fa-chevron-circle-right");
     }
 
     function change_stock_level(variation_id, stock_level) {
@@ -53,7 +55,7 @@ $(document).ready(function() {
 
     function update_stock_button(product_id) {
         return function (event) {
-          update_stock(product_id);
+            update_stock(product_id);
         }
     }
 
@@ -64,7 +66,7 @@ $(document).ready(function() {
         var sku = product_details[product_id].sku
         console.log(product_details[product_id]);
         if (new_stock_level == current_stock_level) {
-          return;
+            return;
         }
         $('#update_' + product_id).prop('disabled', true);
         var status = $('#status_' + product_id);
@@ -78,13 +80,13 @@ $(document).ready(function() {
                 'new_stock_level': stock_input.val(),
                 'old_stock_level': product_details[product_id].stock_level,
             }),
-            success: function(response) {
+            success: function (response) {
                 product_details[product_id].stock_level = response;
                 $('#stock_' + product_id).val(response);
                 status.attr('src', complete_image);
                 $('#update_' + product_id).prop('disabled', false);
             },
-            error: function() {
+            error: function () {
                 api_error();
                 status.attr('src', error_image);
             },

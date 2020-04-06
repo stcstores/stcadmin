@@ -226,6 +226,14 @@ Django = ">=1.8,<3.1"
 
 [[package]]
 category = "main"
+description = "Best way to have Django DRY forms"
+name = "django-crispy-forms"
+optional = false
+python-versions = "*"
+version = "1.9.0"
+
+[[package]]
+category = "main"
 description = "A configurable set of panels that display various debug information about the current request/response."
 name = "django-debug-toolbar"
 optional = false
@@ -972,7 +980,7 @@ python-versions = "*"
 version = "1.2.8"
 
 [metadata]
-content-hash = "c5d243183f5c77eb3c8de50a9ae6aa5d3bdc299521b1a4dd2d5df2930f8f9b3a"
+content-hash = "8a7bc3d44b3c67d57253b6eb357f8720a3ed3c0235e006f542ab56033d2e88f8"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -1074,6 +1082,10 @@ django = [
 ]
 django-admin-sortable2 = [
     {file = "django-admin-sortable2-0.7.6.tar.gz", hash = "sha256:caf158310cba75888d5e2494f0a7e52b9b43b90d22e12798023bbe8dae51243b"},
+]
+django-crispy-forms = [
+    {file = "django-crispy-forms-1.9.0.tar.gz", hash = "sha256:67e73ac863d3159500029fbbcdcb788f287a3fd357becebc1a0b51f73896dce3"},
+    {file = "django_crispy_forms-1.9.0-py2.py3-none-any.whl", hash = "sha256:50032184708ce351e3c9f0008ac35d659d9d5973fa2db218066f2e0a76eb41d9"},
 ]
 django-debug-toolbar = [
     {file = "django-debug-toolbar-2.2.tar.gz", hash = "sha256:eabbefe89881bbe4ca7c980ff102e3c35c8e8ad6eb725041f538988f2f39a943"},

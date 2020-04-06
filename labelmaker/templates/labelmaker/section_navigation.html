@@ -1,8 +1,13 @@
-<div class="section_navigation">
-    <ul>
-        <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
-        <li><a href="{% url 'labelmaker:product_labels' %}">Product Labels</a></li>
-        <li><a href="{% url 'labelmaker:address_labels' %}">Address Labels</a></li>
-        <li><a href="{% url 'labelmaker:small_labels' %}">Small Labels</a></li>
-    </ul>
+<div class="navbar navbar-expand-md navbar-light">
+    <a href="{% url 'labelmaker:index' %}" class="navbar-brand">Labelmaker</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#section_navigation" aria-controls="section_navigation" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="section_navigation">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-link"><a class="nav-link" href="{% url 'labelmaker:product_labels' %}">Product Labels</a></li>
+            <li class="nav-link"><a class="nav-link" href="{% url 'labelmaker:address_labels' %}">Address Labels</a></li>
+            <li class="nav-link"><a class="nav-link" href="{% url 'labelmaker:small_labels' %}">Small Labels</a></li>
+        </ul>
+    </div>
 </div>
