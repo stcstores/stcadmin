@@ -357,7 +357,7 @@ description = "Python humanize utilities"
 name = "humanize"
 optional = false
 python-versions = ">=3.5"
-version = "2.2.0"
+version = "2.3.0"
 
 [package.extras]
 tests = ["freezegun", "pytest", "pytest-cov"]
@@ -1118,8 +1118,8 @@ gunicorn = [
     {file = "gunicorn-20.0.4.tar.gz", hash = "sha256:1904bb2b8a43658807108d59c3f3d56c2b6121a701161de0ddf9ad140073c626"},
 ]
 humanize = [
-    {file = "humanize-2.2.0-py3-none-any.whl", hash = "sha256:0b3157df0f3fcdcb7611180d305a23fd4b6290eb23586e058762f8576348fbab"},
-    {file = "humanize-2.2.0.tar.gz", hash = "sha256:de8ef6ffee618a9d369b3d1fb1359780ccaa2cc76a0e777c6ff21f04d19a0eb8"},
+    {file = "humanize-2.3.0-py3-none-any.whl", hash = "sha256:bc2a1ff065977011de2bc36197a4b14730c54bfc46ab12a153376684573a2dab"},
+    {file = "humanize-2.3.0.tar.gz", hash = "sha256:98b7ac9d1a70ad62175c8e0dd44beebbd92418727fc4e214468dfb2baa8ebfb5"},
 ]
 idna = [
     {file = "idna-2.9-py2.py3-none-any.whl", hash = "sha256:a068a21ceac8a4d63dbfd964670474107f541babbd2250d61922f029858365fa"},
