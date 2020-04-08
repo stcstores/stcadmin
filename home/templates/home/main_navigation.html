@@ -3,40 +3,35 @@
 
 {% block main_navigation %}
 <ul class="navbar-nav mr-auto">
-  <li class="nav-item"><a class="nav-link" href="{% url 'home:index' %}">Home</a></li>
-  <li class="nav-item"><a class="nav-link" href="{% url 'reference:index' %}">Reference</a></li>
-  <li class="nav-item"><a class="nav-link" href="{% url 'home:monitor' %}">Monitor</a></li>
   {% user_groups user as groups %}
   {% if "inventory" in groups %}
-  <li class="nav-item"><a class="nav-link" href="{% url 'inventory:product_search' %}">Inventory</a></li>
+  {% include 'home/main_navigation_link.html' with view='inventory:product_search' text='Inventory' %}
   {% endif %}
   {% if "orders" in groups %}
-  <li class="nav-item"><a class="nav-link" href="{% url 'orders:index' %}">Orders</a></li>
-  {% endif %}
-  {% if 'labelmaker' in groups %}
-  <li class="nav-item"><a class="nav-link" href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
-  {% endif %}
-  {% if 'feedback' in groups %}
-  <li class="nav-item"><a class="nav-link" href="{% url 'feedback:user_feedback' %}">Feedback</a></li>
-  {% endif %}
-  {% if 'manifests' in groups %}
-  <li class="nav-item"><a class="nav-link" href="{% url 'spring_manifest:manifest_list' %}">Manifests</a></li>
-  {% endif %}
-  {% if 'stock_check' in groups %}
-  <li class="nav-item"><a class="nav-link" href="{% url 'stock_check:warehouses' %}">Stock Check</a></li>
-  {% endif %}
-  {% if 'profit_loss' in groups %}
-  <li class="nav-item"><a class="nav-link" href="{% url 'profit_loss:orders' %}">Profit Loss</a></li>
+  {% include 'home/main_navigation_link.html' with view='orders:index' text='Orders' %}
   {% endif %}
   {% if 'epos' in groups %}
-  <li class="nav-item"><a class="nav-link" href="{% url 'epos:index' %}">EPOS</a></li>
+  {% include 'home/main_navigation_link.html' with view='epos:index' text='EPOS' %}
   {% endif %}
+  {% if 'manifests' in groups %}
+  {% include 'home/main_navigation_link.html' with view='spring_manifest:manifest_list' text='Manifest' %}
+  {% endif %}
+  {% if 'labelmaker' in groups %}
+  {% include 'home/main_navigation_link.html' with view='labelmaker:index' text='Labelmaker' %}
+  {% endif %}
+  {% if 'feedback' in groups %}
+  {% include 'home/main_navigation_link.html' with view='feedback:user_feedback' text='Feedback' %}
+  {% endif %}
+  {% if 'stock_check' in groups %}
+  {% include 'home/main_navigation_link.html' with view='stock_check:warehouses' text='Stock Check' %}
+  {% endif %}
+  {% include 'home/main_navigation_link.html' with view='home:monitor' text='Monitor' %}
+  {% include 'home/main_navigation_link.html' with view='reference:index' text='Reference' %}
   {% if 'validation' in groups %}
-  <li class="nav-item"><a class="nav-link" href="{% url 'validation:home' %}">Validation</a></li>
+  {% include 'home/main_navigation_link.html' with view='validation:home' text='Validation' %}
   {% endif %}
-  <li class="nav-item"><a class="nav-link" href="{% help_url %}">Help</a></li>
   {% if 'admin' in groups %}
-  <li class="nav-item"><a class="nav-link" href="/admin/">Admin</a></li>
+  {% include 'home/main_navigation_link.html' with view='admin:index' text='Admin' %}
   {% endif %}
 </ul>
 {% endblock %}

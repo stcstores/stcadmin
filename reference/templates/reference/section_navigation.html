@@ -1,7 +1,3 @@
-{% load reference_extras %}
-
-<div class="section_navigation">
-    <ul>
-        <li><a href="{% help_url %}">STC Admin Help</a></li>
-    </ul>
+<div class="navbar navbar-expand-md navbar-light">
+    {% include 'home/section_navigation_header.html' with view='reference:index' text='Reference' %}
 </div>

@@ -36,16 +36,14 @@ class TestSectionNavigation(STCAdminTest):
         ("Charts", "orders:charts"),
         ("Undispatched Orders", "orders:undispatched_orders"),
         ("Order List", "orders:order_list"),
+        ("Profit / Loss", "profit_loss:orders"),
     ]
 
     def test_links(self):
         content = render_to_string("orders/section_navigation.html")
-        self.assertIn('<div class="section_navigation">', content)
-        links = [
-            f'<a href="{reverse(viewname)}">{text}</a>' for text, viewname in self.links
-        ]
-        for link in links:
-            self.assertIn(link, content)
+        for text, link in self.links:
+            self.assertIn(text, content)
+            self.assertIn(reverse(link), content)
 
 
 class TestIndexView(OrderViewTest, ViewTests):
@@ -425,7 +423,6 @@ class TestOrderListView(OrderViewTest, ViewTests):
     def test_content(self):
         response = self.make_get_request()
         content = str(response.content)
-        self.assertIn('<div class="section_navigation">', content)
         orders = models.Order.dispatched.order_by("-recieved_at")[: self.paginate_by]
         orders[0].tracking_number = "RM_7845938393"
         for order in orders:

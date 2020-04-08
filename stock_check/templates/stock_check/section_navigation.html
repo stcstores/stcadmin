@@ -1,6 +1,9 @@
-<div class="section_navigation">
-    <ul>
-        <li><a href="{% url 'stock_check:warehouses' %}">Warehouses</a></li>
-        <li><a href="{% url 'stock_check:product_search' %}">Product Search</a></li>
-    </ul>
+<div class="navbar navbar-expand-md navbar-light">
+    {% include 'home/section_navigation_header.html' with view='stock_check:warehouses' text='Stock Check' %}
+    <div class="collapse navbar-collapse" id="section_navigation">
+        <ul class="navbar-nav mr-auto">
+            {% include 'home/section_navigation_link.html' with view='stock_check:warehouses' text='Warehouses' %}
+            {% include 'home/section_navigation_link.html' with view='stock_check:product_search' text='Product Search' %}
+        </ul>
+    </div>
 </div>

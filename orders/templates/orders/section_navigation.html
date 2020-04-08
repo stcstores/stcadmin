@@ -1,9 +1,12 @@
-<div class="section_navigation">
-    <ul>
-        <li><a href="{% url 'orders:index' %}">Orders</a></li>
-        <li><a href="{% url 'orders:order_list' %}">Order List</a></li>
-        <li><a href="{% url 'orders:breakages' %}">Breakages</a></li>
-        <li><a href="{% url 'orders:charts' %}">Charts</a></li>
-        <li><a href="{% url 'orders:undispatched_orders' %}">Undispatched Orders</a></li>
-    </ul>
+<div class="navbar navbar-expand-md navbar-light">
+    {% include 'home/section_navigation_header.html' with view='orders:index' text='Orders' %}
+    <div class="collapse navbar-collapse" id="section_navigation">
+        <ul class="navbar-nav mr-auto">
+            {% include 'home/section_navigation_link.html' with view='orders:order_list' text='Order List' %}
+            {% include 'home/section_navigation_link.html' with view='orders:breakages' text='Breakages' %}
+            {% include 'home/section_navigation_link.html' with view='orders:charts' text='Charts' %}
+            {% include 'home/section_navigation_link.html' with view='orders:undispatched_orders' text='Undispatched Orders' %}
+            {% include 'home/section_navigation_link.html' with view='profit_loss:orders' text='Profit / Loss' %}
+        </ul>
+    </div>
 </div>
