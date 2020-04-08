@@ -52,10 +52,10 @@
         <div class="product_range row border border-secondary rounded m-md-2 p-md-2">
             <div class="container-fluid">
                 <div class="row justify-content-between">
-                    <div class="col-md-5">
+                    <div class="col-xl-5">
                         <a href="{% url 'inventory:product_range' range.id %}">{{ range.name }}</a>
                     </div>
-                    <div class="badges col-md-2">
+                    <div class="badges col-xl-2">
                         {% if range.end_of_line %}
                         <span class="badge badge-warning">END OF LINE</span>
                         {% endif %}
@@ -63,31 +63,35 @@
                         <span class="badge danger">INCOMPLETE</span>
                         {% endif %}
                     </div>
-                    <div class="text-nowrap col-md-2">
-                        <a title="Descriptions" href="{% url 'inventory:descriptions' range.id %}" target="_blank">
-                            <button class="btn btn-primary btn-sm">D</button>
-                        </a>
-                        <a title="Edit" href="{% edit_product_url range.id %}" target="_blank">
-                            <button class="btn btn-primary btn-sm">E</button>
-                        </a>
-                        <a title="Images" href="{% url 'inventory:images' range.id %}" target="_blank">
-                            <button class="btn btn-primary btn-sm">I</button>
-                        </a>
-                        <a title="Locations" href="{% url 'inventory:locations' range.id %}" target="_blank">
-                            <button class="btn btn-primary btn-sm">L</button>
-                        </a>
-                        <a title="Price Calulator" href="{% url 'price_calculator:range_price_calculator' range.id %}" target="_blank">
-                            <button class="btn btn-primary btn-sm">P</button>
-                        </a>
-                        <a title="View on Cloud Commerce" href="{% ccp_product_range_page range.id %}" target="_blank">
-                            <button class="btn btn-primary btn-sm">C</button>
-                        </a>
+                    <div class="text-nowrap col-xl-2">
+                        <button id="range_options_{{ range.id }}" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Options
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="range_options_{{ range.id }}">
+                            
+                            <a href="{% url 'inventory:descriptions' range.id %}" target="_blank" class="dropdown-item">
+                                Description
+                            </a>
+                            <a href="{% edit_product_url range.id %}" target="_blank" class="dropdown-item">
+                                Edit
+                            </a>
+                            <a href="{% url 'inventory:images' range.id %}" target="_blank" class="dropdown-item">
+                                Images
+                            </a>
+                            <a href="{% url 'inventory:locations' range.id %}" target="_blank" class="dropdown-item">
+                                Locations
+                            </a>
+                            <a href="{% url 'price_calculator:range_price_calculator' range.id %}" target="_blank" class="dropdown-item">
+                                Price Calculator
+                            </a>
+                            <a href="{% ccp_product_range_page range.id %}" target="_blank" class="dropdown-item">
+                                View on Cloud Commerce
+                            </a>
+                        </div>
                     </div>
-                    <div class="col-md-2 text-left">
+                    <div class="col-xl-2 text-left">
                         <a id="show_hide_products_{{ range.id }}" class="show_hide_products">
                             <span id="product_collapse_icon_{{ range.id }}" class="fas fa-chevron-circle-right"></span> {{ range.products|length }} Variation{{ range.products|length|pluralize }}
-                            {% comment %} <button class="btn btn-primary btn-sm btn-block text-align-left">
-                            </button> {% endcomment %}
                         </a>
                     </div>
                 </div>
