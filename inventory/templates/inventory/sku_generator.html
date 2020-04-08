@@ -8,12 +8,41 @@
 {% block page_title %}CCP SKU Generator{% endblock %}
 
 {% block content %}
-    <input type="text" id="variation_sku" name="variation_sku">
-    <button id="get_variation_sku">Get Variation SKU</button>
-    <br>
-    <br>
-    <input type="text" id="range_sku" name="range_sku">
-    <button id="get_range_sku">Get Range SKU</button>
+
+    <div class="pb-2 mt-4 mb-2 border-bottom">
+        <h1>SKU Generator</h1>
+        <small class="text-muted">Generate SKUs for products or ranges</small>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Variation SKU</span>
+                    </div>
+                    <input type="text" id="variation_sku" name="variation_sku" class="form-control">
+                    <div class="input-group-append">
+                        <button id="get_variation_sku" class="btn btn-primary" type="button">
+                            Generate
+                        </button>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Range SKU</span>
+                    </div>
+                    <input type="text" id="range_sku" name="range_sku" class="form-control">
+                    <div class="input-group-append">
+                        <button id="get_range_sku" class="btn btn-primary" type="button">
+                            Generate
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
 
 {% block script %}
