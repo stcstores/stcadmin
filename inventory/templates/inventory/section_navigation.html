@@ -1,12 +1,38 @@
 <div class="navbar navbar-expand-md navbar-light">
-    {% include 'home/section_navigation_header.html' with view='inventory:product_search' text='Inventory' %}
-    <div class="collapse navbar-collapse" id="section_navigation">
-        <ul class="navbar-nav mr-auto">
-            {% include 'home/section_navigation_link.html' with view='product_editor:basic_info' text='New Product' %}
-            {% include 'home/section_navigation_link.html' with view='price_calculator:price_calculator' text='Price Calculator' %}
-            {% include 'home/section_navigation_link.html' with view='inventory:sku_generator' text='SKU Generator' %}
-            {% include 'home/section_navigation_link.html' with view='inventory:create_warehouse_bay' text='Create Bay' %}
-            {% include 'home/section_navigation_link.html' with view='inventory:suppliers' text='Suppliers' %}
-        </ul>
-    </div>
+  {% include 'home/section_navigation_header.html' with view='inventory:product_search' text='Inventory' %}
+  <div class="collapse navbar-collapse" id="section_navigation">
+    <ul class="navbar-nav mr-auto">
+      {% include 'home/section_navigation_link.html' with view='product_editor:basic_info' text='New Product' %}
+      {% include 'home/section_navigation_link.html' with view='price_calculator:price_calculator' text='Price Calculator' %}
+      {% include 'home/section_navigation_link.html' with view='inventory:sku_generator' text='SKU Generator' %}
+      {% include 'home/section_navigation_link.html' with view='inventory:create_warehouse_bay' text='Create Bay' %}
+      {% include 'home/section_navigation_link.html' with view='inventory:suppliers' text='Suppliers' %}
+    </ul>
+  </div>
 </div>
+<form action="{% url 'inventory:product_search' %}" method="POST">{% csrf_token %}
+  <div class="container">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <input type="text" value="basic" name="search_type" hidden>
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <button class="btn btn-sm btn-dark" type="submit">
+              <i class="fas fa-search" aria-hidden="true"></i>
+            </button>
+          </div>
+          <input class="form-control" type="text" name="basic_search_text" placeholder="Search the inventory" aria-label="Search">
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="input-group input-group-sm">
+          <select class="custom-select" name="end_of_line">
+            <option value="exclude" selected>Hide End of Line</option>
+            <option value="include">Show End of Line</option>
+            <option value="exclusive">Show Only End of Line</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
