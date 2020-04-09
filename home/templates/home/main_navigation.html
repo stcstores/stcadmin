@@ -5,7 +5,7 @@
 <ul class="navbar-nav mr-auto">
   {% user_groups user as groups %}
   {% if "inventory" in groups %}
-  {% include 'home/main_navigation_link.html' with view='inventory:product_search' text='Inventory' %}
+  {% include 'home/main_navigation_link.html' with view='inventory:index' text='Inventory' %}
   {% endif %}
   {% if "orders" in groups %}
   {% include 'home/main_navigation_link.html' with view='orders:index' text='Orders' %}

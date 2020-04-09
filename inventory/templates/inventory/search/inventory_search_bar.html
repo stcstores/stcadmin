@@ -1,0 +1,30 @@
+<form action="{% url 'inventory:inventory_search' %}" method="GET">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 mb-1">
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <button class="btn btn-sm btn-dark" type="submit">
+              <i class="fas fa-search" aria-hidden="true"></i>
+            </button>
+          </div>
+          <input class="form-control" type="text" name="search_text" placeholder="Search the inventory" aria-label="Search" value="{% if request.GET.search_text %}{{ request.GET.search_text }}{% endif %}">
+        </div>
+      </div>
+      <div class="col-md-3 mb-1">
+        <div class="input-group input-group-sm">
+          <select class="custom-select" name="end_of_line">
+            <option value="exclude"{% if request.GET.end_of_line == 'exclude' %} selected{% endif %}>Hide End of Line</option>
+            <option value="include"{% if request.GET.end_of_line == 'include' %} selected{% endif %}>Show End of Line</option>
+            <option value="exclusive" {% if request.GET.end_of_line == 'exclusive' %} selected{% endif %}>Show Only End of Line</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-2 mb-1">
+        <div class="input-group input-group-sm">
+            <button class="btn btn-sm btn-dark" type="submit">Search Inventory</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

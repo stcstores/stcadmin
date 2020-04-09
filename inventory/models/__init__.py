@@ -4,6 +4,7 @@ from .barcodes import Barcode
 from .locations import Bay, Warehouse, check_location_integrity
 from .product_exports import ProductExport
 from .product_options import Department, InternationalShipping, PackageType
+from .products import Products
 from .stock_change import StockChange
 from .suppliers import Supplier, SupplierContact
 
@@ -17,6 +18,7 @@ __all__ = [
     "InternationalShipping",
     "PackageType",
     "get_product_image_upload_to",
+    "Products",
     "StockChange",
     "Supplier",
     "SupplierContact",

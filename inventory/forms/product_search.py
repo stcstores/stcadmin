@@ -1,12 +1,14 @@
 """Forms for product search page."""
 
-from ccapi import CCAPI
+from crispy_forms.bootstrap import FormActions
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Div, Field, Layout, Reset, Submit
 from django import forms
 from django.core.exceptions import ValidationError
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
-from product_editor.forms.widgets import HorizontalRadio
+from inventory.models import Products
 
 
 class OptionSelectField(forms.MultiValueField):
@@ -82,91 +84,37 @@ class OptionSelectWidget(forms.widgets.MultiWidget):
         return mark_safe(html)
 
 
-class ProductSearchForm(forms.Form):
+class AdvancedInventorySearchForm(forms.Form):
     """Product search form."""
 
     EXCLUDE = "exclude"
     INCLUDE = "include"
     EXCLUSIVE = "exclusive"
     END_OF_LINE_CHOICES = (
-        (EXCLUDE, "Hide"),
-        (INCLUDE, "Show"),
-        (EXCLUSIVE, "Only End of Line"),
+        (EXCLUDE, "Hide End of Line"),
+        (INCLUDE, "Show End of Line"),
+        (EXCLUSIVE, "Only Show End of Line"),
     )
 
-    BASIC = "basic"
-    ADVANCED = "advanced"
-
-    SEARCH_TYPE_CHOICES = ((BASIC, "Basic"), (ADVANCED, "Advanced"))
-
-    search_type_help_text = (
-        "Select a Search Type<ul><li><b>Basic Search:"
-        "</b>A quick easy search which returns a limited number of items</li>"
-        "<li><b>Advanced Search:</b> More options for a refined search."
-        "Will return all possible products."
-    )
-
-    basic_search_matches = (
-        "SKU",
-        "Title",
-        "Barcode",
-        "Linnworks SKU",
-        "Linnworks Title",
-        "Supplier",
-        "Supplier SKU",
-        "All Product Options",
-    )
-    basic_search_help_text = "Matches:<ul>{}</ul>".format(
-        "".join(["<li>{}</li>".format(text) for text in (basic_search_matches)])
-    )
-
-    advanced_search_matches = ("SKU", "Title")
-    advanced_search_help_text = "Matches:<ul>{}</ul>".format(
-        "".join(["<li>{}</li>".format(text) for text in (advanced_search_matches)])
-    )
-
-    search_type = forms.ChoiceField(
-        required=True,
-        label="Search Type",
-        help_text=search_type_help_text,
-        initial=BASIC,
-        choices=SEARCH_TYPE_CHOICES,
-        widget=forms.RadioSelect(),
-    )
+    search_text_help_text = "Matches: SKU and product name"
 
     end_of_line = forms.ChoiceField(
-        widget=HorizontalRadio(attrs={"class": "form-check-input"}),
         choices=END_OF_LINE_CHOICES,
         required=False,
-        label="Hide End of Line",
-        help_text="Hide End of Line Products",
+        label="End of Line",
         initial=EXCLUDE,
     )
 
-    basic_search_text = forms.CharField(
-        label="Basic Search",
+    search_text = forms.CharField(
+        label="Search",
         required=False,
-        help_text=basic_search_help_text,
-        widget=forms.TextInput(attrs={"class": "basic_search"}),
-    )
-
-    advanced_search_text = forms.CharField(
-        label="Search Text",
-        required=False,
-        help_text=advanced_search_help_text,
+        help_text=search_text_help_text,
         widget=forms.TextInput(attrs={"class": "advanced_search"}),
     )
 
-    advanced_hide_out_of_stock = forms.BooleanField(
-        required=False,
-        label="Hide Out of Stock",
-        help_text="Hide ranges with no items in stock.",
-    )
+    hide_out_of_stock = forms.BooleanField(required=False, label="Hide Out of Stock")
 
     selectable_options = [
-        "WooCategory1",
-        "WooCategory2",
-        "WooCategory3",
         "Manufacturer",
         "Brand",
         "Supplier",
@@ -178,7 +126,7 @@ class ProductSearchForm(forms.Form):
     def __init__(self, *args, **kwargs):
         """Add advanced option field."""
         super().__init__(*args, **kwargs)
-        option_data = CCAPI.get_product_options()
+        option_data = Products.get_product_options()
         option_choices = [("", "")]
         option_value_choices = [("", "")]
         option_matches = {}
@@ -189,9 +137,9 @@ class ProductSearchForm(forms.Form):
                 for value in option.values:
                     option_value_choices.append((value.id, value.value))
                     option_matches[option.id].append(value.id)
-        option_choices.sort(key=lambda x: x[1])
-        option_value_choices.sort(key=lambda x: x[1])
-        self.fields["advanced_option"] = OptionSelectField(
+        option_choices = sorted(option_choices, key=lambda x: x[1])
+        option_value_choices = sorted(option_value_choices, key=lambda x: x[1])
+        self.fields["option"] = OptionSelectField(
             label="Product Option",
             required=False,
             help_text="Search for products with a particular <b>Product Option</b>",
@@ -199,52 +147,71 @@ class ProductSearchForm(forms.Form):
             option_value_choices=option_value_choices,
             option_matches=option_matches,
         )
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.form_action = ""
+        self.helper.form_class = "form-horizontal"
+        self.helper.label_class = "mr-2"
+        self.helper.help_text_inline = False
+        self.helper.error_text_inline = False
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    Div(
+                        Field("search_text"),
+                        Field("end_of_line"),
+                        Field("hide_out_of_stock"),
+                        css_class="col-md-6",
+                    ),
+                    Div(
+                        Field("option", css_class="custom-select mr-sm-2"),
+                        css_class="col-md-4",
+                    ),
+                    css_class="row",
+                ),
+                css_class="container",
+            ),
+            Div(
+                Div(
+                    FormActions(
+                        Submit("submit", "Submit", css_class="button white"),
+                        Reset("reset", "Reset"),
+                    ),
+                    css_class="col-md-4",
+                ),
+                css_class="row",
+            ),
+        )
 
     def clean(self):
         """Clean submitted data."""
         cleaned_data = super().clean()
-        if cleaned_data.get("search_type") == self.BASIC:
-            cleaned_data = self.clean_basic_search(cleaned_data)
-        elif cleaned_data.get("search_type") == self.ADVANCED:
-            cleaned_data = self.clean_advanced_search(cleaned_data)
-        else:
-            raise ValidationError("No valid search type supplied.")
-        self.filter_end_of_line(cleaned_data)
-        self.ranges.sort(key=lambda x: x.name)
+        ranges = self.get_ranges(cleaned_data)
+        ranges = self.filter_end_of_line(ranges, cleaned_data.get("end_of_line"))
+        ranges = sorted(ranges, key=lambda x: x.name)
+        cleaned_data["ranges"] = ranges
         return cleaned_data
 
-    def filter_end_of_line(self, cleaned_data):
+    def filter_end_of_line(self, ranges, end_of_line):
         """Filter results according to the end of line value."""
-        if cleaned_data["end_of_line"] == self.EXCLUDE:
-            self.ranges = [r for r in self.ranges if not r.end_of_line]
-        elif cleaned_data["end_of_line"] == self.EXCLUSIVE:
-            self.ranges = [r for r in self.ranges if r.end_of_line]
+        if end_of_line == self.EXCLUDE:
+            ranges = Products.filter_end_of_line(ranges)
+        elif end_of_line == self.EXCLUSIVE:
+            ranges = Products.filter_not_end_of_line(ranges)
+        return ranges
 
-    def clean_basic_search(self, data):
-        """Add ranges according to basic search text."""
-        self.ranges = self.get_ranges(data["basic_search_text"])
-        return data
-
-    def clean_advanced_search(self, data):
+    def get_ranges(self, data):
         """Add ranges according to advanced search."""
-        search_text = data.get("advanced_search_text")
-        option_id = data.get("advanced_option")
+        search_text = data.get("search_text")
+        option_id = data.get("option")
+        only_in_stock = data["hide_out_of_stock"]
         if not search_text and not option_id:
             raise ValidationError(
                 "Either search text or an option must be supplied for "
                 "Advanced Search"
             )
-        kwargs = {
-            "search_text": search_text,
-            "only_in_stock": data["advanced_hide_out_of_stock"],
-            "option_matches_id": option_id,
-        }
-        self.ranges = CCAPI.get_ranges(**kwargs)
-        return data
-
-    def get_ranges(self, search_text):
-        """Return Product Ranges according to submitted data."""
-        search_result = CCAPI.search_products(search_text)
-        range_ids = list(set([result.id for result in search_result]))
-        ranges = [CCAPI.get_range(range_id) for range_id in range_ids]
-        return ranges
+        return Products.advanced_get_ranges(
+            search_text=search_text,
+            option_matches_id=option_id,
+            only_in_stock=only_in_stock,
+        )

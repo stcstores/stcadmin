@@ -15,6 +15,12 @@ class InventoryUserMixin(UserInGroupMixin):
     groups = ["inventory"]
 
 
+class Index(InventoryUserMixin, TemplateView):
+    """Landing page for the Inventory app."""
+
+    template_name = "inventory/index.html"
+
+
 class SKUGeneratorView(InventoryUserMixin, TemplateView):
     """View for SKU Generator page."""
 

@@ -19,11 +19,9 @@
       <p>Access reference material.</p>
 
       {% if "inventory" in groups %}
-      <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
+      <li><a href="{% url 'inventory:index' %}">Inventory</a></li>
       <p>Tools for working with Cloud Commerce Inventory</p>
       <ul class="section">
-        <li><a href="{% url 'inventory:product_search' %}">Product Search</a></li>
-        <p>Find products in the Inventory</p>
         <li><a href="{% url 'product_editor:basic_info' %}">New Product</a></li>
         <p>Create a new <a href="{% url 'product_editor:basic_info' %}"> product</a>.</p>
         <li><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>

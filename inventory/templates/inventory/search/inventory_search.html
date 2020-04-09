@@ -1,0 +1,47 @@
+{% extends 'inventory/base.html' %}
+
+{% load static %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+{% endblock %}
+
+{% block page_title %}Inventory Search Results{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1 class="page_title">Search the Inventory</h1>
+</div>
+
+<hr>
+
+{% block form %}{% endblock form %}
+
+{% include 'inventory/search/inventory_search_results.html' %}
+
+{% endblock %}
+
+{% block script %}{{ block.super }}
+    <script>
+        loading_image = "{% static 'images/loading.gif' %}"
+        complete_image = "{% static 'images/complete.jpg' %}"
+        error_image = "{% static 'images/error.jpg' %}"
+        update_stock_url = "{% url 'inventory:update_stock_level' %}";
+        product_details = {
+            {% for range in product_ranges %}
+            {% for product in range.products %}
+                '{{ product.id }}': {
+                  'stock_level': {{ product.stock_level }},
+                  'sku': '{{product.sku}}'
+                },
+            {% endfor %}
+            {% endfor %}
+        }
+
+        $(document).ready(function() {
+            $('.product_list').hide()
+        });
+    </script>
+{% endblock %}

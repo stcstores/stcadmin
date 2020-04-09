@@ -7,7 +7,11 @@ from inventory import views
 app_name = "inventory"
 
 inventory_urlpatterns = [
-    path("product_search/", views.ProductSearchView.as_view(), name="product_search"),
+    path("", views.Index.as_view(), name="index"),
+    path(
+        "inventory_search/", views.InventorySearch.as_view(), name="inventory_search",
+    ),
+    path("advanced_search/", views.AdvancedSearch.as_view(), name="advanced_search"),
     path(
         "product_range/<int:range_id>/",
         views.ProductRangeView.as_view(),

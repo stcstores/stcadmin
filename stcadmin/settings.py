@@ -284,6 +284,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 DOCS_ROOT = os.path.join(SOURCE_DIR, "docs", "build", "html")
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+CRISPY_FAIL_SILENTLY = not DEBUG
 
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "home:index"

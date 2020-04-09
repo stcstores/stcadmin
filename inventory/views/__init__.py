@@ -14,7 +14,7 @@ from .locations import LocationFormView
 from .print_barcodes import BarcodePDF, PrintBarcodeLabels
 from .product import ProductView
 from .productrange import ProductRangeView
-from .productsearch import ProductSearchView
+from .productsearch import AdvancedSearch, InventorySearch
 from .suppliers import (
     CreateSupplier,
     CreateSupplierContact,
@@ -24,7 +24,7 @@ from .suppliers import (
     ToggleSupplierActive,
     UpdateSupplierContact,
 )
-from .views import CreateBayView, InventoryUserMixin, SKUGeneratorView
+from .views import CreateBayView, Index, InventoryUserMixin, SKUGeneratorView
 
 __all__ = [
     "DeleteImage",
@@ -40,7 +40,8 @@ __all__ = [
     "PrintBarcodeLabels",
     "ProductView",
     "ProductRangeView",
-    "ProductSearchView",
+    "AdvancedSearch",
+    "InventorySearch",
     "CreateSupplier",
     "CreateSupplierContact",
     "DeleteSupplierContact",
@@ -49,6 +50,7 @@ __all__ = [
     "ToggleSupplierActive",
     "UpdateSupplierContact",
     "CreateBayView",
+    "Index",
     "InventoryUserMixin",
     "SKUGeneratorView",
 ]

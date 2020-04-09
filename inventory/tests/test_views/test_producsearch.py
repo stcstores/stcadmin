@@ -7,23 +7,20 @@ from stcadmin.tests.stcadmin_test import ViewTests
 from .test_views import InventoryViewTest
 
 
-class TestProductSearchView(InventoryViewTest, ViewTests):
-    URL = "/inventory/product_search/"
-    template = "inventory/product_search.html"
+class TestAdvancedSearch(InventoryViewTest, ViewTests):
+    URL = "/inventory/advanced_search/"
+    template = "inventory/search/advanced_search.html"
 
     def setUp(self):
         super().setUp()
-        ccapi_patcher = patch("inventory.forms.product_search.CCAPI")
+        ccapi_patcher = patch("inventory.models.products.CCAPI")
         self.mock_CCAPI = ccapi_patcher.start()
         self.addCleanup(ccapi_patcher.stop)
 
     def make_post_request(self, data=None, product_options=None, results=None):
         data = data or {}
-        product_options = product_options or []
-        results = results or []
-        self.mock_CCAPI.get_product_options.return_value = product_options
-        self.mock_CCAPI.search_products.return_value = results
-        self.mock_CCAPI.get_range.side_effect = results
+        self.mock_CCAPI.get_product_options.return_value = product_options or []
+        self.mock_CCAPI.get_ranges.return_value = results or []
         return self.client.post(self.URL, data)
 
     def test_get_method(self):
@@ -39,29 +36,12 @@ class TestProductSearchView(InventoryViewTest, ViewTests):
             mocks.MockCCAPIProductRange(id=9903839, name="Range 2"),
         ]
         search_text = "Product Name"
-        data = {"search_type": "basic", "basic_search_text": search_text}
+        data = {"search_text": search_text}
         response = self.make_post_request(
             data=data, product_options=None, results=results
         )
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(self.template)
-
-    def test_search_results(self):
-        results = [
-            mocks.MockCCAPIProductRange(id=3303384, name="Range 1"),
-            mocks.MockCCAPIProductRange(id=9903839, name="Range 2"),
-        ]
-        search_text = "Product Name"
-        data = {"search_type": "basic", "basic_search_text": search_text}
-        response = self.make_post_request(
-            data=data, product_options=None, results=results
-        )
-        self.mock_CCAPI.get_product_options.assert_called_once()
-        self.mock_CCAPI.search_products.assert_called_once_with(search_text)
-        self.mock_CCAPI.get_range.assert_has_calls(
-            [call(result.id) for result in results]
-        )
-        self.assertEqual(response.context["product_ranges"], results)
 
     def test_product_option_drop_down(self):
         values = [
@@ -69,10 +49,11 @@ class TestProductSearchView(InventoryViewTest, ViewTests):
             for name in ("Red", "Green", "Blue")
         ]
         product_option = mocks.MockProductOption(
-            option_name=forms.ProductSearchForm.selectable_options[0], values=values
+            option_name=forms.AdvancedInventorySearchForm.selectable_options[0],
+            values=values,
         )
         response = self.make_post_request(
-            data={"search_type": "basic", "basic_search_text": "Product Name"},
+            data={"search_text": "Product Name"},
             product_options=[product_option],
             results=None,
         )
@@ -89,7 +70,7 @@ class TestProductSearchView(InventoryViewTest, ViewTests):
             option_name="Mock Product Option", values=values
         )
         response = self.make_post_request(
-            data={"search_type": "basic", "basic_search_text": "Product Name"},
+            data={"search_text": "Product Name"},
             product_options=[product_option],
             results=None,
         )
@@ -108,8 +89,7 @@ class TestProductSearchView(InventoryViewTest, ViewTests):
             mocks.MockCCAPIProductRange(end_of_line=False),
         ]
         data = {
-            "search_type": "basic",
-            "basic_search_text": "search text",
+            "search_text": "search text",
             "end_of_line": "include",
         }
         response = self.make_post_request(data=data, results=results)
@@ -122,8 +102,7 @@ class TestProductSearchView(InventoryViewTest, ViewTests):
             mocks.MockCCAPIProductRange(end_of_line=False),
         ]
         data = {
-            "search_type": "basic",
-            "basic_search_text": "search text",
+            "search_text": "search text",
             "end_of_line": "exclude",
         }
         response = self.make_post_request(data=data, results=results)
@@ -136,28 +115,26 @@ class TestProductSearchView(InventoryViewTest, ViewTests):
             mocks.MockCCAPIProductRange(end_of_line=False),
         ]
         data = {
-            "search_type": "basic",
-            "basic_search_text": "search text",
+            "search_text": "search text",
             "end_of_line": "exclusive",
         }
         response = self.make_post_request(data=data, results=results)
         self.assertIn(results[0], response.context["product_ranges"])
         self.assertNotIn(results[1], response.context["product_ranges"])
 
-    def test_advanced_search(self):
+    def test_search_results(self):
         results = [mocks.MockCCAPIProductRange()]
         options = [
             mocks.MockProductOption(
-                option_name=forms.ProductSearchForm.selectable_options[0],
+                option_name=forms.AdvancedInventorySearchForm.selectable_options[0],
                 values=[mocks.MockProductOptionValue()],
             )
         ]
         data = {
-            "search_type": "advanced",
-            "advanced_search_text": "Search Text",
-            "advanced_hide_out_of_stock": False,
-            "advanced_option_0": options[0].id,
-            "advanced_option_1": options[0].values[0].id,
+            "search_text": "Search Text",
+            "hide_out_of_stock": False,
+            "option_0": options[0].id,
+            "option_1": options[0].values[0].id,
         }
         self.mock_CCAPI.get_ranges.return_value = results
         response = self.make_post_request(
@@ -165,13 +142,70 @@ class TestProductSearchView(InventoryViewTest, ViewTests):
         )
         self.assertEqual(response.context["product_ranges"], results)
         self.mock_CCAPI.get_ranges.assert_called_once_with(
-            search_text=data["advanced_search_text"],
-            only_in_stock=data["advanced_hide_out_of_stock"],
+            search_text=data["search_text"],
+            only_in_stock=data["hide_out_of_stock"],
             option_matches_id=int(options[0].values[0].id),
         )
 
     def test_search_without_text_or_option_is_invalid(self):
-        data = {"search_type": "advanced", "search_text": ""}
+        data = {"search_text": ""}
         self.mock_CCAPI.get_ranges.return_value = []
         response = self.make_post_request(data=data)
         self.assertFalse(response.context["form"].is_valid())
+
+
+class TestInventorySearchView(InventoryViewTest, ViewTests):
+    URL = "/inventory/inventory_search/"
+    template = "inventory/inventory_search/inventory_search.html"
+
+    def setUp(self):
+        super().setUp()
+        ccapi_patcher = patch("inventory.models.products.CCAPI")
+        self.mock_CCAPI = ccapi_patcher.start()
+        self.addCleanup(ccapi_patcher.stop)
+        self.results = [
+            mocks.MockCCAPIProductRange(end_of_line=True),
+            mocks.MockCCAPIProductRange(end_of_line=False),
+        ]
+        self.products = []
+        for result in self.results:
+            self.products.extend(result.products)
+        self.mock_CCAPI.search_products.return_value = self.products
+        self.mock_CCAPI.get_range.side_effect = self.results
+
+    def test_get_method(self):
+        self.mock_CCAPI.get_product_options.return_value = []
+        response = self.make_get_request()
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(self.template)
+
+    def test_search(self):
+        form_data = {
+            "search_text": "Product Name",
+            "end_of_line": "include",
+        }
+        response = self.client.get(self.URL, form_data)
+        assert response.status_code == 200
+        assert response.context["product_ranges"] == self.results
+        self.mock_CCAPI.search_products.assert_called_once_with(
+            form_data["search_text"]
+        )
+        self.mock_CCAPI.get_range.assert_has_calls(
+            [call(product.id) for product in self.products], any_order=True
+        )
+
+    def test_end_of_line_hidden(self):
+        form_data = {
+            "search_text": "Product Name",
+            "end_of_line": "exclude",
+        }
+        response = self.client.get(self.URL, form_data)
+        assert response.context["product_ranges"] == [self.results[1]]
+
+    def test_end_of_line_exclusive(self):
+        form_data = {
+            "search_text": "Product Name",
+            "end_of_line": "exclusive",
+        }
+        response = self.client.get(self.URL, form_data)
+        assert response.context["product_ranges"] == [self.results[0]]
