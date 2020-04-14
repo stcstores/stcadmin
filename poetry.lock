@@ -523,10 +523,9 @@ ccapi = "branch master"
 tabler = "^2.4.0"
 
 [package.source]
-reference = "b5f2e5b25f3490b114e1128f0c8005f2ae96e3ae"
+reference = "5c6079cf50dca2b6335d80a0a2f5c58bf2c35070"
 type = "git"
 url = "https://github.com/stcstores/order_profit.git"
-
 [[package]]
 category = "main"
 description = "Core utilities for Python packages"
