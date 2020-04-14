@@ -2,41 +2,18 @@
 {% load static %}
 {% load stcadmin_extras %}
 
-{% block additional_head %}{{ block.super }}
-<style>
-    .new_product input, .new_product .selectize-input {
-        display: inline-block;
-    }
-
-    .field_select {
-        background-color: #ddd;
-        border: 3px solid #ddd;
-    }
-
-    .selected {
-        background-color: white;
-    }
-</style>
-{% endblock %}
-
 {% block pre_form %}
-<div class="field_selection">
-    {% for field in formset.0.visible_fields %}
-        <button id="hide_{{ field.name }}" class="field_select{% if field.name in error_fields %} error{% endif %}">{{ field.label }}</button>
+
+<ul class="nav nav-tabs" id="field_selection">
+  {% for field in formset.0.visible_fields %}
+    <li class="nav-item">
+        <a id="hide_{{ field.name }}" class="nav-link field_select {% if forloop.first %}active{% endif %} {% if field.name in error_fields %} bg-danger{% endif %}">{{ field.label }}</a>
+    </li>
     {% endfor %}
-</div>
-<div class="variation_selectors">
-    <table>
-        <th></th>
-        <td><button id="select_all">All</button>&nbsp;<button id="select_none">None</button></td>
-    {% for option, values in variation_values.items %}
-        <tr>
-            <th>{{ option }}</th>
-            <td>{% for value in values %}<button class="select_option" onclick="select_products('{{ option }}', '{{ value }}')">{{ value }}</button>&nbsp;{% endfor %}</td>
-        </tr>
-    {% endfor %}
-    </table>
-</div>
+</ul>
+
+
+
 {% endblock %}
 
 {% block form %}
@@ -45,22 +22,26 @@
         {{ error }}
     {% endfor %}
     {{ formset.management_form }}
-    <table class="new_product">
-        <tr>
-            {% for variation_field in formset.0.variation_options %}
-            <th>{{ variation_field }}</th>
-            {% endfor %}
-            {% for field in formset.0.visible_fields %}
-            <th class="field_cell {{ field.name }}">{{ field.label }}</th>
-            <th class="field_cell {{ field.name }}"></th>
-            {% endfor %}
-        </tr>
+    <table class="table table-striped new_product">
+        <thead class="thead-light">
+            <tr>
+                {% for variation_field in formset.0.variation_options %}
+                <th>{{ variation_field }}</th>
+                {% endfor %}
+                {% for field in formset.0.visible_fields %}
+                <th class="field_cell {{ field.name }}">{{ field.label }}</th>
+                <th class="field_cell {{ field.name }} font-weight-normal">
+                    <small>{% autoescape off %}{{ field.help_text }}{% endautoescape %}</small>
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
         <tr class="copyrow">
             <th colspan="{{ formset.0.variation_options | length }}"></th>
             {% for field in formset.0.visible_fields %}
                 <td class="field_cell {{ field.name }}">{{ field }}</td>
             {% endfor %}
-            <td><button id="copybutton" type="button">Copy</button></td>
+            <td><button id="copybutton" type="button" class="btn btn-primary btn-sm">Update Selected</button></td>
         </tr>
         <script>
         $(document).ready(function() {
@@ -73,7 +54,7 @@
         {% for form in formset %}
         <tr class="product">
             {% for name, value in form.variation_options.items %}
-            <th>{{ value }}</th>
+            <td>{{ value }}</td>
             {% endfor %}
 
             {% for field in form.visible_fields %}
@@ -89,24 +70,35 @@
             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
         {% endfor %}
         </tr>
-        <th colspan="{{ formset.0.variation_options | length | add:"2" }}">
-            <button name="back">Back</button>
-            <button name="continue">Continue</button>
-        </th>
     </table>
+    <button name="back" class="btn btn-primary">Back</button>
+    <button name="continue" class="btn btn-primary">Continue</button>
 {% endblock %}
 
 {% block formside %}
-{% for field in formset.0 %}
-    <div class="field_cell {{ field.name }}">
-        <h3>{{ field.label }}</h3>
-        <div>
-            {% autoescape off %}
-            {{ field.help_text }}
-            {% endautoescape %}
+<div class="contaner p-2">
+    <div class="row mb-1">
+        <div class="col-md-3 font-weight-bold">
+            Select Variations
+        </div>
+        <div class="col">
+            <button id="select_all" class="btn btn-primary btn-sm" type="button">All</button>
+            <button id="select_none" class="btn btn-primary btn-sm" type="button">None</button>
         </div>
     </div>
-{% endfor %}
+    {% for option, values in variation_values.items %}
+    <div class="row mb-1">
+        <div class="col-md-3">
+            {{ option }}
+        </div>
+        <div class="col">
+            {% for value in values %}
+            <button class="btn btn-primary btn-sm select_option" onclick="select_products('{{ option }}', '{{ value }}')" type="button">{{ value }}</button>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}
 
 {% block script %}{{ block.super }}

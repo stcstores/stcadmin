@@ -5,7 +5,8 @@
 
 {% block additional_head %}{{ block.super }}
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
-<link rel="stylesheet" href="{% static 'css/inventory.css' %}">
+<link rel="stylesheet" href="{% static 'css/selectize-bootstrap.css' %}">
+{% comment %} <link rel="stylesheet" href="{% static 'css/inventory.css' %}"> {% endcomment %}
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
 <script src="{% static 'scripts/new_product.js' %}"></script>
 <script>{% include 'product_editor/widgets/product_widgets.js' %}</script>
@@ -14,42 +15,46 @@
 
 {% block page_title %}Product Editor - {% if manager.range_id %}{{ manager.basic_info.data.title }}{% else %}New Product{% endif %}{% endblock %}
 
-{% block section_navigation %}
+{% comment %} {% block section_navigation %}
 {% include "product_editor/section_navigation.html" %}
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 {% block content %}
 
-<a href="{{ manager.clear_product.url }}" id="clear_product"><button>{{ manager.clear_product.name }}</button></a>
-
 {% include "product_editor/nav.html" %}
 
-<h1 class="page_title">{{ page.name }}</h1>
-{% help_button 'product_editor_help' page.help_anchor %}
+<div class="page-title">
+    <h1 class="page-title">{{ page.name }}</h1>
+</div>
+
+<hr>
 
 {% block pre_form %}{% endblock %}
 
-<form method="POST">{% csrf_token %}
-    <input type="text" id="goto" name="goto" hidden>
-{% block form %}{% endblock %}
-<form>
-<br>
-
-<div class="formside">
-{% block formside %}{% endblock %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <form method="POST">{% csrf_token %}
+                <input type="text" id="goto" name="goto" hidden>
+                {% block form %}{% endblock %}
+            <form>
+        </div>
+        <div class="col-md-4">
+            {% block formside %}{% endblock %}
+            {% block basic_info %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title"><h5>{{ manager.basic_info.data.title }}</h5></div>
+                    {% if manager.basic_info.data.supplier_sku %}
+                    <div class="card-title"><h6>{{ manager.product_info.data.supplier_sku }}</h6></div>
+                    {% endif %}
+                    <div class="card-text">{{ manager.basic_info.data.description | safe }}</div>
+                </div>
+            </div>
+            {% endblock %}
+        </div>
+    </div>
 </div>
-
-{% block basic_info %}
-<div class="formside basic_info">
-    <p>Title: <input type="text" value="{{ manager.basic_info.data.title }}" readonly></p>
-    {% if manager.basic_info.data.supplier_sku %}
-        <p>Supplier SKU: <input type="text" value="{{ manager.product_info.data.supplier_sku }}" readonly></p>
-    {% endif %}
-    {% if manager.basic_info.data.description %}
-        <p>Description: <div class="description">{{ manager.basic_info.data.description | safe }}</div></p>
-    {% endif %}
-</div>
-{% endblock %}
 
 {% endblock %}
 

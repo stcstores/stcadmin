@@ -1,6 +1,6 @@
 """Forms for new products."""
-
 from ccapi import CCAPI
+from crispy_forms.helper import FormHelper
 from django import forms
 
 from product_editor.editor_manager import ProductEditorBase
@@ -9,10 +9,19 @@ from stcadmin.forms import KwargFormSet
 from . import fields
 
 
+class ProductEditorHelper(FormHelper):
+    """Helper class for product editor forms."""
+
+    form_tag = False
+
+
 class ProductForm(forms.Form, ProductEditorBase):
     """Base class for new product forms."""
 
-    field_size = 50
+    def __init__(self, *args, **kwargs):
+        """Remove form tags."""
+        super().__init__(*args, **kwargs)
+        self.helper = ProductEditorHelper()
 
 
 class BasicInfo(ProductForm):

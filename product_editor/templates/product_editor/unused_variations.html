@@ -7,7 +7,7 @@
     {{ error }}
 {% endfor %}
 {{ formset.management_form }}
-<table class="new_product">
+<table class="table">
     <tr>
         {% for variation_field in formset.0.variation_options %}
         <th>{{ variation_field }}</th>
@@ -19,7 +19,7 @@
     {% for form in formset %}
     <tr>
         {% for name, value in form.variation_options.items %}
-        <th>{{ value }}</th>
+        <td>{{ value }}</td>
         {% endfor %}
         {% for field in form.visible_fields %}
         <td class="field_cell {{ field.name }}">{{ field }}</td>

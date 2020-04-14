@@ -1,11 +1,30 @@
-<ul class="form_nav">
-    {% for nav_page in manager.pages %}
-        {% if nav_page.visible %}
-        <li>
-            <button name="goto" value="{{ nav_page.identifier }}" class="goto_button {% ifequal nav_page.identifier page.identifier %}current_page{% else %}{% if not nav_page.enabled %}invalid_page{% endif %}{% endifequal %}">
-                {{ nav_page.name }}
-            </button>
-        </li>
-        {% endif %}
-    {% endfor %}
-</ul>
+
+<style>
+.goto {
+    cursor: pointer;
+}
+</style>
+
+<div class="nav">
+    <div class="navbar navbar-expand-md navbar-light">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <ol class="breadcrumb">
+                    {% for nav_page in manager.pages %}{% if nav_page.visible %}
+                    <li class="breadcrumb-item goto">
+                        <span name="goto" value="{{ nav_page.identifier }}" 
+                        class="goto_button
+                        {% ifequal nav_page.identifier page.identifier %}font-weight-bold{% else %}
+                        {% if nav_page.enabled %}text-primary{% else %}text-secondary{% endif %}{% endifequal %}">
+                            {{ nav_page.name }}
+                        </span>
+                    </li>
+                    {% endif %}{% endfor %}
+                </ol>
+            </li>
+            <li class="nav-item">
+                <a href="{{ manager.clear_product.url }}" class="nav-link" id="clear_product">{{ manager.clear_product.name }}</a>
+            </li>
+        </ul>
+    </div>
+</div>
