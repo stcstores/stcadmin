@@ -176,7 +176,7 @@ class TestOrder(STCAdminTest):
             price = self.product_price
         if quantity is None:
             quantity = self.product_quantity
-        return Mock(id=product_ID, price=price, quantity=quantity)
+        return Mock(product_id=product_ID, price=price, quantity=quantity)
 
     def aware_tz(self, date):
         return make_aware(date, timezone=pytz.timezone("Europe/London"))
@@ -386,11 +386,11 @@ class TestOrder(STCAdminTest):
         for product in products:
             self.assertTrue(
                 models.ProductSale.objects.filter(
-                    order=order, product_ID=product.id
+                    order=order, product_ID=product.product_id
                 ).exists()
             )
             product_sale = models.ProductSale.objects.get(
-                order=order, product_ID=product.id
+                order=order, product_ID=product.product_id
             )
             self.assertEqual(product_sale.quantity, product.quantity)
             self.assertEqual(product_sale.price, int(product.price * 100))
@@ -406,18 +406,18 @@ class TestOrder(STCAdminTest):
             self.create_mock_product(product_ID="9651664", quantity=3, price=0.99),
         ]
         models.ProductSale.objects.create(
-            order=order, product_ID=products[0].id, quantity=2, price=5.99
+            order=order, product_ID=products[0].product_id, quantity=2, price=5.99
         )
         mock_order = self.create_mock_order(order_id="939484393", products=products)
         models.Order.update_sales(order, mock_order)
         for product in products:
             self.assertTrue(
                 models.ProductSale.objects.filter(
-                    order=order, product_ID=product.id
+                    order=order, product_ID=product.product_id
                 ).exists()
             )
             product_sale = models.ProductSale.objects.get(
-                order=order, product_ID=product.id
+                order=order, product_ID=product.product_id
             )
             self.assertEqual(product_sale.quantity, product.quantity)
             self.assertEqual(product_sale.price, int(product.price * 100))
@@ -486,7 +486,7 @@ class TestOrder(STCAdminTest):
         order = models.Order.objects.get(order_ID=mock_order.order_id)
         self.assertFalse(
             models.ProductSale.objects.filter(
-                order=order, product_ID=mock_product.id
+                order=order, product_ID=mock_product.product_id
             ).exists()
         )
 

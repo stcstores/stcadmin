@@ -188,7 +188,7 @@ class Order(models.Model):
             price = int(product.price * 100)
             sale, _ = ProductSale._default_manager.get_or_create(
                 order=order_obj,
-                product_ID=product.id,
+                product_ID=product.product_id,
                 defaults={"quantity": product.quantity, "price": price},
             )
             if sale.quantity != product.quantity or sale.price != price:
