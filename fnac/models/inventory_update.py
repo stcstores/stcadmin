@@ -66,6 +66,7 @@ class _InventoryUpdate:
             return product
         else:
             queryset = FnacProduct.objects.filter(sku=sku)
+            kwargs.pop("colour")
             queryset.update(**kwargs)
             return queryset[0]
 
