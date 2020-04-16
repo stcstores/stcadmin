@@ -268,6 +268,54 @@ def test_size_invalid(
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
+    "product_kwargs,category_kwargs,returned",
+    [
+        ({"colour": "Red"}, {"requires_colour": True}, True),
+        ({"colour": "Red"}, {"requires_colour": False}, True),
+        ({"colour": ""}, {"requires_colour": False}, True),
+        ({"colour": ""}, {"requires_colour": True}, False),
+        ({"colour": "Red"}, None, True),
+        ({"colour": ""}, None, True),
+    ],
+)
+def test_colour_valid(
+    fnac_product_factory, category_factory, product_kwargs, category_kwargs, returned,
+):
+    if category_kwargs is None:
+        category = None
+    else:
+        category = category_factory.create(**category_kwargs)
+    product_kwargs["fnac_range__category"] = category
+    product = fnac_product_factory.create(**product_kwargs)
+    assert (product in models.FnacProduct.objects.colour_valid()) is returned
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "product_kwargs,category_kwargs,returned",
+    [
+        ({"colour": "Red"}, {"requires_colour": True}, False),
+        ({"colour": "Red"}, {"requires_colour": False}, False),
+        ({"colour": ""}, {"requires_colour": False}, False),
+        ({"colour": ""}, {"requires_colour": True}, True),
+        ({"colour": "Red"}, None, False),
+        ({"colour": ""}, None, False),
+    ],
+)
+def test_colour_invalid(
+    fnac_product_factory, category_factory, product_kwargs, category_kwargs, returned,
+):
+    if category_kwargs is None:
+        category = None
+    else:
+        category = category_factory.create(**category_kwargs)
+    product_kwargs["fnac_range__category"] = category
+    product = fnac_product_factory.create(**product_kwargs)
+    assert (product in models.FnacProduct.objects.colour_invalid()) is returned
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
     "product_kwargs,has_category,returned",
     [
         ({}, True, True),

@@ -80,6 +80,18 @@ class FnacProductManager(models.Manager):
             ~Q(english_size="") & Q(french_size__isnull=True) & Q(created=False)
         )
 
+    def colour_valid(self):
+        """Return a queryset of products with valid colour information."""
+        return self.not_do_not_create().exclude(
+            fnac_range__category__requires_colour=True, colour=""
+        )
+
+    def colour_invalid(self):
+        """Return a queryset of products with invalid colour information."""
+        return self.not_do_not_create().filter(
+            fnac_range__category__requires_colour=True, colour=""
+        )
+
     def has_category(self):
         """Return a queryset of products with categories."""
         return self.not_do_not_create().filter(fnac_range__category__isnull=False)
