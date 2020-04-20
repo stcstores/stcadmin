@@ -90,3 +90,11 @@ class CommentFactory(factory.django.DjangoModelFactory):
         model = models.Comment
 
     comment = "A description of the shipping times\n2 days"
+
+
+@register
+class MissingInformationExportFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.MissingInformationExport
+
+    export = factory.django.FileField(filename="fnac_missing_information.xlsx")

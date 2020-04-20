@@ -1,6 +1,7 @@
 """Views for the fnac app."""
 
 from django import http
+from django.http import HttpResponse
 from django.shortcuts import reverse
 from django.views import View
 from django.views.generic.base import TemplateView
@@ -8,6 +9,8 @@ from django.views.generic.edit import FormView, UpdateView
 
 from fnac import forms, models
 from home.views import UserInGroupMixin
+
+from .tasks import create_missing_information_export
 
 
 class FnacUserMixin(UserInGroupMixin):
@@ -229,3 +232,38 @@ class CreatedProducts(FnacUserMixin, FormView):
     def get_success_url(self):
         """Return the URL to redirect to if forms submission is successful."""
         return reverse("fnac:index")
+
+
+class MissingInformation(FnacUserMixin, TemplateView):
+    """View for downloading missing information exports."""
+
+    template_name = "fnac/missing_information.html"
+
+
+class CreateMissingInformationExport(FnacUserMixin, View):
+    """View to trigger the creation of a missing information export."""
+
+    def get(self, *args, **kwargs):
+        """Trigger the creation of a missing information export."""
+        create_missing_information_export.delay()
+        return HttpResponse("done")
+
+
+class MissingInformationExportStatus(FnacUserMixin, TemplateView):
+    """View to provide the status of the latest information export for ajax."""
+
+    template_name = "fnac/missing_information_export_status.html"
+
+    def get_context_data(self, **kwargs):
+        """Return the context for the template."""
+        context = super().get_context_data(**kwargs)
+        try:
+            context["export"] = models.MissingInformationExport.objects.latest(
+                "timestamp"
+            )
+        except models.MissingInformationExport.DoesNotExist:
+            context["export"] = None
+        context[
+            "in_progress"
+        ] = models.MissingInformationExport.objects.is_in_progress()
+        return context

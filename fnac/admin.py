@@ -80,3 +80,11 @@ class TranslationAdmin(admin.ModelAdmin):
     fields = ("product", "name", "description", "colour")
     list_display = ("product", "name", "description", "colour")
     list_editable = ("name", "description", "colour")
+
+
+@admin.register(models.MissingInformationExport)
+class MissingInformationExportAdmin(admin.ModelAdmin):
+    """Model admin for fnac.MissingInformationExport."""
+
+    fields = ("timestamp", "status", "export")
+    list_display = fields

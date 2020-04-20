@@ -1,0 +1,32 @@
+{% extends 'fnac/base.html' %}
+
+{% block content %}
+<h1>Missing FNAC Product Information</h1>
+<hr>
+<h3>Missing Information Export</h3>
+<p>
+    Use a missing information export file to fill in information about a product that 
+    we don't have that is required by FNAC.
+</p>
+<div id="export_status"></div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    function getStatus() {
+        $.get("{% url 'fnac:missing_information_export_status' %}", function(response) {
+            $("#export_status").html(response);
+            $(".create_new_export").click(function() {
+                $.get("{% url 'fnac:create_missing_information_export' %}", function(response) {
+                    getStatus();
+                });
+            });
+        });
+        setTimeout(getStatus, 5000);
+    }
+
+    $(document).ready(function(){
+        getStatus();
+    });
+</script>
+{% endblock script %}

@@ -28,4 +28,19 @@ urlpatterns = [
     path("update_file/", views.UpdateFile.as_view(), name="update_file"),
     path("shipping_comment/", views.ShippingComment.as_view(), name="shipping_comment"),
     path("created_products/", views.CreatedProducts.as_view(), name="created_products"),
+    path(
+        "missing_information/",
+        views.MissingInformation.as_view(),
+        name="missing_information",
+    ),
+    path(
+        "missing_information/create_export/",
+        views.CreateMissingInformationExport.as_view(),
+        name="create_missing_information_export",
+    ),
+    path(
+        "missing_information/export_status/",
+        views.MissingInformationExportStatus.as_view(),
+        name="missing_information_export_status",
+    ),
 ]
