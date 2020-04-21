@@ -18,9 +18,7 @@ def valid_get_response_content(valid_get_response):
 
 
 @pytest.fixture
-def products(
-    fnac_range_factory, fnac_product_factory, size_factory, translation_factory
-):
+def products(fnac_product_factory, translation_factory):
     products = [
         fnac_product_factory.create(name="Missing Translation"),
         fnac_product_factory.create(created=True, name="Already created"),
@@ -30,9 +28,7 @@ def products(
             english_size="Large", french_size=None, price=556, name="Missing size"
         ),
         fnac_product_factory.create(price=None, name="Missing price"),
-        fnac_product_factory.create(
-            fnac_range=fnac_range_factory.create(category=None, name="Missing category")
-        ),
+        fnac_product_factory.create(fnac_range__category=None, name="Missing category"),
         fnac_product_factory.create(do_not_create=True, name="Marked do not create"),
         fnac_product_factory.create(stock_level=0, name="Out of stock"),
         fnac_product_factory.create(name="Valid 2"),
@@ -75,16 +71,12 @@ def test_url_heading(valid_get_response_content):
     assert "<h1>FNAC</h1>" in valid_get_response_content
 
 
-def test_links_to_missing_inventory_info(valid_get_response_content):
-    assert valid_get_response_content.count(reverse("fnac:missing_inventory_info")) == 2
+def test_links_to_invalid_in_inventory(valid_get_response_content):
+    assert valid_get_response_content.count(reverse("fnac:invalid_in_inventory")) == 2
 
 
-def test_links_to_missing_price_size(valid_get_response_content):
-    assert valid_get_response_content.count(reverse("fnac:missing_price_size")) == 2
-
-
-def test_links_to_missing_category(valid_get_response_content):
-    assert valid_get_response_content.count(reverse("fnac:missing_category")) == 2
+def test_links_to_missing_information(valid_get_response_content):
+    assert valid_get_response_content.count(reverse("fnac:missing_information")) == 2
 
 
 def test_links_to_translations(valid_get_response_content):
@@ -108,18 +100,13 @@ def test_created_count_in_context(products, valid_get_response):
 
 
 @pytest.mark.django_db
-def test_missing_inventory_info_count_in_context(products, valid_get_response):
-    assert valid_get_response.context["missing_inventory_info_count"] == 1
+def test_invalid_in_inventory_count_in_context(products, valid_get_response):
+    assert valid_get_response.context["invalid_in_inventory_count"] == 1
 
 
 @pytest.mark.django_db
-def test_missing_category_count_in_context(products, valid_get_response):
-    assert valid_get_response.context["missing_category_count"] == 1
-
-
-@pytest.mark.django_db
-def test_missing_price_size_count_in_context(products, valid_get_response):
-    assert valid_get_response.context["missing_price_size_count"] == 3
+def test_missing_information_count_in_context(products, valid_get_response):
+    assert valid_get_response.context["missing_information_count"] == 4
 
 
 @pytest.mark.django_db

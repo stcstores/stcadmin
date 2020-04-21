@@ -3,7 +3,7 @@ import pytest
 
 @pytest.fixture
 def url():
-    return "/fnac/missing_inventory_info/"
+    return "/fnac/invalid_in_inventory/"
 
 
 @pytest.fixture
@@ -68,7 +68,7 @@ def test_logged_in_group_post(group_logged_in_client, url):
 
 
 def test_heading(valid_get_response_content):
-    text = "<h1>Missing Inventory Information</h1>"
+    text = "<h1>Invalid in Inventory</h1>"
     assert text in valid_get_response_content
 
 

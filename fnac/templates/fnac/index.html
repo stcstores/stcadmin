@@ -11,27 +11,19 @@
     </tr>
     <tr>
         <td>
-            <a href="{% url 'fnac:missing_inventory_info' %}">
-                Missing Inventory Information
+            <a href="{% url 'fnac:invalid_in_inventory' %}">
+                Invalid in the Inventory
             </a>
         </td>
-        <td>{{missing_inventory_info_count}}</td>
+        <td>{{invalid_in_inventory_count}}</td>
     </tr>
     <tr>
         <td>
-            <a href="{% url 'fnac:missing_category' %}">
-                Missing Category
+            <a href="{% url 'fnac:missing_information' %}">
+                Missing Category, Price, Size or Colour
             </a>
         </td>
-        <td>{{missing_category_count}}</td>
-    </tr>
-    <tr>
-        <td>
-            <a href="{% url 'fnac:missing_price_size' %}">
-                Missing Price or Size
-            </a>
-        </td>
-        <td>{{missing_price_size_count}}</td>
+        <td>{{missing_information_count}}</td>
     </tr>
     <tr>
         <td>

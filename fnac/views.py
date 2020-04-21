@@ -29,11 +29,10 @@ class Index(FnacUserMixin, TemplateView):
         context = super().get_context_data(*args, **kwargs)
         to_be_created = models.FnacProduct.objects.to_be_created()
         context["created_product_count"] = self.created_product_count()
-        context["missing_inventory_info_count"] = self.missing_inventory_info_count(
+        context["invalid_in_inventory_count"] = self.invalid_in_inventory_count(
             to_be_created
         )
-        context["missing_category_count"] = self.missing_category_count(to_be_created)
-        context["missing_price_size_count"] = self.missing_price_size_count(
+        context["missing_information_count"] = self.missing_information_count(
             to_be_created
         )
         context["do_not_create_count"] = self.do_not_create_count()
@@ -48,22 +47,16 @@ class Index(FnacUserMixin, TemplateView):
         """Return the number of products that have been created."""
         return models.FnacProduct.objects.filter(created=True).count()
 
-    def missing_inventory_info_count(self, to_be_created):
-        """Return the number of products missing inventory information."""
+    def invalid_in_inventory_count(self, to_be_created):
+        """Return the number of products with invalid inventory information."""
         return to_be_created.intersection(
-            models.FnacProduct.objects.missing_inventory_information()
+            models.FnacProduct.objects.invalid_in_inventory()
         ).count()
 
-    def missing_category_count(self, to_be_created):
+    def missing_information_count(self, to_be_created):
         """Return the number of products without categories."""
-        return (to_be_created & models.FnacProduct.objects.missing_category()).count()
-
-    def missing_price_size_count(self, to_be_created):
-        """Return the number of products missing size or price information."""
-        return to_be_created.intersection(
-            models.FnacProduct.objects.missing_price().union(
-                models.FnacProduct.objects.size_invalid()
-            )
+        return (
+            to_be_created.intersection(models.FnacProduct.objects.missing_information())
         ).count()
 
     def do_not_create_count(self):
@@ -88,50 +81,16 @@ class Index(FnacUserMixin, TemplateView):
         return models.FnacProduct.objects.ready_to_create().count()
 
 
-class MissingInventoryInfo(FnacUserMixin, TemplateView):
-    """View for displaying products that are not listed on FNAC due to missing inventory info."""
+class InvalidInInventory(FnacUserMixin, TemplateView):
+    """View for displaying products that are not listed on FNAC due to invalid inventory info."""
 
-    template_name = "fnac/missing_inventory_info.html"
+    template_name = "fnac/invalid_in_inventory.html"
 
     def get_context_data(self, *args, **kwargs):
         """Return template context."""
         context = super().get_context_data(*args, **kwargs)
-        context["products"] = models.FnacProduct.objects.missing_inventory_information()
+        context["products"] = models.FnacProduct.objects.invalid_in_inventory()
         return context
-
-
-class MissingPriceSize(FnacUserMixin, FormView):
-    """View for displaying products that cannot be listed on FNAC because they do not have a price."""
-
-    template_name = "fnac/missing_prices.html"
-    form_class = forms.MissingPriceSizeFormset
-
-    def form_valid(self, formset):
-        """Save forms and redirect."""
-        for form in formset:
-            form.save()
-        return super().form_valid(formset)
-
-    def get_success_url(self):
-        """Return the URL to redirect to if forms submission is successful."""
-        return reverse("fnac:index")
-
-
-class MissingCategory(FnacUserMixin, FormView):
-    """View for displaying products that are missing a category."""
-
-    template_name = "fnac/missing_category.html"
-    form_class = forms.MissingCategoryFormset
-
-    def form_valid(self, formset):
-        """Save forms and redirect."""
-        for form in formset:
-            form.save()
-        return super().form_valid(formset)
-
-    def get_success_url(self):
-        """Return the URL to redirect to if forms submission is successful."""
-        return reverse("fnac:index")
 
 
 class Translations(FnacUserMixin, FormView):

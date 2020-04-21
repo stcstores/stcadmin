@@ -1,0 +1,35 @@
+{% extends 'fnac/base.html' %}
+
+{% block content %}
+
+<h1>Invalid in Inventory</h1>
+
+<p>
+    The following products cannot be listed on FNAC because they are the following
+    information is missing or invalid in the inventory:
+    <ul>
+        <li>Description</li>
+        <li>Barcode</li>
+        <li>Images</li>
+    </ul>
+</p>
+
+<p>This information must be added or corrected in Cloud Commerce.</p>
+<p>
+    Barcodes must be 12 - 13 digits in length, if a product is otherwise correct please
+    check the length of the barcode.
+</p>
+
+
+<div class="products">
+    {% for product in products %}
+    <div class="product">
+        <div class="product_identification">
+            <div class="sku">{{product.sku}}</div>
+            <div class="name">{{product.name}}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

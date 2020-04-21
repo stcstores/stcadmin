@@ -8,16 +8,10 @@ app_name = "fnac"
 urlpatterns = [
     path("", views.Index.as_view(), name="index"),
     path(
-        "missing_inventory_info/",
-        views.MissingInventoryInfo.as_view(),
-        name="missing_inventory_info",
+        "invalid_in_inventory/",
+        views.InvalidInInventory.as_view(),
+        name="invalid_in_inventory",
     ),
-    path(
-        "missing_price_size/",
-        views.MissingPriceSize.as_view(),
-        name="missing_price_size",
-    ),
-    path("missing_category/", views.MissingCategory.as_view(), name="missing_category"),
     path("translations/", views.Translations.as_view(), name="translations"),
     path(
         "translations_export/",

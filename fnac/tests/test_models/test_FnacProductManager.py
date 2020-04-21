@@ -438,6 +438,26 @@ def test_missing_description(fnac_product_factory, product_kwargs, returned):
 @pytest.mark.parametrize(
     "product_kwargs,returned",
     [
+        ({}, False),
+        ({"fnac_range__category": None}, True,),
+        ({"price": None}, True),
+        ({"fnac_range__category": None}, True,),
+        ({"english_size": "", "french_size": None}, False),
+        ({"english_size": "", "french_size__name": "Rouge"}, False),
+        ({"english_size": "Red", "french_size": None}, True),
+        ({"fnac_range__category__requires_colour": True, "colour": ""}, True),
+        ({"fnac_range__category__requires_colour": False, "colour": ""}, False),
+    ],
+)
+def test_missing_information(fnac_product_factory, product_kwargs, returned):
+    product = fnac_product_factory.create(**product_kwargs)
+    assert (product in models.FnacProduct.objects.missing_information()) is returned
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "product_kwargs,returned",
+    [
         (
             {
                 "description": "Description",
@@ -469,8 +489,6 @@ def test_missing_description(fnac_product_factory, product_kwargs, returned):
         ),
     ],
 )
-def test_missing_inventory_information(fnac_product_factory, product_kwargs, returned):
+def test_invalid_in_inventory(fnac_product_factory, product_kwargs, returned):
     product = fnac_product_factory.create(**product_kwargs)
-    assert (
-        product in models.FnacProduct.objects.missing_inventory_information()
-    ) is returned
+    assert (product in models.FnacProduct.objects.invalid_in_inventory()) is returned

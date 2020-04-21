@@ -36,7 +36,7 @@ class FnacProductManager(models.Manager):
                 & ~Q(translation__description="")
                 & ~Q(~Q(colour="") & Q(translation__colour=""))
             )
-            .difference(self.missing_inventory_information())
+            .difference(self.invalid_in_inventory())
         )
 
     def not_translated(self):
@@ -49,7 +49,7 @@ class FnacProductManager(models.Manager):
                 | Q(translation__description="")
                 | Q(~Q(colour="") & Q(translation__colour=""))
             )
-            .difference(self.missing_inventory_information())
+            .difference(self.invalid_in_inventory())
         )
 
     def barcode_valid(self):
@@ -116,7 +116,15 @@ class FnacProductManager(models.Manager):
         """Return a queryset of products without a price."""
         return self.not_do_not_create().filter(description="")
 
-    def missing_inventory_information(self):
+    def missing_information(self):
+        """Return a queryset of products missing a category, price, size or colour."""
+        return self.not_do_not_create().intersection(
+            self.missing_category().union(
+                self.missing_price(), self.size_invalid(), self.colour_invalid(),
+            )
+        )
+
+    def invalid_in_inventory(self):
         """Return a queryset of products missing description, barcode or images."""
         return self.not_do_not_create().intersection(
             self.missing_description().union(

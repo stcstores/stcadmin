@@ -1,4 +1,4 @@
-"""Create an export file for adding missing inventory information."""
+"""Create an export file for adding missing product information."""
 
 import io
 from tempfile import NamedTemporaryFile
@@ -70,7 +70,7 @@ class MissingInformationExport(models.Model):
 
 
 def create_add_missing_information_export():
-    """Create an export file for adding missing inventory information."""
+    """Create an export file for adding missin product information."""
     return _MissingInformationExportFile().create()
 
 
@@ -162,11 +162,7 @@ class _MissingInformationExportFile:
         return str(product.french_size)
 
     def get_products(self):
-        return FnacProduct.objects.missing_category().union(
-            FnacProduct.objects.missing_price(),
-            FnacProduct.objects.size_invalid(),
-            FnacProduct.objects.colour_invalid(),
-        )
+        return FnacProduct.objects.missing_information()
 
     def create(self):
         workbook = openpyxl.Workbook()
