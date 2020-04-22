@@ -1,0 +1,17 @@
+{% load static %}
+
+{% if in_progress %}
+    An import is in progress <img src="{% static 'images/loading.gif' %}" alt="" height="20">
+{% else %}
+    {% if import == None %}
+    Inventory not yet imported
+    {% elif import.status == import.ERROR %}
+    There was an error updating the inventory information, please try again
+    {% else %}
+    Inventory last updated at {{ import.timestamp }}
+    <br>
+    Inventory information is correct as of {{ import.export.timestamp }}
+    <br>
+    {% endif %}
+    <button class="start_inventory_update">Update Inventory Information</button>
+{% endif %}

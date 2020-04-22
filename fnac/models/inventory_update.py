@@ -1,9 +1,58 @@
 """Update the inventory in the fnac app."""
 
+from django.db import models, transaction
+
 from inventory.models import ProductExport
 
 from .fnac_product import FnacProduct
 from .fnac_range import FnacRange
+
+
+class InventoryImportManager(models.Manager):
+    """Manager for the InventoryImport model."""
+
+    def is_in_progress(self):
+        """Return True if there is an export being created, otherwise False."""
+        return self.get_queryset().filter(status=InventoryImport.IN_PROGRESS).exists()
+
+    def update_inventory(self):
+        """Create a missing information export."""
+        export = ProductExport.latest_export()
+        with transaction.atomic():
+            if self.is_in_progress():
+                raise InventoryImport.AlreadyInProgress()
+            inventory_import = self.create(export=export)
+        try:
+            update_inventory(export.as_table())
+        except Exception as e:
+            inventory_import.status = InventoryImport.ERROR
+            inventory_import.save()
+            raise e
+        else:
+            inventory_import.status = InventoryImport.COMPLETE
+        inventory_import.save()
+
+
+class InventoryImport(models.Model):
+    """Model for recording inventory imports."""
+
+    class AlreadyInProgress(Exception):
+        """Exception raised when an import is started with one already in progress."""
+
+        def __init__(self, *args, **kwargs):
+            """Raise the exception."""
+            return super().__init__(self, "An inventory import is already in progress.")
+
+    COMPLETE = "complete"
+    ERROR = "error"
+    IN_PROGRESS = "in_progress"
+    STATUSES = ((COMPLETE, "Complete"), (ERROR, "Error"), (IN_PROGRESS, "In Progress"))
+
+    timestamp = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=15, choices=STATUSES, default=IN_PROGRESS)
+    export = models.ForeignKey("inventory.ProductExport", on_delete=models.CASCADE)
+
+    objects = InventoryImportManager()
 
 
 def update_inventory(inventory_file=None):

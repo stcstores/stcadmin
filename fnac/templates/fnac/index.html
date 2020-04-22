@@ -4,6 +4,8 @@
 
 <h1>FNAC</h1>
 
+<div id="inventory_update_status"></div>
+
 <table>
     <tr>
         <td>Created</td>
@@ -56,3 +58,23 @@
 </div>
 
 {% endblock content %}
+
+{% block script %}
+<script>
+    function getStatus() {
+        $.get("{% url 'fnac:inventory_update_status' %}", function(response) {
+            $("#inventory_update_status").html(response);
+            $(".start_inventory_update").click(function() {
+                $.get("{% url 'fnac:start_inventory_update' %}", function(response) {
+                    getStatus();
+                });
+            });
+        });
+        setTimeout(getStatus, 5000);
+    }
+
+    $(document).ready(function(){
+        getStatus();
+    });
+</script>
+{% endblock script %}

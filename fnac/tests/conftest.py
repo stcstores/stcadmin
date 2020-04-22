@@ -1,9 +1,13 @@
+from datetime import datetime
+
 import factory
 import pytest
 from django.core.management import call_command
+from django.utils import timezone
 from pytest_factoryboy import register
 
 from fnac import models
+from inventory.models import ProductExport
 
 
 @pytest.fixture
@@ -98,3 +102,22 @@ class MissingInformationExportFactory(factory.django.DjangoModelFactory):
         model = models.MissingInformationExport
 
     export = factory.django.FileField(filename="fnac_missing_information.xlsx")
+
+
+@register
+class InventoryProductExportFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ProductExport
+
+    name = factory.Sequence(lambda n: f"ProductExport{n}")
+    timestamp = timezone.make_aware(datetime(2020, 3, 1))
+    export_file = factory.django.FileField()
+
+
+@register
+class InventoryImportFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.InventoryImport
+
+    timestamp = datetime(2020, 3, 1)
+    export = factory.SubFactory(InventoryProductExportFactory)

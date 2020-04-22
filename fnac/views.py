@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView, UpdateView
 from fnac import forms, models
 from home.views import UserInGroupMixin
 
-from .tasks import create_missing_information_export
+from .tasks import create_missing_information_export, update_inventory
 
 
 class FnacUserMixin(UserInGroupMixin):
@@ -213,9 +213,9 @@ class MissingInformationExportStatus(FnacUserMixin, TemplateView):
 
     template_name = "fnac/missing_information_export_status.html"
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, *args, **kwargs):
         """Return the context for the template."""
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(*args, **kwargs)
         try:
             context["export"] = models.MissingInformationExport.objects.latest(
                 "timestamp"
@@ -225,4 +225,29 @@ class MissingInformationExportStatus(FnacUserMixin, TemplateView):
         context[
             "in_progress"
         ] = models.MissingInformationExport.objects.is_in_progress()
+        return context
+
+
+class StartInventoryUpdate(FnacUserMixin, View):
+    """View to trigger an inventory update."""
+
+    def get(self, *args, **kwargs):
+        """Start an inventory update."""
+        update_inventory.delay()
+        return HttpResponse("done")
+
+
+class InventoryUpdateStatus(FnacUserMixin, TemplateView):
+    """Show the status of the current or most recent inventory update."""
+
+    template_name = "fnac/inventory_import_status.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        try:
+            context["import"] = models.InventoryImport.objects.latest("timestamp")
+        except models.InventoryImport.DoesNotExist:
+            context["import"] = None
+        context["in_progress"] = models.InventoryImport.objects.is_in_progress()
         return context

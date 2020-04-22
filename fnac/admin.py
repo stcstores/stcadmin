@@ -88,3 +88,11 @@ class MissingInformationExportAdmin(admin.ModelAdmin):
 
     fields = ("timestamp", "status", "export")
     list_display = fields
+
+
+@admin.register(models.InventoryImport)
+class InventoryImportAdmin(admin.ModelAdmin):
+    """Model admin for fnac.InventoryImport."""
+
+    fields = ("timestamp", "status", "export")
+    list_display = fields
