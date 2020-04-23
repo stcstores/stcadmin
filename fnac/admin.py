@@ -96,3 +96,11 @@ class InventoryImportAdmin(admin.ModelAdmin):
 
     fields = ("timestamp", "status", "export")
     list_display = fields
+
+
+@admin.register(models.OfferUpdate)
+class OfferUpdateAdmin(admin.ModelAdmin):
+    """Model admin for fnac.OfferUpdate."""
+
+    fields = ("timestamp", "status", "export")
+    list_display = fields

@@ -9,10 +9,10 @@ from .fnac_product import FnacProduct
 from .fnac_range import FnacRange
 from .inventory_update import InventoryImport, update_inventory
 from .mirakl_export import process_mirakl_export
+from .offer_update import Comment, OfferUpdate
 from .product_upload import create_new_product_upload
 from .size import Size
 from .translation import Translation
-from .update_upload import Comment, create_update_upload
 
 __all__ = [
     "MissingInformationExport",
@@ -27,5 +27,5 @@ __all__ = [
     "Size",
     "Translation",
     "Comment",
-    "create_update_upload",
+    "OfferUpdate",
 ]

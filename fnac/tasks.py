@@ -15,3 +15,9 @@ def create_missing_information_export():
 def update_inventory():
     """Update the FNAC inventory information."""
     models.InventoryImport.objects.update_inventory()
+
+
+@shared_task
+def create_offer_update_export():
+    """Create a new offer update export."""
+    models.OfferUpdate.objects.create_export()

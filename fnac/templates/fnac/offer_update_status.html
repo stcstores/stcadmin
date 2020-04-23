@@ -1,0 +1,16 @@
+{% load static %}
+
+{% if in_progress %}
+    An offer update file is being generated <img src="{% static 'images/loading.gif' %}" alt="" height="20">
+{% else %}
+    {% if export == None %}
+    No offer update file has yet been generated
+    {% elif export.status == export.ERROR %}
+    There was an error creating the offer update file, please try again
+    {% else %}
+    Last offer update file created at {{ export.timestamp }}
+    <a href="{{ export.export.url }}"><button>Download</button></a>
+    <br>
+    {% endif %}
+    <button class="create_offer_update_export">Generate New Offer Update File</button>
+{% endif %}

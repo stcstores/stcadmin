@@ -18,3 +18,10 @@ def test_create_missing_information_export_task(
 def test_update_inventory_task(MockInventoryImport, celery_app, celery_worker):
     tasks.update_inventory.delay().get(timeout=10)
     MockInventoryImport.objects.update_inventory.assert_called_once()
+
+
+@patch("fnac.tasks.models.OfferUpdate")
+@pytest.mark.django_db
+def test_create_offer_update_export_task(MockOfferUpdate, celery_app, celery_worker):
+    tasks.create_offer_update_export.delay().get(timeout=10)
+    MockOfferUpdate.objects.create_export.assert_called_once()

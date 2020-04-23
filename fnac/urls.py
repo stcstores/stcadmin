@@ -47,4 +47,14 @@ urlpatterns = [
         views.InventoryUpdateStatus.as_view(),
         name="inventory_update_status",
     ),
+    path(
+        "offer_update/create/",
+        views.CreateOfferUpdate.as_view(),
+        name="create_offer_update",
+    ),
+    path(
+        "offer_update/status/",
+        views.OfferUpdateStatus.as_view(),
+        name="offer_update_status",
+    ),
 ]

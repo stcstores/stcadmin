@@ -10,7 +10,11 @@ from django.views.generic.edit import FormView, UpdateView
 from fnac import forms, models
 from home.views import UserInGroupMixin
 
-from .tasks import create_missing_information_export, update_inventory
+from .tasks import (
+    create_missing_information_export,
+    create_offer_update_export,
+    update_inventory,
+)
 
 
 class FnacUserMixin(UserInGroupMixin):
@@ -250,4 +254,29 @@ class InventoryUpdateStatus(FnacUserMixin, TemplateView):
         except models.InventoryImport.DoesNotExist:
             context["import"] = None
         context["in_progress"] = models.InventoryImport.objects.is_in_progress()
+        return context
+
+
+class CreateOfferUpdate(FnacUserMixin, View):
+    """View to trigger the creation of an offer update export."""
+
+    def get(self, *args, **kwargs):
+        """Trigger the creation of an offer update export."""
+        create_offer_update_export.delay()
+        return HttpResponse("done")
+
+
+class OfferUpdateStatus(FnacUserMixin, TemplateView):
+    """View to provide the status of the latest information export for ajax."""
+
+    template_name = "fnac/offer_update_status.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        try:
+            context["export"] = models.OfferUpdate.objects.latest("timestamp")
+        except models.OfferUpdate.DoesNotExist:
+            context["export"] = None
+        context["in_progress"] = models.OfferUpdate.objects.is_in_progress()
         return context

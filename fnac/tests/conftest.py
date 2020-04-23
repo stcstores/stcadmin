@@ -121,3 +121,11 @@ class InventoryImportFactory(factory.DjangoModelFactory):
 
     timestamp = datetime(2020, 3, 1)
     export = factory.SubFactory(InventoryProductExportFactory)
+
+
+@register
+class OfferUpdateFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.OfferUpdate
+
+    export = factory.django.FileField(filename="fnac_offer_update.csv")
