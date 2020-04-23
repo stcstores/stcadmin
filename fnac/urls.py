@@ -19,7 +19,6 @@ urlpatterns = [
         name="translations_export",
     ),
     path("new_product_file/", views.NewProductFile.as_view(), name="new_product_file"),
-    path("update_file/", views.UpdateFile.as_view(), name="update_file"),
     path("shipping_comment/", views.ShippingComment.as_view(), name="shipping_comment"),
     path("created_products/", views.CreatedProducts.as_view(), name="created_products"),
     path(

@@ -149,17 +149,6 @@ class NewProductFile(FnacUserMixin, View):
         return response
 
 
-class UpdateFile(FnacUserMixin, View):
-    """View for exporting stock and price update files."""
-
-    def get(*args, **kwargs):
-        """Return an HttpResponse object with the CSV export."""
-        export_file = models.create_update_upload()
-        response = http.HttpResponse(export_file.getvalue(), content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="FNAC_offers.csv"'
-        return response
-
-
 class ShippingComment(FnacUserMixin, UpdateView):
     """View for the Shipping Comment."""
 
