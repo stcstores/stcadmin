@@ -18,7 +18,6 @@ urlpatterns = [
         views.TranslationsExport.as_view(),
         name="translations_export",
     ),
-    path("new_product_file/", views.NewProductFile.as_view(), name="new_product_file"),
     path("shipping_comment/", views.ShippingComment.as_view(), name="shipping_comment"),
     path("created_products/", views.CreatedProducts.as_view(), name="created_products"),
     path(
@@ -55,5 +54,15 @@ urlpatterns = [
         "offer_update/status/",
         views.OfferUpdateStatus.as_view(),
         name="offer_update_status",
+    ),
+    path(
+        "new_product_export/create/",
+        views.CreateNewProductExport.as_view(),
+        name="create_new_product_export",
+    ),
+    path(
+        "new_product_export/status/",
+        views.NewProductExportStatus.as_view(),
+        name="new_product_export_status",
     ),
 ]

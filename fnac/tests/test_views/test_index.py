@@ -84,17 +84,6 @@ def test_links_to_translations(valid_get_response_content):
 
 
 @pytest.mark.django_db
-def test_links_to_new_product_file(products, valid_get_response_content):
-    assert reverse("fnac:new_product_file") in valid_get_response_content
-
-
-def test_does_not_link_to_product_file_if_no_valid_products_exist(
-    valid_get_response_content,
-):
-    assert reverse("fnac:new_product_file") not in valid_get_response_content
-
-
-@pytest.mark.django_db
 def test_created_count_in_context(products, valid_get_response):
     assert valid_get_response.context["created_product_count"] == 1
 

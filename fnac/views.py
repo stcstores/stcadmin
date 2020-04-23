@@ -12,6 +12,7 @@ from home.views import UserInGroupMixin
 
 from .tasks import (
     create_missing_information_export,
+    create_new_product_export,
     create_offer_update_export,
     update_inventory,
 )
@@ -135,20 +136,6 @@ class TranslationsExport(FnacUserMixin, View):
         return response
 
 
-class NewProductFile(FnacUserMixin, View):
-    """View for exporting new product import files for FNAC."""
-
-    def get(*args, **kwargs):
-        """Return an HttpResponse object with the XLSX export."""
-        export_file = models.create_new_product_upload()
-        response = http.HttpResponse(
-            export_file,
-            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sh",
-        )
-        response["Content-Disposition"] = 'attachment; filename="mirakl_products.xlsx"'
-        return response
-
-
 class ShippingComment(FnacUserMixin, UpdateView):
     """View for the Shipping Comment."""
 
@@ -268,4 +255,29 @@ class OfferUpdateStatus(FnacUserMixin, TemplateView):
         except models.OfferUpdate.DoesNotExist:
             context["export"] = None
         context["in_progress"] = models.OfferUpdate.objects.is_in_progress()
+        return context
+
+
+class CreateNewProductExport(FnacUserMixin, View):
+    """View to trigger the creation of a new product export."""
+
+    def get(self, *args, **kwargs):
+        """Trigger the creation of a new product export."""
+        create_new_product_export.delay()
+        return HttpResponse("done")
+
+
+class NewProductExportStatus(FnacUserMixin, TemplateView):
+    """View to provide the status of the latest new product export for ajax."""
+
+    template_name = "fnac/new_product_export_status.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        try:
+            context["export"] = models.NewProductExport.objects.latest("timestamp")
+        except models.NewProductExport.DoesNotExist:
+            context["export"] = None
+        context["in_progress"] = models.NewProductExport.objects.is_in_progress()
         return context

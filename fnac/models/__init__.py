@@ -9,8 +9,8 @@ from .fnac_product import FnacProduct
 from .fnac_range import FnacRange
 from .inventory_update import InventoryImport, update_inventory
 from .mirakl_export import process_mirakl_export
+from .new_product_export import NewProductExport
 from .offer_update import Comment, OfferUpdate
-from .product_upload import create_new_product_upload
 from .size import Size
 from .translation import Translation
 
@@ -23,7 +23,7 @@ __all__ = [
     "InventoryImport",
     "update_inventory",
     "process_mirakl_export",
-    "create_new_product_upload",
+    "NewProductExport",
     "Size",
     "Translation",
     "Comment",

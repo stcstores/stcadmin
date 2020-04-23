@@ -8,6 +8,8 @@
 
 <div id="offer_update_status"></div>
 
+<div id="new_product_export_status"></div>
+
 <table>
     <tr>
         <td>Created</td>
@@ -51,12 +53,6 @@
     </tr>
 </table>
 
-<div>
-{% if ready_to_create_count > 0 %}
-    <a href="{% url 'fnac:new_product_file' %}">
-        <button>Download New Product File</button>
-    </a>
-{% endif %}
 </div>
 
 {% endblock content %}
@@ -80,16 +76,29 @@
             $("#offer_update_status").html(response);
             $(".create_offer_update_export").click(function() {
                 $.get("{% url 'fnac:create_offer_update' %}", function(response) {
-                    getInventoryUpdateStatus();
+                    getOfferUpdateStatus();
                 });
             });
         });
         setTimeout(getOfferUpdateStatus, 5000);
     }
 
+    function getNewProductExportStatus() {
+        $.get("{% url 'fnac:new_product_export_status' %}", function(response) {
+            $("#new_product_export_status").html(response);
+            $(".create_new_product_export").click(function() {
+                $.get("{% url 'fnac:create_new_product_export' %}", function(response) {
+                    getNewProductExportStatus();
+                });
+            });
+        });
+        setTimeout(getNewProductExportStatus, 5000);
+    }
+
     $(document).ready(function(){
         getInventoryUpdateStatus();
-        getOfferUpdateStatus()
+        getOfferUpdateStatus();
+        getNewProductExportStatus();
     });
 </script>
 {% endblock script %}

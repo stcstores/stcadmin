@@ -25,3 +25,12 @@ def test_update_inventory_task(MockInventoryImport, celery_app, celery_worker):
 def test_create_offer_update_export_task(MockOfferUpdate, celery_app, celery_worker):
     tasks.create_offer_update_export.delay().get(timeout=10)
     MockOfferUpdate.objects.create_export.assert_called_once()
+
+
+@patch("fnac.tasks.models.NewProductExport")
+@pytest.mark.django_db
+def test_create_new_product_export_task(
+    MockNewProductExport, celery_app, celery_worker
+):
+    tasks.create_new_product_export.delay().get(timeout=10)
+    MockNewProductExport.objects.create_export.assert_called_once()

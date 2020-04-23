@@ -21,3 +21,9 @@ def update_inventory():
 def create_offer_update_export():
     """Create a new offer update export."""
     models.OfferUpdate.objects.create_export()
+
+
+@shared_task
+def create_new_product_export():
+    """Create a new product export."""
+    models.NewProductExport.objects.create_export()

@@ -129,3 +129,11 @@ class OfferUpdateFactory(factory.django.DjangoModelFactory):
         model = models.OfferUpdate
 
     export = factory.django.FileField(filename="fnac_offer_update.csv")
+
+
+@register
+class NewProductExportFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.NewProductExport
+
+    export = factory.django.FileField(filename="fnac_new_products.xlsx")

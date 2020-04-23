@@ -1,0 +1,22 @@
+{% load static %}
+
+<div class="file_status">
+    <h3>New Product Export</h3>
+    {% if in_progress %}
+    An new product file is being generated <img src="{% static 'images/loading.gif' %}" alt="" height="20">
+    <br><br><br>
+    {% else %}
+    {% if export == None %}
+    No new product file has yet been generated
+    <br><br>
+    {% elif export.status == export.ERROR %}
+    There was an error creating the new product file, please try again
+    <br><br>
+    {% else %}
+    Last new product file created at {{ export.timestamp }}
+    <a href="{{ export.export.url }}"><button>Download</button></a>
+    <br>
+    {% endif %}
+    <button class="create_new_product_export">Generate New Product File</button>
+    {% endif %}
+</div>

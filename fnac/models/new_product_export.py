@@ -6,17 +6,72 @@ from tempfile import NamedTemporaryFile
 
 import openpyxl
 from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db import models, transaction
+from django.utils import timezone
 
 from .fnac_product import FnacProduct
 
 
-def create_new_product_upload():
+class NewProductExportManager(models.Manager):
+    """Manager for the NewProductExport model."""
+
+    def is_in_progress(self):
+        """Return True if there is an export being created, otherwise False."""
+        return self.get_queryset().filter(status=NewProductExport.IN_PROGRESS).exists()
+
+    def get_filename(self):
+        """Return a filename for an export."""
+        date_string = timezone.now().strftime("%Y-%m-%d")
+        return f"fnac_new_products_{date_string}.xlsx"
+
+    def create_export(self):
+        """Create a missing information export."""
+        with transaction.atomic():
+            if self.is_in_progress():
+                raise NewProductExport.AlreadyInProgress()
+            export = self.create()
+        try:
+            export_file = create_new_product_export()
+            export.export = SimpleUploadedFile(self.get_filename(), export_file.read())
+        except Exception as e:
+            export.status = export.ERROR
+            export.save()
+            raise e
+        else:
+            export.status = export.COMPLETE
+        export.save()
+
+
+class NewProductExport(models.Model):
+    """Model for new product export files."""
+
+    class AlreadyInProgress(Exception):
+        """Exception raised when an export is created with one already in progress."""
+
+        def __init__(self, *args, **kwargs):
+            """Raise the exception."""
+            return super().__init__(self, "An export is already being created.")
+
+    COMPLETE = "complete"
+    ERROR = "error"
+    IN_PROGRESS = "in_progress"
+    STATUSES = ((COMPLETE, "Complete"), (ERROR, "Error"), (IN_PROGRESS, "In Progress"))
+
+    timestamp = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=15, choices=STATUSES, default=IN_PROGRESS)
+    export = models.FileField(upload_to="fnac/new_product_files/", null=True)
+
+    objects = NewProductExportManager()
+
+
+def create_new_product_export():
     """Return a new product upload file."""
     return _ProductUpload().create()
 
 
 class _ProductUpload:
-    TEMPLATE_PATH = Path(__file__).parent / "product_upload_template.xlsx"
+    TEMPLATE_PATH = Path(__file__).parent / "new_product_export_template.xlsx"
 
     NAME = "Libellé"
     DESCRIPTION = "Description"
