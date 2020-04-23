@@ -1,16 +1,22 @@
 {% load static %}
 
-{% if in_progress %}
+<div class="file_status">
+    <h3>Missing Information Export</h3>
+    {% if in_progress %}
     An export is being generated <img src="{% static 'images/loading.gif' %}" alt="" height="20">
-{% else %}
+    <br><br><br>
+    {% else %}
     {% if export == None %}
     No export has yet been generated
+    <br><br>
     {% elif export.status == export.ERROR %}
     There was an error creating the export file, please try again
+    <br><br>
     {% else %}
     Last export created at {{ export.timestamp }}
     <a href="{{ export.export.url }}"><button>Download</button></a>
     <br>
     {% endif %}
     <button class="create_new_export">Generate New Export File</button>
-{% endif %}
+    {% endif %}
+</div>
