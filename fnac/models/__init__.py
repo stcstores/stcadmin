@@ -1,9 +1,6 @@
 """Models for the fnac app."""
 
-from .add_missing_information import (
-    MissingInformationExport,
-    create_add_missing_information_export,
-)
+from .add_missing_information import MissingInformationExport, MissingInformationImport
 from .category import Category
 from .fnac_product import FnacProduct
 from .fnac_range import FnacRange
@@ -16,7 +13,7 @@ from .translation import Translation
 
 __all__ = [
     "MissingInformationExport",
-    "create_add_missing_information_export",
+    "MissingInformationImport",
     "Category",
     "FnacProduct",
     "FnacRange",

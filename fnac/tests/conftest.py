@@ -105,6 +105,16 @@ class MissingInformationExportFactory(factory.django.DjangoModelFactory):
 
 
 @register
+class MissingInformationImportFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.MissingInformationImport
+
+    import_file = factory.django.FileField(
+        filename="fnac_missing_information_import.xlsx"
+    )
+
+
+@register
 class InventoryProductExportFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ProductExport

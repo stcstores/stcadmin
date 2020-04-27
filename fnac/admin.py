@@ -104,3 +104,11 @@ class OfferUpdateAdmin(admin.ModelAdmin):
 
     fields = ("timestamp", "status", "export")
     list_display = fields
+
+
+@admin.register(models.MissingInformationImport)
+class MissingInformationImportAdmin(admin.ModelAdmin):
+    """Model admin for fnac.MissingInformationImport."""
+
+    fields = ("timestamp", "status", "import_file")
+    list_display = fields

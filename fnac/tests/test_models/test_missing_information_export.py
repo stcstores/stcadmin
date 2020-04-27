@@ -1,8 +1,10 @@
 import openpyxl
 import pytest
 
-from fnac.models import create_add_missing_information_export
-from fnac.models.add_missing_information import _MissingInformationExportFile
+from fnac.models.add_missing_information import (
+    _MissingInformationExportFile,
+    create_add_missing_information_export,
+)
 
 
 @pytest.fixture
