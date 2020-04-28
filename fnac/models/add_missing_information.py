@@ -9,6 +9,8 @@ from django.db import models, transaction
 from django.db.models import Q
 from django.utils import timezone
 
+from fnac.tasks import start_missing_information_import
+
 from .category import Category
 from .fnac_product import FnacProduct
 from .size import Size
@@ -94,6 +96,12 @@ class MissingInformationImportManager(models.Manager):
             import_object = self.create(
                 import_file=SimpleUploadedFile(self.get_filename(), import_file.read())
             )
+            start_missing_information_import.delay(import_object.id)
+        return import_object
+
+    def update_products(self, import_id):
+        """Update products information from a missing information import file."""
+        import_object = self.get_queryset().get(id=import_id)
         try:
             import_missing_information(import_object.import_file.path)
         except Exception as e:
@@ -130,7 +138,7 @@ class MissingInformationImport(models.Model):
 
 
 def create_add_missing_information_export():
-    """Create an export file for adding missin product information."""
+    """Create an export file for adding missing product information."""
     return _MissingInformationExportFile().create()
 
 

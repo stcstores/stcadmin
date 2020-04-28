@@ -1,7 +1,7 @@
 """Views for the fnac app."""
 
 from django import http
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import reverse
 from django.views import View
 from django.views.generic.base import TemplateView
@@ -178,6 +178,13 @@ class MissingInformation(FnacUserMixin, TemplateView):
 
     template_name = "fnac/missing_information.html"
 
+    def get_context_data(self, **kwargs):
+        """Return the context for the template."""
+        context = super().get_context_data(**kwargs)
+        context["form"] = forms.MissingInformationUploadForm()
+        context["MissingInformationImport"] = models.MissingInformationImport
+        return context
+
 
 class CreateMissingInformationExport(FnacUserMixin, View):
     """View to trigger the creation of a missing information export."""
@@ -206,6 +213,43 @@ class MissingInformationExportStatus(FnacUserMixin, TemplateView):
             "in_progress"
         ] = models.MissingInformationExport.objects.is_in_progress()
         return context
+
+
+class StartMissingInformationImport(FnacUserMixin, View):
+    """View to trigger the import of missing product information."""
+
+    def post(self, *args, **kwargs):
+        """Trigger the import of missing product information."""
+        form = forms.MissingInformationUploadForm(
+            data=self.request.POST, files=self.request.FILES
+        )
+        if form.is_valid():
+            form.save()
+            return HttpResponse("done")
+        return HttpResponse(status=500)
+
+
+class MissingInformationImportStatus(FnacUserMixin, View):
+    """View to provide the status of the latest information import for ajax."""
+
+    def get_data(self):
+        """Return view response data."""
+        data = {"status": None, "latest": None}
+        if models.MissingInformationImport.objects.is_in_progress():
+            data["status"] = models.MissingInformationImport.IN_PROGRESS
+            return data
+        try:
+            import_object = models.MissingInformationImport.objects.latest("timestamp")
+        except models.MissingInformationImport.DoesNotExist:
+            return data
+        else:
+            data["status"] = import_object.status
+            data["latest"] = import_object.timestamp.strftime("%H:%M on %d %b %Y")
+        return data
+
+    def get(self, *args, **kwargs):
+        """Return the import status as JSON."""
+        return JsonResponse(self.get_data())
 
 
 class StartInventoryUpdate(FnacUserMixin, View):

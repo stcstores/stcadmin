@@ -40,3 +40,15 @@ class CreatedProductsForm(forms.Form):
     def save(self):
         """Mark created products."""
         models.process_mirakl_export(self.cleaned_data["export_file"])
+
+
+class MissingInformationUploadForm(forms.Form):
+    """Form for submitting missing information updates."""
+
+    import_file = forms.FileField()
+
+    def save(self):
+        """Import the file."""
+        models.MissingInformationImport.objects.create_import(
+            self.cleaned_data["import_file"]
+        )

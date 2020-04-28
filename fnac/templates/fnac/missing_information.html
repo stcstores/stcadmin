@@ -1,32 +1,123 @@
 {% extends 'fnac/base.html' %}
+{% load static %}
 
 {% block content %}
 <h1>Missing FNAC Product Information</h1>
 <hr>
 <h3>Missing Information Export</h3>
 <p>
-    Use a missing information export file to fill in information about a product that 
-    we don't have that is required by FNAC.
+    Use a missing information export file to fill in missing information about a product
+    that is required by FNAC.
 </p>
 <div id="export_status"></div>
+<div id="import_status">
+    <div class="file_status">
+        <h3>Missing Information Import</h3>
+        <div id="import_status_ready" class="import_status_type">
+            Last import started at <span id="latest_import"></span>
+        </div>
+        <div id="import_status_in_progress" class="import_status_type">
+            An import is in progress <img src="{% static 'images/loading.gif' %}" alt="" height="20">
+        </div>
+        <div id="import_status_error" class="import_status_type">
+            There was an error importing the update, please try again
+        </div>
+        <div id="import_status_not_existant" class="import_status_type">
+            No import has yet been done
+        </div>
+        <div id="import_start_error" class="import_status_type">
+            There was an error uploading the file, please try again
+        </div>
+        <div id="import_status_check_error" class="import_status_type">
+            There was an error getting the status of the import
+        </div>
+        <div id="import_status_form" class="import_status_type">
+            <form id="missing_information_import_form" enctype="multipart/form-data" method="POST" action="{% url "fnac:start_missing_information_import" %}">{% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
 {% endblock content %}
 
 {% block script %}
 <script>
-    function getStatus() {
+    function getExportStatus() {
         $.get("{% url 'fnac:missing_information_export_status' %}", function(response) {
             $("#export_status").html(response);
             $(".create_new_export").click(function() {
                 $.get("{% url 'fnac:create_missing_information_export' %}", function(response) {
-                    getStatus();
+                    getExportStatus();
                 });
             });
         });
-        setTimeout(getStatus, 5000);
+        {% comment %} setTimeout(getExportStatus, 5000); {% endcomment %}
+    }
+
+    function getImportStatus() {
+        $.ajax({
+            url: "{% url 'fnac:missing_information_import_status' %}",
+            type: 'GET',
+            success: function(response){ 
+                $('.import_status_type').hide();
+                switch (response['status']) {
+                    case '{{ MissingInformationImport.COMPLETE }}':
+                        $('#import_status_ready').show();
+                        $('#latest_import').html(response['latest']);
+                        $('#import_status_form').show();
+                        break
+                    case '{{ MissingInformationImport.IN_PROGRESS }}':
+                        $('#import_status_in_progress').show();
+                        break
+                    case '{{ MissingInformationImport.ERROR }}':
+                        $('#import_status_error').show();
+                        $('#import_status_form').show();
+                        break
+                    case null:
+                        $('#import_status_not_existant').show();
+                        $('#import_status_form').show();
+                        break
+                    default:
+                        $('#import_status_check_error').show();
+                }
+            },
+            error: function(response) {
+                $('.import_status_type').hide();
+                $('#import_status_check_error').show();
+            }
+        });
+        setTimeout(getImportStatus, 5000);
     }
 
     $(document).ready(function(){
-        getStatus();
+        $('.import_status_type').hide();
+        $("#missing_information_import_form").submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                data: new FormData($(this).get(0)),
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                processData: false,
+                contentType: false,
+                success: function () {
+                    getImportStatus();
+                },
+                error: function() {
+                    $('.import_status_type').hide();
+                    $('#import_start_error').show();
+                    $('#import_status_form').show();
+                    setTimeout(getImportStatus, 5000);
+                }
+            });
+            return false;
+        });
+
+        getExportStatus();
+        getImportStatus();
     });
 </script>
 {% endblock script %}

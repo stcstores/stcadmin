@@ -86,29 +86,29 @@ class TranslationAdmin(admin.ModelAdmin):
 class MissingInformationExportAdmin(admin.ModelAdmin):
     """Model admin for fnac.MissingInformationExport."""
 
-    fields = ("timestamp", "status", "export")
-    list_display = fields
+    fields = ("status", "export")
+    list_display = ("timestamp", "status", "export")
 
 
 @admin.register(models.InventoryImport)
 class InventoryImportAdmin(admin.ModelAdmin):
     """Model admin for fnac.InventoryImport."""
 
-    fields = ("timestamp", "status", "export")
-    list_display = fields
+    fields = ("status", "export")
+    list_display = ("timestamp", "status", "export")
 
 
 @admin.register(models.OfferUpdate)
 class OfferUpdateAdmin(admin.ModelAdmin):
     """Model admin for fnac.OfferUpdate."""
 
-    fields = ("timestamp", "status", "export")
-    list_display = fields
+    fields = ("status", "export")
+    list_display = ("timestamp", "status", "export")
 
 
 @admin.register(models.MissingInformationImport)
 class MissingInformationImportAdmin(admin.ModelAdmin):
     """Model admin for fnac.MissingInformationImport."""
 
-    fields = ("timestamp", "status", "import_file")
-    list_display = fields
+    fields = ("status", "import_file")
+    list_display = ("timestamp", "status", "import_file")

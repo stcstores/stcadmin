@@ -27,3 +27,9 @@ def create_offer_update_export():
 def create_new_product_export():
     """Create a new product export."""
     models.NewProductExport.objects.create_export()
+
+
+@shared_task
+def start_missing_information_import(import_id):
+    """Import missing product information."""
+    models.MissingInformationImport.objects.update_products(import_id)

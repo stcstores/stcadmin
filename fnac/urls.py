@@ -36,6 +36,16 @@ urlpatterns = [
         name="missing_information_export_status",
     ),
     path(
+        "missing_information/start_import/",
+        views.StartMissingInformationImport.as_view(),
+        name="start_missing_information_import",
+    ),
+    path(
+        "missing_information/import_status/",
+        views.MissingInformationImportStatus.as_view(),
+        name="missing_information_import_status",
+    ),
+    path(
         "inventory_update/start/",
         views.StartInventoryUpdate.as_view(),
         name="start_inventory_update",

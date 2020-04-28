@@ -44,28 +44,65 @@ def import_missing_information_error():
         yield mock_import_missing_information
 
 
+@pytest.fixture
+def mock_import_missing_information():
+    with patch(
+        "fnac.models.add_missing_information.import_missing_information"
+    ) as mock_import_missing_information:
+        yield mock_import_missing_information
+
+
+@pytest.fixture()
+def mock_start_missing_information_import_task():
+    with patch(
+        "fnac.models.add_missing_information.start_missing_information_import"
+    ) as mock_task:
+        yield mock_task
+
+
 @pytest.mark.django_db
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_import_missing_information(mock_now, import_file):
-    models.MissingInformationImport.objects.create_import(import_file)
-    assert models.MissingInformationImport.objects.count() == 1
-    import_object = models.MissingInformationImport.objects.get()
+def test_update_products(
+    mock_import_missing_information, missing_information_import_factory
+):
+    import_object = missing_information_import_factory.create(
+        status=models.MissingInformationImport.IN_PROGRESS
+    )
+    models.MissingInformationImport.objects.update_products(import_object.id)
+    mock_import_missing_information.assert_called_once_with(
+        import_object.import_file.path
+    )
+    import_object.refresh_from_db()
     assert import_object.status == import_object.COMPLETE
+
+
+@pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+def test_import_missing_information(
+    mock_now, mock_start_missing_information_import_task, import_file
+):
+    import_object = models.MissingInformationImport.objects.create_import(import_file)
     assert (
         os.path.basename(import_object.import_file.file.name)
         == models.MissingInformationImport.objects.get_filename()
+    )
+    assert import_object.status == import_object.IN_PROGRESS
+    mock_start_missing_information_import_task.delay.assert_called_once_with(
+        import_object.id
     )
 
 
 @pytest.mark.django_db
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 def test_import_missing_information_error(
-    import_missing_information_error, import_file
+    import_missing_information_error, import_file, missing_information_import_factory
 ):
+    import_object = missing_information_import_factory.create(
+        status=models.MissingInformationImport.IN_PROGRESS
+    )
     with pytest.raises(Exception):
-        models.MissingInformationImport.objects.create_import(import_file)
-    assert models.MissingInformationImport.objects.count() == 1
-    import_object = models.MissingInformationImport.objects.get()
+        models.MissingInformationImport.objects.update_products(import_object.id)
+    import_object.refresh_from_db()
     assert import_object.status == import_object.ERROR
 
 

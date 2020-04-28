@@ -34,3 +34,15 @@ def test_create_new_product_export_task(
 ):
     tasks.create_new_product_export.delay().get(timeout=10)
     MockNewProductExport.objects.create_export.assert_called_once()
+
+
+@patch("fnac.tasks.models.MissingInformationImport")
+@pytest.mark.django_db
+def test_start_missing_information_import_task(
+    MockMissingInformationImport, celery_app, celery_worker
+):
+    import_id = 5
+    tasks.start_missing_information_import.delay(import_id).get(timeout=10)
+    MockMissingInformationImport.objects.update_products.assert_called_once_with(
+        import_id
+    )
