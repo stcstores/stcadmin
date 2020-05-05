@@ -32,14 +32,16 @@ class TranslationsForm(forms.Form):
             translation.save()
 
 
-class CreatedProductsForm(forms.Form):
+class MiraklProductImportForm(forms.Form):
     """Form for marking products that have been created."""
 
-    export_file = forms.FileField()
+    import_file = forms.FileField()
 
     def save(self):
         """Mark created products."""
-        models.process_mirakl_export(self.cleaned_data["export_file"])
+        models.MiraklProductImport.objects.create_import(
+            self.cleaned_data["import_file"]
+        )
 
 
 class MissingInformationUploadForm(forms.Form):

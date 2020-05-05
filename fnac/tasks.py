@@ -33,3 +33,9 @@ def create_new_product_export():
 def start_missing_information_import(import_id):
     """Import missing product information."""
     models.MissingInformationImport.objects.update_products(import_id)
+
+
+@shared_task
+def start_mirakl_product_import(import_id):
+    """Import created product information from a Mirakl product export."""
+    models.MiraklProductImport.objects.update_products(import_id)

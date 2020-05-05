@@ -19,7 +19,6 @@ urlpatterns = [
         name="translations_export",
     ),
     path("shipping_comment/", views.ShippingComment.as_view(), name="shipping_comment"),
-    path("created_products/", views.CreatedProducts.as_view(), name="created_products"),
     path(
         "missing_information/",
         views.MissingInformation.as_view(),

@@ -112,3 +112,11 @@ class MissingInformationImportAdmin(admin.ModelAdmin):
 
     fields = ("status", "import_file")
     list_display = ("timestamp", "status", "import_file")
+
+
+@admin.register(models.MiraklProductImport)
+class MiraklProductImportAdmin(admin.ModelAdmin):
+    """Model admin for fnac.MiraklProductImport."""
+
+    fields = ("status", "import_file")
+    list_display = ("timestamp", "status", "import_file")

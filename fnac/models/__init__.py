@@ -5,7 +5,7 @@ from .category import Category
 from .fnac_product import FnacProduct
 from .fnac_range import FnacRange
 from .inventory_update import InventoryImport, update_inventory
-from .mirakl_export import process_mirakl_export
+from .mirakl_product_import import MiraklProductImport
 from .new_product_export import NewProductExport
 from .offer_update import Comment, OfferUpdate
 from .size import Size
@@ -19,7 +19,7 @@ __all__ = [
     "FnacRange",
     "InventoryImport",
     "update_inventory",
-    "process_mirakl_export",
+    "MiraklProductImport",
     "NewProductExport",
     "Size",
     "Translation",

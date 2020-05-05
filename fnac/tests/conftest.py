@@ -147,3 +147,11 @@ class NewProductExportFactory(factory.django.DjangoModelFactory):
         model = models.NewProductExport
 
     export = factory.django.FileField(filename="fnac_new_products.xlsx")
+
+
+@register
+class MiraklProductImportFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.MiraklProductImport
+
+    import_file = factory.django.FileField(filename="fnac_mirakl_product_import.xlsx")
