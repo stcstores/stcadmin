@@ -1,0 +1,20 @@
+<div id="inventory_update_status"></div>
+
+<script>
+
+    function getInventoryUpdateStatus() {
+        $.get("{% url 'fnac:inventory_update_status' %}", function(response) {
+            $("#inventory_update_status").html(response);
+            $(".start_inventory_update").click(function() {
+                $.get("{% url 'fnac:start_inventory_update' %}", function(response) {
+                    getInventoryUpdateStatus();
+                });
+            });
+        });
+        setTimeout(getInventoryUpdateStatus, 5000);
+    }
+    
+    $(document).ready(function(){
+        getInventoryUpdateStatus();
+    });
+</script>

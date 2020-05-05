@@ -4,11 +4,12 @@
 
 <h1>FNAC</h1>
 
-<div id="inventory_update_status"></div>
+{% include 'fnac/status_boxes/inventory_update.html' %}
 
-<div id="offer_update_status"></div>
+{% include 'fnac/status_boxes/offer_update.html' %}
 
-<div id="new_product_export_status"></div>
+{% include 'fnac/status_boxes/new_product_export_status.html' %}
+
 
 <table>
     <tr>
@@ -56,49 +57,3 @@
 </div>
 
 {% endblock content %}
-
-{% block script %}
-<script>
-    function getInventoryUpdateStatus() {
-        $.get("{% url 'fnac:inventory_update_status' %}", function(response) {
-            $("#inventory_update_status").html(response);
-            $(".start_inventory_update").click(function() {
-                $.get("{% url 'fnac:start_inventory_update' %}", function(response) {
-                    getInventoryUpdateStatus();
-                });
-            });
-        });
-        setTimeout(getInventoryUpdateStatus, 5000);
-    }
-
-    function getOfferUpdateStatus() {
-        $.get("{% url 'fnac:offer_update_status' %}", function(response) {
-            $("#offer_update_status").html(response);
-            $(".create_offer_update_export").click(function() {
-                $.get("{% url 'fnac:create_offer_update' %}", function(response) {
-                    getOfferUpdateStatus();
-                });
-            });
-        });
-        setTimeout(getOfferUpdateStatus, 5000);
-    }
-
-    function getNewProductExportStatus() {
-        $.get("{% url 'fnac:new_product_export_status' %}", function(response) {
-            $("#new_product_export_status").html(response);
-            $(".create_new_product_export").click(function() {
-                $.get("{% url 'fnac:create_new_product_export' %}", function(response) {
-                    getNewProductExportStatus();
-                });
-            });
-        });
-        setTimeout(getNewProductExportStatus, 5000);
-    }
-
-    $(document).ready(function(){
-        getInventoryUpdateStatus();
-        getOfferUpdateStatus();
-        getNewProductExportStatus();
-    });
-</script>
-{% endblock script %}

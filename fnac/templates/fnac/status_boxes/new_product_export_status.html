@@ -1,0 +1,22 @@
+<div id="new_product_export_status"></div>
+
+<script>
+
+    function getNewProductExportStatus() {
+        $.get("{% url 'fnac:new_product_export_status' %}", function(response) {
+            $("#new_product_export_status").html(response);
+            $(".create_new_product_export").click(function() {
+                $.get("{% url 'fnac:create_new_product_export' %}", function(response) {
+                    getNewProductExportStatus();
+                });
+            });
+        });
+        setTimeout(getNewProductExportStatus, 5000);
+    }
+
+    $(document).ready(function(){
+        getOfferUpdateStatus();
+        getNewProductExportStatus();
+    });
+
+</script>

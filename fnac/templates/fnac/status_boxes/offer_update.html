@@ -1,0 +1,21 @@
+<div id="offer_update_status"></div>
+
+<script>
+
+    function getOfferUpdateStatus() {
+        $.get("{% url 'fnac:offer_update_status' %}", function(response) {
+            $("#offer_update_status").html(response);
+            $(".create_offer_update_export").click(function() {
+                $.get("{% url 'fnac:create_offer_update' %}", function(response) {
+                    getOfferUpdateStatus();
+                });
+            });
+        });
+        setTimeout(getOfferUpdateStatus, 5000);
+    }
+
+    $(document).ready(function(){
+        getOfferUpdateStatus();
+    });
+
+</script>

@@ -1,0 +1,18 @@
+<div id="export_status"></div>
+<script>
+    function getExportStatus() {
+        $.get("{% url 'fnac:missing_information_export_status' %}", function(response) {
+            $("#export_status").html(response);
+            $(".create_new_export").click(function() {
+                $.get("{% url 'fnac:create_missing_information_export' %}", function(response) {
+                    getExportStatus();
+                });
+            });
+        });
+        {% comment %} setTimeout(getExportStatus, 5000); {% endcomment %}
+    }
+
+    $(document).ready(function(){       
+        getExportStatus();
+    });
+</script>
