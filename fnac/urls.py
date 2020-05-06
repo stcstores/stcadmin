@@ -74,4 +74,19 @@ urlpatterns = [
         views.NewProductExportStatus.as_view(),
         name="new_product_export_status",
     ),
+    path(
+        "add_created_products/",
+        views.AddCreatedProducts.as_view(),
+        name="add_created_products",
+    ),
+    path(
+        "add_created_products/mirakl_product_file_status/",
+        views.MiraklProductFileImportStatus.as_view(),
+        name="mirakl_product_import_status",
+    ),
+    path(
+        "add_created_products/start_mirakl_product_file_import/",
+        views.StartMiraklProductFileImport.as_view(),
+        name="start_mirakl_product_file_import",
+    ),
 ]

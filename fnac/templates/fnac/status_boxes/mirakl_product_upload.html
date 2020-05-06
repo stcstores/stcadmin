@@ -1,0 +1,95 @@
+{% load static %}
+
+<div id="mirakl_product_import_status">
+    <div class="file_status">
+        <h3>Mirakl Product File Import</h3>
+        <div id="mirakl_product_import_status_ready" class="mirakl_product_import_status_type">
+            Last import started at <span id="latest_import"></span>
+        </div>
+        <div id="mirakl_product_import_status_in_progress" class="mirakl_product_import_status_type">
+            An import is in progress <img src="{% static 'images/loading.gif' %}" alt="" height="20">
+        </div>
+        <div id="mirakl_product_import_status_error" class="mirakl_product_import_status_type">
+            There was an error importing the file, please try again
+        </div>
+        <div id="mirakl_product_import_status_not_existant" class="mirakl_product_import_status_type">
+            No import has yet been done
+        </div>
+        <div id="mirakl_product_import_start_error" class="mirakl_product_import_status_type">
+            There was an error uploading the file, please try again
+        </div>
+        <div id="mirakl_product_import_status_check_error" class="mirakl_product_import_status_type">
+            There was an error getting the status of the import
+        </div>
+        <div id="mirakl_product_import_status_form" class="mirakl_product_import_status_type">
+            <form id="mirakl_product_import_form" enctype="multipart/form-data" method="POST" action="{% url "fnac:start_mirakl_product_file_import" %}">{% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function getMiraklProductImportStatus() {
+        $.ajax({
+            url: "{% url 'fnac:mirakl_product_import_status' %}",
+            type: 'GET',
+            success: function(response){ 
+                $('.mirakl_product_import_status_type').hide();
+                switch (response['status']) {
+                    case '{{ MiraklProductImport.COMPLETE }}':
+                        $('#mirakl_product_import_status_ready').show();
+                        $('#latest_import').html(response['latest']);
+                        $('#mirakl_product_import_status_form').show();
+                        break
+                    case '{{ MiraklProductImport.IN_PROGRESS }}':
+                        $('#mirakl_product_import_status_in_progress').show();
+                        break
+                    case '{{ MiraklProductImport.ERROR }}':
+                        $('#mirakl_product_import_status_error').show();
+                        $('#mirakl_product_import_status_form').show();
+                        break
+                    case null:
+                        $('#mirakl_product_import_status_not_existant').show();
+                        $('#mirakl_product_import_status_form').show();
+                        break
+                    default:
+                        $('#mirakl_product_import_status_check_error').show();
+                }
+            },
+            error: function(response) {
+                $('.mirakl_product_import_status_type').hide();
+                $('#mirakl_product_import_status_check_error').show();
+            }
+        });
+        setTimeout(getMiraklProductImportStatus, 5000);
+    }
+
+    $(document).ready(function(){
+        $('.mirakl_product_import_status_type').hide();
+        $("#mirakl_product_import_form").submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                data: new FormData($(this).get(0)),
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                processData: false,
+                contentType: false,
+                success: function () {
+                    getMiraklProductImportStatus();
+                },
+                error: function() {
+                    $('.mirakl_product_import_status_type').hide();
+                    $('#mirakl_product_import_start_error').show();
+                    $('#mirakl_product_import_status_form').show();
+                    setTimeout(getMiraklProductImportStatus, 5000);
+                }
+            });
+            return false;
+        });
+
+        getMiraklProductImportStatus();
+    });
+</script>

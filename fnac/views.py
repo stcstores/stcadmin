@@ -309,3 +309,53 @@ class NewProductExportStatus(FnacUserMixin, TemplateView):
             context["export"] = None
         context["in_progress"] = models.NewProductExport.objects.is_in_progress()
         return context
+
+
+class AddCreatedProducts(FnacUserMixin, TemplateView):
+    """View for uploading mirakl product files."""
+
+    template_name = "fnac/add_created_products.html"
+
+    def get_context_data(self, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(**kwargs)
+        context["form"] = forms.MiraklProductImportForm()
+        context["MiraklProductImport"] = models.MiraklProductImport
+        return context
+
+
+class MiraklProductFileImportStatus(FnacUserMixin, View):
+    """Show the status of the current or most recent mirakl product file import."""
+
+    def get_data(self):
+        """Return view response data."""
+        data = {"status": None, "latest": None}
+        if models.MiraklProductImport.objects.is_in_progress():
+            data["status"] = models.MiraklProductImport.IN_PROGRESS
+            return data
+        try:
+            import_object = models.MiraklProductImport.objects.latest("timestamp")
+        except models.MiraklProductImport.DoesNotExist:
+            return data
+        else:
+            data["status"] = import_object.status
+            data["latest"] = import_object.timestamp.strftime("%H:%M on %d %b %Y")
+        return data
+
+    def get(self, *args, **kwargs):
+        """Return the import status as JSON."""
+        return JsonResponse(self.get_data())
+
+
+class StartMiraklProductFileImport(FnacUserMixin, View):
+    """View to trigger the import of a mirakl product file."""
+
+    def post(self, *args, **kwargs):
+        """Trigger the import of a mirakl product file."""
+        form = forms.MiraklProductImportForm(
+            data=self.request.POST, files=self.request.FILES
+        )
+        if form.is_valid():
+            form.save()
+            return HttpResponse("done")
+        return HttpResponse(status=500)

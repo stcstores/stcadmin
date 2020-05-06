@@ -1,9 +1,8 @@
 {% extends 'fnac/base.html' %}
 
 {% block content %}
-
-<h1>Mark Created Products</h1>
-
+<h1>Add Created Products</h1>
+<hr>
 <p>
     Upload a Mirakl product export to mark products as created. These products will then
     be included in updates.
@@ -16,9 +15,6 @@
     Download Last Export File Generated and upload the resulting file below.
 </p>
 
-<form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
-    {{ form.as_p }}
-    <button>Upload</button>
-</form>
+{% include 'fnac/status_boxes/mirakl_product_upload.html' %}
 
 {% endblock content %}
