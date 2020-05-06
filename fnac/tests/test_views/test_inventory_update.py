@@ -47,7 +47,7 @@ class TestStartInventoryUpdate:
         response = group_logged_in_client.post(self.URL)
         assert response.status_code == 405
 
-    def test_response_test(self, valid_get_response_content):
+    def test_response_templates(self, valid_get_response_content):
         assert valid_get_response_content == "done"
 
     def test_inventory_update_triggered(
@@ -105,8 +105,8 @@ class TestInventoryUpdateStatusView:
         response = group_logged_in_client.post(self.URL)
         assert response.status_code == 405
 
-    def test_response_test(self, valid_get_response):
-        assertTemplateUsed("fnac/inventory_import_status.html")
+    def test_response_templates(self, valid_get_response):
+        assertTemplateUsed(valid_get_response, "fnac/inventory_import_status.html")
 
     def test_content_with_no_existing_import(self, valid_get_response_content):
         assert "Inventory not yet imported" in valid_get_response_content

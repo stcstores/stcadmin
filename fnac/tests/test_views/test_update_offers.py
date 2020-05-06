@@ -54,10 +54,12 @@ class TestUpdateOffersView:
     def test_logged_in_group_post(self, valid_post_response):
         assert valid_post_response.status_code == 302
 
-    def test_response_test(self, valid_get_response):
-        assertTemplateUsed("fnac/update_offers.html")
-        assertTemplateUsed("fnac/status_boxes/inventory_update.html")
-        assertTemplateUsed("fnac/status_boxes/offer_update.html")
+    def test_response_templates(self, valid_get_response):
+        assertTemplateUsed(valid_get_response, "fnac/update_offers.html")
+        assertTemplateUsed(
+            valid_get_response, "fnac/status_boxes/inventory_update.html"
+        )
+        assertTemplateUsed(valid_get_response, "fnac/status_boxes/offer_update.html")
 
     @pytest.mark.django_db
     def test_current_comment_is_displayed(

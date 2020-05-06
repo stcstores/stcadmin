@@ -47,9 +47,11 @@ class TestMissingInformationView:
         response = group_logged_in_client.post(self.URL)
         assert response.status_code == 405
 
-    def test_response_test(self, valid_get_response):
-        assertTemplateUsed("fnac/add_created_products.html")
-        assertTemplateUsed("fnac/status_boxes/mirakl_product_upload.html")
+    def test_response_templates(self, valid_get_response):
+        assertTemplateUsed(valid_get_response, "fnac/add_created_products.html")
+        assertTemplateUsed(
+            valid_get_response, "fnac/status_boxes/mirakl_product_upload.html"
+        )
 
     def test_form_in_context(self, valid_get_response):
         assert isinstance(valid_get_response.context["form"], MiraklProductImportForm)
@@ -106,7 +108,7 @@ class TestStartMiraklProductFileImport:
         response = group_logged_in_client.post(self.URL, {"import_file": upload_file})
         assert response.status_code == 200
 
-    def test_response_test(self, valid_post_response_content):
+    def test_response_templates(self, valid_post_response_content):
         assert valid_post_response_content == "done"
 
     def test_import_triggered(self, mock_create_import, valid_post_response):
@@ -170,9 +172,6 @@ class TestMiraklProductFileImportStatus:
     ):
         response = group_logged_in_client.post(self.URL)
         assert response.status_code == 405
-
-    def test_response_test(self, valid_get_response):
-        assertTemplateUsed("fnac/missing_information_import_status.html")
 
     def test_content_with_no_existing_import(self, valid_get_response_content):
         assert valid_get_response_content == json.dumps(

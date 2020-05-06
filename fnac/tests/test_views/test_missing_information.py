@@ -46,8 +46,8 @@ class TestMissingInformationView:
         response = group_logged_in_client.post(self.URL)
         assert response.status_code == 405
 
-    def test_response_test(self, valid_get_response):
-        assertTemplateUsed("fnac/missing_information.html")
+    def test_response_templates(self, valid_get_response):
+        assertTemplateUsed(valid_get_response, "fnac/missing_information.html")
 
 
 class TestCreateMissingInformationExport:
@@ -91,7 +91,7 @@ class TestCreateMissingInformationExport:
         response = group_logged_in_client.post(self.URL)
         assert response.status_code == 405
 
-    def test_response_test(self, valid_get_response_content):
+    def test_response_templates(self, valid_get_response_content):
         assert valid_get_response_content == "done"
 
     def test_export_creation_triggered(
@@ -158,8 +158,10 @@ class TestMissingInformationExportStatusView:
         response = group_logged_in_client.post(self.URL)
         assert response.status_code == 405
 
-    def test_response_test(self, valid_get_response):
-        assertTemplateUsed("fnac/missing_information_export_status.html")
+    def test_response_templates(self, valid_get_response):
+        assertTemplateUsed(
+            valid_get_response, "fnac/missing_information_export_status.html"
+        )
 
     def test_content_with_no_existing_export(self, valid_get_response_content):
         assert "No export has yet been generated" in valid_get_response_content
@@ -233,7 +235,7 @@ class TestStartMissingInformationImport:
         response = group_logged_in_client.post(self.URL, {"import_file": upload_file})
         assert response.status_code == 200
 
-    def test_response_test(self, valid_post_response_content):
+    def test_response_templates(self, valid_post_response_content):
         assert valid_post_response_content == "done"
 
     def test_import_triggered(self, mock_create_import, valid_post_response):
@@ -301,9 +303,6 @@ class TestMissingInformationImportStatusView:
     ):
         response = group_logged_in_client.post(self.URL)
         assert response.status_code == 405
-
-    def test_response_test(self, valid_get_response):
-        assertTemplateUsed("fnac/missing_information_import_status.html")
 
     def test_content_with_no_existing_import(self, valid_get_response_content):
         assert valid_get_response_content == json.dumps(

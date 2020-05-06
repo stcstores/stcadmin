@@ -49,7 +49,7 @@ class TestCreateNewProductExport:
         response = group_logged_in_client.post(self.URL)
         assert response.status_code == 405
 
-    def test_response_test(self, valid_get_response_content):
+    def test_response_templates(self, valid_get_response_content):
         assert valid_get_response_content == "done"
 
     def test_export_creation_triggered(
@@ -110,8 +110,8 @@ class TestNewProductExportStatusView:
         response = group_logged_in_client.post(self.URL)
         assert response.status_code == 405
 
-    def test_response_test(self, valid_get_response):
-        assertTemplateUsed("fnac/new_product_export_status.html")
+    def test_response_templates(self, valid_get_response):
+        assertTemplateUsed(valid_get_response, "fnac/new_product_export_status.html")
 
     def test_content_with_no_existing_export(self, valid_get_response_content):
         assert (
