@@ -7,6 +7,7 @@ from fnac import views
 app_name = "fnac"
 urlpatterns = [
     path("", views.Index.as_view(), name="index"),
+    path("update_offers/", views.UpdateOffers.as_view(), name="update_offers"),
     path(
         "invalid_in_inventory/",
         views.InvalidInInventory.as_view(),
@@ -18,7 +19,6 @@ urlpatterns = [
         views.TranslationsExport.as_view(),
         name="translations_export",
     ),
-    path("shipping_comment/", views.ShippingComment.as_view(), name="shipping_comment"),
     path(
         "missing_information/",
         views.MissingInformation.as_view(),

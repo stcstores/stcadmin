@@ -3,10 +3,10 @@ from django.shortcuts import reverse
 
 PAGES = [
     reverse("fnac:index"),
+    reverse("fnac:update_offers"),
     reverse("fnac:invalid_in_inventory"),
     reverse("fnac:missing_information"),
     reverse("fnac:translations"),
-    reverse("fnac:shipping_comment"),
 ]
 
 

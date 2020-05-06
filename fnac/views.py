@@ -86,6 +86,27 @@ class Index(FnacUserMixin, TemplateView):
         return models.FnacProduct.objects.ready_to_create().count()
 
 
+class UpdateOffers(FnacUserMixin, UpdateView):
+    """View for managing FNAC offer updates."""
+
+    template_name = "fnac/update_offers.html"
+    model_class = models.Comment
+    fields = ("comment",)
+
+    def get_object(self):
+        """Return kwargs for the form."""
+        return self.model_class.objects.get_comment()
+
+    def form_valid(self, form):
+        """Create new translations."""
+        models.Comment.objects.set_comment_text(form.cleaned_data["comment"])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the URL to redirect to if forms submission is successful."""
+        return reverse("fnac:update_offers")
+
+
 class InvalidInInventory(FnacUserMixin, TemplateView):
     """View for displaying products that are not listed on FNAC due to invalid inventory info."""
 
@@ -134,27 +155,6 @@ class TranslationsExport(FnacUserMixin, View):
         )
         response["Content-Disposition"] = 'attachment; filename="to_translate.xlsx"'
         return response
-
-
-class ShippingComment(FnacUserMixin, UpdateView):
-    """View for the Shipping Comment."""
-
-    template_name = "fnac/shipping_comment.html"
-    model_class = models.Comment
-    fields = ("comment",)
-
-    def get_object(self):
-        """Return kwargs for the form."""
-        return self.model_class.objects.get_comment()
-
-    def form_valid(self, form):
-        """Create new translations."""
-        models.Comment.objects.set_comment_text(form.cleaned_data["comment"])
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        """Return the URL to redirect to if forms submission is successful."""
-        return reverse("fnac:index")
 
 
 class MissingInformation(FnacUserMixin, TemplateView):

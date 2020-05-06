@@ -1,0 +1,35 @@
+{% extends 'fnac/base.html' %}
+
+{% block content %}
+
+<h1>Update Offers</h1>
+<hr>
+<p>
+    Offer files are used to update price and stock levels on FNAC. After a new product
+    is created an offer file must be uploaded before the product will be availble
+    to purchase.
+</p>
+<p>
+    The offer file contains a &quot;Shipping Comment&quot; that describes the expected
+    shipping time and any other relevent shipping information. The shipping comment can
+    be changed below. Enter the new comment (in french) then generate and upload a new
+    offer file.
+</p>
+<form action="" method="POST">{% csrf_token %}
+    {{ form.as_p }}
+    <button>Update Shipping Comment</button>
+</form>
+<p>
+    In order to set the correct stock levels up to date inventory information must be
+    imported from Cloud Commerce. You will see below when the last import was done and
+    if necessary, trigger an update. You should do this before creating an offer file.
+</p>
+{% include 'fnac/status_boxes/inventory_update.html' %}
+<p>
+    To update the offers on FNAC generate and download an Offer Update File below.
+    This should then be uploaded to <a href="https://mp.fnac.com/vendre/pro">FNAC</a>.
+    Go to Offer/Add Offers Massively and upload the Offer Update File.
+</p>
+{% include 'fnac/status_boxes/offer_update.html' %}
+
+{% endblock content %}
