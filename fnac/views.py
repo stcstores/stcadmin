@@ -29,6 +29,33 @@ class Index(FnacUserMixin, TemplateView):
 
     template_name = "fnac/index.html"
 
+
+class UpdateOffers(FnacUserMixin, UpdateView):
+    """View for managing FNAC offer updates."""
+
+    template_name = "fnac/update_offers.html"
+    model_class = models.Comment
+    fields = ("comment",)
+
+    def get_object(self):
+        """Return kwargs for the form."""
+        return self.model_class.objects.get_comment()
+
+    def form_valid(self, form):
+        """Create new translations."""
+        models.Comment.objects.set_comment_text(form.cleaned_data["comment"])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the URL to redirect to if forms submission is successful."""
+        return reverse("fnac:update_offers")
+
+
+class CreateProducts(FnacUserMixin, TemplateView):
+    """View for managing products that have yet to be added to FNAC."""
+
+    template_name = "fnac/create_products.html"
+
     def get_context_data(self, *args, **kwargs):
         """Return template context data."""
         context = super().get_context_data(*args, **kwargs)
@@ -84,27 +111,6 @@ class Index(FnacUserMixin, TemplateView):
     def ready_to_create_count(self):
         """Return the number of products that are ready to be created."""
         return models.FnacProduct.objects.ready_to_create().count()
-
-
-class UpdateOffers(FnacUserMixin, UpdateView):
-    """View for managing FNAC offer updates."""
-
-    template_name = "fnac/update_offers.html"
-    model_class = models.Comment
-    fields = ("comment",)
-
-    def get_object(self):
-        """Return kwargs for the form."""
-        return self.model_class.objects.get_comment()
-
-    def form_valid(self, form):
-        """Create new translations."""
-        models.Comment.objects.set_comment_text(form.cleaned_data["comment"])
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        """Return the URL to redirect to if forms submission is successful."""
-        return reverse("fnac:update_offers")
 
 
 class InvalidInInventory(FnacUserMixin, TemplateView):

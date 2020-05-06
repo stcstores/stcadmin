@@ -10,50 +10,6 @@
 
 {% include 'fnac/status_boxes/new_product_export_status.html' %}
 
-
-<table>
-    <tr>
-        <td>Created</td>
-        <td>{{created_product_count}}</td>
-    </tr>
-    <tr>
-        <td>
-            <a href="{% url 'fnac:invalid_in_inventory' %}">
-                Invalid in the Inventory
-            </a>
-        </td>
-        <td>{{invalid_in_inventory_count}}</td>
-    </tr>
-    <tr>
-        <td>
-            <a href="{% url 'fnac:missing_information' %}">
-                Missing Category, Price, Size or Colour
-            </a>
-        </td>
-        <td>{{missing_information_count}}</td>
-    </tr>
-    <tr>
-        <td>
-            <a href="{% url 'fnac:translations' %}">
-                Not Translated
-            </a>
-        </td>
-        <td>{{missing_translations_count}}</td>
-    </tr>
-    <tr>
-        <td>Marked not to create</td>
-        <td>{{do_not_create_count}}</td>
-    </tr>
-    <tr>
-        <td>Out of stock</td>
-        <td>{{out_of_stock_count}}</td>
-    </tr>
-    <tr>
-        <td>Ready to Create</td>
-        <td>{{ready_to_create_count}}</td>
-    </tr>
-</table>
-
 </div>
 
 {% endblock content %}

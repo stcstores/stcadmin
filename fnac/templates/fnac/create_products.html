@@ -1,0 +1,118 @@
+{% extends 'fnac/base.html' %}
+
+{% block content %}
+<h1>Create Products</h1>
+<hr>
+
+<p>
+    There are currently {{ready_to_create_count}} products ready to be added to FNAC.
+    To add them, download a New Product file below. This can then be uploaded to
+    <a href="http://fnac-prod.mirakl.net">Mirakl</a>. Navigate to
+    "My Inventory > Import from file" and upload the New Product file.
+</p>
+
+<p>
+    After the upload has completed you will need to 
+    <a href="{% url 'fnac:add_created_products' %}"><button>
+    Upload a Mirakl Product Export</button></a> to mark the new products as created.
+    They will then be added to the next <a href="{% url 'fnac:update_offers' %}">
+    Offer Update</a> and then appear for sale on FNAC.
+</p>
+
+{% include 'fnac/status_boxes/new_product_export_status.html' %}
+
+<h2>Preparing More Products</h2>
+
+<p>
+    Below you will see a the number of products that cannot be added to FNAC for a
+    given reason.
+</p>
+
+<table>
+    <th colspan="2">Current product status</th>
+    <tr>
+        <td>Already Created</td>
+        <td>{{created_product_count}}</td>
+    </tr>
+    <tr>
+        <td>
+            <a href="{% url 'fnac:invalid_in_inventory' %}">
+                Requires changes in the inventory
+            </a>
+        </td>
+        <td>{{invalid_in_inventory_count}}</td>
+    </tr>
+    <tr>
+        <td>
+            <a href="{% url 'fnac:missing_information' %}">
+                Requires additional information
+            </a>
+        </td>
+        <td>{{missing_information_count}}</td>
+    </tr>
+    <tr>
+        <td>
+            <a href="{% url 'fnac:translations' %}">
+                Requires translation
+            </a>
+        </td>
+        <td>{{missing_translations_count}}</td>
+    </tr>
+    <tr>
+        <td>Marked not to create</td>
+        <td>{{do_not_create_count}}</td>
+    </tr>
+    <tr>
+        <td>Out of stock</td>
+        <td>{{out_of_stock_count}}</td>
+    </tr>
+    <tr>
+        <td>Ready to Create</td>
+        <td>{{ready_to_create_count}}</td>
+    </tr>
+</table>
+
+<p>
+    Firstly, update the inventory information from Cloud Commerce to ensure all product
+    information is up-to-date an that any newly created products are recognised.
+</p>
+
+{% include 'fnac/status_boxes/inventory_update.html' %}
+<br>
+
+<div id="changes_in_inventory">
+    <h3>Requires changes in the inventory</h3>
+
+    <p>
+        Some products may have missing or invalid information that will need to be corrected
+        in the Cloud Commerce inventory.
+    </p>
+    <a href="{% url 'fnac:invalid_in_inventory' %}">
+        <button>List of products requiring changes in the inventory</button>
+    </a>
+</div>
+
+<div class="missing_information">
+    <h3>Requires additional information</h3>
+
+    <p>
+        FNAC products need to have a FNAC category associated with them and the correct price
+        set. Depending on the product and category, size and colour information may also
+        need to be added.
+    </p>
+    <a href="{% url 'fnac:missing_information' %}">
+        <button>Update required information</button>
+    </a>
+</div>
+
+<div class="translations">
+    <h3>Translations</h3>
+    <p>
+        All products on FNAC must have their names, descriptions and colour information
+        translated into French.
+    </p>
+    <a href="{% url 'fnac:translations' %}">
+        <button>Add translations</button>
+    </a>
+</div>
+{% endblock content %}

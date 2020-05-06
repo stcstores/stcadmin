@@ -1,5 +1,4 @@
 import pytest
-from django.shortcuts import reverse
 
 
 @pytest.fixture
@@ -15,27 +14,6 @@ def valid_get_response(valid_get_request, url):
 @pytest.fixture
 def valid_get_response_content(valid_get_response):
     return valid_get_response.content.decode("utf8")
-
-
-@pytest.fixture
-def products(fnac_product_factory, translation_factory):
-    products = [
-        fnac_product_factory.create(name="Missing Translation"),
-        fnac_product_factory.create(created=True, name="Already created"),
-        fnac_product_factory.create(description="", name="Missing description"),
-        fnac_product_factory.create(price=None, name="Missing price"),
-        fnac_product_factory.create(
-            english_size="Large", french_size=None, price=556, name="Missing size"
-        ),
-        fnac_product_factory.create(price=None, name="Missing price"),
-        fnac_product_factory.create(fnac_range__category=None, name="Missing category"),
-        fnac_product_factory.create(do_not_create=True, name="Marked do not create"),
-        fnac_product_factory.create(stock_level=0, name="Out of stock"),
-        fnac_product_factory.create(name="Valid 2"),
-    ]
-    for product in products[1:]:
-        translation_factory.create(product=product)
-    return products
 
 
 def test_logged_out_get_method(url, logged_in_client):
@@ -69,50 +47,3 @@ def test_logged_in_group_post(group_logged_in_client, url):
 
 def test_url_heading(valid_get_response_content):
     assert "<h1>FNAC</h1>" in valid_get_response_content
-
-
-def test_links_to_invalid_in_inventory(valid_get_response_content):
-    assert valid_get_response_content.count(reverse("fnac:invalid_in_inventory")) == 2
-
-
-def test_links_to_missing_information(valid_get_response_content):
-    assert valid_get_response_content.count(reverse("fnac:missing_information")) == 2
-
-
-def test_links_to_translations(valid_get_response_content):
-    assert valid_get_response_content.count(reverse("fnac:translations")) == 2
-
-
-@pytest.mark.django_db
-def test_created_count_in_context(products, valid_get_response):
-    assert valid_get_response.context["created_product_count"] == 1
-
-
-@pytest.mark.django_db
-def test_invalid_in_inventory_count_in_context(products, valid_get_response):
-    assert valid_get_response.context["invalid_in_inventory_count"] == 1
-
-
-@pytest.mark.django_db
-def test_missing_information_count_in_context(products, valid_get_response):
-    assert valid_get_response.context["missing_information_count"] == 4
-
-
-@pytest.mark.django_db
-def test_do_not_create_count_in_context(products, valid_get_response):
-    assert valid_get_response.context["do_not_create_count"] == 1
-
-
-@pytest.mark.django_db
-def test_out_of_stock_count_in_context(products, valid_get_response):
-    assert valid_get_response.context["out_of_stock_count"] == 1
-
-
-@pytest.mark.django_db
-def test_missing_translations_count_in_context(products, valid_get_response):
-    assert valid_get_response.context["missing_translations_count"] == 1
-
-
-@pytest.mark.django_db
-def test_ready_to_create_count_in_context(products, valid_get_response):
-    assert valid_get_response.context["ready_to_create_count"] == 1

@@ -8,6 +8,7 @@ app_name = "fnac"
 urlpatterns = [
     path("", views.Index.as_view(), name="index"),
     path("update_offers/", views.UpdateOffers.as_view(), name="update_offers"),
+    path("create_products/", views.CreateProducts.as_view(), name="create_products"),
     path(
         "invalid_in_inventory/",
         views.InvalidInInventory.as_view(),
