@@ -28,6 +28,7 @@ cc-products = {git = "https://github.com/stcstores/cc_products.git"}
 order-profit = {git = "https://github.com/stcstores/order_profit.git"}
 labeler = {git = "https://github.com/lukeshiner/labeler.git"}
 list-input = {git = "https://github.com/lukeshiner/list_input.git"}
+django-solo = "^1.1.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.3.5"
@@ -38,6 +39,8 @@ black = "^19.10b0"
 flake8 = "^3.7.9"
 flake8-docstrings = "^1.5.0"
 isort = "^4.3.21"
+factory_boy = "^2.12.0"
+pytest_factoryboy = "^2.0.3"
 
 [build-system]
 requires = ["poetry>=0.12"]

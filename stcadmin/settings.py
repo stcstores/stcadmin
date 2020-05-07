@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     "orders",
     "shipping",
     "feedback",
+    "itd",
     "debug_toolbar",
 ]
 
