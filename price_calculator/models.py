@@ -122,24 +122,24 @@ class ShippingPrice(models.Model):
     @classmethod
     def get_price(cls, country_name, package_type_name, weight, price):
         """Return best match price object."""
-        country = DestinationCountry.objects.get(name__icontains=country_name)
-        package_type = PackageType.objects.get(name__icontains=package_type_name)
-        shipping_prices = cls._default_manager.filter(Q(country=country))
-        shipping_prices = shipping_prices.filter(Q(disabled=False))
-        shipping_prices = shipping_prices.filter(Q(package_type=package_type))
-        shipping_prices = shipping_prices.filter(
-            Q(min_weight__isnull=True) | Q(min_weight__lte=weight)
-        )
-        shipping_prices = shipping_prices.filter(
-            Q(max_weight__isnull=True) | Q(max_weight__gte=weight)
-        )
-        shipping_prices = shipping_prices.filter(
-            Q(min_price__isnull=True) | Q(min_price__lte=price)
-        )
-        shipping_prices = shipping_prices.filter(
-            Q(max_price__isnull=True) | Q(max_price__gte=price)
-        )
         try:
+            country = DestinationCountry.objects.get(name__icontains=country_name)
+            package_type = PackageType.objects.get(name__icontains=package_type_name)
+            shipping_prices = cls._default_manager.filter(Q(country=country))
+            shipping_prices = shipping_prices.filter(Q(disabled=False))
+            shipping_prices = shipping_prices.filter(Q(package_type=package_type))
+            shipping_prices = shipping_prices.filter(
+                Q(min_weight__isnull=True) | Q(min_weight__lte=weight)
+            )
+            shipping_prices = shipping_prices.filter(
+                Q(max_weight__isnull=True) | Q(max_weight__gte=weight)
+            )
+            shipping_prices = shipping_prices.filter(
+                Q(min_price__isnull=True) | Q(min_price__lte=price)
+            )
+            shipping_prices = shipping_prices.filter(
+                Q(max_price__isnull=True) | Q(max_price__gte=price)
+            )
             return cls._default_manager.get(pk=shipping_prices.all()[0].id)
         except IndexError:
             raise DestinationCountry.NoShippingService()
