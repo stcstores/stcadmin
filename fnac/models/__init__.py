@@ -9,7 +9,7 @@ from .mirakl_product_import import MiraklProductImport
 from .new_product_export import NewProductExport
 from .offer_update import Comment, OfferUpdate
 from .size import Size
-from .translation import Translation
+from .translation import Translation, TranslationUpdate
 
 __all__ = [
     "MissingInformationExport",
@@ -23,6 +23,7 @@ __all__ = [
     "NewProductExport",
     "Size",
     "Translation",
+    "TranslationUpdate",
     "Comment",
     "OfferUpdate",
 ]

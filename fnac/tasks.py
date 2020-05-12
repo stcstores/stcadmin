@@ -39,3 +39,9 @@ def start_missing_information_import(import_id):
 def start_mirakl_product_import(import_id):
     """Import created product information from a Mirakl product export."""
     models.MiraklProductImport.objects.update_products(import_id)
+
+
+@shared_task
+def start_translation_update(update_id):
+    """Create translations from a translation update."""
+    models.TranslationUpdate.objects.update_translations(update_id)

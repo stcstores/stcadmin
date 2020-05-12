@@ -49,3 +49,12 @@ def test_start_mirakl_product_import_task(
     import_id = 5
     tasks.start_mirakl_product_import.delay(import_id).get(timeout=10)
     MockMiraklProductImport.objects.update_products.assert_called_once_with(import_id)
+
+
+@patch("fnac.tasks.models.TranslationUpdate")
+def test_start_translation_update_task(
+    MockTranslationUpdate, celery_app, celery_worker
+):
+    update_id = 5
+    tasks.start_translation_update.delay(update_id).get(timeout=10)
+    MockTranslationUpdate.objects.update_translations.assert_called_once_with(update_id)

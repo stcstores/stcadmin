@@ -123,34 +123,6 @@ def test_invalid_post_status_code(products, invalid_post_response):
 
 
 @pytest.mark.django_db
-def test_translation_created(products, valid_post_response):
-    for product in products:
-        product.refresh_from_db()
-        assert product.translation is not None
-
-
-@pytest.mark.django_db
-def test_translation_names(products, names, valid_post_response):
-    for product, name in zip(products, names):
-        product.refresh_from_db()
-        assert product.translation.name == name
-
-
-@pytest.mark.django_db
-def test_translation_descriptions(products, descriptions, valid_post_response):
-    for product, description in zip(products, descriptions):
-        product.refresh_from_db()
-        assert product.translation.description == description
-
-
-@pytest.mark.django_db
-def test_translation_colours(products, colours, valid_post_response):
-    for product, colour in zip(products, colours):
-        product.refresh_from_db()
-        assert product.translation.colour == colour
-
-
-@pytest.mark.django_db
 def test_product_missing_translation_count_in_content(
     products, valid_get_response_content
 ):
@@ -199,26 +171,6 @@ def test_export_link_not_in_contents_if_translations_not_required(
 ):
     assert reverse("fnac:translations_export") not in valid_get_response_content
     assert "No translations required" in valid_get_response_content
-
-
-@pytest.mark.django_db
-def test_existing_translations_are_updated(
-    translation_factory, url, valid_post_request
-):
-    translation = translation_factory.create()
-    product = translation.product
-    translation_text = "\r\n".join(
-        [
-            "SKU \tTitre \tCouleur \tLa description \t¬",
-            f"{product.sku} \tProduit un titre \trouge \tUne description d'un produit\t¬",
-        ]
-    )
-    valid_post_request(url, {"translations": translation_text})
-    translation.refresh_from_db()
-    assert translation.product == product
-    assert translation.name == "Produit un titre"
-    assert translation.colour == "rouge"
-    assert translation.description == "Une description d'un produit"
 
 
 @pytest.mark.django_db

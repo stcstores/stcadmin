@@ -3,8 +3,10 @@
 import io
 from tempfile import NamedTemporaryFile
 
-from django.db import models
+from django.db import models, transaction
 from openpyxl import Workbook
+
+from fnac.tasks import start_translation_update
 
 from .fnac_product import FnacProduct
 
@@ -44,6 +46,66 @@ class Translation(models.Model):
 
     def __repr__(self):
         return f"<Translations for {self.product}>"
+
+
+class TranslationUpdateManager(models.Manager):
+    """Manager for the TranslationUpdate model."""
+
+    def is_in_progress(self):
+        """Return True if there is an update in progress, otherwise False."""
+        return self.get_queryset().filter(status=TranslationUpdate.IN_PROGRESS).exists()
+
+    def create_update(self, translation_text):
+        """Create a translation update."""
+        with transaction.atomic():
+            if self.is_in_progress():
+                raise TranslationUpdate.AlreadyInProgress()
+            update_object = self.create(translation_text=translation_text)
+            start_translation_update.delay(update_object.id)
+        return update_object
+
+    def update_translations(self, import_id):
+        """Add translations from translation update text."""
+        update_object = self.get_queryset().get(id=import_id)
+        try:
+            update_translations(update_object.translation_text)
+        except Exception as e:
+            update_object.status = update_object.ERROR
+            update_object.save()
+            raise e
+        else:
+            update_object.status = update_object.COMPLETE
+        update_object.save()
+
+
+@transaction.atomic
+def update_translations(translation_text):
+    """Add translations."""
+    translations = _TranslationImport().get_translations(translation_text)
+    for translation in translations:
+        translation.save()
+
+
+class TranslationUpdate(models.Model):
+    """Model for translation update records."""
+
+    class AlreadyInProgress(Exception):
+        """Exception raised when an update is created with one already in progress."""
+
+        def __init__(self, *args, **kwargs):
+            """Raise the exception."""
+            return super().__init__(self, "An update is already in progress.")
+
+    COMPLETE = "complete"
+    ERROR = "error"
+    IN_PROGRESS = "in_progress"
+    STATUSES = ((COMPLETE, "Complete"), (ERROR, "Error"), (IN_PROGRESS, "In Progress"))
+
+    timestamp = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=15, choices=STATUSES, default=IN_PROGRESS)
+    translation_text = models.TextField()
+
+    objects = TranslationUpdateManager()
 
 
 class _TranslationExport:

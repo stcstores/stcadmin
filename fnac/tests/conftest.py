@@ -155,3 +155,17 @@ class MiraklProductImportFactory(factory.django.DjangoModelFactory):
         model = models.MiraklProductImport
 
     import_file = factory.django.FileField(filename="fnac_mirakl_product_import.xlsx")
+
+
+@register
+class TranslationUpdateFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.TranslationUpdate
+
+    translation_text = "\r\n".join(
+        [
+            "SKU \tTitre \tCouleur \tLa description \t¬",
+            "5 AM-8UM-7AN \tProduit un titre \trouge \t<p> Une description d'un produit </p>\r\n<p> Il est rouge </p> \t¬",
+            "4 AM-A1M-R2P \tTitre du produit deux \tAucun \tUne description d'un produit\r\nIl n'a pas de couleur \t¬",
+        ]
+    )
