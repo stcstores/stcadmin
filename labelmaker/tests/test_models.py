@@ -28,25 +28,25 @@ class TestSizeChart(STCAdminTest):
 
     def test_get_absolute_url_method(self):
         self.assertEqual(
-            f"/labelmaker/product_labels/update_size_chart/1/",
+            "/labelmaker/product_labels/update_size_chart/1/",
             self.size_chart.get_absolute_url(),
         )
 
     def test_get_delete_url_method(self):
         self.assertEqual(
-            f"/labelmaker/product_labels/delete_size_chart/1/",
+            "/labelmaker/product_labels/delete_size_chart/1/",
             self.size_chart.get_delete_url(),
         )
 
     def test_get_edit_sizes_url(self):
         self.assertEqual(
-            f"/labelmaker/product_labels/edit_size_chart_sizes/1/",
+            "/labelmaker/product_labels/edit_size_chart_sizes/1/",
             self.size_chart.get_edit_sizes_url(),
         )
 
     def test_get_use_url(self):
         self.assertEqual(
-            f"/labelmaker/product_labels/create_product_labels/1/",
+            "/labelmaker/product_labels/create_product_labels/1/",
             self.size_chart.get_use_url(),
         )
 
