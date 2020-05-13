@@ -65,6 +65,7 @@ def test_logged_in_group_post(group_logged_in_client, url):
 def test_response_header(valid_get_response_content):
     worksheet = valid_get_response_content.active
     assert [_.value for _ in list(worksheet.rows)[0]] == [
+        "ID",
         "SKU",
         "Title",
         "Colour",
@@ -79,6 +80,7 @@ def test_response_row(products_without_translation, valid_get_response_content):
     rows = [[_.value for _ in row] for row in list(worksheet.rows)]
     for prodcut in products_without_translation:
         assert [
+            products_without_translation[0].id,
             products_without_translation[0].sku,
             products_without_translation[0].name,
             products_without_translation[0].colour,
@@ -94,8 +96,8 @@ def test_only_products_without_translation_are_exported(
     worksheet = valid_get_response_content.active
     assert len(list(worksheet.rows)) == len(products_without_translation) + 1
     sku_column = [row[0].value for row in list(worksheet.rows)[1:]]
-    product_skus = [product.sku for product in products_without_translation]
-    assert sorted(sku_column) == sorted(product_skus)
+    product_ids = [product.id for product in products_without_translation]
+    assert sorted(sku_column) == sorted(product_ids)
 
 
 @pytest.fixture
@@ -106,4 +108,4 @@ def product_without_colour(fnac_product_factory):
 @pytest.mark.django_db
 def test_null_colours_are_replaced(product_without_colour, valid_get_response_content):
     worksheet = valid_get_response_content.active
-    assert list(worksheet.rows)[1][2].value == "None"
+    assert list(worksheet.rows)[1][3].value == "None"

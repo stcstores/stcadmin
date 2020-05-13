@@ -35,12 +35,12 @@ def colours():
 
 
 @pytest.fixture
-def translation_import_text():
+def translation_import_text(products):
     return "\r\n".join(
         [
-            "SKU \tTitre \tCouleur \tLa description \t¬",
-            "5 AM-8UM-7AN \tProduit un titre \trouge \t<p> Une description d'un produit </p>\r\n<p> Il est rouge </p> \t¬",
-            "4 AM-A1M-R2P \tTitre du produit deux \tAucun \tUne description d'un produit\r\nIl n'a pas de couleur \t¬",
+            "ID \tSKU \tTitre \tCouleur \tLa description \t¬",
+            f"{products[0].id} \t{products[0].sku} \tProduit un titre \trouge \t<p> Une description d'un produit </p>\r\n<p> Il est rouge </p> \t¬",
+            f"{products[1].id} \t{products[1].sku} \tTitre du produit deux \tAucun \tUne description d'un produit\r\nIl n'a pas de couleur \t¬",
         ]
     )
 
@@ -114,8 +114,8 @@ def test_existing_translations_are_updated(translation_factory, translation_impo
     product = translation.product
     translation_text = "\r\n".join(
         [
-            "SKU \tTitre \tCouleur \tLa description \t¬",
-            f"{product.sku} \tProduit un titre \trouge \tUne description d'un produit\t¬",
+            "ID \tSKU \tTitre \tCouleur \tLa description \t¬",
+            f"{product.id} \t{product.sku} \tProduit un titre \trouge \tUne description d'un produit\t¬",
         ]
     )
     update_translations(translation_text)
@@ -187,16 +187,20 @@ def test_add_error(translation_update_factory):
 
 
 @pytest.mark.django_db
-def test_invalid_sku_input(
-    products, translation_update_factory, translation_import_text
-):
-    products[0].sku = "AAA-AAA-AAA"
-    products[0].save()
-    update = translation_update_factory.create(translation_text=translation_import_text)
+def test_invalid_id_input(products, translation_update_factory):
+    invalid_id = 9999999
+    translation_text = "\r\n".join(
+        [
+            "ID \tSKU \tTitre \tCouleur \tLa description \t¬",
+            f"{invalid_id} \t{products[0].sku} \tProduit un titre \trouge \t<p> Une description d'un produit </p>\r\n<p> Il est rouge </p> \t¬",
+            f"{products[1].id} \t{products[1].sku} \tTitre du produit deux \tAucun \tUne description d'un produit\r\nIl n'a pas de couleur \t¬",
+        ]
+    )
+    update = translation_update_factory.create(translation_text=translation_text)
     update.add_translations()
     update.refresh_from_db()
     assert update.status == update.ERROR
-    assert update.errors == ["No FnacProduct matching SKU 5AM-8UM-7AN exists."]
+    assert update.errors == [f"No FnacProduct matching ID {invalid_id} exists."]
 
 
 @pytest.mark.django_db
@@ -216,15 +220,17 @@ def test_invalid_text_import(fnac_product_factory, translation_update_factory):
     product = fnac_product_factory.create()
     translation_text = "\r\n".join(
         [
-            "SKU \tTitre \tCouleur \tLa description \t¬",
-            f"{product.sku} \tProduit un titre rouge Une description d'un produit\t¬",
+            "ID \tSKU \tTitre \tCouleur \tLa description \t¬",
+            f"{product.id} \t{product.sku} \tProduit un titre rouge Une description d'un produit\t¬",
         ]
     )
     update = translation_update_factory.create(translation_text=translation_text)
     update.add_translations()
     update.refresh_from_db()
     assert update.status == update.ERROR
-    assert update.errors == [f"No description found for product {product.sku}."]
+    assert update.errors == [
+        f"No translated description found for product ID {product.id}."
+    ]
 
 
 @pytest.mark.django_db
