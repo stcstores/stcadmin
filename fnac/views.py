@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import reverse
 from django.views import View
 from django.views.generic.base import TemplateView
-from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.edit import UpdateView
 
 from fnac import forms, models
 from home.views import UserInGroupMixin
@@ -123,44 +123,6 @@ class InvalidInInventory(FnacUserMixin, TemplateView):
         context = super().get_context_data(*args, **kwargs)
         context["products"] = models.FnacProduct.objects.invalid_in_inventory()
         return context
-
-
-class Translations(FnacUserMixin, FormView):
-    """View for updating translations."""
-
-    template_name = "fnac/translations.html"
-    form_class = forms.TranslationsForm
-
-    def get_context_data(self, *args, **kwargs):
-        """Return template context data."""
-        context = super().get_context_data(*args, **kwargs)
-        context[
-            "missing_translations_count"
-        ] = models.FnacProduct.objects.not_translated().count()
-        return context
-
-    def form_valid(self, form):
-        """Create new translations."""
-        form.save()
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        """Return the URL to redirect to if forms submission is successful."""
-        return reverse("fnac:index")
-
-
-class TranslationsExport(FnacUserMixin, View):
-    """Download an XLSX file for translation."""
-
-    def get(*args, **kwargs):
-        """Return an HttpResponse object with the XLSX export."""
-        export_file = models.Translation.objects.translations_export()
-        response = http.HttpResponse(
-            export_file,
-            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sh",
-        )
-        response["Content-Disposition"] = 'attachment; filename="to_translate.xlsx"'
-        return response
 
 
 class MissingInformation(FnacUserMixin, TemplateView):
@@ -365,3 +327,76 @@ class StartMiraklProductFileImport(FnacUserMixin, View):
             form.save()
             return HttpResponse("done")
         return HttpResponse(status=500)
+
+
+class Translations(FnacUserMixin, TemplateView):
+    """View for updating translations."""
+
+    template_name = "fnac/translations.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return template context data."""
+        context = super().get_context_data(*args, **kwargs)
+        context[
+            "missing_translations_count"
+        ] = models.FnacProduct.objects.not_translated().count()
+        context["form"] = forms.TranslationsForm()
+        context["TranslationUpdate"] = models.TranslationUpdate
+        return context
+
+
+class UploadTranslations(FnacUserMixin, View):
+    """View to trigger a translation update."""
+
+    def post(self, *args, **kwargs):
+        """Trigger a translation update."""
+        form = forms.TranslationsForm(data=self.request.POST)
+        if form.is_valid():
+            models.TranslationUpdate.objects.create_update(
+                form.cleaned_data["translation_text"]
+            )
+            return HttpResponse("done")
+        else:
+            models.TranslationUpdate.objects.create_invalid_upload(
+                translation_text=form.data.get("translation_text", ""),
+                errors=form.errors,
+            )
+            return HttpResponse(status=500)
+
+
+class TranslationUpdateStatus(FnacUserMixin, View):
+    """View to provide the status of the latest translation update for ajax."""
+
+    def get_data(self):
+        """Return view response data."""
+        data = {"status": None, "latest": None, "errors": None}
+        if models.TranslationUpdate.objects.is_in_progress():
+            data["status"] = models.TranslationUpdate.IN_PROGRESS
+            return data
+        try:
+            update_object = models.TranslationUpdate.objects.latest("timestamp")
+        except models.TranslationUpdate.DoesNotExist:
+            return data
+        else:
+            data["status"] = update_object.status
+            data["latest"] = update_object.timestamp.strftime("%H:%M on %d %b %Y")
+            data["errors"] = update_object.errors
+        return data
+
+    def get(self, *args, **kwargs):
+        """Return the import status as JSON."""
+        return JsonResponse(self.get_data())
+
+
+class TranslationsExport(FnacUserMixin, View):
+    """Download an XLSX file for translation."""
+
+    def get(*args, **kwargs):
+        """Return an HttpResponse object with the XLSX export."""
+        export_file = models.Translation.objects.translations_export()
+        response = http.HttpResponse(
+            export_file,
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sh",
+        )
+        response["Content-Disposition"] = 'attachment; filename="to_translate.xlsx"'
+        return response

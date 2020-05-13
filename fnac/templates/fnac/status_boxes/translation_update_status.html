@@ -1,0 +1,95 @@
+{% load static %}
+
+<div id="translation_update_status">
+    <div class="file_status">
+        <h3>Add Translations</h3>
+        <div id="translation_update_status_ready" class="translation_update_status_type">
+            Translations last added at <span id="latest_import"></span>
+        </div>
+        <div id="translation_update_status_in_progress" class="translation_update_status_type">
+            An update is in progress <img src="{% static 'images/loading.gif' %}" alt="" height="20">
+        </div>
+        <div id="translation_update_status_error" class="translation_update_status_type">
+            There was an error adding the translations, please try again
+        </div>
+        <div id="translation_update_status_not_existant" class="translation_update_status_type">
+            No translations have yet been added
+        </div>
+        <div id="translation_update_start_error" class="translation_update_status_type">
+            There was an error uploading the translations, please try again
+        </div>
+        <div id="translation_update_status_check_error" class="translation_update_status_type">
+            There was an error getting the translation update status
+        </div>
+        <div id="translation_update_status_form" class="translation_update_status_type">
+            <form id="translation_update_form" method="POST" action="{% url "fnac:upload_translations" %}">{% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function getTranslationUpdateStatus() {
+        $.ajax({
+            url: "{% url 'fnac:translation_update_status' %}",
+            type: 'GET',
+            success: function(response){ 
+                $('.translation_update_status_type').hide();
+                switch (response['status']) {
+                    case '{{ TranslationUpdate.COMPLETE }}':
+                        $('#translation_update_status_ready').show();
+                        $('#latest_import').html(response['latest']);
+                        $('#translation_update_status_form').show();
+                        break
+                    case '{{ TranslationUpdate.IN_PROGRESS }}':
+                        $('#translation_update_status_in_progress').show();
+                        break
+                    case '{{ TranslationUpdate.ERROR }}':
+                        $('#translation_update_start_error').show();
+                        $('#translation_update_status_form').show();
+                        break
+                    case null:
+                        $('#translation_update_status_not_existant').show();
+                        $('#translation_update_status_form').show();
+                        break
+                    default:
+                        $('#translation_update_status_check_error').show();
+                }
+            },
+            error: function(response) {
+                $('.translation_update_status_type').hide();
+                $('#translation_update_status_check_error').show();
+            }
+        });
+        setTimeout(getTranslationUpdateStatus, 5000);
+    }
+
+    $(document).ready(function(){
+        $('.translation_update_status_type').hide();
+        $("#translation_update_form").submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                data: new FormData($(this).get(0)),
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                processData: false,
+                contentType: false,
+                success: function () {
+                    getTranslationUpdateStatus();
+                },
+                error: function() {
+                    $('.translation_update_status_type').hide();
+                    $('#translation_update_start_error').show();
+                    $('#translation_update_status_form').show();
+                    setTimeout(getTranslationUpdateStatus, 5000);
+                }
+            });
+            return false;
+        });
+
+        getTranslationUpdateStatus();
+    });
+</script>

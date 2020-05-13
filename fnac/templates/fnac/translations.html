@@ -29,9 +29,6 @@
 
 {% endif %}
 
-<form action="" method="POST">{% csrf_token %}
-    {{ form.as_p }}
-    <button>Add Translations</button>
-</form>
+{% include 'fnac/status_boxes/translation_update_status.html' %}
 
 {% endblock content %}

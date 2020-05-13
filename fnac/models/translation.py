@@ -3,6 +3,7 @@
 import io
 from tempfile import NamedTemporaryFile
 
+from django.contrib.postgres.fields import JSONField
 from django.db import models, transaction
 from openpyxl import Workbook
 
@@ -11,13 +12,43 @@ from fnac.tasks import start_translation_update
 from .fnac_product import FnacProduct
 
 
-class TranslationProductNotFound(ValueError):
+class TranslationError(ValueError):
+    """Base exception class for errors processing translations."""
+
+    pass
+
+
+class TranslationProductNotFound(TranslationError):
     """Exception raised when an imported translation has no matching product."""
 
     def __init__(self, sku):
         """Raise exeption."""
         self.sku = sku
-        return super().__init__(f"No FnacProduct matching SKU {self.sku} exists.")
+        super().__init__(f"No FnacProduct matching SKU {self.sku} exists.")
+
+
+class InvalidTranslationText(TranslationError):
+    """Exception raised when translation text cannot be parsed."""
+
+    def __init__(self):
+        """Raise exeption."""
+        super().__init__("Translation text could not be parsed.")
+
+
+class NoTranslationsProvided(TranslationError):
+    """Exception raised when translation text does not contain any translations."""
+
+    def __init__(self):
+        """Raise exeption."""
+        super().__init__("No translations present in translation text.")
+
+
+class TranslationHasNoDescription(TranslationError):
+    """Exception raised when a translation has an empty description."""
+
+    def __init__(self, sku):
+        """Raise exception."""
+        super().__init__(f"No description found for product {sku}.")
 
 
 class TranslationManager(models.Manager):
@@ -26,10 +57,6 @@ class TranslationManager(models.Manager):
     def translations_export(self):
         """Return a translation export file."""
         return _TranslationExport().translation_export()
-
-    def translations_from_text(self, translation_text):
-        """Create Translation objects from Google Translate text."""
-        return _TranslationImport().get_translations(translation_text)
 
 
 class Translation(models.Model):
@@ -41,8 +68,6 @@ class Translation(models.Model):
     colour = models.CharField(max_length=255, blank=True)
 
     objects = TranslationManager()
-
-    TranslationProductNotFound = TranslationProductNotFound
 
     def __repr__(self):
         return f"<Translations for {self.product}>"
@@ -64,26 +89,19 @@ class TranslationUpdateManager(models.Manager):
             start_translation_update.delay(update_object.id)
         return update_object
 
+    def create_invalid_upload(self, translation_text, errors):
+        """Add an invalid update to the database."""
+        update = self.create(
+            translation_text=translation_text,
+            errors=errors,
+            status=TranslationUpdate.ERROR,
+        )
+        return update
+
     def update_translations(self, import_id):
         """Add translations from translation update text."""
         update_object = self.get_queryset().get(id=import_id)
-        try:
-            update_translations(update_object.translation_text)
-        except Exception as e:
-            update_object.status = update_object.ERROR
-            update_object.save()
-            raise e
-        else:
-            update_object.status = update_object.COMPLETE
-        update_object.save()
-
-
-@transaction.atomic
-def update_translations(translation_text):
-    """Add translations."""
-    translations = _TranslationImport().get_translations(translation_text)
-    for translation in translations:
-        translation.save()
+        update_object.add_translations()
 
 
 class TranslationUpdate(models.Model):
@@ -104,8 +122,36 @@ class TranslationUpdate(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=15, choices=STATUSES, default=IN_PROGRESS)
     translation_text = models.TextField()
+    errors = JSONField(default=list)
 
     objects = TranslationUpdateManager()
+
+    def add_error(self, message):
+        """Mark the update with an error."""
+        self.errors.append(message)
+        self.status = self.ERROR
+        self.save()
+
+    def add_translations(self):
+        """Create Translation objects from the translation text."""
+        try:
+            update_translations(self.translation_text)
+        except TranslationError as e:
+            self.add_error(str(e))
+        except Exception as e:
+            self.add_error("Error parsing translation text")
+            raise e
+        else:
+            self.status = self.COMPLETE
+            self.save()
+
+
+@transaction.atomic
+def update_translations(translation_text):
+    """Add translations."""
+    translations = _TranslationImport().get_translations(translation_text)
+    for translation in translations:
+        translation.save()
 
 
 class _TranslationExport:
@@ -149,6 +195,8 @@ class _TranslationImport:
 
     def get_translations(self, translation_text):
         stripped_text = translation_text.strip().split("¬")[1:]
+        if not stripped_text:
+            raise NoTranslationsProvided()
         translations = [self._parse_row(row) for row in stripped_text if row]
         return translations
 
@@ -157,7 +205,7 @@ class _TranslationImport:
         sku = self.read_sku(split[0])
         name = self.read_name(split[1])
         colour = self.read_colour(split[2])
-        description = self.read_description(split[3:])
+        description = self.read_description(sku, split[3:])
         product = self.get_product(sku)
         return self.get_translation(
             product=product, name=name, colour=colour, description=description
@@ -188,8 +236,8 @@ class _TranslationImport:
             return ""
         return colour
 
-    def read_description(self, lines):
+    def read_description(self, sku, lines):
         description = "".join([_.strip() for _ in lines if _])
         if description == "":
-            raise ValueError("Description was empty.")
+            raise TranslationHasNoDescription(sku)
         return description

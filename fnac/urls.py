@@ -16,6 +16,16 @@ urlpatterns = [
     ),
     path("translations/", views.Translations.as_view(), name="translations"),
     path(
+        "translations/upload_translations/",
+        views.UploadTranslations.as_view(),
+        name="upload_translations",
+    ),
+    path(
+        "translations/update_status/",
+        views.TranslationUpdateStatus.as_view(),
+        name="translation_update_status",
+    ),
+    path(
         "translations_export/",
         views.TranslationsExport.as_view(),
         name="translations_export",

@@ -120,3 +120,11 @@ class MiraklProductImportAdmin(admin.ModelAdmin):
 
     fields = ("status", "import_file")
     list_display = ("timestamp", "status", "import_file")
+
+
+@admin.register(models.TranslationUpdate)
+class TranslationUpdateAdmin(admin.ModelAdmin):
+    """Model admin for fnac.TranslationUpdate."""
+
+    fields = ("status", "errors")
+    list_display = ("timestamp", "status", "errors")

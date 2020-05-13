@@ -169,3 +169,4 @@ class TranslationUpdateFactory(factory.DjangoModelFactory):
             "4 AM-A1M-R2P \tTitre du produit deux \tAucun \tUne description d'un produit\r\nIl n'a pas de couleur \t¬",
         ]
     )
+    errors = factory.LazyFunction(lambda: list())

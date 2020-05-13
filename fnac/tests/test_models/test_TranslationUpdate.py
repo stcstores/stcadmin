@@ -149,19 +149,6 @@ def test_create_update(
 
 
 @pytest.mark.django_db
-def test_update_translations_error(
-    mock_update_translations_error, translation_update_factory
-):
-    update_object = translation_update_factory.create(
-        status=models.TranslationUpdate.IN_PROGRESS
-    )
-    with pytest.raises(Exception):
-        models.TranslationUpdate.objects.update_translations(update_object.id)
-    update_object.refresh_from_db()
-    assert update_object.status == update_object.ERROR
-
-
-@pytest.mark.django_db
 def test_import_missing_information_when_one_is_in_progress(
     translation_update_factory, translation_import_text
 ):
@@ -175,3 +162,80 @@ def test_is_in_progress(translation_update_factory):
     assert models.TranslationUpdate.objects.is_in_progress() is False
     translation_update_factory.create(status=models.TranslationUpdate.IN_PROGRESS)
     assert models.TranslationUpdate.objects.is_in_progress() is True
+
+
+@pytest.mark.django_db
+def test_create_invalid_upload():
+    translation_text = "invalid text"
+    errors = ["Invalid translation text"]
+    update = models.TranslationUpdate.objects.create_invalid_upload(
+        translation_text=translation_text, errors=errors
+    )
+    assert update.id is not None
+    assert update.translation_text == translation_text
+    assert update.errors == errors
+
+
+@pytest.mark.django_db
+def test_add_error(translation_update_factory):
+    error_text = "Error text."
+    update = translation_update_factory.create()
+    update.add_error(error_text)
+    update.refresh_from_db()
+    assert update.errors == [error_text]
+    assert update.status == update.ERROR
+
+
+@pytest.mark.django_db
+def test_invalid_sku_input(
+    products, translation_update_factory, translation_import_text
+):
+    products[0].sku = "AAA-AAA-AAA"
+    products[0].save()
+    update = translation_update_factory.create(translation_text=translation_import_text)
+    update.add_translations()
+    update.refresh_from_db()
+    assert update.status == update.ERROR
+    assert update.errors == ["No FnacProduct matching SKU 5AM-8UM-7AN exists."]
+
+
+@pytest.mark.django_db
+def test_update_translations_error(
+    mock_update_translations_error, translation_update_factory
+):
+    update = translation_update_factory.create()
+    with pytest.raises(Exception):
+        update.add_translations()
+    update.refresh_from_db()
+    assert update.errors == ["Error parsing translation text"]
+    assert update.status == update.ERROR
+
+
+@pytest.mark.django_db
+def test_invalid_text_import(fnac_product_factory, translation_update_factory):
+    product = fnac_product_factory.create()
+    translation_text = "\r\n".join(
+        [
+            "SKU \tTitre \tCouleur \tLa description \t¬",
+            f"{product.sku} \tProduit un titre rouge Une description d'un produit\t¬",
+        ]
+    )
+    update = translation_update_factory.create(translation_text=translation_text)
+    update.add_translations()
+    update.refresh_from_db()
+    assert update.status == update.ERROR
+    assert update.errors == [f"No description found for product {product.sku}."]
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "translation_text", ["invalid_text", "invalid_text\r\nmore invalid text"]
+)
+def test_single_line_of_text_is_rejected(
+    products, translation_text, translation_update_factory
+):
+    update = translation_update_factory.create(translation_text=translation_text)
+    update.add_translations()
+    update.refresh_from_db()
+    assert update.status == update.ERROR
+    assert update.errors == ["No translations present in translation text."]
