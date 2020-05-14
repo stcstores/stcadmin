@@ -1,18 +1,19 @@
 import tempfile
 from datetime import datetime
+from pathlib import Path
 from unittest.mock import call, patch
 
 import pytest
+from django.core.files.base import ContentFile
 from django.test import override_settings
 from django.utils import timezone
 
 from itd import models
-from itd.models import ITDManifest
 
 
 @pytest.fixture
 def new_manifest():
-    manifest = ITDManifest()
+    manifest = models.ITDManifest()
     manifest.save()
     return manifest
 
@@ -54,6 +55,12 @@ def itd_config_single_rule(itd_shipping_rules):
     return config
 
 
+@pytest.fixture
+def mock_clear_manifest_files_task():
+    with patch("itd.models.clear_manifest_files") as mock_clear_manifest_files_task:
+        yield mock_clear_manifest_files_task
+
+
 @pytest.mark.django_db
 def test_default_create_at_attribute(mock_now, new_manifest):
     assert new_manifest.created_at == mock_now
@@ -66,7 +73,7 @@ def test_last_generated_at_attributes(mock_now, new_manifest):
 
 @pytest.mark.django_db
 def test_status_attribute(new_manifest):
-    assert new_manifest.status == ITDManifest.OPEN
+    assert new_manifest.status == models.ITDManifest.OPEN
 
 
 @pytest.mark.django_db
@@ -82,17 +89,17 @@ def test_manifest_ordering(itd_manifest_factory):
     ]
     for date in dates:
         itd_manifest_factory.create(created_at=date)
-    manifests = ITDManifest.objects.all()
+    manifests = models.ITDManifest.objects.all()
     assert list(manifests) == sorted(
         list(manifests), key=lambda x: x.created_at, reverse=True
     )
 
 
 @pytest.mark.django_db
-def test_close_manifest():
-    with patch("itd.models.close_manifest") as mock_close_manifest:
+def test_create_manifest_closes_manifest():
+    with patch("itd.models.close_manifest") as mock_close_manifest_task:
         manifest = models.ITDManifest.objects.create_manifest()
-    mock_close_manifest.delay.assert_called_once_with(manifest.id)
+    mock_close_manifest_task.delay.assert_called_once_with(manifest.id)
 
 
 @pytest.mark.django_db
@@ -127,10 +134,15 @@ def test_current_orders_filters_existing_orders(
 @pytest.mark.django_db
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 @pytest.mark.parametrize(
-    "status", [ITDManifest.CLOSED, ITDManifest.GENERATING, ITDManifest.ERROR]
+    "status",
+    [
+        models.ITDManifest.CLOSED,
+        models.ITDManifest.GENERATING,
+        models.ITDManifest.ERROR,
+    ],
 )
 def test_manifest_cannot_be_closed_unless_it_is_open(
-    status, mock_CCAPI, itd_manifest_factory
+    mock_now, status, mock_CCAPI, itd_manifest_factory
 ):
     manifest = itd_manifest_factory.create(status=status)
     with pytest.raises(ValueError):
@@ -141,7 +153,7 @@ def test_manifest_cannot_be_closed_unless_it_is_open(
 
 @pytest.mark.django_db
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_close_manifest_creates_orders(
+def test_close_creates_orders(
     itd_config_single_rule, country, mock_CCAPI, mock_orders, itd_manifest_factory
 ):
     manifest = itd_manifest_factory.create()
@@ -154,7 +166,25 @@ def test_close_manifest_creates_orders(
 
 @pytest.mark.django_db
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_close_manifest_creates_products(
+def test_close_schedules_file_deletion(
+    mock_now,
+    mock_clear_manifest_files_task,
+    itd_config_single_rule,
+    country,
+    mock_CCAPI,
+    mock_orders,
+    itd_manifest_factory,
+):
+    manifest = itd_manifest_factory.create()
+    manifest.close()
+    mock_clear_manifest_files_task.apply_async.assert_called_once_with(
+        args=[manifest.id], eta=mock_now + models.ITDManifest.PERSIST_FILES
+    )
+
+
+@pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+def test_close_creates_products(
     itd_config_single_rule, country, mock_CCAPI, mock_orders, itd_manifest_factory
 ):
     manifest = itd_manifest_factory.create()
@@ -168,8 +198,13 @@ def test_close_manifest_creates_products(
 
 @pytest.mark.django_db
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_close_manifest_creates_manifest_file(
-    itd_config_single_rule, country, mock_CCAPI, mock_orders, itd_manifest_factory
+def test_close_creates_manifest_file(
+    mock_clear_manifest_files_task,
+    itd_config_single_rule,
+    country,
+    mock_CCAPI,
+    mock_orders,
+    itd_manifest_factory,
 ):
     manifest = itd_manifest_factory.create()
     manifest.close()
@@ -180,8 +215,13 @@ def test_close_manifest_creates_manifest_file(
 
 @pytest.mark.django_db
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_close_manifest_marks_manifest_closed(
-    itd_config_single_rule, country, mock_CCAPI, mock_orders, itd_manifest_factory
+def test_close_marks_manifest_closed(
+    mock_clear_manifest_files_task,
+    itd_config_single_rule,
+    country,
+    mock_CCAPI,
+    mock_orders,
+    itd_manifest_factory,
 ):
     manifest = itd_manifest_factory.create()
     manifest.close()
@@ -190,7 +230,8 @@ def test_close_manifest_marks_manifest_closed(
 
 @pytest.mark.django_db
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_close_manifest_error_marks_manifest_error(
+def test_close_error_marks_manifest_error(
+    mock_clear_manifest_files_task,
     itd_config_single_rule,
     country,
     mock_get_orders_error,
@@ -205,7 +246,8 @@ def test_close_manifest_error_marks_manifest_error(
 
 @pytest.mark.django_db
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_close_manifest_does_not_create_orders_after_error(
+def test_close_does_not_create_orders_after_error(
+    mock_clear_manifest_files_task,
     itd_config_single_rule,
     country,
     mock_get_orders_error,
@@ -216,3 +258,22 @@ def test_close_manifest_does_not_create_orders_after_error(
     with pytest.raises(Exception):
         manifest.close()
     assert models.ITDOrder.objects.filter(manifest=manifest).exists() is False
+
+
+@pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+def test_clear_files(itd_manifest_factory):
+    manifest = itd_manifest_factory.create()
+    manifest.manifest_file.save("test_file.csv", ContentFile("test_text"))
+    file_path = manifest.manifest_file.path
+    manifest.clear_files()
+    assert Path(file_path).exists() is False
+    assert bool(manifest.manifest_file) is False
+
+
+@pytest.mark.django_db
+@patch("itd.models.ITDManifest.close")
+def test_close_manifest(mock_close, itd_manifest_factory):
+    manifest = itd_manifest_factory.create()
+    models.ITDManifest.objects.close_manifest(manifest.id)
+    mock_close.assert_called_once

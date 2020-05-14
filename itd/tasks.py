@@ -9,3 +9,10 @@ from itd import models
 def close_manifest(manifest_id):
     """Close an ITD manifest and generate a manifest file from current orders."""
     models.ITDManifest.objects.close_manifest(manifest_id)
+
+
+@shared_task
+def clear_manifest_files(manifest_id):
+    """Delete manifest files from an ITD manifest."""
+    manifest = models.ITDManifest.objects.get(id=manifest_id)
+    manifest.clear_files()

@@ -25,3 +25,7 @@ DATABASE_USER = "postgres"
 DATABASE_PASSWORD = ""
 DATABASE_PORT = "5432"
 TEST_DATABASE_NAME = "stcadmin_test"
+
+CC_IMAGE_URL = "https://images.testserver.com/"
+
+CELERY_BROKER_URL = "amqp://localhost//"

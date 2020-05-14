@@ -9,7 +9,7 @@ from django.db import models, transaction
 from django.utils import timezone
 from solo.models import SingletonModel
 
-from itd.tasks import close_manifest
+from itd.tasks import clear_manifest_files, close_manifest
 from shipping.models import Country, ShippingRule
 
 
@@ -85,6 +85,8 @@ class ITDManifest(models.Model):
         (COMPLETE, "Complete"),
     )
 
+    PERSIST_FILES = timedelta(minutes=30)
+
     created_at = models.DateTimeField(auto_now_add=True)
     last_generated_at = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=OPEN)
@@ -121,6 +123,14 @@ class ITDManifest(models.Model):
         else:
             self.status = self.CLOSED
             self.save()
+        finally:
+            clear_manifest_files.apply_async(
+                args=[self.id], eta=timezone.now() + self.PERSIST_FILES
+            )
+
+    def clear_files(self):
+        """Delete manifest files."""
+        self.manifest_file.delete(save=True)
 
 
 class ITDOrderManager(models.Manager):
