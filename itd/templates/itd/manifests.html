@@ -1,0 +1,32 @@
+{% extends 'spring_manifest/base.html' %}
+
+{% block content %}
+
+<h1>ITD Manifest</h1>
+<hr>
+
+<div id="manifest_list"></div>
+
+{% endblock content %}
+
+{% block script %}
+
+<script>
+
+    function getManifestList() {
+        $.get("{% url 'itd:manifest_list' %}", function(response) {
+            $("#manifest_list").html(response);
+            $('#create_manifest_button').click(function() {
+                $(this).attr('disabled', true)
+                $.get("{% url 'itd:create_manifest' %}");
+            });
+        });
+        setTimeout(getManifestList, 5000);
+    }
+    
+    $(document).ready(function(){
+        getManifestList();
+    });
+</script>
+
+{% endblock script %}

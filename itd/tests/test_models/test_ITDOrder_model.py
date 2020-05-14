@@ -33,7 +33,7 @@ def test_create_from_dispatch_order_sets_order_id(mock_orders, itd_manifest_fact
     manifest = itd_manifest_factory.create()
     order = models.ITDOrder.objects.create_from_dispatch_order(manifest, mock_orders[0])
     order.refresh_from_db()
-    assert order.order_id == mock_orders[0].order_id
+    assert order.order_id == str(mock_orders[0].order_id)
 
 
 @pytest.mark.django_db
@@ -41,7 +41,7 @@ def test_create_from_dispatch_order_sets_customer_id(mock_orders, itd_manifest_f
     manifest = itd_manifest_factory.create()
     order = models.ITDOrder.objects.create_from_dispatch_order(manifest, mock_orders[0])
     order.refresh_from_db()
-    assert order.customer_id == mock_orders[0].customer_id
+    assert order.customer_id == str(mock_orders[0].customer_id)
 
 
 @pytest.mark.django_db

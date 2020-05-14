@@ -6,6 +6,7 @@ from datetime import timedelta
 from ccapi import CCAPI
 from django.core.files.base import ContentFile
 from django.db import models, transaction
+from django.db.models import Q
 from django.utils import timezone
 from solo.models import SingletonModel
 
@@ -63,9 +64,19 @@ class ITDManifestManager(models.Manager):
                 number_of_days=ITDManifest.objects.DAYS_SINCE_DISPATCH,
                 courier_rule_id=rule_id,
             )
-            rule_orders = [_ for _ in rule_orders if _.order_id not in existing_orders]
+            rule_orders = [
+                _ for _ in rule_orders if str(_.order_id) not in existing_orders
+            ]
             orders.extend(rule_orders)
         return orders
+
+    def ready_to_create(self):
+        """Return True if a manifest can be created, otherwise False."""
+        return (
+            not self.get_queryset()
+            .filter(Q(status=ITDManifest.GENERATING) | Q(status=ITDManifest.OPEN))
+            .exists()
+        )
 
 
 class ITDManifest(models.Model):
@@ -82,7 +93,6 @@ class ITDManifest(models.Model):
         (CLOSED, "Closed"),
         (GENERATING, "Generating Manifest File"),
         (ERROR, "Error"),
-        (COMPLETE, "Complete"),
     )
 
     PERSIST_FILES = timedelta(minutes=30)
@@ -105,17 +115,10 @@ class ITDManifest(models.Model):
         """Create a new manifest."""
         if self.status != self.OPEN:
             raise ValueError("Cannot close a manifest that is not open.")
+        self.status = self.GENERATING
+        self.save()
         try:
-            cc_orders = self.__class__.objects.get_current_orders()
-            with transaction.atomic():
-                for cc_order in cc_orders:
-                    ITDOrder.objects.create_from_dispatch_order(
-                        manifest=self, cc_order=cc_order
-                    )
-            manifest_file = _ITDManifestFile.create(cc_orders)
-            self.manifest_file.save(
-                "ITD_Manifest.csv", ContentFile(manifest_file.getvalue())
-            )
+            self._generate_manifest()
         except Exception as e:
             self.status = self.ERROR
             self.save()
@@ -127,6 +130,18 @@ class ITDManifest(models.Model):
             clear_manifest_files.apply_async(
                 args=[self.id], eta=timezone.now() + self.PERSIST_FILES
             )
+
+    def _generate_manifest(self):
+        cc_orders = self.__class__.objects.get_current_orders()
+        with transaction.atomic():
+            for cc_order in cc_orders:
+                ITDOrder.objects.create_from_dispatch_order(
+                    manifest=self, cc_order=cc_order
+                )
+        manifest_file = _ITDManifestFile.create(cc_orders)
+        self.manifest_file.save(
+            "ITD_Manifest.csv", ContentFile(manifest_file.getvalue())
+        )
 
     def clear_files(self):
         """Delete manifest files."""
@@ -152,7 +167,7 @@ class ITDOrderManager(models.Manager):
 class ITDOrder(models.Model):
     """Model for orders sent by ITD."""
 
-    order_id = models.CharField(max_length=20)
+    order_id = models.CharField(max_length=20, unique=True)
     customer_id = models.CharField(max_length=20)
     manifest = models.ForeignKey(ITDManifest, on_delete=models.CASCADE)
 

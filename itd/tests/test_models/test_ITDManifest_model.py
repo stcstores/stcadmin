@@ -277,3 +277,22 @@ def test_close_manifest(mock_close, itd_manifest_factory):
     manifest = itd_manifest_factory.create()
     models.ITDManifest.objects.close_manifest(manifest.id)
     mock_close.assert_called_once
+
+
+@pytest.mark.django_db
+def test_ready_to_create_returns_true_if_no_manifest_exists():
+    assert models.ITDManifest.objects.ready_to_create() is True
+
+
+@pytest.mark.django_db
+def test_ready_to_create_returns_false_if_a_manifest_is_open(itd_manifest_factory):
+    itd_manifest_factory.create(status=models.ITDManifest.OPEN)
+    assert models.ITDManifest.objects.ready_to_create() is False
+
+
+@pytest.mark.django_db
+def test_ready_to_create_returns_false_if_a_manifest_is_generating(
+    itd_manifest_factory,
+):
+    itd_manifest_factory.create(status=models.ITDManifest.GENERATING)
+    assert models.ITDManifest.objects.ready_to_create() is False

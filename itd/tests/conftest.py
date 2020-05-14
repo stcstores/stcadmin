@@ -35,8 +35,8 @@ def mock_orders(mock_CCAPI):
         ),
     ]
     mock_order = Mock(
-        order_id="3893038",
-        customer_id="284938403",
+        order_id=3893038,
+        customer_id=284938403,
         delivery_name="Joe Bloggs",
         products=mock_products,
         delilvery_address="123 No Road\tNowhere,Sometown,Someplace,EB23 2BD",
