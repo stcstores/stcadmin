@@ -90,9 +90,9 @@ def test_manifest_ordering(itd_manifest_factory):
 
 @pytest.mark.django_db
 def test_close_manifest():
-    with patch("itd.models.ITDManifest.objects.close_manifest") as mock_close_manifest:
+    with patch("itd.models.close_manifest") as mock_close_manifest:
         manifest = models.ITDManifest.objects.create_manifest()
-    mock_close_manifest.assert_called_once_with(manifest.id)
+    mock_close_manifest.delay.assert_called_once_with(manifest.id)
 
 
 @pytest.mark.django_db

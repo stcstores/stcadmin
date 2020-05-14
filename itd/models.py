@@ -9,6 +9,7 @@ from django.db import models, transaction
 from django.utils import timezone
 from solo.models import SingletonModel
 
+from itd.tasks import close_manifest
 from shipping.models import Country, ShippingRule
 
 
@@ -36,7 +37,7 @@ class ITDManifestManager(models.Manager):
     def create_manifest(self):
         """Create a new manifest."""
         manifest = self.create()
-        self.close_manifest(manifest.id)
+        close_manifest.delay(manifest.id)
         return manifest
 
     def close_manifest(self, manifest_id):

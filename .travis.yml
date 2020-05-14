@@ -16,12 +16,13 @@ install:
 
 before_script:
   - psql -c "CREATE DATABASE stcadmin;" -U postgres
+  - poetry run python manage.py collectstatic
 
 script:
   - flake8 .
   - isort --recursive -c
   - black --check .
-  - poetry run pytest
+  - poetry run pytest -sv
   - coveralls
 
 notifications:
