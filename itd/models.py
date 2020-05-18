@@ -227,23 +227,45 @@ class _ITDManifestFile:
         def __init__(self, order_address_string):
             parts = order_address_string.split(",")
             self.city, self.region, self.postcode = parts[-3:]
-            lines = "".join(parts[:-3])
-            if "#" in lines:
-                lines = lines[: lines.index("#")]
-            if "\t" in lines:
-                tab_index = lines.index("\t")
-                self.line_1 = lines[:tab_index]
-                self.line_2 = lines[tab_index + 1 :]
-            else:
-                self.line_1 = lines
-                self.line_2 = ""
+            self.line_1, self.line_2 = self.get_address_lines("".join(parts[:-3]))
             if "(" in self.postcode:
-                self.postcode = self.postcode[: self.postcode.index("(")]
+                self.postcode = self.postcode[: self.postcode.index("(")].strip()
             self.line_1 = self.line_1.strip()
             self.line_2 = self.line_2.strip()
             self.city = self.city.strip()
             self.region = self.region.strip()
             self.postcode = self.postcode.strip()
+
+        def strip_hash(self, address_string):
+            if "#" in address_string:
+                address_string = address_string[: address_string.index("#")]
+            return address_string
+
+        def get_address_lines(self, address_string):
+            address_string = self.strip_hash(address_string)
+            line_1, line_2 = self.split_address_lines(address_string)
+            line_1, line_2 = self.fix_address_length(line_1, line_2)
+            return line_1.strip(), line_2.strip()
+
+        def split_address_lines(self, address_string):
+            if "\t" in address_string:
+                tab_index = address_string.index("\t")
+                line_1 = address_string[:tab_index].strip()
+                line_2 = address_string[tab_index + 1 :].strip()
+            else:
+                line_1 = address_string.strip()
+                line_2 = ""
+            return line_1.strip(), line_2.strip()
+
+        def fix_address_length(self, line_1, line_2):
+            while len(line_1) > 35:
+                try:
+                    space_index = line_1.rindex(" ")
+                except ValueError:
+                    space_index = 35
+                line_2 = " ".join((line_1[space_index:], line_2))
+                line_1 = line_1[:space_index]
+            return line_1, line_2
 
     @classmethod
     def create(cls, orders):
