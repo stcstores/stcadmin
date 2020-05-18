@@ -1,0 +1,12 @@
+[Unit]
+Description=Celery process for SITENAME
+
+[Service]
+Restart=on-failure
+User=USERNAME
+WorkingDirectory=/home/USERNAME/sites/SITENAME/source/
+ExecStart=/home/USERNAME/sites/SITENAME/source/.venv/bin/celery -A stcadmin worker
+ExecStop=/home/USERNAME/sites/SITENAME/source/.venv/bin/celery -A stcadmin control shutdown
+
+[Install]
+WantedBy=multi-user.target

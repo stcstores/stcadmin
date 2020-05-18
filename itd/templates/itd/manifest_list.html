@@ -1,0 +1,23 @@
+{% load static %}
+
+
+<button id="create_manifest_button" {% if not ready_to_create %} disabled{% endif %}>
+    Create new manifest
+</button>
+
+<table>
+    {% for manifest in manifests %}
+    <tr>
+        <td>{{manifest.created_at}}</td>
+        <td>{{manifest.status}}</td>
+        <td>
+            {% if manifest.status == manifest.OPEN or manifest.status == manifest.GENERATING %}
+            Generating <img src="{% static 'images/loading.gif' %}" alt="" height="20">
+            {% elif manifest.manifest_file %}
+            <a href="{{manifest.manifest_file.url}}"><button>Download</button></a>
+            {% endif %}
+        </td>
+        <td>{{ manifest.itdorder_set.all|length }}</td>
+    </tr>
+    {% endfor %}
+</table>

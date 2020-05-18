@@ -7,6 +7,7 @@ from .views import (
     ManifestView,
     OrderExists,
     SendSecuredMailManifest,
+    SpringUserMixin,
     UpdateManifest,
     UpdateOrderView,
 )
@@ -18,6 +19,7 @@ __all__ = [
     "ManifestView",
     "OrderExists",
     "SendSecuredMailManifest",
+    "SpringUserMixin",
     "UpdateManifest",
     "UpdateOrderView",
 ]

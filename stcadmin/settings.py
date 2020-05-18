@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     "orders",
     "shipping",
     "feedback",
+    "itd",
     "debug_toolbar",
 ]
 
@@ -284,6 +285,10 @@ DOCS_ROOT = os.path.join(SOURCE_DIR, "docs", "build", "html")
 
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "home:index"
+
+CELERY_BROKER_URL = get_config("CELERY_BROKER_URL")
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
 
 TESTING = (
     len(sys.argv) > 1
