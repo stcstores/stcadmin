@@ -200,3 +200,13 @@ def test_address_string_split(
     manifest_contents = manifest_file_contents([order])
     assert manifest_contents[0][2] == line_1
     assert manifest_contents[0][3] == line_2
+
+
+@pytest.mark.django_db
+def test_empty_region_is_replaced_with_city(
+    country, mock_order, manifest_file_contents
+):
+    order = mock_order(region="", city="City")
+    manifest_contents = manifest_file_contents([order])
+    assert manifest_contents[0][4] == "City"
+    assert manifest_contents[0][5] == "City"

@@ -105,11 +105,7 @@ def test_create_manifest_closes_manifest():
 @pytest.mark.django_db
 def test_get_current_orders_requests_orders(itd_config, mock_CCAPI, itd_shipping_rules):
     calls = [
-        call(
-            order_type=1,
-            number_of_days=models.ITDManifest.objects.DAYS_SINCE_DISPATCH,
-            courier_rule_id=rule.rule_ID,
-        )
+        call(order_type=0, number_of_days=0, courier_rule_id=rule.rule_ID,)
         for rule in itd_shipping_rules
     ]
     models.ITDManifest.objects.get_current_orders()
