@@ -60,9 +60,7 @@ class ITDManifestManager(models.Manager):
         orders = []
         for rule_id in shipping_rule_ids:
             rule_orders = CCAPI.get_orders_for_dispatch(
-                order_type=1,
-                number_of_days=ITDManifest.objects.DAYS_SINCE_DISPATCH,
-                courier_rule_id=rule_id,
+                order_type=0, number_of_days=0, courier_rule_id=rule_id,
             )
             rule_orders = [
                 _ for _ in rule_orders if str(_.order_id) not in existing_orders
@@ -183,10 +181,6 @@ class ITDOrder(models.Model):
         """Return the order ID as presented to ITD."""
         return itd_order_id(self.order_id)
 
-    def get_cc_order(self):
-        """Return the details of the order from Cloud Commerce."""
-        return CCAPI.get_orders_for_dispatch(order_type=1, search_term=self.order_id)[0]
-
 
 class ITDProductManager(models.Manager):
     """Model manager for the ITDProduct model."""
@@ -233,7 +227,7 @@ class _ITDManifestFile:
             self.line_1 = self.line_1.strip()
             self.line_2 = self.line_2.strip()
             self.city = self.city.strip()
-            self.region = self.region.strip()
+            self.region = self.region.strip() or self.city
             self.postcode = self.postcode.strip()
 
         def strip_hash(self, address_string):
