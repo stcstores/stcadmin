@@ -292,3 +292,18 @@ def test_ready_to_create_returns_false_if_a_manifest_is_generating(
 ):
     itd_manifest_factory.create(status=models.ITDManifest.GENERATING)
     assert models.ITDManifest.objects.ready_to_create() is False
+
+
+@pytest.mark.django_db
+def test_no_new_orders(
+    mock_clear_manifest_files_task,
+    itd_config_single_rule,
+    country,
+    mock_CCAPI,
+    itd_manifest_factory,
+):
+    manifest = itd_manifest_factory.create()
+    manifest.close()
+    manifest.refresh_from_db()
+    assert manifest.status == manifest.NO_ORDERS
+    assert bool(manifest.manifest_file) is False

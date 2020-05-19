@@ -9,7 +9,7 @@
     {% for manifest in manifests %}
     <tr>
         <td>{{manifest.created_at}}</td>
-        <td>{{manifest.status}}</td>
+        <td>{{manifest.get_status_display}}</td>
         <td>
             {% if manifest.status == manifest.OPEN or manifest.status == manifest.GENERATING %}
             Generating <img src="{% static 'images/loading.gif' %}" alt="" height="20">
@@ -17,7 +17,11 @@
             <a href="{{manifest.manifest_file.url}}"><button>Download</button></a>
             {% endif %}
         </td>
-        <td>{{ manifest.itdorder_set.all|length }}</td>
+        <td>
+            {% with manifest.itdorder_set.all|length as order_count %}
+            {{ order_count }} order{{order_count|pluralize}}
+            {% endwith %}
+        </td>
     </tr>
     {% endfor %}
 </table>

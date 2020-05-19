@@ -85,12 +85,14 @@ class ITDManifest(models.Model):
     GENERATING = "generating"
     ERROR = "error"
     COMPLETE = "complete"
+    NO_ORDERS = "no_orders"
 
     STATUS_CHOICES = (
         (OPEN, "Open"),
         (CLOSED, "Closed"),
         (GENERATING, "Generating Manifest File"),
         (ERROR, "Error"),
+        (NO_ORDERS, "No Orders"),
     )
 
     PERSIST_FILES = timedelta(minutes=30)
@@ -111,35 +113,46 @@ class ITDManifest(models.Model):
 
     def close(self):
         """Create a new manifest."""
-        if self.status != self.OPEN:
-            raise ValueError("Cannot close a manifest that is not open.")
-        self.status = self.GENERATING
-        self.save()
-        try:
-            self._generate_manifest()
-        except Exception as e:
-            self.status = self.ERROR
-            self.save()
-            raise e
-        else:
-            self.status = self.CLOSED
-            self.save()
-        finally:
+        self._check_status_before_closing()
+        cc_orders = self._get_cc_orders()
+        if len(cc_orders) > 0:
+            self._add_orders_to_db(cc_orders)
+            self._generate_manifest(cc_orders)
+            self._set_status(self.CLOSED)
             clear_manifest_files.apply_async(
                 args=[self.id], eta=timezone.now() + self.PERSIST_FILES
             )
+        else:
+            self._set_status(self.NO_ORDERS)
 
-    def _generate_manifest(self):
-        cc_orders = self.__class__.objects.get_current_orders()
-        with transaction.atomic():
-            for cc_order in cc_orders:
-                ITDOrder.objects.create_from_dispatch_order(
-                    manifest=self, cc_order=cc_order
-                )
+    def _check_status_before_closing(self):
+        if self.status != self.OPEN:
+            raise ValueError("Cannot close a manifest that is not open.")
+        self._set_status(self.GENERATING)
+
+    @transaction.atomic
+    def _add_orders_to_db(self, cc_orders):
+        for cc_order in cc_orders:
+            ITDOrder.objects.create_from_dispatch_order(
+                manifest=self, cc_order=cc_order
+            )
+
+    def _generate_manifest(self, cc_orders):
         manifest_file = _ITDManifestFile.create(cc_orders)
         self.manifest_file.save(
             "ITD_Manifest.csv", ContentFile(manifest_file.getvalue())
         )
+
+    def _set_status(self, status):
+        self.status = status
+        self.save()
+
+    def _get_cc_orders(self):
+        try:
+            return self.__class__.objects.get_current_orders()
+        except Exception as e:
+            self._set_status(self.ERROR)
+            raise e
 
     def clear_files(self):
         """Delete manifest files."""
