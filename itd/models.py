@@ -10,7 +10,7 @@ from django.db.models import Q
 from django.utils import timezone
 from solo.models import SingletonModel
 
-from itd.tasks import clear_manifest_files, close_manifest
+from itd.tasks import clear_manifest_files, close_manifest, regenerate_manifest
 from shipping.models import Country, ShippingRule
 
 
@@ -45,6 +45,11 @@ class ITDManifestManager(models.Manager):
         """Close a manifest."""
         manifest = super().get_queryset().get(id=manifest_id)
         manifest.close()
+
+    def regenerate_manifest(self, manifest_id):
+        """Regenerate a manifest file."""
+        manifest = super().get_queryset().get(id=manifest_id)
+        manifest.regenerate()
 
     def _recent_order_ids(self):
         orders_since = timezone.now() - timedelta(self.DAYS_SINCE_DISPATCH)
@@ -114,21 +119,54 @@ class ITDManifest(models.Model):
     def close(self):
         """Create a new manifest."""
         self._check_status_before_closing()
+        self._set_status(self.GENERATING)
         cc_orders = self._get_cc_orders()
         if len(cc_orders) > 0:
             self._add_orders_to_db(cc_orders)
             self._generate_manifest(cc_orders)
             self._set_status(self.CLOSED)
-            clear_manifest_files.apply_async(
-                args=[self.id], eta=timezone.now() + self.PERSIST_FILES
-            )
+            self._set_clear_files()
         else:
             self._set_status(self.NO_ORDERS)
+
+    def regenerate(self):
+        """Recreate the manifest file."""
+        self._check_status_before_regenerating()
+        self._set_status(self.GENERATING)
+        orders = self._reaquire_orders()
+        self._generate_manifest(orders)
+        self._set_clear_files()
+        self.last_generated_at = timezone.now()
+        self._set_status(self.CLOSED)
+
+    def regenerate_async(self):
+        """Regenerate the manifest file asynchronously."""
+        regenerate_manifest.delay(self.id)
+
+    def _reaquire_orders(self):
+        cc_orders = []
+        try:
+            for order in self.itdorder_set.all():
+                results = CCAPI.get_orders_for_dispatch(search_term=order.order_id)
+                cc_orders.extend(results)
+        except Exception as e:
+            self._set_status(self.ERROR)
+            raise e
+        else:
+            return cc_orders
+
+    def _set_clear_files(self):
+        clear_manifest_files.apply_async(
+            args=[self.id], eta=timezone.now() + self.PERSIST_FILES
+        )
 
     def _check_status_before_closing(self):
         if self.status != self.OPEN:
             raise ValueError("Cannot close a manifest that is not open.")
-        self._set_status(self.GENERATING)
+
+    def _check_status_before_regenerating(self):
+        if self.status != self.CLOSED:
+            raise ValueError("Cannot regenerate a manifest that is not closed.")
 
     @transaction.atomic
     def _add_orders_to_db(self, cc_orders):

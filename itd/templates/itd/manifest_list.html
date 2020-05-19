@@ -15,6 +15,10 @@
             Generating <img src="{% static 'images/loading.gif' %}" alt="" height="20">
             {% elif manifest.manifest_file %}
             <a href="{{manifest.manifest_file.url}}"><button>Download</button></a>
+            {% elif manifest.status == manifest.CLOSED %}
+            <button onclick="regenerate_manifest('{% url 'itd:regenerate_manifest' manifest.id %}')">
+                Regenerate
+            </button>
             {% endif %}
         </td>
         <td>
