@@ -19,3 +19,9 @@ def test_clear_manifest_files_task(mock_ITDManifest, celery_app, celery_worker):
     tasks.clear_manifest_files.delay(manifest.id).get(timeout=5)
     mock_ITDManifest.objects.get.assert_called_once_with(id=manifest.id)
     manifest.clear_files.assert_called_once()
+
+
+@patch("itd.models.ITDManifestManager.regenerate_manifest")
+def test_regenerate_manifest_task(mock_regenerate_manifest, celery_app, celery_worker):
+    tasks.regenerate_manifest.delay(5).get(timeout=10)
+    mock_regenerate_manifest.assert_called_once_with(5)

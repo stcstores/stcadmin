@@ -12,6 +12,10 @@
 {% block script %}
 
 <script>
+    
+    function regenerate_manifest(url) {
+        $.ajax({method: "GET", url: url});
+    }
 
     function getManifestList() {
         $.get("{% url 'itd:manifest_list' %}", function(response) {

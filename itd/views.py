@@ -1,6 +1,7 @@
 """Views for the ITD app."""
 
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, View
 
 from itd import models
@@ -40,3 +41,13 @@ class CreateITDManifest(SpringUserMixin, View):
             return HttpResponse(status=500)
         else:
             return HttpResponse("done")
+
+
+class RegenerateITDManifest(SpringUserMixin, View):
+    """View to trigger regenerating a manifest file."""
+
+    def get(self, *args, **kwargs):
+        """Start regenerating an ITD manifest."""
+        manifest = get_object_or_404(models.ITDManifest, id=self.kwargs["pk"])
+        manifest.regenerate_async()
+        return HttpResponse("done")

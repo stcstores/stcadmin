@@ -61,6 +61,12 @@ def mock_clear_manifest_files_task():
         yield mock_clear_manifest_files_task
 
 
+@pytest.fixture
+def mock_regenerate_manifest_task():
+    with patch("itd.models.regenerate_manifest") as mock_regenerate_manifest_task:
+        yield mock_regenerate_manifest_task
+
+
 @pytest.mark.django_db
 def test_default_create_at_attribute(mock_now, new_manifest):
     assert new_manifest.created_at == mock_now
@@ -135,6 +141,7 @@ def test_current_orders_filters_existing_orders(
         models.ITDManifest.CLOSED,
         models.ITDManifest.GENERATING,
         models.ITDManifest.ERROR,
+        models.ITDManifest.NO_ORDERS,
     ],
 )
 def test_manifest_cannot_be_closed_unless_it_is_open(
@@ -257,6 +264,21 @@ def test_close_does_not_create_orders_after_error(
 
 
 @pytest.mark.django_db
+def test_no_new_orders(
+    mock_clear_manifest_files_task,
+    itd_config_single_rule,
+    country,
+    mock_CCAPI,
+    itd_manifest_factory,
+):
+    manifest = itd_manifest_factory.create()
+    manifest.close()
+    manifest.refresh_from_db()
+    assert manifest.status == manifest.NO_ORDERS
+    assert bool(manifest.manifest_file) is False
+
+
+@pytest.mark.django_db
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 def test_clear_files(itd_manifest_factory):
     manifest = itd_manifest_factory.create()
@@ -272,7 +294,7 @@ def test_clear_files(itd_manifest_factory):
 def test_close_manifest(mock_close, itd_manifest_factory):
     manifest = itd_manifest_factory.create()
     models.ITDManifest.objects.close_manifest(manifest.id)
-    mock_close.assert_called_once
+    mock_close.assert_called_once()
 
 
 @pytest.mark.django_db
@@ -292,3 +314,99 @@ def test_ready_to_create_returns_false_if_a_manifest_is_generating(
 ):
     itd_manifest_factory.create(status=models.ITDManifest.GENERATING)
     assert models.ITDManifest.objects.ready_to_create() is False
+
+
+@pytest.fixture
+def regenerated_manifest(
+    mock_clear_manifest_files_task,
+    mock_CCAPI,
+    country,
+    mock_orders,
+    itd_manifest_factory,
+    itd_order_factory,
+):
+    manifest = itd_manifest_factory.create(status=models.ITDManifest.CLOSED)
+    for _ in range(5):
+        itd_order_factory.create(manifest=manifest)
+    manifest.regenerate()
+    manifest.refresh_from_db()
+    return manifest
+
+
+@pytest.mark.django_db
+def test_regenerate_requests_orders(mock_CCAPI, regenerated_manifest):
+    calls = [
+        call(search_term=order.order_id)
+        for order in regenerated_manifest.itdorder_set.all()
+    ]
+    mock_CCAPI.get_orders_for_dispatch.assert_has_calls(calls)
+
+
+@pytest.mark.django_db
+def test_regenerate_creates_file(regenerated_manifest):
+    assert bool(regenerated_manifest.manifest_file) is True
+
+
+@pytest.mark.django_db
+def test_regenerate_sets_manifest_closed(regenerated_manifest):
+    assert regenerated_manifest.status == regenerated_manifest.CLOSED
+
+
+@pytest.mark.django_db
+def test_regenerate_calls_clear_files(
+    mock_now, mock_clear_manifest_files_task, regenerated_manifest
+):
+    mock_clear_manifest_files_task.apply_async.assert_called_once_with(
+        args=[regenerated_manifest.id], eta=mock_now + models.ITDManifest.PERSIST_FILES
+    )
+
+
+@pytest.mark.django_db
+def test_regenerate_sets_last_generated_at(mock_now, regenerated_manifest):
+    assert regenerated_manifest.last_generated_at == mock_now
+
+
+@pytest.mark.django_db
+def test_regenerate_error(
+    mock_get_orders_error,
+    mock_clear_manifest_files_task,
+    itd_manifest_factory,
+    itd_order_factory,
+):
+    manifest = itd_manifest_factory.create(status=models.ITDManifest.CLOSED)
+    itd_order_factory.create(manifest=manifest)
+    with pytest.raises(Exception):
+        manifest.regenerate()
+    manifest.refresh_from_db()
+    assert manifest.status == manifest.ERROR
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "status",
+    (
+        models.ITDManifest.OPEN,
+        models.ITDManifest.GENERATING,
+        models.ITDManifest.ERROR,
+        models.ITDManifest.NO_ORDERS,
+    ),
+)
+def test_regenerate_only_allowed_on_closed_manifests(itd_manifest_factory, status):
+    manifest = itd_manifest_factory.create(status=status)
+    with pytest.raises(ValueError):
+        manifest.regenerate()
+
+
+@pytest.mark.django_db
+@patch("itd.models.ITDManifest.regenerate")
+def test_regenerate_manifest(mock_regenerate, itd_manifest_factory):
+    manifest = itd_manifest_factory.create(status=models.ITDManifest.CLOSED)
+    models.ITDManifest.objects.regenerate_manifest(manifest.id)
+    mock_regenerate.assert_called_once()
+
+
+@pytest.mark.django_db
+def test_regenerate_async(mock_regenerate_manifest_task, itd_manifest_factory):
+    manifest = itd_manifest_factory.create(status=models.ITDManifest.CLOSED)
+    manifest.regenerate_async()
+    mock_regenerate_manifest_task.delay.assert_called_once_with(manifest.id)

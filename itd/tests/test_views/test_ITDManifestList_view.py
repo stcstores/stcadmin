@@ -60,7 +60,7 @@ def test_closed_manifest(url, group_logged_in_client, itd_manifest_factory):
     manifest = itd_manifest_factory.create(status=models.ITDManifest.CLOSED)
     response = group_logged_in_client.get(url)
     content = response.content.decode("utf8")
-    assert manifest.status in content
+    assert manifest.get_status_display() in content
     assert "disabled" not in content
 
 
@@ -68,7 +68,7 @@ def test_open_manifest(url, group_logged_in_client, itd_manifest_factory):
     manifest = itd_manifest_factory.create(status=models.ITDManifest.OPEN)
     response = group_logged_in_client.get(url)
     content = response.content.decode("utf8")
-    assert manifest.status in content
+    assert manifest.get_status_display() in content
     assert "disabled" in content
 
 
@@ -76,7 +76,7 @@ def test_generating_manifest(url, group_logged_in_client, itd_manifest_factory):
     manifest = itd_manifest_factory.create(status=models.ITDManifest.GENERATING)
     response = group_logged_in_client.get(url)
     content = response.content.decode("utf8")
-    assert manifest.status in content
+    assert manifest.get_status_display() in content
     assert "disabled" in content
     assert "img" in content
 
@@ -85,5 +85,5 @@ def test_error_manifest(url, group_logged_in_client, itd_manifest_factory):
     manifest = itd_manifest_factory.create(status=models.ITDManifest.ERROR)
     response = group_logged_in_client.get(url)
     content = response.content.decode("utf8")
-    assert manifest.status in content
+    assert manifest.get_status_display() in content
     assert "disabled" not in content
