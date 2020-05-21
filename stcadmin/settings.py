@@ -98,7 +98,6 @@ INSTALLED_APPS = [
     "orders",
     "shipping",
     "feedback",
-    "itd",
     "fnac",
     "debug_toolbar",
 ]
