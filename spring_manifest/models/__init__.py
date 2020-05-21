@@ -99,7 +99,7 @@ def update_manifest_orders(number_of_days=1):
         try:
             update_manifest_database(number_of_days)
         except Exception as e:
-            logger.exception(f"Manifest update raised an exception.")
+            logger.exception("Manifest update raised an exception.")
             update.fail()
             raise e
         else:

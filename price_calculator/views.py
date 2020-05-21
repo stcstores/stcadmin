@@ -1,9 +1,7 @@
 """Views for price_calculator."""
 
-import json
-
 import cc_products
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -34,10 +32,10 @@ class GetShippingPriceView(InventoryUserMixin, View):
     def post(self, request):
         """Return shipping prices as JSON or return server error."""
         try:
-            json_data = self.get_shipping_price_details()
+            response_data = self.get_shipping_price_details()
         except models.DestinationCountry.NoShippingService:
-            json_data = self.no_shipping_price_response()
-        return HttpResponse(json_data)
+            response_data = self.no_shipping_price_response()
+        return JsonResponse(response_data)
 
     def package_type_name(self):
         """Return the package type name."""
@@ -113,7 +111,7 @@ class GetShippingPriceView(InventoryUserMixin, View):
             self.CURRENCY_SYMBOL: currency_symbol,
             self.MIN_CHANNEL_FEE: min_channel_fee,
         }
-        return json.dumps(data)
+        return data
 
 
 class RangePriceCalculatorView(InventoryUserMixin, TemplateView):

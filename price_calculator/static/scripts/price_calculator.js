@@ -159,28 +159,28 @@ function get_postage_price(
     'price': price,
   }
   console.log(data);
+
   $.ajax({
     type: 'POST',
     url: get_postage_price_url,
     data: data,
     success: function (response) {
-      data = $.parseJSON(response);
-      console.log(data);
-      console.log(data['vat_rates']);
-      update_vat_rates(data['vat_rates'], calculator);
-      calculator.set_postage_price(parseInt(data['price']) / 100);
-      calculator.set_exchange_rate(parseFloat(data['exchange_rate']));
-      calculator.currency_code = data['currency_code'];
-      calculator.currency_symbol = data['currency_symbol'];
-      calculator.min_channel_fee = parseInt(data['min_channel_fee']);
+      console.log(response);
+      update_vat_rates(response['vat_rates'], calculator);
+      calculator.set_postage_price(parseInt(response['price']) / 100);
+      calculator.set_exchange_rate(parseFloat(response['exchange_rate']));
+      calculator.currency_code = response['currency_code'];
+      calculator.currency_symbol = response['currency_symbol'];
+      calculator.min_channel_fee = parseInt(response['min_channel_fee']);
       calculator.shipping_service = data['price_name'];
-      calculator.valid = data['success'];
+      calculator.valid = response['success'];
       calculator.recalculate();
       calculator.change();
       $(document).trigger('calculator_update');
     },
     error: function () {
       alert('Error finding shipping service.');
+      $(document).trigger('calculator_update');
     }
   });
 }

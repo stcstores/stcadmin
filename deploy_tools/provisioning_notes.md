@@ -10,6 +10,7 @@
 * `postgres`
 * `webhook`
 * `certbot`
+* `Rabbit MQ`
 
 ## Install User Python
 
@@ -57,7 +58,7 @@ cp source/deploy_tools/scripts/update.sh scripts/
 
 Add `config.toml` and `secret_key.toml` to the `config` directory.
 
-## Nginx Virtual Host config
+## Nginx
 
 Replace SITENAME in `nginx.template.conf` and copy to
 `/etc/nginx/sites-available/<sitename>`:
@@ -72,12 +73,12 @@ Enable site by symlinking config file to `/etc/nginx/sites-enabled`:
 sudo ln -s /etc/nginx/sites-available/<sitename> /etc/nginx/sites-enabled/<sitename>
 ```
 
-## Systemd service
+## Gunicorn Service
 
 Install the service config file, replacing the username and sitename, then enable and start the service:
 
 ```bash
-sed "s/SITENAME/<sitename>/g; s/USERNAME/<username>/g" deploy_tools/gunicorn-systemd.template.service \ |sudo tee etc/systemd/system/gunicorn-<sitename>.service
+sed "s/SITENAME/<sitename>/g; s/USERNAME/<username>/g" deploy_tools/gunicorn-systemd.template.service \ |sudo tee /etc/systemd/system/gunicorn-<sitename>.service
 sudo systemctl enable gunicorn-<sitename>.service
 sudo systemctl start gunicorn-<sitename>.service
 ```
@@ -85,6 +86,22 @@ sudo systemctl start gunicorn-<sitename>.service
 Allow the service to be restarted without a password by adding the following to the sudoers file with `visudo`.
 
 ```<username> ALL=NOPASSWORD: /bin/systemctl restart gunicorn-<domain>.service```
+
+## Celery Service
+
+Install RabbitMQ
+
+```bash
+sudo apt install rabbitmq-server
+```
+
+Add a service to enable the Celery worker
+
+```bash
+sed "s/SITENAME/<sitename>/g; s/USERNAME/<username>/g" deploy_tools/celery-systemd.template.service \ |sudo tee /etc/systemd/system/celery-<sitename>.service
+sudo systemctl enable celery-<sitename>.service
+sudo systemctl start celery-<sitename>.service
+```
 
 ## Get SSL Certificates
 

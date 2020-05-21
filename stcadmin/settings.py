@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "adminsortable2",
     "crispy_forms",
+    "solo",
     "formtools",
     "stcadmin",
     "home",
@@ -269,7 +270,7 @@ LOGGING = {
 }
 
 LANGUAGE_CODE = "en-gb"
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/London"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -288,6 +289,10 @@ CRISPY_FAIL_SILENTLY = not DEBUG
 
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "home:index"
+
+CELERY_BROKER_URL = get_config("CELERY_BROKER_URL")
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
 
 TESTING = (
     len(sys.argv) > 1
