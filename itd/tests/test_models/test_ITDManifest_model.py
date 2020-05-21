@@ -68,12 +68,12 @@ def mock_regenerate_manifest_task():
 
 
 @pytest.mark.django_db
-def test_default_create_at_attribute(mock_now, new_manifest):
+def test_default_created_at_attribute(mock_now, new_manifest):
     assert new_manifest.created_at == mock_now
 
 
 @pytest.mark.django_db
-def test_last_generated_at_attributes(mock_now, new_manifest):
+def test_last_generated_at_attribute(mock_now, new_manifest):
     assert new_manifest.last_generated_at is None
 
 
@@ -83,7 +83,7 @@ def test_status_attribute(new_manifest):
 
 
 @pytest.mark.django_db
-def test_manifest_file_attributs(new_manifest):
+def test_manifest_file_attribute(new_manifest):
     assert bool(new_manifest.manifest_file) is False
 
 
@@ -264,6 +264,7 @@ def test_close_does_not_create_orders_after_error(
 
 
 @pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 def test_no_new_orders(
     mock_clear_manifest_files_task,
     itd_config_single_rule,
@@ -317,6 +318,7 @@ def test_ready_to_create_returns_false_if_a_manifest_is_generating(
 
 
 @pytest.fixture
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 def regenerated_manifest(
     mock_clear_manifest_files_task,
     mock_CCAPI,
@@ -367,6 +369,7 @@ def test_regenerate_sets_last_generated_at(mock_now, regenerated_manifest):
 
 
 @pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 def test_regenerate_error(
     mock_get_orders_error,
     mock_clear_manifest_files_task,
@@ -382,6 +385,7 @@ def test_regenerate_error(
 
 
 @pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 @pytest.mark.parametrize(
     "status",
     (
