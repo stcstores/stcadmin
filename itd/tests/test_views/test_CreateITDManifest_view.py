@@ -53,7 +53,7 @@ def test_logged_in_group_post(group_logged_in_client, url):
     assert response.status_code == 405
 
 
-def test_valid_request_response(valid_get_response):
+def test_valid_request_response(mock_ITDManifest, valid_get_response):
     assert valid_get_response.content.decode("utf8") == "done"
     assert valid_get_response.status_code == 200
 
