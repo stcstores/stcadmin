@@ -291,7 +291,7 @@ class LocationIntegrityCheck:
             self.incorrect_bays,
         ]
         data = []
-        for i in range(max([len(l) for l in bay_lists])):
+        for i in range(max([len(_) for _ in bay_lists])):
             row = []
             for bay_list in bay_lists:
                 try:

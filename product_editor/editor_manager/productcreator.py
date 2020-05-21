@@ -41,7 +41,7 @@ class ProductSaver(ProductEditorBase):
                 self.create_variation_product(self)
             self.product_range.options[self.INCOMPLETE].selected = False
         except Exception as e:
-            logger.exception(f"Error creating product.", extra={"user": self.user})
+            logger.exception("Error creating product.", extra={"user": self.user})
             self.handle_error(self)
             raise e
 

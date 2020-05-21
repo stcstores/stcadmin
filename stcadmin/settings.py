@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "adminsortable2",
+    "solo",
     "validation",
     "formtools",
     "stcadmin",
@@ -98,6 +99,7 @@ INSTALLED_APPS = [
     "shipping",
     "feedback",
     "fnac",
+    "itd",
     "debug_toolbar",
 ]
 
