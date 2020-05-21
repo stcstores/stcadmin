@@ -3,17 +3,17 @@
 <div class="file_status">
     <h3>New Product Export</h3>
     {% if in_progress %}
-    An new product file is being generated <img src="{% static 'images/loading.gif' %}" alt="" height="20">
+    A New Product file is being generated <img src="{% static 'images/loading.gif' %}" alt="" height="20">
     <br><br><br>
     {% else %}
     {% if export == None %}
-    No new product file has yet been generated
+    No New Product file has yet been generated
     <br><br>
     {% elif export.status == export.ERROR %}
-    There was an error creating the new product file, please try again
+    There was an error creating the New Product file, please try again
     <br><br>
     {% else %}
-    Last new product file created at {{ export.timestamp }}
+    Last New Product file created at {{ export.timestamp }}
     <a href="{{ export.export.url }}"><button>Download</button></a>
     <br>
     {% endif %}

@@ -3,20 +3,20 @@
 <div class="file_status">
     <h3>Missing Information Export</h3>
     {% if in_progress %}
-    An export is being generated <img src="{% static 'images/loading.gif' %}" alt="" height="20">
+    A Missing Information file is being generated <img src="{% static 'images/loading.gif' %}" alt="" height="20">
     <br><br><br>
     {% else %}
     {% if export == None %}
-    No export has yet been generated
+    No Missing Information file has yet been generated
     <br><br>
     {% elif export.status == export.ERROR %}
-    There was an error creating the export file, please try again
+    There was an error creating the file, please try again
     <br><br>
     {% else %}
-    Last export created at {{ export.timestamp }}
+    Last Missing Information file created at {{ export.timestamp }}
     <a href="{{ export.export.url }}"><button>Download</button></a>
     <br>
     {% endif %}
-    <button class="create_new_export">Generate New Export File</button>
+    <button class="create_new_export">Generate New Missing Information File</button>
     {% endif %}
 </div>

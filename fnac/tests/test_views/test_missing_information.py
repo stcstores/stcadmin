@@ -164,27 +164,31 @@ class TestMissingInformationExportStatusView:
         )
 
     def test_content_with_no_existing_export(self, valid_get_response_content):
-        assert "No export has yet been generated" in valid_get_response_content
-        assert "Generate New Export File" in valid_get_response_content
+        assert (
+            "No Missing Information file has yet been generated"
+            in valid_get_response_content
+        )
+        assert "Generate New Missing Information File" in valid_get_response_content
 
     def test_content_with_existing_export(
         self, existing_export, valid_get_response_content
     ):
-        assert "Last export created at" in valid_get_response_content
-        assert "Generate New Export File" in valid_get_response_content
+        assert "Last Missing Information file created at " in valid_get_response_content
+        assert "Generate New Missing Information File" in valid_get_response_content
 
     def test_content_with_export_in_progress(
         self, in_progress_export, valid_get_response_content
     ):
-        assert "An export is being generated" in valid_get_response_content
+        assert (
+            "A Missing Information file is being generated"
+            in valid_get_response_content
+        )
 
     def test_content_with_export_error(
         self, errored_export, valid_get_response_content
     ):
-        assert (
-            "There was an error creating the export file" in valid_get_response_content
-        )
-        assert "Generate New Export File" in valid_get_response_content
+        assert "There was an error creating the file" in valid_get_response_content
+        assert "Generate New Missing Information File" in valid_get_response_content
 
 
 class TestStartMissingInformationImport:

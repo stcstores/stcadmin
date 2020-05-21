@@ -4,8 +4,9 @@
 <h1>Create Products</h1>
 <hr>
 
+<p>There are {{ready_to_create_count}} in stock products that can be added to FNAC</p>
+
 <p>
-    There are currently {{ready_to_create_count}} products ready to be added to FNAC.
     To add them, download a New Product file below. This can then be uploaded to
     <a href="http://fnac-prod.mirakl.net">Mirakl</a>. Navigate to
     "My Inventory > Import from file" and upload the New Product file.
@@ -13,8 +14,8 @@
 
 <p>
     After the upload has completed you will need to 
-    <a href="{% url 'fnac:add_created_products' %}"><button>
-    Upload a Mirakl Product Export</button></a> to mark the new products as created.
+    <a href="{% url 'fnac:add_created_products' %}">
+    Upload a Mirakl Product Export</a> to mark the new products as created.
     They will then be added to the next <a href="{% url 'fnac:update_offers' %}">
     Offer Update</a> and then appear for sale on FNAC.
 </p>
@@ -80,7 +81,7 @@
 {% include 'fnac/status_boxes/inventory_update.html' %}
 <br>
 
-<div id="changes_in_inventory">
+<div id="changes_in_inventory" class="section">
     <h3>Requires changes in the inventory</h3>
 
     <p>
@@ -92,7 +93,7 @@
     </a>
 </div>
 
-<div class="missing_information">
+<div id="missing_information" class="section">
     <h3>Requires additional information</h3>
 
     <p>
@@ -105,7 +106,7 @@
     </a>
 </div>
 
-<div class="translations">
+<div id="translations" class="section">
     <h3>Translations</h3>
     <p>
         All products on FNAC must have their names, descriptions and colour information

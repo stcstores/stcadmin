@@ -109,7 +109,10 @@ class TestInventoryUpdateStatusView:
         assertTemplateUsed(valid_get_response, "fnac/inventory_import_status.html")
 
     def test_content_with_no_existing_import(self, valid_get_response_content):
-        assert "Inventory not yet imported" in valid_get_response_content
+        assert (
+            "No inventory information has yet been imported"
+            in valid_get_response_content
+        )
         assert "Update Inventory Information" in valid_get_response_content
 
     def test_content_with_existing_import(

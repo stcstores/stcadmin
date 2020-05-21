@@ -3,13 +3,22 @@
 {% block content %}
 
 <h1>FNAC</h1>
+<hr>
+<br>
 
-{% include 'fnac/status_boxes/inventory_update.html' %}
+<a href="{% url 'fnac:update_offers' %}"><h3>Update Offers</h3></a>
+<p>
+    Create an Offer Update file. This will update the stock levels, prices and shipping
+    information for products on FNAC as well as creating adding for newly created
+    products
+</p>
 
-{% include 'fnac/status_boxes/offer_update.html' %}
+<br>
 
-{% include 'fnac/status_boxes/new_product_export_status.html' %}
-
-</div>
+<a href="{% url 'fnac:create_products' %}"><h3>Create Products</h3></a>
+<p>
+    Fix problems preventing products being added to FNAC and download a Product File
+    that can be uploaded to Mirakl to create them.
+</p>
 
 {% endblock content %}
