@@ -117,7 +117,7 @@ def test_update_marks_inactive(
 ):
     shipping_rule = shipping_rule_factory.create(inactive=False)
     mock_get_courier_rules.return_value = mock_cc_rules([])
-    models.ShippingRule.update()
+    models.ShippingRule.objects.update_rules()
     shipping_rule.refresh_from_db()
     assert shipping_rule.inactive is True
 
@@ -130,7 +130,7 @@ def test_update_marks_active(
     shipping_rule = shipping_rule_factory.create(inactive=True)
     mock_rule = mock_cc_rule(rule_ID=shipping_rule.rule_ID)
     mock_get_courier_rules.return_value = mock_cc_rules([mock_rule])
-    models.ShippingRule.update()
+    models.ShippingRule.objects.update_rules()
     shipping_rule.refresh_from_db()
     assert shipping_rule.inactive is False
 
@@ -151,7 +151,7 @@ def test_update_creates_rule(
         courier_service_ID=courier_service.courier_service_ID,
     )
     mock_get_courier_rules.return_value = mock_cc_rules([mock_rule])
-    models.ShippingRule.update()
+    models.ShippingRule.objects.update_rules()
     shipping_rule = models.ShippingRule.objects.get(rule_ID=rule_ID)
     assert shipping_rule.courier_service == courier_service
     assert shipping_rule.name == mock_rule.name
@@ -164,8 +164,8 @@ def test_update_creates_a_shipping_rule_backup(
 ):
     mock_rules = mock_cc_rules(mock_cc_rule())
     mock_get_courier_rules.return_value = mock_rules
-    models.ShippingRule.update()
-    file_path = models.ShippingRule._backup_path()
+    models.ShippingRule.objects.update_rules()
+    file_path = models.ShippingRule.objects._backup_path()
     with open(file_path) as f:
         saved_data = json.load(f)
     assert mock_rules.json == saved_data
@@ -182,7 +182,7 @@ def test_update_creates_courier_service(
         courier_ID=courier.courier_ID, courier_service_ID=courier_service_ID
     )
     mock_get_courier_rules.return_value = mock_cc_rules([mock_rule])
-    models.ShippingRule.update()
+    models.ShippingRule.objects.update_rules()
     courier_service = models.CourierService.objects.get(
         courier_service_ID=courier_service_ID
     )

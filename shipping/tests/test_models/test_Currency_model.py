@@ -65,7 +65,7 @@ def test_currency_exchange_rate_is_set(exchange_rate, new_currency):
 
 @pytest.mark.django_db
 def test_update_requests_exchange_rates(mock_exchange_rate_request):
-    models.Currency.update()
+    models.Currency.objects.update_rates()
     mock_exchange_rate_request.assert_called_once_with(
         models.Currency.EXCHANGE_RATE_URL
     )
@@ -75,13 +75,13 @@ def test_update_requests_exchange_rates(mock_exchange_rate_request):
 def test_exchange_rate_update_request_raises_for_status(
     mock_exchange_rate_request, mock_exchange_rate_response
 ):
-    models.Currency.update()
+    models.Currency.objects.update_rates()
     mock_exchange_rate_response.raise_for_status.assert_called_once()
 
 
 @pytest.mark.django_db
 def test_update(mock_exchange_rate_request, mock_rates):
-    models.Currency.update()
+    models.Currency.objects.update_rates()
     for currency in models.Currency.objects.all():
         expected = str(round(1 / mock_rates[currency.code], 3))
         assert currency.exchange_rate == Decimal(expected)

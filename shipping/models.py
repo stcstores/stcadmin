@@ -9,6 +9,19 @@ from django.db import models
 from django.utils import timezone
 
 
+class CurrencyManager(models.Manager):
+    """Model Manager for the Currency model."""
+
+    def update_rates(self):
+        """Update the exchange rates."""
+        response = requests.get(Currency.EXCHANGE_RATE_URL)
+        response.raise_for_status()
+        rates = response.json()["rates"]
+        for currency in self.all():
+            currency.exchange_rate = 1 / rates[currency.code]
+            currency.save()
+
+
 class Currency(models.Model):
     """Model for currencies."""
 
@@ -19,6 +32,8 @@ class Currency(models.Model):
     exchange_rate = models.DecimalField(max_digits=6, decimal_places=3)
     symbol = models.CharField(max_length=5, default="$")
 
+    objects = CurrencyManager()
+
     class Meta:
         """Meta class for Currency."""
 
@@ -27,16 +42,6 @@ class Currency(models.Model):
 
     def __str__(self):
         return self.name
-
-    @classmethod
-    def update(cls):
-        """Update the exchange rates."""
-        response = requests.get(cls.EXCHANGE_RATE_URL)
-        response.raise_for_status()
-        rates = response.json()["rates"]
-        for currency in cls._default_manager.all():
-            currency.exchange_rate = 1 / rates[currency.code]
-            currency.save()
 
 
 class Country(models.Model):
@@ -144,56 +149,33 @@ class CourierService(models.Model):
         return f"{self.courier_service_ID}: {self.name}"
 
 
-class ShippingRule(models.Model):
-    """Model for Shipping Rules."""
+class ShippingRuleManager(models.Manager):
+    """Model Manager for the ShippingRule model."""
 
-    rule_ID = models.CharField(max_length=10, unique=True, db_index=True)
-    name = models.CharField(max_length=255, unique=True)
-    courier_service = models.ForeignKey(
-        CourierService, blank=True, null=True, on_delete=models.PROTECT
-    )
-    priority = models.BooleanField(default=False)
-    inactive = models.BooleanField(default=False)
-
-    class Meta:
-        """Meta class for shipping.ShippingRule."""
-
-        verbose_name = "Shipping Rule"
-        verbose_name_plural = "Shipping Rules"
-        ordering = ("inactive", "name")
-
-    def __str__(self):
-        return self.name
-
-    @classmethod
-    def update(cls):
+    def update_rules(self):
         """Update shipping rules from Cloud Commerce."""
         rules = CCAPI.get_courier_rules()
-        cls._backup_rules(rules)
-        cls._remove_defunct_rules(rules)
+        self._backup_rules(rules)
+        self._remove_defunct_rules(rules)
         for rule in rules:
-            cls._create_or_update_from_cc_rule(rule)
+            self._create_or_update_from_cc_rule(rule)
 
-    @classmethod
-    def _backup_path(cls):
+    def _backup_path(self):
         filename = f"shipping_rules_{timezone.now().strftime('%Y-%m-%d')}.json"
         return Path(settings.MEDIA_ROOT) / "shipping_rules" / filename
 
-    @classmethod
-    def _backup_rules(cls, rules):
-        path = cls._backup_path()
+    def _backup_rules(self, rules):
+        path = self._backup_path()
         directory = path.parent
         directory.mkdir(parents=True, exist_ok=True)
         with path.open("w") as f:
             json.dump(rules.json, f, indent=4, sort_keys=True)
 
-    @classmethod
-    def _remove_defunct_rules(cls, rules):
+    def _remove_defunct_rules(self, rules):
         rule_ids = [rule.id for rule in rules]
-        cls.objects.exclude(rule_ID__in=rule_ids).update(inactive=True)
+        self.exclude(rule_ID__in=rule_ids).update(inactive=True)
 
-    @classmethod
-    def _get_rule_kwargs(cls, cc_rule):
+    def _get_rule_kwargs(self, cc_rule):
         courier, _ = Courier.objects.get_or_create(
             courier_ID=str(cc_rule.courier_services_group_id)
         )
@@ -209,11 +191,34 @@ class ShippingRule(models.Model):
             "inactive": False,
         }
 
-    @classmethod
-    def _create_or_update_from_cc_rule(cls, cc_rule):
-        kwargs = cls._get_rule_kwargs(cc_rule)
-        queryset = cls.objects.filter(rule_ID=cc_rule.id)
+    def _create_or_update_from_cc_rule(self, cc_rule):
+        kwargs = self._get_rule_kwargs(cc_rule)
+        queryset = self.filter(rule_ID=cc_rule.id)
         if queryset.exists():
             queryset.update(**kwargs)
         else:
-            cls.objects.create(**kwargs)
+            self.create(**kwargs)
+
+
+class ShippingRule(models.Model):
+    """Model for Shipping Rules."""
+
+    rule_ID = models.CharField(max_length=10, unique=True, db_index=True)
+    name = models.CharField(max_length=255, unique=True)
+    courier_service = models.ForeignKey(
+        CourierService, blank=True, null=True, on_delete=models.PROTECT
+    )
+    priority = models.BooleanField(default=False)
+    inactive = models.BooleanField(default=False)
+
+    objects = ShippingRuleManager()
+
+    class Meta:
+        """Meta class for shipping.ShippingRule."""
+
+        verbose_name = "Shipping Rule"
+        verbose_name_plural = "Shipping Rules"
+        ordering = ("inactive", "name")
+
+    def __str__(self):
+        return self.name
