@@ -1,5 +1,6 @@
 """Shipping Models."""
 import json
+import math
 from pathlib import Path
 
 import requests
@@ -147,6 +148,93 @@ class CourierService(models.Model):
 
     def __str__(self):
         return f"{self.courier_service_ID}: {self.name}"
+
+
+class ShippingService(models.Model):
+    """Model for shipping services."""
+
+    name = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        """Meta class for shipping.ShippingService."""
+
+        verbose_name = "Shipping Service"
+        verbose_name_plural = "Shipping Services"
+        ordering = ("name",)
+
+    def __str__(self):
+        return self.name
+
+
+class ShippingPrice(models.Model):
+    """Model for shipping prices."""
+
+    FIXED = "fixed"
+    WEIGHT = "weight"
+    WEIGHT_BAND = "weight_band"
+    PRICE_TYPES = ((FIXED, "Fixed"), (WEIGHT, "Weight"), (WEIGHT_BAND, "Weight Band"))
+
+    shipping_service = models.ForeignKey(ShippingService, on_delete=models.CASCADE)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    price_type = models.CharField(max_length=50, choices=PRICE_TYPES)
+    item_price = models.IntegerField(default=0)
+    price_per_kg = models.IntegerField(default=0)
+    inactive = models.BooleanField(default=False)
+
+    class Meta:
+        """Meta class for shipping.ShippingPrice."""
+
+        verbose_name = "Shipping Price"
+        verbose_name_plural = "Shipping Prices"
+
+        unique_together = [["shipping_service", "country"]]
+
+    def __str__(self):
+        return f"{self.shipping_service} - {self.country}"
+
+    def price(self, weight):
+        """Return the shipping price for a given weight in grams."""
+        if self.price_type == self.FIXED:
+            return self._fixed_price()
+        elif self.price_type == self.WEIGHT:
+            return self._weight_price(weight)
+        elif self.price_type == self.WEIGHT_BAND:
+            return self._weight_band_price(weight)
+        else:
+            raise NotImplementedError(
+                f"No price method exists for price type {self.price_type}"
+            )
+
+    def _fixed_price(self):
+        return self.item_price
+
+    def _weight_price(self, weight):
+        weight_kg = math.ceil(weight / 1000)
+        return self.item_price + self.price_per_kg * weight_kg
+
+    def _weight_band_price(self, weight):
+        return self.weightband_set.get(
+            min_weight__lte=weight, max_weight__gte=weight
+        ).price
+
+
+class WeightBand(models.Model):
+    """Model for shipping price weight bands."""
+
+    shipping_price = models.ForeignKey(ShippingPrice, on_delete=models.CASCADE)
+    min_weight = models.IntegerField()
+    max_weight = models.IntegerField()
+    price = models.IntegerField()
+
+    class Meta:
+        """Meta clss for shiping.WeightBand."""
+
+        verbose_name = "Weight Band"
+        verbose_name_plural = "Weight Bands"
+        ordering = ("min_weight",)
+
+    def __str__(self):
+        return f"{self.shipping_price} {self.min_weight}g - {self.max_weight}g"
 
 
 class ShippingRuleManager(models.Manager):

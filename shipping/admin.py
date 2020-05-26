@@ -61,6 +61,61 @@ class CourierServiceAdmin(admin.ModelAdmin):
     list_filter = ("courier",)
 
 
+@admin.register(models.ShippingService)
+class ShippingServiceAdmin(admin.ModelAdmin):
+    """Model admin for shipping.ShippingService."""
+
+    fields = ("name",)
+    list_display = ("id", "name")
+    list_editable = ("name",)
+
+
+@admin.register(models.ShippingPrice)
+class ShippingPriceAdmin(admin.ModelAdmin):
+    """Model admin for shipping.ShippingPrice."""
+
+    fields = (
+        "shipping_service",
+        "country",
+        "price_type",
+        "item_price",
+        "price_per_kg",
+        "inactive",
+    )
+    list_display = (
+        "id",
+        "shipping_service",
+        "country",
+        "price_type",
+        "item_price",
+        "price_per_kg",
+        "inactive",
+    )
+    list_editable = (
+        "price_type",
+        "item_price",
+        "price_per_kg",
+        "inactive",
+    )
+    list_filter = (
+        ("shipping_service", admin.RelatedOnlyFieldListFilter),
+        ("country", admin.RelatedOnlyFieldListFilter),
+    )
+
+
+@admin.register(models.WeightBand)
+class WeightBandAdmin(admin.ModelAdmin):
+    """Model admin for shipping.WeightBand."""
+
+    fields = ("shipping_price", "min_weight", "max_weight", "price")
+    list_display = fields
+    list_editable = ("min_weight", "max_weight", "price")
+    list_filter = (
+        ("shipping_price__shipping_service", admin.RelatedOnlyFieldListFilter),
+        ("shipping_price__country", admin.RelatedOnlyFieldListFilter),
+    )
+
+
 @admin.register(models.ShippingRule)
 class ShippingRuleAdmin(admin.ModelAdmin):
     """Model Admmin for shipping.ShippingRule."""
