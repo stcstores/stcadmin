@@ -18,6 +18,15 @@ class CurrencyFactory(factory.django.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
+class RegionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Region
+
+    name = factory.Sequence(lambda n: f"Test Currency {n}")
+    abriviation = "EU"
+
+
+@pytest_factoryboy.register
 class CountryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Country
@@ -25,7 +34,7 @@ class CountryFactory(factory.django.DjangoModelFactory):
     country_ID = factory.Sequence(lambda n: f"15{n}")
     name = factory.Sequence(lambda n: f"Test Country {n}")
     ISO_code = "TC"
-    region = models.Country.EU
+    region = factory.SubFactory(RegionFactory)
     currency = factory.SubFactory(CurrencyFactory)
 
 

@@ -5,6 +5,7 @@ from stcadmin.tests.stcadmin_test import STCAdminTest
 class TestDestinationCountry(STCAdminTest):
     fixtures = (
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "price_calculator/destination_country",
     )
@@ -95,6 +96,7 @@ class TestChannelFee(STCAdminTest):
 class TestShippingPrice(STCAdminTest):
     fixtures = (
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "price_calculator/destination_country",
         "price_calculator/package_type",
@@ -200,6 +202,7 @@ class TestShippingPrice(STCAdminTest):
 class TestShippingPriceGetPriceMethod(STCAdminTest):
     fixtures = (
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "price_calculator/destination_country",
         "price_calculator/package_type",

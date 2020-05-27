@@ -45,6 +45,23 @@ class Currency(models.Model):
         return self.name
 
 
+class Region(models.Model):
+    """Model for shipping regions."""
+
+    name = models.CharField(max_length=255)
+    abriviation = models.CharField(max_length=10, blank=True, null=True)
+
+    class Meta:
+        """Meta class for the Region model."""
+
+        verbose_name = "Region"
+        verbose_name_plural = "Regions"
+        ordering = ("name",)
+
+    def __str__(self):
+        return self.name
+
+
 class Country(models.Model):
     """Model for shipping countries."""
 
@@ -58,7 +75,7 @@ class Country(models.Model):
     country_ID = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=255)
     ISO_code = models.CharField(max_length=2, blank=True, null=True)
-    region = models.CharField(max_length=3, choices=REGION_CHOICES)
+    region = models.ForeignKey(Region, on_delete=models.PROTECT, blank=True, null=True)
     currency = models.ForeignKey(
         Currency, blank=True, null=True, on_delete=models.SET_NULL
     )

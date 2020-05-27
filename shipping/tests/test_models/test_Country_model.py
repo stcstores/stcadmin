@@ -14,8 +14,8 @@ def name():
 
 
 @pytest.fixture
-def region():
-    return models.Country.EU
+def region(region_factory):
+    return region_factory.create()
 
 
 @pytest.fixture

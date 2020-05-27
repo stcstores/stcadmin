@@ -13,6 +13,15 @@ class CurrencyAdmin(admin.ModelAdmin):
     list_editable = ("code", "exchange_rate", "symbol")
 
 
+@admin.register(models.Region)
+class RegionAdmin(admin.ModelAdmin):
+    """Model admin for shipping.Region."""
+
+    fields = ("name", "abriviation")
+    list_display = ("id", "name", "abriviation")
+    list_editable = ("name", "abriviation")
+
+
 @admin.register(models.Country)
 class CountryAdmin(admin.ModelAdmin):
     """Model Admin for shipping.Country."""
