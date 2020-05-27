@@ -1,4 +1,5 @@
 import pytest
+from django.db import IntegrityError
 
 from shipping import models
 
@@ -11,6 +12,11 @@ def shipping_service(shipping_service_factory):
 @pytest.fixture
 def country(country_factory):
     return country_factory.create()
+
+
+@pytest.fixture
+def region(region_factory):
+    return region_factory.create()
 
 
 @pytest.fixture
@@ -37,6 +43,11 @@ def test_sets_country(new_shipping_price, country):
     assert new_shipping_price.country == country
 
 
+@pytest.fixture
+def test_sets_region(new_shipping_price):
+    assert new_shipping_price.region is None
+
+
 @pytest.mark.django_db
 def test_sets_price_type(new_shipping_price, price_type):
     assert new_shipping_price.price_type == price_type
@@ -55,6 +66,15 @@ def test_sets_price_per_kg(new_shipping_price):
 @pytest.mark.django_db
 def test_sets_inactive(new_shipping_price):
     assert new_shipping_price.inactive is False
+
+
+@pytest.mark.django_db
+def test_can_create_with_region(shipping_service, region, price_type):
+    shipping_price = models.ShippingPrice(
+        shipping_service=shipping_service, region=region, price_type=price_type,
+    )
+    shipping_price.save()
+    assert shipping_price.region == region
 
 
 @pytest.mark.django_db
@@ -113,7 +133,34 @@ def test_shipping_service_and_country_are_unique_together(
     shipping_service, country, shipping_price_factory
 ):
     shipping_price_factory.create(shipping_service=shipping_service, country=country)
-    with pytest.raises(Exception):
+    with pytest.raises(IntegrityError):
         shipping_price_factory.create(
             shipping_service=shipping_service, country=country
         )
+
+
+@pytest.mark.django_db
+def test_shipping_service_and_region_are_unique_together(
+    region, shipping_service, country, shipping_price_factory
+):
+    shipping_price_factory.create(
+        shipping_service=shipping_service, country=None, region=region
+    )
+    with pytest.raises(IntegrityError):
+        shipping_price_factory.create(
+            shipping_service=shipping_service, country=None, region=region
+        )
+
+
+@pytest.mark.django_db
+def test_shipping_service_cannot_have_both_country_and_region(
+    shipping_price_factory, country, region
+):
+    with pytest.raises(IntegrityError):
+        shipping_price_factory.create(country=country, region=region)
+
+
+@pytest.mark.django_db
+def test_country_and_region_cannot_both_be_null(shipping_price_factory):
+    with pytest.raises(IntegrityError):
+        shipping_price_factory.create(country=None, region=None)

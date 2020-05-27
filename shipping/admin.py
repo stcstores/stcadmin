@@ -86,6 +86,7 @@ class ShippingPriceAdmin(admin.ModelAdmin):
     fields = (
         "shipping_service",
         "country",
+        "region",
         "price_type",
         "item_price",
         "price_per_kg",
@@ -95,6 +96,7 @@ class ShippingPriceAdmin(admin.ModelAdmin):
         "id",
         "shipping_service",
         "country",
+        "region",
         "price_type",
         "item_price",
         "price_per_kg",

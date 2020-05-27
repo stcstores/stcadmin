@@ -192,7 +192,10 @@ class ShippingPrice(models.Model):
     PRICE_TYPES = ((FIXED, "Fixed"), (WEIGHT, "Weight"), (WEIGHT_BAND, "Weight Band"))
 
     shipping_service = models.ForeignKey(ShippingService, on_delete=models.CASCADE)
-    country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    country = models.ForeignKey(
+        Country, on_delete=models.CASCADE, blank=True, null=True
+    )
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, blank=True, null=True)
     price_type = models.CharField(max_length=50, choices=PRICE_TYPES)
     item_price = models.IntegerField(default=0)
     price_per_kg = models.IntegerField(default=0)
@@ -204,7 +207,19 @@ class ShippingPrice(models.Model):
         verbose_name = "Shipping Price"
         verbose_name_plural = "Shipping Prices"
 
-        unique_together = [["shipping_service", "country"]]
+        unique_together = [
+            ["shipping_service", "country"],
+            ["shipping_service", "region"],
+        ]
+        constraints = [
+            models.CheckConstraint(
+                name="shipping_price_has_country_or_region",
+                check=(
+                    models.Q(country__isnull=False, region__isnull=True)
+                    | models.Q(country__isnull=True, region__isnull=False)
+                ),
+            )
+        ]
 
     def __str__(self):
         return f"{self.shipping_service} - {self.country}"
