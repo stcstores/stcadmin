@@ -59,7 +59,7 @@ class OrderUpdate(models.Model):
         order_update = cls._default_manager.create()
         try:
             with transaction.atomic():
-                Order.update()
+                Order.objects.update_orders()
                 PackingRecord.update()
         except Exception as e:
             order_update.mark_error()

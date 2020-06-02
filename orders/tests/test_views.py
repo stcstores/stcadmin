@@ -430,7 +430,9 @@ class TestOrderListView(OrderViewTest, ViewTests):
         response = self.make_get_request()
         content = str(response.content)
         self.assertIn('<div class="section_navigation">', content)
-        orders = models.Order.dispatched.order_by("-recieved_at")[: self.paginate_by]
+        orders = models.Order.objects.dispatched().order_by("-recieved_at")[
+            : self.paginate_by
+        ]
         orders[0].tracking_number = "RM_7845938393"
         for order in orders:
             self.assertIn(order.order_ID, content)
@@ -465,7 +467,7 @@ class TestOrderListView(OrderViewTest, ViewTests):
             self.assertLessEqual(order.recieved_at, recieved_to + timedelta(days=1))
 
     def test_filter_by_order_id(self):
-        order = models.Order.dispatched.all()[0]
+        order = models.Order.objects.dispatched()[0]
         response = self.client.get(self.URL, {"order_ID": order.order_ID})
         self.assertEqual(list(response.context["object_list"]), [order])
 
@@ -514,7 +516,7 @@ class TestExportOrdersView(OrderViewTest, ViewTests):
         self.assertEqual(200, response.status_code)
         header, rows = self.read_csv(response)
         self.assertEqual(views.ExportOrders.header, header)
-        self.assertEqual(models.Order.dispatched.count(), len(rows))
+        self.assertEqual(models.Order.objects.dispatched().count(), len(rows))
 
     def test_filter_country(self):
         country = Country.objects.get(name="United Kingdom")
@@ -522,7 +524,7 @@ class TestExportOrdersView(OrderViewTest, ViewTests):
         header, rows = self.read_csv(response)
         self.assertEqual(views.ExportOrders.header, header)
         self.assertEqual(
-            models.Order.dispatched.filter(country=country).count(), len(rows)
+            models.Order.objects.dispatched().filter(country=country).count(), len(rows)
         )
         order = models.Order.objects.get(order_ID=rows[0][0])
         self.assertEqual(
@@ -550,10 +552,12 @@ class TestExportOrdersView(OrderViewTest, ViewTests):
         )
         header, rows = self.read_csv(response)
         self.assertEqual(
-            models.Order.dispatched.filter(
+            models.Order.objects.dispatched()
+            .filter(
                 recieved_at__gte=recieved_from,
                 recieved_at__lte=recieved_to + timedelta(days=1),
-            ).count(),
+            )
+            .count(),
             len(rows),
         )
 

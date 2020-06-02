@@ -28,7 +28,7 @@ class PackingRecord(models.Model):
 
     @classmethod
     def _orders_to_update(cls):
-        return Order.dispatched.filter(
+        return Order.objects.dispatched().filter(
             packingrecord__isnull=True, customer_ID__isnull=False
         )
 

@@ -143,20 +143,24 @@ class UndispatchedOrdersData(TemplateView):
 
     def urgent_orders(self):
         """Return a list of order IDs for urgent undispatched orders."""
-        return list(models.Order.urgent.values_list("order_ID", flat=True))
+        return list(models.Order.objects.urgent().values_list("order_ID", flat=True))
 
     def priority_orders(self, urgent_orders):
         """Return a list of order IDs for undispatched priority orders."""
-        priority_orders = models.Order.undispatched_priority.values_list(
-            "order_ID", flat=True
+        priority_orders = (
+            models.Order.objects.undispatched()
+            .priority()
+            .values_list("order_ID", flat=True)
         )
         return list(set(priority_orders) - set(urgent_orders))
 
     def non_priority_orders(self, urgent_orders, priority_orders):
         """Return a list of order IDs for orders that are not urgent or priority."""
-        undispatched_orders = models.Order.undispatched.filter(
-            recieved_at__gte=timezone.now() - timedelta(days=7)
-        ).values_list("order_ID", flat=True)
+        undispatched_orders = (
+            models.Order.objects.undispatched()
+            .filter(recieved_at__gte=timezone.now() - timedelta(days=7))
+            .values_list("order_ID", flat=True)
+        )
         return list(
             set(undispatched_orders) - set(urgent_orders) - set(priority_orders)
         )
