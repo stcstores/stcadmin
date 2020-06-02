@@ -251,7 +251,7 @@
 
     function update_vat_rates(vat_rates, calculator) {
         var vat_rate_select = $('#vat_rate');
-        var original_value = vat_rate_select.val();
+        var original_name = vat_rate_select.text;
         vat_rate_select.html('');
         if (vat_rates.length > 0) {
             $(vat_rates).each(function() {
@@ -268,10 +268,10 @@
             vat_rate_select.attr('disabled', true);
         }
         console.log(vat_rates);
-        console.log(original_value);
+        console.log(original_name);
         for (var i=0; i<vat_rates.length; i++) {
-            if (vat_rates[i]['percentage'] == original_value) {
-                vat_rate_select.val(original_value);
+            if (vat_rates[i]['name'] == original_name) {
+                vat_rate_select.val(vat_rates[i]['percentage']);
             }
         }
         vat_rate_select.change();
