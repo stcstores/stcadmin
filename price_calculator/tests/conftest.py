@@ -1,26 +1,32 @@
 import factory
 import pytest_factoryboy
 
+from inventory.models import PackageType
 from price_calculator import models
-from shipping.tests.conftest import CountryFactory
+from shipping.tests.conftest import (
+    CountryFactory,
+    ShippingPriceFactory,
+    ShippingServiceFactory,
+)
 
 pytest_factoryboy.register(CountryFactory)
+pytest_factoryboy.register(ShippingServiceFactory)
+pytest_factoryboy.register(ShippingPriceFactory)
 
 
 @pytest_factoryboy.register
-class DestinationCountryFactory(factory.django.DjangoModelFactory):
+class CountryChannelFeeFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = models.DestinationCountry
+        model = models.CountryChannelFee
 
-    name = factory.Sequence(lambda n: f"Test Destination Country {n}")
     country = factory.SubFactory(CountryFactory)
     min_channel_fee = 7
 
 
 @pytest_factoryboy.register
-class PackageTypeFactory(factory.django.DjangoModelFactory):
+class ProductTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = models.PackageType
+        model = models.ProductType
 
     name = factory.Sequence(lambda n: f"Test Package Type {n}")
 
@@ -46,11 +52,19 @@ class ChannelFeeFactory(factory.django.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class ShippingPriceFactory(factory.django.DjangoModelFactory):
+class ShippingMethodFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = models.ShippingPrice
+        model = models.ShippingMethod
 
     name = factory.Sequence(lambda n: f"Test Shipping Price {n}")
-    country = factory.SubFactory(DestinationCountryFactory)
-    item_price = 540
-    kilo_price = 230
+    country = factory.SubFactory(CountryFactory)
+    shipping_service = factory.SubFactory(ShippingServiceFactory)
+
+
+@pytest_factoryboy.register
+class PackageTypeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = PackageType
+
+    name = factory.sequence(lambda n: f"Test Package Type {n}")
+    product_option_value_ID = factory.sequence(lambda n: 8567498 + n)

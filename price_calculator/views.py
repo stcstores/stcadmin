@@ -8,11 +8,13 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 
+from inventory.models import PackageType
 from inventory.views.views import InventoryUserMixin
 from price_calculator import models
+from shipping.models import Country
 
 
-class GetShippingPriceView(InventoryUserMixin, View):
+class GetShippingPrice(InventoryUserMixin, View):
     """View for AJAX requests for shipping prices."""
 
     SUCCESS = "success"
@@ -33,51 +35,50 @@ class GetShippingPriceView(InventoryUserMixin, View):
         """Return shipping prices as JSON or return server error."""
         try:
             response_data = self.get_shipping_price_details()
-        except models.DestinationCountry.NoShippingService:
+        except models.NoShippingService:
             response_data = self.no_shipping_price_response()
         return JsonResponse(response_data)
 
-    def package_type_name(self):
-        """Return the package type name."""
-        int_shipping = self.request.POST["international_shipping"]
-        if (
-            self.country.country.region != self.country.country.UK
-            and int_shipping == "Express"
-        ):
-            package_type_name = int_shipping
-        else:
-            package_type_name = self.request.POST["package_type"]
-        return package_type_name
+    def product_type(self):
+        """Return the package type."""
+        return models.ProductType.objects.get(name=self.request.POST["package_type"])
 
     def min_channel_fee(self):
         """Return the minimum channel fee."""
-        if self.country.min_channel_fee is None:
-            min_channel_fee = 0
+        try:
+            min_fee = models.CountryChannelFee.objects.get(
+                country=self.country
+            ).min_channel_fee
+        except models.CountryChannelFee.DoesNotExist:
+            return 0
         else:
-            min_channel_fee = int(self.country.min_channel_fee * self.exchange_rate)
-        return min_channel_fee
+            return int(min_fee * self.exchange_rate)
 
     def get_shipping_price_details(self):
         """Return details of shipping price as dict."""
-        self.country = get_object_or_404(
-            models.DestinationCountry, name=self.request.POST["country"]
-        )
+        self.country = get_object_or_404(Country, name=self.request.POST["country"])
         weight = int(self.request.POST["weight"])
         price = int(self.request.POST["price"])
-        self.exchange_rate = float(self.country.exchange_rate)
-        postage_price = models.ShippingPrice.get_price(
-            self.country.name, self.package_type_name(), weight, price
+        self.exchange_rate = float(self.country.currency.exchange_rate)
+        (
+            shipping_method,
+            shipping_price,
+        ) = models.ShippingMethod.objects.get_shipping_price(
+            country=self.country,
+            product_type=self.product_type(),
+            weight=weight,
+            price=price,
         )
-        vat_rates = list(postage_price.vat_rates.values())
+        vat_rates = list(shipping_method.vat_rates.values())
 
         return self.format_response(
             success=True,
-            price=postage_price.calculate(weight),
-            price_name=postage_price.name,
+            price=shipping_price,
+            price_name=shipping_method.name,
             vat_rates=vat_rates,
             exchange_rate=self.exchange_rate,
-            currency_code=self.country.currency_code,
-            currency_symbol=self.country.currency_symbol,
+            currency_code=self.country.currency.code,
+            currency_symbol=self.country.currency.symbol,
             min_channel_fee=self.min_channel_fee(),
         )
 
@@ -114,6 +115,26 @@ class GetShippingPriceView(InventoryUserMixin, View):
         return data
 
 
+class GetRangeShippingPrice(GetShippingPrice):
+    """View for AJAX shipping price requests for Product Ranges."""
+
+    def product_type(self):
+        """Return the package type."""
+        if self.country.region.name == "UK":
+            package_type = PackageType.objects.get(
+                name=self.request.POST["package_type"]
+            )
+            return models.ProductType.objects.get(package_types=package_type)
+        try:
+            return models.ProductType.objects.get(
+                name=self.request.POST["international_shipping"]
+            )
+        except models.ProductType.DoesNotExist:
+            return models.ProductType.objects.get(
+                name=self.request.POST["package_type"]
+            )
+
+
 class RangePriceCalculatorView(InventoryUserMixin, TemplateView):
     """View calcualting prices for an existing Product Range."""
 
@@ -124,7 +145,8 @@ class RangePriceCalculatorView(InventoryUserMixin, TemplateView):
         context_data = super().get_context_data(*args, **kwargs)
         product_range = cc_products.get_range(self.kwargs.get("range_id"))
         context_data["product_range"] = product_range
-        context_data["countries"] = models.DestinationCountry.objects.all()
+        country_ids = models.ShippingMethod.objects.values_list("country", flat=True)
+        context_data["countries"] = Country.objects.filter(id__in=country_ids)
         context_data["channel_fees"] = models.ChannelFee.objects.all()
         return context_data
 
@@ -137,7 +159,8 @@ class PriceCalculator(InventoryUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Get context data for template."""
         context_data = super().get_context_data(*args, **kwargs)
-        context_data["countries"] = models.DestinationCountry.objects.all()
-        context_data["package_types"] = models.PackageType.objects.all()
+        country_ids = models.ShippingMethod.objects.values_list("country", flat=True)
+        context_data["countries"] = Country.objects.filter(id__in=country_ids)
+        context_data["product_types"] = models.ProductType.objects.all()
         context_data["channel_fees"] = models.ChannelFee.objects.all()
         return context_data

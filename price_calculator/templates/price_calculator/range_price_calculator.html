@@ -115,7 +115,7 @@
 {% block script %}
 <script>
 
-    get_postage_price_url = "{% url 'price_calculator:get_shipping_price' %}";
+    get_postage_price_url = "{% url 'price_calculator:get_range_shipping_price' %}";
 
     function update_vat_rates(vat_rates, calculator) {
         if (vat_rates.length == 0) {
