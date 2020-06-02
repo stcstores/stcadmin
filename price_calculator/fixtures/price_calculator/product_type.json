@@ -1,0 +1,36 @@
+[{
+    "model": "price_calculator.producttype",
+    "pk": 1,
+    "fields": {
+        "name": "Packet",
+        "package_types": [1]
+    }
+}, {
+    "model": "price_calculator.producttype",
+    "pk": 2,
+    "fields": {
+        "name": "Large Letter",
+        "package_types": [2, 5]
+    }
+}, {
+    "model": "price_calculator.producttype",
+    "pk": 3,
+    "fields": {
+        "name": "Heavy and Large",
+        "package_types": [3]
+    }
+}, {
+    "model": "price_calculator.producttype",
+    "pk": 4,
+    "fields": {
+        "name": "Courier",
+        "package_types": [4]
+    }
+}, {
+    "model": "price_calculator.producttype",
+    "pk": 5,
+    "fields": {
+        "name": "Express",
+        "package_types": []
+    }
+}]

@@ -21,7 +21,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Update shipping rules."""
         try:
-            ShippingRule.update()
+            ShippingRule.objects.update_rules()
         except Exception as e:
             logger.exception("Error updating Shipping Rules")
             raise e

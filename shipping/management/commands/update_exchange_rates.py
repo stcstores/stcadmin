@@ -21,7 +21,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Update orders."""
         try:
-            Currency.update()
+            Currency.objects.update_rates()
         except Exception as e:
             logger.exception("Error updating currency exchange rates")
             raise e

@@ -75,6 +75,7 @@ class TestUserFeedback(FeedbackTest, ViewTests):
     fixtures = (
         "home/cloud_commerce_user",
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "shipping/provider",
         "shipping/courier_type",

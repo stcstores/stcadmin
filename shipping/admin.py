@@ -13,6 +13,15 @@ class CurrencyAdmin(admin.ModelAdmin):
     list_editable = ("code", "exchange_rate", "symbol")
 
 
+@admin.register(models.Region)
+class RegionAdmin(admin.ModelAdmin):
+    """Model admin for shipping.Region."""
+
+    fields = ("name", "abriviation")
+    list_display = ("id", "name", "abriviation")
+    list_editable = ("name", "abriviation")
+
+
 @admin.register(models.Country)
 class CountryAdmin(admin.ModelAdmin):
     """Model Admin for shipping.Country."""
@@ -59,6 +68,63 @@ class CourierServiceAdmin(admin.ModelAdmin):
     list_display = ("__str__", "courier_service_ID", "name", "courier", "inactive")
     list_editable = ("courier_service_ID", "name", "courier", "inactive")
     list_filter = ("courier",)
+
+
+@admin.register(models.ShippingService)
+class ShippingServiceAdmin(admin.ModelAdmin):
+    """Model admin for shipping.ShippingService."""
+
+    fields = ("name",)
+    list_display = ("id", "name")
+    list_editable = ("name",)
+
+
+@admin.register(models.ShippingPrice)
+class ShippingPriceAdmin(admin.ModelAdmin):
+    """Model admin for shipping.ShippingPrice."""
+
+    fields = (
+        "shipping_service",
+        "country",
+        "region",
+        "price_type",
+        "item_price",
+        "price_per_kg",
+        "inactive",
+    )
+    list_display = (
+        "id",
+        "shipping_service",
+        "country",
+        "region",
+        "price_type",
+        "item_price",
+        "price_per_kg",
+        "inactive",
+    )
+    list_editable = (
+        "price_type",
+        "item_price",
+        "price_per_kg",
+        "inactive",
+    )
+    list_filter = (
+        ("shipping_service", admin.RelatedOnlyFieldListFilter),
+        ("country", admin.RelatedOnlyFieldListFilter),
+    )
+
+
+@admin.register(models.WeightBand)
+class WeightBandAdmin(admin.ModelAdmin):
+    """Model admin for shipping.WeightBand."""
+
+    fields = ("shipping_price", "min_weight", "max_weight", "price")
+    list_display = fields
+    list_editable = ("min_weight", "max_weight", "price")
+    list_filter = (
+        ("shipping_price__shipping_service", admin.RelatedOnlyFieldListFilter),
+        ("shipping_price__country", admin.RelatedOnlyFieldListFilter),
+    )
 
 
 @admin.register(models.ShippingRule)

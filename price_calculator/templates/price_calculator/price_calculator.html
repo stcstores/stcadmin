@@ -34,8 +34,8 @@
     <div class="InputAddOn">
       <span class="InputAddOn-item">Shipping Method</span>
       <select name="shipping_method" id="shipping_method">
-        {% for package_type in package_types %}
-        <option value="{{ package_type }}">{{ package_type }}</option>
+        {% for product_type in product_types %}
+        <option value="{{ product_type }}">{{ product_type }}</option>
         {% endfor %}
       </select>
     </div>
@@ -212,9 +212,9 @@
         function update_postage_price(calculator) {
             var country = $('#country').val();
             var weight = $('#weight').val();
-            var package_type = $('#shipping_method').val();
+            var product_type = $('#shipping_method').val();
             var price = calculator.sale_price;
-            get_postage_price(calculator, country, package_type, null, weight, price);
+            get_postage_price(calculator, country, product_type, null, weight, price);
 
         };
 
