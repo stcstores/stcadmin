@@ -70,7 +70,6 @@ class GetShippingPrice(InventoryUserMixin, View):
             price=price,
         )
         vat_rates = list(shipping_method.vat_rates.values())
-
         return self.format_response(
             success=True,
             price=shipping_price,

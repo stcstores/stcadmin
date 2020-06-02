@@ -1,5 +1,6 @@
 """Model admin for price_calculator app."""
 
+from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
 
 from price_calculator import models
@@ -82,7 +83,7 @@ class ShippingMethodeAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.VATRate)
-class VATRateAdmin(admin.ModelAdmin):
+class VATRateAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for VATRate model."""
 
     fields = ("name", "cc_id", "percentage")
