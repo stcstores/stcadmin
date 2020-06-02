@@ -75,7 +75,7 @@ class Country(models.Model):
     country_ID = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=255)
     ISO_code = models.CharField(max_length=2, blank=True, null=True)
-    region = models.ForeignKey(Region, on_delete=models.PROTECT, blank=True, null=True)
+    region = models.ForeignKey(Region, on_delete=models.PROTECT)
     currency = models.ForeignKey(
         Currency, blank=True, null=True, on_delete=models.SET_NULL
     )
