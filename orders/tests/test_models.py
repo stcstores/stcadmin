@@ -687,7 +687,7 @@ class TestPackingRecord(STCAdminTest):
             added_by_user_ID=user.user_id,
         )
         self.mock_CCAPI.customer_logs.return_value = [mock_log]
-        models.PackingRecord.update()
+        models.PackingRecord.objects.update_packing_records()
         self.assertTrue(models.PackingRecord.objects.filter(order=order).exists())
         record = models.PackingRecord.objects.get(order=order)
         self.assertEqual(order, record.order)
@@ -697,7 +697,7 @@ class TestPackingRecord(STCAdminTest):
 
     def test_orders_to_update(self):
         models.PackingRecord.objects.all().delete()
-        orders = models.PackingRecord._orders_to_update()
+        orders = models.PackingRecord.objects._orders_to_update()
         self.assertEqual(11, len(orders))
         for order in orders:
             self.assertTrue(order.is_dispatched())
@@ -709,7 +709,7 @@ class TestPackingRecord(STCAdminTest):
         invalid_order.customer_ID = None
         invalid_order.save()
         models.PackingRecord.objects.all().delete()
-        orders = models.PackingRecord._orders_to_update()
+        orders = models.PackingRecord.objects._orders_to_update()
         for order in orders:
             self.assertTrue(order.is_dispatched())
             self.assertIsNotNone(order.customer_ID)
@@ -720,7 +720,7 @@ class TestPackingRecord(STCAdminTest):
         invalid_order = dispatched_orders[2]
         models.PackingRecord.objects.exclude(order__id=invalid_order.id).delete()
         self.assertEqual(1, models.PackingRecord.objects.count())
-        orders = models.PackingRecord._orders_to_update()
+        orders = models.PackingRecord.objects._orders_to_update()
         for order in orders:
             self.assertTrue(order.is_dispatched())
             self.assertIsNotNone(order.customer_ID)
@@ -730,7 +730,7 @@ class TestPackingRecord(STCAdminTest):
         order = models.Order.objects.dispatched()[0]
         models.PackingRecord.objects.all().delete()
         self.mock_CCAPI.customer_logs.return_value = []
-        models.PackingRecord._update_order(order)
+        models.PackingRecord.objects._update_order(order)
         self.assertFalse(models.PackingRecord.objects.exists())
 
     def test_update_order_with_no_dispatch_logs(self):
@@ -744,7 +744,7 @@ class TestPackingRecord(STCAdminTest):
             added_by_user_ID="4859483",
         )
         self.mock_CCAPI.customer_logs.return_value = [mock_log]
-        models.PackingRecord._update_order(order)
+        models.PackingRecord.objects._update_order(order)
         self.assertFalse(models.PackingRecord.objects.exists())
 
     def test_update_order_with_new_packer(self):
@@ -760,7 +760,7 @@ class TestPackingRecord(STCAdminTest):
             added_by_user_ID=new_user_ID,
         )
         self.mock_CCAPI.customer_logs.return_value = [mock_log]
-        models.PackingRecord._update_order(order)
+        models.PackingRecord.objects._update_order(order)
         self.assertTrue(CloudCommerceUser.objects.filter(user_id=new_user_ID).exists())
 
 
@@ -791,11 +791,11 @@ class TestOrderUpdate(STCAdminTest):
     def test_update(self, mock_now, mock_packing_record, mock_order):
         mock_date = make_aware(datetime(2019, 12, 10))
         mock_now.return_value = mock_date
-        update = models.OrderUpdate.update()
+        update = models.OrderUpdate.objects.start_order_update()
         update.refresh_from_db()
         self.assertEqual(update.COMPLETE, update.status)
         self.assertEqual(mock_date, update.completed_at)
-        mock_packing_record.update.assert_called_once()
+        mock_packing_record.objects.update_packing_records.assert_called_once()
         mock_order.objects.update_orders.assert_called_once()
 
     @patch("orders.models.update.Order")
@@ -808,7 +808,7 @@ class TestOrderUpdate(STCAdminTest):
             side_effect=Exception("Test")
         )
         with self.assertRaises(Exception):
-            models.OrderUpdate.update()
+            models.OrderUpdate.objects.start_order_update()
         self.assertEqual(
             1,
             models.OrderUpdate.objects.filter(status=models.OrderUpdate.ERROR).count(),
@@ -829,9 +829,11 @@ class TestOrderUpdate(STCAdminTest):
         )
         mock_date = make_aware(datetime(2019, 12, 10))
         mock_now.return_value = mock_date
-        mock_packing_record.update.side_effect = Mock(side_effect=Exception("Test"))
+        mock_packing_record.objects.update_packing_records.side_effect = Mock(
+            side_effect=Exception("Test")
+        )
         with self.assertRaises(Exception):
-            models.OrderUpdate.update()
+            models.OrderUpdate.objects.start_order_update()
         self.assertEqual(
             1,
             models.OrderUpdate.objects.filter(status=models.OrderUpdate.ERROR).count(),
@@ -840,15 +842,15 @@ class TestOrderUpdate(STCAdminTest):
         self.assertEqual(update.ERROR, update.status)
         self.assertEqual(mock_date, update.completed_at)
         mock_order.objects.update_orders.assert_called_once()
-        mock_packing_record.update.assert_called_once()
+        mock_packing_record.objects.update_packing_records.assert_called_once()
 
     @patch("orders.models.update.Order")
     @patch("orders.models.update.PackingRecord")
     def test_update_already_in_progress(self, mock_packing_record, mock_order):
         models.OrderUpdate.objects.create()
-        self.assertTrue(models.OrderUpdate.is_in_progress())
+        self.assertTrue(models.OrderUpdate.objects.is_in_progress())
         with self.assertRaises(models.OrderUpdate.OrderUpdateInProgressError):
-            models.OrderUpdate.update()
+            models.OrderUpdate.objects.start_order_update()
         mock_order.objects.update_orders.assert_not_called()
         mock_packing_record.update.assert_not_called()
 
@@ -860,11 +862,11 @@ class TestOrderUpdate(STCAdminTest):
         )
         update.started_at -= timedelta(hours=2)
         update.save()
-        models.OrderUpdate.update()
+        models.OrderUpdate.objects.start_order_update()
         update.refresh_from_db()
         self.assertEqual(update.ERROR, update.status)
         mock_order.objects.update_orders.assert_called()
-        mock_packing_record.update.assert_called()
+        mock_packing_record.objects.update_packing_records.assert_called()
 
     def test_is_in_progress(self):
         self.assertFalse(
@@ -872,11 +874,11 @@ class TestOrderUpdate(STCAdminTest):
                 status=models.OrderUpdate.IN_PROGRESS
             ).exists()
         )
-        self.assertFalse(models.OrderUpdate.is_in_progress())
+        self.assertFalse(models.OrderUpdate.objects.is_in_progress())
         update = models.OrderUpdate.objects.create()
         update.status = update.IN_PROGRESS
         update.save()
-        self.assertTrue(models.OrderUpdate.is_in_progress())
+        self.assertTrue(models.OrderUpdate.objects.is_in_progress())
 
     def test_timeout_updates(self):
         update = models.OrderUpdate.objects.create(
@@ -884,7 +886,7 @@ class TestOrderUpdate(STCAdminTest):
         )
         update.started_at -= timedelta(hours=2)
         update.save()
-        models.OrderUpdate.timeout_update()
+        models.OrderUpdate.objects._timeout_update()
         update.refresh_from_db()
         self.assertEqual(update.ERROR, update.status)
         update = models.OrderUpdate.objects.create(
@@ -892,19 +894,9 @@ class TestOrderUpdate(STCAdminTest):
         )
         update.started_at -= timedelta(minutes=10)
         update.save()
-        models.OrderUpdate.timeout_update()
+        models.OrderUpdate.objects._timeout_update()
         update.refresh_from_db()
         self.assertEqual(update.IN_PROGRESS, update.status)
-
-    def test_latest_complete(self):
-        self.assertFalse(models.OrderUpdate.is_in_progress())
-        latest_update = models.OrderUpdate.objects.latest("completed_at")
-        self.assertEqual(latest_update, models.OrderUpdate.latest())
-
-    def test_latest_in_progress(self):
-        self.assertFalse(models.OrderUpdate.is_in_progress())
-        update = models.OrderUpdate.objects.create()
-        self.assertEqual(update, models.OrderUpdate.latest())
 
 
 class TestBreakage(STCAdminTest):

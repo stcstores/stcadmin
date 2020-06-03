@@ -74,7 +74,7 @@ class OrderManager(models.Manager):
         """Add product sales to the ProductSale model."""
         for product in order.products:
             price = int(product.price * 100)
-            sale, _ = ProductSale._default_manager.get_or_create(
+            sale, _ = ProductSale.objects.get_or_create(
                 order=order_obj,
                 product_ID=product.product_id,
                 defaults={"quantity": product.quantity, "price": price},
