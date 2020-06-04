@@ -12,7 +12,7 @@ class Breakage(models.Model):
     order_id = models.CharField(max_length=10)
     note = models.TextField(blank=True, null=True)
     packer = models.ForeignKey(CloudCommerceUser, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(default=timezone.now)
+    timestamp = models.DateTimeField(default=lambda: timezone.now())
 
     class Meta:
         """Meta class for UserFeedback."""

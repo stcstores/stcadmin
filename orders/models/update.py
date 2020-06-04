@@ -38,9 +38,10 @@ class OrderUpdateManager(models.Manager):
 
     def _timeout_update(self):
         """Set the status of updates older than TIMEOUT to ERROR."""
-        self.filter(started_at__lte=timezone.now() - OrderUpdate.TIMEOUT).update(
-            status=OrderUpdate.ERROR
-        )
+        self.filter(
+            status=OrderUpdate.IN_PROGRESS,
+            started_at__lte=timezone.now() - OrderUpdate.TIMEOUT,
+        ).update(status=OrderUpdate.ERROR)
 
     def is_in_progress(self):
         """Return True if an update is in progress, else return False."""
