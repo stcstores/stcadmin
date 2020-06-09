@@ -89,6 +89,7 @@ class PackCountMonitor(TemplateView):
         """Return HttpResponse with pack count data."""
         context = super().get_context_data(*args, **kwargs)
         date = timezone.now()
+        print(models.Order.objects.all())
         qs = (
             CloudCommerceUser.unhidden.annotate(
                 pack_count=Count(
@@ -143,7 +144,9 @@ class UndispatchedOrdersData(TemplateView):
 
     def urgent_orders(self):
         """Return a list of order IDs for urgent undispatched orders."""
-        return list(models.Order.objects.urgent().values_list("order_ID", flat=True))
+        return sorted(
+            list(models.Order.objects.urgent().values_list("order_ID", flat=True))
+        )
 
     def priority_orders(self, urgent_orders):
         """Return a list of order IDs for undispatched priority orders."""
@@ -152,7 +155,7 @@ class UndispatchedOrdersData(TemplateView):
             .priority()
             .values_list("order_ID", flat=True)
         )
-        return list(set(priority_orders) - set(urgent_orders))
+        return sorted(list(set(priority_orders) - set(urgent_orders)))
 
     def non_priority_orders(self, urgent_orders, priority_orders):
         """Return a list of order IDs for orders that are not urgent or priority."""
@@ -161,8 +164,8 @@ class UndispatchedOrdersData(TemplateView):
             .filter(recieved_at__gte=timezone.now() - timedelta(days=7))
             .values_list("order_ID", flat=True)
         )
-        return list(
-            set(undispatched_orders) - set(urgent_orders) - set(priority_orders)
+        return sorted(
+            list(set(undispatched_orders) - set(urgent_orders) - set(priority_orders))
         )
 
     def get_context_data(self, *args, **kwargs):
