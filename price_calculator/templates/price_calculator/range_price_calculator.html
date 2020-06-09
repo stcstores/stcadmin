@@ -29,6 +29,16 @@
   </div>
 
   <div class="InputAddOn">
+    <span class="InputAddOn-item">Channel</span>
+    <select name="channel" id="channel">
+      <option value="">Generic</option>
+      {% for channel in channels %}
+      <option value="{{ channel }}">{{ channel }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="InputAddOn">
     <label for="channel_fee" class="InputAddOn-item">Channel Fee</label>
     <select name="channel_fee" id="channel_fee_input" size="{{ channel_fees|length }}">
       {% for fee in channel_fees %}
@@ -219,16 +229,29 @@
         {% endfor %}
         $('#country').change(function() {
             {% for product in product_range.products %}
-            var country = $(this).val();
-            var price = calcs['{{ product.id }}'].sale_price;
             get_postage_price(
-                calcs['{{ product.id}}'],
-                country,
-                "{{ product.package_type }}".replace(' (Single)', ''),
-                "{{ product.international_shipping }}",
-                {{ product.weight }},
-                price);
+              calcs['{{ product.id}}'],
+              $('#country').val(),
+              "{{ product.package_type }}".replace(' (Single)', ''),
+              $('#channel').val(),
+              "{{ product.international_shipping }}",
+              {{ product.weight }},
+              calcs['{{ product.id }}'].sale_price
+            );
             {% endfor %}
+        });
+        $('#channel').change(function() {
+          {% for product in product_range.products %}
+          get_postage_price(
+              calcs['{{ product.id}}'],
+              $('#country').val(),
+              "{{ product.package_type }}".replace(' (Single)', ''),
+              $('#channel').val(),
+              "{{ product.international_shipping }}",
+              {{ product.weight }},
+              calcs['{{ product.id }}'].sale_price
+            );
+          {% endfor %}
         });
         {% for product in product_range.products %}
         calcs['{{ product.id}}'].set_sale_price(

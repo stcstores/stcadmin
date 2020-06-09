@@ -24,6 +24,11 @@ def product_type():
 
 
 @pytest.fixture
+def channel(channel_factory):
+    return channel_factory.create()
+
+
+@pytest.fixture
 def min_weight():
     return 100
 
@@ -96,6 +101,12 @@ def test_sets_inactive(new_shipping_method):
 def can_set_product_type(new_shipping_method, product_type):
     new_shipping_method.product_type.set([product_type])
     assert list(new_shipping_method.product_type.all()) == [product_type]
+
+
+@pytest.mark.django_db
+def can_set_channel_type(new_shipping_method, channel):
+    new_shipping_method.channel.set([channel])
+    assert list(new_shipping_method.channel.all()) == [channel]
 
 
 @pytest.mark.django_db

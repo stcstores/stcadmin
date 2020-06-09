@@ -25,6 +25,16 @@ class ChannelFeeAdmin(admin.ModelAdmin):
     list_editable = ("name", "fee_percentage", "ordering")
 
 
+@admin.register(models.Channel)
+class ChannelAdmin(admin.ModelAdmin):
+    """Model admin for the Channel model."""
+
+    fields = ("name", "ordering")
+    list_display = ("__str__", "name", "ordering")
+    list_display_links = ("__str__",)
+    list_editable = ("name", "ordering")
+
+
 @admin.register(models.ProductType)
 class ProductTypeAdmin(admin.ModelAdmin):
     """Model admin for ProductType model."""
@@ -44,6 +54,7 @@ class ShippingMethodeAdmin(admin.ModelAdmin):
         "country",
         "shipping_service",
         "product_type",
+        "channel",
         "min_weight",
         "max_weight",
         "min_price",

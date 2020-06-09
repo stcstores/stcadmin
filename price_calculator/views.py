@@ -25,6 +25,7 @@ class GetShippingPrice(InventoryUserMixin, View):
     CURRENCY_CODE = "currency_code"
     CURRENCY_SYMBOL = "currency_symbol"
     MIN_CHANNEL_FEE = "min_channel_fee"
+    CHANNEL = "channel"
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
@@ -42,6 +43,13 @@ class GetShippingPrice(InventoryUserMixin, View):
     def product_type(self):
         """Return the package type."""
         return models.ProductType.objects.get(name=self.request.POST["package_type"])
+
+    def channel(self):
+        """Return the selected channel."""
+        channel_name = self.request.POST[self.CHANNEL]
+        if channel_name != "":
+            return models.Channel.objects.get(name=channel_name)
+        return None
 
     def min_channel_fee(self):
         """Return the minimum channel fee."""
@@ -66,6 +74,7 @@ class GetShippingPrice(InventoryUserMixin, View):
         ) = models.ShippingMethod.objects.get_shipping_price(
             country=self.country,
             product_type=self.product_type(),
+            channel=self.channel(),
             weight=weight,
             price=price,
         )
@@ -147,6 +156,7 @@ class RangePriceCalculatorView(InventoryUserMixin, TemplateView):
         country_ids = models.ShippingMethod.objects.values_list("country", flat=True)
         context_data["countries"] = Country.objects.filter(id__in=country_ids)
         context_data["channel_fees"] = models.ChannelFee.objects.all()
+        context_data["channels"] = models.Channel.objects.all()
         return context_data
 
 
@@ -162,4 +172,5 @@ class PriceCalculator(InventoryUserMixin, TemplateView):
         context_data["countries"] = Country.objects.filter(id__in=country_ids)
         context_data["product_types"] = models.ProductType.objects.all()
         context_data["channel_fees"] = models.ChannelFee.objects.all()
+        context_data["channels"] = models.Channel.objects.all()
         return context_data

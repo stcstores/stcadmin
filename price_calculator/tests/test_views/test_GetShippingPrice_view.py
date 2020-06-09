@@ -34,13 +34,19 @@ def product_type(product_type_factory):
 
 
 @pytest.fixture
-def form_data(country, weight, price, international_shipping, product_type):
+def channel(channel_factory):
+    return channel_factory.create()
+
+
+@pytest.fixture
+def form_data(country, channel, weight, price, international_shipping, product_type):
     return {
         "country": country.name,
         "weight": weight,
         "price": price,
         "international_shipping": international_shipping,
         "package_type": product_type.name,
+        "channel": channel.name,
     }
 
 
@@ -64,11 +70,13 @@ def shipping_method(
     shipping_price,
     shipping_service,
     product_type,
+    channel,
 ):
     shipping_method = shipping_method_factory.create(
         country=country, shipping_service=shipping_service
     )
     shipping_method.product_type.set([product_type])
+    shipping_method.channel.set([channel])
     shipping_method.vat_rates.set([vat_rate_factory.create() for _ in range(2)])
     return shipping_method
 
