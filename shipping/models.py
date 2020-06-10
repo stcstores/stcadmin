@@ -222,7 +222,11 @@ class ShippingPrice(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.shipping_service} - {self.country}"
+        if self.country is not None:
+            location = self.country
+        else:
+            location = self.region
+        return f"{self.shipping_service} - {location}"
 
     def price(self, weight):
         """Return the shipping price for a given weight in grams."""

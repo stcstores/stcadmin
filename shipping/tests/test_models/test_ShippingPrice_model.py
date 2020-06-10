@@ -78,12 +78,18 @@ def test_can_create_with_region(shipping_service, region, price_type):
 
 
 @pytest.mark.django_db
-def test__str__method(shipping_price_factory):
-    shipping_price = shipping_price_factory.create()
+def test__str__method_with_country(shipping_price_factory, country):
+    shipping_price = shipping_price_factory.create(country=country, region=None)
     assert (
         str(shipping_price)
         == f"{shipping_price.shipping_service} - {shipping_price.country}"
     )
+
+
+@pytest.mark.django_db
+def test__str__method_with_region(shipping_price_factory, region):
+    shipping_price = shipping_price_factory.create(country=None, region=region)
+    assert str(shipping_price) == f"{shipping_price.shipping_service} - {region}"
 
 
 @pytest.mark.django_db
