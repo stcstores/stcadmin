@@ -146,6 +146,7 @@ class ShippingMethodManager(models.Manager):
             channel=channel,
             min_weight__lte=weight,
             min_price__lte=price,
+            inactive=False,
         ).filter(
             Q(
                 Q(Q(max_price__isnull=True) | Q(max_price__gte=price))
@@ -192,7 +193,9 @@ class ShippingMethod(models.Model):
     def _get_shipping_price(self):
         try:
             shipping_price = ShippingPrice.objects.get(
-                country=self.country, shipping_service=self.shipping_service
+                country=self.country,
+                shipping_service=self.shipping_service,
+                inactive=False,
             )
         except ShippingPrice.DoesNotExist:
             raise NoShippingService(
