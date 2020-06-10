@@ -1,0 +1,196 @@
+[{
+    "model": "price_calculator.shippingmethod",
+    "pk": 1,
+    "fields": {
+        "name": "Whistle Tracked - Netherlands",
+        "country": 6,
+        "shipping_service": 8,
+        "min_weight": 0,
+        "max_weight": 2000,
+        "min_price": 0,
+        "max_price": 1500,
+        "inactive": false,
+        "product_type": [1, 2],
+        "vat_rates": [1, 2]
+    }
+}, {
+    "model": "price_calculator.shippingmethod",
+    "pk": 2,
+    "fields": {
+        "name": "Whistle Tracked - Australia",
+        "country": 25,
+        "shipping_service": 8,
+        "min_weight": 0,
+        "max_weight": 2000,
+        "min_price": 0,
+        "max_price": 1500,
+        "inactive": false,
+        "product_type": [1, 2],
+        "vat_rates": [1, 2]
+    }
+}, {
+    "model": "price_calculator.shippingmethod",
+    "pk": 3,
+    "fields": {
+        "name": "Whistle Tracked - Canada",
+        "country": 55,
+        "shipping_service": 8,
+        "min_weight": 0,
+        "max_weight": 2000,
+        "min_price": 0,
+        "max_price": 4000,
+        "inactive": false,
+        "product_type": [1, 2],
+        "vat_rates": []
+    }
+}, {
+    "model": "price_calculator.shippingmethod",
+    "pk": 4,
+    "fields": {
+        "name": "Whistle Tracked - France",
+        "country": 2,
+        "shipping_service": 8,
+        "min_weight": 0,
+        "max_weight": 2000,
+        "min_price": 0,
+        "max_price": 4000,
+        "inactive": false,
+        "product_type": [1, 2, 3],
+        "vat_rates": [1, 2]
+    }
+}, {
+    "model": "price_calculator.shippingmethod",
+    "pk": 5,
+    "fields": {
+        "name": "Whistle Tracked - Germany",
+        "country": 3,
+        "shipping_service": 8,
+        "min_weight": 0,
+        "max_weight": 2000,
+        "min_price": 0,
+        "max_price": 4000,
+        "inactive": false,
+        "product_type": [1, 2],
+        "vat_rates": [1, 2]
+    }
+}, {
+    "model": "price_calculator.shippingmethod",
+    "pk": 6,
+    "fields": {
+        "name": "Whistle Tracked - Ireland",
+        "country": 118,
+        "shipping_service": 8,
+        "min_weight": 0,
+        "max_weight": 2000,
+        "min_price": 0,
+        "max_price": 4000,
+        "inactive": false,
+        "product_type": [1, 2],
+        "vat_rates": [1, 2]
+    }
+}, {
+    "model": "price_calculator.shippingmethod",
+    "pk": 7,
+    "fields": {
+        "name": "Whistle Tracked - Italy",
+        "country": 7,
+        "shipping_service": 8,
+        "min_weight": 0,
+        "max_weight": 2000,
+        "min_price": 0,
+        "max_price": 4000,
+        "inactive": false,
+        "product_type": [1, 2],
+        "vat_rates": [1, 2]
+    }
+}, {
+    "model": "price_calculator.shippingmethod",
+    "pk": 8,
+    "fields": {
+        "name": "Whistle Tracked - Spain",
+        "country": 4,
+        "shipping_service": 8,
+        "min_weight": 0,
+        "max_weight": 2000,
+        "min_price": 0,
+        "max_price": 4000,
+        "inactive": false,
+        "product_type": [1, 2],
+        "vat_rates": [1, 2]
+    }
+}, {
+    "model": "price_calculator.shippingmethod",
+    "pk": 9,
+    "fields": {
+        "name": "Whistle Tracked - USA",
+        "country": 247,
+        "shipping_service": 8,
+        "min_weight": 0,
+        "max_weight": 2000,
+        "min_price": 0,
+        "max_price": 4000,
+        "inactive": false,
+        "product_type": [1, 2],
+        "vat_rates": [1, 2]
+    }
+}, {
+    "model": "price_calculator.shippingmethod",
+    "pk": 10,
+    "fields": {
+        "name": "UK Packet 48",
+        "country": 1,
+        "shipping_service": 4,
+        "min_weight": 0,
+        "max_weight": 2000,
+        "min_price": 0,
+        "max_price": null,
+        "inactive": false,
+        "product_type": [1],
+        "vat_rates": [1, 2]
+    }
+}, {
+    "model": "price_calculator.shippingmethod",
+    "pk": 11,
+    "fields": {
+        "name": "UK Large Letter",
+        "country": 1,
+        "shipping_service": 2,
+        "min_weight": 0,
+        "max_weight": 750,
+        "min_price": 0,
+        "max_price": null,
+        "inactive": false,
+        "product_type": [2],
+        "vat_rates": [1, 2]
+    }
+}, {
+    "model": "price_calculator.shippingmethod",
+    "pk": 12,
+    "fields": {
+        "name": "UK Heavy and Large (Tracked 48)",
+        "country": 1,
+        "shipping_service": 6,
+        "min_weight": 0,
+        "max_weight": null,
+        "min_price": 0,
+        "max_price": null,
+        "inactive": false,
+        "product_type": [1],
+        "vat_rates": [1, 2]
+    }
+}, {
+    "model": "price_calculator.shippingmethod",
+    "pk": 13,
+    "fields": {
+        "name": "UK Courier",
+        "country": 1,
+        "shipping_service": 7,
+        "min_weight": 0,
+        "max_weight": null,
+        "min_price": 0,
+        "max_price": null,
+        "inactive": false,
+        "product_type": [4],
+        "vat_rates": [1, 2]
+    }
+}]

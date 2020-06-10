@@ -60,6 +60,7 @@ class TestPackCountMonitorView(STCAdminTest, ViewTests):
     fixtures = (
         "home/cloud_commerce_user",
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "shipping/provider",
         "shipping/courier_type",
@@ -245,6 +246,7 @@ class TestChartsView(OrderViewTest, ViewTests):
     fixtures = (
         "home/cloud_commerce_user",
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "shipping/provider",
         "shipping/courier_type",
@@ -308,6 +310,7 @@ class TestUndispatchedDataView(OrderViewTest, ViewTests):
     fixtures = (
         "home/cloud_commerce_user",
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "shipping/provider",
         "shipping/courier_type",
@@ -394,6 +397,7 @@ class TestOrderListView(OrderViewTest, ViewTests):
     fixtures = (
         "home/cloud_commerce_user",
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "shipping/provider",
         "shipping/courier_type",
@@ -482,6 +486,7 @@ class TestExportOrdersView(OrderViewTest, ViewTests):
     fixtures = (
         "home/cloud_commerce_user",
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "shipping/provider",
         "shipping/courier_type",

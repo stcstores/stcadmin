@@ -150,10 +150,11 @@ function format_price(price) {
 }
 
 function get_postage_price(
-  calculator, country, package_type, international_shipping, weight, price) {
+  calculator, country, package_type, channel, international_shipping, weight, price) {
   var data = {
     'country': country,
     'package_type': package_type,
+    'channel': channel,
     'international_shipping': international_shipping,
     'weight': weight,
     'price': price,

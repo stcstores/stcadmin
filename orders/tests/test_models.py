@@ -78,6 +78,7 @@ class TestUrgentSince(STCAdminTest):
 class TestOrder(STCAdminTest):
     fixtures = (
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "shipping/provider",
         "shipping/courier_type",
@@ -601,6 +602,7 @@ class TestOrder(STCAdminTest):
 class TestProductSale(STCAdminTest):
     fixtures = (
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "shipping/provider",
         "shipping/courier_type",
@@ -633,6 +635,7 @@ class TestPackingRecord(STCAdminTest):
     fixtures = (
         "home/cloud_commerce_user",
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "shipping/provider",
         "shipping/courier_type",
@@ -928,6 +931,7 @@ class TestOrdersByDayChart(STCAdminTest):
     fixtures = (
         "home/cloud_commerce_user",
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "shipping/provider",
         "shipping/courier_type",
@@ -992,6 +996,7 @@ class TestOrdersByWeekChart(STCAdminTest):
     fixtures = (
         "home/cloud_commerce_user",
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
         "shipping/provider",
         "shipping/courier_type",

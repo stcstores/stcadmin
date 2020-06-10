@@ -5,7 +5,7 @@
         "country_ID": "1",
         "name": "United Kingdom",
         "ISO_code": "GB",
-        "region": "UK",
+        "region": 1,
         "currency": 1
     }
 }, {
@@ -15,7 +15,7 @@
         "country_ID": "2",
         "name": "France",
         "ISO_code": "FR",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -25,7 +25,7 @@
         "country_ID": "3",
         "name": "Germany",
         "ISO_code": "DE",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -35,7 +35,7 @@
         "country_ID": "4",
         "name": "Spain",
         "ISO_code": "ES",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -45,7 +45,7 @@
         "country_ID": "5",
         "name": "Denmark",
         "ISO_code": "DK",
-        "region": "EU",
+        "region": 2,
         "currency": 17
     }
 }, {
@@ -55,7 +55,7 @@
         "country_ID": "6",
         "name": "Netherlands",
         "ISO_code": "NL",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -65,7 +65,7 @@
         "country_ID": "7",
         "name": "Italy",
         "ISO_code": "IT",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -75,7 +75,7 @@
         "country_ID": "8",
         "name": "Greece",
         "ISO_code": "GR",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -85,7 +85,7 @@
         "country_ID": "9",
         "name": "Abkhazia",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -95,7 +95,7 @@
         "country_ID": "10",
         "name": "Afghanistan",
         "ISO_code": "AF",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -105,7 +105,7 @@
         "country_ID": "11",
         "name": "Akrotiri and Dhekelia",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -115,7 +115,7 @@
         "country_ID": "12",
         "name": "Aland",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -125,7 +125,7 @@
         "country_ID": "13",
         "name": "Albania",
         "ISO_code": "AL",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -135,7 +135,7 @@
         "country_ID": "14",
         "name": "Alderney",
         "ISO_code": "GG",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -145,7 +145,7 @@
         "country_ID": "15",
         "name": "Algeria",
         "ISO_code": "DZ",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -155,7 +155,7 @@
         "country_ID": "16",
         "name": "American Samoa",
         "ISO_code": "AS",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -165,7 +165,7 @@
         "country_ID": "17",
         "name": "Andorra",
         "ISO_code": "AD",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -175,7 +175,7 @@
         "country_ID": "18",
         "name": "Angola",
         "ISO_code": "AO",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -185,7 +185,7 @@
         "country_ID": "19",
         "name": "Anguilla",
         "ISO_code": "AI",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -195,7 +195,7 @@
         "country_ID": "20",
         "name": "Antigua and Barbuda",
         "ISO_code": "AG",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -205,7 +205,7 @@
         "country_ID": "21",
         "name": "Argentina",
         "ISO_code": "AR",
-        "region": "ROW",
+        "region": 3,
         "currency": 7
     }
 }, {
@@ -215,7 +215,7 @@
         "country_ID": "22",
         "name": "Armenia",
         "ISO_code": "AM",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -225,7 +225,7 @@
         "country_ID": "23",
         "name": "Aruba",
         "ISO_code": "AW",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -235,7 +235,7 @@
         "country_ID": "24",
         "name": "Ashmore and Cartier Islands",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -245,7 +245,7 @@
         "country_ID": "25",
         "name": "Australia",
         "ISO_code": "AU",
-        "region": "ROW",
+        "region": 3,
         "currency": 8
     }
 }, {
@@ -255,7 +255,7 @@
         "country_ID": "26",
         "name": "Australian Antarctic Territory",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -265,7 +265,7 @@
         "country_ID": "27",
         "name": "Austria",
         "ISO_code": "AT",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -275,7 +275,7 @@
         "country_ID": "28",
         "name": "Azad Kashmir",
         "ISO_code": "PK",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -285,7 +285,7 @@
         "country_ID": "29",
         "name": "Azerbaijan",
         "ISO_code": "AZ",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -295,7 +295,7 @@
         "country_ID": "30",
         "name": "Bahamas",
         "ISO_code": "BS",
-        "region": "ROW",
+        "region": 3,
         "currency": 11
     }
 }, {
@@ -305,7 +305,7 @@
         "country_ID": "31",
         "name": "Bahrain",
         "ISO_code": "BH",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -315,7 +315,7 @@
         "country_ID": "32",
         "name": "Bangladesh",
         "ISO_code": "BD",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -325,7 +325,7 @@
         "country_ID": "33",
         "name": "Barbados",
         "ISO_code": "BB",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -335,7 +335,7 @@
         "country_ID": "34",
         "name": "Belarus",
         "ISO_code": "BY",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -345,7 +345,7 @@
         "country_ID": "35",
         "name": "Belgium",
         "ISO_code": "BE",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -355,7 +355,7 @@
         "country_ID": "36",
         "name": "Belize",
         "ISO_code": "BZ",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -365,7 +365,7 @@
         "country_ID": "37",
         "name": "Benin",
         "ISO_code": "BJ",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -375,7 +375,7 @@
         "country_ID": "38",
         "name": "Bermuda",
         "ISO_code": "BM",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -385,7 +385,7 @@
         "country_ID": "39",
         "name": "Bhutan",
         "ISO_code": "BT",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -395,7 +395,7 @@
         "country_ID": "40",
         "name": "Bolivia",
         "ISO_code": "BO",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -405,7 +405,7 @@
         "country_ID": "41",
         "name": "Bosnia and Herzegovina",
         "ISO_code": "BA",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -415,7 +415,7 @@
         "country_ID": "42",
         "name": "Botswana",
         "ISO_code": "BW",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -425,7 +425,7 @@
         "country_ID": "43",
         "name": "Brazil",
         "ISO_code": "BR",
-        "region": "ROW",
+        "region": 3,
         "currency": 10
     }
 }, {
@@ -435,7 +435,7 @@
         "country_ID": "44",
         "name": "British Antarctic Territory",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -445,7 +445,7 @@
         "country_ID": "45",
         "name": "British Indian Ocean Territory",
         "ISO_code": "IO",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -455,7 +455,7 @@
         "country_ID": "46",
         "name": "British Virgin Islands",
         "ISO_code": "VG",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -465,7 +465,7 @@
         "country_ID": "47",
         "name": "Brunei",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -475,7 +475,7 @@
         "country_ID": "48",
         "name": "Bulgaria",
         "ISO_code": "BG",
-        "region": "EU",
+        "region": 2,
         "currency": 9
     }
 }, {
@@ -485,7 +485,7 @@
         "country_ID": "49",
         "name": "Burkina Faso",
         "ISO_code": "BF",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -495,7 +495,7 @@
         "country_ID": "50",
         "name": "Burma",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -505,7 +505,7 @@
         "country_ID": "51",
         "name": "Burundi",
         "ISO_code": "BI",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -515,7 +515,7 @@
         "country_ID": "52",
         "name": "Cambodia",
         "ISO_code": "KH",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -525,7 +525,7 @@
         "country_ID": "53",
         "name": "Cameroon",
         "ISO_code": "CM",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -535,7 +535,7 @@
         "country_ID": "54",
         "name": "Cayman Islands",
         "ISO_code": "KY",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -545,7 +545,7 @@
         "country_ID": "55",
         "name": "Canada",
         "ISO_code": "CA",
-        "region": "ROW",
+        "region": 3,
         "currency": 4
     }
 }, {
@@ -555,7 +555,7 @@
         "country_ID": "56",
         "name": "Cape Verde",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -565,7 +565,7 @@
         "country_ID": "57",
         "name": "Central African Republic",
         "ISO_code": "CF",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -575,7 +575,7 @@
         "country_ID": "58",
         "name": "Chad",
         "ISO_code": "TD",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -585,7 +585,7 @@
         "country_ID": "59",
         "name": "Chile",
         "ISO_code": "CL",
-        "region": "ROW",
+        "region": 3,
         "currency": 13
     }
 }, {
@@ -595,7 +595,7 @@
         "country_ID": "60",
         "name": "China",
         "ISO_code": "CN",
-        "region": "ROW",
+        "region": 3,
         "currency": 14
     }
 }, {
@@ -605,7 +605,7 @@
         "country_ID": "61",
         "name": "Christmas Island",
         "ISO_code": "CX",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -615,7 +615,7 @@
         "country_ID": "62",
         "name": "Clipperton Island",
         "ISO_code": "PF",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -625,7 +625,7 @@
         "country_ID": "63",
         "name": "Cocos (Keeling) Islands",
         "ISO_code": "CC",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -635,7 +635,7 @@
         "country_ID": "64",
         "name": "Colombia",
         "ISO_code": "CO",
-        "region": "ROW",
+        "region": 3,
         "currency": 15
     }
 }, {
@@ -645,7 +645,7 @@
         "country_ID": "65",
         "name": "Comoros",
         "ISO_code": "KM",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -655,7 +655,7 @@
         "country_ID": "66",
         "name": "Congo",
         "ISO_code": "CG",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -665,7 +665,7 @@
         "country_ID": "67",
         "name": "Cook Islands",
         "ISO_code": "CK",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -675,7 +675,7 @@
         "country_ID": "68",
         "name": "Coral Sea Islands",
         "ISO_code": "AQ",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -685,7 +685,7 @@
         "country_ID": "69",
         "name": "Costa Rica",
         "ISO_code": "CR",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -695,7 +695,7 @@
         "country_ID": "70",
         "name": "C\u00f4te d'Ivoire",
         "ISO_code": "CI",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -705,7 +705,7 @@
         "country_ID": "71",
         "name": "Croatia",
         "ISO_code": "HR",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -715,7 +715,7 @@
         "country_ID": "72",
         "name": "Cuba",
         "ISO_code": "CU",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -725,7 +725,7 @@
         "country_ID": "73",
         "name": "Cura\u00e7ao",
         "ISO_code": "CW",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -735,7 +735,7 @@
         "country_ID": "74",
         "name": "Cyprus",
         "ISO_code": "CY",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -745,7 +745,7 @@
         "country_ID": "75",
         "name": "Czech Republic",
         "ISO_code": "CZ",
-        "region": "EU",
+        "region": 2,
         "currency": 16
     }
 }, {
@@ -755,7 +755,7 @@
         "country_ID": "76",
         "name": "Djibouti",
         "ISO_code": "DJ",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -765,7 +765,7 @@
         "country_ID": "77",
         "name": "Dominica",
         "ISO_code": "DM",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -775,7 +775,7 @@
         "country_ID": "78",
         "name": "Dominican Republic",
         "ISO_code": "DO",
-        "region": "ROW",
+        "region": 3,
         "currency": 18
     }
 }, {
@@ -785,7 +785,7 @@
         "country_ID": "79",
         "name": "East Timor",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -795,7 +795,7 @@
         "country_ID": "80",
         "name": "Ecuador",
         "ISO_code": "EC",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -805,7 +805,7 @@
         "country_ID": "81",
         "name": "Egypt",
         "ISO_code": "EG",
-        "region": "ROW",
+        "region": 3,
         "currency": 19
     }
 }, {
@@ -815,7 +815,7 @@
         "country_ID": "82",
         "name": "El Salvador",
         "ISO_code": "SV",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -825,7 +825,7 @@
         "country_ID": "83",
         "name": "Equatorial Guinea",
         "ISO_code": "GQ",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -835,7 +835,7 @@
         "country_ID": "84",
         "name": "Eritrea",
         "ISO_code": "ER",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -845,7 +845,7 @@
         "country_ID": "85",
         "name": "Estonia",
         "ISO_code": "EE",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -855,7 +855,7 @@
         "country_ID": "86",
         "name": "Ethiopia",
         "ISO_code": "ET",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -865,7 +865,7 @@
         "country_ID": "87",
         "name": "Falkland Islands",
         "ISO_code": "FK",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -875,7 +875,7 @@
         "country_ID": "88",
         "name": "Faroe Islands",
         "ISO_code": "FO",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -885,7 +885,7 @@
         "country_ID": "89",
         "name": "Fiji",
         "ISO_code": "FJ",
-        "region": "ROW",
+        "region": 3,
         "currency": 20
     }
 }, {
@@ -895,7 +895,7 @@
         "country_ID": "90",
         "name": "Finland",
         "ISO_code": "FI",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -905,7 +905,7 @@
         "country_ID": "91",
         "name": "French Polynesia",
         "ISO_code": "PF",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -915,7 +915,7 @@
         "country_ID": "92",
         "name": "French Southern and Antarctic Lands",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -925,7 +925,7 @@
         "country_ID": "93",
         "name": "Gabon",
         "ISO_code": "GA",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -935,7 +935,7 @@
         "country_ID": "94",
         "name": "Gambia",
         "ISO_code": "GM",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -945,7 +945,7 @@
         "country_ID": "95",
         "name": "Georgia",
         "ISO_code": "GE",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -955,7 +955,7 @@
         "country_ID": "96",
         "name": "Ghana",
         "ISO_code": "GH",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -965,7 +965,7 @@
         "country_ID": "97",
         "name": "Gibraltar",
         "ISO_code": "GI",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -975,7 +975,7 @@
         "country_ID": "98",
         "name": "Gilgit-Baltistan",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -985,7 +985,7 @@
         "country_ID": "99",
         "name": "Greenland",
         "ISO_code": "GL",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -995,7 +995,7 @@
         "country_ID": "100",
         "name": "Grenada",
         "ISO_code": "GD",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1005,7 +1005,7 @@
         "country_ID": "101",
         "name": "Guam",
         "ISO_code": "GU",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1015,7 +1015,7 @@
         "country_ID": "102",
         "name": "Guatemala",
         "ISO_code": "GT",
-        "region": "ROW",
+        "region": 3,
         "currency": 21
     }
 }, {
@@ -1025,7 +1025,7 @@
         "country_ID": "103",
         "name": "Guernsey",
         "ISO_code": "GG",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -1035,7 +1035,7 @@
         "country_ID": "104",
         "name": "Guinea",
         "ISO_code": "GN",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1045,7 +1045,7 @@
         "country_ID": "105",
         "name": "Guinea-Bissau",
         "ISO_code": "GW",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1055,7 +1055,7 @@
         "country_ID": "106",
         "name": "Guyana",
         "ISO_code": "GY",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1065,7 +1065,7 @@
         "country_ID": "107",
         "name": "Haiti",
         "ISO_code": "HT",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1075,7 +1075,7 @@
         "country_ID": "108",
         "name": "Heard Island and McDonald Islands",
         "ISO_code": "HM",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1085,7 +1085,7 @@
         "country_ID": "109",
         "name": "Herm",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1095,7 +1095,7 @@
         "country_ID": "110",
         "name": "Honduras",
         "ISO_code": "HN",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1105,7 +1105,7 @@
         "country_ID": "111",
         "name": "Hong Kong",
         "ISO_code": "HK",
-        "region": "ROW",
+        "region": 3,
         "currency": 22
     }
 }, {
@@ -1115,7 +1115,7 @@
         "country_ID": "112",
         "name": "Hungary",
         "ISO_code": "HU",
-        "region": "EU",
+        "region": 2,
         "currency": 24
     }
 }, {
@@ -1125,7 +1125,7 @@
         "country_ID": "113",
         "name": "Iceland",
         "ISO_code": "IS",
-        "region": "EU",
+        "region": 2,
         "currency": 28
     }
 }, {
@@ -1135,7 +1135,7 @@
         "country_ID": "114",
         "name": "India",
         "ISO_code": "IN",
-        "region": "ROW",
+        "region": 3,
         "currency": 27
     }
 }, {
@@ -1145,7 +1145,7 @@
         "country_ID": "115",
         "name": "Indonesia",
         "ISO_code": "ID",
-        "region": "ROW",
+        "region": 3,
         "currency": 25
     }
 }, {
@@ -1155,7 +1155,7 @@
         "country_ID": "116",
         "name": "Iran",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1165,7 +1165,7 @@
         "country_ID": "117",
         "name": "Iraq",
         "ISO_code": "IQ",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1175,7 +1175,7 @@
         "country_ID": "118",
         "name": "Ireland",
         "ISO_code": "IE",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -1185,7 +1185,7 @@
         "country_ID": "119",
         "name": "Isle of Man",
         "ISO_code": "IM",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -1195,7 +1195,7 @@
         "country_ID": "120",
         "name": "Israel",
         "ISO_code": "IL",
-        "region": "ROW",
+        "region": 3,
         "currency": 26
     }
 }, {
@@ -1205,7 +1205,7 @@
         "country_ID": "121",
         "name": "Jamaica",
         "ISO_code": "JM",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1215,7 +1215,7 @@
         "country_ID": "122",
         "name": "Japan",
         "ISO_code": "JP",
-        "region": "ROW",
+        "region": 3,
         "currency": 29
     }
 }, {
@@ -1225,7 +1225,7 @@
         "country_ID": "123",
         "name": "Jersey",
         "ISO_code": "JE",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -1235,7 +1235,7 @@
         "country_ID": "124",
         "name": "Jordan",
         "ISO_code": "JO",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1245,7 +1245,7 @@
         "country_ID": "125",
         "name": "Kazakhstan",
         "ISO_code": "KZ",
-        "region": "ROW",
+        "region": 3,
         "currency": 31
     }
 }, {
@@ -1255,7 +1255,7 @@
         "country_ID": "126",
         "name": "Kenya",
         "ISO_code": "KE",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1265,7 +1265,7 @@
         "country_ID": "127",
         "name": "Kiribati",
         "ISO_code": "KI",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1275,7 +1275,7 @@
         "country_ID": "128",
         "name": "South Korea",
         "ISO_code": "KR",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1285,7 +1285,7 @@
         "country_ID": "129",
         "name": "North Korea",
         "ISO_code": "KP",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1295,7 +1295,7 @@
         "country_ID": "130",
         "name": "Kosovo",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1305,7 +1305,7 @@
         "country_ID": "131",
         "name": "Kuwait",
         "ISO_code": "KW",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1315,7 +1315,7 @@
         "country_ID": "132",
         "name": "Kyrgyzstan",
         "ISO_code": "KG",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1325,7 +1325,7 @@
         "country_ID": "133",
         "name": "Laos",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1335,7 +1335,7 @@
         "country_ID": "134",
         "name": "Latvia",
         "ISO_code": "LV",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -1345,7 +1345,7 @@
         "country_ID": "135",
         "name": "Lebanon",
         "ISO_code": "LB",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1355,7 +1355,7 @@
         "country_ID": "136",
         "name": "Lesotho",
         "ISO_code": "LS",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1365,7 +1365,7 @@
         "country_ID": "137",
         "name": "Liberia",
         "ISO_code": "LR",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1375,7 +1375,7 @@
         "country_ID": "138",
         "name": "Libya",
         "ISO_code": "LY",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1385,7 +1385,7 @@
         "country_ID": "139",
         "name": "Liechtenstein",
         "ISO_code": "LI",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -1395,7 +1395,7 @@
         "country_ID": "140",
         "name": "Lithuania",
         "ISO_code": "LT",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -1405,7 +1405,7 @@
         "country_ID": "141",
         "name": "Luxembourg",
         "ISO_code": "LU",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -1415,7 +1415,7 @@
         "country_ID": "142",
         "name": "Macau",
         "ISO_code": "MO",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1425,7 +1425,7 @@
         "country_ID": "143",
         "name": "Macedonia",
         "ISO_code": null,
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -1435,7 +1435,7 @@
         "country_ID": "144",
         "name": "Madagascar",
         "ISO_code": "MG",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1445,7 +1445,7 @@
         "country_ID": "145",
         "name": "Malawi",
         "ISO_code": "MW",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1455,7 +1455,7 @@
         "country_ID": "146",
         "name": "Malaysia",
         "ISO_code": "MY",
-        "region": "ROW",
+        "region": 3,
         "currency": 33
     }
 }, {
@@ -1465,7 +1465,7 @@
         "country_ID": "147",
         "name": "Maldives",
         "ISO_code": "MV",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1475,7 +1475,7 @@
         "country_ID": "148",
         "name": "Mali",
         "ISO_code": "ML",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1485,7 +1485,7 @@
         "country_ID": "149",
         "name": "Malta",
         "ISO_code": "MT",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -1495,7 +1495,7 @@
         "country_ID": "150",
         "name": "Marshall Islands",
         "ISO_code": "MH",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1505,7 +1505,7 @@
         "country_ID": "151",
         "name": "Mauritania",
         "ISO_code": "MR",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1515,7 +1515,7 @@
         "country_ID": "152",
         "name": "Mauritius",
         "ISO_code": "MU",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1525,7 +1525,7 @@
         "country_ID": "153",
         "name": "Mexico",
         "ISO_code": "MX",
-        "region": "ROW",
+        "region": 3,
         "currency": 32
     }
 }, {
@@ -1535,7 +1535,7 @@
         "country_ID": "154",
         "name": "Micronesia",
         "ISO_code": "FM",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1545,7 +1545,7 @@
         "country_ID": "155",
         "name": "Moldova",
         "ISO_code": null,
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -1555,7 +1555,7 @@
         "country_ID": "156",
         "name": "Monaco",
         "ISO_code": "MC",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -1565,7 +1565,7 @@
         "country_ID": "157",
         "name": "Mongolia",
         "ISO_code": "MN",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1575,7 +1575,7 @@
         "country_ID": "158",
         "name": "Montenegro",
         "ISO_code": "ME",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -1585,7 +1585,7 @@
         "country_ID": "159",
         "name": "Montserrat",
         "ISO_code": "MS",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1595,7 +1595,7 @@
         "country_ID": "160",
         "name": "Morocco",
         "ISO_code": "MA",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1605,7 +1605,7 @@
         "country_ID": "161",
         "name": "Mozambique",
         "ISO_code": "MZ",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1615,7 +1615,7 @@
         "country_ID": "162",
         "name": "Myanmar",
         "ISO_code": "MM",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1625,7 +1625,7 @@
         "country_ID": "163",
         "name": "Nagorno-Karabakh",
         "ISO_code": "NU",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -1635,7 +1635,7 @@
         "country_ID": "164",
         "name": "Namibia",
         "ISO_code": "NA",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1645,7 +1645,7 @@
         "country_ID": "165",
         "name": "Nauru",
         "ISO_code": "NR",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1655,7 +1655,7 @@
         "country_ID": "166",
         "name": "Nepal",
         "ISO_code": "NP",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1665,7 +1665,7 @@
         "country_ID": "167",
         "name": "New Caledonia",
         "ISO_code": "NC",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1675,7 +1675,7 @@
         "country_ID": "168",
         "name": "New Zealand",
         "ISO_code": "NZ",
-        "region": "ROW",
+        "region": 3,
         "currency": 35
     }
 }, {
@@ -1685,7 +1685,7 @@
         "country_ID": "169",
         "name": "Nicaragua",
         "ISO_code": "NI",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1695,7 +1695,7 @@
         "country_ID": "170",
         "name": "Niger",
         "ISO_code": "NE",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1705,7 +1705,7 @@
         "country_ID": "171",
         "name": "Nigeria",
         "ISO_code": "NG",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1715,7 +1715,7 @@
         "country_ID": "172",
         "name": "Niue",
         "ISO_code": "NU",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1725,7 +1725,7 @@
         "country_ID": "173",
         "name": "Norfolk Island",
         "ISO_code": "NF",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1735,7 +1735,7 @@
         "country_ID": "174",
         "name": "Northern Cyprus",
         "ISO_code": "CY",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -1745,7 +1745,7 @@
         "country_ID": "175",
         "name": "Northern Mariana Islands",
         "ISO_code": "MP",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1755,7 +1755,7 @@
         "country_ID": "176",
         "name": "Norway",
         "ISO_code": "NO",
-        "region": "EU",
+        "region": 2,
         "currency": 34
     }
 }, {
@@ -1765,7 +1765,7 @@
         "country_ID": "177",
         "name": "Oman",
         "ISO_code": "OM",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1775,7 +1775,7 @@
         "country_ID": "178",
         "name": "Palau",
         "ISO_code": "PW",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1785,7 +1785,7 @@
         "country_ID": "179",
         "name": "Palestine",
         "ISO_code": "PS",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1795,7 +1795,7 @@
         "country_ID": "180",
         "name": "Panama",
         "ISO_code": "PA",
-        "region": "ROW",
+        "region": 3,
         "currency": 36
     }
 }, {
@@ -1805,7 +1805,7 @@
         "country_ID": "181",
         "name": "Papua New Guinea",
         "ISO_code": "PG",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1815,7 +1815,7 @@
         "country_ID": "182",
         "name": "Paraguay",
         "ISO_code": "PY",
-        "region": "ROW",
+        "region": 3,
         "currency": 41
     }
 }, {
@@ -1825,7 +1825,7 @@
         "country_ID": "183",
         "name": "Peru",
         "ISO_code": "PE",
-        "region": "ROW",
+        "region": 3,
         "currency": 37
     }
 }, {
@@ -1835,7 +1835,7 @@
         "country_ID": "184",
         "name": "Philippines",
         "ISO_code": "PH",
-        "region": "ROW",
+        "region": 3,
         "currency": 38
     }
 }, {
@@ -1845,7 +1845,7 @@
         "country_ID": "185",
         "name": "Pitcairn Islands",
         "ISO_code": "PN",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1855,7 +1855,7 @@
         "country_ID": "186",
         "name": "Poland",
         "ISO_code": "PL",
-        "region": "EU",
+        "region": 2,
         "currency": 40
     }
 }, {
@@ -1865,7 +1865,7 @@
         "country_ID": "187",
         "name": "Portugal",
         "ISO_code": "PT",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -1875,7 +1875,7 @@
         "country_ID": "188",
         "name": "Pridnestrovskaya Moldavskaya",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1885,7 +1885,7 @@
         "country_ID": "189",
         "name": "Puerto Rico",
         "ISO_code": "PR",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1895,7 +1895,7 @@
         "country_ID": "190",
         "name": "Qatar",
         "ISO_code": "QA",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1905,7 +1905,7 @@
         "country_ID": "191",
         "name": "Romania",
         "ISO_code": "RO",
-        "region": "EU",
+        "region": 2,
         "currency": 42
     }
 }, {
@@ -1915,7 +1915,7 @@
         "country_ID": "192",
         "name": "Ross Dependency",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1925,7 +1925,7 @@
         "country_ID": "193",
         "name": "Russian Federation",
         "ISO_code": "RU",
-        "region": "ROW",
+        "region": 3,
         "currency": 43
     }
 }, {
@@ -1935,7 +1935,7 @@
         "country_ID": "194",
         "name": "Rwanda",
         "ISO_code": "RW",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1945,7 +1945,7 @@
         "country_ID": "195",
         "name": "S\u00e3o Tom\u00e9 and Pr\u00edncipe",
         "ISO_code": "ST",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1955,7 +1955,7 @@
         "country_ID": "196",
         "name": "Sahrawi",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1965,7 +1965,7 @@
         "country_ID": "197",
         "name": "Saint-Barth\u00e9lemy",
         "ISO_code": "BL",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1975,7 +1975,7 @@
         "country_ID": "198",
         "name": "Saint Helena",
         "ISO_code": "SH",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1985,7 +1985,7 @@
         "country_ID": "199",
         "name": "Saint Kitts and Nevis",
         "ISO_code": "KN",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -1995,7 +1995,7 @@
         "country_ID": "200",
         "name": "Saint Lucia",
         "ISO_code": "LC",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2005,7 +2005,7 @@
         "country_ID": "201",
         "name": "Saint Martin",
         "ISO_code": "MF",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2015,7 +2015,7 @@
         "country_ID": "202",
         "name": "Saint Pierre and Miquelon",
         "ISO_code": "PM",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2025,7 +2025,7 @@
         "country_ID": "203",
         "name": "Saint Vincent and the Grenadines",
         "ISO_code": "VC",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2035,7 +2035,7 @@
         "country_ID": "204",
         "name": "Samoa",
         "ISO_code": "WS",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2045,7 +2045,7 @@
         "country_ID": "205",
         "name": "San Marino",
         "ISO_code": "SM",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -2055,7 +2055,7 @@
         "country_ID": "206",
         "name": "Sark",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2065,7 +2065,7 @@
         "country_ID": "207",
         "name": "Saudi Arabia",
         "ISO_code": "SA",
-        "region": "ROW",
+        "region": 3,
         "currency": 44
     }
 }, {
@@ -2075,7 +2075,7 @@
         "country_ID": "208",
         "name": "Senegal",
         "ISO_code": "SN",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2085,7 +2085,7 @@
         "country_ID": "209",
         "name": "Serbia",
         "ISO_code": "RS",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -2095,7 +2095,7 @@
         "country_ID": "210",
         "name": "Seychelles",
         "ISO_code": "SC",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2105,7 +2105,7 @@
         "country_ID": "211",
         "name": "Sierra Leone",
         "ISO_code": "SL",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2115,7 +2115,7 @@
         "country_ID": "212",
         "name": "Singapore",
         "ISO_code": "SG",
-        "region": "ROW",
+        "region": 3,
         "currency": 46
     }
 }, {
@@ -2125,7 +2125,7 @@
         "country_ID": "213",
         "name": "Sint Maarten",
         "ISO_code": "MF",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2135,7 +2135,7 @@
         "country_ID": "214",
         "name": "Slovakia",
         "ISO_code": "SK",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -2145,7 +2145,7 @@
         "country_ID": "215",
         "name": "Slovenia",
         "ISO_code": "SI",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -2155,7 +2155,7 @@
         "country_ID": "216",
         "name": "Solomon Islands",
         "ISO_code": "SB",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2165,7 +2165,7 @@
         "country_ID": "217",
         "name": "Somalia",
         "ISO_code": "SO",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2175,7 +2175,7 @@
         "country_ID": "218",
         "name": "Somaliland",
         "ISO_code": "SO",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2185,7 +2185,7 @@
         "country_ID": "219",
         "name": "South Africa",
         "ISO_code": "ZA",
-        "region": "ROW",
+        "region": 3,
         "currency": 52
     }
 }, {
@@ -2195,7 +2195,7 @@
         "country_ID": "220",
         "name": "South Georgia and the South Sandwich Islands",
         "ISO_code": "GS",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2205,7 +2205,7 @@
         "country_ID": "221",
         "name": "South Ossetia",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2215,7 +2215,7 @@
         "country_ID": "222",
         "name": "South Sudan",
         "ISO_code": "SS",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2225,7 +2225,7 @@
         "country_ID": "223",
         "name": "Sri Lanka",
         "ISO_code": "LK",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2235,7 +2235,7 @@
         "country_ID": "224",
         "name": "Sudan",
         "ISO_code": "SD",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2245,7 +2245,7 @@
         "country_ID": "225",
         "name": "Suriname",
         "ISO_code": "SR",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2255,7 +2255,7 @@
         "country_ID": "226",
         "name": "Swaziland",
         "ISO_code": "SZ",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2265,7 +2265,7 @@
         "country_ID": "227",
         "name": "Sweden",
         "ISO_code": "SE",
-        "region": "EU",
+        "region": 2,
         "currency": 45
     }
 }, {
@@ -2275,7 +2275,7 @@
         "country_ID": "228",
         "name": "Switzerland",
         "ISO_code": "CH",
-        "region": "ROW",
+        "region": 3,
         "currency": 12
     }
 }, {
@@ -2285,7 +2285,7 @@
         "country_ID": "229",
         "name": "Syria",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2295,7 +2295,7 @@
         "country_ID": "230",
         "name": "Taiwan",
         "ISO_code": "TW",
-        "region": "ROW",
+        "region": 3,
         "currency": 49
     }
 }, {
@@ -2305,7 +2305,7 @@
         "country_ID": "231",
         "name": "Tajikistan",
         "ISO_code": "TJ",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -2315,7 +2315,7 @@
         "country_ID": "232",
         "name": "Tanzania",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2325,7 +2325,7 @@
         "country_ID": "233",
         "name": "Thailand",
         "ISO_code": "TH",
-        "region": "ROW",
+        "region": 3,
         "currency": 47
     }
 }, {
@@ -2335,7 +2335,7 @@
         "country_ID": "234",
         "name": "Togo",
         "ISO_code": "TG",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2345,7 +2345,7 @@
         "country_ID": "235",
         "name": "Tonga",
         "ISO_code": "TO",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2355,7 +2355,7 @@
         "country_ID": "236",
         "name": "Tokelau",
         "ISO_code": "TK",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2365,7 +2365,7 @@
         "country_ID": "237",
         "name": "Transnistria",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2375,7 +2375,7 @@
         "country_ID": "238",
         "name": "Trinidad and Tobago",
         "ISO_code": "TT",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2385,7 +2385,7 @@
         "country_ID": "239",
         "name": "Tunisia",
         "ISO_code": "TN",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2395,7 +2395,7 @@
         "country_ID": "240",
         "name": "Turkey",
         "ISO_code": "TR",
-        "region": "EU",
+        "region": 2,
         "currency": 48
     }
 }, {
@@ -2405,7 +2405,7 @@
         "country_ID": "241",
         "name": "Turkmenistan",
         "ISO_code": "TM",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -2415,7 +2415,7 @@
         "country_ID": "242",
         "name": "Turks and Caicos Islands",
         "ISO_code": "TC",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2425,7 +2425,7 @@
         "country_ID": "243",
         "name": "Tuvalu",
         "ISO_code": "TV",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2435,7 +2435,7 @@
         "country_ID": "244",
         "name": "Uganda",
         "ISO_code": "UG",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2445,7 +2445,7 @@
         "country_ID": "245",
         "name": "Ukraine",
         "ISO_code": "UA",
-        "region": "EU",
+        "region": 2,
         "currency": 50
     }
 }, {
@@ -2455,7 +2455,7 @@
         "country_ID": "246",
         "name": "United Arab Emirates",
         "ISO_code": "AE",
-        "region": "ROW",
+        "region": 3,
         "currency": 6
     }
 }, {
@@ -2465,7 +2465,7 @@
         "country_ID": "247",
         "name": "United States",
         "ISO_code": "US",
-        "region": "ROW",
+        "region": 3,
         "currency": 2
     }
 }, {
@@ -2475,7 +2475,7 @@
         "country_ID": "248",
         "name": "Uruguay",
         "ISO_code": "UY",
-        "region": "ROW",
+        "region": 3,
         "currency": 51
     }
 }, {
@@ -2485,7 +2485,7 @@
         "country_ID": "249",
         "name": "Uzbekistan",
         "ISO_code": "UZ",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2495,7 +2495,7 @@
         "country_ID": "250",
         "name": "Vanuatu",
         "ISO_code": "VU",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2505,7 +2505,7 @@
         "country_ID": "251",
         "name": "Vatican City",
         "ISO_code": null,
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -2515,7 +2515,7 @@
         "country_ID": "252",
         "name": "Venezuela",
         "ISO_code": null,
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2525,7 +2525,7 @@
         "country_ID": "253",
         "name": "Vietnam",
         "ISO_code": "VN",
-        "region": "ROW",
+        "region": 3,
         "currency": 52
     }
 }, {
@@ -2535,7 +2535,7 @@
         "country_ID": "254",
         "name": "Virgin Islands",
         "ISO_code": "VI",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2545,7 +2545,7 @@
         "country_ID": "255",
         "name": "Yemen",
         "ISO_code": "YE",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2555,7 +2555,7 @@
         "country_ID": "256",
         "name": "Wallis and Futuna",
         "ISO_code": "WF",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2565,7 +2565,7 @@
         "country_ID": "257",
         "name": "Zambia",
         "ISO_code": "ZM",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2575,7 +2575,7 @@
         "country_ID": "258",
         "name": "Zimbabwe",
         "ISO_code": "ZW",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2585,7 +2585,7 @@
         "country_ID": "259",
         "name": "Pakistan",
         "ISO_code": "PK",
-        "region": "ROW",
+        "region": 3,
         "currency": 39
     }
 }, {
@@ -2595,7 +2595,7 @@
         "country_ID": "260",
         "name": "Canary Islands",
         "ISO_code": "IC",
-        "region": "EU",
+        "region": 2,
         "currency": null
     }
 }, {
@@ -2605,7 +2605,7 @@
         "country_ID": "261",
         "name": "Reunion",
         "ISO_code": "RE",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2615,7 +2615,7 @@
         "country_ID": "262",
         "name": "Denmark",
         "ISO_code": "DK",
-        "region": "EU",
+        "region": 2,
         "currency": 17
     }
 }, {
@@ -2625,7 +2625,7 @@
         "country_ID": "263",
         "name": "Guadeloupe",
         "ISO_code": "GP",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2635,7 +2635,7 @@
         "country_ID": "264",
         "name": "Belgium",
         "ISO_code": "BE",
-        "region": "EU",
+        "region": 2,
         "currency": 3
     }
 }, {
@@ -2645,7 +2645,7 @@
         "country_ID": "265",
         "name": "Canada Fr",
         "ISO_code": "CA",
-        "region": "ROW",
+        "region": 3,
         "currency": 1
     }
 }, {
@@ -2655,7 +2655,7 @@
         "country_ID": "266",
         "name": "French Guiana",
         "ISO_code": "GF",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }, {
@@ -2665,7 +2665,7 @@
         "country_ID": "267",
         "name": "Martinique",
         "ISO_code": "MQ",
-        "region": "ROW",
+        "region": 3,
         "currency": null
     }
 }]

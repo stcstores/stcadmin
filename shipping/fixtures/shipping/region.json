@@ -1,0 +1,1 @@
+[{"model": "shipping.region", "pk": 1, "fields": {"name": "UK", "abriviation": "UK"}}, {"model": "shipping.region", "pk": 2, "fields": {"name": "Europe", "abriviation": "EU"}}, {"model": "shipping.region", "pk": 3, "fields": {"name": "Rest of World", "abriviation": "ROW"}}]

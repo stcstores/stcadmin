@@ -14,8 +14,13 @@ urlpatterns = [
     ),
     path(
         "get_shipping_price/",
-        views.GetShippingPriceView.as_view(),
+        views.GetShippingPrice.as_view(),
         name="get_shipping_price",
+    ),
+    path(
+        "get_range_shipping_price/",
+        views.GetRangeShippingPrice.as_view(),
+        name="get_range_shipping_price",
     ),
     path("price_calculator/", views.PriceCalculator.as_view(), name="price_calculator"),
 ]

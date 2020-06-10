@@ -4,6 +4,7 @@ from unittest.mock import Mock, patch
 from django.contrib.auth.models import Group
 
 from price_calculator import models
+from shipping.models import Country
 from stcadmin.tests.stcadmin_test import STCAdminTest, ViewTests
 
 
@@ -23,11 +24,14 @@ class PriceCalculatorViewTest(STCAdminTest):
 class TestPriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
     fixtures = (
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
-        "price_calculator/destination_country",
-        "price_calculator/package_type",
+        "shipping/shipping_service",
+        "inventory/package_type",
+        "price_calculator/country_channel_fee",
+        "price_calculator/product_type",
         "price_calculator/vat_rate",
-        "price_calculator/shipping_price",
+        "price_calculator/shipping_method",
     )
 
     URL = "/price_calculator/price_calculator/"
@@ -44,12 +48,10 @@ class TestPriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
         self.assertIsNotNone(response.context)
         context = response.context
         self.assertIn("countries", context)
+        self.assertEqual(set(Country.objects.all()), set(context["countries"]))
+        self.assertIn("product_types", context)
         self.assertEqual(
-            set(models.DestinationCountry.objects.all()), set(context["countries"])
-        )
-        self.assertIn("package_types", context)
-        self.assertEqual(
-            set(models.PackageType.objects.all()), set(context["package_types"])
+            set(models.ProductType.objects.all()), set(context["product_types"])
         )
         self.assertIn("channel_fees", context)
         self.assertEqual(
@@ -60,11 +62,14 @@ class TestPriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
 class TestRangePriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
     fixtures = (
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
-        "price_calculator/destination_country",
-        "price_calculator/package_type",
+        "shipping/shipping_service",
+        "inventory/package_type",
+        "price_calculator/country_channel_fee",
+        "price_calculator/product_type",
         "price_calculator/vat_rate",
-        "price_calculator/shipping_price",
+        "price_calculator/shipping_method",
     )
 
     template = "price_calculator/range_price_calculator.html"
@@ -100,9 +105,7 @@ class TestRangePriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
         self.assertIn("product_range", context)
         self.assertEqual(mock_product_range, context["product_range"])
         self.assertIn("countries", context)
-        self.assertEqual(
-            set(models.DestinationCountry.objects.all()), set(context["countries"])
-        )
+        self.assertEqual(set(Country.objects.all()), set(context["countries"]))
         self.assertIn("channel_fees", context)
         self.assertEqual(
             set(models.ChannelFee.objects.all()), set(context["channel_fees"])
@@ -112,19 +115,22 @@ class TestRangePriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
 class TestGetShippingPriceView(PriceCalculatorViewTest, ViewTests):
     fixtures = (
         "shipping/currency",
+        "shipping/region",
         "shipping/country",
-        "price_calculator/destination_country",
-        "price_calculator/package_type",
+        "shipping/shipping_service",
+        "inventory/package_type",
+        "price_calculator/country_channel_fee",
+        "price_calculator/product_type",
         "price_calculator/vat_rate",
-        "price_calculator/shipping_price",
+        "price_calculator/shipping_method",
     )
 
     URL = "/price_calculator/get_shipping_price/"
     template = "price_calculator/range_price_calculator.html"
 
     def get_form_data(self):
-        package_type = models.PackageType.objects.get(id=1)
-        country = models.DestinationCountry.objects.get(id=1)
+        package_type = models.ProductType.objects.get(name="Packet")
+        country = Country.objects.get(name="United Kingdom")
         return {
             "package_type": package_type.name,
             "international_shipping": "Domestic",
@@ -183,7 +189,7 @@ class TestGetShippingPriceView(PriceCalculatorViewTest, ViewTests):
 
     def test_international(self):
         form_data = self.get_form_data()
-        country = models.DestinationCountry.objects.get(id=3)
+        country = Country.objects.get(id=3)
         form_data["country"] = country
         form_data["international_shipping"] = "Express"
         response = self.client.post(self.URL, form_data)
@@ -199,16 +205,17 @@ class TestGetShippingPriceView(PriceCalculatorViewTest, ViewTests):
                     {"cc_id": 5, "id": 1, "name": "20% VAT", "percentage": 20},
                     {"cc_id": 0, "id": 2, "name": "VAT Free", "percentage": 0},
                 ],
-                "exchange_rate": country.exchange_rate,
-                "currency_code": country.currency_code,
-                "currency_symbol": country.currency_symbol,
+                "exchange_rate": country.currency.exchange_rate,
+                "currency_code": country.currency.code,
+                "currency_symbol": country.currency.symbol,
                 "min_channel_fee": 0,
             },
         )
 
     def test_min_channel_fee(self):
         form_data = self.get_form_data()
-        country = models.DestinationCountry.objects.get(id=6)
+        country_fee = models.CountryChannelFee.objects.get(id=1)
+        country = country_fee.country
         form_data["country"] = country
         response = self.client.post(self.URL, form_data)
         content = response.content.decode("utf8")
@@ -220,9 +227,10 @@ class TestGetShippingPriceView(PriceCalculatorViewTest, ViewTests):
                 "price": 248,
                 "price_name": "SMIU USA",
                 "vat_rates": [],
-                "exchange_rate": country.exchange_rate,
-                "currency_code": country.currency_code,
-                "currency_symbol": country.currency_symbol,
-                "min_channel_fee": country.min_channel_fee * country.exchange_rate,
+                "exchange_rate": country.currency.exchange_rate,
+                "currency_code": country.currency.code,
+                "currency_symbol": country.currency.symbol,
+                "min_channel_fee": country_fee.min_channel_fee
+                * country.currency.exchange_rate,
             },
         )

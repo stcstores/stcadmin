@@ -46,6 +46,18 @@
 
         <div class="input-group mb-3">
           <div class="input-group-prepend">
+            <span class="input-group-text">Channel</span>
+          </div>
+          <select name="channel" id="channel" class="custom-select">
+          <option value="">Generic</option>
+            {% for channel in channels %}
+            <option value="{{ channel }}">{{ channel }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
             <span class="input-group-text">Weight</span>
           </div>
           <input class="form-control" id="weight" value="50" size="1" />
@@ -238,15 +250,17 @@
         function update_postage_price(calculator) {
             var country = $('#country').val();
             var weight = $('#weight').val();
-            var package_type = $('#shipping_method').val();
+            var product_type = $('#shipping_method').val();
             var price = calculator.sale_price;
-            get_postage_price(calculator, country, package_type, null, weight, price);
+            var channel = $('#channel').val();
+            get_postage_price(calculator, country, product_type, channel, null, weight, price);
 
         };
 
         $('#country').change(function() {update_postage_price(calculator)});
         $('#weight').change(function() {update_postage_price(calculator)});
         $('#shipping_method').change(function() {update_postage_price(calculator)});
+        $('#channel').change(function() {update_postage_price(calculator)});
         $('#sale_price').change(function() {
             calculator.set_sale_price($(this).val());
             update_postage_price(calculator);
@@ -277,7 +291,7 @@
 
     function update_vat_rates(vat_rates, calculator) {
         var vat_rate_select = $('#vat_rate');
-        var original_value = vat_rate_select.val();
+        var original_name = vat_rate_select.text;
         vat_rate_select.html('');
         if (vat_rates.length > 0) {
             $(vat_rates).each(function() {
@@ -294,10 +308,10 @@
             vat_rate_select.attr('disabled', true);
         }
         console.log(vat_rates);
-        console.log(original_value);
+        console.log(original_name);
         for (var i=0; i<vat_rates.length; i++) {
-            if (vat_rates[i]['percentage'] == original_value) {
-                vat_rate_select.val(original_value);
+            if (vat_rates[i]['name'] == original_name) {
+                vat_rate_select.val(vat_rates[i]['percentage']);
             }
         }
         vat_rate_select.change();
