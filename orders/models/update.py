@@ -17,6 +17,38 @@ class OrderUpdateInProgressError(Exception):
         super().__init__("Cannot start an Order Update as one is already in progress")
 
 
+class OrderUpdateManager(models.Manager):
+    """Model manager for orders.OrderUpdate."""
+
+    def start_order_update(self):
+        """Update the Order, PackingRecord and ProductSale models."""
+        if self.is_in_progress():
+            raise OrderUpdateInProgressError()
+        order_update = self.create()
+        try:
+            with transaction.atomic():
+                Order.objects.update_orders()
+                PackingRecord.objects.update_packing_records()
+        except Exception as e:
+            order_update.mark_error()
+            raise e
+        else:
+            order_update.mark_complete()
+        return order_update
+
+    def _timeout_update(self):
+        """Set the status of updates older than TIMEOUT to ERROR."""
+        self.filter(
+            status=OrderUpdate.IN_PROGRESS,
+            started_at__lte=timezone.now() - OrderUpdate.TIMEOUT,
+        ).update(status=OrderUpdate.ERROR)
+
+    def is_in_progress(self):
+        """Return True if an update is in progress, else return False."""
+        self._timeout_update()
+        return self.filter(status=OrderUpdate.IN_PROGRESS).exists()
+
+
 class OrderUpdate(models.Model):
     """Manages order updates from Cloud Commerce."""
 
@@ -41,6 +73,8 @@ class OrderUpdate(models.Model):
         max_length=25, choices=STATUS_CHOICES, default=IN_PROGRESS
     )
 
+    objects = OrderUpdateManager()
+
     class Meta:
         """Meta class for the OrderUpdate model."""
 
@@ -50,45 +84,6 @@ class OrderUpdate(models.Model):
     def __str__(self):
         date = self.started_at.strftime("%Y-%m-%d %H:%M:%S")
         return f"OrderUpdate {date} - {self.status}"
-
-    @classmethod
-    def update(cls):
-        """Update the Order, PackingRecord and ProductSale models."""
-        if cls.is_in_progress():
-            raise OrderUpdateInProgressError()
-        order_update = cls._default_manager.create()
-        try:
-            with transaction.atomic():
-                Order.update()
-                PackingRecord.update()
-        except Exception as e:
-            order_update.mark_error()
-            raise e
-        else:
-            order_update.mark_complete()
-        return order_update
-
-    @classmethod
-    def timeout_update(cls):
-        """Set the status of updates older than TIMEOUT to ERROR."""
-        cls.objects.filter(started_at__lte=timezone.now() - cls.TIMEOUT).update(
-            status=cls.ERROR
-        )
-
-    @classmethod
-    def is_in_progress(cls):
-        """Return True if an update is in progress, else return False."""
-        cls.timeout_update()
-        return cls.objects.filter(status=cls.IN_PROGRESS).exists()
-
-    @classmethod
-    def latest(cls):
-        """Return the latest update."""
-        in_progress = cls._default_manager.filter(status=cls.IN_PROGRESS)
-        if in_progress.exists():
-            return in_progress.latest("started_at")
-        else:
-            return cls._default_manager.latest("completed_at")
 
     def mark_error(self):
         """Set error status."""

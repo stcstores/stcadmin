@@ -21,7 +21,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Update orders."""
         try:
-            OrderUpdate.update()
+            OrderUpdate.objects.start_order_update()
         except Exception as e:
             logger.exception("Error updating Orders")
             raise e

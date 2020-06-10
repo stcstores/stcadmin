@@ -1,0 +1,127 @@
+import csv
+import io
+from datetime import datetime
+
+import pytest
+from django.utils import timezone
+
+
+@pytest.fixture
+def url():
+    return "/orders/export_orders/"
+
+
+@pytest.fixture
+def valid_get_response(valid_get_request, url):
+    return valid_get_request(url)
+
+
+@pytest.fixture
+def valid_get_response_content(url, valid_get_request):
+    return valid_get_request(url).content.decode("utf8")
+
+
+@pytest.fixture
+def order(order_factory):
+    return order_factory.create()
+
+
+@pytest.fixture
+def export_rows():
+    def _export_rows(response):
+        return list(
+            csv.reader(io.StringIO(response.content.decode("utf8")), delimiter=",")
+        )
+
+    return _export_rows
+
+
+def test_logged_in_get(url, logged_in_client):
+    response = logged_in_client.get(url)
+    assert response.status_code == 403
+
+
+def test_logged_out_get(client, url):
+    response = client.get(url)
+    assert response.status_code == 302
+
+
+def test_logged_in_group_get(group_logged_in_client, url):
+    response = group_logged_in_client.get(url)
+    assert response.status_code == 200
+
+
+def test_logged_in_post(url, logged_in_client):
+    response = logged_in_client.post(url)
+    assert response.status_code == 403
+
+
+def test_logged_out_post(client, url):
+    response = client.post(url)
+    assert response.status_code == 302
+
+
+def test_logged_in_group_post(group_logged_in_client, url):
+    response = group_logged_in_client.post(url)
+    assert response.status_code == 405
+
+
+@pytest.mark.django_db
+def test_export_contains_order(order, valid_get_response, export_rows):
+    contents = export_rows(valid_get_response)
+    assert contents[1] == [
+        order.order_ID,
+        order.recieved_at.strftime("%Y-%m-%d"),
+        order.country.name,
+        order.channel.name,
+        order.tracking_number,
+        order.shipping_rule.name,
+        order.courier_service.name,
+    ]
+
+
+@pytest.mark.django_db
+@pytest.mark.django_db
+def test_country_filter(order_factory, url, group_logged_in_client, export_rows):
+    order = order_factory.create()
+    order_factory.create()
+    response = group_logged_in_client.get(url, {"country": order.country.id})
+    content = export_rows(response)
+    assert content[1][0] == order.order_ID
+    assert len(content) == 2
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "recieved_at,shown",
+    [
+        (datetime(2019, 12, 2, 23, 59), False),
+        (datetime(2019, 12, 3, 0, 0), True),
+        (datetime(2019, 12, 4, 23, 59), True),
+        (datetime(2019, 12, 5, 0, 0), False),
+    ],
+)
+def test_date_filter(
+    recieved_at, shown, order_factory, url, group_logged_in_client, export_rows
+):
+    order = order_factory.create(recieved_at=timezone.make_aware(recieved_at))
+    recieved_from = timezone.make_aware(datetime(2019, 12, 3))
+    recieved_to = timezone.make_aware(datetime(2019, 12, 4))
+    response = group_logged_in_client.get(
+        url,
+        {
+            "recieved_from": recieved_from.strftime("%Y-%m-%d"),
+            "recieved_to": recieved_to.strftime("%Y-%m-%d"),
+        },
+    )
+    content = export_rows(response)
+    if shown is True:
+        assert content[1][0] == order.order_ID
+        assert len(content) == 2
+    else:
+        assert len(content) == 1
+
+
+def test_invalid_form(url, group_logged_in_client):
+    response = group_logged_in_client.get(url, {"country": 999999})
+    assert response.status_code == 404

@@ -1,7 +1,6 @@
 """The Order model."""
 from datetime import datetime, timedelta
 
-import pytz
 from ccapi import CCAPI
 from django.db import models
 from django.utils import timezone
@@ -33,76 +32,150 @@ def urgent_since():
     return timezone.make_aware(urgent_cutoff)
 
 
-class DispatchedManager(models.Manager):
-    """Manager for dispatched orders."""
+class OrderQueryset(models.QuerySet):
+    """Model manager for order.Order."""
 
-    def get_queryset(self):
+    def dispatched(self):
         """Return a queryset of dispatched orders."""
-        return super().get_queryset().filter(dispatched_at__isnull=False)
+        return self.filter(dispatched_at__isnull=False)
 
-
-class UndispatchedManager(models.Manager):
-    """Manager for undispatched orders."""
-
-    def get_queryset(self):
+    def undispatched(self):
         """Return a queryset of undispatched orders."""
-        return (
-            super()
-            .get_queryset()
-            .filter(dispatched_at__isnull=True, cancelled=False, ignored=False)
-        )
+        return self.filter(dispatched_at__isnull=True, cancelled=False, ignored=False)
 
-
-class PriorityManager(models.Manager):
-    """Manager for priority orders."""
-
-    def get_queryset(self):
+    def priority(self):
         """Return a queryset of priority orders."""
-        return (
-            super().get_queryset().filter(shipping_rule__priority=True, cancelled=False)
-        )
+        return self.filter(shipping_rule__priority=True, cancelled=False)
 
-
-class NonPriorityManager(models.Manager):
-    """Manager for priority orders."""
-
-    def get_queryset(self):
+    def non_priority(self):
         """Return a queryset of non-priority orders."""
-        return (
-            super()
-            .get_queryset()
-            .filter(shipping_rule__priority=False, cancelled=False)
+        return self.filter(shipping_rule__priority=False, cancelled=False)
+
+    def urgent(self):
+        """Return a queryset of urgent orders."""
+        return self.undispatched().filter(recieved_at__lte=urgent_since())
+
+
+class OrderManager(models.Manager):
+    """Model manager for orders.Order."""
+
+    def update_orders(self, number_of_days=None):
+        """Update orders from Cloud Commerce."""
+        orders_to_dispatch = self._get_orders_for_dispatch()
+        dispatched_orders = self._get_dispatched_orders(number_of_days=number_of_days)
+        orders = orders_to_dispatch + dispatched_orders
+        for order in orders:
+            order_obj = self._create_or_update_from_cc_order(order)
+            if order_obj is not None:
+                self._update_sales(order_obj, order)
+        self._update_cancelled_orders(orders_to_dispatch)
+
+    def _update_sales(self, order_obj, order):
+        """Add product sales to the ProductSale model."""
+        for product in order.products:
+            price = int(product.price * 100)
+            sale, _ = ProductSale.objects.get_or_create(
+                order=order_obj,
+                product_ID=product.product_id,
+                defaults={"quantity": product.quantity, "price": price},
+            )
+            if sale.quantity != product.quantity or sale.price != price:
+                sale.quantity = product.quantity
+                sale.price = price
+                sale.save()
+
+    def _update_cancelled_orders(self, orders_to_dispatch):
+        """Mark cancelled orders."""
+        undispatched_order_IDs = [order.order_id for order in orders_to_dispatch]
+        unaccounted_orders = self.filter(
+            cancelled=False, dispatched_at__isnull=True, ignored=False
+        ).exclude(order_ID__in=undispatched_order_IDs)
+        for order in unaccounted_orders:
+            order.check_cancelled()
+
+    def _get_orders_for_dispatch(self):
+        """Return undispatched Cloud Commerce orders."""
+        return CCAPI.get_orders_for_dispatch(order_type=0, number_of_days=0)
+
+    def _get_dispatched_orders(self, number_of_days=None):
+        """Return dispatched Cloud Commerce orders."""
+        if number_of_days is None:
+            number_of_days = 1
+        return CCAPI.get_orders_for_dispatch(
+            order_type=1, number_of_days=number_of_days
         )
 
+    def _create_or_update_from_cc_order(self, order):
+        """Create or update an order from Cloud Commerce."""
+        try:
+            existing_order = self.get(order_ID=order.order_id)
+        except Order.DoesNotExist:
+            existing_order = None
+        if existing_order is not None and existing_order.dispatched_at is not None:
+            # The order exists and already shows as dispatched
+            return None
+        order_details = self._cc_order_details(order)
+        if existing_order is None:
+            # The order does not exist and will be created
+            new_order = Order(**order_details)
+            new_order.save()
+            return new_order
+        else:
+            # The order does exist but has not been dispatched
+            self.filter(order_ID=order.order_id).update(**order_details)
+            existing_order.refresh_from_db()
+            return existing_order
 
-class UndispatchedPriorityManager(UndispatchedManager):
-    """Manager for undispatched priority orders."""
+    def _parse_dispatch_date(self, dispatch_date):
+        """Return dispatch date as tz aware if it is not the EPOCH, otherwise return None."""
+        if dispatch_date != Order.DISPATCH_EPOCH:
+            return timezone.make_aware(dispatch_date)
+        else:
+            return None
 
-    def get_queryset(self):
-        """Return a queryset of undispatched priority orders."""
-        return super().get_queryset().filter(shipping_rule__priority=True)
+    def _cc_order_details(self, order):
+        """Return a dict of Order kwargs from a Cloud Commerce order."""
+        channel, _ = Channel._default_manager.get_or_create(name=order.channel_name)
+        try:
+            country = Country._default_manager.get(
+                country_ID=order.delivery_country_code
+            )
+        except Country.DoesNotExist:
+            raise CountryNotRecognisedError(order.country_code, order.order_id)
+        shipping_rule = self._get_shipping_rule(order)
+        if shipping_rule is not None:
+            courier_service = shipping_rule.courier_service
+        else:
+            courier_service = None
+        dispatched_at = self._parse_dispatch_date(order.dispatch_date)
+        kwargs = {
+            "order_ID": order.order_id,
+            "customer_ID": order.customer_id,
+            "recieved_at": timezone.make_aware(order.date_recieved),
+            "dispatched_at": dispatched_at,
+            "cancelled": order.cancelled,
+            "channel": channel,
+            "channel_order_ID": order.external_transaction_id,
+            "country": country,
+            "shipping_rule": shipping_rule,
+            "courier_service": courier_service,
+            "tracking_number": order.tracking_code or None,
+            "ignored": not order.can_process_order,
+        }
+        return kwargs
 
-
-class UndispatchedNonPriorityManager(UndispatchedManager):
-    """Manager for undispatched non-priority orders."""
-
-    def get_queryset(self):
-        """Return a queryset of undispatched non-priority orders."""
-        return super().get_queryset().filter(shipping_rule__priority=False)
-
-
-class UrgentManager(UndispatchedManager):
-    """Manager for orders recieved before the urgent since date."""
-
-    def get_queryset(self):
-        """Return a queryset of urgent orders."""
-        return super().get_queryset().filter(recieved_at__lte=urgent_since())
+    def _get_shipping_rule(self, order):
+        """Return the shipping rule used on the order if possible."""
+        rule_name = order.default_cs_rule_name.split(" - ")[0]
+        try:
+            return ShippingRule.objects.get(name=rule_name)
+        except ShippingRule.DoesNotExist:
+            return None
 
 
 class Order(models.Model):
     """Model for Cloud Commerce Orders."""
 
-    TIME_ZONE = "Europe/London"
     DISPATCH_EPOCH = datetime(2000, 1, 1, 0, 0)
 
     order_ID = models.CharField(max_length=12, unique=True, db_index=True)
@@ -128,14 +201,7 @@ class Order(models.Model):
 
     CountryNotRecognisedError = CountryNotRecognisedError
 
-    objects = models.Manager()
-    dispatched = DispatchedManager()
-    undispatched = UndispatchedManager()
-    priority = PriorityManager()
-    non_priority = NonPriorityManager()
-    undispatched_priority = UndispatchedPriorityManager()
-    undispatched_non_priority = UndispatchedNonPriorityManager()
-    urgent = UrgentManager()
+    objects = OrderManager.from_queryset(OrderQueryset)()
 
     class Meta:
         """Meta class for the Order model."""
@@ -163,129 +229,3 @@ class Order(models.Model):
             elif order.status == order.IGNORED:
                 self.ignored = True
                 self.save()
-
-    @classmethod
-    def make_tz_aware(cls, d):
-        """Make a naive datetime timezone aware."""
-        return timezone.make_aware(d, timezone=pytz.timezone(cls.TIME_ZONE))
-
-    @classmethod
-    def update(cls, number_of_days=None):
-        """Update orders from Cloud Commerce."""
-        orders_to_dispatch = cls.get_orders_for_dispatch()
-        dispatched_orders = cls.get_dispatched_orders(number_of_days=number_of_days)
-        orders = orders_to_dispatch + dispatched_orders
-        for order in orders:
-            order_obj = cls.create_or_update_order(order)
-            if order_obj is not None:
-                cls.update_sales(order_obj, order)
-        cls.update_cancelled_orders(orders_to_dispatch)
-
-    @classmethod
-    def update_sales(cls, order_obj, order):
-        """Add product sales to the ProductSale model."""
-        for product in order.products:
-            price = int(product.price * 100)
-            sale, _ = ProductSale._default_manager.get_or_create(
-                order=order_obj,
-                product_ID=product.product_id,
-                defaults={"quantity": product.quantity, "price": price},
-            )
-            if sale.quantity != product.quantity or sale.price != price:
-                sale.quantity = product.quantity
-                sale.price = price
-                sale.save()
-
-    @classmethod
-    def update_cancelled_orders(cls, orders_to_dispatch):
-        """Mark cancelled orders."""
-        undispatched_order_IDs = [order.order_id for order in orders_to_dispatch]
-        unaccounted_orders = cls._default_manager.filter(
-            cancelled=False, dispatched_at__isnull=True, ignored=False
-        ).exclude(order_ID__in=undispatched_order_IDs)
-        for order in unaccounted_orders:
-            order.check_cancelled()
-
-    @classmethod
-    def get_orders_for_dispatch(cls):
-        """Return undispatched Cloud Commerce orders."""
-        return CCAPI.get_orders_for_dispatch(order_type=0, number_of_days=0)
-
-    @classmethod
-    def get_dispatched_orders(cls, number_of_days=None):
-        """Return dispatched Cloud Commerce orders."""
-        if number_of_days is None:
-            number_of_days = 1
-        return CCAPI.get_orders_for_dispatch(
-            order_type=1, number_of_days=number_of_days
-        )
-
-    @classmethod
-    def create_or_update_order(cls, order):
-        """Create or update an order from Cloud Commerce."""
-        try:
-            existing_order = cls._default_manager.get(order_ID=order.order_id)
-        except cls.DoesNotExist:
-            existing_order = None
-        if existing_order is not None and existing_order.dispatched_at is not None:
-            # The order exists and already shows as dispatched
-            return None
-        order_details = cls.order_details(order)
-        if existing_order is None:
-            # The order does not exist and will be created
-            new_order = cls._default_manager.create(**order_details)
-            return new_order
-        else:
-            # The order does exist but has not been dispatched
-            cls._default_manager.filter(order_ID=order.order_id).update(**order_details)
-            existing_order.refresh_from_db()
-            return existing_order
-
-    @classmethod
-    def parse_dispatch_date(cls, dispatch_date):
-        """Return dispatch date as tz aware if it is not the EPOCH, otherwise return None."""
-        if dispatch_date != cls.DISPATCH_EPOCH:
-            return cls.make_tz_aware(dispatch_date)
-        else:
-            return None
-
-    @classmethod
-    def order_details(cls, order):
-        """Return a dict of order details."""
-        channel, _ = Channel._default_manager.get_or_create(name=order.channel_name)
-        try:
-            country = Country._default_manager.get(
-                country_ID=order.delivery_country_code
-            )
-        except Country.DoesNotExist:
-            raise CountryNotRecognisedError(order.country_code, order.order_id)
-        shipping_rule = cls.get_shipping_rule(order)
-        if shipping_rule is not None:
-            courier_service = shipping_rule.courier_service
-        else:
-            courier_service = None
-        dispatched_at = cls.parse_dispatch_date(order.dispatch_date)
-        kwargs = {
-            "order_ID": order.order_id,
-            "customer_ID": order.customer_id,
-            "recieved_at": cls.make_tz_aware(order.date_recieved),
-            "dispatched_at": dispatched_at,
-            "cancelled": order.cancelled,
-            "channel": channel,
-            "channel_order_ID": order.external_transaction_id,
-            "country": country,
-            "shipping_rule": shipping_rule,
-            "courier_service": courier_service,
-            "tracking_number": order.tracking_code or None,
-            "ignored": not order.can_process_order,
-        }
-        return kwargs
-
-    @classmethod
-    def get_shipping_rule(cls, order):
-        """Return the shipping rule used on the order if possible."""
-        rule_name = order.default_cs_rule_name.split(" - ")[0]
-        try:
-            return ShippingRule._default_manager.get(name=rule_name)
-        except ShippingRule.DoesNotExist:
-            return None

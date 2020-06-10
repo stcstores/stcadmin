@@ -7,45 +7,48 @@ from home.models import CloudCommerceUser
 from .order import Order
 
 
-class PackingRecord(models.Model):
-    """Model for order packing."""
+class PackingRecordManager(models.Manager):
+    """Model manager for the orders.PackingRecord model."""
 
-    order = models.OneToOneField(Order, on_delete=models.CASCADE)
-    packed_by = models.ForeignKey(CloudCommerceUser, on_delete=models.PROTECT)
-
-    class Meta:
-        """Meta class for the Packing model."""
-
-        verbose_name = "Packing Record"
-        verbose_name_plural = "Packing Records"
-
-    @classmethod
-    def update(cls):
+    def update_packing_records(self):
         """Update packing records from Cloud Commerce."""
-        orders = cls._orders_to_update()
+        orders = self._orders_to_update()
         for order in orders:
-            cls._update_order(order)
+            self._update_order(order)
 
-    @classmethod
-    def _orders_to_update(cls):
-        return Order.dispatched.filter(
+    def _orders_to_update(self):
+        return Order.objects.dispatched().filter(
             packingrecord__isnull=True, customer_ID__isnull=False
         )
 
-    @classmethod
-    def _update_order(cls, order):
-        packer_ID = cls._get_packer_ID(order)
+    def _update_order(self, order):
+        packer_ID = self._get_packer_ID(order)
         if packer_ID is None:
             return
         try:
             packer = CloudCommerceUser.objects.get(user_id=packer_ID)
         except CloudCommerceUser.DoesNotExist:
             packer = CloudCommerceUser.objects.create(user_id=packer_ID)
-        cls._default_manager.create(order=order, packed_by=packer)
+        packing_record = PackingRecord(order=order, packed_by=packer)
+        packing_record.save()
 
-    @classmethod
-    def _get_packer_ID(cls, order):
+    def _get_packer_ID(self, order):
         logs = CCAPI.customer_logs(order.customer_ID)
         for log in logs:
             if "Order Dispatched" in log.note and order.order_ID in log.note:
                 return log.added_by_user_ID
+
+
+class PackingRecord(models.Model):
+    """Model for order packing."""
+
+    order = models.OneToOneField(Order, on_delete=models.CASCADE)
+    packed_by = models.ForeignKey(CloudCommerceUser, on_delete=models.PROTECT)
+
+    objects = PackingRecordManager()
+
+    class Meta:
+        """Meta class for the Packing model."""
+
+        verbose_name = "Packing Record"
+        verbose_name_plural = "Packing Records"

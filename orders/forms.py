@@ -53,4 +53,6 @@ class OrderListFilter(forms.Form):
     def get_queryset(self):
         """Return a queryset of orders based on the submitted data."""
         kwargs = self.query_kwargs(self.cleaned_data)
-        return models.Order.dispatched.filter(**kwargs).order_by("-recieved_at")
+        return (
+            models.Order.objects.dispatched().filter(**kwargs).order_by("-recieved_at")
+        )
