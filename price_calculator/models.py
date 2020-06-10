@@ -161,7 +161,7 @@ class ShippingMethod(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
     shipping_service = models.ForeignKey(ShippingService, on_delete=models.PROTECT)
     product_type = models.ManyToManyField(ProductType)
-    channel = models.ManyToManyField(Channel)
+    channel = models.ManyToManyField(Channel, blank=True)
     min_weight = models.PositiveIntegerField(default=0)
     max_weight = models.PositiveIntegerField(null=True, blank=True)
     min_price = models.PositiveIntegerField(default=0)
