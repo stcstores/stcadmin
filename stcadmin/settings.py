@@ -206,6 +206,15 @@ LOGGING = {
             "filters": ["add_user_to_log_record"],
             "formatter": "default_formatter",
         },
+        "profit_loss_error_file_handler": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "logs", "profit_loss_error.log"),
+            "maxBytes": 1_048_576,
+            "backupCount": 2,
+            "level": "ERROR",
+            "filters": ["add_user_to_log_record"],
+            "formatter": "default_formatter",
+        },
         "product_editor_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": os.path.join(BASE_DIR, "logs", "product_editor.log"),
@@ -253,7 +262,7 @@ LOGGING = {
             "propogate": False,
         },
         "order_profit": {
-            "handlers": ["mail_admins", "error_file_handler"],
+            "handlers": ["profit_loss_error_file_handler"],
             "level": "ERROR",
             "propagate": False,
         },

@@ -38,6 +38,23 @@ class ChannelFee(models.Model):
         return self.name
 
 
+class Channel(models.Model):
+    """Model for channels."""
+
+    name = models.CharField(max_length=50, unique=True)
+    ordering = models.PositiveSmallIntegerField(default=100)
+
+    class Meta:
+        """Meta class for Channel."""
+
+        verbose_name = "Channel"
+        verbose_name_plural = "Channel"
+        ordering = ("ordering",)
+
+    def __str__(self):
+        return self.name
+
+
 class ProductType(models.Model):
     """Model for types of packaging."""
 
@@ -80,10 +97,14 @@ class VATRate(models.Model):
 class ShippingMethodManager(models.Manager):
     """Model manager for ShippingMethod."""
 
-    def get_shipping_price(self, country, product_type, weight, price):
+    def get_shipping_price(self, country, channel, product_type, weight, price):
         """Return the lowest available matching shipping price."""
         shipping_methods = self.match_shipping_methods(
-            country=country, product_type=product_type, weight=weight, price=price
+            country=country,
+            product_type=product_type,
+            channel=channel,
+            weight=weight,
+            price=price,
         )
         if len(shipping_methods) == 0:
             raise NoShippingService(
@@ -117,11 +138,12 @@ class ShippingMethodManager(models.Manager):
         prices.sort(key=lambda x: x[1])
         return prices
 
-    def match_shipping_methods(self, country, product_type, weight, price):
+    def match_shipping_methods(self, country, product_type, weight, price, channel):
         """Return shipping methods for a given country, product type, weight and price."""
         return self.filter(
             country=country,
             product_type=product_type,
+            channel=channel,
             min_weight__lte=weight,
             min_price__lte=price,
         ).filter(
@@ -139,6 +161,7 @@ class ShippingMethod(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
     shipping_service = models.ForeignKey(ShippingService, on_delete=models.PROTECT)
     product_type = models.ManyToManyField(ProductType)
+    channel = models.ManyToManyField(Channel, blank=True)
     min_weight = models.PositiveIntegerField(default=0)
     max_weight = models.PositiveIntegerField(null=True, blank=True)
     min_price = models.PositiveIntegerField(default=0)

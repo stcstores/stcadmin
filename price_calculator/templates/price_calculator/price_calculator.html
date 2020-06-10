@@ -41,6 +41,16 @@
     </div>
 
     <div class="InputAddOn">
+      <span class="InputAddOn-item">Channel</span>
+      <select name="channel" id="channel">
+        <option value="">Generic</option>
+        {% for channel in channels %}
+        <option value="{{ channel }}">{{ channel }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="InputAddOn">
       <span class="InputAddOn-item">Weight</span>
       <input class="InputAddOn-field" id="weight" value="50" size="1" />
       <span class="InputAddOn-item">g</span>
@@ -214,13 +224,15 @@
             var weight = $('#weight').val();
             var product_type = $('#shipping_method').val();
             var price = calculator.sale_price;
-            get_postage_price(calculator, country, product_type, null, weight, price);
+            var channel = $('#channel').val();
+            get_postage_price(calculator, country, product_type, channel, null, weight, price);
 
         };
 
         $('#country').change(function() {update_postage_price(calculator)});
         $('#weight').change(function() {update_postage_price(calculator)});
         $('#shipping_method').change(function() {update_postage_price(calculator)});
+        $('#channel').change(function() {update_postage_price(calculator)});
         $('#sale_price').change(function() {
             calculator.set_sale_price($(this).val());
             update_postage_price(calculator);

@@ -39,13 +39,19 @@ def product_type(product_type_factory):
 
 
 @pytest.fixture
-def form_data(country, weight, price, international_shipping, product_type):
+def channel(channel_factory):
+    return channel_factory.create()
+
+
+@pytest.fixture
+def form_data(country, channel, weight, price, international_shipping, product_type):
     return {
         "country": country.name,
         "weight": weight,
         "price": price,
         "international_shipping": international_shipping,
         "package_type": product_type.name,
+        "channel": channel.name,
     }
 
 
@@ -69,11 +75,13 @@ def shipping_method(
     shipping_price,
     shipping_service,
     product_type,
+    channel,
 ):
     shipping_method = shipping_method_factory.create(
         country=country, shipping_service=shipping_service
     )
     shipping_method.product_type.set([product_type])
+    shipping_method.channel.set([channel])
     shipping_method.vat_rates.set([vat_rate_factory.create() for _ in range(2)])
     return shipping_method
 
@@ -144,7 +152,7 @@ def test_logged_in_group_post(valid_post_response):
     assert valid_post_response.status_code == 200
 
 
-def test_response_without_valid_price(valid_post_response_content):
+def test_response_without_valid_method(valid_post_response_content):
     assert valid_post_response_content == {
         "success": False,
         "price": 0,
@@ -158,7 +166,7 @@ def test_response_without_valid_price(valid_post_response_content):
 
 
 @pytest.mark.django_db
-def test_response_with_valid_price(
+def test_response_with_valid_method(
     weight, shipping_method, valid_post_response_content
 ):
     assert valid_post_response_content == {
@@ -185,6 +193,7 @@ def test_country_channel_fee(
 @pytest.mark.django_db
 def test_uk_shipping(
     country_uk,
+    channel,
     package_type_factory,
     product_type_factory,
     shipping_method_factory,
@@ -204,7 +213,40 @@ def test_uk_shipping(
         country=country_uk, shipping_service=shipping_service
     )
     shipping_method.product_type.set([product_type])
+    shipping_method.channel.set([channel])
     shipping_price_factory.create(country=country_uk, shipping_service=shipping_service)
     response = valid_post_request(url, form_data)
     response_data = json.loads(response.content.decode("utf8"))
     assert response_data["price_name"] == shipping_method.name
+
+
+@pytest.mark.django_db
+def test_empty_channel(
+    shipping_method_factory,
+    shipping_price_factory,
+    country,
+    weight,
+    product_type,
+    shipping_service,
+    form_data,
+    url,
+    valid_post_request,
+):
+    form_data["channel"] = ""
+    shipping_method = shipping_method_factory.create(
+        country=country, shipping_service=shipping_service
+    )
+    shipping_method.product_type.set([product_type])
+    shipping_price_factory.create(country=country, shipping_service=shipping_service)
+    response = valid_post_request(url, form_data)
+    content = json.loads(response.content.decode("utf8"))
+    assert content == {
+        "success": True,
+        "price": shipping_method.shipping_price(weight),
+        "price_name": shipping_method.name,
+        "vat_rates": list(shipping_method.vat_rates.values()),
+        "exchange_rate": shipping_method.country.currency.exchange_rate,
+        "currency_code": shipping_method.country.currency.code,
+        "currency_symbol": shipping_method.country.currency.symbol,
+        "min_channel_fee": 0,
+    }

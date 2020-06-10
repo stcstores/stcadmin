@@ -52,6 +52,15 @@ class ChannelFeeFactory(factory.django.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
+class ChannelFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Channel
+
+    name = factory.Sequence(lambda n: f"Test Channel {n}")
+    ordering = 100
+
+
+@pytest_factoryboy.register
 class ShippingMethodFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.ShippingMethod

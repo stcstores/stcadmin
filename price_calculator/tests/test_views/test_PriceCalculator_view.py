@@ -32,6 +32,11 @@ def channel_fees(channel_fee_factory):
     return [channel_fee_factory.create() for _ in range(3)]
 
 
+@pytest.fixture
+def channels(channel_factory):
+    return [channel_factory.create() for _ in range(3)]
+
+
 def test_logged_out_get_method(url, logged_in_client):
     response = logged_in_client.get(url)
     assert response.status_code == 403
@@ -90,3 +95,8 @@ def test_product_types_in_context(product_types, valid_get_response):
 @pytest.mark.django_db
 def test_channel_fees_in_context(channel_fees, valid_get_response):
     assert list(valid_get_response.context["channel_fees"]) == channel_fees
+
+
+@pytest.mark.django_db
+def test_channels_in_context(channels, valid_get_response):
+    assert list(valid_get_response.context["channels"]) == channels
