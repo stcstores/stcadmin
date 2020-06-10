@@ -38,8 +38,8 @@
             <span class="input-group-text">Shipping Method</span>
           </div>
           <select name="shipping_method" id="shipping_method" class="custom-select">
-            {% for package_type in package_types %}
-            <option value="{{ package_type }}">{{ package_type }}</option>
+            {% for product_type in product_types %}
+            <option value="{{ product_type }}">{{ product_type }}</option>
             {% endfor %}
           </select>
         </div>

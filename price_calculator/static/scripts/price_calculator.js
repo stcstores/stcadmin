@@ -173,7 +173,7 @@ function get_postage_price(
       calculator.currency_code = response['currency_code'];
       calculator.currency_symbol = response['currency_symbol'];
       calculator.min_channel_fee = parseInt(response['min_channel_fee']);
-      calculator.shipping_service = data['price_name'];
+      calculator.shipping_service = response['price_name'];
       calculator.valid = response['success'];
       calculator.recalculate();
       calculator.change();
