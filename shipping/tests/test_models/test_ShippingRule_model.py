@@ -24,6 +24,11 @@ def courier_service(courier_service_factory):
 
 
 @pytest.fixture
+def shipping_service(shipping_service_factory):
+    return shipping_service_factory.create()
+
+
+@pytest.fixture
 def new_shipping_rule(rule_ID, name, courier_service):
     shipping_rule = models.ShippingRule(
         rule_ID=rule_ID, name=name, courier_service=courier_service,
@@ -102,6 +107,23 @@ def test_priority_is_set(new_shipping_rule):
 @pytest.mark.django_db
 def test_inactive_is_set(new_shipping_rule):
     assert new_shipping_rule.inactive is False
+
+
+@pytest.mark.django_db
+def test_default_shipping_service(new_shipping_rule):
+    assert new_shipping_rule.shipping_service is None
+
+
+@pytest.mark.django_db
+def test_can_set_shipping_service(rule_ID, name, courier_service, shipping_service):
+    shipping_rule = models.ShippingRule(
+        rule_ID=rule_ID,
+        name=name,
+        courier_service=courier_service,
+        shipping_service=shipping_service,
+    )
+    shipping_rule.save()
+    assert shipping_rule.shipping_service == shipping_service
 
 
 @pytest.mark.django_db
