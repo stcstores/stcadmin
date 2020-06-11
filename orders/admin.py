@@ -30,31 +30,31 @@ class OrderAdmin(admin.ModelAdmin):
         "shipping_rule",
         "courier_service",
         "tracking_number",
+        "total_paid",
+        "total_paid_GBP",
     )
     list_display = (
         "__str__",
         "order_ID",
-        "customer_ID",
         "recieved_at",
         "dispatched_at",
         "cancelled",
         "ignored",
-        "channel",
-        "channel_order_ID",
         "country",
         "shipping_rule",
         "courier_service",
-        "tracking_number",
+        "total_paid",
+        "total_paid_GBP",
     )
-    list_editable = ("cancelled", "ignored", "shipping_rule", "courier_service")
+    list_editable = ("cancelled", "ignored")
 
 
 @admin.register(models.ProductSale)
 class ProductSaleAdmin(admin.ModelAdmin):
     """Admin for the ProductSale model."""
 
-    fields = ("order", "product_ID", "quantity", "price")
-    list_display = ("order", "product_ID", "quantity", "price")
+    fields = ("order", "product_ID", "sku", "name", "quantity", "price", "weight")
+    list_display = ("order", "product_ID", "sku", "name", "quantity", "price", "weight")
 
 
 @admin.register(models.PackingRecord)

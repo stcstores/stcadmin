@@ -131,6 +131,19 @@ class WeightBandAdmin(admin.ModelAdmin):
 class ShippingRuleAdmin(admin.ModelAdmin):
     """Model Admmin for shipping.ShippingRule."""
 
-    fields = ("rule_ID", "name", "courier_service", "inactive")
-    list_display = ("__str__", "rule_ID", "name", "courier_service", "inactive")
-    list_editable = ("rule_ID", "name", "courier_service", "inactive")
+    fields = ("rule_ID", "name", "courier_service", "shipping_service", "inactive")
+    list_display = (
+        "__str__",
+        "rule_ID",
+        "name",
+        "courier_service",
+        "shipping_service",
+        "inactive",
+    )
+    list_editable = (
+        "rule_ID",
+        "name",
+        "courier_service",
+        "shipping_service",
+        "inactive",
+    )

@@ -58,6 +58,16 @@ def tracking_number():
 
 
 @pytest.fixture
+def total_paid():
+    return 550
+
+
+@pytest.fixture
+def total_paid_GBP():
+    return 780
+
+
+@pytest.fixture
 def new_order(order_ID, recieved_at, channel, country, shipping_rule, courier_service):
     new_order = models.Order(
         order_ID=order_ID,
@@ -99,8 +109,22 @@ def ignored_recent_order(mock_CCAPI, order_ID):
 
 @pytest.fixture
 def mock_product():
-    def _mock_product(product_id="8384938", price=5.50, quantity=3):
-        return Mock(product_id=product_id, price=price, quantity=quantity)
+    def _mock_product(
+        product_id="8384938",
+        price=5.50,
+        quantity=3,
+        sku="SEV-DJ3-9DK",
+        per_item_weight=256.35,
+        product_full_name="Test Product - AB343",
+    ):
+        return Mock(
+            product_id=product_id,
+            price=price,
+            quantity=quantity,
+            sku=sku,
+            per_item_weight=per_item_weight,
+            product_full_name=product_full_name,
+        )
 
     return _mock_product
 
@@ -135,6 +159,9 @@ def mock_order(
             tracking_code=kwargs.get("tracking_code") or tracking_number,
             products=kwargs.get("products") or [mock_product()],
             can_process_order=kwargs.get("can_process_order") or True,
+            priority=kwargs.get("priority") or False,
+            total_gross=kwargs.get("total_gross") or "5.69",
+            total_gross_gbp=kwargs.get("total_gross_gbp") or "8.96",
         )
 
     return _mock_order
@@ -286,6 +313,50 @@ def test_can_set_tracking_number(
 
 
 @pytest.mark.django_db
+def test_sets_total_paid(new_order):
+    assert new_order.total_paid is None
+
+
+@pytest.mark.django_db
+def test_can_set_total_paid(
+    order_ID, recieved_at, country, shipping_rule, courier_service, total_paid
+):
+    order = models.Order(
+        order_ID=order_ID,
+        recieved_at=recieved_at,
+        country=country,
+        shipping_rule=shipping_rule,
+        courier_service=courier_service,
+        total_paid=total_paid,
+    )
+    order.save()
+    order.refresh_from_db()
+    assert order.total_paid == total_paid
+
+
+@pytest.mark.django_db
+def test_sets_total_GBP(new_order):
+    assert new_order.total_paid_GBP is None
+
+
+@pytest.mark.django_db
+def test_can_set_total_paid_GBP(
+    order_ID, recieved_at, country, shipping_rule, courier_service, total_paid_GBP
+):
+    order = models.Order(
+        order_ID=order_ID,
+        recieved_at=recieved_at,
+        country=country,
+        shipping_rule=shipping_rule,
+        courier_service=courier_service,
+        total_paid_GBP=total_paid_GBP,
+    )
+    order.save()
+    order.refresh_from_db()
+    assert order.total_paid_GBP == total_paid_GBP
+
+
+@pytest.mark.django_db
 def test__str__method(order_factory):
     order = order_factory.create(order_ID="3849383")
     assert str(order) == "Order: 3849383"
@@ -399,7 +470,7 @@ def test_order_details(
     shipping_rule,
     tracking_number,
 ):
-    mock_order = mock_order()
+    mock_order = mock_order(total_gross="8.69", total_gross_gbp="12.56")
     order_details = models.Order.objects._cc_order_details(mock_order)
     assert order_details == {
         "order_ID": order_ID,
@@ -414,6 +485,9 @@ def test_order_details(
         "courier_service": shipping_rule.courier_service,
         "tracking_number": tracking_number,
         "ignored": not mock_order.can_process_order,
+        "total_paid": 869,
+        "total_paid_GBP": 1256,
+        "priority": mock_order.priority,
     }
 
 
@@ -582,12 +656,56 @@ def test_get_dispatched_orders_takes_number_of_days(mock_CCAPI, mock_order):
 
 
 @pytest.mark.django_db
+def test_create_or_update_creates_order(country, channel, shipping_rule, mock_order):
+    mock_order = mock_order(priority=True, total_gross="15.69", total_gross_gbp="12.78")
+    models.Order.objects._create_or_update_from_cc_order(mock_order)
+    assert models.Order.objects.filter(
+        order_ID=str(mock_order.order_id),
+        customer_ID=str(mock_order.customer_id),
+        recieved_at=timezone.make_aware(mock_order.date_recieved),
+        dispatched_at=timezone.make_aware(mock_order.dispatch_date),
+        cancelled=False,
+        ignored=False,
+        channel=channel,
+        channel_order_ID=mock_order.external_transaction_id,
+        country=country,
+        shipping_rule=shipping_rule,
+        courier_service=shipping_rule.courier_service,
+        tracking_number=mock_order.tracking_code,
+        total_paid=1569,
+        total_paid_GBP=1278,
+        priority=True,
+    ).exists()
+
+
+@pytest.mark.django_db
 def test_update_sales(order_factory, mock_CCAPI, mock_order, mock_product):
     order = order_factory.create()
     products = [
-        mock_product(product_id="3849390", quantity=1, price=6.50),
-        mock_product(product_id="5461616", quantity=5, price=12.80),
-        mock_product(product_id="9651664", quantity=3, price=0.99),
+        mock_product(
+            product_id="3849390",
+            quantity=1,
+            price=6.50,
+            sku="ABC-456-342",
+            product_full_name="Test Product 0",
+            per_item_weight=256.35,
+        ),
+        mock_product(
+            product_id="5461616",
+            quantity=5,
+            price=12.80,
+            sku="SGE-F3D-5DJ",
+            product_full_name="Test Product 1",
+            per_item_weight=12.63,
+        ),
+        mock_product(
+            product_id="9651664",
+            quantity=3,
+            price=0.99,
+            sku="SD5-S85-6F6",
+            product_full_name="Test Product 2",
+            per_item_weight=1156.356,
+        ),
     ]
     mock_order = mock_order(products=products)
     mock_CCAPI.get_orders_for_dispatch.return_value = mock_order
@@ -598,6 +716,9 @@ def test_update_sales(order_factory, mock_CCAPI, mock_order, mock_product):
             product_ID=product.product_id,
             quantity=product.quantity,
             price=int(product.price * 100),
+            sku=product.sku,
+            name=product.product_full_name,
+            weight=int(product.per_item_weight),
         ).exists()
 
 
@@ -608,15 +729,35 @@ def test_update_sales_updates_existing_sales(
     order = order_factory.create()
     product_id = "3849390"
     product_sale = product_sale_factory.create(
-        order=order, product_ID=product_id, quantity=5, price=920
+        order=order,
+        product_ID=product_id,
+        quantity=5,
+        price=920,
+        sku="ABE-1E3-3DE",
+        name="Test Product 1",
+        weight=256,
     )
-    products = [mock_product(product_id=product_id, quantity=1, price=6.50)]
+    product = mock_product(
+        product_id=product_id,
+        quantity=3,
+        price=0.99,
+        sku="SD5-S85-6F6",
+        product_full_name="Test Product 2",
+        per_item_weight=1156.356,
+    )
+    products = [product]
     mock_order = mock_order(products=products)
     mock_CCAPI.get_orders_for_dispatch.return_value = mock_order
     models.Order.objects._update_sales(order, mock_order)
-    product_sale.refresh_from_db()
-    assert product_sale.quantity == 1
-    assert product_sale.price == 650
+    assert models.ProductSale.objects.filter(
+        id=product_sale.id,
+        order=order,
+        product_ID=product.product_id,
+        sku=product.sku,
+        weight=product.per_item_weight,
+        name=product.product_full_name,
+        quantity=product.quantity,
+    ).exists()
 
 
 @pytest.mark.django_db

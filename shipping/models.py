@@ -332,6 +332,9 @@ class ShippingRule(models.Model):
     courier_service = models.ForeignKey(
         CourierService, blank=True, null=True, on_delete=models.PROTECT
     )
+    shipping_service = models.ForeignKey(
+        ShippingService, blank=True, null=True, on_delete=models.PROTECT
+    )
     priority = models.BooleanField(default=False)
     inactive = models.BooleanField(default=False)
 

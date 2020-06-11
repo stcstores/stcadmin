@@ -8,6 +8,9 @@ class ProductSale(models.Model):
 
     order = models.ForeignKey("Order", on_delete=models.CASCADE)
     product_ID = models.CharField(max_length=25)
+    sku = models.CharField(max_length=25, null=True)
+    name = models.TextField(null=True)
+    weight = models.PositiveIntegerField(null=True)
     quantity = models.PositiveSmallIntegerField()
     price = models.PositiveIntegerField()
 
