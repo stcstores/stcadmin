@@ -70,6 +70,9 @@ class ProductSaleFactory(factory.DjangoModelFactory):
 
     order = factory.SubFactory(OrderFactory)
     product_ID = factory.Sequence(lambda n: str(6546486 + n))
+    sku = factory.Sequence(lambda n: f"ABC-123-TG{n}")
+    name = factory.Sequence(lambda n: f"Test Product {n}")
+    weight = 256
     quantity = 1
     price = 550
 

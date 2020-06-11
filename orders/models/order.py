@@ -74,15 +74,24 @@ class OrderManager(models.Manager):
         """Add product sales to the ProductSale model."""
         for product in order.products:
             price = int(product.price * 100)
+            weight = int(product.per_item_weight)
             sale, _ = ProductSale.objects.get_or_create(
                 order=order_obj,
                 product_ID=product.product_id,
-                defaults={"quantity": product.quantity, "price": price},
+                defaults={
+                    "quantity": product.quantity,
+                    "price": price,
+                    "sku": product.sku,
+                    "name": product.product_full_name,
+                    "weight": weight,
+                },
             )
-            if sale.quantity != product.quantity or sale.price != price:
-                sale.quantity = product.quantity
-                sale.price = price
-                sale.save()
+            sale.sku = product.sku
+            sale.quantity = product.quantity
+            sale.price = price
+            sale.weight = weight
+            sale.name = product.product_full_name
+            sale.save()
 
     def _update_cancelled_orders(self, orders_to_dispatch):
         """Mark cancelled orders."""
@@ -160,6 +169,9 @@ class OrderManager(models.Manager):
             "shipping_rule": shipping_rule,
             "courier_service": courier_service,
             "tracking_number": order.tracking_code or None,
+            "priority": order.priority,
+            "total_paid": int(float(order.total_gross) * 100),
+            "total_paid_GBP": int(float(order.total_gross_gbp) * 100),
             "ignored": not order.can_process_order,
         }
         return kwargs
@@ -198,6 +210,9 @@ class Order(models.Model):
         CourierService, blank=True, null=True, on_delete=models.PROTECT
     )
     tracking_number = models.CharField(max_length=255, blank=True, null=True)
+    total_paid = models.PositiveIntegerField(blank=True, null=True)
+    total_paid_GBP = models.PositiveIntegerField(blank=True, null=True)
+    priority = models.BooleanField(default=False)
 
     CountryNotRecognisedError = CountryNotRecognisedError
 

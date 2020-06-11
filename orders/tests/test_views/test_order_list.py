@@ -1,5 +1,5 @@
 from datetime import datetime
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
 from django.utils import timezone
@@ -26,6 +26,14 @@ def valid_get_response_content(url, valid_get_request):
 @pytest.fixture
 def order(order_factory):
     return order_factory.create()
+
+
+@pytest.fixture
+def mock_now():
+    with patch("django.utils.timezone.now") as mock_now:
+        date_time = timezone.make_aware(datetime(2020, 3, 26))
+        mock_now.return_value = date_time
+        yield date_time
 
 
 def test_logged_in_get(url, logged_in_client):
@@ -78,7 +86,7 @@ def test_shows_shipping_rule(order, valid_get_response_content):
 
 
 @pytest.mark.django_db
-def test_shows_recieved_at(order, valid_get_response_content):
+def test_shows_recieved_at(mock_now, order, valid_get_response_content):
     assert order.recieved_at.strftime("%Y-%m-%d") in valid_get_response_content
 
 
