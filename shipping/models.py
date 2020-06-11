@@ -50,6 +50,7 @@ class Region(models.Model):
 
     name = models.CharField(max_length=255)
     abriviation = models.CharField(max_length=10, blank=True, null=True)
+    vat_required = models.BooleanField(default=False)
 
     class Meta:
         """Meta class for the Region model."""
@@ -79,6 +80,7 @@ class Country(models.Model):
     currency = models.ForeignKey(
         Currency, blank=True, null=True, on_delete=models.SET_NULL
     )
+    vat_required = models.BooleanField(blank=True, null=True)
 
     class Meta:
         """Meta class for Country."""
@@ -89,6 +91,12 @@ class Country(models.Model):
 
     def __str__(self):
         return self.name
+
+    def vat_is_required(self):
+        """Return True if VAT is required for this country, otherwise False."""
+        if self.vat_required is None:
+            return self.region.vat_required
+        return self.vat_required
 
 
 class Provider(models.Model):
