@@ -335,14 +335,13 @@ description = "A generic Django application to convert text with specific markup
 name = "django-markup"
 optional = false
 python-versions = "*"
-version = "1.4.1"
+version = "1.5"
 
 [package.dependencies]
-django = ">=1.11"
-six = "*"
+django = ">=2.2"
 
 [package.extras]
-all_filter_dependencies = ["textile (>=2.3.16)", "smartypants (>=2.0.0)", "docutils (>=0.14)", "pygments (>=2.2.0)", "markdown (>=2.6.9)", "bleach (>=3.0)", "bleach-whitelist (>=0.0.9)", "python-creole (>=1.3.1)", "pygments (>=2.2.0)"]
+all_filter_dependencies = ["textile (>=2.3.16)", "smartypants (>=2.0.0)", "docutils (>=0.14)", "pygments (>=2.2.0)", "markdown (>=2.6.9)", "bleach (>=3.0)", "python-creole (>=1.3.1)"]
 
 [[package]]
 category = "main"
@@ -1273,8 +1272,8 @@ django-jchart = [
     {file = "django_jchart-0.4.2-py2.py3-none-any.whl", hash = "sha256:c9503a025092f63f870f83d773311d9c67090f1843b4bb99ef24959ab1877736"},
 ]
 django-markup = [
-    {file = "django-markup-1.4.1.tar.gz", hash = "sha256:bd2ca1c61555d92d329bd5e8c237c938ffe8eabea02fe0ebbba093d4ec524f67"},
-    {file = "django_markup-1.4.1-py2.py3-none-any.whl", hash = "sha256:6edfadaa56d139f8dab3496a99f3bb54972057317a53099ecaefa76f9264bfa1"},
+    {file = "django-markup-1.5.tar.gz", hash = "sha256:e7b6eb670f644bccd62157d18e89fb7a35df02605d5edb30a8578dc6ffbd684b"},
+    {file = "django_markup-1.5-py2.py3-none-any.whl", hash = "sha256:9d22dd08681ffc20235ffb81eb58d97568d86a3b0dc4517f142f74577484674c"},
 ]
 django-solo = [
     {file = "django-solo-1.1.3.tar.gz", hash = "sha256:b1206b9a9411b19a4354f7d7d245909a9ea7e9cd566b594363b5adce7dc13e5d"},
