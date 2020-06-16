@@ -17,18 +17,25 @@ class CurrencyAdmin(admin.ModelAdmin):
 class RegionAdmin(admin.ModelAdmin):
     """Model admin for shipping.Region."""
 
-    fields = ("name", "abriviation")
-    list_display = ("id", "name", "abriviation")
-    list_editable = ("name", "abriviation")
+    fields = ("name", "abriviation", "vat_required")
+    list_display = ("id", "name", "abriviation", "vat_required")
+    list_editable = ("name", "abriviation", "vat_required")
 
 
 @admin.register(models.Country)
 class CountryAdmin(admin.ModelAdmin):
     """Model Admin for shipping.Country."""
 
-    fields = ("country_ID", "name", "region", "currency")
-    list_display = ("__str__", "country_ID", "name", "region", "currency")
-    list_editable = ("country_ID", "name", "region", "currency")
+    fields = ("country_ID", "name", "region", "currency", "vat_required")
+    list_display = (
+        "__str__",
+        "country_ID",
+        "name",
+        "region",
+        "currency",
+        "vat_required",
+    )
+    list_editable = ("country_ID", "name", "region", "currency", "vat_required")
     list_filter = ("region",)
 
 
