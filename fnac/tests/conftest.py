@@ -1,27 +1,22 @@
 from datetime import datetime
 
 import factory
-import pytest
-from django.core.management import call_command
 from django.utils import timezone
 from pytest_factoryboy import register
 
 from fnac import models
-from inventory.models import ProductExport
+from inventory.models import ProductExport, Supplier
 
 
-@pytest.fixture
-def add_fixture(django_db_setup, django_db_blocker):
-    def _add_fixture(fixture_name):
-        with django_db_blocker.unblock():
-            call_command("loaddata", fixture_name)
+@register
+class SupplierFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Supplier
 
-    return _add_fixture
-
-
-@pytest.fixture
-def fnac_db_fixtures(add_fixture):
-    add_fixture("shipping/currency")
+    name = factory.Sequence(lambda n: f"Test Supplier {n}")
+    product_option_value_ID = factory.sequence(lambda n: str(315453 + n))
+    factory_ID = factory.sequence(lambda n: str(84615 + n))
+    inactive = False
 
 
 @register
@@ -69,6 +64,7 @@ class FnacProductFactory(factory.django.DjangoModelFactory):
     english_size = "UK 5"
     french_size = factory.SubFactory(SizeFactory)
     stock_level = 54
+    supplier = factory.SubFactory(SupplierFactory)
     image_1 = "81916118.jpg"
     image_2 = "152411896.jpg"
     image_3 = "9489220.jpg"

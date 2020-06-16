@@ -1,8 +1,11 @@
 """Model admin for the fnac app."""
 
 from django.contrib import admin
+from solo.admin import SingletonModelAdmin
 
 from fnac import models
+
+admin.site.register(models.FnacConfig, SingletonModelAdmin)
 
 
 @admin.register(models.Category)

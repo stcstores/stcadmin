@@ -2,6 +2,7 @@
 
 from .add_missing_information import MissingInformationExport, MissingInformationImport
 from .category import Category
+from .fnac_config import FnacConfig
 from .fnac_product import FnacProduct
 from .fnac_range import FnacRange
 from .inventory_update import InventoryImport, update_inventory
@@ -15,6 +16,7 @@ __all__ = [
     "MissingInformationExport",
     "MissingInformationImport",
     "Category",
+    "FnacConfig",
     "FnacProduct",
     "FnacRange",
     "InventoryImport",

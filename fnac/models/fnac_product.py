@@ -3,6 +3,8 @@
 from django.db import models
 from django.db.models import Q
 
+from inventory.models import Supplier
+
 from .fnac_range import FnacRange
 from .size import Size
 
@@ -168,6 +170,7 @@ class FnacProduct(models.Model):
     image_2 = models.CharField(max_length=20, blank=True)
     image_3 = models.CharField(max_length=20, blank=True)
     image_4 = models.CharField(max_length=20, blank=True)
+    supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT)
     do_not_create = models.BooleanField(default=False)
     created = models.BooleanField(default=False)
 

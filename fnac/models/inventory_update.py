@@ -2,8 +2,9 @@
 
 from django.db import models, transaction
 
-from inventory.models import ProductExport
+from inventory.models import ProductExport, Supplier
 
+from .fnac_config import FnacConfig
 from .fnac_product import FnacProduct
 from .fnac_range import FnacRange
 
@@ -72,6 +73,7 @@ class _InventoryUpdate:
     SIZE_COLUMN = "OPT_Size_DRD"
     STOCK_COLUMN = "VAR_Stock"
     IMAGE_COLUMN = "VAR_IMG"
+    SUPPLIER_COLUMN = "VAR_Supplier"
 
     def __init__(self, inventory_file=None):
         self.updated_range_skus = []
@@ -124,7 +126,8 @@ class _InventoryUpdate:
 
     def get_fnac_product_kwargs(self, row):
         images = self.clean_images(row[self.IMAGE_COLUMN])
-        return {
+        supplier = Supplier.objects.get(name=row[self.SUPPLIER_COLUMN])
+        kwargs = {
             "name": row[self.NAME_COLUMN],
             "sku": row[self.SKU_COLUMN],
             "barcode": self.clean_barcode(row[self.BARCODE_COLUMN]),
@@ -133,11 +136,15 @@ class _InventoryUpdate:
             "brand": self.clean_brand(row[self.BRAND_COLUMN]),
             "english_size": row[self.SIZE_COLUMN] or "",
             "stock_level": row[self.STOCK_COLUMN],
+            "supplier": supplier,
             "image_1": images[0],
             "image_2": images[1],
             "image_3": images[2],
             "image_4": images[3],
         }
+        if supplier in FnacConfig.get_solo().ignored_suppliers.all():
+            kwargs["do_not_create"] = True
+        return kwargs
 
     @staticmethod
     def clean_barcode(raw_barcode):

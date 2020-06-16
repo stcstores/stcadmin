@@ -23,8 +23,16 @@ def mock_latest_inventory_file(inventory_file):
         yield
 
 
+@pytest.fixture
+def suppliers(db, inventory_file, supplier_factory):
+    suppliers = []
+    for supplier in set(inventory_file.get_column("VAR_Supplier")):
+        suppliers.append(supplier_factory.create(name=supplier))
+    return suppliers
+
+
 @pytest.fixture()
-def import_test_inventory(db, mock_latest_inventory_file):
+def import_test_inventory(db, suppliers, mock_latest_inventory_file):
     models.update_inventory()
 
 
@@ -38,7 +46,12 @@ def created_fnac_product(import_test_inventory, inventory_file):
     return models.FnacProduct.objects.get(sku=inventory_file[0]["VAR_SKU"])
 
 
-def test_get_inventory_file(import_test_inventory,):
+@pytest.fixture
+def ignored_suppliers(suppliers):
+    models.FnacConfig.get_solo().ignored_suppliers.set(suppliers)
+
+
+def test_get_inventory_file(import_test_inventory):
     inventory_file = models.inventory_update._InventoryUpdate.get_inventory_file()
     assert isinstance(inventory_file, Table)
 
@@ -59,6 +72,18 @@ def test_fnac_products_are_created(import_test_inventory, inventory_file):
 
 def test_fnac_range_name_set(import_test_inventory, created_fnac_range, inventory_file):
     assert created_fnac_range.name == "Adults Christmas Reindeer Slippers"
+
+
+def test_ignored_suppliers_set_do_not_create(
+    ignored_suppliers, import_test_inventory, created_fnac_product
+):
+    assert created_fnac_product.do_not_create is True
+
+
+def test_do_not_create_is_not_set_if_supplier_not_in_ignored_suppliers(
+    import_test_inventory, created_fnac_product
+):
+    assert created_fnac_product.do_not_create is False
 
 
 def test_fnac_range_category_is_null(import_test_inventory, created_fnac_range):
