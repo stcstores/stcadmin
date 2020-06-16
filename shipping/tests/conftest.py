@@ -24,6 +24,7 @@ class RegionFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"Test Currency {n}")
     abriviation = "EU"
+    vat_required = True
 
 
 @pytest_factoryboy.register
@@ -36,6 +37,7 @@ class CountryFactory(factory.django.DjangoModelFactory):
     ISO_code = "TC"
     region = factory.SubFactory(RegionFactory)
     currency = factory.SubFactory(CurrencyFactory)
+    vat_required = None
 
 
 @pytest_factoryboy.register
