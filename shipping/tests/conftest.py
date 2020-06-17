@@ -120,7 +120,6 @@ class ShippingPriceFactory(factory.django.DjangoModelFactory):
     shipping_service = factory.SubFactory(ShippingServiceFactory)
     country = factory.SubFactory(CountryFactory)
     region = None
-    price_type = models.ShippingPrice.FIXED
     item_price = 550
     price_per_kg = 0
     inactive = False

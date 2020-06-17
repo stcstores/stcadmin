@@ -20,14 +20,9 @@ def region(region_factory):
 
 
 @pytest.fixture
-def price_type():
-    return models.ShippingPrice.FIXED
-
-
-@pytest.fixture
-def new_shipping_price(shipping_service, country, price_type):
+def new_shipping_price(shipping_service, country):
     shipping_price = models.ShippingPrice(
-        shipping_service=shipping_service, country=country, price_type=price_type,
+        shipping_service=shipping_service, country=country
     )
     shipping_price.save()
     return shipping_price
@@ -49,11 +44,6 @@ def test_sets_region(new_shipping_price):
 
 
 @pytest.mark.django_db
-def test_sets_price_type(new_shipping_price, price_type):
-    assert new_shipping_price.price_type == price_type
-
-
-@pytest.mark.django_db
 def test_sets_item_price(new_shipping_price):
     assert new_shipping_price.item_price == 0
 
@@ -64,14 +54,19 @@ def test_sets_price_per_kg(new_shipping_price):
 
 
 @pytest.mark.django_db
+def test_sets_price_per_g(new_shipping_price):
+    assert new_shipping_price.price_per_g == 0
+
+
+@pytest.mark.django_db
 def test_sets_inactive(new_shipping_price):
     assert new_shipping_price.inactive is False
 
 
 @pytest.mark.django_db
-def test_can_create_with_region(shipping_service, region, price_type):
+def test_can_create_with_region(shipping_service, region):
     shipping_price = models.ShippingPrice(
-        shipping_service=shipping_service, region=region, price_type=price_type,
+        shipping_service=shipping_service, region=region
     )
     shipping_price.save()
     assert shipping_price.region == region
@@ -95,25 +90,27 @@ def test__str__method_with_region(shipping_price_factory, region):
 @pytest.mark.django_db
 def test_fixed_price(shipping_price_factory):
     price = 560
-    shipping_price = shipping_price_factory.create(
-        price_type=models.ShippingPrice.FIXED, item_price=price
-    )
+    shipping_price = shipping_price_factory.create(item_price=price, price_per_kg=0)
     assert shipping_price.price(970) == price
 
 
 @pytest.mark.django_db
-def test_weight_price(shipping_price_factory):
-    shipping_price = shipping_price_factory.create(
-        price_type=models.ShippingPrice.WEIGHT, item_price=120, price_per_kg=80
-    )
+def test_kg_price(shipping_price_factory):
+    shipping_price = shipping_price_factory.create(item_price=120, price_per_kg=80)
     assert shipping_price.price(1500) == 280
 
 
 @pytest.mark.django_db
-def test_weight_band_price(shipping_price_factory, weight_band_factory):
+def test_g_price(shipping_price_factory):
     shipping_price = shipping_price_factory.create(
-        price_type=models.ShippingPrice.WEIGHT_BAND
+        item_price=120, price_per_kg=0, price_per_g=0.08
     )
+    assert shipping_price.price(1500) == 240
+
+
+@pytest.mark.django_db
+def test_weight_band_price(shipping_price_factory, weight_band_factory):
+    shipping_price = shipping_price_factory.create(item_price=0, price_per_kg=0)
     weight_band_factory.create(
         min_weight=0, max_weight=200, price=220, shipping_price=shipping_price
     )
@@ -127,11 +124,23 @@ def test_weight_band_price(shipping_price_factory, weight_band_factory):
 
 
 @pytest.mark.django_db
-def test_price_with_invalid_price_type(shipping_price_factory):
-    shipping_price = shipping_price_factory.build()
-    shipping_price.price_type = "invalid_price_type"
-    with pytest.raises(NotImplementedError):
-        shipping_price.price(73)
+def test_weight_band_with_kg_price(shipping_price_factory, weight_band_factory):
+    shipping_price = shipping_price_factory.create(item_price=0, price_per_kg=80)
+    weight_band_factory.create(
+        min_weight=100, max_weight=2000, price=220, shipping_price=shipping_price
+    )
+    assert shipping_price.price(1500) == 380
+
+
+@pytest.mark.django_db
+def test_weight_band_with_g_price(shipping_price_factory, weight_band_factory):
+    shipping_price = shipping_price_factory.create(
+        item_price=0, price_per_kg=0, price_per_g=0.08
+    )
+    weight_band_factory.create(
+        min_weight=100, max_weight=2000, price=220, shipping_price=shipping_price
+    )
+    assert shipping_price.price(1500) == 340
 
 
 @pytest.mark.django_db

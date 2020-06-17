@@ -213,19 +213,14 @@ class ShippingService(models.Model):
 class ShippingPrice(models.Model):
     """Model for shipping prices."""
 
-    FIXED = "fixed"
-    WEIGHT = "weight"
-    WEIGHT_BAND = "weight_band"
-    PRICE_TYPES = ((FIXED, "Fixed"), (WEIGHT, "Weight"), (WEIGHT_BAND, "Weight Band"))
-
     shipping_service = models.ForeignKey(ShippingService, on_delete=models.CASCADE)
     country = models.ForeignKey(
         Country, on_delete=models.CASCADE, blank=True, null=True
     )
     region = models.ForeignKey(Region, on_delete=models.CASCADE, blank=True, null=True)
-    price_type = models.CharField(max_length=50, choices=PRICE_TYPES)
-    item_price = models.IntegerField(default=0)
-    price_per_kg = models.IntegerField(default=0)
+    item_price = models.PositiveIntegerField(default=0)
+    price_per_kg = models.PositiveIntegerField(default=0)
+    price_per_g = models.DecimalField(max_digits=7, decimal_places=3, default=0)
     inactive = models.BooleanField(default=False)
 
     class Meta:
@@ -257,23 +252,20 @@ class ShippingPrice(models.Model):
 
     def price(self, weight):
         """Return the shipping price for a given weight in grams."""
-        if self.price_type == self.FIXED:
-            return self._fixed_price()
-        elif self.price_type == self.WEIGHT:
-            return self._weight_price(weight)
-        elif self.price_type == self.WEIGHT_BAND:
-            return self._weight_band_price(weight)
-        else:
-            raise NotImplementedError(
-                f"No price method exists for price type {self.price_type}"
-            )
+        price = 0
+        price += self.item_price
+        price += self._per_kg_price(weight)
+        price += self._per_g_price(weight)
+        if self.weightband_set.count() > 0:
+            price += self._weight_band_price(weight)
+        return price
 
-    def _fixed_price(self):
-        return self.item_price
-
-    def _weight_price(self, weight):
+    def _per_kg_price(self, weight):
         weight_kg = math.ceil(weight / 1000)
-        return self.item_price + self.price_per_kg * weight_kg
+        return self.price_per_kg * weight_kg
+
+    def _per_g_price(self, weight):
+        return math.ceil(self.price_per_g * weight)
 
     def _weight_band_price(self, weight):
         return self.weightband_set.get(
