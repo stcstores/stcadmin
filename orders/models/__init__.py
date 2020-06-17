@@ -3,9 +3,9 @@ from . import charts
 from .breakage import Breakage
 from .channel import Channel
 from .order import Order
+from .order_update import OrderUpdate
 from .packing_record import PackingRecord
 from .product_sale import ProductSale
-from .update import OrderUpdate
 
 __all__ = [
     "Breakage",
