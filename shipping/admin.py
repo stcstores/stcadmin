@@ -96,6 +96,7 @@ class ShippingPriceAdmin(admin.ModelAdmin):
         "region",
         "item_price",
         "price_per_kg",
+        "price_per_g",
         "inactive",
     )
     list_display = (
@@ -105,11 +106,13 @@ class ShippingPriceAdmin(admin.ModelAdmin):
         "region",
         "item_price",
         "price_per_kg",
+        "price_per_g",
         "inactive",
     )
     list_editable = (
         "item_price",
         "price_per_kg",
+        "price_per_g",
         "inactive",
     )
     list_filter = (

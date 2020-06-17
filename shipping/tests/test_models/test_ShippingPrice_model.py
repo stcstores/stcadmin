@@ -54,6 +54,11 @@ def test_sets_price_per_kg(new_shipping_price):
 
 
 @pytest.mark.django_db
+def test_sets_price_per_g(new_shipping_price):
+    assert new_shipping_price.price_per_g == 0
+
+
+@pytest.mark.django_db
 def test_sets_inactive(new_shipping_price):
     assert new_shipping_price.inactive is False
 
@@ -90,9 +95,17 @@ def test_fixed_price(shipping_price_factory):
 
 
 @pytest.mark.django_db
-def test_weight_price(shipping_price_factory):
+def test_kg_price(shipping_price_factory):
     shipping_price = shipping_price_factory.create(item_price=120, price_per_kg=80)
     assert shipping_price.price(1500) == 280
+
+
+@pytest.mark.django_db
+def test_g_price(shipping_price_factory):
+    shipping_price = shipping_price_factory.create(
+        item_price=120, price_per_kg=0, price_per_g=0.08
+    )
+    assert shipping_price.price(1500) == 240
 
 
 @pytest.mark.django_db
@@ -111,12 +124,23 @@ def test_weight_band_price(shipping_price_factory, weight_band_factory):
 
 
 @pytest.mark.django_db
-def test_weight_band_with_weight_price(shipping_price_factory, weight_band_factory):
+def test_weight_band_with_kg_price(shipping_price_factory, weight_band_factory):
     shipping_price = shipping_price_factory.create(item_price=0, price_per_kg=80)
     weight_band_factory.create(
         min_weight=100, max_weight=2000, price=220, shipping_price=shipping_price
     )
     assert shipping_price.price(1500) == 380
+
+
+@pytest.mark.django_db
+def test_weight_band_with_g_price(shipping_price_factory, weight_band_factory):
+    shipping_price = shipping_price_factory.create(
+        item_price=0, price_per_kg=0, price_per_g=0.08
+    )
+    weight_band_factory.create(
+        min_weight=100, max_weight=2000, price=220, shipping_price=shipping_price
+    )
+    assert shipping_price.price(1500) == 340
 
 
 @pytest.mark.django_db

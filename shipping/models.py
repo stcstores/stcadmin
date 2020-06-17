@@ -199,8 +199,9 @@ class ShippingPrice(models.Model):
         Country, on_delete=models.CASCADE, blank=True, null=True
     )
     region = models.ForeignKey(Region, on_delete=models.CASCADE, blank=True, null=True)
-    item_price = models.IntegerField(default=0)
-    price_per_kg = models.IntegerField(default=0)
+    item_price = models.PositiveIntegerField(default=0)
+    price_per_kg = models.PositiveIntegerField(default=0)
+    price_per_g = models.DecimalField(max_digits=7, decimal_places=3, default=0)
     inactive = models.BooleanField(default=False)
 
     class Meta:
@@ -233,18 +234,19 @@ class ShippingPrice(models.Model):
     def price(self, weight):
         """Return the shipping price for a given weight in grams."""
         price = 0
-        price += self._fixed_price()
+        price += self.item_price
         price += self._per_kg_price(weight)
+        price += self._per_g_price(weight)
         if self.weightband_set.count() > 0:
             price += self._weight_band_price(weight)
         return price
 
-    def _fixed_price(self):
-        return self.item_price
-
     def _per_kg_price(self, weight):
         weight_kg = math.ceil(weight / 1000)
         return self.price_per_kg * weight_kg
+
+    def _per_g_price(self, weight):
+        return math.ceil(self.price_per_g * weight)
 
     def _weight_band_price(self, weight):
         return self.weightband_set.get(
