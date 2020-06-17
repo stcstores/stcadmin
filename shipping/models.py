@@ -99,6 +99,25 @@ class Country(models.Model):
         return self.vat_required
 
 
+class VATRate(models.Model):
+    """Model for VAT rates."""
+
+    name = models.CharField(max_length=50)
+    cc_id = models.PositiveSmallIntegerField()
+    percentage = models.PositiveSmallIntegerField()
+    ordering = models.PositiveSmallIntegerField(default=100)
+
+    class Meta:
+        """Meta class for VATRate."""
+
+        verbose_name = "VAT Rate"
+        verbose_name_plural = "VAT Rates"
+        ordering = ("ordering",)
+
+    def __str__(self):
+        return self.name
+
+
 class Provider(models.Model):
     """Model for shipping providers."""
 
