@@ -5,7 +5,7 @@ from shipping import models
 
 @pytest.fixture
 def shipping_price(shipping_price_factory):
-    return shipping_price_factory.create(price_type=models.ShippingPrice.WEIGHT_BAND)
+    return shipping_price_factory.create(item_price=0, price_per_kg=0)
 
 
 @pytest.fixture
