@@ -53,8 +53,32 @@ class OrderAdmin(admin.ModelAdmin):
 class ProductSaleAdmin(admin.ModelAdmin):
     """Admin for the ProductSale model."""
 
-    fields = ("order", "product_ID", "sku", "name", "quantity", "price", "weight")
-    list_display = ("order", "product_ID", "sku", "name", "quantity", "price", "weight")
+    fields = (
+        "order",
+        "product_ID",
+        "sku",
+        "name",
+        "quantity",
+        "price",
+        "weight",
+        "department",
+        "purchase_price",
+        "vat_rate",
+        "details_success",
+    )
+    list_display = (
+        "order",
+        "product_ID",
+        "sku",
+        "name",
+        "quantity",
+        "price",
+        "weight",
+        "department",
+        "purchase_price",
+        "vat_rate",
+        "details_success",
+    )
 
 
 @admin.register(models.PackingRecord)
@@ -74,3 +98,20 @@ class OrderUpdateAdmin(admin.ModelAdmin):
     list_display = ("__str__", "status", "started_at", "completed_at")
     list_editable = ("status",)
     list_filter = ("status",)
+
+
+@admin.register(models.OrderDetailsUpdate)
+class OrderDetailsUpdateAdmin(admin.ModelAdmin):
+    """Admin for the OrderDetailsUpdate model."""
+
+    fields = ("started_at", "completed_at", "status")
+    list_display = ("started_at", "completed_at", "status")
+    list_editable = ("status",)
+
+
+@admin.register(models.OrderDetailsUpdateError)
+class OrderDetailsUpdateErrorAdmin(admin.ModelAdmin):
+    """Admin for the OrderDetailsUpdateError model."""
+
+    fields = ("update", "product_sale", "text")
+    list_display = ("update", "product_sale", "text")

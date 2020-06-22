@@ -1,22 +1,11 @@
 """Models for the order app."""
 
 from ccapi import CCAPI
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 from inventory.models import Department
 from shipping.models import VATRate
-
-
-class ProductSaleManager(models.Manager):
-    """Model manager for the ProductSale model."""
-
-    def update_product_details(self):
-        """Update missing product details."""
-        for product_sale in self.filter(error=None):
-            try:
-                product_sale.update_details()
-            except Exception:
-                pass
 
 
 class ProductSale(models.Model):
@@ -34,9 +23,7 @@ class ProductSale(models.Model):
     )
     purchase_price = models.PositiveIntegerField(blank=True, null=True)
     vat_rate = models.PositiveSmallIntegerField(blank=True, null=True)
-    error = models.BooleanField(blank=True, null=True)
-
-    objects = ProductSaleManager()
+    details_success = models.BooleanField(blank=True, null=True)
 
     class Meta:
         """Meta class for the ProductSale model."""
@@ -51,22 +38,28 @@ class ProductSale(models.Model):
         for attempt in range(10):
             try:
                 self._update_details()
+            except ObjectDoesNotExist as e:
+                self.details_success = False
+                self.save()
+                raise e
             except Exception as e:
                 exception = e
                 continue
             break
         else:
-            self.error = True
+            self.details_success = False
             self.save()
             raise exception
-        self.error = False
+        self.details_success = True
         self.save()
 
     def _update_details(self):
         product = CCAPI.get_product(self.product_ID)
         self.vat_rate = VATRate.objects.get(cc_id=product.vat_rate_id).percentage
         self.department = Department.objects.get(
-            product_option_value_ID=product.options["Department"].id
+            product_option_value_ID=str(product.options["Department"].value.id)
         )
-        self.purchase_price = int(product.options["Purchase Price"].value * 100)
+        self.purchase_price = int(
+            float(product.options["Purchase Price"].value.value) * 100
+        )
         self.save()

@@ -1,6 +1,7 @@
 from unittest.mock import Mock, patch
 
 import pytest
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 
 from orders import models
@@ -65,8 +66,8 @@ def mock_CCAPI():
 @pytest.fixture
 def mock_product():
     def _mock_product(vat_rate_id, department_id, purchase_price):
-        department = Mock(id=department_id)
-        purchase_price = Mock(value=purchase_price)
+        department = Mock(value=Mock(id=int(department_id)))
+        purchase_price = Mock(value=Mock(value=float(purchase_price)))
         return Mock(
             vat_rate_id=vat_rate_id,
             options={"Department": department, "Purchase Price": purchase_price},
@@ -243,8 +244,8 @@ def test_vat_rate_defaults_to_null(order, product_ID, sku, name, quantity, price
 
 
 @pytest.mark.django_db
-def test_sets_details_set(new_product_sale):
-    assert new_product_sale.error is None
+def test_sets_details_success(new_product_sale):
+    assert new_product_sale.details_success is None
 
 
 @pytest.mark.django_db
@@ -279,8 +280,8 @@ def updated_product(
 
 
 @pytest.mark.django_db
-def test_update_details_sets_error(updated_product):
-    assert updated_product.error is False
+def test_update_details_sets_details_success(updated_product):
+    assert updated_product.details_success is True
 
 
 @pytest.mark.django_db
@@ -305,7 +306,7 @@ def test_update_details_marks_updated_on_exception(mock_CCAPI, product_sale_fact
     with pytest.raises(Exception):
         product_sale.update_details()
     product_sale.refresh_from_db()
-    assert product_sale.error is True
+    assert product_sale.details_success is False
 
 
 @pytest.mark.django_db
@@ -342,35 +343,25 @@ def test_update_details_retries(
     product_sale = product_sale_factory.create()
     product_sale.update_details()
     assert len(mock_CCAPI.get_product.mock_calls) == 4
-    assert product_sale.error is False
+    assert product_sale.details_success is True
 
 
 @pytest.mark.django_db
-def test_update_product_details(
+def test_does_not_retry_for_does_not_exist_exceptions(
     mock_CCAPI,
     mock_product,
     department,
-    vat_rate,
     purchase_price,
     vat_rate_factory,
     product_sale_factory,
 ):
-    vat_rate_obj = vat_rate_factory.create(percentage=vat_rate)
-    mock_CCAPI.get_product.return_value = mock_product(
+    mock_product = mock_product(
         department_id=department.product_option_value_ID,
-        vat_rate_id=vat_rate_obj.cc_id,
+        vat_rate_id="99999",
         purchase_price=float(purchase_price) / 100,
     )
+    mock_CCAPI.get_product.return_value = mock_product
     product_sale = product_sale_factory.create()
-    models.ProductSale.objects.update_product_details()
-    product_sale.refresh_from_db()
-    assert product_sale.error is False
-
-
-@pytest.mark.django_db
-def test_update_product_details_does_not_stop_for_errors(
-    mock_CCAPI, product_sale_factory,
-):
-    mock_CCAPI.get_product.side_effect = Exception
-    product_sale_factory.create()
-    models.ProductSale.objects.update_product_details()
+    with pytest.raises(ObjectDoesNotExist):
+        product_sale.update_details()
+    mock_CCAPI.get_product.assert_called_once()

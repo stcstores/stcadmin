@@ -1,4 +1,5 @@
 """Model Admin for the shipping app."""
+from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
 
 from shipping import models
@@ -154,3 +155,14 @@ class ShippingRuleAdmin(admin.ModelAdmin):
         "shipping_service",
         "inactive",
     )
+
+
+@admin.register(models.VATRate)
+class VATRateAdmin(SortableAdminMixin, admin.ModelAdmin):
+    """Model admin for the VATRate model."""
+
+    fields = ("name", "cc_id", "percentage")
+    list_display = ("__str__", "name", "cc_id", "percentage")
+    list_display_links = ("__str__",)
+    list_editable = ("name", "cc_id", "percentage")
+    search_fields = ("name",)

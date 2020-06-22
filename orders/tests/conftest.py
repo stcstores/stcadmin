@@ -111,3 +111,23 @@ class OrderUpdateFactory(factory.DjangoModelFactory):
     started_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
     completed_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
     status = models.OrderUpdate.COMPLETE
+
+
+@pytest_factoryboy.register
+class OrderDetailsUpdateFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.OrderDetailsUpdate
+
+    started_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
+    completed_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
+    status = models.OrderDetailsUpdate.COMPLETE
+
+
+@pytest_factoryboy.register
+class OrderDetailsUpdateErrorFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.OrderDetailsUpdateError
+
+    update = factory.SubFactory(OrderDetailsUpdateFactory)
+    product_sale = factory.SubFactory(ProductSaleFactory)
+    text = "An exception string"
