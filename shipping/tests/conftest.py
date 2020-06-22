@@ -41,6 +41,16 @@ class CountryFactory(factory.django.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
+class VatRateFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.VATRate
+
+    name = factory.Sequence(lambda n: f"Test VAT Rate {n}")
+    cc_id = factory.Sequence(lambda n: n + 3)
+    percentage = 37
+
+
+@pytest_factoryboy.register
 class ProviderFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Provider

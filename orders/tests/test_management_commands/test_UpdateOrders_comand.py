@@ -5,8 +5,6 @@ from stcadmin.tests.stcadmin_test import STCAdminTest
 
 
 class TestUpdateOrdersCommand(STCAdminTest):
-    from orders.management.commands.update_orders import Command
-
     @patch("orders.management.commands.update_orders.OrderUpdate")
     def test_command(self, mock_order_update):
         commands.update_orders.Command().handle()

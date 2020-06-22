@@ -3,16 +3,30 @@ import pytest_factoryboy
 from django.utils import timezone
 
 from home.models import CloudCommerceUser
+from inventory.models import Department
 from orders import models
 from shipping.tests.conftest import (
     CountryFactory,
     CourierServiceFactory,
     ShippingRuleFactory,
+    VatRateFactory,
 )
 
 pytest_factoryboy.register(CountryFactory)
 pytest_factoryboy.register(ShippingRuleFactory)
 pytest_factoryboy.register(CourierServiceFactory)
+pytest_factoryboy.register(VatRateFactory)
+
+
+@pytest_factoryboy.register
+class DepartmentFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Department
+
+    name = factory.Sequence(lambda n: f"Test Department {n}")
+    product_option_value_ID = factory.Sequence(lambda n: str(6465 + n))
+    abriviation = "TD"
+    inactive = False
 
 
 @pytest_factoryboy.register
@@ -97,3 +111,23 @@ class OrderUpdateFactory(factory.DjangoModelFactory):
     started_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
     completed_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
     status = models.OrderUpdate.COMPLETE
+
+
+@pytest_factoryboy.register
+class OrderDetailsUpdateFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.OrderDetailsUpdate
+
+    started_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
+    completed_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
+    status = models.OrderDetailsUpdate.COMPLETE
+
+
+@pytest_factoryboy.register
+class OrderDetailsUpdateErrorFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.OrderDetailsUpdateError
+
+    update = factory.SubFactory(OrderDetailsUpdateFactory)
+    product_sale = factory.SubFactory(ProductSaleFactory)
+    text = "An exception string"

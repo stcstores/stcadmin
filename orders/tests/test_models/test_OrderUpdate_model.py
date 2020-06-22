@@ -9,7 +9,7 @@ from orders import models
 
 @pytest.fixture
 def mock_now():
-    with patch("orders.models.update.timezone.now") as mock_now:
+    with patch("orders.models.order_update.timezone.now") as mock_now:
         mock_now.return_value = timezone.make_aware(datetime(2020, 3, 1, 12, 36))
         yield mock_now.return_value
 
@@ -17,7 +17,7 @@ def mock_now():
 @pytest.fixture
 def mock_update_orders():
     with patch(
-        "orders.models.update.Order.objects.update_orders"
+        "orders.models.order_update.Order.objects.update_orders"
     ) as mock_update_orders:
         yield mock_update_orders
 
@@ -25,7 +25,7 @@ def mock_update_orders():
 @pytest.fixture
 def mock_update_packing_records():
     with patch(
-        "orders.models.update.PackingRecord.objects.update_packing_records"
+        "orders.models.order_update.PackingRecord.objects.update_packing_records"
     ) as mock_update_packing_records:
         yield mock_update_packing_records
 
@@ -160,14 +160,14 @@ def test_timeout_does_not_change_completed_updates(mock_now, order_update_factor
 
 
 @pytest.mark.django_db
-@patch("orders.models.update.OrderUpdate.objects._timeout_update")
+@patch("orders.models.order_update.OrderUpdate.objects._timeout_update")
 def test_is_in_progress_timesout_updates(mock_timeout_update):
     models.OrderUpdate.objects.is_in_progress()
     mock_timeout_update.assert_called_once()
 
 
 @pytest.mark.django_db
-@patch("orders.models.update.OrderUpdate.objects._timeout_update")
+@patch("orders.models.order_update.OrderUpdate.objects._timeout_update")
 def test_is_in_progress_returns_True_when_an_update_is_in_progress(
     mock_timeout_update, order_update_factory
 ):
@@ -176,7 +176,7 @@ def test_is_in_progress_returns_True_when_an_update_is_in_progress(
 
 
 @pytest.mark.django_db
-@patch("orders.models.update.OrderUpdate.objects._timeout_update")
+@patch("orders.models.order_update.OrderUpdate.objects._timeout_update")
 def test_is_in_progress_returns_False_when_an_update_is_not_in_progress(
     mock_timeout_update,
 ):
