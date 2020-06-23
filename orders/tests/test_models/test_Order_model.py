@@ -907,6 +907,49 @@ def test_urgent(mock_urgent_since, kwargs, returned, order_factory):
     assert (order in queryset) == returned
 
 
+@pytest.mark.django_db
+def test_profit_calculable(order_factory, product_sale_factory):
+    order = order_factory.create(postage_price_success=True)
+    product_sale_factory.create(order=order, details_success=True)
+    assert list(models.Order.objects.profit_calculable()) == [order]
+
+
+@pytest.mark.django_db
+def test_profit_calculable_excludes_details_not_retrieved(
+    order_factory, product_sale_factory
+):
+    order = order_factory.create(postage_price_success=True)
+    product_sale_factory.create(order=order, details_success=None)
+    assert order not in models.Order.objects.profit_calculable()
+
+
+@pytest.mark.django_db
+def test_profit_calculable_excludes_details_failures(
+    order_factory, product_sale_factory
+):
+    order = order_factory.create(postage_price_success=True)
+    product_sale_factory.create(order=order, details_success=False)
+    assert order not in models.Order.objects.profit_calculable()
+
+
+@pytest.mark.django_db
+def test_profit_calculable_excludes_postage_price_failrues(
+    order_factory, product_sale_factory
+):
+    order = order_factory.create(postage_price_success=False)
+    product_sale_factory.create(order=order, details_success=True)
+    assert order not in models.Order.objects.profit_calculable()
+
+
+@pytest.mark.django_db
+def test_profit_calculable_excludes_postage_price_not_retrieved(
+    order_factory, product_sale_factory
+):
+    order = order_factory.create(postage_price_success=None)
+    product_sale_factory.create(order=order, details_success=True)
+    assert order not in models.Order.objects.profit_calculable()
+
+
 @pytest.fixture
 def shipping_price(country, shipping_rule, shipping_price_factory):
     return shipping_price_factory.create(

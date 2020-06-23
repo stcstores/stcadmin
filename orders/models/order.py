@@ -55,6 +55,15 @@ class OrderQueryset(models.QuerySet):
         """Return a queryset of urgent orders."""
         return self.undispatched().filter(recieved_at__lte=urgent_since())
 
+    def profit_calculable(self):
+        """Return a queryset of products with all required information for profit calculations."""
+        return (
+            self.dispatched()
+            .filter(postage_price_success=True)
+            .exclude(productsale__details_success__isnull=True)
+            .exclude(productsale__details_success=False)
+        )
+
 
 class OrderManager(models.Manager):
     """Model manager for orders.Order."""
