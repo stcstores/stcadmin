@@ -32,6 +32,8 @@ class OrderAdmin(admin.ModelAdmin):
         "tracking_number",
         "total_paid",
         "total_paid_GBP",
+        "postage_price",
+        "postage_price_success",
     )
     list_display = (
         "__str__",
@@ -45,6 +47,8 @@ class OrderAdmin(admin.ModelAdmin):
         "courier_service",
         "total_paid",
         "total_paid_GBP",
+        "postage_price",
+        "postage_price_success",
     )
     list_editable = ("cancelled", "ignored")
 

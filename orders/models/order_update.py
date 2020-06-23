@@ -29,6 +29,7 @@ class OrderUpdateManager(models.Manager):
             with transaction.atomic():
                 Order.objects.update_orders()
                 PackingRecord.objects.update_packing_records()
+                Order.objects.update_postage_prices()
         except Exception as e:
             order_update.mark_error()
             raise e

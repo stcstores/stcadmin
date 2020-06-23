@@ -31,6 +31,14 @@ def mock_update_packing_records():
 
 
 @pytest.fixture
+def mock_postage_price_update():
+    with patch(
+        "orders.models.order_update.Order.objects.update_postage_prices"
+    ) as mock_postage_price_update:
+        yield mock_postage_price_update
+
+
+@pytest.fixture
 def completed_at():
     return timezone.make_aware(datetime(2020, 5, 1, 11, 36))
 
@@ -83,17 +91,27 @@ def test_mark_complete(mock_now, order_update_factory):
 
 
 @pytest.mark.django_db
-def test_order_update_updates_orders(mock_update_orders, mock_update_packing_records):
+def test_order_update_updates_orders(
+    mock_update_orders, mock_update_packing_records, mock_postage_price_update
+):
     models.OrderUpdate.objects.start_order_update()
     mock_update_orders.assert_called_once()
 
 
 @pytest.mark.django_db
 def test_order_update_updates_packing_records(
-    mock_update_orders, mock_update_packing_records
+    mock_update_orders, mock_update_packing_records, mock_postage_price_update
 ):
     models.OrderUpdate.objects.start_order_update()
     mock_update_packing_records.assert_called_once()
+
+
+@pytest.mark.django_db
+def test_order_update_updates_postage_prices(
+    mock_update_orders, mock_update_packing_records, mock_postage_price_update
+):
+    models.OrderUpdate.objects.start_order_update()
+    mock_postage_price_update.assert_called_once()
 
 
 @pytest.mark.django_db

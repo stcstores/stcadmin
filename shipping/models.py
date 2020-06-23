@@ -210,6 +210,17 @@ class ShippingService(models.Model):
         return self.name
 
 
+class ShippingPriceManager(models.Manager):
+    """Model manager for the ShippingPrice model."""
+
+    def find_shipping_price(self, country, shipping_service):
+        """Return the shipping price object for a given country and shipping service."""
+        try:
+            return self.get(country=country, shipping_service=shipping_service)
+        except ShippingPrice.DoesNotExist:
+            return self.get(region=country.region, shipping_service=shipping_service)
+
+
 class ShippingPrice(models.Model):
     """Model for shipping prices."""
 
@@ -222,6 +233,8 @@ class ShippingPrice(models.Model):
     price_per_kg = models.PositiveIntegerField(default=0)
     price_per_g = models.DecimalField(max_digits=7, decimal_places=3, default=0)
     inactive = models.BooleanField(default=False)
+
+    objects = ShippingPriceManager()
 
     class Meta:
         """Meta class for shipping.ShippingPrice."""

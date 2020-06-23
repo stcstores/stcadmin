@@ -179,3 +179,43 @@ def test_shipping_service_cannot_have_both_country_and_region(
 def test_country_and_region_cannot_both_be_null(shipping_price_factory):
     with pytest.raises(IntegrityError):
         shipping_price_factory.create(country=None, region=None)
+
+
+@pytest.mark.django_db
+def test_find_shipping_price(
+    shipping_price_factory, country_factory, shipping_service_factory
+):
+    shipping_service = shipping_service_factory.create()
+    country = country_factory.create()
+    price = shipping_price_factory.create(
+        shipping_service=shipping_service, country=country, region=None
+    )
+    returned = models.ShippingPrice.objects.find_shipping_price(
+        country=country, shipping_service=shipping_service
+    )
+    assert returned == price
+
+
+@pytest.mark.django_db
+def test_find_shipping_price_by_region(
+    shipping_price_factory, country_factory, shipping_service_factory
+):
+    shipping_service = shipping_service_factory.create()
+    country = country_factory.create()
+    price = shipping_price_factory.create(
+        shipping_service=shipping_service, country=None, region=country.region
+    )
+    returned = models.ShippingPrice.objects.find_shipping_price(
+        country=country, shipping_service=shipping_service
+    )
+    assert returned == price
+
+
+@pytest.mark.django_db
+def test_find_shipping_price_without_match(shipping_service_factory, country_factory):
+    shipping_service = shipping_service_factory.create()
+    country = country_factory.create()
+    with pytest.raises(models.ShippingPrice.DoesNotExist):
+        models.ShippingPrice.objects.find_shipping_price(
+            country=country, shipping_service=shipping_service
+        )

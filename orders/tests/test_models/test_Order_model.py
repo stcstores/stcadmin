@@ -905,3 +905,132 @@ def test_urgent(mock_urgent_since, kwargs, returned, order_factory):
     order = order_factory.create(**kwargs)
     queryset = models.Order.objects.urgent()
     assert (order in queryset) == returned
+
+
+@pytest.fixture
+def shipping_price(country, shipping_rule, shipping_price_factory):
+    return shipping_price_factory.create(
+        country=country, shipping_service=shipping_rule.shipping_service
+    )
+
+
+@pytest.fixture
+def order_without_shipping_price(country, shipping_rule, order_factory):
+    return order_factory.create(
+        country=country,
+        shipping_rule=shipping_rule,
+        postage_price=None,
+        postage_price_success=None,
+    )
+
+
+@pytest.mark.django_db
+def test_get_postage_price(country, shipping_rule, shipping_price, order_factory):
+    order = order_factory.create(country=country, shipping_rule=shipping_rule)
+    assert order._get_postage_price() == shipping_price.price(order._total_weight())
+
+
+@pytest.mark.django_db
+def test_set_postage_price_sets_postage_price(
+    country, shipping_rule, shipping_price, order_factory
+):
+    order = order_factory.create(
+        country=country,
+        shipping_rule=shipping_rule,
+        postage_price=None,
+        postage_price_success=None,
+    )
+    order._set_postage_price()
+    order.refresh_from_db()
+    assert order.postage_price == shipping_price.price(order._total_weight())
+
+
+@pytest.mark.django_db
+def test_set_postage_price_sets_postage_price_success(
+    country, shipping_rule, shipping_price, order_without_shipping_price
+):
+    order_without_shipping_price._set_postage_price()
+    order_without_shipping_price.refresh_from_db()
+    assert order_without_shipping_price.postage_price_success is True
+
+
+@pytest.mark.django_db
+def test_set_postage_price_without_valid_price_sets_postage_price_null(
+    country, shipping_rule, order_without_shipping_price
+):
+    order_without_shipping_price._set_postage_price()
+    order_without_shipping_price.refresh_from_db()
+    assert order_without_shipping_price.postage_price is None
+
+
+@pytest.mark.django_db
+def test_set_postage_price_without_valid_price_sets_postage_succces_false(
+    country, shipping_rule, order_without_shipping_price
+):
+    order_without_shipping_price._set_postage_price()
+    order_without_shipping_price.refresh_from_db()
+    assert order_without_shipping_price.postage_price_success is False
+
+
+@pytest.mark.django_db
+def test_update_postage_prices(
+    country, shipping_rule, shipping_price, order_without_shipping_price
+):
+    models.Order.objects.update_postage_prices()
+    order_without_shipping_price.refresh_from_db()
+    assert order_without_shipping_price.postage_price_success is True
+
+
+@pytest.mark.django_db
+def test_vat_paid(order_factory, product_sale_factory):
+    order = order_factory.create()
+    product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=20)
+    product_sale_factory.create(order=order, price=550, quantity=2, vat_rate=20)
+    product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=0)
+    assert order._vat_paid() == 274
+
+
+@pytest.mark.django_db
+def test_channel_fee_paid(order_factory, product_sale_factory):
+    order = order_factory.create()
+    product_sale_factory.create(order=order, price=550, quantity=1)
+    product_sale_factory.create(order=order, price=550, quantity=2)
+    assert order._channel_fee_paid() == 247
+
+
+@pytest.mark.django_db
+def test_purchase_price(order_factory, product_sale_factory):
+    order = order_factory.create()
+    product_sale_factory.create(order=order, purchase_price=550, quantity=1)
+    product_sale_factory.create(order=order, purchase_price=550, quantity=2)
+    assert order._purchase_price() == 1650
+
+
+@pytest.mark.django_db
+def test_profit(order_factory, product_sale_factory):
+    order = order_factory.create(total_paid_GBP=3500, postage_price=500)
+    product_sale_factory.create(
+        order=order, purchase_price=550, price=550, quantity=1, vat_rate=20
+    )
+    product_sale_factory.create(
+        order=order, purchase_price=550, price=550, quantity=2, vat_rate=20
+    )
+    product_sale_factory.create(
+        order=order, purchase_price=550, price=550, quantity=1, vat_rate=0
+    )
+    assert order._profit() == 197
+
+
+@pytest.mark.django_db
+def test_profit_percentage(order_factory, product_sale_factory):
+    order = order_factory.create(total_paid_GBP=3500, postage_price=500)
+    product_sale_factory.create(
+        order=order, purchase_price=550, price=550, quantity=1, vat_rate=20
+    )
+    product_sale_factory.create(
+        order=order, purchase_price=550, price=550, quantity=2, vat_rate=20
+    )
+    product_sale_factory.create(
+        order=order, purchase_price=550, price=550, quantity=1, vat_rate=0
+    )
+    assert order._profit_percentage() == 5

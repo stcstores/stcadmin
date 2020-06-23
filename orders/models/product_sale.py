@@ -63,3 +63,20 @@ class ProductSale(models.Model):
             float(product.options["Purchase Price"].value.value) * 100
         )
         self.save()
+
+    def total_weight(self):
+        """Return the combined weight of this item."""
+        return self.weight * self.quantity
+
+    def _price_paid(self):
+        return self.price * self.quantity
+
+    def _vat_paid(self):
+        vat_divisor = 1 + (self.vat_rate / 100)
+        return int(((self._price_paid() / vat_divisor) - self._price_paid()) * -1)
+
+    def _channel_fee_paid(self):
+        return int(float(self._price_paid() / 100) * 15)
+
+    def _purchase_price_total(self):
+        return self.purchase_price * self.quantity
