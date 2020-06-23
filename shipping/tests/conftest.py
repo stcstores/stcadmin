@@ -93,18 +93,6 @@ class CourierServiceFactory(factory.django.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class ShippingRuleFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = models.ShippingRule
-
-    rule_ID = factory.Sequence(lambda n: f"1000{n}")
-    name = factory.Sequence(lambda n: f"Test Shipping Rule {n}")
-    courier_service = factory.SubFactory(CourierServiceFactory)
-    priority = False
-    inactive = False
-
-
-@pytest_factoryboy.register
 class ShippingServiceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.ShippingService
@@ -134,3 +122,16 @@ class WeightBandFactory(factory.django.DjangoModelFactory):
     min_weight = 200
     max_weight = 500
     price = 720
+
+
+@pytest_factoryboy.register
+class ShippingRuleFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.ShippingRule
+
+    rule_ID = factory.Sequence(lambda n: f"1000{n}")
+    name = factory.Sequence(lambda n: f"Test Shipping Rule {n}")
+    courier_service = factory.SubFactory(CourierServiceFactory)
+    shipping_service = factory.SubFactory(ShippingServiceFactory)
+    priority = False
+    inactive = False

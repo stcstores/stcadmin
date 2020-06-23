@@ -8,12 +8,14 @@ from orders import models
 from shipping.tests.conftest import (
     CountryFactory,
     CourierServiceFactory,
+    ShippingPriceFactory,
     ShippingRuleFactory,
     VatRateFactory,
 )
 
 pytest_factoryboy.register(CountryFactory)
 pytest_factoryboy.register(ShippingRuleFactory)
+pytest_factoryboy.register(ShippingPriceFactory)
 pytest_factoryboy.register(CourierServiceFactory)
 pytest_factoryboy.register(VatRateFactory)
 
@@ -66,6 +68,11 @@ class OrderFactory(factory.DjangoModelFactory):
     shipping_rule = factory.SubFactory(ShippingRuleFactory)
     courier_service = factory.SubFactory(CourierServiceFactory)
     tracking_number = factory.Sequence(lambda n: f"TK8493833{n}")
+    total_paid = 4457
+    total_paid_GBP = 5691
+    priority = False
+    postage_price = 832
+    postage_price_success = True
 
 
 @pytest_factoryboy.register

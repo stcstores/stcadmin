@@ -5,7 +5,7 @@ from ccapi import CCAPI
 from django.db import models
 from django.utils import timezone
 
-from shipping.models import Country, CourierService, ShippingRule
+from shipping.models import Country, CourierService, ShippingPrice, ShippingRule
 
 from .channel import Channel
 from .product_sale import ProductSale
@@ -101,6 +101,15 @@ class OrderManager(models.Manager):
         ).exclude(order_ID__in=undispatched_order_IDs)
         for order in unaccounted_orders:
             order.check_cancelled()
+
+    def update_postage_prices(self):
+        """Add postage prices to orders."""
+        for order in self.dispatched().filter(
+            postage_price__isnull=True,
+            postage_price_success__isnull=True,
+            shipping_rule__isnull=False,
+        ):
+            order._set_postage_price()
 
     def _get_orders_for_dispatch(self):
         """Return undispatched Cloud Commerce orders."""
@@ -213,6 +222,8 @@ class Order(models.Model):
     total_paid = models.PositiveIntegerField(blank=True, null=True)
     total_paid_GBP = models.PositiveIntegerField(blank=True, null=True)
     priority = models.BooleanField(default=False)
+    postage_price = models.PositiveIntegerField(blank=True, null=True)
+    postage_price_success = models.BooleanField(blank=True, null=True)
 
     CountryNotRecognisedError = CountryNotRecognisedError
 
@@ -244,3 +255,48 @@ class Order(models.Model):
             elif order.status == order.IGNORED:
                 self.ignored = True
                 self.save()
+
+    def _total_weight(self):
+        return sum((sale.total_weight() for sale in self.productsale_set.all()))
+
+    def _vat_paid(self):
+        return sum((sale._vat_paid() for sale in self.productsale_set.all()))
+
+    def _channel_fee_paid(self):
+        return sum((sale._channel_fee_paid() for sale in self.productsale_set.all()))
+
+    def _purchase_price(self):
+        return sum(
+            (sale._purchase_price_total() for sale in self.productsale_set.all())
+        )
+
+    def _profit(self):
+        expenses = sum(
+            (
+                self._vat_paid(),
+                self._channel_fee_paid(),
+                self._purchase_price(),
+                self.postage_price,
+            )
+        )
+        return self.total_paid_GBP - expenses
+
+    def _profit_percentage(self):
+        return int((self._profit() / self.total_paid_GBP) * 100)
+
+    def _get_postage_price(self):
+        shipping_service = self.shipping_rule.shipping_service
+        price = ShippingPrice.objects.find_shipping_price(
+            country=self.country, shipping_service=shipping_service
+        )
+        return price.price(self._total_weight())
+
+    def _set_postage_price(self):
+        try:
+            self.postage_price = self._get_postage_price()
+        except ShippingPrice.DoesNotExist:
+            self.postage_price = None
+            self.postage_price_success = False
+        else:
+            self.postage_price_success = True
+        self.save()

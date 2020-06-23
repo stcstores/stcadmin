@@ -365,3 +365,58 @@ def test_does_not_retry_for_does_not_exist_exceptions(
     with pytest.raises(ObjectDoesNotExist):
         product_sale.update_details()
     mock_CCAPI.get_product.assert_called_once()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "weight,quantity,expected", [(500, 1, 500), (500, 2, 1000), (300, 3, 900)]
+)
+def test_total_weight(weight, quantity, expected, product_sale_factory):
+    sale = product_sale_factory.create(weight=weight, quantity=quantity)
+    assert sale.total_weight() == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "price,quantity,expected", [(550, 1, 550), (550, 2, 1100), (720, 3, 2160)]
+)
+def test_price_paid(price, quantity, expected, product_sale_factory):
+    sale = product_sale_factory.create(price=price, quantity=quantity)
+    assert sale._price_paid() == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "price,quantity,vat_rate,expected",
+    [
+        (550, 1, 0, 0),
+        (550, 2, 0, 0),
+        (720, 3, 0, 0),
+        (550, 1, 20, 91),
+        (550, 2, 20, 183),
+        (720, 3, 20, 360),
+    ],
+)
+def test__vat_paid(price, quantity, vat_rate, expected, product_sale_factory):
+    sale = product_sale_factory.create(
+        price=price, quantity=quantity, vat_rate=vat_rate
+    )
+    assert sale._vat_paid() == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "price,quantity,expected", [(550, 1, 82), (550, 2, 165), (720, 3, 324)]
+)
+def test_channel_fee_paid(price, quantity, expected, product_sale_factory):
+    sale = product_sale_factory.create(price=price, quantity=quantity)
+    assert sale._channel_fee_paid() == expected
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "purchase_price,quantity,expected", [(550, 1, 550), (550, 2, 1100), (720, 3, 2160)]
+)
+def test_purchase_price_total(purchase_price, quantity, expected, product_sale_factory):
+    sale = product_sale_factory.create(purchase_price=purchase_price, quantity=quantity)
+    assert sale._purchase_price_total() == expected
