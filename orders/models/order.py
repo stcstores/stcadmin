@@ -265,40 +265,59 @@ class Order(models.Model):
                 self.ignored = True
                 self.save()
 
-    def _total_weight(self):
+    def total_weight(self):
+        """Return the combined weight of the order."""
         return sum((sale.total_weight() for sale in self.productsale_set.all()))
 
-    def _vat_paid(self):
+    def vat_paid(self):
+        """Return the VAT paid on the order."""
         return sum((sale._vat_paid() for sale in self.productsale_set.all()))
 
-    def _channel_fee_paid(self):
+    def channel_fee_paid(self):
+        """Return the channel fee for the order."""
         return sum((sale._channel_fee_paid() for sale in self.productsale_set.all()))
 
-    def _purchase_price(self):
+    def purchase_price(self):
+        """Return the combined purchase price of the order."""
         return sum(
             (sale._purchase_price_total() for sale in self.productsale_set.all())
         )
 
-    def _profit(self):
+    def item_count(self):
+        """Return the number of items included in the order."""
+        return sum((sale.quantity for sale in self.productsale_set.all()))
+
+    def department(self):
+        """Return the name of the department to which the sale belongs or Mixed if more than one."""
+        departments = list(
+            set((sale.department for sale in self.productsale_set.all()))
+        )
+        if len(departments) == 1:
+            return departments[0].name
+        return "Mixed"
+
+    def profit(self):
+        """Return the profit made on the order."""
         expenses = sum(
             (
-                self._vat_paid(),
-                self._channel_fee_paid(),
-                self._purchase_price(),
+                self.vat_paid(),
+                self.channel_fee_paid(),
+                self.purchase_price(),
                 self.postage_price,
             )
         )
         return self.total_paid_GBP - expenses
 
-    def _profit_percentage(self):
-        return int((self._profit() / self.total_paid_GBP) * 100)
+    def profit_percentage(self):
+        """Return the percentage of the amount paid for the order that is profit."""
+        return int((self.profit() / self.total_paid_GBP) * 100)
 
     def _get_postage_price(self):
         shipping_service = self.shipping_rule.shipping_service
         price = ShippingPrice.objects.find_shipping_price(
             country=self.country, shipping_service=shipping_service
         )
-        return price.price(self._total_weight())
+        return price.price(self.total_weight())
 
     def _set_postage_price(self):
         try:

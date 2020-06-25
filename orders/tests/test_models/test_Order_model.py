@@ -970,7 +970,7 @@ def order_without_shipping_price(country, shipping_rule, order_factory):
 @pytest.mark.django_db
 def test_get_postage_price(country, shipping_rule, shipping_price, order_factory):
     order = order_factory.create(country=country, shipping_rule=shipping_rule)
-    assert order._get_postage_price() == shipping_price.price(order._total_weight())
+    assert order._get_postage_price() == shipping_price.price(order.total_weight())
 
 
 @pytest.mark.django_db
@@ -985,7 +985,7 @@ def test_set_postage_price_sets_postage_price(
     )
     order._set_postage_price()
     order.refresh_from_db()
-    assert order.postage_price == shipping_price.price(order._total_weight())
+    assert order.postage_price == shipping_price.price(order.total_weight())
 
 
 @pytest.mark.django_db
@@ -1030,7 +1030,7 @@ def test_vat_paid(order_factory, product_sale_factory):
     product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=20)
     product_sale_factory.create(order=order, price=550, quantity=2, vat_rate=20)
     product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=0)
-    assert order._vat_paid() == 274
+    assert order.vat_paid() == 274
 
 
 @pytest.mark.django_db
@@ -1038,7 +1038,7 @@ def test_channel_fee_paid(order_factory, product_sale_factory):
     order = order_factory.create()
     product_sale_factory.create(order=order, price=550, quantity=1)
     product_sale_factory.create(order=order, price=550, quantity=2)
-    assert order._channel_fee_paid() == 247
+    assert order.channel_fee_paid() == 247
 
 
 @pytest.mark.django_db
@@ -1046,7 +1046,7 @@ def test_purchase_price(order_factory, product_sale_factory):
     order = order_factory.create()
     product_sale_factory.create(order=order, purchase_price=550, quantity=1)
     product_sale_factory.create(order=order, purchase_price=550, quantity=2)
-    assert order._purchase_price() == 1650
+    assert order.purchase_price() == 1650
 
 
 @pytest.mark.django_db
@@ -1061,7 +1061,7 @@ def test_profit(order_factory, product_sale_factory):
     product_sale_factory.create(
         order=order, purchase_price=550, price=550, quantity=1, vat_rate=0
     )
-    assert order._profit() == 197
+    assert order.profit() == 197
 
 
 @pytest.mark.django_db
@@ -1076,4 +1076,29 @@ def test_profit_percentage(order_factory, product_sale_factory):
     product_sale_factory.create(
         order=order, purchase_price=550, price=550, quantity=1, vat_rate=0
     )
-    assert order._profit_percentage() == 5
+    assert order.profit_percentage() == 5
+
+
+@pytest.mark.django_db
+def test_item_count(order_factory, product_sale_factory):
+    order = order_factory.create()
+    product_sale_factory.create(order=order, quantity=1)
+    product_sale_factory.create(order=order, quantity=3)
+    assert order.item_count() == 4
+
+
+@pytest.mark.django_db
+def test_department(order_factory, product_sale_factory, department_factory):
+    order = order_factory.create()
+    department = department_factory.create()
+    product_sale_factory.create(order=order, department=department)
+    product_sale_factory.create(order=order, department=department)
+    assert order.department() == department.name
+
+
+@pytest.mark.django_db
+def test_mixed_department(order_factory, product_sale_factory, department_factory):
+    order = order_factory.create()
+    product_sale_factory.create(order=order, department=department_factory.create())
+    product_sale_factory.create(order=order, department=department_factory.create())
+    assert order.department() == "Mixed"

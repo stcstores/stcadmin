@@ -96,6 +96,9 @@ class ProductSaleFactory(factory.DjangoModelFactory):
     weight = 256
     quantity = 1
     price = 550
+    department = factory.SubFactory(DepartmentFactory)
+    purchase_price = 250
+    vat_rate = 20
 
 
 @pytest_factoryboy.register
