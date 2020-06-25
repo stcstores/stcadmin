@@ -121,7 +121,9 @@ class BayManager(models.Manager):
 
         """
         try:
-            bay_ID = CCAPI.add_bay_to_warehouse(bay=name, warehouse_id=warehouse_id)
+            bay_ID = CCAPI.add_bay_to_warehouse(
+                bay_name=name, warehouse_id=warehouse_id
+            )
         except Exception:
             raise Exception("Error creating new bay in Cloud Commerce")
         if bay_ID is None:
