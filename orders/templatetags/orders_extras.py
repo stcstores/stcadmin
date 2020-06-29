@@ -23,6 +23,18 @@ def format_price(price):
 
 
 @register.simple_tag
+def format_percentage(percentage):
+    """Return a coloured percentage value."""
+    if percentage <= 0:
+        html_class = "error"
+    elif percentage <= 10:
+        html_class = "warning"
+    else:
+        html_class = "success"
+    return mark_safe(f'<span class="{html_class}">{percentage}%</span>')
+
+
+@register.simple_tag
 def ccp_order_page(order_id, customer_id):
     """Return Cloud Commerce URL for a order."""
     return URLs.order_url(SUBDOMAIN, order_id, customer_id)

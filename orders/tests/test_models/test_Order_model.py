@@ -1102,3 +1102,73 @@ def test_mixed_department(order_factory, product_sale_factory, department_factor
     product_sale_factory.create(order=order, department=department_factory.create())
     product_sale_factory.create(order=order, department=department_factory.create())
     assert order.department() == "Mixed"
+
+
+@pytest.mark.django_db
+def test_missing_department(order_factory, product_sale_factory, department_factory):
+    order = order_factory.create()
+    product_sale_factory.create(order=order, department=department_factory.create())
+    product_sale_factory.create(order=order, department=None)
+    assert order.department() is None
+
+
+@pytest.mark.parametrize(
+    "postage_price, details,expected",
+    [
+        (True, True, True),
+        (False, True, True),
+        (True, False, True),
+        (None, True, False),
+        (None, False, False),
+        (True, None, False),
+        (False, None, False),
+    ],
+)
+@pytest.mark.django_db
+def test_up_to_date_details(
+    postage_price, details, expected, order_factory, product_sale_factory
+):
+    order = order_factory.create(postage_price_success=postage_price)
+    product_sale_factory.create(order=order, details_success=details)
+    assert order.up_to_date_details() is expected
+
+
+@pytest.mark.django_db
+def test_up_to_date_details_with_mixed_product_details(
+    order_factory, product_sale_factory
+):
+    order = order_factory.create(postage_price_success=True)
+    product_sale_factory.create(order=order, details_success=None)
+    product_sale_factory.create(order=order, details_success=True)
+    assert order.up_to_date_details() is False
+
+
+@pytest.mark.parametrize(
+    "postage_price, details,expected",
+    [
+        (True, True, True),
+        (False, True, False),
+        (True, False, False),
+        (None, True, False),
+        (None, False, False),
+        (True, None, False),
+        (False, None, False),
+    ],
+)
+@pytest.mark.django_db
+def test_profit_calculable_method(
+    postage_price, details, expected, order_factory, product_sale_factory
+):
+    order = order_factory.create(postage_price_success=postage_price)
+    product_sale_factory.create(order=order, details_success=details)
+    assert order.profit_calculable() is expected
+
+
+@pytest.mark.django_db
+def test_profit_calculable_method_with_mixed_product_details(
+    order_factory, product_sale_factory
+):
+    order = order_factory.create(postage_price_success=True)
+    product_sale_factory.create(order=order, details_success=None)
+    product_sale_factory.create(order=order, details_success=True)
+    assert order.profit_calculable() is False
