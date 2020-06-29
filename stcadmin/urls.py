@@ -27,7 +27,6 @@ urlpatterns = [
     path(
         "spring_manifest/", include("spring_manifest.urls", namespace="spring_manifest")
     ),
-    path("profit_loss/", include("profit_loss.urls", namespace="profit_loss")),
     path("epos/", include("epos.urls", namespace="epos")),
     path("feedback/", include("feedback.urls", namespace="feedback")),
     path("orders/", include("orders.urls", namespace="orders")),
