@@ -89,7 +89,7 @@ class TestBays(CreateBays, STCAdminTest):
         self.assertFalse(bay.is_default)
         self.assertEqual(str(bay), "Warehouse 1 - New Bay")
         mock_CCAPI.add_bay_to_warehouse.assert_called_once_with(
-            bay="New Bay", warehouse_id=self.warehouse_1.warehouse_ID
+            bay_name="New Bay", warehouse_id=self.warehouse_1.warehouse_ID
         )
 
     @patch("inventory.models.locations.CCAPI")
@@ -104,7 +104,7 @@ class TestBays(CreateBays, STCAdminTest):
         self.assertEqual(bay.warehouse, self.warehouse_1)
         self.assertFalse(bay.is_default)
         mock_CCAPI.add_bay_to_warehouse.assert_called_once_with(
-            bay="WH1 Backup Warehouse 2 New Bay",
+            bay_name="WH1 Backup Warehouse 2 New Bay",
             warehouse_id=self.warehouse_1.warehouse_ID,
         )
 
@@ -114,7 +114,7 @@ class TestBays(CreateBays, STCAdminTest):
         with self.assertRaises(Exception):
             models.Bay.objects.new_bay(name="New Bay", warehouse=self.warehouse_1)
         mock_CCAPI.add_bay_to_warehouse.assert_called_once_with(
-            bay="New Bay", warehouse_id=self.warehouse_1.warehouse_ID
+            bay_name="New Bay", warehouse_id=self.warehouse_1.warehouse_ID
         )
 
     def test_backup_bay_name_method(self):
