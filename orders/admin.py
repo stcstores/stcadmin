@@ -50,6 +50,7 @@ class OrderAdmin(admin.ModelAdmin):
         "postage_price",
         "postage_price_success",
     )
+    search_fields = ("order_ID", "customer_ID")
     list_editable = ("cancelled", "ignored")
 
 
@@ -70,6 +71,7 @@ class ProductSaleAdmin(admin.ModelAdmin):
         "vat_rate",
         "details_success",
     )
+    readonly_fields = ("order",)
     list_display = (
         "order",
         "product_ID",
@@ -83,13 +85,25 @@ class ProductSaleAdmin(admin.ModelAdmin):
         "vat_rate",
         "details_success",
     )
+    search_fields = (
+        "order__order_ID",
+        "order__customer_ID",
+        "sku",
+        "name",
+        "product_ID",
+    )
 
 
 @admin.register(models.PackingRecord)
 class PackingRecordAdmin(admin.ModelAdmin):
     """Admin for the PackingRecord model."""
 
-    fields = ("order", "packed_by")
+    fields = (
+        "__str__",
+        "order",
+        "packed_by",
+    )
+    readonly_fields = ("order",)
     list_display = ("order", "packed_by")
     list_editable = ("packed_by",)
 
@@ -98,7 +112,8 @@ class PackingRecordAdmin(admin.ModelAdmin):
 class OrderUpdateAdmin(admin.ModelAdmin):
     """Admin for the OrderUpdate models."""
 
-    fields = ("status", "started_at", "completed_at")
+    fields = ("started_at", "status", "completed_at")
+    readonly_fields = ("started_at",)
     list_display = ("__str__", "status", "started_at", "completed_at")
     list_editable = ("status",)
     list_filter = ("status",)
@@ -109,6 +124,7 @@ class OrderDetailsUpdateAdmin(admin.ModelAdmin):
     """Admin for the OrderDetailsUpdate model."""
 
     fields = ("started_at", "completed_at", "status")
+    readonly_fields = ("started_at",)
     list_display = ("started_at", "completed_at", "status")
     list_editable = ("status",)
 
