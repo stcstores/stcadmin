@@ -26,9 +26,6 @@
     {% if 'stock_check' in groups %}
     <li><a href="{% url 'stock_check:warehouses' %}">Stock Check</a></li>
     {% endif %}
-    {% if 'profit_loss' in groups %}
-    <li><a href="{% url 'profit_loss:orders' %}">Profit Loss</a></li>
-    {% endif %}
     {% if 'epos' in groups %}
     <li><a href="{% url 'epos:index' %}">EPOS</a></li>
     {% endif %}

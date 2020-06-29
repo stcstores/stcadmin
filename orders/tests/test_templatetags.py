@@ -28,3 +28,18 @@ def test_ccp_order_page(mock_order_url):
     mock_order_url.assert_called_once_with(
         orders_extras.SUBDOMAIN, order_id, customer_id
     )
+
+
+@pytest.mark.parametrize(
+    "percentage,expected",
+    [
+        (12, '<span class="success">12%</span>'),
+        (11, '<span class="success">11%</span>'),
+        (10, '<span class="warning">10%</span>'),
+        (1, '<span class="warning">1%</span>'),
+        (0, '<span class="error">0%</span>'),
+        (-1, '<span class="error">-1%</span>'),
+    ],
+)
+def test_format_percentage(percentage, expected):
+    assert orders_extras.format_percentage(percentage) == expected

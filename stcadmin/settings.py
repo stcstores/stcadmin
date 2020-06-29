@@ -91,7 +91,6 @@ INSTALLED_APPS = [
     "django_markup",
     "stock_check",
     "jchart",
-    "profit_loss",
     "product_editor",
     "epos",
     "orders",

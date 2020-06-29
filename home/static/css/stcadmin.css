@@ -1,9 +1,10 @@
 @CHARSET "UTF-8";
 
-html, body {
-  height:100%;
-  margin:0;
-  padding:0;
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
   width: 100%;
 }
 
@@ -15,7 +16,7 @@ body {
   height: 100%;
   margin: 0 auto;
   min-height: 100%;
-  position:relative;
+  position: relative;
   text-align: center;
   width: 100%;
 }
@@ -37,14 +38,15 @@ body {
 
 .footer {
   background: #eee;
-  bottom:0;
+  bottom: 0;
   font-family: serif;
   font-size: 0.75em;
-  left: 0; /* IE 7 and below */
+  left: 0;
+  /* IE 7 and below */
   margin: 0 auto;
   padding-bottom: 0.5em;
   padding-top: 2em;
-  position:absolute;
+  position: absolute;
   text-align: center;
   width: 100%;
 }
@@ -125,20 +127,20 @@ body {
   color: black;
 }
 
-input[type=number]{
+input[type=number] {
   width: 80px;
 }
 
 h1 {
   font-family: serif;
-	margin-bottom: 0;
-	padding-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 h3 {
   font-family: serif;
-	margin-top: 0;
-	padding-top: 0;
+  margin-top: 0;
+  padding-top: 0;
 }
 
 p {
@@ -146,8 +148,9 @@ p {
   font-size: 1.25em;
 }
 
-table, form {
-  border-collapse:collapse;
+table,
+form {
+  border-collapse: collapse;
   margin: 1em;
   padding: 1em;
 }
@@ -156,7 +159,8 @@ table, form {
   border-style: none;
 }
 
-th, td {
+th,
+td {
   border: 1px #ccc solid;
   margin: 0;
   padding: 0.25em;
@@ -209,7 +213,8 @@ th {
   text-indent: 1em;
 }
 
-.qtip-title, .qtip-content {
+.qtip-title,
+.qtip-content {
   font-size: 1.5em;
   line-height: 1.25em;
 }
@@ -220,7 +225,7 @@ th {
 
 .ui-autocomplete {
   max-height: 400px;
-	overflow-x: hidden;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -242,6 +247,7 @@ th {
 .negative {
   color: red;
 }
+
 .messages {
   margin: 0;
   padding: 0;
@@ -279,7 +285,8 @@ th {
   font-weight: bold;
 }
 
-#pack_count, #feedback {
+#pack_count,
+#feedback {
   border: none;
   clear: both;
   margin: 0 auto;
@@ -287,7 +294,10 @@ th {
   text-align: center;
 }
 
-.feedback td, .feedback th, .pack_count td, .pack_count th {
+.feedback td,
+.feedback th,
+.pack_count td,
+.pack_count th {
   border: none;
   border-collapse: collapse;
   margin: 0;
@@ -295,12 +305,14 @@ th {
   padding-top: 0;
 }
 
-.feedback_name, .packer_name {
+.feedback_name,
+.packer_name {
   padding-right: 0.25em;
   text-align: right;
 }
 
-.feedback_icons, .packer_count {
+.feedback_icons,
+.packer_count {
   font-size: 5em;
   padding-left: 0.25em;
   text-align: left;
@@ -355,6 +367,12 @@ th {
 .price_negative {
   color: red;
 }
-.price_zero, .price_positive {
+
+.price_zero,
+.price_positive {
   color: black;
+}
+
+.warning {
+  color: orange;
 }

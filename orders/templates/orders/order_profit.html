@@ -3,19 +3,19 @@
 {% load orders_extras %}
 {% load inventory_extras %}
 
-{% block page_title %}Profit Loss Order {{ order.order_id }}{% endblock %}
+{% block page_title %}Profit Loss Order {{ order.order_ID }}{% endblock %}
 
 {% block content %}
-<h1>Order: {{ order.order_id }}</h1>
-<a href="{% ccp_order_page order.order_id order.customer_id %}" target="_blank">View on Cloud Commerce</a>
+<h1>Order: {{ order.order_ID }}</h1>
+<a href="{% ccp_order_page order.order_ID order.customer_ID %}" target="_blank">View on Cloud Commerce</a>
 {% if order.error %}
 <h1 class="error">An error occured processing the details of this order</h1>
 {% endif %}
 <table>
     <tr><th>Department</th><td>{{ order.department }}</td></tr>
     <tr><th>Destination</th><td>{{ order.country.name }}</td></tr>
-    <tr><th>Recieved On</th><td class="date">{{ order.recieved_at|date:'D jS N h:iA' }}</td></tr>
-    <tr><th>Dispatched On</th><td class="date">{{ order.dispatched_at|date:'D jS N h:iA' }}</td></tr>
+    <tr><th>Recieved At</th><td class="date">{{ order.recieved_at|date:'D jS N h:iA' }}</td></tr>
+    <tr><th>Dispatched At</th><td class="date">{{ order.dispatched_at|date:'D jS N h:iA' }}</td></tr>
     <tr><th>Number of Items</th><td>{{ order.item_count }}</td></tr>
     <tr><th>Weight (g)</th><td>{{ order.total_weight }}</td></tr>
     <tr><th>Shipping Service</th><td>{{ order.shipping_rule.shipping_service }}</td></tr>
@@ -34,14 +34,12 @@
         <th>SKU</th>
         <th>Name</th>
         <th>Quantity</th>
-        <th></th>
     </tr>
     {% for product in products %}
     <tr>
         <td>{{ product.sku }}</td>
         <td>{{ product.name }}</td>
         <td>{{ product.quantity }}</td>
-        <td><a target="_blank" href="{% ccp_product_page product.range_id product.product_id %}">View on Cloud Commerce</a></td>
     </tr>
     {% endfor %}
 </table>

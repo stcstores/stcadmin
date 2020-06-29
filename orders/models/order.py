@@ -292,6 +292,8 @@ class Order(models.Model):
         departments = list(
             set((sale.department for sale in self.productsale_set.all()))
         )
+        if None in departments:
+            return None
         if len(departments) == 1:
             return departments[0].name
         return "Mixed"
@@ -328,3 +330,21 @@ class Order(models.Model):
         else:
             self.postage_price_success = True
         self.save()
+
+    def up_to_date_details(self):
+        """Return True if all data requests have been attempted, otherwise False."""
+        if self.postage_price_success is None:
+            return False
+        if any((sale.details_success is None for sale in self.productsale_set.all())):
+            return False
+        return True
+
+    def profit_calculable(self):
+        """Return True if all data requests have been retrieved, otherwise False."""
+        if self.postage_price_success is not True:
+            return False
+        if any(
+            (sale.details_success is not True for sale in self.productsale_set.all())
+        ):
+            return False
+        return True

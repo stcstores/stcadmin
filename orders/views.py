@@ -204,7 +204,13 @@ class OrderList(OrdersUserMixin, ListView):
     def get_queryset(self):
         """Return a queryset of orders based on GET data."""
         if self.form.is_valid():
-            return self.form.get_queryset()
+            return (
+                self.form.get_queryset()
+                .prefetch_related("productsale_set")
+                .select_related(
+                    "shipping_rule", "courier_service", "channel", "country"
+                )
+            )
         return []
 
     def get_context_data(self, *args, **kwargs):

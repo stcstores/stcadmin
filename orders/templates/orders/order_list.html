@@ -1,4 +1,5 @@
 {% extends 'orders/base.html' %}
+{% load orders_extras %}
 
 {% block content %}
 
@@ -18,21 +19,35 @@
         <tr>
             <th>Order ID</th>
             <th>Date Recieved</th>
+            <th>Department</th>
             <th>Country</th>
             <th>Channel</th>
             <th>Tracking Number</th>
             <th>Shipping Rule</th>
             <th>Courier Service</th>
+            <th>Profit</th>
         </tr>
     {% for order in object_list %}
         <tr class="order">
             <th>{{ order.order_ID }} </th>
             <td>{{ order.recieved_at|date:"Y-m-d" }}</td>
+            <td>{{ order.department}}</td>
             <td>{{ order.country }}</td>
             <td>{{ order.channel }}</td>
             <td>{{ order.tracking_number }}</td>
             <td>{{ order.shipping_rule.name }}</td>
             <td>{{ order.courier_service }}</td>
+            <td>
+                {% if order.up_to_date_details is False %}
+                    Not yet calculated
+                {% elif order.profit_calculable is False %}
+                    ERROR
+                {% else %}
+                    <a href="{% url 'orders:order_profit' order.id %}">
+                        {% format_percentage order.profit_percentage %}
+                    </a>
+                {% endif %}
+            </td>
         </tr>
     {% endfor %}
     </table>
