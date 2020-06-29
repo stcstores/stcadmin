@@ -37,4 +37,7 @@ urlpatterns = [
     ),
     path("order_list/", views.OrderList.as_view(), name="order_list"),
     path("export_orders/", views.ExportOrders.as_view(), name="export_orders"),
+    path(
+        "order_profit/<int:order_id>/", views.OrderProfit.as_view(), name="order_profit"
+    ),
 ]

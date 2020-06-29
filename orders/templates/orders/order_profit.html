@@ -1,0 +1,48 @@
+{% extends "orders/base.html" %}
+{% load static %}
+{% load orders_extras %}
+{% load inventory_extras %}
+
+{% block page_title %}Profit Loss Order {{ order.order_id }}{% endblock %}
+
+{% block content %}
+<h1>Order: {{ order.order_id }}</h1>
+<a href="{% ccp_order_page order.order_id order.customer_id %}" target="_blank">View on Cloud Commerce</a>
+{% if order.error %}
+<h1 class="error">An error occured processing the details of this order</h1>
+{% endif %}
+<table>
+    <tr><th>Department</th><td>{{ order.department }}</td></tr>
+    <tr><th>Destination</th><td>{{ order.country.name }}</td></tr>
+    <tr><th>Recieved On</th><td class="date">{{ order.recieved_at|date:'D jS N h:iA' }}</td></tr>
+    <tr><th>Dispatched On</th><td class="date">{{ order.dispatched_at|date:'D jS N h:iA' }}</td></tr>
+    <tr><th>Number of Items</th><td>{{ order.item_count }}</td></tr>
+    <tr><th>Weight (g)</th><td>{{ order.total_weight }}</td></tr>
+    <tr><th>Shipping Service</th><td>{{ order.shipping_rule.shipping_service }}</td></tr>
+    <tr><th>Price</th><td>{% format_price order.total_paid_GBP %}</td></tr>
+    <tr><th>Purchase Price</th><td>{% format_price order.purchase_price %}</td></tr>
+    <tr><th>Postage Price</th><td>{% format_price order.postage_price %}</td></tr>
+    <tr><th>VAT</th><td>{% format_price order.vat_paid %}</td></tr>
+    <tr><th>Channel Fee</th><td>{% format_price order.channel_fee_paid %}</td></tr>
+    <tr><th>Profit</th><td>{% format_price order.profit %}</td></tr>
+    <tr><th>Profit Percentage</th><td>{% if order.profit_percentage %}{{ order.profit_percentage }}%{% endif %}</td></tr>
+</table>
+
+<h3>Products</h3>
+<table>
+    <tr>
+        <th>SKU</th>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th></th>
+    </tr>
+    {% for product in products %}
+    <tr>
+        <td>{{ product.sku }}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.quantity }}</td>
+        <td><a target="_blank" href="{% ccp_product_page product.range_id product.product_id %}">View on Cloud Commerce</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

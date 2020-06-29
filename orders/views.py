@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from django.db.models import Count, Q
 from django.http import HttpResponse, HttpResponseNotFound
-from django.shortcuts import reverse
+from django.shortcuts import get_object_or_404, reverse
 from django.utils import timezone
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -268,3 +268,17 @@ class ExportOrders(OrdersUserMixin, View):
             order.shipping_rule.name,
             order.courier_service.name,
         ]
+
+
+class OrderProfit(OrdersUserMixin, TemplateView):
+    """View for details of individual orders."""
+
+    template_name = "orders/order_profit.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context data for template."""
+        context = super().get_context_data(*args, **kwargs)
+        order_id = self.kwargs.get("order_id")
+        context["order"] = get_object_or_404(models.Order, id=order_id)
+        context["products"] = context["order"].productsale_set.all()
+        return context
