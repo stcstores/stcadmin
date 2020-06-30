@@ -4,7 +4,7 @@ from ccapi import CCAPI
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
-from inventory.models import Department
+from inventory.models import Department, Supplier
 from shipping.models import VATRate
 
 
@@ -20,6 +20,9 @@ class ProductSale(models.Model):
     price = models.PositiveIntegerField()
     department = models.ForeignKey(
         Department, blank=True, null=True, on_delete=models.PROTECT
+    )
+    supplier = models.ForeignKey(
+        Supplier, blank=True, null=True, on_delete=models.PROTECT
     )
     purchase_price = models.PositiveIntegerField(blank=True, null=True)
     vat_rate = models.PositiveSmallIntegerField(blank=True, null=True)
@@ -58,6 +61,9 @@ class ProductSale(models.Model):
         self.vat_rate = VATRate.objects.get(cc_id=product.vat_rate_id).percentage
         self.department = Department.objects.get(
             product_option_value_ID=str(product.options["Department"].value.id)
+        )
+        self.supplier = Supplier.objects.get(
+            product_option_value_ID=str(product.options["Supplier"].value.id)
         )
         self.purchase_price = int(
             float(product.options["Purchase Price"].value.value) * 100

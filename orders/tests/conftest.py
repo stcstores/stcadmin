@@ -3,7 +3,7 @@ import pytest_factoryboy
 from django.utils import timezone
 
 from home.models import CloudCommerceUser
-from inventory.models import Department
+from inventory.models import Department, Supplier
 from orders import models
 from shipping.tests.conftest import (
     CountryFactory,
@@ -28,6 +28,17 @@ class DepartmentFactory(factory.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Test Department {n}")
     product_option_value_ID = factory.Sequence(lambda n: str(6465 + n))
     abriviation = "TD"
+    inactive = False
+
+
+@pytest_factoryboy.register
+class SupplierFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Supplier
+
+    name = factory.Sequence(lambda n: f"Test Department {n}")
+    product_option_value_ID = factory.Sequence(lambda n: str(6465 + n))
+    factory_ID = factory.Sequence(lambda n: str(n + 46546))
     inactive = False
 
 

@@ -69,6 +69,7 @@ class ProductSaleAdmin(admin.ModelAdmin):
         "department",
         "purchase_price",
         "vat_rate",
+        "supplier",
         "details_success",
     )
     readonly_fields = ("order",)
@@ -83,6 +84,7 @@ class ProductSaleAdmin(admin.ModelAdmin):
         "department",
         "purchase_price",
         "vat_rate",
+        "supplier",
         "details_success",
     )
     search_fields = (
