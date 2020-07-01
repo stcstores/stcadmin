@@ -40,4 +40,16 @@ urlpatterns = [
     path(
         "order_profit/<int:order_id>/", views.OrderProfit.as_view(), name="order_profit"
     ),
+    path("refund_list/", views.RefundList.as_view(), name="refund_list"),
+    path(
+        "create_refund_order_select/",
+        views.CreateRefundOrderSelect.as_view(),
+        name="create_refund_order_select",
+    ),
+    path(
+        "create_refund/<int:order_ID>/",
+        views.CreateRefund.as_view(),
+        name="create_refund",
+    ),
+    path("refund/<int:pk>/", views.Refund.as_view(), name="refund"),
 ]

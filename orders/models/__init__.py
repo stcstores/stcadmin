@@ -7,6 +7,7 @@ from .order_details_update import OrderDetailsUpdate, OrderDetailsUpdateError
 from .order_update import OrderUpdate
 from .packing_record import PackingRecord
 from .product_sale import ProductSale
+from .refund import Refund, RefundReason
 
 __all__ = [
     "Breakage",
@@ -18,4 +19,6 @@ __all__ = [
     "OrderUpdate",
     "PackingRecord",
     "ProductSale",
+    "Refund",
+    "RefundReason",
 ]

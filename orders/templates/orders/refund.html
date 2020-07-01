@@ -1,0 +1,34 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}{{ block.super }}
+
+<h2>Order: {{ order.order_ID }}</h2>
+<p>Tracking Number: {{ order.tracking_number }}</p>
+<p>Dispatched at: {{ order.dispatched_at|date:"Y-m-d" }}</p>
+<p>Packed By: {{ packing_record.packed_by }}</p>
+
+<h2>Product</h2>
+<p>SKU: {{ product.sku }}</p>
+<p>Name: {{ product.name }}</p>
+<p>Applies to {{ refund.number_applied_to }} of {{ product.quantity }}</p>
+
+{% if products|length > 1 %}
+<h3>Also in this order</h3>
+<table id="product_list">
+{% for other_product in products %}
+{% if other_product != product %}{% endif %}
+<tr>
+    <td>{{ other_product.sku }}</td>
+    <td>{{ other_product.name }}</td>
+    <td>&times; {{ other_product.quantity }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+<form action="" method="POST">{% csrf_token %}
+{{ form.as_p }}
+<button>Submit</button>
+</form>
+
+{% endblock content %}

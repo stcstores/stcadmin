@@ -7,6 +7,7 @@ from django.db.models import Count, Q
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, reverse
 from django.utils import timezone
+from django.views.generic import FormView
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
@@ -287,4 +288,114 @@ class OrderProfit(OrdersUserMixin, TemplateView):
         order_id = self.kwargs.get("order_id")
         context["order"] = get_object_or_404(models.Order, id=order_id)
         context["products"] = context["order"].productsale_set.all()
+        return context
+
+
+class RefundList(OrdersUserMixin, ListView):
+    """Display a filterable list of orders."""
+
+    template_name = "orders/refund_list.html"
+    model = models.Refund
+    paginate_by = 50
+    orphans = 3
+    form_class = forms.RefundListFilter
+
+    def get(self, *args, **kwargs):
+        """Instanciate the form."""
+        self.form = self.form_class(self.request.GET)
+        return super().get(*args, **kwargs)
+
+    def get_queryset(self):
+        """Return a queryset of orders based on GET data."""
+        if self.form.is_valid():
+            return self.form.get_queryset().select_related("order", "product")
+        return []
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the template context."""
+        context = super().get_context_data(*args, **kwargs)
+        context["form"] = self.form
+        context["page_range"] = self.get_page_range(context["paginator"])
+        return context
+
+    def get_page_range(self, paginator):
+        """Return a list of pages to link to."""
+        if paginator.num_pages < 11:
+            return list(range(1, paginator.num_pages + 1))
+        else:
+            return list(range(1, 11)) + [paginator.num_pages]
+
+
+class CreateRefundOrderSelect(OrdersUserMixin, FormView):
+    """View for selecting orders for which a refund will be created."""
+
+    template_name = "orders/create_refund_order_select.html"
+    form_class = forms.RefundOrderSelect
+
+    def form_valid(self, form):
+        """Get the submitted order ID."""
+        self.order_ID = form.cleaned_data["order"].order_ID
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the URL to redirect to after a successfull submission."""
+        return reverse("orders:create_refund", args=[self.order_ID])
+
+
+class CreateRefund(OrdersUserMixin, FormView):
+    """View for creating new refunds."""
+
+    template_name = "orders/create_refund.html"
+    form_class = forms.CreateRefund
+
+    def get_form_kwargs(self, *args, **kwargs):
+        """Return the form kwargs."""
+        self.order = get_object_or_404(models.Order, order_ID=self.kwargs["order_ID"])
+        form_kwargs = super().get_form_kwargs(*args, **kwargs)
+        form_kwargs["order"] = self.order
+        return form_kwargs
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["order"] = self.order
+        context["products"] = self.order.productsale_set.all()
+        context["packing_record"] = get_object_or_404(
+            models.PackingRecord, order=self.order
+        )
+        return context
+
+    def form_valid(self, form):
+        """Create a new refund and redirect."""
+        data = form.cleaned_data
+        self.refund = models.Refund(
+            order=self.order,
+            product=data["product"],
+            reason=data["reason"],
+            number_applied_to=data["quantity"],
+        )
+        self.refund.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the URL to redirect to after a sucessfull form submission."""
+        return reverse("orders:refund_list")
+
+
+class Refund(OrdersUserMixin, TemplateView):
+    """View for refunds."""
+
+    template_name = "orders/refund.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        refund = get_object_or_404(models.Refund, pk=self.kwargs["pk"])
+        context["refund"] = refund
+        context["order"] = refund.order
+        context["product"] = refund.product
+        context["products"] = refund.order.productsale_set.all()
+        context["packing_record"] = get_object_or_404(
+            models.PackingRecord, order=refund.order
+        )
         return context
