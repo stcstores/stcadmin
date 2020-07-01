@@ -270,7 +270,7 @@ description = "A high-level Python Web framework that encourages rapid developme
 name = "django"
 optional = false
 python-versions = ">=3.6"
-version = "3.0.7"
+version = "3.0.8"
 
 [package.dependencies]
 asgiref = ">=3.2,<4.0"
@@ -641,23 +641,6 @@ version = "3.0.4"
 [package.dependencies]
 et-xmlfile = "*"
 jdcal = "*"
-
-[[package]]
-category = "main"
-description = ""
-name = "order-profit"
-optional = false
-python-versions = "^3.8"
-version = "0.1.0"
-
-[package.dependencies]
-ccapi = "branch master"
-tabler = "^2.4.0"
-
-[package.source]
-reference = "c5ba020680ee5cb69639210911079dd733d6dd83"
-type = "git"
-url = "https://github.com/stcstores/order_profit.git"
 
 [[package]]
 category = "main"
@@ -1144,7 +1127,7 @@ python-versions = "*"
 version = "1.2.9"
 
 [metadata]
-content-hash = "922dfdeee993074637d1ce279ee995358ae679ff7f48a511fab158ef6f0d2471"
+content-hash = "955a9b5b866e25b3505843e88805893f61a19fba16817732051cd1a3bc54b444"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -1253,8 +1236,8 @@ defusedxml = [
     {file = "defusedxml-0.6.0.tar.gz", hash = "sha256:f684034d135af4c6cbb949b8a4d2ed61634515257a67299e5f940fbaa34377f5"},
 ]
 django = [
-    {file = "Django-3.0.7-py3-none-any.whl", hash = "sha256:e1630333248c9b3d4e38f02093a26f1e07b271ca896d73097457996e0fae12e8"},
-    {file = "Django-3.0.7.tar.gz", hash = "sha256:5052b34b34b3425233c682e0e11d658fd6efd587d11335a0203d827224ada8f2"},
+    {file = "Django-3.0.8-py3-none-any.whl", hash = "sha256:5457fc953ec560c5521b41fad9e6734a4668b7ba205832191bbdff40ec61073c"},
+    {file = "Django-3.0.8.tar.gz", hash = "sha256:31a5fbbea5fc71c99e288ec0b2f00302a0a92c44b13ede80b73a6a4d6d205582"},
 ]
 django-admin-sortable2 = [
     {file = "django-admin-sortable2-0.7.6.tar.gz", hash = "sha256:caf158310cba75888d5e2494f0a7e52b9b43b90d22e12798023bbe8dae51243b"},
@@ -1403,7 +1386,6 @@ odfpy = [
 openpyxl = [
     {file = "openpyxl-3.0.4-py2.py3-none-any.whl", hash = "sha256:6e62f058d19b09b95d20ebfbfb04857ad08d0833190516c1660675f699c6186f"},
 ]
-order-profit = []
 packaging = [
     {file = "packaging-20.3-py2.py3-none-any.whl", hash = "sha256:82f77b9bee21c1bafbf35a84905d604d5d1223801d639cf3ed140bd651c08752"},
     {file = "packaging-20.3.tar.gz", hash = "sha256:3c292b474fda1671ec57d46d739d072bfd495a4f51ad01a055121d81e952b7a3"},
