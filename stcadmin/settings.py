@@ -71,6 +71,7 @@ SECURED_MAIL_DOCKET_EMAIL_ADDRESS = get_config("SECURED_MAIL_DOCKET_EMAIL_ADDRES
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
+    "polymorphic",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",

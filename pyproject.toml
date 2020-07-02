@@ -29,6 +29,7 @@ labeler = {git = "https://github.com/lukeshiner/labeler.git"}
 list-input = {git = "https://github.com/lukeshiner/list_input.git"}
 django-solo = "^1.1.3"
 celery = "^4.4.2"
+django-polymorphic = "^2.1.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.3.5"

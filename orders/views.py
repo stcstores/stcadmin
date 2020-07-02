@@ -3,12 +3,13 @@ import csv
 import io
 from datetime import timedelta
 
+from django.db import transaction
 from django.db.models import Count, Q
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, reverse
 from django.utils import timezone
 from django.views.generic import FormView
-from django.views.generic.base import TemplateView, View
+from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
@@ -294,19 +295,25 @@ class OrderProfit(OrdersUserMixin, TemplateView):
 class RefundList(OrdersUserMixin, ListView):
     """Display a filterable list of orders."""
 
-    template_name = "orders/refund_list.html"
+    template_name = "orders/refunds/refund_list.html"
     model = models.Refund
     paginate_by = 50
     orphans = 3
-    form_class = forms.RefundListFilter
+    # form_class = forms.RefundListFilter
 
     def get(self, *args, **kwargs):
         """Instanciate the form."""
-        self.form = self.form_class(self.request.GET)
+        # self.form = self.form_class(self.request.GET)
         return super().get(*args, **kwargs)
 
     def get_queryset(self):
         """Return a queryset of orders based on GET data."""
+        return (
+            models.Refund.objects.all()
+            .prefetch_related("products", "order__productsale_set")
+            .select_related("order", "order__channel", "order")
+            .order_by("order__dispatched_at")
+        )
         if self.form.is_valid():
             return self.form.get_queryset().select_related("order", "product")
         return []
@@ -314,7 +321,7 @@ class RefundList(OrdersUserMixin, ListView):
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
         context = super().get_context_data(*args, **kwargs)
-        context["form"] = self.form
+        # context["form"] = self.form
         context["page_range"] = self.get_page_range(context["paginator"])
         return context
 
@@ -326,66 +333,32 @@ class RefundList(OrdersUserMixin, ListView):
             return list(range(1, 11)) + [paginator.num_pages]
 
 
-class CreateRefundOrderSelect(OrdersUserMixin, FormView):
+class CreateRefund(OrdersUserMixin, FormView):
     """View for selecting orders for which a refund will be created."""
 
-    template_name = "orders/create_refund_order_select.html"
-    form_class = forms.RefundOrderSelect
+    template_name = "orders/refunds/create_refund_order_select.html"
+    form_class = forms.CreateRefund
 
     def form_valid(self, form):
         """Get the submitted order ID."""
-        self.order_ID = form.cleaned_data["order"].order_ID
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        """Return the URL to redirect to after a successfull submission."""
-        return reverse("orders:create_refund", args=[self.order_ID])
-
-
-class CreateRefund(OrdersUserMixin, FormView):
-    """View for creating new refunds."""
-
-    template_name = "orders/create_refund.html"
-    form_class = forms.CreateRefund
-
-    def get_form_kwargs(self, *args, **kwargs):
-        """Return the form kwargs."""
-        self.order = get_object_or_404(models.Order, order_ID=self.kwargs["order_ID"])
-        form_kwargs = super().get_form_kwargs(*args, **kwargs)
-        form_kwargs["order"] = self.order
-        return form_kwargs
-
-    def get_context_data(self, *args, **kwargs):
-        """Return context for the template."""
-        context = super().get_context_data(*args, **kwargs)
-        context["order"] = self.order
-        context["products"] = self.order.productsale_set.all()
-        context["packing_record"] = get_object_or_404(
-            models.PackingRecord, order=self.order
-        )
-        return context
-
-    def form_valid(self, form):
-        """Create a new refund and redirect."""
-        data = form.cleaned_data
-        self.refund = models.Refund(
-            order=self.order,
-            product=data["product"],
-            reason=data["reason"],
-            number_applied_to=data["quantity"],
-        )
-        self.refund.save()
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        """Return the URL to redirect to after a sucessfull form submission."""
-        return reverse("orders:refund_list")
+        order = form.cleaned_data["order"]
+        refund_type = form.cleaned_data["refund_type"]
+        refund_class = form.refund_types[refund_type]
+        products = order.productsale_set.all()
+        if products.count() == 1 and products[0].quantity == 1:
+            refund = refund_class(order=order)
+            refund.save()
+            return HttpResponseRedirect(refund.get_absolute_url())
+        else:
+            return HttpResponseRedirect(
+                reverse("orders:select_refund_products", args=[refund_type, order.pk])
+            )
 
 
 class Refund(OrdersUserMixin, TemplateView):
     """View for refunds."""
 
-    template_name = "orders/refund.html"
+    template_name = "orders/refunds/refund.html"
 
     def get_context_data(self, *args, **kwargs):
         """Return context for the template."""
@@ -393,9 +366,88 @@ class Refund(OrdersUserMixin, TemplateView):
         refund = get_object_or_404(models.Refund, pk=self.kwargs["pk"])
         context["refund"] = refund
         context["order"] = refund.order
-        context["product"] = refund.product
-        context["products"] = refund.order.productsale_set.all()
-        context["packing_record"] = get_object_or_404(
-            models.PackingRecord, order=refund.order
+        refund_products = refund.products.all()
+        context["products"] = refund_products
+        context["other_products"] = refund.order.productsale_set.exclude(
+            id__in=[refund_product.product.id for refund_product in refund_products]
         )
+        # context["packing_record"] = get_object_or_404(
+        #     models.PackingRecord, order=refund.order
+        # )
         return context
+
+
+class MarkRefundContacted(OrdersUserMixin, RedirectView):
+    """View for marking refunds as contacted."""
+
+    def get_redirect_url(self, pk):
+        """Mark the refund as contacted and redirect to it's page."""
+        refund = get_object_or_404(models.Refund, id=pk)
+        refund.contact_contacted = True
+        refund.save()
+        return refund.get_absolute_url()
+
+
+class MarkRefundAccepted(OrdersUserMixin, RedirectView):
+    """View for marking refunds as rejected."""
+
+    def get_redirect_url(self, pk):
+        """Mark the refund as contacted and redirect to it's page."""
+        refund = get_object_or_404(models.Refund, id=pk)
+        refund.refund_amount = int(float(self.request.GET["refund_amount"]) * 100)
+        refund.refund_accepted = True
+        refund.save()
+        return refund.get_absolute_url()
+
+
+class MarkRefundRejected(OrdersUserMixin, RedirectView):
+    """View for marking refunds as rejected."""
+
+    def get_redirect_url(self, pk):
+        """Mark the refund as contacted and redirect to it's page."""
+        refund = get_object_or_404(models.Refund, id=pk)
+        refund.refund_accepted = False
+        refund.save()
+        return refund.get_absolute_url()
+
+
+class SelectRefundProducts(OrdersUserMixin, FormView):
+    """View for creating refunds with multiple products."""
+
+    form_class = forms.RefundProductFormset
+    template_name = "orders/refunds/product_form.html"
+
+    def get_form_kwargs(self, *args, **kwargs):
+        """Return kwargs for the formset."""
+        self.refund_type = self.kwargs.get("refund_type")
+        self.refund_class = forms.CreateRefund.refund_types[self.refund_type]
+        self.order = get_object_or_404(models.Order, pk=self.kwargs.get("order_pk"))
+        products = self.order.productsale_set.all()
+        form_kwargs = super().get_form_kwargs(*args, **kwargs)
+        form_kwargs["form_kwargs"] = [{"product_sale": product} for product in products]
+        return form_kwargs
+
+    def form_valid(self, formset):
+        """Create a refund."""
+        with transaction.atomic():
+            self.refund = self.refund_class(order=self.order)
+            self.refund.save()
+            for form in formset:
+                refund_quantity = form.cleaned_data["quantity"]
+                if refund_quantity > 0:
+                    models.ProductRefund(
+                        refund=self.refund,
+                        product=form.product_sale,
+                        quantity=refund_quantity,
+                    ).save()
+        return super().form_valid(formset)
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["formset"] = context.pop("form")
+        return context
+
+    def get_success_url(self):
+        """Return the URL to redirect to after a succesfull form submission."""
+        return self.refund.get_absolute_url()

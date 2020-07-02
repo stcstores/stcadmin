@@ -137,27 +137,3 @@ class OrderDetailsUpdateErrorAdmin(admin.ModelAdmin):
 
     fields = ("update", "product_sale", "text")
     list_display = ("update", "product_sale", "text")
-
-
-@admin.register(models.RefundReason)
-class RefundRasonAdmin(admin.ModelAdmin):
-    """Admin for the RefundReason model."""
-
-    fields = ("name", "contact_name", "auto_close")
-    list_display = ("id", "name", "contact_name", "auto_close")
-    list_editable = ("name", "contact_name", "auto_close")
-
-
-@admin.register(models.Refund)
-class RefundAdmin(admin.ModelAdmin):
-    """Admin for the Refund model."""
-
-    fields = (
-        "order",
-        "product",
-        "reason",
-        "contact_contacted",
-        "refund_accepted",
-        "refund_amount",
-        "closed",
-    )

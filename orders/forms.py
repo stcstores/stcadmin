@@ -7,6 +7,7 @@ from django.utils.timezone import make_aware
 
 from orders import models
 from shipping.models import Country
+from stcadmin.forms import KwargFormSet
 
 
 class ChartSettingsForm(forms.Form):
@@ -98,10 +99,37 @@ class RefundListFilter(forms.Form):
         return models.Refund.objects.filter(**kwargs).order_by("-order__dispatched_at")
 
 
-class RefundOrderSelect(forms.Form):
+class CreateRefund(forms.Form):
     """Form for selecting an order for which a refund will be created."""
 
+    BROKEN = "broken"
+    PACKING_MISTAKE = "packing_mistake"
+    LINKING_MISTAKE = "linking_mistake"
+    LOST_IN_POST = "lost_in_post"
+    DEMIC = "demic"
+
+    refund_types = {
+        BROKEN: models.BreakageRefund,
+        PACKING_MISTAKE: models.PackingMistakeRefund,
+        LINKING_MISTAKE: models.LinkingMistakeRefund,
+        LOST_IN_POST: models.LostInPostRefund,
+        DEMIC: models.DemicRefund,
+    }
+
     order_ID = forms.CharField()
+    refund_type = forms.ChoiceField(
+        choices=(
+            (BROKEN, "Broken - An item was broken when in transit"),
+            (PACKING_MISTAKE, "Packing Mistake - The wrong item was sent"),
+            (
+                LINKING_MISTAKE,
+                "Linking Mistake - The wrong item was sent due to a linking error",
+            ),
+            (LOST_IN_POST, "Lost in Post - The item never arrived"),
+            (DEMIC, "Demic - We recieved the item in an unsalable state"),
+        ),
+        widget=forms.RadioSelect(),
+    )
 
     def clean(self):
         """Validate form data."""
@@ -115,25 +143,28 @@ class RefundOrderSelect(forms.Form):
         return cleaned_data
 
 
-class CreateRefund(forms.Form):
-    """Form for creating new refunds."""
+class RefundProductSelectForm(forms.Form):
+    """Form for adding products to a refund."""
 
-    product = forms.CharField(required=False, widget=forms.HiddenInput)
-    quantity = forms.CharField(required=False, widget=forms.HiddenInput)
-    reason = forms.ModelChoiceField(models.RefundReason.objects.all())
+    product_sale_id = forms.CharField(widget=forms.HiddenInput())
+    quantity = forms.IntegerField(min_value=0)
 
     def __init__(self, *args, **kwargs):
-        """Get the order for which the refund applies."""
-        self.order = kwargs.pop("order")
+        """Set the initial and max quantity."""
+        self.product_sale = kwargs.pop("product_sale")
         super().__init__(*args, **kwargs)
+        self.fields["quantity"].max_value = self.product_sale.quantity
+        self.initial = self.get_initial()
 
-    def clean_product(self):
-        """Add the ProductSale object to cleaned data."""
-        product_ID = self.cleaned_data["product"]
-        try:
-            product = models.ProductSale.objects.get(id=product_ID)
-        except models.ProductSale.DoesNotExist:
-            raise ValidationError("Product not found")
-        if product.order != self.order:
-            raise ValidationError("Product belongs to the wrong order")
-        return product
+    def get_initial(self):
+        """Return the initial values for the form."""
+        return {
+            "product_sale_id": self.product_sale.id,
+            "quantity": self.product_sale.quantity,
+        }
+
+
+class RefundProductFormset(KwargFormSet):
+    """Form set for adding products to refunds."""
+
+    form = RefundProductSelectForm

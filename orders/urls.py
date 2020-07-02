@@ -41,15 +41,26 @@ urlpatterns = [
         "order_profit/<int:order_id>/", views.OrderProfit.as_view(), name="order_profit"
     ),
     path("refund_list/", views.RefundList.as_view(), name="refund_list"),
-    path(
-        "create_refund_order_select/",
-        views.CreateRefundOrderSelect.as_view(),
-        name="create_refund_order_select",
-    ),
-    path(
-        "create_refund/<int:order_ID>/",
-        views.CreateRefund.as_view(),
-        name="create_refund",
-    ),
+    path("create_refund/", views.CreateRefund.as_view(), name="create_refund",),
     path("refund/<int:pk>/", views.Refund.as_view(), name="refund"),
+    path(
+        "refund/<int:pk>/mark_contacted/",
+        views.MarkRefundContacted.as_view(),
+        name="mark_refund_contacted",
+    ),
+    path(
+        "refund/<int:pk>/mark_accepted/",
+        views.MarkRefundAccepted.as_view(),
+        name="mark_refund_accepted",
+    ),
+    path(
+        "refund/<int:pk>/mark_rejected/",
+        views.MarkRefundRejected.as_view(),
+        name="mark_refund_rejected",
+    ),
+    path(
+        "refund/select_products/<str:refund_type>/<int:order_pk>/",
+        views.SelectRefundProducts.as_view(),
+        name="select_refund_products",
+    ),
 ]

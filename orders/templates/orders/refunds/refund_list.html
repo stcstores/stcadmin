@@ -3,7 +3,7 @@
 
 <h1>Refunds</h1>
 
-<a href="{% url 'orders:create_refund_order_select' %}"><button>Create Refund</button></a>
+<a href="{% url 'orders:create_refund' %}"><button>Create Refund</button></a>
 <form action="" method="GET">
     <div class="filter">
         {{ form.as_p }}
@@ -26,15 +26,25 @@
         </tr>
     {% for refund in object_list %}
         <tr class="order">
-            <th>{{ refund.order.order_ID }} </th>
+            <th>{{ refund.order.order_ID }}</th>
             <td>{{ refund.order.dispatched_at|date:"Y-m-d" }}</td>
             <td>{{ refund.order.department}}</td>
             <td>{{ refund.order.channel }}</td>
-            <td>{{ refund.reason.name }}</td>
+            <td>{{ refund.reason }}</td>
             <td>
-                
+                {% if refund.contact_contacted is False %}
+                Not Contacted
+                {% else %}
+                    {% if refund.refund_accepted is True %}
+                    <span class="success">Accepted</span>
+                    {% elif refund.refund_accepted is False %}
+                    <span class="error">Rejected</span>
+                    {% else %}
+                    Awaiting Response
+                    {% endif %}
+                {% endif %}
             </td>
-            <td><a href="{{ refund.get_absolute_url }}">View</a></td>
+            <td><a href="{{ refund.get_absolute_url }}" target="_blank">View</a></td>
         </tr>
     {% endfor %}
     </table>
