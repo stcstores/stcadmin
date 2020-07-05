@@ -454,7 +454,7 @@ description = "Python humanize utilities"
 name = "humanize"
 optional = false
 python-versions = ">=3.5"
-version = "2.4.1"
+version = "2.5.0"
 
 [package.extras]
 tests = ["freezegun", "pytest", "pytest-cov"]
@@ -1295,8 +1295,8 @@ gunicorn = [
     {file = "gunicorn-20.0.4.tar.gz", hash = "sha256:1904bb2b8a43658807108d59c3f3d56c2b6121a701161de0ddf9ad140073c626"},
 ]
 humanize = [
-    {file = "humanize-2.4.1-py3-none-any.whl", hash = "sha256:e01d52a6d597f125f99abedf91742ef6020dea6b88cb8d0f04744805ecd828e2"},
-    {file = "humanize-2.4.1.tar.gz", hash = "sha256:4b4ce2fc1c9d79c63f68009ddf5a12ad238aa78e2fceb256b5aa921763551422"},
+    {file = "humanize-2.5.0-py3-none-any.whl", hash = "sha256:89062c6db8601693b7d223443d0d7529aa9577df43a1387ddd4b9c273abb4a51"},
+    {file = "humanize-2.5.0.tar.gz", hash = "sha256:8a68bd9bccb899fd9bfb1e6d96c1e84e4475551cc9a5b5bdbd69b9b1cfd19c80"},
 ]
 idna = [
     {file = "idna-2.9-py2.py3-none-any.whl", hash = "sha256:a068a21ceac8a4d63dbfd964670474107f541babbd2250d61922f029858365fa"},
@@ -1385,6 +1385,7 @@ odfpy = [
 ]
 openpyxl = [
     {file = "openpyxl-3.0.4-py2.py3-none-any.whl", hash = "sha256:6e62f058d19b09b95d20ebfbfb04857ad08d0833190516c1660675f699c6186f"},
+    {file = "openpyxl-3.0.4.tar.gz", hash = "sha256:d88dd1480668019684c66cfff3e52a5de4ed41e9df5dd52e008cbf27af0dbf87"},
 ]
 packaging = [
     {file = "packaging-20.3-py2.py3-none-any.whl", hash = "sha256:82f77b9bee21c1bafbf35a84905d604d5d1223801d639cf3ed140bd651c08752"},
