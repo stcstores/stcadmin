@@ -271,7 +271,9 @@ class Order(models.Model):
 
     def vat_paid(self):
         """Return the VAT paid on the order."""
-        return sum((sale._vat_paid() for sale in self.productsale_set.all()))
+        if self.country.vat_is_required():
+            return sum((sale._vat_paid() for sale in self.productsale_set.all()))
+        return 0
 
     def channel_fee_paid(self):
         """Return the channel fee for the order."""
