@@ -10,7 +10,7 @@ def order_details_update(order_details_update_factory):
 
 @pytest.fixture
 def product_sale(product_sale_factory):
-    return product_sale_factory.create()
+    return product_sale_factory.create(details_success=None)
 
 
 @pytest.fixture
