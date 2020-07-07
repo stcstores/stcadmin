@@ -51,6 +51,7 @@
                     ERROR
                 {% else %}
                     <a href="{% url 'orders:order_profit' order.id %}">
+                        {% format_price order.profit %}&nbsp;
                         {% format_percentage order.profit_percentage %}
                     </a>
                 {% endif %}
