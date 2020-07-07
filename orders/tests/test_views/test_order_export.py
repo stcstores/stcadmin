@@ -22,8 +22,19 @@ def valid_get_response_content(url, valid_get_request):
 
 
 @pytest.fixture
-def order(order_factory):
-    return order_factory.create()
+def order(order_factory, product_sale_factory):
+    order = order_factory.create()
+    product_sale_factory.create(order=order)
+    return order
+
+
+@pytest.fixture
+def undispatched_order(order_factory, product_sale_factory):
+    order = order_factory.create(
+        dispatched_at=None, postage_price=None, postage_price_success=None
+    )
+    product_sale_factory.create(order=order, details_success=None)
+    return order
 
 
 @pytest.fixture
@@ -72,15 +83,48 @@ def test_export_contains_order(order, valid_get_response, export_rows):
     assert contents[1] == [
         order.order_ID,
         order.recieved_at.strftime("%Y-%m-%d"),
+        order.dispatched_at.strftime("%Y-%m-%d"),
         order.country.name,
         order.channel.name,
         order.tracking_number,
         order.shipping_rule.name,
         order.courier_service.name,
+        f"{order.total_paid_GBP/100:.2f}",
+        order.department(),
+        str(order.total_weight()),
+        str(order.postage_price),
+        str(order.vat_paid()),
+        f"{order.channel_fee_paid()/100:.2f}",
+        f"{order.purchase_price()/100:.2f}",
+        f"{order.profit()/100:.2f}",
+        str(order.profit_percentage()),
     ]
 
 
 @pytest.mark.django_db
+def test_export_undispatched_order(undispatched_order, valid_get_response, export_rows):
+    contents = export_rows(valid_get_response)
+    assert contents[1] == [
+        undispatched_order.order_ID,
+        undispatched_order.recieved_at.strftime("%Y-%m-%d"),
+        "UNDISPATCHED",
+        undispatched_order.country.name,
+        undispatched_order.channel.name,
+        undispatched_order.tracking_number,
+        undispatched_order.shipping_rule.name,
+        undispatched_order.courier_service.name,
+        f"{undispatched_order.total_paid_GBP/100:.2f}",
+        undispatched_order.department(),
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+    ]
+
+
 @pytest.mark.django_db
 def test_country_filter(order_factory, url, group_logged_in_client, export_rows):
     order = order_factory.create()

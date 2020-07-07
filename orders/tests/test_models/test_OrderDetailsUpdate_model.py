@@ -170,7 +170,7 @@ def test_is_in_progress_returns_False_when_an_update_is_not_in_progress(
 @pytest.mark.django_db
 @patch("orders.models.order_details_update.ProductSale.update_details")
 def test_update_product_details(mock_update_details, product_sale_factory):
-    product_sale_factory.create()
+    product_sale_factory.create(details_success=None)
     models.OrderDetailsUpdate.objects.start_update()
     mock_update_details.assert_called_once()
 
@@ -181,8 +181,8 @@ def test_update_product_details_does_not_stop_for_errors(
     mock_update_details, product_sale_factory,
 ):
     mock_update_details.side_effect = Exception
-    product_sale_factory.create()
-    product_sale_factory.create()
+    product_sale_factory.create(details_success=None)
+    product_sale_factory.create(details_success=None)
     models.OrderDetailsUpdate.objects.start_update()
     assert len(mock_update_details.mock_calls) == 2
 
@@ -194,7 +194,7 @@ def test_update_creates_order_details_update_error_object(
 ):
     error_text = "Exception Text"
     mock_update_details.side_effect = Exception(error_text)
-    product_sale = product_sale_factory.create()
+    product_sale = product_sale_factory.create(details_success=None)
     models.OrderDetailsUpdate.objects.start_update()
     assert models.OrderDetailsUpdateError.objects.filter(
         product_sale=product_sale, text=error_text

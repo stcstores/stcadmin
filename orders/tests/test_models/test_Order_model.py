@@ -1026,11 +1026,20 @@ def test_update_postage_prices(
 
 @pytest.mark.django_db
 def test_vat_paid(order_factory, product_sale_factory):
-    order = order_factory.create()
+    order = order_factory.create(country__vat_required=True)
     product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=20)
     product_sale_factory.create(order=order, price=550, quantity=2, vat_rate=20)
     product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=0)
     assert order.vat_paid() == 274
+
+
+@pytest.mark.django_db
+def test_vat_paid_returns_zero_if_vat_not_required(order_factory, product_sale_factory):
+    order = order_factory.create(country__vat_required=False)
+    product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=20)
+    product_sale_factory.create(order=order, price=550, quantity=2, vat_rate=20)
+    product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=0)
+    assert order.vat_paid() == 0
 
 
 @pytest.mark.django_db
