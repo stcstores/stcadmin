@@ -75,4 +75,14 @@ class OrderListFilter(forms.Form):
             qs = qs.undispatched()
         if self.cleaned_data["profit_calculable_only"] is True:
             qs = qs.profit_calculable()
-        return qs.order_by("-recieved_at")
+        return (
+            qs.order_by("-recieved_at")
+            .prefetch_related("productsale_set", "productsale_set__department")
+            .select_related(
+                "shipping_rule",
+                "courier_service",
+                "channel",
+                "country",
+                "country__region",
+            )
+        )
