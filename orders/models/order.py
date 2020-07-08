@@ -81,9 +81,10 @@ class OrderManager(models.Manager):
 
     def _update_sales(self, order_obj, order):
         """Add product sales to the ProductSale model."""
+        exchange_rate = float(order.total_gross_gbp) / float(order.total_gross)
         for product in order.products:
-            price = int(product.price * 100)
-            weight = int(product.per_item_weight)
+            price = round(product.price * exchange_rate * 100)
+            weight = round(product.per_item_weight)
             sale, _ = ProductSale.objects.get_or_create(
                 order=order_obj,
                 product_ID=product.product_id,
@@ -271,7 +272,9 @@ class Order(models.Model):
 
     def vat_paid(self):
         """Return the VAT paid on the order."""
-        return sum((sale._vat_paid() for sale in self.productsale_set.all()))
+        if self.country.vat_is_required():
+            return sum((sale._vat_paid() for sale in self.productsale_set.all()))
+        return 0
 
     def channel_fee_paid(self):
         """Return the channel fee for the order."""

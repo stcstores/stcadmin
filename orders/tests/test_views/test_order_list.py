@@ -136,6 +136,73 @@ def test_order_ID_filter(country_factory, order_factory, url, group_logged_in_cl
     assert other_order.order_ID not in content
 
 
+@pytest.mark.django_db
+def test_filter_status_any(order_factory, url, group_logged_in_client):
+    orders = [
+        order_factory.create(
+            dispatched_at=timezone.make_aware(datetime(2019, 12, 4, 23, 59))
+        ),
+        order_factory.create(dispatched_at=None),
+    ]
+    response = group_logged_in_client.get(url, {"status": "any"})
+    content = response.content.decode("utf8")
+    for order in orders:
+        assert order.order_ID in content
+
+
+@pytest.mark.django_db
+def test_filter_status_dispatched(order_factory, url, group_logged_in_client):
+    orders = [
+        order_factory.create(
+            dispatched_at=timezone.make_aware(datetime(2019, 12, 4, 23, 59))
+        ),
+        order_factory.create(dispatched_at=None),
+    ]
+    response = group_logged_in_client.get(url, {"status": "dispatched"})
+    content = response.content.decode("utf8")
+    assert orders[0].order_ID in content
+    assert orders[1].order_ID not in content
+
+
+@pytest.mark.django_db
+def test_filter_status_undispatched(order_factory, url, group_logged_in_client):
+    orders = [
+        order_factory.create(
+            dispatched_at=timezone.make_aware(datetime(2019, 12, 4, 23, 59))
+        ),
+        order_factory.create(dispatched_at=None),
+    ]
+    response = group_logged_in_client.get(url, {"status": "undispatched"})
+    content = response.content.decode("utf8")
+    assert orders[1].order_ID in content
+    assert orders[0].order_ID not in content
+
+
+@pytest.mark.django_db
+def test_filter_profit_calculable_only_true(
+    order_factory, product_sale_factory, url, group_logged_in_client
+):
+    order = order_factory.create(postage_price_success=True)
+    product_sale_factory.create(order=order, details_success=True)
+    other_order = order_factory.create(postage_price_success=None)
+    response = group_logged_in_client.get(url, {"profit_calculable_only": True})
+    content = response.content.decode("utf8")
+    assert order.order_ID in content
+    assert other_order.order_ID not in content
+
+
+@pytest.mark.django_db
+def test_filter_profit_calculable_only_False(
+    order_factory, url, group_logged_in_client
+):
+    order = order_factory.create(postage_price_success=None)
+    other_order = order_factory.create(postage_price_success=True)
+    response = group_logged_in_client.get(url, {"profit_calculable_only": False})
+    content = response.content.decode("utf8")
+    assert order.order_ID in content
+    assert other_order.order_ID in content
+
+
 def test_invalid_form(group_logged_in_client, url):
     response = group_logged_in_client.get(url, {"country": 999999})
     assert response.status_code == 200

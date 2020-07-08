@@ -237,11 +237,21 @@ class ExportOrders(OrdersUserMixin, View):
     header = [
         "order_ID",
         "date_recieved",
+        "date_dispatched",
         "country",
         "channel",
         "tracking_number",
         "shipping_rule",
         "courier_service",
+        "total_paid",
+        "department",
+        "weight",
+        "postage_price",
+        "vat",
+        "channel_fee",
+        "purchase_price",
+        "profit",
+        "profit_percentage",
     ]
 
     def get(self, *args, **kwargs):
@@ -267,15 +277,53 @@ class ExportOrders(OrdersUserMixin, View):
 
     def make_row(self, order):
         """Return a row of order data."""
+        if order.is_dispatched():
+            dispatched_at = order.dispatched_at.strftime("%Y-%m-%d")
+        else:
+            dispatched_at = "UNDISPATCHED"
+        if order.profit_calculable():
+            weight = order.total_weight()
+            profit = order.profit()
+            profit_percentage = order.profit_percentage()
+            vat = order.vat_paid()
+            channel_fee = order.channel_fee_paid()
+            purchase_price = order.purchase_price()
+        else:
+            weight = None
+            profit = None
+            profit_percentage = None
+            vat = None
+            channel_fee = None
+            purchase_price = None
+        if order.courier_service is None:
+            courier_service = None
+        else:
+            courier_service = order.courier_service.name
         return [
             order.order_ID,
             order.recieved_at.strftime("%Y-%m-%d"),
+            dispatched_at,
             order.country.name,
             order.channel.name,
             order.tracking_number,
-            order.shipping_rule.name,
-            order.courier_service.name,
+            order.shipping_rule,
+            courier_service,
+            self.format_currency(order.total_paid_GBP),
+            order.department(),
+            weight,
+            order.postage_price,
+            vat,
+            self.format_currency(channel_fee),
+            self.format_currency(purchase_price),
+            self.format_currency(profit),
+            profit_percentage,
         ]
+
+    def format_currency(self, price):
+        """Return a price as a formatted string."""
+        if price is None:
+            return None
+        return f"{price / 100:.2f}"
 
 
 class OrderProfit(OrdersUserMixin, TemplateView):

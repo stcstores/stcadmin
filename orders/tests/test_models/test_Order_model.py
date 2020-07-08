@@ -710,15 +710,16 @@ def test_update_sales(order_factory, mock_CCAPI, mock_order, mock_product):
     mock_order = mock_order(products=products)
     mock_CCAPI.get_orders_for_dispatch.return_value = mock_order
     models.Order.objects._update_sales(order, mock_order)
+    exchange_rate = float(mock_order.total_gross_gbp) / float(mock_order.total_gross)
     for product in products:
         assert models.ProductSale.objects.filter(
             order=order,
             product_ID=product.product_id,
             quantity=product.quantity,
-            price=int(product.price * 100),
+            price=round(product.price * exchange_rate * 100),
             sku=product.sku,
             name=product.product_full_name,
-            weight=int(product.per_item_weight),
+            weight=round(product.per_item_weight),
         ).exists()
 
 
@@ -1026,11 +1027,20 @@ def test_update_postage_prices(
 
 @pytest.mark.django_db
 def test_vat_paid(order_factory, product_sale_factory):
-    order = order_factory.create()
+    order = order_factory.create(country__vat_required=True)
     product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=20)
     product_sale_factory.create(order=order, price=550, quantity=2, vat_rate=20)
     product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=0)
     assert order.vat_paid() == 274
+
+
+@pytest.mark.django_db
+def test_vat_paid_returns_zero_if_vat_not_required(order_factory, product_sale_factory):
+    order = order_factory.create(country__vat_required=False)
+    product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=20)
+    product_sale_factory.create(order=order, price=550, quantity=2, vat_rate=20)
+    product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=0)
+    assert order.vat_paid() == 0
 
 
 @pytest.mark.django_db

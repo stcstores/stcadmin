@@ -21,14 +21,29 @@ class ChartSettingsForm(forms.Form):
 class OrderListFilter(forms.Form):
     """Form for filtering the shipping method list."""
 
+    DISPATCHED = "dispatched"
+    UNDISPATCHED = "undispatched"
+    ANY = "any"
+
     order_ID = forms.CharField(required=False)
-    country = forms.ModelChoiceField(Country.objects.all(), required=False)
+    country = forms.ModelChoiceField(
+        Country.objects.all().order_by("name"), required=False
+    )
     recieved_from = forms.DateField(
         required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
     )
     recieved_to = forms.DateField(
         required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
     )
+    status = forms.ChoiceField(
+        choices=(
+            (ANY, "Any"),
+            (DISPATCHED, "Dispatched"),
+            (UNDISPATCHED, "Undispatched"),
+        ),
+        required=False,
+    )
+    profit_calculable_only = forms.BooleanField(initial=False, required=False)
 
     def clean_recieved_from(self):
         """Return a timezone aware datetime object from the submitted date."""
@@ -55,9 +70,14 @@ class OrderListFilter(forms.Form):
     def get_queryset(self):
         """Return a queryset of orders based on the submitted data."""
         kwargs = self.query_kwargs(self.cleaned_data)
-        return (
-            models.Order.objects.dispatched().filter(**kwargs).order_by("-recieved_at")
-        )
+        qs = models.Order.objects.filter(**kwargs)
+        if self.cleaned_data.get("status") == self.DISPATCHED:
+            qs = qs.dispatched()
+        elif self.cleaned_data.get("status") == self.UNDISPATCHED:
+            qs = qs.undispatched()
+        if self.cleaned_data["profit_calculable_only"] is True:
+            qs = qs.profit_calculable()
+        return qs.order_by("-recieved_at")
 
 
 class RefundListFilter(forms.Form):

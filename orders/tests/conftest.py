@@ -110,6 +110,7 @@ class ProductSaleFactory(factory.DjangoModelFactory):
     department = factory.SubFactory(DepartmentFactory)
     purchase_price = 250
     vat_rate = 20
+    details_success = True
 
 
 @pytest_factoryboy.register

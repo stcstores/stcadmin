@@ -18,7 +18,8 @@
     <table class="orders">
         <tr>
             <th>Order ID</th>
-            <th>Date Recieved</th>
+            <th>Recieved At</th>
+            <th>Dispatched At</th>
             <th>Department</th>
             <th>Country</th>
             <th>Channel</th>
@@ -30,7 +31,13 @@
     {% for order in object_list %}
         <tr class="order">
             <th>{{ order.order_ID }} </th>
-            <td>{{ order.recieved_at|date:"Y-m-d" }}</td>
+            <td>{{ order.recieved_at|date:"Y-m-d H:i" }}</td>
+            <td>{% if order.dispatched_at %}
+                {{ order.dispatched_at|date:"Y-m-d H:i" }}
+                {% else %}
+                UNDISPATCHED
+                {% endif %}
+            </td>
             <td>{{ order.department}}</td>
             <td>{{ order.country }}</td>
             <td>{{ order.channel }}</td>
@@ -44,6 +51,7 @@
                     ERROR
                 {% else %}
                     <a href="{% url 'orders:order_profit' order.id %}">
+                        {% format_price order.profit %}&nbsp;
                         {% format_percentage order.profit_percentage %}
                     </a>
                 {% endif %}
