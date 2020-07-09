@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "adminsortable2",
     "solo",
+    "imagekit",
     "validation",
     "formtools",
     "stcadmin",

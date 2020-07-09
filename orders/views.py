@@ -347,29 +347,32 @@ class RefundList(OrdersUserMixin, ListView):
     model = models.Refund
     paginate_by = 50
     orphans = 3
-    # form_class = forms.RefundListFilter
+    form_class = forms.RefundListFilter
 
     def get(self, *args, **kwargs):
         """Instanciate the form."""
-        # self.form = self.form_class(self.request.GET)
+        self.form = self.form_class(self.request.GET)
         return super().get(*args, **kwargs)
 
     def get_queryset(self):
         """Return a queryset of orders based on GET data."""
-        return (
-            models.Refund.objects.all()
-            .prefetch_related("products", "order__productsale_set")
-            .select_related("order", "order__channel", "order")
-            .order_by("order__dispatched_at")
-        )
         if self.form.is_valid():
-            return self.form.get_queryset().select_related("order", "product")
+            return (
+                self.form.get_queryset()
+                .prefetch_related(
+                    "products",
+                    "order__productsale_set",
+                    "order__productsale_set__department",
+                )
+                .select_related("order", "order__channel", "order")
+                .order_by("order__dispatched_at")
+            )
         return []
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
         context = super().get_context_data(*args, **kwargs)
-        # context["form"] = self.form
+        context["form"] = self.form
         context["page_range"] = self.get_page_range(context["paginator"])
         return context
 
@@ -419,9 +422,9 @@ class Refund(OrdersUserMixin, TemplateView):
         context["other_products"] = refund.order.productsale_set.exclude(
             id__in=[refund_product.product.id for refund_product in refund_products]
         )
-        # context["packing_record"] = get_object_or_404(
-        #     models.PackingRecord, order=refund.order
-        # )
+        context["packing_record"] = get_object_or_404(
+            models.PackingRecord, order=refund.order
+        )
         return context
 
 
@@ -499,3 +502,57 @@ class SelectRefundProducts(OrdersUserMixin, FormView):
     def get_success_url(self):
         """Return the URL to redirect to after a succesfull form submission."""
         return self.refund.get_absolute_url()
+
+
+class RefundImages(OrdersUserMixin, TemplateView):
+    """View for managing refund images."""
+
+    template_name = "orders/refunds/refund_images.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        refund = get_object_or_404(models.Refund, id=self.kwargs.get("pk"))
+        context["refund"] = refund
+        context["refund_images"] = models.RefundImage.objects.filter(
+            refund=refund, product_refund__isnull=True
+        )
+        context["products"] = {}
+        for product in refund.products.all():
+            context["products"][product] = models.RefundImage.objects.filter(
+                refund=refund, product_refund=product
+            )
+        return context
+
+
+class AddRefundImages(OrdersUserMixin, RedirectView):
+    """View for adding images to refunds."""
+
+    def get_redirect_url(self, refund_pk, product_pk=None):
+        """Create refund images and redirect to the images page."""
+        refund = get_object_or_404(models.Refund, pk=refund_pk)
+        if product_pk is not None:
+            product_refund = get_object_or_404(models.ProductRefund, pk=product_pk)
+        else:
+            product_refund = None
+        images = self.request.FILES.getlist("images")
+        for image in images:
+            refund_image = models.RefundImage(
+                refund=refund,
+                product_refund=product_refund,
+                image=image,
+                thumbnail=image,
+            )
+            refund_image.save()
+        return reverse("orders:refund_images", args=[refund_pk])
+
+
+class DeleteRefundImage(OrdersUserMixin, DeleteView):
+    """View for deleting refund images."""
+
+    model = models.RefundImage
+    template_name = "orders/refunds/confirm_refund_image_delete.html"
+
+    def get_success_url(self):
+        """Return the URL to return to after deleting the image."""
+        return reverse("orders:refund_images", args=[self.object.refund.id])

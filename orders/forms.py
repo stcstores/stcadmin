@@ -83,6 +83,40 @@ class OrderListFilter(forms.Form):
 class RefundListFilter(forms.Form):
     """Form for filtering the refund list."""
 
+    ANY = "any"
+    YES = "yes"
+    NO = "no"
+    BOOLEAN_CHOICES = ((ANY, ""), (YES, "Yes"), (NO, "No"))
+
+    BREAKAGE = "breakage"
+    PACKING = "packing"
+    LINKING = "linking"
+    LOST = "lost"
+    DEMIC = "demic"
+    OUT = "out"
+    IN = "in"
+
+    TYPE_CHOICES = (
+        ("", "Any"),
+        (OUT, "Refund to Customer"),
+        (IN, "Refund to Us"),
+        (BREAKAGE, "Breakage"),
+        (PACKING, "Packing Mistake"),
+        (LINKING, "Linking Mistake"),
+        (LOST, "Lost in Post"),
+        (DEMIC, "Demic"),
+    )
+
+    REFUND_TYPES = {
+        OUT: models.RefundOut,
+        IN: models.RefundIn,
+        BREAKAGE: models.BreakageRefund,
+        PACKING: models.PackingMistakeRefund,
+        LINKING: models.LinkingMistakeRefund,
+        LOST: models.LostInPostRefund,
+        DEMIC: models.DemicRefund,
+    }
+
     order_ID = forms.CharField(required=False)
     product_SKU = forms.CharField(required=False)
     dispatched_from = forms.DateField(
@@ -91,6 +125,10 @@ class RefundListFilter(forms.Form):
     dispatched_to = forms.DateField(
         required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
     )
+    refund_type = forms.ChoiceField(choices=TYPE_CHOICES, required=False)
+    contacted = forms.ChoiceField(choices=BOOLEAN_CHOICES, required=False)
+    accepted = forms.ChoiceField(choices=BOOLEAN_CHOICES, required=False)
+    closed = forms.ChoiceField(choices=BOOLEAN_CHOICES, required=False)
 
     def clean_dispatched_from(self):
         """Return a timezone aware datetime object from the submitted date."""
@@ -104,19 +142,54 @@ class RefundListFilter(forms.Form):
         if date is not None:
             return make_aware(datetime.combine(date, datetime.max.time()))
 
+    def clean_contacted(self):
+        """Return selection an bool or None."""
+        value = self.cleaned_data["contacted"]
+        if value == self.YES:
+            return True
+        elif value == self.NO:
+            return False
+        return None
+
+    def clean_accepted(self):
+        """Return selection an bool or None."""
+        value = self.cleaned_data["accepted"]
+        if value == self.YES:
+            return True
+        elif value == self.NO:
+            return False
+        return None
+
+    def clean_closed(self):
+        """Return selection an bool or None."""
+        value = self.cleaned_data["closed"]
+        if value == self.YES:
+            return True
+        elif value == self.NO:
+            return False
+        return None
+
     def query_kwargs(self, data):
         """Return a dict of filter kwargs."""
         kwargs = {
-            "order__dispatched__gte": data.get("recieved_from"),
-            "order__dispatched_at__lte": data.get("recieved_to"),
+            "order__dispatched_at__gte": data.get("dispatched_from"),
+            "order__dispatched_at__lte": data.get("dispatched_to"),
             "order__order_ID": data.get("order_ID") or None,
+            "products__product__sku": data.get("product_SKU") or None,
+            "contact_contacted": data.get("contacted"),
+            "refund_accepted": data.get("accepted"),
+            "closed": data.get("closed"),
         }
         return {key: value for key, value in kwargs.items() if value is not None}
 
     def get_queryset(self):
         """Return a queryset of orders based on the submitted data."""
         kwargs = self.query_kwargs(self.cleaned_data)
-        return models.Refund.objects.filter(**kwargs).order_by("-order__dispatched_at")
+        qs = models.Refund.objects.filter(**kwargs).order_by("-order__dispatched_at")
+        refund_type = self.cleaned_data.get("refund_type")
+        if refund_type:
+            qs = qs.instance_of(self.REFUND_TYPES[refund_type])
+        return qs
 
 
 class CreateRefund(forms.Form):

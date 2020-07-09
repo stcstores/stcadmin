@@ -38,6 +38,8 @@
 {% endif %}
 
 </div>
+<br>
+<a href="{% url 'orders:refund_images' refund.pk %}"><button>Images</button></a>
 
 <table>
 {% for product_refund in products %}

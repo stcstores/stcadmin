@@ -15,6 +15,7 @@ from .refund import (
     PackingMistakeRefund,
     ProductRefund,
     Refund,
+    RefundImage,
     RefundIn,
     RefundOut,
 )
@@ -36,6 +37,7 @@ __all__ = [
     "PackingMistakeRefund",
     "ProductRefund",
     "Refund",
+    "RefundImage",
     "RefundIn",
     "RefundOut",
 ]

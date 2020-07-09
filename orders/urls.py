@@ -63,4 +63,20 @@ urlpatterns = [
         views.SelectRefundProducts.as_view(),
         name="select_refund_products",
     ),
+    path("refund/images/<int:pk>/", views.RefundImages.as_view(), name="refund_images"),
+    path(
+        "refund/add_images/<int:refund_pk>/",
+        views.AddRefundImages.as_view(),
+        name="add_refund_images",
+    ),
+    path(
+        "refund/add_images/<int:refund_pk>/<int:product_pk>/",
+        views.AddRefundImages.as_view(),
+        name="add_refund_images",
+    ),
+    path(
+        "refund/delete_image/<int:pk>/",
+        views.DeleteRefundImage.as_view(),
+        name="delete_refund_image",
+    ),
 ]

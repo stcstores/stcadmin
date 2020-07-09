@@ -1,0 +1,37 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}{{ block.super }}
+
+
+<a href="{{ refund.get_absolute_url }}">Back to Refund</a>
+<h1>Order {{ refund.order.order_ID}} Refund Images</h1>
+
+{% include "orders/refunds/refund_image_list.html" with images=refund_images %}
+
+<form action="{% url 'orders:add_refund_images' refund.id %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+    <input type="file" name="images" multiple>
+</form>
+
+{% for product, images in products.items %}
+<div class="refund_images_product">
+    {{ product.product.sku }} - {{ product.product.name }}
+    {% include "orders/refunds/refund_image_list.html" with images=images %}
+    <form action="{% url 'orders:add_refund_images' refund.id product.id %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+        <input type="file" name="images" multiple>
+    </form>
+</div>
+{% endfor %}
+
+{% endblock content %}
+
+{% block script %}
+
+<script>
+    $(document).ready(function() {
+        $('input[type=file]').change(function() {
+            $(this).closest('form').submit();
+        });
+    });
+</script>
+
+{% endblock script %}
