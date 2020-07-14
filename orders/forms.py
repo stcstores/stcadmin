@@ -22,6 +22,8 @@ class OrderListFilter(forms.Form):
     DISPATCHED = "dispatched"
     UNDISPATCHED = "undispatched"
     ANY = "any"
+    SHOW = "show"
+    HIDE = "hide"
 
     order_ID = forms.CharField(required=False)
     country = forms.ModelChoiceField(
@@ -41,6 +43,11 @@ class OrderListFilter(forms.Form):
         ),
         required=False,
     )
+    contains_EOL_items = forms.ChoiceField(
+        choices=((ANY, "Any"), (SHOW, "Show"), (HIDE, "Hide")),
+        required=False,
+        label="Contains EOL Items",
+    )
     profit_calculable_only = forms.BooleanField(initial=False, required=False)
 
     def clean_recieved_from(self):
@@ -54,6 +61,15 @@ class OrderListFilter(forms.Form):
         date = self.cleaned_data["recieved_to"]
         if date is not None:
             return make_aware(datetime.combine(date, datetime.max.time()))
+
+    def clean_contains_EOL_items(self):
+        """Return bool or None."""
+        value = self.cleaned_data["contains_EOL_items"]
+        if value == self.SHOW:
+            return True
+        if value == self.HIDE:
+            return False
+        return None
 
     def query_kwargs(self, data):
         """Return a dict of filter kwargs."""
@@ -75,4 +91,23 @@ class OrderListFilter(forms.Form):
             qs = qs.undispatched()
         if self.cleaned_data["profit_calculable_only"] is True:
             qs = qs.profit_calculable()
-        return qs.order_by("-recieved_at")
+        if self.cleaned_data["contains_EOL_items"] is True:
+            qs = qs.filter(productsale__end_of_line=True).exclude(
+                productsale__end_of_line__isnull=True
+            )
+        elif self.cleaned_data["contains_EOL_items"] is False:
+            qs = qs.exclude(productsale__end_of_line=True).exclude(
+                productsale__end_of_line__isnull=True
+            )
+        return (
+            qs.order_by("-recieved_at")
+            .prefetch_related("productsale_set", "productsale_set__department")
+            .select_related(
+                "shipping_rule",
+                "courier_service",
+                "channel",
+                "country",
+                "country__region",
+            )
+            .distinct()
+        )

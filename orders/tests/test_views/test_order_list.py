@@ -203,6 +203,45 @@ def test_filter_profit_calculable_only_False(
     assert other_order.order_ID in content
 
 
+@pytest.mark.django_db
+def test_filter_contains_EOL_items_show(
+    order_factory, product_sale_factory, url, group_logged_in_client
+):
+    order = order_factory.create()
+    product_sale_factory.create(order=order, end_of_line=True)
+    product_sale_factory.create(order=order, end_of_line=False)
+    not_eol_order = order_factory.create()
+    product_sale_factory.create(order=not_eol_order, end_of_line=False)
+    unknown_eol_order = order_factory.create()
+    product_sale_factory.create(order=unknown_eol_order, end_of_line=None)
+    response = group_logged_in_client.get(url, {"contains_EOL_items": "show"})
+    content = response.content.decode("utf8")
+    assert order.order_ID in content
+    assert not_eol_order.order_ID not in content
+    assert unknown_eol_order.order_ID not in content
+
+
+@pytest.mark.django_db
+def test_filter_contains_EOL_items_hide(
+    order_factory, product_sale_factory, url, group_logged_in_client
+):
+    order = order_factory.create()
+    product_sale_factory.create(order=order, end_of_line=False)
+    mixed_order = order_factory.create()
+    product_sale_factory.create(order=mixed_order, end_of_line=True)
+    product_sale_factory.create(order=mixed_order, end_of_line=False)
+    eol_order = order_factory.create()
+    product_sale_factory.create(order=eol_order, end_of_line=True)
+    unknown_eol_order = order_factory.create()
+    product_sale_factory.create(order=unknown_eol_order, end_of_line=None)
+    response = group_logged_in_client.get(url, {"contains_EOL_items": "hide"})
+    content = response.content.decode("utf8")
+    assert order.order_ID in content
+    assert mixed_order.order_ID not in content
+    assert eol_order.order_ID not in content
+    assert unknown_eol_order.order_ID not in content
+
+
 def test_invalid_form(group_logged_in_client, url):
     response = group_logged_in_client.get(url, {"country": 999999})
     assert response.status_code == 200

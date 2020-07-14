@@ -204,13 +204,7 @@ class OrderList(OrdersUserMixin, ListView):
     def get_queryset(self):
         """Return a queryset of orders based on GET data."""
         if self.form.is_valid():
-            return (
-                self.form.get_queryset()
-                .prefetch_related("productsale_set")
-                .select_related(
-                    "shipping_rule", "courier_service", "channel", "country"
-                )
-            )
+            return self.form.get_queryset()
         return []
 
     def get_context_data(self, *args, **kwargs):
@@ -309,8 +303,8 @@ class ExportOrders(OrdersUserMixin, View):
             self.format_currency(order.total_paid_GBP),
             order.department(),
             weight,
-            order.postage_price,
-            vat,
+            self.format_currency(order.postage_price),
+            self.format_currency(vat),
             self.format_currency(channel_fee),
             self.format_currency(purchase_price),
             self.format_currency(profit),
