@@ -710,15 +710,16 @@ def test_update_sales(order_factory, mock_CCAPI, mock_order, mock_product):
     mock_order = mock_order(products=products)
     mock_CCAPI.get_orders_for_dispatch.return_value = mock_order
     models.Order.objects._update_sales(order, mock_order)
+    exchange_rate = float(mock_order.total_gross_gbp) / float(mock_order.total_gross)
     for product in products:
         assert models.ProductSale.objects.filter(
             order=order,
             product_ID=product.product_id,
             quantity=product.quantity,
-            price=int(product.price * 100),
+            price=round(product.price * exchange_rate * 100),
             sku=product.sku,
             name=product.product_full_name,
-            weight=int(product.per_item_weight),
+            weight=round(product.per_item_weight),
         ).exists()
 
 
