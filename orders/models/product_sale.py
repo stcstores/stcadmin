@@ -26,6 +26,7 @@ class ProductSale(models.Model):
     )
     purchase_price = models.PositiveIntegerField(blank=True, null=True)
     vat_rate = models.PositiveSmallIntegerField(blank=True, null=True)
+    end_of_line = models.BooleanField(blank=True, null=True)
     details_success = models.BooleanField(blank=True, null=True)
 
     class Meta:
@@ -68,6 +69,7 @@ class ProductSale(models.Model):
         self.purchase_price = int(
             float(product.options["Purchase Price"].value.value) * 100
         )
+        self.end_of_line = bool(product.end_of_line)
         self.save()
 
     def total_weight(self):

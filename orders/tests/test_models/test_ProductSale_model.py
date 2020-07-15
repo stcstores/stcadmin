@@ -70,7 +70,9 @@ def mock_CCAPI():
 
 @pytest.fixture
 def mock_product():
-    def _mock_product(vat_rate_id, department_id, supplier_id, purchase_price):
+    def _mock_product(
+        vat_rate_id, department_id, supplier_id, purchase_price, end_of_line=False
+    ):
         department = Mock(value=Mock(id=int(department_id)))
         supplier = Mock(value=Mock(id=int(supplier_id)))
         purchase_price = Mock(value=Mock(value=float(purchase_price)))
@@ -81,6 +83,7 @@ def mock_product():
                 "Purchase Price": purchase_price,
                 "Supplier": supplier,
             },
+            end_of_line=end_of_line,
         )
 
     return _mock_product
@@ -112,6 +115,7 @@ def new_product_sale(
         supplier=supplier,
         vat_rate=vat_rate,
         purchase_price=purchase_price,
+        end_of_line=True,
     )
     sale.save()
     return sale
@@ -289,6 +293,21 @@ def test_supplier_defaults_null(
 
 
 @pytest.mark.django_db
+def test_sets_end_of_line(new_product_sale):
+    assert new_product_sale.end_of_line is True
+
+
+@pytest.mark.django_db
+def test_end_of_line_defaults_to_null(order, product_ID, sku, name, quantity, price):
+    sale = models.ProductSale(
+        order=order, product_ID=product_ID, sku=sku, quantity=quantity, price=price,
+    )
+    sale.save()
+    sale.refresh_from_db()
+    assert sale.end_of_line is None
+
+
+@pytest.mark.django_db
 def test_sets_details_success(new_product_sale):
     assert new_product_sale.details_success is None
 
@@ -319,6 +338,7 @@ def updated_product(
         department_id=department.product_option_value_ID,
         vat_rate_id=vat_rate_obj.cc_id,
         purchase_price=float(purchase_price) / 100,
+        end_of_line=True,
     )
     product_sale = product_sale_factory.create()
     product_sale.update_details()
@@ -349,6 +369,11 @@ def test_update_details_sets_purchase_price(updated_product, purchase_price):
 @pytest.mark.django_db
 def test_update_details_sets_vat_rate(updated_product, vat_rate):
     assert updated_product.vat_rate == vat_rate
+
+
+@pytest.mark.django_db
+def test_update_details_sets_end_of_line(updated_product):
+    assert updated_product.end_of_line is True
 
 
 @pytest.mark.django_db
