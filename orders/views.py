@@ -5,7 +5,12 @@ from datetime import timedelta
 
 from django.db import transaction
 from django.db.models import Count, Q
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.http import (
+    Http404,
+    HttpResponse,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+)
 from django.shortcuts import get_object_or_404, reverse
 from django.utils import timezone
 from django.views.generic import FormView
@@ -391,8 +396,12 @@ class CreateRefund(OrdersUserMixin, FormView):
         refund_class = form.refund_types[refund_type]
         products = order.productsale_set.all()
         if products.count() == 1 and products[0].quantity == 1:
-            refund = refund_class(order=order)
-            refund.save()
+            with transaction.atomic():
+                refund = refund_class(order=order)
+                refund.save()
+                models.ProductRefund(
+                    refund=refund, product=products[0], quantity=1
+                ).save()
             return HttpResponseRedirect(refund.get_absolute_url())
         else:
             return HttpResponseRedirect(
@@ -438,6 +447,8 @@ class MarkRefundAccepted(OrdersUserMixin, RedirectView):
 
     def get_redirect_url(self, pk):
         """Mark the refund as contacted and redirect to it's page."""
+        if self.request.method == "POST":
+            raise Http404
         refund = get_object_or_404(models.Refund, id=pk)
         refund.refund_amount = int(float(self.request.GET["refund_amount"]) * 100)
         refund.refund_accepted = True
