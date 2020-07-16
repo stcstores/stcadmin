@@ -294,6 +294,17 @@ Django = ">=1.8,<3.1"
 
 [[package]]
 category = "main"
+description = "A helper class for handling configuration defaults of packaged apps gracefully."
+name = "django-appconf"
+optional = false
+python-versions = "*"
+version = "1.0.4"
+
+[package.dependencies]
+django = "*"
+
+[[package]]
+category = "main"
 description = "A configurable set of panels that display various debug information about the current request/response."
 name = "django-debug-toolbar"
 optional = false
@@ -314,6 +325,23 @@ version = "2.2"
 
 [package.dependencies]
 Django = ">=1.11"
+
+[[package]]
+category = "main"
+description = "Automated image processing for Django models."
+name = "django-imagekit"
+optional = false
+python-versions = "*"
+version = "4.0.2"
+
+[package.dependencies]
+django-appconf = ">=0.5"
+pilkit = ">=0.2.0"
+six = "*"
+
+[package.extras]
+async = ["django-celery (>=3.0)"]
+async_rq = ["django-rq (>=0.6.0)"]
 
 [[package]]
 category = "main"
@@ -342,6 +370,17 @@ django = ">=2.2"
 
 [package.extras]
 all_filter_dependencies = ["textile (>=2.3.16)", "smartypants (>=2.0.0)", "docutils (>=0.14)", "pygments (>=2.2.0)", "markdown (>=2.6.9)", "bleach (>=3.0)", "python-creole (>=1.3.1)"]
+
+[[package]]
+category = "main"
+description = "Seamless polymorphic inheritance for Django models"
+name = "django-polymorphic"
+optional = false
+python-versions = "*"
+version = "2.1.2"
+
+[package.dependencies]
+Django = ">=1.11"
 
 [[package]]
 category = "main"
@@ -661,6 +700,14 @@ name = "pathspec"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "0.8.0"
+
+[[package]]
+category = "main"
+description = "A collection of utilities and processors for the Python Imaging Libary."
+name = "pilkit"
+optional = false
+python-versions = "*"
+version = "2.0"
 
 [[package]]
 category = "main"
@@ -1127,7 +1174,7 @@ python-versions = "*"
 version = "1.2.9"
 
 [metadata]
-content-hash = "955a9b5b866e25b3505843e88805893f61a19fba16817732051cd1a3bc54b444"
+content-hash = "989a1a582147da2b24b5f9284b69c32de3cf210bab2f49c1adafb36ee7efc4b6"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -1242,6 +1289,10 @@ django = [
 django-admin-sortable2 = [
     {file = "django-admin-sortable2-0.7.6.tar.gz", hash = "sha256:caf158310cba75888d5e2494f0a7e52b9b43b90d22e12798023bbe8dae51243b"},
 ]
+django-appconf = [
+    {file = "django-appconf-1.0.4.tar.gz", hash = "sha256:be58deb54a43d77d2e1621fe59f787681376d3cd0b8bd8e4758ef6c3a6453380"},
+    {file = "django_appconf-1.0.4-py2.py3-none-any.whl", hash = "sha256:1b1d0e1069c843ebe8ae5aa48ec52403b1440402b320c3e3a206a0907e97bb06"},
+]
 django-debug-toolbar = [
     {file = "django-debug-toolbar-2.2.tar.gz", hash = "sha256:eabbefe89881bbe4ca7c980ff102e3c35c8e8ad6eb725041f538988f2f39a943"},
     {file = "django_debug_toolbar-2.2-py3-none-any.whl", hash = "sha256:ff94725e7aae74b133d0599b9bf89bd4eb8f5d2c964106e61d11750228c8774c"},
@@ -1250,6 +1301,10 @@ django-formtools = [
     {file = "django-formtools-2.2.tar.gz", hash = "sha256:c5272c03c1cd51b2375abf7397a199a3148a9fbbf2f100e186467a84025d13b2"},
     {file = "django_formtools-2.2-py2.py3-none-any.whl", hash = "sha256:304fa777b8ef9e0693ce7833f885cb89ba46b0e46fc23b01176900a93f46742f"},
 ]
+django-imagekit = [
+    {file = "django-imagekit-4.0.2.tar.gz", hash = "sha256:6ec0afb77cdf52cd453c9fc2c10ef350d111edfd6ce53c5977aa8a0e22cee00c"},
+    {file = "django_imagekit-4.0.2-py2.py3-none-any.whl", hash = "sha256:304c3379f6a5cac387e47ace11195a603ad3cb01e3e951b45489824d25b00359"},
+]
 django-jchart = [
     {file = "django-jchart-0.4.2.tar.gz", hash = "sha256:1a0acd545f24924ab953eec703cbaa9f3bff1eb8240d14f5c0b66ae74fdbe6cd"},
     {file = "django_jchart-0.4.2-py2.py3-none-any.whl", hash = "sha256:c9503a025092f63f870f83d773311d9c67090f1843b4bb99ef24959ab1877736"},
@@ -1257,6 +1312,10 @@ django-jchart = [
 django-markup = [
     {file = "django-markup-1.5.tar.gz", hash = "sha256:e7b6eb670f644bccd62157d18e89fb7a35df02605d5edb30a8578dc6ffbd684b"},
     {file = "django_markup-1.5-py2.py3-none-any.whl", hash = "sha256:9d22dd08681ffc20235ffb81eb58d97568d86a3b0dc4517f142f74577484674c"},
+]
+django-polymorphic = [
+    {file = "django-polymorphic-2.1.2.tar.gz", hash = "sha256:6e08a76c91066635ccb7ef3ebbe9a0ad149febae6b30be2579716ec16d3c6461"},
+    {file = "django_polymorphic-2.1.2-py2.py3-none-any.whl", hash = "sha256:0a25058e95e5e99fe0beeabb8f4734effe242d7b5b77dca416fba9fd3062da6a"},
 ]
 django-solo = [
     {file = "django-solo-1.1.3.tar.gz", hash = "sha256:b1206b9a9411b19a4354f7d7d245909a9ea7e9cd566b594363b5adce7dc13e5d"},
@@ -1394,6 +1453,9 @@ packaging = [
 pathspec = [
     {file = "pathspec-0.8.0-py2.py3-none-any.whl", hash = "sha256:7d91249d21749788d07a2d0f94147accd8f845507400749ea19c1ec9054a12b0"},
     {file = "pathspec-0.8.0.tar.gz", hash = "sha256:da45173eb3a6f2a5a487efba21f050af2b41948be6ab52b6a1e3ff22bb8b7061"},
+]
+pilkit = [
+    {file = "pilkit-2.0.tar.gz", hash = "sha256:ddb30c2f0198a147e56b151476c3bb9fe045fbfd5b0a0fa2a3148dba62d1559f"},
 ]
 pillow = [
     {file = "Pillow-7.1.2-cp35-cp35m-macosx_10_10_intel.whl", hash = "sha256:ae2b270f9a0b8822b98655cb3a59cdb1bd54a34807c6c56b76dd2e786c3b7db3"},
@@ -1596,7 +1658,6 @@ reportlab = [
     {file = "reportlab-3.5.42.tar.gz", hash = "sha256:9c21f202697a6cea57b9d716288fc919d99cbabeb30222eebfc7ff77eac32744"},
 ]
 requests = [
-    {file = "requests-2.23.0-py2.7.egg", hash = "sha256:5d2d0ffbb515f39417009a46c14256291061ac01ba8f875b90cad137de83beb4"},
     {file = "requests-2.23.0-py2.py3-none-any.whl", hash = "sha256:43999036bfa82904b6af1d99e4882b560e5e2c68e5c4b0aa03b655f3d7d73fee"},
     {file = "requests-2.23.0.tar.gz", hash = "sha256:b3f43d496c6daba4493e7c431722aeb7dbc6288f52a6e04e7b6023b0247817e6"},
 ]

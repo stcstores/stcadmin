@@ -1,0 +1,54 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}{{ block.super }}
+
+<h2>Order: {{ order.order_ID }}</h2>
+<p>Tracking Number: {{ order.tracking_number }}</p>
+<p>Dispatched at: {{ order.dispatched_at|date:"Y-m-d" }}</p>
+<p>Packed By: {{ packing_record.packed_by }}</p>
+
+<table id="product_list">
+{% for product in products %}
+<tr>
+    <td>{{ product.sku }}</td>
+    <td>{{ product.name }}</td>
+    <td>
+        <input type="radio" name="product_select" value="{{product.id}}"{% if forloop.first %} checked{% endif %}{% if products|length == 1 %} disabled{% endif %}>
+    </td>
+    <td {% if product.quantity == 1 %} hidden{% endif %}>
+        Applies to <input type="number" value="1" min="1" max="{{ product.quantity}}"> of {{ product.quantity}}
+    </td>
+</tr>
+{% endfor %}
+</table>
+
+<form action="" method="POST">{% csrf_token %}
+{{ form.as_p }}
+<button>Submit</button>
+</form>
+
+{% endblock content %}
+
+{% block script %}
+
+<script>
+$(document).ready(function() {
+    $('form').submit(function() {
+        var product_ID = $(this).find("input[name={{form.product.name}}]");
+        product_ID.val($('input[name=product_select]').val());
+        var quantity = $(this).find('input[name={{form.quantity.name}}]');
+        quantity.val($('input[name=product_select]:checked').closest('tr').find('input[type=number]').val());
+    });
+    $('input[name=product_select]').change(function(){
+        var selected = $('input[name=product_select]:checked');
+        $('#product_list tr').css('color', 'grey');
+        $('#product_list input[type=number]').prop('disabled', true);
+        var row = $(selected).closest('tr');
+        row.css('color', 'black');
+        row.find('input[type=number]').prop('disabled', false);
+    });
+    $('input[name=product_select]').change();
+});
+</script>
+
+{% endblock script %}

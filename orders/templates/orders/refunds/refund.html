@@ -1,0 +1,71 @@
+{% extends 'orders/base.html' %}
+
+{% load orders_extras %}
+
+{% block content %}{{ block.super }}
+
+<h2>Order: {{ order.order_ID }} - {{ refund.reason }}</h2>
+<h3>Courier: {{ order.courier_service.courier.courier_type }}</h3>
+<p>Tracking Number: {{ order.tracking_number }}</p>
+<p>Dispatched at: {{ order.dispatched_at|date:"Y-m-d" }}</p>
+<p>Packed By: {{ packing_record.packed_by }}</p>
+
+<div class="status">
+{% if refund.contact_contacted is False %}
+<p>{{ refund.contact_name }} Not Contacted</p>
+<a href="{% url 'orders:mark_refund_contacted' refund.pk %}">
+    <button>Mark contacted</button>
+</a>
+{% else %}
+    {% if refund.refund_accepted is True %}
+    <p class="success">Accepted at {% format_price refund.refund_amount %}</p>
+    {% elif refund.refund_accepted is False %}
+    <p class="error">Rejected</p>
+    {% else %}
+    <p>Awaiting Response from {{ refund.contact_name }}</p>
+    <p>
+    <form action="{% url 'orders:mark_refund_accepted' refund.pk %}" method="GET">
+    <input name="refund_amount" type="number" step="0.1" required>
+    <button>Refund Accepted</button>
+    </form>
+    </p>
+    <p>
+        <a href="{% url 'orders:mark_refund_rejected' refund.pk %}">
+            <button>Refund Rejected</button>
+        </a>
+    </p>
+    {% endif %}
+{% endif %}
+
+</div>
+<br>
+<a href="{% url 'orders:refund_images' refund.pk %}"><button>Images</button></a>
+
+<table>
+{% for product_refund in products %}
+<tr>
+    <td>{{ product_refund.product.sku }}</td>
+    <td>{{ product_refund.product.name }}</td>
+    <td>
+        {% if product_refund.product.quantity > 1 %}
+        {{ product_refund.quantity }} of {{ product_refund.product.quantity }}
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+</table>
+
+{% if other_products.count > 0 %}
+<h3>Also in this order</h3>
+<table>
+{% for product in other_products %}
+<tr>
+    <td>{{ product.sku }}</td>
+    <td>{{ product.name }}</td>
+    <td>&times; {{ product.quantity }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+{% endblock content %}

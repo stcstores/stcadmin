@@ -1,0 +1,13 @@
+<div class="refund_images">
+    {% for image in images %}
+    <div class="refund_image">
+        <div class="image">
+            <img src="{{ image.thumbnail.url }}" alt="{{ image.image.filename }}">
+        </div>
+        <div class="buttons">
+            <a href="{{ image.image.url }}" target="_blank"><button>View</button></a>
+            <a href="{% url 'orders:delete_refund_image' image.id %}"><button class="error">Delete</button></a>
+        </div>
+    </div>
+    {% endfor %}
+</div>

@@ -48,6 +48,11 @@ def department(department_factory):
 
 
 @pytest.fixture
+def supplier(supplier_factory):
+    return supplier_factory.create()
+
+
+@pytest.fixture
 def vat_rate():
     return 20
 
@@ -65,13 +70,20 @@ def mock_CCAPI():
 
 @pytest.fixture
 def mock_product():
-    def _mock_product(vat_rate_id, department_id, purchase_price, end_of_line=False):
+    def _mock_product(
+        vat_rate_id, department_id, supplier_id, purchase_price, end_of_line=False
+    ):
         department = Mock(value=Mock(id=int(department_id)))
+        supplier = Mock(value=Mock(id=int(supplier_id)))
         purchase_price = Mock(value=Mock(value=float(purchase_price)))
         return Mock(
             vat_rate_id=vat_rate_id,
+            options={
+                "Department": department,
+                "Purchase Price": purchase_price,
+                "Supplier": supplier,
+            },
             end_of_line=end_of_line,
-            options={"Department": department, "Purchase Price": purchase_price},
         )
 
     return _mock_product
@@ -87,6 +99,7 @@ def new_product_sale(
     quantity,
     price,
     department,
+    supplier,
     vat_rate,
     purchase_price,
 ):
@@ -99,6 +112,7 @@ def new_product_sale(
         quantity=quantity,
         price=price,
         department=department,
+        supplier=supplier,
         vat_rate=vat_rate,
         purchase_price=purchase_price,
         end_of_line=True,
@@ -246,6 +260,39 @@ def test_vat_rate_defaults_to_null(order, product_ID, sku, name, quantity, price
 
 
 @pytest.mark.django_db
+def test_sets_supplier(new_product_sale, supplier):
+    assert new_product_sale.supplier == supplier
+
+
+@pytest.mark.django_db
+def test_supplier_defaults_null(
+    order,
+    product_ID,
+    name,
+    weight,
+    quantity,
+    price,
+    department,
+    vat_rate,
+    purchase_price,
+):
+    sale = models.ProductSale(
+        order=order,
+        product_ID=product_ID,
+        name=name,
+        weight=weight,
+        quantity=quantity,
+        price=price,
+        department=department,
+        purchase_price=purchase_price,
+        vat_rate=vat_rate,
+    )
+    sale.save()
+    sale.refresh_from_db()
+    assert sale.supplier is None
+
+
+@pytest.mark.django_db
 def test_sets_end_of_line(new_product_sale):
     assert new_product_sale.end_of_line is True
 
@@ -279,6 +326,7 @@ def updated_product(
     mock_CCAPI,
     mock_product,
     department,
+    supplier,
     vat_rate,
     purchase_price,
     vat_rate_factory,
@@ -286,6 +334,7 @@ def updated_product(
 ):
     vat_rate_obj = vat_rate_factory.create(percentage=vat_rate)
     mock_CCAPI.get_product.return_value = mock_product(
+        supplier_id=supplier.product_option_value_ID,
         department_id=department.product_option_value_ID,
         vat_rate_id=vat_rate_obj.cc_id,
         purchase_price=float(purchase_price) / 100,
@@ -305,6 +354,11 @@ def test_update_details_sets_details_success(updated_product):
 @pytest.mark.django_db
 def test_update_details_sets_department(updated_product, department):
     assert updated_product.department == department
+
+
+@pytest.mark.django_db
+def test_update_details_sets_supplier(updated_product, supplier):
+    assert updated_product.supplier == supplier
 
 
 @pytest.mark.django_db
@@ -346,6 +400,7 @@ def test_update_details_retries(
     mock_CCAPI,
     mock_product,
     department,
+    supplier,
     vat_rate,
     purchase_price,
     vat_rate_factory,
@@ -353,6 +408,7 @@ def test_update_details_retries(
 ):
     vat_rate_obj = vat_rate_factory.create(percentage=vat_rate)
     mock_product = mock_product(
+        supplier_id=supplier.product_option_value_ID,
         department_id=department.product_option_value_ID,
         vat_rate_id=vat_rate_obj.cc_id,
         purchase_price=float(purchase_price) / 100,
@@ -374,12 +430,14 @@ def test_does_not_retry_for_does_not_exist_exceptions(
     mock_CCAPI,
     mock_product,
     department,
+    supplier,
     purchase_price,
     vat_rate_factory,
     product_sale_factory,
 ):
     mock_product = mock_product(
         department_id=department.product_option_value_ID,
+        supplier_id=supplier.product_option_value_ID,
         vat_rate_id="99999",
         purchase_price=float(purchase_price) / 100,
     )

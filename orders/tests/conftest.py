@@ -3,7 +3,7 @@ import pytest_factoryboy
 from django.utils import timezone
 
 from home.models import CloudCommerceUser
-from inventory.models import Department
+from inventory.models import Department, Supplier
 from orders import models
 from shipping.tests.conftest import (
     CountryFactory,
@@ -28,6 +28,17 @@ class DepartmentFactory(factory.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Test Department {n}")
     product_option_value_ID = factory.Sequence(lambda n: str(6465 + n))
     abriviation = "TD"
+    inactive = False
+
+
+@pytest_factoryboy.register
+class SupplierFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Supplier
+
+    name = factory.Sequence(lambda n: f"Test Department {n}")
+    product_option_value_ID = factory.Sequence(lambda n: str(6465 + n))
+    factory_ID = factory.Sequence(lambda n: str(n + 46546))
     inactive = False
 
 
@@ -142,3 +153,96 @@ class OrderDetailsUpdateErrorFactory(factory.DjangoModelFactory):
     update = factory.SubFactory(OrderDetailsUpdateFactory)
     product_sale = factory.SubFactory(ProductSaleFactory)
     text = "An exception string"
+
+
+@pytest_factoryboy.register
+class RefundFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Refund
+
+    order = factory.SubFactory(OrderFactory)
+    contact_contacted = False
+    refund_accepted = None
+    refund_amount = 982
+    closed = False
+
+
+@pytest_factoryboy.register
+class BreakageRefundFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.BreakageRefund
+
+    order = factory.SubFactory(OrderFactory)
+    contact_contacted = False
+    refund_accepted = None
+    refund_amount = 982
+    closed = False
+
+
+@pytest_factoryboy.register
+class PackingMistakeRefundFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.PackingMistakeRefund
+
+    order = factory.SubFactory(OrderFactory)
+    contact_contacted = False
+    refund_accepted = None
+    refund_amount = 982
+    closed = False
+
+
+@pytest_factoryboy.register
+class LinkingMistakeRefundFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.LinkingMistakeRefund
+
+    order = factory.SubFactory(OrderFactory)
+    contact_contacted = False
+    refund_accepted = None
+    refund_amount = 982
+    closed = False
+
+
+@pytest_factoryboy.register
+class LostInPostRefundFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.LostInPostRefund
+
+    order = factory.SubFactory(OrderFactory)
+    contact_contacted = False
+    refund_accepted = None
+    refund_amount = 982
+    closed = False
+
+
+@pytest_factoryboy.register
+class DemicRefundFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.DemicRefund
+
+    order = factory.SubFactory(OrderFactory)
+    contact_contacted = False
+    refund_accepted = None
+    refund_amount = 982
+    closed = False
+
+
+@pytest_factoryboy.register
+class ProductRefundFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.ProductRefund
+
+    refund = factory.SubFactory(LostInPostRefundFactory)
+    product = factory.SubFactory(ProductSaleFactory)
+    quantity = 1
+
+
+@pytest_factoryboy.register
+class RefundImageFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.RefundImage
+
+    refund = factory.SubFactory(RefundFactory)
+    product_refund = None
+    image = factory.django.ImageField(width=1000, height=1000)
+    thumbnail = factory.django.ImageField(width=200, height=200)

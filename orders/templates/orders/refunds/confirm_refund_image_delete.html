@@ -1,0 +1,12 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}{{ block.super }}
+
+<img src="{{ object.thumbnail.url }}" alt="{{ object.image.filename }}">
+
+<form method="post">{% csrf_token %}
+    <p>Are you sure you want to delete this image?</p>
+    <input type="submit" value="Confirm">
+</form>
+
+{% endblock content %}
