@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import factory
 import pytest_factoryboy
 from django.utils import timezone
@@ -69,8 +71,8 @@ class OrderFactory(factory.DjangoModelFactory):
 
     order_ID = factory.Sequence(lambda n: str(748373 + n))
     customer_ID = factory.Sequence(lambda n: str(16844161 + n))
-    recieved_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
-    dispatched_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
+    recieved_at = timezone.make_aware(datetime(2020, 2, 11, 10, 24))
+    dispatched_at = timezone.make_aware(datetime(2020, 2, 10, 12, 36))
     cancelled = False
     ignored = False
     channel = factory.SubFactory(ChannelFactory)

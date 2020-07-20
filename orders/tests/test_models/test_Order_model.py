@@ -143,26 +143,25 @@ def mock_order(
     tracking_number,
 ):
     def _mock_order(**kwargs):
-        return Mock(
-            order_id=kwargs.get("order_id") or order_ID,
-            customer_id=kwargs.get("customer_id") or customer_ID,
-            date_recieved=kwargs.get("date_recieved") or datetime(2020, 2, 15, 12, 35),
-            dispatch_date=kwargs.get("dispatch_date") or datetime(2020, 2, 16, 10, 18),
-            cancelled=kwargs.get("cancelled") or False,
-            channel_name=kwargs.get("channel_name") or channel.name,
-            external_transaction_id=kwargs.get("external_transaction_id")
-            or channel_order_ID,
-            delivery_country_code=kwargs.get("delivery_country_code")
-            or country.country_ID,
-            default_cs_rule_name=kwargs.get("default_cs_rule_name")
-            or f"{shipping_rule.name} - {shipping_rule.courier_service.name}",
-            tracking_code=kwargs.get("tracking_code") or tracking_number,
-            products=kwargs.get("products") or [mock_product()],
-            can_process_order=kwargs.get("can_process_order") or True,
-            priority=kwargs.get("priority") or False,
-            total_gross=kwargs.get("total_gross") or "5.69",
-            total_gross_gbp=kwargs.get("total_gross_gbp") or "8.96",
-        )
+        values = {
+            "order_id": order_ID,
+            "customer_id": customer_ID,
+            "date_recieved": datetime(2020, 2, 15, 12, 35),
+            "dispatch_date": datetime(2020, 2, 16, 10, 18),
+            "cancelled": False,
+            "channel_name": channel.name,
+            "external_transaction_id": channel_order_ID,
+            "delivery_country_code": country.country_ID,
+            "default_cs_rule_name": f"{shipping_rule.name} - {shipping_rule.courier_service.name}",
+            "tracking_code": tracking_number,
+            "products": [mock_product()],
+            "can_process_order": True,
+            "priority": False,
+            "total_gross": "5.69",
+            "total_gross_gbp": "8.96",
+        }
+        values.update(kwargs)
+        return Mock(**values)
 
     return _mock_order
 
@@ -759,6 +758,24 @@ def test_update_sales_updates_existing_sales(
         name=product.product_full_name,
         quantity=product.quantity,
     ).exists()
+
+
+@pytest.mark.django_db
+def test_update_sales_with_price_zero(
+    order_factory, product_sale_factory, mock_CCAPI, mock_order, mock_product
+):
+    order = order_factory.create()
+    product_id = "3849390"
+    product_sale = product_sale_factory.create(
+        order=order, product_ID=product_id, price=0,
+    )
+    product = mock_product(product_id=product_id, price=5.99)
+    products = [product]
+    mock_order = mock_order(total_gross=0, total_gross_gbp=0, products=products)
+    mock_CCAPI.get_orders_for_dispatch.return_value = mock_order
+    models.Order.objects._update_sales(order, mock_order)
+    product_sale.refresh_from_db()
+    assert product_sale.price == 599
 
 
 @pytest.mark.django_db
