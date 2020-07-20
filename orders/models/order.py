@@ -122,7 +122,12 @@ class OrderManager(models.Manager):
             postage_price_success__isnull=True,
             shipping_rule__isnull=False,
         ):
-            order._set_postage_price()
+            try:
+                order._set_postage_price()
+            except Exception as e:
+                raise Exception(
+                    f"Error finding postage price for order {order.order_ID}: {e}"
+                )
 
     def _get_orders_for_dispatch(self):
         """Return undispatched Cloud Commerce orders."""
