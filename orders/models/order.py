@@ -81,9 +81,12 @@ class OrderManager(models.Manager):
 
     def _update_sales(self, order_obj, order):
         """Add product sales to the ProductSale model."""
-        exchange_rate = float(order.total_gross_gbp) / float(order.total_gross)
+        if order.total_gross_gbp == 0 or order.total_gross == 0:
+            exchange_rate = 1
+        else:
+            exchange_rate = float(order.total_gross_gbp) / float(order.total_gross)
         for product in order.products:
-            price = round(product.price * exchange_rate * 100)
+            price = round(float(product.price) * exchange_rate * 100)
             weight = round(product.per_item_weight)
             sale, _ = ProductSale.objects.get_or_create(
                 order=order_obj,
