@@ -1,4 +1,5 @@
 import pytest
+from django.shortcuts import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from orders import forms, models
@@ -115,7 +116,7 @@ def test_refund_products_created(
 @pytest.mark.django_db
 def test_redirects(group_logged_in_client, url, order, form_data):
     response = group_logged_in_client.post(url("broken", order), form_data)
-    assert response.url == models.Refund.objects.get(order=order).get_absolute_url()
+    assert response.url == reverse("orders:refund_list") + f"?order_ID={order.order_ID}"
 
 
 @pytest.mark.django_db
@@ -125,3 +126,13 @@ def test_does_not_create_product_when_quantity_is_zero(
     form_data["form-0-quantity"] = 0
     group_logged_in_client.post(url("broken", order), form_data)
     assert models.ProductRefund.objects.filter(product=products[0]).exists() is False
+
+
+def test_a_refund_is_created_for_each_supplier(
+    order, url, group_logged_in_client, form_data, products, supplier_factory
+):
+    for product in products:
+        product.supplier = supplier_factory.create()
+        product.save()
+    group_logged_in_client.post(url("broken", order), form_data)
+    assert models.Refund.objects.filter(order=order).count() == len(products)

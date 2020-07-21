@@ -1,6 +1,7 @@
 """Views for the Orders app."""
 import csv
 import io
+from collections import defaultdict
 from datetime import timedelta
 
 from django.db import transaction
@@ -486,16 +487,20 @@ class SelectRefundProducts(OrdersUserMixin, FormView):
     def form_valid(self, formset):
         """Create a refund."""
         with transaction.atomic():
-            self.refund = self.refund_class(order=self.order)
-            self.refund.save()
+            supplier_forms = defaultdict(list)
             for form in formset:
-                refund_quantity = form.cleaned_data["quantity"]
-                if refund_quantity > 0:
-                    models.ProductRefund(
-                        refund=self.refund,
-                        product=form.product_sale,
-                        quantity=refund_quantity,
-                    ).save()
+                supplier_forms[form.product_sale.supplier].append(form)
+            for supplier, _forms in supplier_forms.items():
+                refund = self.refund_class(order=self.order)
+                refund.save()
+                for form in _forms:
+                    refund_quantity = form.cleaned_data["quantity"]
+                    if refund_quantity > 0:
+                        models.ProductRefund(
+                            refund=refund,
+                            product=form.product_sale,
+                            quantity=refund_quantity,
+                        ).save()
         return super().form_valid(formset)
 
     def get_context_data(self, *args, **kwargs):
@@ -506,7 +511,7 @@ class SelectRefundProducts(OrdersUserMixin, FormView):
 
     def get_success_url(self):
         """Return the URL to redirect to after a succesfull form submission."""
-        return self.refund.get_absolute_url()
+        return reverse("orders:refund_list") + f"?order_ID={self.order.order_ID}"
 
 
 class RefundImages(OrdersUserMixin, TemplateView):
