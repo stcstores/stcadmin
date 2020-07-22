@@ -3,8 +3,10 @@ from datetime import datetime
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.utils.timezone import make_aware
 
+from inventory.models import Supplier
 from orders import models
 from shipping.models import Country
 from stcadmin.forms import KwargFormSet
@@ -151,9 +153,10 @@ class RefundListFilter(forms.Form):
         LOST: models.LostInPostRefund,
         DEMIC: models.DemicRefund,
     }
-
+    search = forms.CharField(required=False)
     order_ID = forms.CharField(required=False)
     product_SKU = forms.CharField(required=False)
+    supplier = forms.ModelChoiceField(queryset=Supplier.objects.all(), required=False)
     dispatched_from = forms.DateField(
         required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
     )
@@ -211,6 +214,7 @@ class RefundListFilter(forms.Form):
             "order__dispatched_at__lte": data.get("dispatched_to"),
             "order__order_ID": data.get("order_ID") or None,
             "products__product__sku": data.get("product_SKU") or None,
+            "products__product__supplier": data.get("supplier") or None,
             "contact_contacted": data.get("contacted"),
             "refund_accepted": data.get("accepted"),
             "closed": data.get("closed"),
@@ -221,6 +225,17 @@ class RefundListFilter(forms.Form):
         """Return a queryset of orders based on the submitted data."""
         kwargs = self.query_kwargs(self.cleaned_data)
         qs = models.Refund.objects.filter(**kwargs).order_by("-order__dispatched_at")
+        search_text = self.cleaned_data.get("search")
+        if search_text:
+            search_text = search_text.strip()
+            print(search_text)
+            product_qs = models.ProductRefund.objects.filter(
+                Q(product__sku__icontains=search_text)
+                | Q(product__name__icontains=search_text)
+                | Q(product__supplier__name__icontains=search_text)
+            ).values_list("refund", flat=True)
+            print(product_qs)
+            qs = qs.filter(id__in=product_qs)
         refund_type = self.cleaned_data.get("refund_type")
         if refund_type:
             qs = qs.instance_of(self.REFUND_TYPES[refund_type])

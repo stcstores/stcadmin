@@ -112,6 +112,7 @@ class ProductSaleFactory(factory.DjangoModelFactory):
     department = factory.SubFactory(DepartmentFactory)
     purchase_price = 250
     vat_rate = 20
+    supplier = factory.SubFactory(SupplierFactory)
     details_success = True
 
 
