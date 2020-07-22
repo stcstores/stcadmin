@@ -247,14 +247,20 @@ class CreateRefund(forms.Form):
     order_ID = forms.CharField()
     refund_type = forms.ChoiceField(
         choices=(
-            (BROKEN, "Broken - An item was broken when in transit"),
-            (PACKING_MISTAKE, "Packing Mistake - The wrong item was sent"),
+            (BROKEN, "Broken - A customer is requesting a return for a damaged item"),
+            (
+                PACKING_MISTAKE,
+                "Packing Mistake - The wrong item was sent due to a packing error",
+            ),
             (
                 LINKING_MISTAKE,
                 "Linking Mistake - The wrong item was sent due to a linking error",
             ),
-            (LOST_IN_POST, "Lost in Post - The item never arrived"),
-            (DEMIC, "Demic - We recieved the item in an unsalable state"),
+            (
+                LOST_IN_POST,
+                "Lost in Post - Request a refund from a courier for a missing item",
+            ),
+            (DEMIC, "Demic - Request a refund from a supplier for a damaged item"),
         ),
         widget=forms.RadioSelect(),
     )
