@@ -166,6 +166,7 @@ class RefundFactory(factory.DjangoModelFactory):
     contact_contacted = False
     refund_accepted = None
     refund_amount = 982
+    notes = "A refund"
     closed = False
 
 
@@ -178,6 +179,7 @@ class BreakageRefundFactory(factory.DjangoModelFactory):
     contact_contacted = False
     refund_accepted = None
     refund_amount = 982
+    notes = "A refund for a damaged item"
     closed = False
 
 
@@ -190,6 +192,7 @@ class PackingMistakeRefundFactory(factory.DjangoModelFactory):
     contact_contacted = False
     refund_accepted = None
     refund_amount = 982
+    notes = "A refund for a packing mistake"
     closed = False
 
 
@@ -202,6 +205,7 @@ class LinkingMistakeRefundFactory(factory.DjangoModelFactory):
     contact_contacted = False
     refund_accepted = None
     refund_amount = 982
+    notes = "A refund for a linking mistake"
     closed = False
 
 
@@ -214,6 +218,7 @@ class LostInPostRefundFactory(factory.DjangoModelFactory):
     contact_contacted = False
     refund_accepted = None
     refund_amount = 982
+    notes = "A refund for an item lost in the post"
     closed = False
 
 
@@ -226,6 +231,7 @@ class DemicRefundFactory(factory.DjangoModelFactory):
     contact_contacted = False
     refund_accepted = None
     refund_amount = 982
+    notes = "A refund for an item recieved from the supplier damaged"
     closed = False
 
 

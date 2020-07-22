@@ -18,6 +18,7 @@ class Refund(PolymorphicModel):
     contact_contacted = models.BooleanField(default=False)
     refund_accepted = models.BooleanField(blank=True, null=True)
     refund_amount = models.PositiveIntegerField(blank=True, null=True)
+    notes = models.TextField(blank=True)
     closed = models.BooleanField(default=False)
 
     def get_absolute_url(self):

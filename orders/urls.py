@@ -79,4 +79,9 @@ urlpatterns = [
         views.DeleteRefundImage.as_view(),
         name="delete_refund_image",
     ),
+    path(
+        "refund/<int:pk>/set_notes/",
+        views.SetRefundNotes.as_view(),
+        name="set_refund_notes",
+    ),
 ]

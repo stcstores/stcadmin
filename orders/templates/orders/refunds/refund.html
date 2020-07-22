@@ -10,6 +10,17 @@
 <p>Dispatched at: {{ order.dispatched_at|date:"Y-m-d" }}</p>
 <p>Packed By: {{ packing_record.packed_by }}</p>
 
+<div class="notes">
+    <form action="{% url 'orders:set_refund_notes' refund.id %}" method="GET">
+        <label for="notes">Notes</label>
+        <textarea name="notes" id="" cols="30" rows="10">{{ refund.notes }}</textarea>
+        <button>Update</button>
+    </form>
+</div>
+
+<br>
+<a href="{% url 'orders:refund_images' refund.pk %}"><button>Images</button></a>
+
 <div class="status">
 {% if refund.contact_contacted is False %}
 <p>{{ refund.contact_name }} Not Contacted</p>
@@ -38,8 +49,7 @@
 {% endif %}
 
 </div>
-<br>
-<a href="{% url 'orders:refund_images' refund.pk %}"><button>Images</button></a>
+
 
 <table>
 {% for product_refund in products %}

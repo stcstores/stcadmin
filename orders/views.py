@@ -566,3 +566,15 @@ class DeleteRefundImage(OrdersUserMixin, DeleteView):
     def get_success_url(self):
         """Return the URL to return to after deleting the image."""
         return reverse("orders:refund_images", args=[self.object.refund.id])
+
+
+class SetRefundNotes(OrdersUserMixin, RedirectView):
+    """View for setting refund notes."""
+
+    def get_redirect_url(self, pk):
+        """Set the refund notes field and redirect to it's page."""
+        refund = get_object_or_404(models.Refund, pk=pk)
+        note_text = self.request.GET.get("notes") or ""
+        refund.notes = note_text
+        refund.save()
+        return refund.get_absolute_url()
