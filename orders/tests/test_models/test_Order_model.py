@@ -1052,6 +1052,38 @@ def test_vat_paid(order_factory, product_sale_factory):
 
 
 @pytest.mark.django_db
+def test_postage_price_success_is_false_if_total_paid_is_zero(
+    country, shipping_rule, shipping_price, order_factory
+):
+    order = order_factory.create(
+        total_paid=0,
+        country=country,
+        shipping_rule=shipping_rule,
+        postage_price=None,
+        postage_price_success=None,
+    )
+    models.Order.objects.update_postage_prices()
+    order.refresh_from_db()
+    assert order.postage_price_success is False
+
+
+@pytest.mark.django_db
+def test_postage_price_success_is_false_if_total_paid_GBP_is_zero(
+    country, shipping_rule, shipping_price, order_factory
+):
+    order = order_factory.create(
+        total_paid_GBP=0,
+        country=country,
+        shipping_rule=shipping_rule,
+        postage_price=None,
+        postage_price_success=None,
+    )
+    models.Order.objects.update_postage_prices()
+    order.refresh_from_db()
+    assert order.postage_price_success is False
+
+
+@pytest.mark.django_db
 def test_vat_paid_returns_zero_if_vat_not_required(order_factory, product_sale_factory):
     order = order_factory.create(country__vat_required=False)
     product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=20)
@@ -1199,3 +1231,23 @@ def test_profit_calculable_method_with_mixed_product_details(
     product_sale_factory.create(order=order, details_success=None)
     product_sale_factory.create(order=order, details_success=True)
     assert order.profit_calculable() is False
+
+
+@pytest.fixture
+def mock_set_postage_price():
+    with patch(
+        "orders.models.order.Order._set_postage_price"
+    ) as mock_set_posrage_price:
+        yield mock_set_posrage_price
+
+
+@pytest.mark.django_db
+def test_set_postage_price_error(mock_set_postage_price, order_without_shipping_price):
+    mock_set_postage_price.side_effect = Exception("exception message")
+    order_id = order_without_shipping_price.order_ID
+    with pytest.raises(Exception) as excinfo:
+        models.Order.objects.update_postage_prices()
+    assert (
+        f"Error finding postage price for order {order_id}: exception message"
+        in str(excinfo)
+    )
