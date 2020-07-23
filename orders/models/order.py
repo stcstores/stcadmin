@@ -340,6 +340,8 @@ class Order(models.Model):
             self.postage_price_success = False
         else:
             self.postage_price_success = True
+        if self.total_paid == 0 or self.total_paid_GBP == 0:
+            self.postage_price_success = False
         self.save()
 
     def up_to_date_details(self):
