@@ -33,13 +33,7 @@ def test_order_set(model_class, order):
 
 @pytest.mark.parametrize(
     "model_class",
-    (
-        models.BreakageRefund,
-        models.PackingMistakeRefund,
-        models.LinkingMistakeRefund,
-        models.LostInPostRefund,
-        models.DemicRefund,
-    ),
+    (models.BreakageRefund, models.LostInPostRefund, models.DemicRefund,),
 )
 @pytest.mark.django_db
 def test_default_contact_contacted(model_class, order):
@@ -51,13 +45,7 @@ def test_default_contact_contacted(model_class, order):
 
 @pytest.mark.parametrize(
     "model_class",
-    (
-        models.BreakageRefund,
-        models.PackingMistakeRefund,
-        models.LinkingMistakeRefund,
-        models.LostInPostRefund,
-        models.DemicRefund,
-    ),
+    (models.BreakageRefund, models.LostInPostRefund, models.DemicRefund,),
 )
 @pytest.mark.django_db
 def test_default_refund_accepted(model_class, order):
@@ -69,13 +57,7 @@ def test_default_refund_accepted(model_class, order):
 
 @pytest.mark.parametrize(
     "model_class",
-    (
-        models.BreakageRefund,
-        models.PackingMistakeRefund,
-        models.LinkingMistakeRefund,
-        models.LostInPostRefund,
-        models.DemicRefund,
-    ),
+    (models.BreakageRefund, models.LostInPostRefund, models.DemicRefund,),
 )
 @pytest.mark.django_db
 def test_default_refund_amount(model_class, order):
@@ -171,3 +153,74 @@ def test_default_can_set_notes(model_class, order, notes):
 def test_reason_method(model_class, expected, order):
     refund = model_class(order=order)
     assert refund.reason() == expected
+
+
+@pytest.mark.django_db
+def test_from_order(order_factory, product_sale_factory):
+    order = order_factory.create()
+    products = [
+        (product_sale_factory.create(order=order, quantity=3), 2) for _ in range(3)
+    ]
+    models.Refund.from_order(order, products)
+    for product, quantity in products:
+        assert models.ProductRefund.objects.filter(
+            refund__order=order, product=product, quantity=quantity
+        ).exists()
+
+
+@pytest.mark.django_db
+def test_courier_refund_from_order(order_factory, product_sale_factory):
+    order = order_factory.create()
+    products = [
+        (product_sale_factory.create(order=order, quantity=3), 2) for _ in range(3)
+    ]
+    models.LostInPostRefund.from_order(order, products)
+    for product, quantity in products:
+        assert models.ProductRefund.objects.filter(
+            refund__order=order, product=product, quantity=quantity
+        ).exists()
+    assert models.Refund.objects.filter(
+        order=order,
+        CourierRefund___courier=order.shipping_rule.courier_service.courier.courier_type.provider,
+    ).exists()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("model", [models.DemicRefund, models.SupplierRefund])
+def test_supplier_refund_from_order(
+    model, order_factory, product_sale_factory, supplier_factory
+):
+    order = order_factory.create()
+    supplier = supplier_factory.create()
+    products = [
+        (product_sale_factory.create(order=order, quantity=3, supplier=supplier), 2)
+        for _ in range(3)
+    ]
+    model.from_order(order, products)
+    for product, quantity in products:
+        assert models.ProductRefund.objects.filter(
+            refund__order=order, product=product, quantity=quantity
+        ).exists()
+    assert models.Refund.objects.filter(
+        order=order, SupplierRefund___supplier=products[0][0].supplier,
+    ).exists()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("model", [models.DemicRefund, models.SupplierRefund])
+def test_supplier_from_order_splits_suppliers(
+    model, order_factory, product_sale_factory, supplier_factory
+):
+    order = order_factory.create()
+    products = [
+        (product_sale_factory.create(order=order, quantity=3), 2,) for _ in range(3)
+    ]
+    model.from_order(order, products)
+    for product, quantity in products:
+        assert models.ProductRefund.objects.filter(
+            refund__order=order, product=product, quantity=quantity,
+        ).exists()
+        assert models.Refund.objects.filter(
+            order=order, SupplierRefund___supplier=product.supplier
+        ).exists()
+    assert models.Refund.objects.filter(order=order).count() == 3

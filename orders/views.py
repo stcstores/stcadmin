@@ -1,10 +1,8 @@
 """Views for the Orders app."""
 import csv
 import io
-from collections import defaultdict
 from datetime import timedelta
 
-from django.db import transaction
 from django.db.models import Count, Q
 from django.http import (
     Http404,
@@ -397,13 +395,11 @@ class CreateRefund(OrdersUserMixin, FormView):
         refund_class = form.refund_types[refund_type]
         products = order.productsale_set.all()
         if products.count() == 1 and products[0].quantity == 1:
-            with transaction.atomic():
-                refund = refund_class(order=order)
-                refund.save()
-                models.ProductRefund(
-                    refund=refund, product=products[0], quantity=1
-                ).save()
-            return HttpResponseRedirect(refund.get_absolute_url())
+            product_sale = products.first()
+            refund_class.from_order(order, [(product_sale, 1)])
+            return HttpResponseRedirect(
+                reverse("orders:refund_list") + f"?order_ID={order.order_ID}"
+            )
         else:
             return HttpResponseRedirect(
                 reverse("orders:select_refund_products", args=[refund_type, order.pk])
@@ -486,21 +482,12 @@ class SelectRefundProducts(OrdersUserMixin, FormView):
 
     def form_valid(self, formset):
         """Create a refund."""
-        with transaction.atomic():
-            supplier_forms = defaultdict(list)
-            for form in formset:
-                supplier_forms[form.product_sale.supplier].append(form)
-            for supplier, _forms in supplier_forms.items():
-                refund = self.refund_class(order=self.order)
-                refund.save()
-                for form in _forms:
-                    refund_quantity = form.cleaned_data["quantity"]
-                    if refund_quantity > 0:
-                        models.ProductRefund(
-                            refund=refund,
-                            product=form.product_sale,
-                            quantity=refund_quantity,
-                        ).save()
+        products = [
+            (form.product_sale, form.cleaned_data["quantity"])
+            for form in formset
+            if form.cleaned_data["quantity"] > 0
+        ]
+        self.refund_class.from_order(self.order, products)
         return super().form_valid(formset)
 
     def get_context_data(self, *args, **kwargs):
