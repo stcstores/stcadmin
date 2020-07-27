@@ -114,9 +114,9 @@ def test_shows_reason(refund, valid_get_response_content):
     ],
 )
 def test_refund_status(
-    refund_kwargs, status, refund_factory, url, group_logged_in_client
+    refund_kwargs, status, breakage_refund_factory, url, group_logged_in_client
 ):
-    refund_factory.create(**refund_kwargs)
+    breakage_refund_factory.create(**refund_kwargs)
     response = group_logged_in_client.get(url)
     content = response.content.decode("utf8")
     assert status in content
@@ -160,10 +160,10 @@ def test_order_ID_filter(country_factory, refund_factory, url, group_logged_in_c
 
 
 @pytest.mark.django_db
-def test_filter_contacted_any(refund_factory, url, group_logged_in_client):
+def test_filter_contacted_any(breakage_refund_factory, url, group_logged_in_client):
     refunds = [
-        refund_factory.create(contact_contacted=True),
-        refund_factory.create(contact_contacted=False),
+        breakage_refund_factory.create(contact_contacted=True),
+        breakage_refund_factory.create(contact_contacted=False),
     ]
     response = group_logged_in_client.get(url, {"contacted": "any"})
     content = response.content.decode("utf8")
@@ -172,10 +172,10 @@ def test_filter_contacted_any(refund_factory, url, group_logged_in_client):
 
 
 @pytest.mark.django_db
-def test_filter_contacted_yes(refund_factory, url, group_logged_in_client):
+def test_filter_contacted_yes(breakage_refund_factory, url, group_logged_in_client):
     refunds = [
-        refund_factory.create(contact_contacted=True),
-        refund_factory.create(contact_contacted=False),
+        breakage_refund_factory.create(contact_contacted=True),
+        breakage_refund_factory.create(contact_contacted=False),
     ]
     response = group_logged_in_client.get(url, {"contacted": "yes"})
     content = response.content.decode("utf8")
@@ -184,10 +184,10 @@ def test_filter_contacted_yes(refund_factory, url, group_logged_in_client):
 
 
 @pytest.mark.django_db
-def test_filter_contacted_no(refund_factory, url, group_logged_in_client):
+def test_filter_contacted_no(breakage_refund_factory, url, group_logged_in_client):
     refunds = [
-        refund_factory.create(contact_contacted=True),
-        refund_factory.create(contact_contacted=False),
+        breakage_refund_factory.create(contact_contacted=True),
+        breakage_refund_factory.create(contact_contacted=False),
     ]
     response = group_logged_in_client.get(url, {"contacted": "no"})
     content = response.content.decode("utf8")
@@ -196,11 +196,11 @@ def test_filter_contacted_no(refund_factory, url, group_logged_in_client):
 
 
 @pytest.mark.django_db
-def test_filter_accepted_any(refund_factory, url, group_logged_in_client):
+def test_filter_accepted_any(breakage_refund_factory, url, group_logged_in_client):
     refunds = [
-        refund_factory.create(refund_accepted=True),
-        refund_factory.create(refund_accepted=False),
-        refund_factory.create(refund_accepted=None),
+        breakage_refund_factory.create(refund_accepted=True),
+        breakage_refund_factory.create(refund_accepted=False),
+        breakage_refund_factory.create(refund_accepted=None),
     ]
     response = group_logged_in_client.get(url, {"accepted": "any"})
     content = response.content.decode("utf8")
@@ -209,11 +209,11 @@ def test_filter_accepted_any(refund_factory, url, group_logged_in_client):
 
 
 @pytest.mark.django_db
-def test_filter_accepted_yes(refund_factory, url, group_logged_in_client):
+def test_filter_accepted_yes(breakage_refund_factory, url, group_logged_in_client):
     refunds = [
-        refund_factory.create(refund_accepted=True),
-        refund_factory.create(refund_accepted=False),
-        refund_factory.create(refund_accepted=None),
+        breakage_refund_factory.create(refund_accepted=True),
+        breakage_refund_factory.create(refund_accepted=False),
+        breakage_refund_factory.create(refund_accepted=None),
     ]
     response = group_logged_in_client.get(url, {"accepted": "yes"})
     content = response.content.decode("utf8")
@@ -223,11 +223,11 @@ def test_filter_accepted_yes(refund_factory, url, group_logged_in_client):
 
 
 @pytest.mark.django_db
-def test_filter_accepted_no(refund_factory, url, group_logged_in_client):
+def test_filter_accepted_no(breakage_refund_factory, url, group_logged_in_client):
     refunds = [
-        refund_factory.create(refund_accepted=True),
-        refund_factory.create(refund_accepted=False),
-        refund_factory.create(refund_accepted=None),
+        breakage_refund_factory.create(refund_accepted=True),
+        breakage_refund_factory.create(refund_accepted=False),
+        breakage_refund_factory.create(refund_accepted=None),
     ]
     response = group_logged_in_client.get(url, {"accepted": "no"})
     content = response.content.decode("utf8")
@@ -295,3 +295,55 @@ def test_page_range():
     paginator.num_pages = 55
     page_numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 55]
     assert views.RefundList().get_page_range(paginator) == page_numbers
+
+
+@pytest.mark.django_db
+def test_search_by_sku(
+    breakage_refund_factory, product_refund_factory, url, group_logged_in_client
+):
+    refund = breakage_refund_factory.create()
+    product_refund_factory.create(refund=refund, product__sku="ABC-123-DEF")
+    other_refund = breakage_refund_factory.create()
+    product_refund_factory.create(refund=other_refund, product__sku="999-KFR-232")
+    response = group_logged_in_client.get(url, {"search": "abc"})
+    assert list(response.context["object_list"]) == [refund]
+
+
+@pytest.mark.django_db
+def test_search_by_name(
+    breakage_refund_factory, product_refund_factory, url, group_logged_in_client
+):
+    refund = breakage_refund_factory.create()
+    product_refund_factory.create(refund=refund, product__name="French Bulldog")
+    other_refund = breakage_refund_factory.create()
+    product_refund_factory.create(refund=other_refund, product__name="Other Product")
+    response = group_logged_in_client.get(url, {"search": "bulldog"})
+    assert list(response.context["object_list"]) == [refund]
+
+
+@pytest.mark.django_db
+def test_search_by_supplier(
+    breakage_refund_factory, product_refund_factory, url, group_logged_in_client
+):
+    refund = breakage_refund_factory.create()
+    product_refund_factory.create(refund=refund, product__supplier__name="Nemesis")
+    other_refund = breakage_refund_factory.create()
+    product_refund_factory.create(
+        refund=other_refund, product__supplier__name="Other Supplier"
+    )
+    response = group_logged_in_client.get(url, {"search": "neme"})
+    assert list(response.context["object_list"]) == [refund]
+
+
+@pytest.mark.django_db
+def test_supplier_filter(
+    breakage_refund_factory, product_refund_factory, url, group_logged_in_client
+):
+    refund = breakage_refund_factory.create()
+    product = product_refund_factory.create(refund=refund)
+    other_refund = breakage_refund_factory.create()
+    product_refund_factory.create(refund=other_refund)
+    response = group_logged_in_client.get(
+        url, {"supplier": product.product.supplier.id}
+    )
+    assert list(response.context["object_list"]) == [refund]

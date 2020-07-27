@@ -1,4 +1,5 @@
 import pytest
+from django.shortcuts import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from orders import models
@@ -6,7 +7,11 @@ from orders import models
 
 @pytest.fixture
 def refund(
-    refund_factory, product_sale_factory, packing_record_factory, product_refund_factory
+    db,
+    refund_factory,
+    product_sale_factory,
+    packing_record_factory,
+    product_refund_factory,
 ):
     refund = refund_factory.create()
     product = product_sale_factory.create(order=refund.order)
@@ -77,21 +82,36 @@ def test_uses_template(valid_get_response):
     )
 
 
-def test_refund_in_context(valid_get_response, refund):
+def test_refund_in_context(refund, valid_get_response):
     assert valid_get_response.context["refund"] == refund
 
 
-def test_order_in_context(valid_get_response, refund):
+def test_order_in_context(refund, valid_get_response):
     assert valid_get_response.context["order"] == refund.order
 
 
-def test_products_in_context(valid_get_response, refund):
+def test_products_in_context(refund, valid_get_response):
     assert list(valid_get_response.context["products"]) == list(refund.products.all())
 
 
-def test_other_products_in_context(valid_get_response, refund, other_product):
+def test_other_products_in_context(refund, other_product, valid_get_response):
     assert list(valid_get_response.context["other_products"]) == [other_product]
 
 
-def test_packing_record_in_context(valid_get_response, refund, packing_record):
+def test_packing_record_in_context(refund, packing_record, valid_get_response):
     assert valid_get_response.context["packing_record"] == packing_record
+
+
+def test_order_id_in_response(refund, valid_get_response_content):
+    assert refund.order.order_ID in valid_get_response_content
+
+
+def test_notes_in_response(refund, valid_get_response_content):
+    assert refund.notes in valid_get_response_content
+
+
+def test_links_to_set_notes(refund, valid_get_response_content):
+    assert (
+        reverse("orders:set_refund_notes", args=[refund.pk])
+        in valid_get_response_content
+    )

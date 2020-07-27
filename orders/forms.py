@@ -3,8 +3,10 @@ from datetime import datetime
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.utils.timezone import make_aware
 
+from inventory.models import Supplier
 from orders import models
 from shipping.models import Country
 from stcadmin.forms import KwargFormSet
@@ -128,13 +130,9 @@ class RefundListFilter(forms.Form):
     LINKING = "linking"
     LOST = "lost"
     DEMIC = "demic"
-    OUT = "out"
-    IN = "in"
 
     TYPE_CHOICES = (
         ("", "Any"),
-        (OUT, "Refund to Customer"),
-        (IN, "Refund to Us"),
         (BREAKAGE, "Breakage"),
         (PACKING, "Packing Mistake"),
         (LINKING, "Linking Mistake"),
@@ -143,17 +141,16 @@ class RefundListFilter(forms.Form):
     )
 
     REFUND_TYPES = {
-        OUT: models.RefundOut,
-        IN: models.RefundIn,
         BREAKAGE: models.BreakageRefund,
         PACKING: models.PackingMistakeRefund,
         LINKING: models.LinkingMistakeRefund,
         LOST: models.LostInPostRefund,
         DEMIC: models.DemicRefund,
     }
-
+    search = forms.CharField(required=False)
     order_ID = forms.CharField(required=False)
     product_SKU = forms.CharField(required=False)
+    supplier = forms.ModelChoiceField(queryset=Supplier.objects.all(), required=False)
     dispatched_from = forms.DateField(
         required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
     )
@@ -211,8 +208,7 @@ class RefundListFilter(forms.Form):
             "order__dispatched_at__lte": data.get("dispatched_to"),
             "order__order_ID": data.get("order_ID") or None,
             "products__product__sku": data.get("product_SKU") or None,
-            "contact_contacted": data.get("contacted"),
-            "refund_accepted": data.get("accepted"),
+            "products__product__supplier": data.get("supplier") or None,
             "closed": data.get("closed"),
         }
         return {key: value for key, value in kwargs.items() if value is not None}
@@ -221,9 +217,24 @@ class RefundListFilter(forms.Form):
         """Return a queryset of orders based on the submitted data."""
         kwargs = self.query_kwargs(self.cleaned_data)
         qs = models.Refund.objects.filter(**kwargs).order_by("-order__dispatched_at")
+        search_text = self.cleaned_data.get("search")
+        if search_text:
+            search_text = search_text.strip()
+            product_qs = models.ProductRefund.objects.filter(
+                Q(product__sku__icontains=search_text)
+                | Q(product__name__icontains=search_text)
+                | Q(product__supplier__name__icontains=search_text)
+            ).values_list("refund", flat=True)
+            qs = qs.filter(id__in=product_qs)
         refund_type = self.cleaned_data.get("refund_type")
         if refund_type:
             qs = qs.instance_of(self.REFUND_TYPES[refund_type])
+        contacted = self.cleaned_data.get("contacted")
+        if contacted is not None:
+            qs = qs.filter(Q(ContactRefund___contact_contacted=contacted))
+        accepted = self.cleaned_data.get("accepted")
+        if accepted is not None:
+            qs = qs.filter(Q(ContactRefund___refund_accepted=accepted))
         return qs
 
 
@@ -247,14 +258,20 @@ class CreateRefund(forms.Form):
     order_ID = forms.CharField()
     refund_type = forms.ChoiceField(
         choices=(
-            (BROKEN, "Broken - An item was broken when in transit"),
-            (PACKING_MISTAKE, "Packing Mistake - The wrong item was sent"),
+            (BROKEN, "Broken - An order was damaged in transit"),
+            (
+                PACKING_MISTAKE,
+                "Packing Mistake - The wrong item was sent due to a packing error",
+            ),
             (
                 LINKING_MISTAKE,
                 "Linking Mistake - The wrong item was sent due to a linking error",
             ),
-            (LOST_IN_POST, "Lost in Post - The item never arrived"),
-            (DEMIC, "Demic - We recieved the item in an unsalable state"),
+            (LOST_IN_POST, "Lost in Post - An order went missing in transit",),
+            (
+                DEMIC,
+                "Demic - An item was recived from a supplier in an unsalable state",
+            ),
         ),
         widget=forms.RadioSelect(),
     )

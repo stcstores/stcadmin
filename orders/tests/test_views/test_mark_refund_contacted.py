@@ -3,9 +3,12 @@ import pytest
 
 @pytest.fixture
 def refund(
-    refund_factory, product_sale_factory, packing_record_factory, product_refund_factory
+    breakage_refund_factory,
+    product_sale_factory,
+    packing_record_factory,
+    product_refund_factory,
 ):
-    refund = refund_factory.create(contact_contacted=False)
+    refund = breakage_refund_factory.create(contact_contacted=False)
     product = product_sale_factory.create(order=refund.order)
     product_refund_factory.create(refund=refund, product=product)
     return refund

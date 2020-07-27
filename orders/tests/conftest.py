@@ -10,6 +10,7 @@ from orders import models
 from shipping.tests.conftest import (
     CountryFactory,
     CourierServiceFactory,
+    ProviderFactory,
     ShippingPriceFactory,
     ShippingRuleFactory,
     VatRateFactory,
@@ -20,6 +21,7 @@ pytest_factoryboy.register(ShippingRuleFactory)
 pytest_factoryboy.register(ShippingPriceFactory)
 pytest_factoryboy.register(CourierServiceFactory)
 pytest_factoryboy.register(VatRateFactory)
+pytest_factoryboy.register(ProviderFactory)
 
 
 @pytest_factoryboy.register
@@ -38,7 +40,7 @@ class SupplierFactory(factory.DjangoModelFactory):
     class Meta:
         model = Supplier
 
-    name = factory.Sequence(lambda n: f"Test Department {n}")
+    name = factory.Sequence(lambda n: f"Test Supplier {n}")
     product_option_value_ID = factory.Sequence(lambda n: str(6465 + n))
     factory_ID = factory.Sequence(lambda n: str(n + 46546))
     inactive = False
@@ -112,6 +114,7 @@ class ProductSaleFactory(factory.DjangoModelFactory):
     department = factory.SubFactory(DepartmentFactory)
     purchase_price = 250
     vat_rate = 20
+    supplier = factory.SubFactory(SupplierFactory)
     details_success = True
 
 
@@ -163,9 +166,7 @@ class RefundFactory(factory.DjangoModelFactory):
         model = models.Refund
 
     order = factory.SubFactory(OrderFactory)
-    contact_contacted = False
-    refund_accepted = None
-    refund_amount = 982
+    notes = "A refund"
     closed = False
 
 
@@ -178,7 +179,9 @@ class BreakageRefundFactory(factory.DjangoModelFactory):
     contact_contacted = False
     refund_accepted = None
     refund_amount = 982
+    notes = "A refund for a damaged item"
     closed = False
+    supplier = factory.SubFactory(SupplierFactory)
 
 
 @pytest_factoryboy.register
@@ -187,9 +190,7 @@ class PackingMistakeRefundFactory(factory.DjangoModelFactory):
         model = models.PackingMistakeRefund
 
     order = factory.SubFactory(OrderFactory)
-    contact_contacted = False
-    refund_accepted = None
-    refund_amount = 982
+    notes = "A refund for a packing mistake"
     closed = False
 
 
@@ -199,9 +200,7 @@ class LinkingMistakeRefundFactory(factory.DjangoModelFactory):
         model = models.LinkingMistakeRefund
 
     order = factory.SubFactory(OrderFactory)
-    contact_contacted = False
-    refund_accepted = None
-    refund_amount = 982
+    notes = "A refund for a linking mistake"
     closed = False
 
 
@@ -214,7 +213,9 @@ class LostInPostRefundFactory(factory.DjangoModelFactory):
     contact_contacted = False
     refund_accepted = None
     refund_amount = 982
+    notes = "A refund for an item lost in the post"
     closed = False
+    courier = factory.SubFactory(ProviderFactory)
 
 
 @pytest_factoryboy.register
@@ -226,7 +227,9 @@ class DemicRefundFactory(factory.DjangoModelFactory):
     contact_contacted = False
     refund_accepted = None
     refund_amount = 982
+    notes = "A refund for an item recieved from the supplier damaged"
     closed = False
+    supplier = factory.SubFactory(SupplierFactory)
 
 
 @pytest_factoryboy.register

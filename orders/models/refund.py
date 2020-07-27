@@ -1,11 +1,16 @@
 """Model for refund tracking."""
 
 
-from django.db import models
+from collections import defaultdict
+
+from django.db import models, transaction
 from django.shortcuts import reverse
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
 from polymorphic.models import PolymorphicModel
+
+from inventory.models import Supplier
+from shipping.models import Provider
 
 from .order import Order
 from .product_sale import ProductSale
@@ -15,9 +20,7 @@ class Refund(PolymorphicModel):
     """Model for refund requests."""
 
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
-    contact_contacted = models.BooleanField(default=False)
-    refund_accepted = models.BooleanField(blank=True, null=True)
-    refund_amount = models.PositiveIntegerField(blank=True, null=True)
+    notes = models.TextField(blank=True)
     closed = models.BooleanField(default=False)
 
     def get_absolute_url(self):
@@ -28,47 +31,125 @@ class Refund(PolymorphicModel):
         """Return the reason for the refund."""
         return self._meta.verbose_name.title().replace(" Refund", "")
 
+    @classmethod
+    def from_order(cls, order, products):
+        """
+        Create a refund.
 
-class RefundOut(Refund):
-    """Model for refunds to customers."""
-
-    contact_name = "Customer"
-
-
-class RefundIn(Refund):
-    """Model for refunds to us."""
-
-    pass
-
-
-class BreakageRefund(RefundOut):
-    """Model for refunds lost in the post."""
-
-    pass
-
-
-class PackingMistakeRefund(RefundOut):
-    """Model for refunds lost in the post."""
-
-    pass
+        args:
+            order (orders.models.Order): The order to which the refund belongs.
+            products (tulple(orders.models.ProductSale, int)): A lost of tuples of
+                ProductSale objects to which the refund applies and the quantity of that
+                product to which it applies.
+        """
+        with transaction.atomic():
+            refund = cls(order=order)
+            refund.save()
+            for product_sale, quantity in products:
+                ProductRefund(
+                    refund=refund, product=product_sale, quantity=quantity
+                ).save()
 
 
-class LinkingMistakeRefund(RefundOut):
-    """Model for refunds lost in the post."""
+class ContactRefund(Refund):
+    """Model for refunds with status tracking."""
 
-    pass
-
-
-class LostInPostRefund(RefundIn):
-    """Model for refunds lost in the post."""
-
-    contact_name = "Logistics Partner"
+    contact_contacted = models.BooleanField(default=False)
+    refund_accepted = models.BooleanField(blank=True, null=True)
+    refund_amount = models.PositiveIntegerField(blank=True, null=True)
 
 
-class DemicRefund(RefundIn):
-    """Model for refunds lost in the post."""
+class SupplierRefund(ContactRefund):
+    """Model for refunds from suppliers."""
 
     contact_name = "Supplier"
+    supplier = models.ForeignKey(
+        Supplier, null=True, blank=True, on_delete=models.PROTECT
+    )
+
+    @classmethod
+    def from_order(cls, order, products):
+        """
+        Create a refund for each supplier in an order.
+
+        args:
+            order (orders.models.Order): The order to which the refund belongs.
+            products (tulple(orders.models.ProductSale, int)): A lost of tuples of
+                ProductSale objects to which the refund applies and the quantity of that
+                product to which it applies.
+        """
+        with transaction.atomic():
+            supplier_products = defaultdict(list)
+            for product_sale, quantity in products:
+                supplier_products[product_sale.supplier].append(
+                    (product_sale, quantity)
+                )
+            for supplier, products in supplier_products.items():
+                refund = cls(order=order, supplier=supplier)
+                refund.save()
+                for product_sale, quantity in products:
+                    ProductRefund(
+                        refund=refund, product=product_sale, quantity=quantity
+                    ).save()
+
+
+class CourierRefund(ContactRefund):
+    """Model for refunds from couriers."""
+
+    contact_name = "Logistics Partner"
+    courier = models.ForeignKey(
+        Provider, null=True, blank=True, on_delete=models.PROTECT
+    )
+
+    @classmethod
+    def from_order(cls, order, products):
+        """
+        Create a refund.
+
+        args:
+            order (orders.models.Order): The order to which the refund belongs.
+            products (tulple(orders.models.ProductSale, int)): A lost of tuples of
+                ProductSale objects to which the refund applies and the quantity of that
+                product to which it applies.
+        """
+        with transaction.atomic():
+            courier = order.shipping_rule.courier_service.courier.courier_type.provider
+            refund = cls(order=order, courier=courier)
+            refund.save()
+            for product_sale, quantity in products:
+                ProductRefund(
+                    refund=refund, product=product_sale, quantity=quantity
+                ).save()
+
+
+class BreakageRefund(SupplierRefund):
+    """Model for refunds lost in the post."""
+
+    pass
+
+
+class PackingMistakeRefund(Refund):
+    """Model for refunds lost in the post."""
+
+    pass
+
+
+class LinkingMistakeRefund(Refund):
+    """Model for refunds lost in the post."""
+
+    pass
+
+
+class LostInPostRefund(CourierRefund):
+    """Model for refunds lost in the post."""
+
+    pass
+
+
+class DemicRefund(SupplierRefund):
+    """Model for refunds lost in the post."""
+
+    pass
 
 
 class ProductRefund(models.Model):

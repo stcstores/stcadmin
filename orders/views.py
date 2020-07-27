@@ -3,7 +3,6 @@ import csv
 import io
 from datetime import timedelta
 
-from django.db import transaction
 from django.db.models import Count, Q
 from django.http import (
     Http404,
@@ -24,7 +23,7 @@ from orders import forms, models
 
 
 class OrdersUserMixin(UserInGroupMixin):
-    """View mixin to ensure user is in the print audit group."""
+    """View mixin to ensure user is in the orders group."""
 
     groups = ["orders"]
 
@@ -396,13 +395,11 @@ class CreateRefund(OrdersUserMixin, FormView):
         refund_class = form.refund_types[refund_type]
         products = order.productsale_set.all()
         if products.count() == 1 and products[0].quantity == 1:
-            with transaction.atomic():
-                refund = refund_class(order=order)
-                refund.save()
-                models.ProductRefund(
-                    refund=refund, product=products[0], quantity=1
-                ).save()
-            return HttpResponseRedirect(refund.get_absolute_url())
+            product_sale = products.first()
+            refund_class.from_order(order, [(product_sale, 1)])
+            return HttpResponseRedirect(
+                reverse("orders:refund_list") + f"?order_ID={order.order_ID}"
+            )
         else:
             return HttpResponseRedirect(
                 reverse("orders:select_refund_products", args=[refund_type, order.pk])
@@ -485,17 +482,12 @@ class SelectRefundProducts(OrdersUserMixin, FormView):
 
     def form_valid(self, formset):
         """Create a refund."""
-        with transaction.atomic():
-            self.refund = self.refund_class(order=self.order)
-            self.refund.save()
-            for form in formset:
-                refund_quantity = form.cleaned_data["quantity"]
-                if refund_quantity > 0:
-                    models.ProductRefund(
-                        refund=self.refund,
-                        product=form.product_sale,
-                        quantity=refund_quantity,
-                    ).save()
+        products = [
+            (form.product_sale, form.cleaned_data["quantity"])
+            for form in formset
+            if form.cleaned_data["quantity"] > 0
+        ]
+        self.refund_class.from_order(self.order, products)
         return super().form_valid(formset)
 
     def get_context_data(self, *args, **kwargs):
@@ -506,7 +498,7 @@ class SelectRefundProducts(OrdersUserMixin, FormView):
 
     def get_success_url(self):
         """Return the URL to redirect to after a succesfull form submission."""
-        return self.refund.get_absolute_url()
+        return reverse("orders:refund_list") + f"?order_ID={self.order.order_ID}"
 
 
 class RefundImages(OrdersUserMixin, TemplateView):
@@ -561,3 +553,79 @@ class DeleteRefundImage(OrdersUserMixin, DeleteView):
     def get_success_url(self):
         """Return the URL to return to after deleting the image."""
         return reverse("orders:refund_images", args=[self.object.refund.id])
+
+
+class SetRefundNotes(OrdersUserMixin, RedirectView):
+    """View for setting refund notes."""
+
+    def get_redirect_url(self, pk):
+        """Set the refund notes field and redirect to it's page."""
+        refund = get_object_or_404(models.Refund, pk=pk)
+        note_text = self.request.GET.get("notes") or ""
+        refund.notes = note_text
+        refund.save()
+        return refund.get_absolute_url()
+
+
+class ExportRefunds(OrdersUserMixin, View):
+    """Create a .csv export of order data."""
+
+    form_class = forms.RefundListFilter
+    header = [
+        "order_ID",
+        "refund_reason",
+        "date_recieved",
+        "date_dispatched",
+        "country",
+        "channel",
+        "tracking_number",
+        "courier",
+        "supplier",
+        "contacted",
+        "accepted",
+        "amount",
+    ]
+
+    def get(self, *args, **kwargs):
+        """Return an HttpResponse contaning the export or a 404 status."""
+        form = self.form_class(self.request.GET)
+        if form.is_valid():
+            contents = self.make_csv(form.get_queryset())
+            response = HttpResponse(contents, content_type="text/csv")
+            filename = f"refunds_export_{timezone.now().strftime('%Y-%m-%d')}.csv"
+            response["Content-Disposition"] = f"attachment; filename={filename}"
+            return response
+        return HttpResponseNotFound()
+
+    def make_csv(self, refunds):
+        """Return the export as a CSV string."""
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(self.header)
+        for refund in refunds:
+            row = self.make_row(refund)
+            writer.writerow(row)
+        return output.getvalue()
+
+    def make_row(self, refund):
+        """Return a row of order data."""
+        return [
+            refund.order.order_ID,
+            refund.reason(),
+            refund.order.recieved_at.strftime("%Y-%m-%d"),
+            refund.order.dispatched_at.strftime("%Y-%m-%d"),
+            refund.order.country.name,
+            refund.order.channel.name,
+            refund.order.tracking_number,
+            getattr(refund, "courier", ""),
+            getattr(refund, "supplier", ""),
+            getattr(refund, "contact_contacted", ""),
+            getattr(refund, "refund_accepted", ""),
+            self.format_currency(getattr(refund, "refund_amount", None)),
+        ]
+
+    def format_currency(self, price):
+        """Return a price as a formatted string."""
+        if price is None:
+            return None
+        return f"{price / 100:.2f}"
