@@ -10,6 +10,7 @@ from orders import models
 from shipping.tests.conftest import (
     CountryFactory,
     CourierServiceFactory,
+    ProviderFactory,
     ShippingPriceFactory,
     ShippingRuleFactory,
     VatRateFactory,
@@ -20,6 +21,7 @@ pytest_factoryboy.register(ShippingRuleFactory)
 pytest_factoryboy.register(ShippingPriceFactory)
 pytest_factoryboy.register(CourierServiceFactory)
 pytest_factoryboy.register(VatRateFactory)
+pytest_factoryboy.register(ProviderFactory)
 
 
 @pytest_factoryboy.register
@@ -179,6 +181,7 @@ class BreakageRefundFactory(factory.DjangoModelFactory):
     refund_amount = 982
     notes = "A refund for a damaged item"
     closed = False
+    supplier = factory.SubFactory(SupplierFactory)
 
 
 @pytest_factoryboy.register
@@ -212,6 +215,7 @@ class LostInPostRefundFactory(factory.DjangoModelFactory):
     refund_amount = 982
     notes = "A refund for an item lost in the post"
     closed = False
+    courier = factory.SubFactory(ProviderFactory)
 
 
 @pytest_factoryboy.register
@@ -225,6 +229,7 @@ class DemicRefundFactory(factory.DjangoModelFactory):
     refund_amount = 982
     notes = "A refund for an item recieved from the supplier damaged"
     closed = False
+    supplier = factory.SubFactory(SupplierFactory)
 
 
 @pytest_factoryboy.register

@@ -23,7 +23,7 @@ from orders import forms, models
 
 
 class OrdersUserMixin(UserInGroupMixin):
-    """View mixin to ensure user is in the print audit group."""
+    """View mixin to ensure user is in the orders group."""
 
     groups = ["orders"]
 
@@ -565,3 +565,67 @@ class SetRefundNotes(OrdersUserMixin, RedirectView):
         refund.notes = note_text
         refund.save()
         return refund.get_absolute_url()
+
+
+class ExportRefunds(OrdersUserMixin, View):
+    """Create a .csv export of order data."""
+
+    form_class = forms.RefundListFilter
+    header = [
+        "order_ID",
+        "refund_reason",
+        "date_recieved",
+        "date_dispatched",
+        "country",
+        "channel",
+        "tracking_number",
+        "courier",
+        "supplier",
+        "contacted",
+        "accepted",
+        "amount",
+    ]
+
+    def get(self, *args, **kwargs):
+        """Return an HttpResponse contaning the export or a 404 status."""
+        form = self.form_class(self.request.GET)
+        if form.is_valid():
+            contents = self.make_csv(form.get_queryset())
+            response = HttpResponse(contents, content_type="text/csv")
+            filename = f"refunds_export_{timezone.now().strftime('%Y-%m-%d')}.csv"
+            response["Content-Disposition"] = f"attachment; filename={filename}"
+            return response
+        return HttpResponseNotFound()
+
+    def make_csv(self, refunds):
+        """Return the export as a CSV string."""
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(self.header)
+        for refund in refunds:
+            row = self.make_row(refund)
+            writer.writerow(row)
+        return output.getvalue()
+
+    def make_row(self, refund):
+        """Return a row of order data."""
+        return [
+            refund.order.order_ID,
+            refund.reason(),
+            refund.order.recieved_at.strftime("%Y-%m-%d"),
+            refund.order.dispatched_at.strftime("%Y-%m-%d"),
+            refund.order.country.name,
+            refund.order.channel.name,
+            refund.order.tracking_number,
+            getattr(refund, "courier", ""),
+            getattr(refund, "supplier", ""),
+            getattr(refund, "contact_contacted", ""),
+            getattr(refund, "refund_accepted", ""),
+            self.format_currency(getattr(refund, "refund_amount", None)),
+        ]
+
+    def format_currency(self, price):
+        """Return a price as a formatted string."""
+        if price is None:
+            return None
+        return f"{price / 100:.2f}"

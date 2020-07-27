@@ -84,4 +84,5 @@ urlpatterns = [
         views.SetRefundNotes.as_view(),
         name="set_refund_notes",
     ),
+    path("export_refunds/", views.ExportRefunds.as_view(), name="export_refunds"),
 ]
