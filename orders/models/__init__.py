@@ -1,6 +1,5 @@
 """Models for the orders app."""
 from . import charts
-from .breakage import Breakage
 from .channel import Channel
 from .order import Order
 from .order_details_update import OrderDetailsUpdate, OrderDetailsUpdateError
@@ -22,7 +21,6 @@ from .refund import (
 )
 
 __all__ = [
-    "Breakage",
     "Channel",
     "charts",
     "Order",
