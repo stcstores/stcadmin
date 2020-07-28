@@ -61,6 +61,7 @@
 .refund_images {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .refund_image {
@@ -83,5 +84,21 @@
     border: 1px solid black;
     margin: 1em;
     padding: 1em;
+    border-radius: 1em;
+}
+
+.refund {
+    display: flex;
+}
+
+.refund_products {
+    display: flex;
+}
+
+.refund_product {
+    display: flex;
+    padding: 1em;
+    margin: 1em;
+    border: 2px solid #555;
     border-radius: 1em;
 }

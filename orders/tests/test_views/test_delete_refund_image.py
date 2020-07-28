@@ -1,5 +1,4 @@
 import pytest
-from django.shortcuts import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from orders import models
@@ -80,4 +79,4 @@ def test_post_deletes_image(image, group_logged_in_client, url):
 @pytest.mark.django_db
 def test_post_redirects(image, group_logged_in_client, url):
     response = group_logged_in_client.post(url)
-    assert response.url == reverse("orders:refund_images", args=[image.refund.id])
+    assert response.url == image.refund.get_absolute_url()

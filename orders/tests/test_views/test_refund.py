@@ -1,5 +1,8 @@
+import tempfile
+
 import pytest
 from django.shortcuts import reverse
+from django.test import override_settings
 from pytest_django.asserts import assertTemplateUsed
 
 from orders import models
@@ -18,6 +21,18 @@ def refund(
     packing_record_factory.create(order=refund.order)
     product_refund_factory.create(refund=refund, product=product)
     return refund
+
+
+@pytest.fixture
+def image(refund, refund_image_factory):
+    return refund_image_factory.create(refund=refund)
+
+
+@pytest.fixture
+def product_image(refund, refund_image_factory):
+    return refund_image_factory.create(
+        refund=refund, product_refund=refund.products.first()
+    )
 
 
 @pytest.fixture
@@ -113,5 +128,68 @@ def test_notes_in_response(refund, valid_get_response_content):
 def test_links_to_set_notes(refund, valid_get_response_content):
     assert (
         reverse("orders:set_refund_notes", args=[refund.pk])
+        in valid_get_response_content
+    )
+
+
+@pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+def test_shows_images(image, valid_get_response_content):
+    assert f'src="{image.thumbnail.url}"' in valid_get_response_content
+
+
+@pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+def test_shows_product_images(product_image, valid_get_response_content):
+    assert f'src="{product_image.thumbnail.url}"' in valid_get_response_content
+
+
+@pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+def test_links_to_images(image, valid_get_response_content):
+    assert f'href="{image.image.url}"' in valid_get_response_content
+
+
+@pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+def test_links_to_product_images(product_image, valid_get_response_content):
+    assert f'href="{product_image.image.url}"' in valid_get_response_content
+
+
+@pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+def test_links_to_delete_images(image, valid_get_response_content):
+    assert (
+        reverse("orders:delete_refund_image", args=[image.id])
+        in valid_get_response_content
+    )
+
+
+@pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+def test_links_to_delete_product_images(product_image, valid_get_response_content):
+    assert (
+        reverse("orders:delete_refund_image", args=[product_image.id])
+        in valid_get_response_content
+    )
+
+
+@pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+def test_links_to_add_images(image, valid_get_response_content):
+    assert (
+        reverse("orders:add_refund_images", args=[image.refund.id])
+        in valid_get_response_content
+    )
+
+
+@pytest.mark.django_db
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+def test_links_to_add_product_images(product_image, valid_get_response_content):
+    assert (
+        reverse(
+            "orders:add_refund_images",
+            args=[product_image.refund.id, product_image.product_refund.id],
+        )
         in valid_get_response_content
     )
