@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404, reverse
 from django.utils import timezone
 from django.views.generic import FormView
 from django.views.generic.base import RedirectView, TemplateView, View
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
 
 from home.models import CloudCommerceUser
@@ -32,58 +32,6 @@ class Index(OrdersUserMixin, TemplateView):
     """Main view for the orders app."""
 
     template_name = "orders/index.html"
-
-
-class BreakageIndex(OrdersUserMixin, TemplateView):
-    """Main view for breakages."""
-
-    template_name = "orders/breakages.html"
-
-    def get_context_data(self, *args, **kwargs):
-        """Return context for template."""
-        context = super().get_context_data(*args, **kwargs)
-        context["breakages"] = models.Breakage.objects.all()
-        return context
-
-
-class AddBreakage(OrdersUserMixin, CreateView):
-    """View for creating new Breakage objects."""
-
-    model = models.Breakage
-    fields = ["product_sku", "order_id", "note", "packer"]
-
-    def get_success_url(self):
-        """Return URL to redirect to after succesfull form submission."""
-        return reverse("orders:breakages")
-
-
-class UpdateBreakage(OrdersUserMixin, UpdateView):
-    """View for updating Breakage objects."""
-
-    model = models.Breakage
-    fields = ["product_sku", "order_id", "note", "packer"]
-
-    def get_object(self, queryset=None):
-        """Return object to update."""
-        return models.Breakage.objects.get(id=self.kwargs["breakage_id"])
-
-    def get_success_url(self):
-        """Return URL to redirect to after succesfull form submission."""
-        return reverse("orders:breakages")
-
-
-class DeleteBreakage(OrdersUserMixin, DeleteView):
-    """View for deleting Breakage objects."""
-
-    model = models.Breakage
-
-    def get_object(self, queryset=None):
-        """Return object to delete."""
-        return models.Breakage.objects.get(id=self.kwargs["breakage_id"])
-
-    def get_success_url(self):
-        """Return URL to redirect to after succesfull form submission."""
-        return reverse("orders:breakages")
 
 
 class PackCountMonitor(TemplateView):

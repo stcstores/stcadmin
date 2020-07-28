@@ -2,8 +2,6 @@
 
 from django.db import migrations, models
 
-import orders.models.breakage
-
 
 class Migration(migrations.Migration):
 
@@ -13,10 +11,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name="breakage",
-            name="timestamp",
-            field=models.DateTimeField(
-                default=orders.models.breakage.default_timestamp
-            ),
+            model_name="breakage", name="timestamp", field=models.DateTimeField(),
         ),
     ]
