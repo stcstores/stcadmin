@@ -425,6 +425,9 @@ class Refund(OrdersUserMixin, TemplateView):
         context["packing_record"] = get_object_or_404(
             models.PackingRecord, order=refund.order
         )
+        context["refund_images"] = models.RefundImage.objects.filter(
+            refund=refund, product_refund__isnull=True
+        )
         return context
 
 
@@ -501,27 +504,6 @@ class SelectRefundProducts(OrdersUserMixin, FormView):
         return reverse("orders:refund_list") + f"?order_ID={self.order.order_ID}"
 
 
-class RefundImages(OrdersUserMixin, TemplateView):
-    """View for managing refund images."""
-
-    template_name = "orders/refunds/refund_images.html"
-
-    def get_context_data(self, *args, **kwargs):
-        """Return context for the template."""
-        context = super().get_context_data(*args, **kwargs)
-        refund = get_object_or_404(models.Refund, id=self.kwargs.get("pk"))
-        context["refund"] = refund
-        context["refund_images"] = models.RefundImage.objects.filter(
-            refund=refund, product_refund__isnull=True
-        )
-        context["products"] = {}
-        for product in refund.products.all():
-            context["products"][product] = models.RefundImage.objects.filter(
-                refund=refund, product_refund=product
-            )
-        return context
-
-
 class AddRefundImages(OrdersUserMixin, RedirectView):
     """View for adding images to refunds."""
 
@@ -541,7 +523,7 @@ class AddRefundImages(OrdersUserMixin, RedirectView):
                 thumbnail=image,
             )
             refund_image.save()
-        return reverse("orders:refund_images", args=[refund_pk])
+        return refund.get_absolute_url()
 
 
 class DeleteRefundImage(OrdersUserMixin, DeleteView):
@@ -552,7 +534,7 @@ class DeleteRefundImage(OrdersUserMixin, DeleteView):
 
     def get_success_url(self):
         """Return the URL to return to after deleting the image."""
-        return reverse("orders:refund_images", args=[self.object.refund.id])
+        return self.object.refund.get_absolute_url()
 
 
 class SetRefundNotes(OrdersUserMixin, RedirectView):

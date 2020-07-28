@@ -110,3 +110,9 @@ def test_creates_product_images(
         models.RefundImage.objects.filter(refund=refund, product_refund=product).count()
         == 2
     )
+
+
+def test_redirects(refund, url, image_file, group_logged_in_client):
+    form_data = {"images": [image_file(), image_file()]}
+    response = group_logged_in_client.post(url(refund), form_data)
+    assert response.url == refund.get_absolute_url()
