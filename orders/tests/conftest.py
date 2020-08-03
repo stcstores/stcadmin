@@ -119,18 +119,6 @@ class ProductSaleFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class BreakageFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = models.Breakage
-
-    product_sku = factory.Sequence(lambda n: f"ABC-123-56{n}")
-    order_id = factory.Sequence(lambda n: str(4684684 + n))
-    note = ""
-    packer = factory.SubFactory(CloudCommerceUserFactory)
-    timestamp = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
-
-
-@pytest_factoryboy.register
 class OrderUpdateFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.OrderUpdate
