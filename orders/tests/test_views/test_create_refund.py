@@ -91,6 +91,26 @@ def test_creates_refund(
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize(
+    "refund_type,refund_class",
+    (
+        (forms.CreateRefund.BROKEN, models.BreakageRefund),
+        (forms.CreateRefund.PACKING_MISTAKE, models.PackingMistakeRefund),
+        (forms.CreateRefund.LINKING_MISTAKE, models.LinkingMistakeRefund),
+        (forms.CreateRefund.LOST_IN_POST, models.LostInPostRefund),
+        (forms.CreateRefund.DEMIC, models.DemicRefund),
+    ),
+)
+def test_redirects(
+    refund_type, refund_class, group_logged_in_client, url, order, form_data
+):
+    form_data["refund_type"] = refund_type
+    response = group_logged_in_client.post(url, form_data)
+    refund = refund_class.objects.get(order=order)
+    assert response.url == refund.get_absolute_url()
+
+
+@pytest.mark.django_db
 def test_creates_product_refund(order, group_logged_in_client, url, form_data):
     group_logged_in_client.post(url, form_data)
     assert models.ProductRefund.objects.filter(

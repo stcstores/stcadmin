@@ -344,10 +344,8 @@ class CreateRefund(OrdersUserMixin, FormView):
         products = order.productsale_set.all()
         if products.count() == 1 and products[0].quantity == 1:
             product_sale = products.first()
-            refund_class.from_order(order, [(product_sale, 1)])
-            return HttpResponseRedirect(
-                reverse("orders:refund_list") + f"?order_ID={order.order_ID}"
-            )
+            refunds = refund_class.from_order(order, [(product_sale, 1)])
+            return HttpResponseRedirect(refunds[0].get_absolute_url())
         else:
             return HttpResponseRedirect(
                 reverse("orders:select_refund_products", args=[refund_type, order.pk])
@@ -438,7 +436,7 @@ class SelectRefundProducts(OrdersUserMixin, FormView):
             for form in formset
             if form.cleaned_data["quantity"] > 0
         ]
-        self.refund_class.from_order(self.order, products)
+        self.refunds = self.refund_class.from_order(self.order, products)
         return super().form_valid(formset)
 
     def get_context_data(self, *args, **kwargs):
@@ -449,6 +447,8 @@ class SelectRefundProducts(OrdersUserMixin, FormView):
 
     def get_success_url(self):
         """Return the URL to redirect to after a succesfull form submission."""
+        if len(self.refunds) == 1:
+            return self.refunds[0].get_absolute_url()
         return reverse("orders:refund_list") + f"?order_ID={self.order.order_ID}"
 
 
