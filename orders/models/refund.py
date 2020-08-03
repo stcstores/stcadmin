@@ -22,6 +22,7 @@ class Refund(PolymorphicModel):
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
     notes = models.TextField(blank=True)
     closed = models.BooleanField(default=False)
+    images_required = False
 
     def get_absolute_url(self):
         """Return the URL for this refund."""
@@ -67,6 +68,7 @@ class SupplierRefund(ContactRefund):
     supplier = models.ForeignKey(
         Supplier, null=True, blank=True, on_delete=models.PROTECT
     )
+    images_required = True
 
     @classmethod
     def from_order(cls, order, products):
