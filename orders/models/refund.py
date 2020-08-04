@@ -22,6 +22,7 @@ class Refund(PolymorphicModel):
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
     notes = models.TextField(blank=True)
     closed = models.BooleanField(default=False)
+    images_required = False
 
     def get_absolute_url(self):
         """Return the URL for this refund."""
@@ -49,6 +50,7 @@ class Refund(PolymorphicModel):
                 ProductRefund(
                     refund=refund, product=product_sale, quantity=quantity
                 ).save()
+            return [refund]
 
 
 class ContactRefund(Refund):
@@ -66,6 +68,7 @@ class SupplierRefund(ContactRefund):
     supplier = models.ForeignKey(
         Supplier, null=True, blank=True, on_delete=models.PROTECT
     )
+    images_required = True
 
     @classmethod
     def from_order(cls, order, products):
@@ -79,6 +82,7 @@ class SupplierRefund(ContactRefund):
                 product to which it applies.
         """
         with transaction.atomic():
+            refunds = []
             supplier_products = defaultdict(list)
             for product_sale, quantity in products:
                 supplier_products[product_sale.supplier].append(
@@ -86,11 +90,13 @@ class SupplierRefund(ContactRefund):
                 )
             for supplier, products in supplier_products.items():
                 refund = cls(order=order, supplier=supplier)
+                refunds.append(refund)
                 refund.save()
                 for product_sale, quantity in products:
                     ProductRefund(
                         refund=refund, product=product_sale, quantity=quantity
                     ).save()
+        return refunds
 
 
 class CourierRefund(ContactRefund):
@@ -111,6 +117,9 @@ class CourierRefund(ContactRefund):
             products (tulple(orders.models.ProductSale, int)): A lost of tuples of
                 ProductSale objects to which the refund applies and the quantity of that
                 product to which it applies.
+
+        returns:
+            A list of refunds created.
         """
         with transaction.atomic():
             courier = order.shipping_rule.courier_service.courier.courier_type.provider
@@ -120,6 +129,7 @@ class CourierRefund(ContactRefund):
                 ProductRefund(
                     refund=refund, product=product_sale, quantity=quantity
                 ).save()
+        return [refund]
 
 
 class BreakageRefund(SupplierRefund):

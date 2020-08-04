@@ -169,6 +169,16 @@ def test_from_order(order_factory, product_sale_factory):
 
 
 @pytest.mark.django_db
+def test_from_order_returns_refunds(order_factory, product_sale_factory):
+    order = order_factory.create()
+    products = [
+        (product_sale_factory.create(order=order, quantity=3), 2) for _ in range(3)
+    ]
+    return_value = models.Refund.from_order(order, products)
+    assert return_value == list(models.Refund.objects.filter(order=order))
+
+
+@pytest.mark.django_db
 def test_courier_refund_from_order(order_factory, product_sale_factory):
     order = order_factory.create()
     products = [

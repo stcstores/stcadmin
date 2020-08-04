@@ -15,20 +15,23 @@
         <p>Tracking Number: {{ order.tracking_number }}</p>
         <p>Dispatched at: {{ order.dispatched_at|date:"Y-m-d" }}</p>
         <p>Packed By: {{ packing_record.packed_by }}</p>
-
-        <div class="notes">
-            <form action="{% url 'orders:set_refund_notes' refund.id %}" method="GET">
-                <label for="notes">Notes</label>
-                <textarea name="notes" id="" cols="30" rows="10">{{ refund.notes }}</textarea>
-                <button>Update</button>
-            </form>
-        </div>
+        {% if refund.reason == "Packing Mistake" %}
+            {% if feedback %}
+                <a href="{{ feedback.get_absolute_url }}" target="_blank">
+                    Edit feedback for this mistake
+                </a>
+            {% else %}
+            <a href="{% url 'orders:add_packing_mistake_feedback' refund.id %}">
+                <button>Add Packing Mistake for {{ packing_record.packed_by }}</button>
+            </a>
+            {% endif %}
+        {% endif %}
 
         <div class="status">
             {% if refund.contact_contacted is False %}
-            <p>{{ refund.contact_name }} Not Contacted</p>
+            <p class="error">{{ refund.contact_name }} Not Contacted</p>
             <a href="{% url 'orders:mark_refund_contacted' refund.pk %}">
-                <button>Mark contacted</button>
+                <button><b>Mark Contacted</b></button>
             </a>
             {% else %}
                 {% if refund.refund_accepted is True %}
@@ -36,25 +39,37 @@
                 {% elif refund.refund_accepted is False %}
                 <p class="error">Rejected</p>
                 {% else %}
-                <p>Awaiting Response from {{ refund.contact_name }}</p>
-                <p>
-                <form action="{% url 'orders:mark_refund_accepted' refund.pk %}" method="GET">
-                <input name="refund_amount" type="number" step="0.01" required>
-                <button>Refund Accepted</button>
-                </form>
-                </p>
-                <p>
-                    <a href="{% url 'orders:mark_refund_rejected' refund.pk %}">
-                        <button>Refund Rejected</button>
-                    </a>
-                </p>
+                <br>
+                {% if refund.contact_name %}
+                    <p>Awaiting Response from {{ refund.contact_name }}</p>
+                    <p>
+                    <form action="{% url 'orders:mark_refund_accepted' refund.pk %}" method="GET">
+                    <input name="refund_amount" type="number" step="0.01" required>
+                    <button><b>Refund Accepted</b></button>
+                    </form>
+                    </p>
+                    <p>
+                        <a href="{% url 'orders:mark_refund_rejected' refund.pk %}">
+                            <button><b>Refund Rejected</b></button>
+                        </a>
+                    </p>
+                    {% endif %}
                 {% endif %}
             {% endif %}
         </div>
+        <div class="notes">
+            <form action="{% url 'orders:set_refund_notes' refund.id %}" method="GET">
+                <label for="notes">Notes</label>
+                <textarea name="notes" id="" cols="30" rows="10">{{ refund.notes }}</textarea>
+                <button>Update</button>
+            </form>
+        </div>
     </div>
     <div class="refund_images">
-
         <form action="{% url 'orders:add_refund_images' refund.id %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+        {% if refund.images_required and refund_images|length == 0%}
+        <h2 class="error">Images are required for this refund</h2><br>
+        {% endif %}
             <label for="images">Add Images to Refund</label>
             <input type="file" name="images" multiple>
         </form>

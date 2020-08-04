@@ -8,8 +8,19 @@
     <table>
         {{ form.as_table }}
     </table>
-    <input type="submit" value="Save Feedback">
+    
+    {% if form.instance.id %}
+        <input type="submit" value="Update Feedback">
+    {% else %}
+        <input type="submit" value="Save Feedback">
+    {% endif %}
 </form>
+
+{% if form.instance.id %}
+    <form style="margin:0;padding:0;" method="POST" class="delete_button" action="{% url 'feedback:delete_feedback' form.instance.id %}">{% csrf_token %}
+        <input type="submit" value="Delete">
+    </form>
+{% endif %}
 
 
 

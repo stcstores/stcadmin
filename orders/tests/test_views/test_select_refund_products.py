@@ -120,6 +120,16 @@ def test_redirects(group_logged_in_client, url, order, form_data):
 
 
 @pytest.mark.django_db
+def test_redirects_to_refund_when_only_one_created(
+    group_logged_in_client, url, order, form_data
+):
+    form_data["form-1-quantity"] = 0
+    form_data["form-2-quantity"] = 0
+    response = group_logged_in_client.post(url("broken", order), form_data)
+    assert response.url == models.Refund.objects.get(order=order).get_absolute_url()
+
+
+@pytest.mark.django_db
 def test_does_not_create_product_when_quantity_is_zero(
     group_logged_in_client, url, order, form_data, products
 ):

@@ -72,4 +72,9 @@ urlpatterns = [
         name="set_refund_notes",
     ),
     path("export_refunds/", views.ExportRefunds.as_view(), name="export_refunds"),
+    path(
+        "refund/<int:refund_pk>/create_feedback/",
+        views.AddPackingMistakeForRefund.as_view(),
+        name="add_packing_mistake_feedback",
+    ),
 ]

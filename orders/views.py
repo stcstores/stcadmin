@@ -17,6 +17,7 @@ from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
 
+from feedback.models import Feedback, UserFeedback
 from home.models import CloudCommerceUser
 from home.views import UserInGroupMixin
 from orders import forms, models
@@ -43,7 +44,6 @@ class PackCountMonitor(TemplateView):
         """Return HttpResponse with pack count data."""
         context = super().get_context_data(*args, **kwargs)
         date = timezone.now()
-        print(models.Order.objects.all())
         qs = (
             CloudCommerceUser.unhidden.annotate(
                 pack_count=Count(
@@ -344,10 +344,8 @@ class CreateRefund(OrdersUserMixin, FormView):
         products = order.productsale_set.all()
         if products.count() == 1 and products[0].quantity == 1:
             product_sale = products.first()
-            refund_class.from_order(order, [(product_sale, 1)])
-            return HttpResponseRedirect(
-                reverse("orders:refund_list") + f"?order_ID={order.order_ID}"
-            )
+            refunds = refund_class.from_order(order, [(product_sale, 1)])
+            return HttpResponseRedirect(refunds[0].get_absolute_url())
         else:
             return HttpResponseRedirect(
                 reverse("orders:select_refund_products", args=[refund_type, order.pk])
@@ -376,6 +374,14 @@ class Refund(OrdersUserMixin, TemplateView):
         context["refund_images"] = models.RefundImage.objects.filter(
             refund=refund, product_refund__isnull=True
         )
+        if isinstance(refund, models.PackingMistakeRefund):
+            try:
+                context["feedback"] = UserFeedback.objects.get(
+                    feedback_type__name="Packing Mistake",
+                    order_id=refund.order.order_ID,
+                )
+            except UserFeedback.DoesNotExist:
+                context["feedback"] = None
         return context
 
 
@@ -438,7 +444,7 @@ class SelectRefundProducts(OrdersUserMixin, FormView):
             for form in formset
             if form.cleaned_data["quantity"] > 0
         ]
-        self.refund_class.from_order(self.order, products)
+        self.refunds = self.refund_class.from_order(self.order, products)
         return super().form_valid(formset)
 
     def get_context_data(self, *args, **kwargs):
@@ -449,6 +455,8 @@ class SelectRefundProducts(OrdersUserMixin, FormView):
 
     def get_success_url(self):
         """Return the URL to redirect to after a succesfull form submission."""
+        if len(self.refunds) == 1:
+            return self.refunds[0].get_absolute_url()
         return reverse("orders:refund_list") + f"?order_ID={self.order.order_ID}"
 
 
@@ -559,3 +567,22 @@ class ExportRefunds(OrdersUserMixin, View):
         if price is None:
             return None
         return f"{price / 100:.2f}"
+
+
+class AddPackingMistakeForRefund(OrdersUserMixin, RedirectView):
+    """View for adding packing mistakes for a refund."""
+
+    def get_redirect_url(self, refund_pk):
+        """Create feedback and redirect to refund page."""
+        if self.request.method == "POST":
+            raise Http404
+        refund = get_object_or_404(models.PackingMistakeRefund, pk=refund_pk)
+        packing_record = get_object_or_404(models.PackingRecord, order=refund.order)
+        feedback_type = Feedback.objects.get(name="Packing Mistake")
+        feedback = UserFeedback(
+            user=packing_record.packed_by,
+            feedback_type=feedback_type,
+            order_id=refund.order.order_ID,
+        )
+        feedback.save()
+        return refund.get_absolute_url()

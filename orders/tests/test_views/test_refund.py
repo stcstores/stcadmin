@@ -1,10 +1,12 @@
 import tempfile
 
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.shortcuts import reverse
 from django.test import override_settings
 from pytest_django.asserts import assertTemplateUsed
 
+from feedback.models import Feedback, UserFeedback
 from orders import models
 
 
@@ -46,47 +48,50 @@ def other_product(product_sale_factory, refund):
 
 
 @pytest.fixture
-def url(db, refund):
-    return f"/orders/refund/{refund.id}/"
+def url(db):
+    def _url(refund):
+        return f"/orders/refund/{refund.id}/"
+
+    return _url
 
 
 @pytest.fixture
-def valid_get_response(valid_get_request, url):
-    return valid_get_request(url)
+def valid_get_response(refund, valid_get_request, url):
+    return valid_get_request(url(refund))
 
 
 @pytest.fixture
-def valid_get_response_content(url, valid_get_request):
-    return valid_get_request(url).content.decode("utf8")
+def valid_get_response_content(refund, url, valid_get_request):
+    return valid_get_request(url(refund)).content.decode("utf8")
 
 
-def test_logged_in_get(url, logged_in_client):
-    response = logged_in_client.get(url)
+def test_logged_in_get(refund, url, logged_in_client):
+    response = logged_in_client.get(url(refund))
     assert response.status_code == 403
 
 
-def test_logged_out_get(client, url):
-    response = client.get(url)
+def test_logged_out_get(refund, client, url):
+    response = client.get(url(refund))
     assert response.status_code == 302
 
 
-def test_logged_in_group_get(group_logged_in_client, url):
-    response = group_logged_in_client.get(url)
+def test_logged_in_group_get(refund, group_logged_in_client, url):
+    response = group_logged_in_client.get(url(refund))
     assert response.status_code == 200
 
 
-def test_logged_in_post(url, logged_in_client):
-    response = logged_in_client.post(url)
+def test_logged_in_post(refund, url, logged_in_client):
+    response = logged_in_client.post(url(refund))
     assert response.status_code == 403
 
 
-def test_logged_out_post(client, url):
-    response = client.post(url)
+def test_logged_out_post(refund, client, url):
+    response = client.post(url(refund))
     assert response.status_code == 302
 
 
-def test_logged_in_group_post(group_logged_in_client, url):
-    response = group_logged_in_client.post(url)
+def test_logged_in_group_post(refund, group_logged_in_client, url):
+    response = group_logged_in_client.post(url(refund))
     assert response.status_code == 405
 
 
@@ -193,3 +198,49 @@ def test_links_to_add_product_images(product_image, valid_get_response_content):
         )
         in valid_get_response_content
     )
+
+
+@pytest.mark.django_db
+def test_links_to_create_feedback_for_packing_mistake(
+    group_logged_in_client,
+    url,
+    packing_mistake_refund_factory,
+    product_sale_factory,
+    packing_record_factory,
+    product_refund_factory,
+):
+    refund = packing_mistake_refund_factory.create()
+    product = product_sale_factory.create(order=refund.order)
+    packing_record_factory.create(order=refund.order)
+    product_refund_factory.create(refund=refund, product=product)
+    response = group_logged_in_client.get(url(refund))
+    content = response.content.decode("utf8")
+    assert reverse("orders:add_packing_mistake_feedback", args=[refund.id]) in content
+
+
+@pytest.mark.django_db
+def test_links_to_feedback_page_when_feedback_exists(
+    group_logged_in_client,
+    url,
+    packing_mistake_refund_factory,
+    product_sale_factory,
+    packing_record_factory,
+    product_refund_factory,
+):
+    refund = packing_mistake_refund_factory.create()
+    product = product_sale_factory.create(order=refund.order)
+    packing_record = packing_record_factory.create(order=refund.order)
+    product_refund_factory.create(refund=refund, product=product)
+    feedback = UserFeedback.objects.create(
+        feedback_type=Feedback.objects.create(
+            name="Packing Mistake",
+            image=SimpleUploadedFile(
+                name="test_image.jpg", content=b"", content_type="image/jpeg"
+            ),
+        ),
+        user=packing_record.packed_by,
+        order_id=refund.order.order_ID,
+    )
+    response = group_logged_in_client.get(url(refund))
+    content = response.content.decode("utf8")
+    assert feedback.get_absolute_url() in content
