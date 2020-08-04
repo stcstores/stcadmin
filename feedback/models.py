@@ -1,6 +1,7 @@
 """Models for the Feedback app."""
 
 from django.db import models
+from django.shortcuts import reverse
 from django.utils import timezone
 
 from home.models import CloudCommerceUser
@@ -62,3 +63,7 @@ class UserFeedback(models.Model):
 
     def __str__(self):
         return "{} for {}".format(self.feedback_type.name, self.user.full_name())
+
+    def get_absolute_url(self):
+        """Return the absolute URL for this object."""
+        return reverse("feedback:update_feedback", kwargs={"feedback_id": self.pk})

@@ -17,6 +17,7 @@ from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
 
+from feedback.models import Feedback, UserFeedback
 from home.models import CloudCommerceUser
 from home.views import UserInGroupMixin
 from orders import forms, models
@@ -43,7 +44,6 @@ class PackCountMonitor(TemplateView):
         """Return HttpResponse with pack count data."""
         context = super().get_context_data(*args, **kwargs)
         date = timezone.now()
-        print(models.Order.objects.all())
         qs = (
             CloudCommerceUser.unhidden.annotate(
                 pack_count=Count(
@@ -374,6 +374,14 @@ class Refund(OrdersUserMixin, TemplateView):
         context["refund_images"] = models.RefundImage.objects.filter(
             refund=refund, product_refund__isnull=True
         )
+        if isinstance(refund, models.PackingMistakeRefund):
+            try:
+                context["feedback"] = UserFeedback.objects.get(
+                    feedback_type__name="Packing Mistake",
+                    order_id=refund.order.order_ID,
+                )
+            except UserFeedback.DoesNotExist:
+                context["feedback"] = None
         return context
 
 
@@ -559,3 +567,22 @@ class ExportRefunds(OrdersUserMixin, View):
         if price is None:
             return None
         return f"{price / 100:.2f}"
+
+
+class AddPackingMistakeForRefund(OrdersUserMixin, RedirectView):
+    """View for adding packing mistakes for a refund."""
+
+    def get_redirect_url(self, refund_pk):
+        """Create feedback and redirect to refund page."""
+        if self.request.method == "POST":
+            raise Http404
+        refund = get_object_or_404(models.PackingMistakeRefund, pk=refund_pk)
+        packing_record = get_object_or_404(models.PackingRecord, order=refund.order)
+        feedback_type = Feedback.objects.get(name="Packing Mistake")
+        feedback = UserFeedback(
+            user=packing_record.packed_by,
+            feedback_type=feedback_type,
+            order_id=refund.order.order_ID,
+        )
+        feedback.save()
+        return refund.get_absolute_url()

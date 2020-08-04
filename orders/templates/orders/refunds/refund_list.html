@@ -32,15 +32,17 @@
             <td>{{ refund.order.channel }}</td>
             <td>{{ refund.reason }}</td>
             <td>
-                {% if refund.contact_contacted is False %}
-                Not Contacted
-                {% else %}
-                    {% if refund.refund_accepted is True %}
-                    <span class="success">Accepted</span>
-                    {% elif refund.refund_accepted is False %}
-                    <span class="error">Rejected</span>
+                {% if refund.contact_name %}
+                    {% if refund.contact_contacted is False %}
+                    Not Contacted
                     {% else %}
-                    Awaiting Response
+                        {% if refund.refund_accepted is True %}
+                        <span class="success">Accepted</span>
+                        {% elif refund.refund_accepted is False %}
+                        <span class="error">Rejected</span>
+                        {% else %}
+                        Awaiting Response
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             </td>

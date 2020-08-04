@@ -15,6 +15,17 @@
         <p>Tracking Number: {{ order.tracking_number }}</p>
         <p>Dispatched at: {{ order.dispatched_at|date:"Y-m-d" }}</p>
         <p>Packed By: {{ packing_record.packed_by }}</p>
+        {% if refund.reason == "Packing Mistake" %}
+            {% if feedback %}
+                <a href="{{ feedback.get_absolute_url }}" target="_blank">
+                    Edit feedback for this mistake
+                </a>
+            {% else %}
+            <a href="{% url 'orders:add_packing_mistake_feedback' refund.id %}">
+                <button>Add Packing Mistake for {{ packing_record.packed_by }}</button>
+            </a>
+            {% endif %}
+        {% endif %}
 
         <div class="status">
             {% if refund.contact_contacted is False %}
@@ -28,18 +39,21 @@
                 {% elif refund.refund_accepted is False %}
                 <p class="error">Rejected</p>
                 {% else %}
-                <p>Awaiting Response from {{ refund.contact_name }}</p>
-                <p>
-                <form action="{% url 'orders:mark_refund_accepted' refund.pk %}" method="GET">
-                <input name="refund_amount" type="number" step="0.01" required>
-                <button><b>Refund Accepted</b></button>
-                </form>
-                </p>
-                <p>
-                    <a href="{% url 'orders:mark_refund_rejected' refund.pk %}">
-                        <button><b>Refund Rejected</b></button>
-                    </a>
-                </p>
+                <br>
+                {% if refund.contact_name %}
+                    <p>Awaiting Response from {{ refund.contact_name }}</p>
+                    <p>
+                    <form action="{% url 'orders:mark_refund_accepted' refund.pk %}" method="GET">
+                    <input name="refund_amount" type="number" step="0.01" required>
+                    <button><b>Refund Accepted</b></button>
+                    </form>
+                    </p>
+                    <p>
+                        <a href="{% url 'orders:mark_refund_rejected' refund.pk %}">
+                            <button><b>Refund Rejected</b></button>
+                        </a>
+                    </p>
+                    {% endif %}
                 {% endif %}
             {% endif %}
         </div>
