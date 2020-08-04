@@ -50,6 +50,7 @@ class ProductInfo(ProductForm):
         self.fields[self.WEIGHT] = fields.Weight()
         self.fields[self.DIMENSIONS] = fields.Dimensions()
         self.fields[self.PACKAGE_TYPE] = fields.PackageType()
+        self.fields[self.HS_CODE] = fields.HSCode()
         self.fields[self.BRAND] = fields.Brand(
             choices=fields.Brand.get_choices(
                 "Brand", self.options, self.initial.get(self.BRAND, None)

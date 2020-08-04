@@ -144,6 +144,7 @@ class ProductForm(ProductEditorBase, forms.Form):
         self.fields[self.RETAIL_PRICE] = fields.RetailPrice()
         self.fields[self.SUPPLIER] = fields.Supplier()
         self.fields[self.SUPPLIER_SKU] = fields.SupplierSKU()
+        self.fields[self.HS_CODE] = fields.HSCode()
         for option_name, values in self.options.items():
             choices = [("", "")] + [
                 (v, v) for v in self.get_choice_values(option_name, values)
@@ -179,6 +180,7 @@ class ProductForm(ProductEditorBase, forms.Form):
         initial[self.PURCHASE_PRICE] = self.product.purchase_price
         initial[self.RETAIL_PRICE] = self.product.retail_price
         initial[self.PACKAGE_TYPE] = self.product.package_type
+        initial[self.HS_CODE] = self.product.hs_code
         if self.product.supplier:
             initial[self.SUPPLIER] = self.product.supplier.factory_name
         initial[self.SUPPLIER_SKU] = self.product.supplier_sku
@@ -208,6 +210,7 @@ class ProductForm(ProductEditorBase, forms.Form):
         self.product.retail_price = data[self.RETAIL_PRICE]
         self.product.supplier = data[self.SUPPLIER]
         self.product.supplier_sku = data[self.SUPPLIER_SKU]
+        self.product.hs_code = data[self.HS_CODE]
         options = [key[4:] for key in data.keys() if key[:4] == "opt_"]
         for option in options:
             value = data["opt_" + option]

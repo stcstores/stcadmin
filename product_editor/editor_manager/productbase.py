@@ -53,3 +53,4 @@ class ProductEditorBase:
     RANGE_ID = "range_id"
     PRODUCT_ID = "product_id"
     EXISTING_VARIATIONS = "existing_variations"
+    HS_CODE = "hs_code"
