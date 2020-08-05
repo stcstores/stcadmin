@@ -128,6 +128,7 @@ ccapi = "branch master"
 reference = "ba54795a28f07c8a325872dd76fc6e15f37ca2dd"
 type = "git"
 url = "https://github.com/stcstores/cc_products.git"
+
 [[package]]
 category = "main"
 description = ""
@@ -145,6 +146,7 @@ requests = "^2.23.0"
 reference = "85a744cdf746cdac03bcd050feda7b41ab83db56"
 type = "git"
 url = "https://github.com/stcstores/ccapi.git"
+
 [[package]]
 category = "main"
 description = "Distributed Task Queue."
@@ -284,10 +286,10 @@ description = "Generic drag-and-drop sorting for the List, the Stacked- and the 
 name = "django-admin-sortable2"
 optional = false
 python-versions = "*"
-version = "0.7.6"
+version = "0.7.7"
 
 [package.dependencies]
-Django = ">=1.8,<3.1"
+Django = ">=1.8,<3.2"
 
 [[package]]
 category = "main"
@@ -598,6 +600,7 @@ reportlab = "^3.5.34"
 reference = "b7e64aa56717438e1ece8e92e066e88a82ec02a6"
 type = "git"
 url = "https://github.com/lukeshiner/labeler.git"
+
 [[package]]
 category = "main"
 description = ""
@@ -613,6 +616,7 @@ django = "^3.0.3"
 reference = "42b0e2df3d39ab8921904c1ba3eab0763adf586d"
 type = "git"
 url = "https://github.com/lukeshiner/list_input.git"
+
 [[package]]
 category = "main"
 description = "Load me later. A lazy plugin management system."
@@ -1277,7 +1281,7 @@ django = [
     {file = "Django-3.0.9.tar.gz", hash = "sha256:c22b4cd8e388f8219dc121f091e53a8701f9f5bca9aa132b5254263cab516215"},
 ]
 django-admin-sortable2 = [
-    {file = "django-admin-sortable2-0.7.6.tar.gz", hash = "sha256:caf158310cba75888d5e2494f0a7e52b9b43b90d22e12798023bbe8dae51243b"},
+    {file = "django-admin-sortable2-0.7.7.tar.gz", hash = "sha256:65c8a02300e178b4a02c904b6f4dce6e528c58f5ecab3907dfba3540da51b862"},
 ]
 django-appconf = [
     {file = "django-appconf-1.0.4.tar.gz", hash = "sha256:be58deb54a43d77d2e1621fe59f787681376d3cd0b8bd8e4758ef6c3a6453380"},
