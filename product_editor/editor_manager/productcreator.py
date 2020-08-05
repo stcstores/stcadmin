@@ -153,6 +153,7 @@ class ProductSaver(ProductEditorBase):
         product.package_type = kwargs[self.PACKAGE_TYPE]
         product.brand = kwargs[self.BRAND]
         product.manufacturer = kwargs[self.MANUFACTURER]
+        product.hs_code = kwargs[self.HS_CODE]
         if product.barcode != kwargs[self.BARCODE]:
             product.barcode = kwargs[self.BARCODE]
         if kwargs[self.RETAIL_PRICE]:
@@ -247,6 +248,7 @@ class DataSanitizer(ProductEditorBase):
         ProductEditorBase.SUPPLIER_SKU,
         ProductEditorBase.TITLE,
         ProductEditorBase.WEIGHT,
+        ProductEditorBase.HS_CODE,
     )
 
     LIST_FIELDS = (

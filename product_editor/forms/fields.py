@@ -175,6 +175,18 @@ class StockLevel(fieldtypes.NumberField):
     )
 
 
+class HSCode(fieldtypes.TextField):
+    """Field for product HS Codes."""
+
+    label = "HS Code"
+    name = "hs_code"
+    placeholder = "HS Code"
+    validators = [Validators.numeric]
+    required_message = "Please provide an HS Code"
+    variable = True
+    help_text = "The product's HS Code"
+
+
 class Supplier(fieldtypes.SingleSelectize):
     """Field for selecting the supplier of a product."""
 

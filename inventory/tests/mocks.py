@@ -181,6 +181,7 @@ class MockCCProductsProduct:
         amazon_bullets=None,
         amazon_search_terms=None,
         gender="mens",
+        hs_code="28490389",
     ):
         self.id = id or get_id()
         self.name = name
@@ -204,6 +205,7 @@ class MockCCProductsProduct:
         self.supplier = supplier or MockCCProductsSupplier()
         self.supplier_sku = supplier_sku
         self.department = department
+        self.hs_code = hs_code
         self.options = (
             MockCCProductProductOptions(options) or MockCCProductProductOptions()
         )
