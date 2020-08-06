@@ -1,0 +1,15 @@
+{% extends 'fba/base.html' %}
+
+{% block content %}
+
+<ul>
+    <a href="{% url 'fba:order_list' %}">
+        <li>Order List</li>
+    </a>
+    <li>
+        <a href="{% url 'fba:select_product_for_order' %}">Create Order</a>
+    </li>
+    <li>Fullfill Order</li>
+</ul>
+
+{% endblock content %}
