@@ -87,6 +87,7 @@ class ProductEditorViewTest(STCAdminTest):
             "brand": "84943",
             "manufacturer": "78188",
             "gender": "womens",
+            "hs_code": "9302390",
         }
 
     def add_mock(self, name, path):
@@ -710,5 +711,6 @@ class TestEditProductInfo(ProductEditorViewTest, ViewTests):
             "product_id": product.id,
             "stock_level": product.stock_level,
             "price": {"ex_vat": product.price, "vat_rate": product.vat_rate},
+            "hs_code": product.hs_code,
         }
         assert response.context["form"].initial == expected
