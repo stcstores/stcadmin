@@ -105,6 +105,7 @@ class ProductLoader(ProductEditorBase):
             self.MANUFACTURER: product.manufacturer,
             self.GENDER: product.gender,
             self.PRODUCT_ID: product.id,
+            self.HS_CODE: product.hs_code,
         }
         return data
 
