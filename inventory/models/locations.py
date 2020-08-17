@@ -247,8 +247,10 @@ class LocationIntegrityCheck:
 
     def excess_bays(self):
         """Create list of bays existing in STCAdmin but not Cloud Commerce."""
-        bay_IDs = [int(b.id) for b in self.bays]
-        self.excess_bays = [b for b in Bay.objects.all() if b.bay_ID not in bay_IDs]
+        bay_IDs = [str(b.id) for b in self.bays]
+        self.excess_bays = [
+            b for b in Bay.objects.all() if str(b.bay_ID) not in bay_IDs
+        ]
 
     def incorrect_bays(self):
         """
