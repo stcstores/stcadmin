@@ -21,10 +21,10 @@
         {% if wizard.form.forms %}
             {% for form in wizard.form.forms %}
                 {% for field in form %}
-                    {% ifequal field.name|slice:"0:4" 'opt_' %}
+                    {% if field.name|slice:"0:4" == 'opt_' %}
                         var {{ field.auto_id }}_auto_input = new Awesomplete($('#{{ field.auto_id }}')[0], {minChars: 1});
                         {{ field.auto_id }}_auto_input.list = product_options['{{ field.label }}'];
-                    {% endifequal %}
+                    {% endif %}
                 {% endfor %}
                 {% if form.location %}{% if form.department %}
                     if (warehouses.hasOwnProperty('{{ form.department }}')) {
@@ -69,10 +69,10 @@
                 {{ form.manufacturer.auto_id }}_auto_input.list = product_options['Manufacturer'];
             {% endif %}
             {% for field in form %}
-                {% ifequal field.name|slice:"0:4" 'opt_' %}
+                {% if field.name|slice:"0:4" == 'opt_' %}
                     var {{ field.auto_id }}_auto_input = new Awesomplete($('#{{ field.auto_id }}')[0], {minChars: 1});
                     {{ field.auto_id }}_auto_input.list = product_options['{{ field.label }}'];
-                {% endifequal %}
+                {% endif %}
             {% endfor %}
         {% endif %}
     });
