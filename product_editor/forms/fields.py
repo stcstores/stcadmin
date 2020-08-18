@@ -185,6 +185,7 @@ class HSCode(fieldtypes.TextField):
     required_message = "Please provide an HS Code"
     variable = True
     help_text = "The product's HS Code"
+    widget = widgets.HSCodeWidget()
 
 
 class Supplier(fieldtypes.SingleSelectize):

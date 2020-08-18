@@ -20,6 +20,12 @@ class BaseSelectizeWidget:
     template_name = "product_editor/widgets/selectize.html"
 
 
+class HSCodeWidget(forms.TextInput):
+    """Widget for HS Codes with search."""
+
+    template_name = "product_editor/widgets/hs_code.html"
+
+
 class MultipleSelectizeWidget(BaseSelectizeWidget, forms.SelectMultiple):
     """Widget for selectize fields allowing multiple values."""
 
