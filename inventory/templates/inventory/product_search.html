@@ -21,7 +21,7 @@
 
         <table id="basic_search">
             {% for field in form %}
-            <tr class="{% ifequal field.name|slice:"0:6" 'basic_' %}basic_search_row{% else %}{% ifequal field.name|slice:"0:9" 'advanced_' %}advanced_search_row{% endifequal %}{% endifequal %}">
+            <tr class="{% if field.name|slice:"0:6" == 'basic_' %}basic_search_row{% else %}{% if field.name|slice:"0:9" == 'advanced_' %}advanced_search_row{% endif %}{% endif %}">
                 <td>{{ field.label }}</td>
                 <td>{{ field }}</td>
                 <td>{% tooltip_help_text field %}</td>
