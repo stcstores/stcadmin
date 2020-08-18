@@ -3,7 +3,7 @@
 import json
 
 from ccapi import CCAPI
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -111,3 +111,15 @@ class DeleteImage(InventoryUserMixin, View):
         except Exception:
             return HttpResponse(status=500)
         return HttpResponse("ok")
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class SearchHSCode(InventoryUserMixin, View):
+    """Return a list of matching HS codes."""
+
+    def get(self, *args, **kwargs):
+        """Process HTTP request."""
+        search_term = self.request.GET.get("term")
+        hs_codes = CCAPI.find_hs_code(search_term)
+        result = {key: f"{key}: {value}" for key, value in hs_codes.items()}
+        return JsonResponse(result)

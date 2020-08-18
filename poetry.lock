@@ -128,6 +128,7 @@ ccapi = "branch master"
 reference = "aef5ae5b1370d74b16157901e074aeb56f10e891"
 type = "git"
 url = "https://github.com/stcstores/cc_products.git"
+
 [[package]]
 category = "main"
 description = ""
@@ -142,7 +143,7 @@ pyyaml = "^5.3"
 requests = "^2.23.0"
 
 [package.source]
-reference = "58ae0bb0710b16bd6d46b3af8258352bd11583e0"
+reference = "66fc44ff6f3e3476c4a865dae58b24d5fb1a3da2"
 type = "git"
 url = "https://github.com/stcstores/ccapi.git"
 [[package]]
@@ -598,6 +599,7 @@ reportlab = "^3.5.34"
 reference = "39dbfe5a97908f2fde173df040c2db614aeceeba"
 type = "git"
 url = "https://github.com/lukeshiner/labeler.git"
+
 [[package]]
 category = "main"
 description = ""
@@ -613,6 +615,7 @@ django = "^3.0.3"
 reference = "42b0e2df3d39ab8921904c1ba3eab0763adf586d"
 type = "git"
 url = "https://github.com/lukeshiner/list_input.git"
+
 [[package]]
 category = "main"
 description = "Load me later. A lazy plugin management system."
