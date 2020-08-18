@@ -5,7 +5,10 @@ import sys
 
 import toml
 from ccapi import CCAPI
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
+from django.db import models
+
+models.FieldDoesNotExist = FieldDoesNotExist  # Compatibility for django-polymorphic
 
 TRAVIS_ENVIRONMENT = "TRAVIS" in os.environ
 
