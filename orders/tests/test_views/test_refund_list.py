@@ -89,11 +89,6 @@ def test_shows_department(refund, valid_get_response_content):
 
 
 @pytest.mark.django_db
-def test_shows_channel(refund, valid_get_response_content):
-    assert refund.order.channel.name in valid_get_response_content
-
-
-@pytest.mark.django_db
 def test_links_to_refund_page(refund, valid_get_response_content):
     assert refund.get_absolute_url() in valid_get_response_content
 

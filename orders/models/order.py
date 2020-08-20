@@ -361,3 +361,10 @@ class Order(models.Model):
         ):
             return False
         return True
+
+    def packed_by(self):
+        """Return the packer who packed this order."""
+        try:
+            return self.packingrecord.packed_by
+        except Exception:
+            return None

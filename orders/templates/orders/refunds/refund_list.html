@@ -18,8 +18,9 @@
         <tr>
             <th>Order ID</th>
             <th>Date Dispatched</th>
+            <th>Products</th>
             <th>Department</th>
-            <th>Channel</th>
+            <th>Packed By</th>
             <th>Reason</th>
             <th>Status</th>
             <th></th>
@@ -28,8 +29,9 @@
         <tr class="order">
             <th>{{ refund.order.order_ID }}</th>
             <td>{{ refund.order.dispatched_at|date:"Y-m-d" }}</td>
+            <td>{{ refund.order.productsale_set.first.name}}{% if refund.order.productsale_set.count > 1 %} + {{ refund.order.productsale_set.count|add:"-1" }} more{% endif %}</td>
             <td>{{ refund.order.department}}</td>
-            <td>{{ refund.order.channel }}</td>
+            <td>{{ refund.order.packed_by }}</td>
             <td>{{ refund.reason }}</td>
             <td>
                 {% if refund.contact_name %}
