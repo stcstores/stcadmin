@@ -1,0 +1,13 @@
+.fba_order_form_container {
+    display: flex;
+    flex-direction: row;
+}
+
+.fba_order_form {
+    display: flex;
+}
+
+.price_calculator {
+    display: flex;
+    flex-direction: column;
+}
