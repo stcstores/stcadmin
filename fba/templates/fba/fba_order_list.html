@@ -1,0 +1,43 @@
+{% extends 'fba/base.html' %}
+{% load orders_extras %}
+
+{% block content %}
+
+<h1>FBA Orders</h1>
+
+<div class="filter">
+    <form action="" method="GET">
+        {{ form.as_p }}
+        <p>
+            <button>Filter</button>
+        </p>
+    </form>
+    </div>
+    <p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
+    {% include 'orders/pagination_navigation.html' %}
+    <table class="orders">
+        <tr>
+            <th>SKU</th>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Country</th>
+            <th>Location</th>
+            <th>Fullfilled By</th>
+            <th>Fullfillment Date</th>
+            <th>Status</th>
+        </tr>
+    {% for order in object_list %}
+        <tr class="order">
+            <th>{{ order.product_SKU }} </th>
+            <th>{{ order.product_name }} </th>
+            <td>{{ order.aproximate_quantity}}</td>
+            <td>{{ order.country }}</td>
+            <td>{{ order.location }}</td>
+            <td>{{ order.fullfilled_by }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.closed_at|date:"Y-m-d H:i" }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+    {% include 'orders/pagination_navigation.html' %}
+{% endblock content %}

@@ -29,6 +29,9 @@
     {% if 'epos' in groups %}
     <li><a href="{% url 'epos:index' %}">EPOS</a></li>
     {% endif %}
+    {% if 'fba' in groups %}
+    <li><a href="{% url 'fba:index' %}">FBA</a></li>
+    {% endif %}
     {% if 'validation' in groups %}
     <li><a href="{% url 'validation:home' %}">Validation</a></li>
     {% endif %}

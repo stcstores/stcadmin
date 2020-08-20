@@ -1,0 +1,8 @@
+{% extends 'fba/base.html' %}
+
+{% block content %}{{ block.super }}
+<form action="" method="POST">{% csrf_token %}
+    {{ form.as_p }}
+    <button>Submit</button>
+</form>
+{% endblock content %}
