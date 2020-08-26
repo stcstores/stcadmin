@@ -14,12 +14,14 @@ from shipping.tests.conftest import (
     ShippingPriceFactory,
     ShippingRuleFactory,
     VatRateFactory,
+    WeightBandFactory,
 )
 
 pytest_factoryboy.register(CountryFactory)
 pytest_factoryboy.register(ShippingRuleFactory)
 pytest_factoryboy.register(ShippingPriceFactory)
 pytest_factoryboy.register(CourierServiceFactory)
+pytest_factoryboy.register(WeightBandFactory)
 pytest_factoryboy.register(VatRateFactory)
 pytest_factoryboy.register(ProviderFactory)
 
