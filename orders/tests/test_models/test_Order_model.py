@@ -1007,6 +1007,30 @@ def test_set_postage_price_sets_postage_price(
 
 
 @pytest.mark.django_db
+def test_set_postage_price_does_not_stop_for_missing_weight_band(
+    country,
+    shipping_rule,
+    shipping_price,
+    order_factory,
+    weight_band_factory,
+    product_sale_factory,
+):
+    weight_band_factory.create(
+        min_weight=0, max_weight=20, shipping_price=shipping_price
+    )
+    order = order_factory.create(
+        country=country,
+        shipping_rule=shipping_rule,
+        postage_price=None,
+        postage_price_success=None,
+    )
+    product_sale_factory.create(order=order, weight=500)
+    order._set_postage_price()
+    assert order.postage_price is None
+    assert order.postage_price_success is False
+
+
+@pytest.mark.django_db
 def test_set_postage_price_sets_postage_price_success(
     country, shipping_rule, shipping_price, order_without_shipping_price
 ):
