@@ -58,6 +58,7 @@ class FBAOrder(models.Model):
     selling_price = models.PositiveIntegerField()
     FBA_fee = models.PositiveIntegerField()
     aproximate_quantity = models.PositiveIntegerField()
+    max_quantity = models.PositiveIntegerField()
     quantity_sent = models.PositiveIntegerField(blank=True, null=True)
     box_width = models.PositiveIntegerField(blank=True, null=True)
     box_height = models.PositiveIntegerField(blank=True, null=True)

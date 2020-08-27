@@ -47,6 +47,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "selling_price",
             "FBA_fee",
             "aproximate_quantity",
+            "max_quantity",
             "notes",
         ]
         widgets = {"product_ID": forms.HiddenInput()}
