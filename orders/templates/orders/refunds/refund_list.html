@@ -24,6 +24,7 @@
             <th>Reason</th>
             <th>Status</th>
             <th></th>
+            <th></th>
         </tr>
     {% for refund in object_list %}
         <tr class="order">
@@ -48,10 +49,26 @@
                     {% endif %}
                 {% endif %}
             </td>
-            <td><a href="{{ refund.get_absolute_url }}" target="_blank">View</a></td>
+            <td><a href="{{ refund.get_absolute_url }}" target="_blank"><button>View</button></a></td>
+            <td><a href="{% url 'orders:delete_refund' refund.id %}" class="delete_refund"><button class="error">Delete</button></a></td>
         </tr>
     {% endfor %}
     </table>
     {% include 'orders/pagination_navigation.html' %}
 </form>
 {% endblock content %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        $(".delete_refund").click(function(e) {
+            e.preventDefault();
+            if (confirm("Are you sure you want to delete this refund?")) {
+                $.get($(this).attr("href"), function() {
+                    location.reload();
+                });
+            }
+        });
+    });
+</script>
+{% endblock script %}
