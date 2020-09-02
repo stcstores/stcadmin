@@ -587,3 +587,16 @@ class AddPackingMistakeForRefund(OrdersUserMixin, RedirectView):
         )
         feedback.save()
         return refund.get_absolute_url()
+
+
+class DeleteRefund(OrdersUserMixin, View):
+    """View for deleting refunds."""
+
+    def get(self, *args, **kwargs):
+        """Delete a refund."""
+        refund = get_object_or_404(models.Refund, pk=kwargs.get("refund_pk"))
+        try:
+            refund.delete()
+        except Exception:
+            return HttpResponseNotFound
+        return HttpResponse("ok")
