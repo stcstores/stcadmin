@@ -600,3 +600,25 @@ class DeleteRefund(OrdersUserMixin, View):
         except Exception:
             return HttpResponseNotFound
         return HttpResponse("ok")
+
+
+class SetParcelReturnedForRefund(OrdersUserMixin, RedirectView):
+    """View for setting the parcel returned status on Lost In Post refunds."""
+
+    def get_redirect_url(self, refund_pk):
+        """Set the returned field of the refund to True and redirect to it's page."""
+        refund = get_object_or_404(models.LostInPostRefund, id=refund_pk)
+        refund.returned = True
+        refund.save()
+        return refund.get_absolute_url()
+
+
+class SetParcelNotReturnedForRefund(OrdersUserMixin, RedirectView):
+    """View for setting the parcel returned status on Lost In Post refunds."""
+
+    def get_redirect_url(self, refund_pk):
+        """Set the returned field of the refund to False and redirect to it's page."""
+        refund = get_object_or_404(models.LostInPostRefund, id=refund_pk)
+        refund.returned = False
+        refund.save()
+        return refund.get_absolute_url()

@@ -157,7 +157,7 @@ class LinkingMistakeRefund(Refund):
 class LostInPostRefund(CourierRefund):
     """Model for refunds lost in the post."""
 
-    pass
+    returned = models.BooleanField(default=False)
 
 
 class DemicRefund(SupplierRefund):

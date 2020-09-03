@@ -206,6 +206,7 @@ class LostInPostRefundFactory(factory.DjangoModelFactory):
     notes = "A refund for an item lost in the post"
     closed = False
     courier = factory.SubFactory(ProviderFactory)
+    returned = False
 
 
 @pytest_factoryboy.register

@@ -32,8 +32,7 @@ def test_order_set(model_class, order):
 
 
 @pytest.mark.parametrize(
-    "model_class",
-    (models.BreakageRefund, models.LostInPostRefund, models.DemicRefund,),
+    "model_class", (models.BreakageRefund, models.LostInPostRefund, models.DemicRefund)
 )
 @pytest.mark.django_db
 def test_default_contact_contacted(model_class, order):
@@ -44,8 +43,7 @@ def test_default_contact_contacted(model_class, order):
 
 
 @pytest.mark.parametrize(
-    "model_class",
-    (models.BreakageRefund, models.LostInPostRefund, models.DemicRefund,),
+    "model_class", (models.BreakageRefund, models.LostInPostRefund, models.DemicRefund)
 )
 @pytest.mark.django_db
 def test_default_refund_accepted(model_class, order):
@@ -56,8 +54,7 @@ def test_default_refund_accepted(model_class, order):
 
 
 @pytest.mark.parametrize(
-    "model_class",
-    (models.BreakageRefund, models.LostInPostRefund, models.DemicRefund,),
+    "model_class", (models.BreakageRefund, models.LostInPostRefund, models.DemicRefund)
 )
 @pytest.mark.django_db
 def test_default_refund_amount(model_class, order):
@@ -119,6 +116,22 @@ def test_default_notes(model_class, order):
     refund.save()
     refund.refresh_from_db()
     assert refund.notes == ""
+
+
+@pytest.mark.django_db
+def test_default_returned(order):
+    refund = models.LostInPostRefund(order=order)
+    refund.save()
+    refund.refresh_from_db()
+    assert refund.returned is False
+
+
+@pytest.mark.django_db
+def test_can_set_returned(order):
+    refund = models.LostInPostRefund(order=order, returned=True)
+    refund.save()
+    refund.refresh_from_db()
+    assert refund.returned is True
 
 
 @pytest.mark.parametrize(
@@ -212,7 +225,7 @@ def test_supplier_refund_from_order(
             refund__order=order, product=product, quantity=quantity
         ).exists()
     assert models.Refund.objects.filter(
-        order=order, SupplierRefund___supplier=products[0][0].supplier,
+        order=order, SupplierRefund___supplier=products[0][0].supplier
     ).exists()
 
 
@@ -223,12 +236,12 @@ def test_supplier_from_order_splits_suppliers(
 ):
     order = order_factory.create()
     products = [
-        (product_sale_factory.create(order=order, quantity=3), 2,) for _ in range(3)
+        (product_sale_factory.create(order=order, quantity=3), 2) for _ in range(3)
     ]
     model.from_order(order, products)
     for product, quantity in products:
         assert models.ProductRefund.objects.filter(
-            refund__order=order, product=product, quantity=quantity,
+            refund__order=order, product=product, quantity=quantity
         ).exists()
         assert models.Refund.objects.filter(
             order=order, SupplierRefund___supplier=product.supplier
