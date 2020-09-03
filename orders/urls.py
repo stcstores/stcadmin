@@ -82,4 +82,14 @@ urlpatterns = [
         views.DeleteRefund.as_view(),
         name="delete_refund",
     ),
+    path(
+        "refund/<int:refund_pk>/set_returned/",
+        views.SetParcelReturnedForRefund.as_view(),
+        name="set_refund_parcel_returned",
+    ),
+    path(
+        "refund/<int:refund_pk>/set_not_returned/",
+        views.SetParcelNotReturnedForRefund.as_view(),
+        name="set_refund_parcel_not_returned",
+    ),
 ]
