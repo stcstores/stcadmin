@@ -5,19 +5,13 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("orders", "0013_refund_notes"),
-    ]
+    dependencies = [("orders", "0013_refund_notes")]
 
     operations = [
         migrations.RemoveField(model_name="demicrefund", name="refundin_ptr"),
-        migrations.RemoveField(
-            model_name="linkingmistakerefund", name="refundout_ptr",
-        ),
+        migrations.RemoveField(model_name="linkingmistakerefund", name="refundout_ptr"),
         migrations.RemoveField(model_name="lostinpostrefund", name="refundin_ptr"),
-        migrations.RemoveField(
-            model_name="packingmistakerefund", name="refundout_ptr",
-        ),
+        migrations.RemoveField(model_name="packingmistakerefund", name="refundout_ptr"),
         migrations.RemoveField(model_name="productrefund", name="product"),
         migrations.RemoveField(model_name="productrefund", name="refund"),
         migrations.RemoveField(model_name="refund", name="order"),
