@@ -157,6 +157,12 @@ class RefundListFilter(forms.Form):
     dispatched_to = forms.DateField(
         required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
     )
+    created_from = forms.DateField(
+        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+    )
+    created_to = forms.DateField(
+        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+    )
     refund_type = forms.ChoiceField(choices=TYPE_CHOICES, required=False)
     contacted = forms.ChoiceField(choices=BOOLEAN_CHOICES, required=False)
     accepted = forms.ChoiceField(choices=BOOLEAN_CHOICES, required=False)
@@ -171,6 +177,18 @@ class RefundListFilter(forms.Form):
     def clean_dispatched_to(self):
         """Return a timezone aware datetime object from the submitted date."""
         date = self.cleaned_data["dispatched_to"]
+        if date is not None:
+            return make_aware(datetime.combine(date, datetime.max.time()))
+
+    def clean_created_from(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["created_from"]
+        if date is not None:
+            return make_aware(datetime.combine(date, datetime.min.time()))
+
+    def clean_created_to(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["created_to"]
         if date is not None:
             return make_aware(datetime.combine(date, datetime.max.time()))
 
@@ -206,6 +224,8 @@ class RefundListFilter(forms.Form):
         kwargs = {
             "order__dispatched_at__gte": data.get("dispatched_from"),
             "order__dispatched_at__lte": data.get("dispatched_to"),
+            "created_at__gte": data.get("created_from"),
+            "created_at__lte": data.get("created_to"),
             "order__order_ID": data.get("order_ID") or None,
             "products__product__sku": data.get("product_SKU") or None,
             "products__product__supplier": data.get("supplier") or None,
@@ -267,7 +287,7 @@ class CreateRefund(forms.Form):
                 LINKING_MISTAKE,
                 "Linking Mistake - The wrong item was sent due to a linking error",
             ),
-            (LOST_IN_POST, "Lost in Post - An order went missing in transit",),
+            (LOST_IN_POST, "Lost in Post - An order went missing in transit"),
             (
                 DEMIC,
                 "Demic - An item was recived from a supplier in an unsalable state",

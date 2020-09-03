@@ -23,6 +23,7 @@ class Refund(PolymorphicModel):
     notes = models.TextField(blank=True)
     closed = models.BooleanField(default=False)
     images_required = False
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def get_absolute_url(self):
         """Return the URL for this refund."""
@@ -42,6 +43,7 @@ class Refund(PolymorphicModel):
             products (tulple(orders.models.ProductSale, int)): A lost of tuples of
                 ProductSale objects to which the refund applies and the quantity of that
                 product to which it applies.
+
         """
         with transaction.atomic():
             refund = cls(order=order)
@@ -80,6 +82,7 @@ class SupplierRefund(ContactRefund):
             products (tulple(orders.models.ProductSale, int)): A lost of tuples of
                 ProductSale objects to which the refund applies and the quantity of that
                 product to which it applies.
+
         """
         with transaction.atomic():
             refunds = []
@@ -120,6 +123,7 @@ class CourierRefund(ContactRefund):
 
         returns:
             A list of refunds created.
+
         """
         with transaction.atomic():
             courier = order.shipping_rule.courier_service.courier.courier_type.provider
