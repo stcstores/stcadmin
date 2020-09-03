@@ -5,7 +5,7 @@ from feedback.models import Feedback, UserFeedback
 
 @pytest.fixture
 def refund(
-    packing_mistake_refund_factory, product_sale_factory, product_refund_factory,
+    packing_mistake_refund_factory, product_sale_factory, product_refund_factory
 ):
     refund = packing_mistake_refund_factory.create()
     product = product_sale_factory.create(order=refund.order)

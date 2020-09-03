@@ -5,9 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("orders", "0006_auto_20200611_0952"),
-    ]
+    dependencies = [("orders", "0006_auto_20200611_0952")]
 
     operations = [
         migrations.AddField(
@@ -26,7 +24,7 @@ class Migration(migrations.Migration):
             field=models.PositiveIntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name="productsale", name="name", field=models.TextField(null=True),
+            model_name="productsale", name="name", field=models.TextField(null=True)
         ),
         migrations.AddField(
             model_name="productsale",

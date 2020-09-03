@@ -6,9 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("shipping", "0003_auto_20200218_1150"),
-    ]
+    dependencies = [("shipping", "0003_auto_20200218_1150")]
 
     operations = [
         migrations.CreateModel(
@@ -108,6 +106,6 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterUniqueTogether(
-            name="shippingprice", unique_together={("shipping_service", "country")},
+            name="shippingprice", unique_together={("shipping_service", "country")}
         ),
     ]
