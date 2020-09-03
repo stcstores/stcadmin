@@ -57,6 +57,23 @@
                     {% endif %}
                 {% endif %}
             {% endif %}
+            {% if refund.reason == "Lost In Post" %}
+                {% if refund.returned %}
+                    <p class="success">
+                        Refund Returned
+                        <a href="{% url 'orders:set_refund_parcel_not_returned' refund.id %}">
+                            <button>Mark Not Returned</button>
+                        </a>
+                    </p>
+                    {% else %}
+                    <p class="error">
+                        Refund Not Returned
+                        <a href="{% url 'orders:set_refund_parcel_returned' refund.id %}">
+                            <button>Mark Returned</button>
+                        </a>
+                    </span>
+                    {% endif %}
+            {% endif %}
         </div>
         <div class="notes">
             <form action="{% url 'orders:set_refund_notes' refund.id %}" method="GET">
