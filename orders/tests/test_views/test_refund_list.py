@@ -84,6 +84,11 @@ def test_shows_dispatched_at(mock_now, refund, valid_get_response_content):
 
 
 @pytest.mark.django_db
+def test_shows_created_at(mock_now, refund, valid_get_response_content):
+    assert refund.created_at.strftime("%Y-%m-%d") in valid_get_response_content
+
+
+@pytest.mark.django_db
 def test_shows_department(refund, valid_get_response_content):
     assert refund.order.department() in valid_get_response_content
 
@@ -127,7 +132,9 @@ def test_refund_status(
         (datetime(2019, 12, 5, 0, 0), False),
     ],
 )
-def test_date_filter(dispatched_at, shown, refund_factory, url, group_logged_in_client):
+def test_dispatch_date_filter(
+    dispatched_at, shown, refund_factory, url, group_logged_in_client
+):
     refund = refund_factory.create(
         order__dispatched_at=timezone.make_aware(dispatched_at)
     )
@@ -138,6 +145,35 @@ def test_date_filter(dispatched_at, shown, refund_factory, url, group_logged_in_
         {
             "dispatched_from": dispatched_from.strftime("%Y-%m-%d"),
             "dispatched_to": dispatched_to.strftime("%Y-%m-%d"),
+        },
+    )
+    content = response.content.decode("utf8")
+    assert (refund.order.order_ID in content) is shown
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "created_at,shown",
+    [
+        (datetime(2019, 12, 2, 23, 59), False),
+        (datetime(2019, 12, 3, 0, 0), True),
+        (datetime(2019, 12, 4, 23, 59), True),
+        (datetime(2019, 12, 5, 0, 0), False),
+    ],
+)
+def test_created_date_filter(
+    created_at, shown, refund_factory, url, group_logged_in_client
+):
+    with patch("django.utils.timezone.now") as mock_now:
+        mock_now.return_value = timezone.make_aware(created_at)
+        refund = refund_factory.create()
+    created_from = timezone.make_aware(datetime(2019, 12, 3))
+    created_to = timezone.make_aware(datetime(2019, 12, 4))
+    response = group_logged_in_client.get(
+        url,
+        {
+            "created_from": created_from.strftime("%Y-%m-%d"),
+            "created_to": created_to.strftime("%Y-%m-%d"),
         },
     )
     content = response.content.decode("utf8")
@@ -233,10 +269,7 @@ def test_filter_accepted_no(breakage_refund_factory, url, group_logged_in_client
 
 @pytest.mark.django_db
 def test_filter_closed_any(refund_factory, url, group_logged_in_client):
-    refunds = [
-        refund_factory.create(closed=True),
-        refund_factory.create(closed=False),
-    ]
+    refunds = [refund_factory.create(closed=True), refund_factory.create(closed=False)]
     response = group_logged_in_client.get(url, {"closed": "any"})
     content = response.content.decode("utf8")
     for refund in refunds:
@@ -245,10 +278,7 @@ def test_filter_closed_any(refund_factory, url, group_logged_in_client):
 
 @pytest.mark.django_db
 def test_filter_closed_yes(refund_factory, url, group_logged_in_client):
-    refunds = [
-        refund_factory.create(closed=True),
-        refund_factory.create(closed=False),
-    ]
+    refunds = [refund_factory.create(closed=True), refund_factory.create(closed=False)]
     response = group_logged_in_client.get(url, {"closed": "yes"})
     content = response.content.decode("utf8")
     assert refunds[0].order.order_ID in content
@@ -257,10 +287,7 @@ def test_filter_closed_yes(refund_factory, url, group_logged_in_client):
 
 @pytest.mark.django_db
 def test_filter_closed_no(refund_factory, url, group_logged_in_client):
-    refunds = [
-        refund_factory.create(closed=True),
-        refund_factory.create(closed=False),
-    ]
+    refunds = [refund_factory.create(closed=True), refund_factory.create(closed=False)]
     response = group_logged_in_client.get(url, {"closed": "no"})
     content = response.content.decode("utf8")
     assert refunds[0].order.order_ID not in content
