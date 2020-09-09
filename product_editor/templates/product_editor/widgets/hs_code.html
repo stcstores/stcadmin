@@ -1,11 +1,11 @@
 {% include "django/forms/widgets/text.html" %}
 <script>
  $(document).ready(function() {
-    $({{ widget.attrs.id }}).autocomplete({
+    $("#{{ widget.attrs.id }}").autocomplete({
     source: "{% url 'inventory:search_hs_code' %}"
   })
 
-  $({{ widget.attrs.id }}).change(function() {
+  $("#{{ widget.attrs.id }}").change(function() {
     var value = $(this).val();
     var colon_position = value.indexOf(':');
     if (colon_position != -1) {
@@ -14,7 +14,7 @@
     $(this).val(value);
   });
 
-  $({{ widget.attrs.id }}).focus(function() { 
+  $("#{{ widget.attrs.id }}").focus(function() { 
     $(this).select(); 
   }); 
  });

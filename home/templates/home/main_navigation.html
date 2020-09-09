@@ -13,6 +13,7 @@
     {% endif %}
     {% if "orders" in groups %}
     <li><a href="{% url 'orders:index' %}">Orders</a></li>
+    <li><a href="{% url 'orders:refund_list' %}">Refunds</a></li>
     {% endif %}
     {% if 'labelmaker' in groups %}
     <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>

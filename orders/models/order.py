@@ -335,7 +335,7 @@ class Order(models.Model):
     def _set_postage_price(self):
         try:
             self.postage_price = self._get_postage_price()
-        except ShippingPrice.DoesNotExist:
+        except Exception:
             self.postage_price = None
             self.postage_price_success = False
         else:
@@ -361,3 +361,10 @@ class Order(models.Model):
         ):
             return False
         return True
+
+    def packed_by(self):
+        """Return the packer who packed this order."""
+        try:
+            return self.packingrecord.packed_by
+        except Exception:
+            return None

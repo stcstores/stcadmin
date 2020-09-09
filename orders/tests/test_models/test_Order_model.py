@@ -767,7 +767,7 @@ def test_update_sales_with_price_zero(
     order = order_factory.create()
     product_id = "3849390"
     product_sale = product_sale_factory.create(
-        order=order, product_ID=product_id, price=0,
+        order=order, product_ID=product_id, price=0
     )
     product = mock_product(product_id=product_id, price=5.99)
     products = [product]
@@ -816,8 +816,7 @@ def test_product_sales_are_not_created_for_a_dispatched_order(
     models.Order.objects.update_orders()
     assert (
         models.ProductSale.objects.filter(
-            order__order_ID=order.order_ID,
-            product_ID=mock_order.products[0].product_id,
+            order__order_ID=order.order_ID, product_ID=mock_order.products[0].product_id
         ).exists()
         is False
     )
@@ -1004,6 +1003,30 @@ def test_set_postage_price_sets_postage_price(
     order._set_postage_price()
     order.refresh_from_db()
     assert order.postage_price == shipping_price.price(order.total_weight())
+
+
+@pytest.mark.django_db
+def test_set_postage_price_does_not_stop_for_missing_weight_band(
+    country,
+    shipping_rule,
+    shipping_price,
+    order_factory,
+    weight_band_factory,
+    product_sale_factory,
+):
+    weight_band_factory.create(
+        min_weight=0, max_weight=20, shipping_price=shipping_price
+    )
+    order = order_factory.create(
+        country=country,
+        shipping_rule=shipping_rule,
+        postage_price=None,
+        postage_price_success=None,
+    )
+    product_sale_factory.create(order=order, weight=500)
+    order._set_postage_price()
+    assert order.postage_price is None
+    assert order.postage_price_success is False
 
 
 @pytest.mark.django_db

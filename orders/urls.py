@@ -29,7 +29,7 @@ urlpatterns = [
         "order_profit/<int:order_id>/", views.OrderProfit.as_view(), name="order_profit"
     ),
     path("refund_list/", views.RefundList.as_view(), name="refund_list"),
-    path("create_refund/", views.CreateRefund.as_view(), name="create_refund",),
+    path("create_refund/", views.CreateRefund.as_view(), name="create_refund"),
     path("refund/<int:pk>/", views.Refund.as_view(), name="refund"),
     path(
         "refund/<int:pk>/mark_contacted/",
@@ -76,5 +76,20 @@ urlpatterns = [
         "refund/<int:refund_pk>/create_feedback/",
         views.AddPackingMistakeForRefund.as_view(),
         name="add_packing_mistake_feedback",
+    ),
+    path(
+        "refund/<int:refund_pk>/delete_refund/",
+        views.DeleteRefund.as_view(),
+        name="delete_refund",
+    ),
+    path(
+        "refund/<int:refund_pk>/set_returned/",
+        views.SetParcelReturnedForRefund.as_view(),
+        name="set_refund_parcel_returned",
+    ),
+    path(
+        "refund/<int:refund_pk>/set_not_returned/",
+        views.SetParcelNotReturnedForRefund.as_view(),
+        name="set_refund_parcel_not_returned",
     ),
 ]

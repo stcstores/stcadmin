@@ -28,10 +28,11 @@
         {% endif %}
 
         <div class="status">
+            <button class="error" id="delete_refund">Delete Refund</button>
             {% if refund.contact_contacted is False %}
             <p class="error">{{ refund.contact_name }} Not Contacted</p>
             <a href="{% url 'orders:mark_refund_contacted' refund.pk %}">
-                <button><b>Mark Contacted</b></button>
+                <button><b>Mark {{ refund.contact_name }} Contacted</b></button>
             </a>
             {% else %}
                 {% if refund.refund_accepted is True %}
@@ -45,16 +46,33 @@
                     <p>
                     <form action="{% url 'orders:mark_refund_accepted' refund.pk %}" method="GET">
                     <input name="refund_amount" type="number" step="0.01" required>
-                    <button><b>Refund Accepted</b></button>
+                    <button><b>Mark Accepted by {{ refund.contact_name }}</b></button>
                     </form>
                     </p>
                     <p>
                         <a href="{% url 'orders:mark_refund_rejected' refund.pk %}">
-                            <button><b>Refund Rejected</b></button>
+                            <button><b>Mark Rejected by {{ refund.contact_name }}</b></button>
                         </a>
                     </p>
                     {% endif %}
                 {% endif %}
+            {% endif %}
+            {% if refund.reason == "Lost In Post" %}
+                {% if refund.returned %}
+                    <p class="success">
+                        Refund Returned
+                        <a href="{% url 'orders:set_refund_parcel_not_returned' refund.id %}">
+                            <button>Mark Not Returned</button>
+                        </a>
+                    </p>
+                    {% else %}
+                    <p class="error">
+                        Refund Not Returned
+                        <a href="{% url 'orders:set_refund_parcel_returned' refund.id %}">
+                            <button>Mark Returned</button>
+                        </a>
+                    </span>
+                    {% endif %}
             {% endif %}
         </div>
         <div class="notes">
@@ -124,6 +142,13 @@
         $('input[type=file]').change(function() {
             $(this).closest('form').submit();
         });
+        $("#delete_refund").click(function() {
+            if (confirm("Are you sure you want to delete this refund?")) {
+                $.get("{% url 'orders:delete_refund' refund.id %}", function() {
+                    window.location = "{% url 'orders:refund_list' %}"
+                });
+            }
+        })
     });
 </script>
 

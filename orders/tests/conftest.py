@@ -14,12 +14,14 @@ from shipping.tests.conftest import (
     ShippingPriceFactory,
     ShippingRuleFactory,
     VatRateFactory,
+    WeightBandFactory,
 )
 
 pytest_factoryboy.register(CountryFactory)
 pytest_factoryboy.register(ShippingRuleFactory)
 pytest_factoryboy.register(ShippingPriceFactory)
 pytest_factoryboy.register(CourierServiceFactory)
+pytest_factoryboy.register(WeightBandFactory)
 pytest_factoryboy.register(VatRateFactory)
 pytest_factoryboy.register(ProviderFactory)
 
@@ -204,6 +206,7 @@ class LostInPostRefundFactory(factory.DjangoModelFactory):
     notes = "A refund for an item lost in the post"
     closed = False
     courier = factory.SubFactory(ProviderFactory)
+    returned = False
 
 
 @pytest_factoryboy.register

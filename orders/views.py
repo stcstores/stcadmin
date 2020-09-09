@@ -309,6 +309,7 @@ class RefundList(OrdersUserMixin, ListView):
                     "products",
                     "order__productsale_set",
                     "order__productsale_set__department",
+                    "order__packingrecord",
                 )
                 .select_related("order", "order__channel", "order")
                 .order_by("order__dispatched_at")
@@ -585,4 +586,39 @@ class AddPackingMistakeForRefund(OrdersUserMixin, RedirectView):
             order_id=refund.order.order_ID,
         )
         feedback.save()
+        return refund.get_absolute_url()
+
+
+class DeleteRefund(OrdersUserMixin, View):
+    """View for deleting refunds."""
+
+    def get(self, *args, **kwargs):
+        """Delete a refund."""
+        refund = get_object_or_404(models.Refund, pk=kwargs.get("refund_pk"))
+        try:
+            refund.delete()
+        except Exception:
+            return HttpResponseNotFound
+        return HttpResponse("ok")
+
+
+class SetParcelReturnedForRefund(OrdersUserMixin, RedirectView):
+    """View for setting the parcel returned status on Lost In Post refunds."""
+
+    def get_redirect_url(self, refund_pk):
+        """Set the returned field of the refund to True and redirect to it's page."""
+        refund = get_object_or_404(models.LostInPostRefund, id=refund_pk)
+        refund.returned = True
+        refund.save()
+        return refund.get_absolute_url()
+
+
+class SetParcelNotReturnedForRefund(OrdersUserMixin, RedirectView):
+    """View for setting the parcel returned status on Lost In Post refunds."""
+
+    def get_redirect_url(self, refund_pk):
+        """Set the returned field of the refund to False and redirect to it's page."""
+        refund = get_object_or_404(models.LostInPostRefund, id=refund_pk)
+        refund.returned = False
+        refund.save()
         return refund.get_absolute_url()

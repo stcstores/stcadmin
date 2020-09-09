@@ -416,8 +416,10 @@ class TestProductLabelsPDFFromSizeChartView(LabelmakerViewTest, ViewTests):
     def test_label_data_parsing(self):
         size_chart = models.SizeChart.objects.get(id=1)
         size = models.SizeChartSize.objects.get(id=1)
-        label_data = views.ProductLabelsPDFFromSizeChart().get_label_data_for_size_chart(
-            "TV009", [{"size": size.id, "colour": "Red", "quantity": 1}], size_chart
+        label_data = (
+            views.ProductLabelsPDFFromSizeChart().get_label_data_for_size_chart(
+                "TV009", [{"size": size.id, "colour": "Red", "quantity": 1}], size_chart
+            )
         )
         self.assertIsInstance(label_data, list)
         self.assertEqual(2, len(label_data))
@@ -433,8 +435,10 @@ class TestProductLabelsPDFFromSizeChartView(LabelmakerViewTest, ViewTests):
         size = models.SizeChartSize.objects.get(id=1)
         size.name = ""
         size.save()
-        label_data = views.ProductLabelsPDFFromSizeChart().get_label_data_for_size_chart(
-            "TV009", [{"size": size.id, "colour": "Red", "quantity": 1}], size_chart
+        label_data = (
+            views.ProductLabelsPDFFromSizeChart().get_label_data_for_size_chart(
+                "TV009", [{"size": size.id, "colour": "Red", "quantity": 1}], size_chart
+            )
         )
         self.assertIsInstance(label_data, list)
         self.assertEqual(2, len(label_data))

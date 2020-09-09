@@ -5,10 +5,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("shipping", "0011_auto_20200611_1557"),
-    ]
+    dependencies = [("shipping", "0011_auto_20200611_1557")]
 
-    operations = [
-        migrations.RemoveField(model_name="shippingprice", name="price_type",),
-    ]
+    operations = [migrations.RemoveField(model_name="shippingprice", name="price_type")]

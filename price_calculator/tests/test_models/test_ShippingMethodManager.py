@@ -86,7 +86,7 @@ def test_get_shipping_price_returns_method_and_price(
 
 @pytest.mark.django_db
 def test_get_shipping_price_raises_when_no_shipping_method_is_found(
-    country, product_type, channel,
+    country, product_type, channel
 ):
     with pytest.raises(models.NoShippingService):
         models.ShippingMethod.objects.get_shipping_price(
