@@ -25,6 +25,21 @@ class SelectFBAOrderProduct(forms.Form):
             self.add_error("Product not found")
 
 
+class CurrencyWidget(forms.TextInput):
+    """Widget that converts pence to pounds and pence."""
+
+    def __init__(self, *args, **kwargs):
+        """Add attributes."""
+        attrs = kwargs.get("attrs", {})
+        attrs.update({"type": "number", "step": "0.01"})
+        kwargs["attrs"] = attrs
+        super().__init__(*args, **kwargs)
+
+    def format_value(self, value):
+        """Return the value as pounds."""
+        return str(float(value) / 100).zfill(3)
+
+
 class CreateFBAOrderForm(forms.ModelForm):
     """Form for creating FBA orders."""
 
@@ -34,6 +49,8 @@ class CreateFBAOrderForm(forms.ModelForm):
         self.fields["product_SKU"].disabled = True
         self.fields["product_ID"].disabled = True
         self.fields["product_name"].disabled = True
+        self.fields["selling_price"].widget = CurrencyWidget()
+        self.fields["selling_price"].to_python = lambda x: int(float(x) * 100)
 
     class Meta:
         """Meta class for CreateFBAOrderForm."""
