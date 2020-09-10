@@ -99,7 +99,7 @@
     }
 
     $(document).ready(function() {
-        $('input,textarea,select').filter('[required]').parent().find("label").addClass("required");
+        $('input,textarea,select').filter('[required]').filter(':enabled').parent().find("label").addClass("required");
         $('form').submit(function(e) {
             if (!confirm("Are you sure you want to create this FBA order?")) {
                 e.preventDefault();

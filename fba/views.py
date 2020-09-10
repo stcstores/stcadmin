@@ -1,6 +1,7 @@
 """Views for the FBA app."""
 
 import cc_products
+from ccapi import CCAPI
 from django.contrib import messages
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import reverse
@@ -213,3 +214,35 @@ class FBAPriceCalculator(FBAUserMixin, View):
         """Return the maximum number of the product that can be sent."""
         max_quantity = (self.country.max_weight * 1000) // self.product_weight
         return max_quantity
+
+
+class FulfillFBAOrder(FBAUserMixin, UpdateView):
+    """View for creating FBA orders."""
+
+    model = models.FBAOrder
+    form_class = forms.FulfillFBAOrderForm
+    template_name = "fba/fulfill_fba_order.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Add the bay list to the context."""
+        context = super().get_context_data(*args, **kwargs)
+        product_ID = context["form"].instance.product_ID
+        bays = CCAPI.get_bays_for_product(product_ID)
+        context["bays"] = ", ".join([bay.name for bay in bays])
+        return context
+
+    def form_valid(self, form):
+        """Save the user fulfilling the order."""
+        return_value = super().form_valid(form)
+        form.instance.fullfilled_by = self.request.user
+        form.save()
+        return return_value
+
+    def get_success_url(self):
+        """Redirect to the order list."""
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            f"FBA order fulfilled for product {self.object.product_SKU}.",
+        )
+        return reverse("fba:order_list")

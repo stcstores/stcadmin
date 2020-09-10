@@ -1,0 +1,49 @@
+{% extends 'fba/base.html' %}
+
+{% block content %}{{ block.super }}
+
+<h1>Fulfill FBA Order</h1>
+
+<h3>{{ form.instance.product_SKU }} - {{ form.instance.product_name }}</h3>
+
+<div class="fba_order_form_container">
+    <div class="order_details">
+        <p>
+            <label for="country">Country</label>
+            <input type="text" name="country" value="{{ form.instance.country.country.name }}" disabled>
+        </p>
+        <p>
+            <label for="locations">Locations</label>
+            <input type="text" name="locations" value="{{ bays }}" disabled>
+        </p>
+        <p>
+            <label for="approximate_quantity">Approximate Qauantity</label>
+            <input type="number" name="approximate_quantity" value="{{ form.instance.aproximate_quantity }}" disabled>
+        </p>
+        <p>
+            <label for="weight_lb">Weight (lb)</label>
+            <input type="number" name="weight_lb" id="weight_lb" disabled>
+        </p>
+    </div>
+    <div class="fba_order_form">
+        <form action="" method="POST">{% csrf_token %}
+            {{ form.as_p }}
+            <button>Fulfill</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+    $(document).ready(function() {
+        $('input,textarea,select').filter('[required]').parent().find("label").addClass("required");
+
+        $("#{{ form.box_weight.auto_id }}").change(function() {
+            $("#weight_lb").val($(this).val() * 2.20462)
+        });
+    });
+</script>
+{% endblock script %}
