@@ -138,6 +138,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
             response["profit"] = self.get_profit()
             response["percentage"] = self.get_percentage()
             response["purchase_price"] = self.get_purchase_price()
+            response["max_quantity"] = self.get_max_quantity()
             return JsonResponse(response)
         except Exception as e:
             print(e)
@@ -154,6 +155,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
         country_id = int(post_data.get("country"))
         self.country = models.FBACountry.objects.get(id=country_id)
         self.exchange_rate = float(self.country.country.currency.exchange_rate)
+        self.product_weight = int(post_data.get("weight"))
 
     def get_channel_fee(self):
         """Return the caclulated channel fee."""
@@ -206,3 +208,8 @@ class FBAPriceCalculator(FBAUserMixin, View):
         """Return the purchase price in local currency."""
         purchase_price = self.purchase_price / self.exchange_rate
         return round(purchase_price, 2)
+
+    def get_max_quantity(self):
+        """Return the maximum number of the product that can be sent."""
+        max_quantity = (self.country.max_weight * 1000) // self.product_weight
+        return max_quantity
