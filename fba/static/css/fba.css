@@ -19,3 +19,7 @@ label.required {
 label.required:after {
     content: " *"
 }
+
+.fba_order_form_container input:disabled {
+    color: black;
+}

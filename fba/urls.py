@@ -27,4 +27,9 @@ urlpatterns = [
     path(
         "price_calculator/", views.FBAPriceCalculator.as_view(), name="price_calculator"
     ),
+    path(
+        "fulfil_fba_order/<int:pk>/",
+        views.FulfillFBAOrder.as_view(),
+        name="fulfill_fba_order",
+    ),
 ]

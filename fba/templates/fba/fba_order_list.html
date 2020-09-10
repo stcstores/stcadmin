@@ -25,6 +25,7 @@
             <th>Fullfilled By</th>
             <th>Fullfillment Date</th>
             <th>Status</th>
+            <th></th>
         </tr>
     {% for order in object_list %}
         <tr class="order">
@@ -36,6 +37,13 @@
             <td>{{ order.fullfilled_by }}</td>
             <td>{{ order.status }}</td>
             <td>{{ order.closed_at|date:"Y-m-d H:i" }}</td>
+            <td>
+                {% if order.closed_at == None %}
+                    <a href="{% url 'fba:fulfill_fba_order' order.id %}">
+                        <button>Fulfill</button>
+                    </a>
+                {% endif %}
+            </td>
         </tr>
     {% endfor %}
     </table>
