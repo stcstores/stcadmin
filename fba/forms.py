@@ -37,6 +37,8 @@ class CurrencyWidget(forms.TextInput):
 
     def format_value(self, value):
         """Return the value as pounds."""
+        if value == "" or value is None:
+            return None
         return str(float(value) / 100).zfill(3)
 
 
