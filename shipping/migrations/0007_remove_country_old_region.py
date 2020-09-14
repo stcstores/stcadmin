@@ -5,10 +5,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("shipping", "0006_country_region"),
-    ]
+    dependencies = [("shipping", "0006_country_region")]
 
-    operations = [
-        migrations.RemoveField(model_name="country", name="old_region",),
-    ]
+    operations = [migrations.RemoveField(model_name="country", name="old_region")]

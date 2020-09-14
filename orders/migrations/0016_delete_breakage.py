@@ -5,10 +5,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("orders", "0015_auto_20200723_1529"),
-    ]
+    dependencies = [("orders", "0015_auto_20200723_1529")]
 
-    operations = [
-        migrations.DeleteModel(name="Breakage",),
-    ]
+    operations = [migrations.DeleteModel(name="Breakage")]

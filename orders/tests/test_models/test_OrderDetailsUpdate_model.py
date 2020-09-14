@@ -178,7 +178,7 @@ def test_update_product_details(mock_update_details, product_sale_factory):
 @pytest.mark.django_db
 @patch("orders.models.order_details_update.ProductSale.update_details")
 def test_update_product_details_does_not_stop_for_errors(
-    mock_update_details, product_sale_factory,
+    mock_update_details, product_sale_factory
 ):
     mock_update_details.side_effect = Exception
     product_sale_factory.create(details_success=None)
@@ -190,7 +190,7 @@ def test_update_product_details_does_not_stop_for_errors(
 @pytest.mark.django_db
 @patch("orders.models.order_details_update.ProductSale.update_details")
 def test_update_creates_order_details_update_error_object(
-    mock_update_details, product_sale_factory,
+    mock_update_details, product_sale_factory
 ):
     error_text = "Exception Text"
     mock_update_details.side_effect = Exception(error_text)

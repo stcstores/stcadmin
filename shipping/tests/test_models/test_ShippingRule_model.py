@@ -31,7 +31,7 @@ def shipping_service(shipping_service_factory):
 @pytest.fixture
 def new_shipping_rule(rule_ID, name, courier_service):
     shipping_rule = models.ShippingRule(
-        rule_ID=rule_ID, name=name, courier_service=courier_service,
+        rule_ID=rule_ID, name=name, courier_service=courier_service
     )
     shipping_rule.save()
     return shipping_rule

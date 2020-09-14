@@ -6,9 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("orders", "0008_auto_20200617_0955"),
-    ]
+    dependencies = [("orders", "0008_auto_20200617_0955")]
 
     operations = [
         migrations.CreateModel(
@@ -45,7 +43,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.RenameField(
-            model_name="productsale", old_name="error", new_name="details_success",
+            model_name="productsale", old_name="error", new_name="details_success"
         ),
         migrations.CreateModel(
             name="OrderDetailsUpdateError",

@@ -5,9 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("shipping", "0004_auto_20200527_1129"),
-    ]
+    dependencies = [("shipping", "0004_auto_20200527_1129")]
 
     operations = [
         migrations.CreateModel(
@@ -32,6 +30,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.RenameField(
-            model_name="country", old_name="region", new_name="old_region",
+            model_name="country", old_name="region", new_name="old_region"
         ),
     ]

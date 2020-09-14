@@ -56,7 +56,7 @@ def vat_rate(vat_rate_factory):
 @pytest.fixture
 def new_shipping_method(name, country, shipping_service):
     shipping_method = models.ShippingMethod(
-        name=name, country=country, shipping_service=shipping_service,
+        name=name, country=country, shipping_service=shipping_service
     )
     shipping_method.save()
     return shipping_method

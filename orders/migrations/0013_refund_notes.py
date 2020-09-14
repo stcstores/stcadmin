@@ -5,12 +5,10 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("orders", "0012_auto_20200715_1225"),
-    ]
+    dependencies = [("orders", "0012_auto_20200715_1225")]
 
     operations = [
         migrations.AddField(
-            model_name="refund", name="notes", field=models.TextField(blank=True),
-        ),
+            model_name="refund", name="notes", field=models.TextField(blank=True)
+        )
     ]

@@ -222,7 +222,7 @@ def test_sets_department(new_product_sale, department):
 @pytest.mark.django_db
 def test_department_defaults_to_null(order, product_ID, sku, name, quantity, price):
     sale = models.ProductSale(
-        order=order, product_ID=product_ID, sku=sku, quantity=quantity, price=price,
+        order=order, product_ID=product_ID, sku=sku, quantity=quantity, price=price
     )
     sale.save()
     sale.refresh_from_db()
@@ -237,7 +237,7 @@ def test_sets_purchase_price(new_product_sale, purchase_price):
 @pytest.mark.django_db
 def test_purchase_price_defaults_to_null(order, product_ID, sku, name, quantity, price):
     sale = models.ProductSale(
-        order=order, product_ID=product_ID, sku=sku, quantity=quantity, price=price,
+        order=order, product_ID=product_ID, sku=sku, quantity=quantity, price=price
     )
     sale.save()
     sale.refresh_from_db()
@@ -252,7 +252,7 @@ def test_sets_vat_rate(new_product_sale, vat_rate):
 @pytest.mark.django_db
 def test_vat_rate_defaults_to_null(order, product_ID, sku, name, quantity, price):
     sale = models.ProductSale(
-        order=order, product_ID=product_ID, sku=sku, quantity=quantity, price=price,
+        order=order, product_ID=product_ID, sku=sku, quantity=quantity, price=price
     )
     sale.save()
     sale.refresh_from_db()
@@ -300,7 +300,7 @@ def test_sets_end_of_line(new_product_sale):
 @pytest.mark.django_db
 def test_end_of_line_defaults_to_null(order, product_ID, sku, name, quantity, price):
     sale = models.ProductSale(
-        order=order, product_ID=product_ID, sku=sku, quantity=quantity, price=price,
+        order=order, product_ID=product_ID, sku=sku, quantity=quantity, price=price
     )
     sale.save()
     sale.refresh_from_db()
@@ -413,12 +413,7 @@ def test_update_details_retries(
         vat_rate_id=vat_rate_obj.cc_id,
         purchase_price=float(purchase_price) / 100,
     )
-    mock_CCAPI.get_product.side_effect = [
-        Exception,
-        Exception,
-        Exception,
-        mock_product,
-    ]
+    mock_CCAPI.get_product.side_effect = [Exception, Exception, Exception, mock_product]
     product_sale = product_sale_factory.create()
     product_sale.update_details()
     assert len(mock_CCAPI.get_product.mock_calls) == 4

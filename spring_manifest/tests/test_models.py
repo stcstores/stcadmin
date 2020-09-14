@@ -207,10 +207,7 @@ class TestSecuredMailService(STCAdminTest):
 
 
 class TestManifest(STCAdminTest):
-    fixtures = (
-        "spring_manifest/manifest_type",
-        "spring_manifest/manifest",
-    )
+    fixtures = ("spring_manifest/manifest_type", "spring_manifest/manifest")
 
     @patch("django.utils.timezone.now", mock_now)
     def test_create(self):
@@ -418,7 +415,7 @@ class TestManifestOrder(STCAdminTest):
         self.assertIsNone(order._packages)
         packages = order.packages
         self.assertEqual(
-            list(packages), list(models.ManifestPackage.objects.filter(order=order)),
+            list(packages), list(models.ManifestPackage.objects.filter(order=order))
         )
         self.assertEqual(packages, order._packages)
         mock_packages = Mock()

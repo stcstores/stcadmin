@@ -767,7 +767,7 @@ def test_update_sales_with_price_zero(
     order = order_factory.create()
     product_id = "3849390"
     product_sale = product_sale_factory.create(
-        order=order, product_ID=product_id, price=0,
+        order=order, product_ID=product_id, price=0
     )
     product = mock_product(product_id=product_id, price=5.99)
     products = [product]
@@ -816,8 +816,7 @@ def test_product_sales_are_not_created_for_a_dispatched_order(
     models.Order.objects.update_orders()
     assert (
         models.ProductSale.objects.filter(
-            order__order_ID=order.order_ID,
-            product_ID=mock_order.products[0].product_id,
+            order__order_ID=order.order_ID, product_ID=mock_order.products[0].product_id
         ).exists()
         is False
     )
