@@ -21,7 +21,6 @@
             <th>Name</th>
             <th>Quantity</th>
             <th>Country</th>
-            <th>Location</th>
             <th>Fullfilled By</th>
             <th>Fullfillment Date</th>
             <th>Status</th>
@@ -32,8 +31,7 @@
             <th>{{ order.product_SKU }} </th>
             <th>{{ order.product_name }} </th>
             <td>{{ order.aproximate_quantity}}</td>
-            <td>{{ order.country }}</td>
-            <td>{{ order.location }}</td>
+            <td>{{ order.region }}</td>
             <td>{{ order.fullfilled_by }}</td>
             <td>{{ order.status }}</td>
             <td>{{ order.closed_at|date:"Y-m-d H:i" }}</td>

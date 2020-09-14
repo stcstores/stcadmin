@@ -178,7 +178,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
 
     def get_postage_to_fba(self):
         """Return the caclulated price to post to FBA."""
-        postage_to_fba = float(self.country.postage_price) / 100.0
+        postage_to_fba = float(self.country.region.postage_price) / 100.0
         return round(postage_to_fba, 2)
 
     def get_postage_per_item(self):
@@ -212,7 +212,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
 
     def get_max_quantity(self):
         """Return the maximum number of the product that can be sent."""
-        max_quantity = (self.country.max_weight * 1000) // self.product_weight
+        max_quantity = (self.country.region.max_weight * 1000) // self.product_weight
         return max_quantity
 
 

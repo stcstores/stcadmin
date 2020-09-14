@@ -53,6 +53,11 @@ class CreateFBAOrderForm(forms.ModelForm):
         self.fields["product_name"].disabled = True
         self.fields["selling_price"].widget = CurrencyWidget()
         self.fields["selling_price"].to_python = lambda x: int(float(x) * 100)
+        self.fields["region"].widget = forms.HiddenInput()
+        self.fields["region"].required = False
+        self.fields["country"] = forms.ModelChoiceField(
+            queryset=models.FBACountry.objects.all()
+        )
 
     class Meta:
         """Meta class for CreateFBAOrderForm."""
@@ -62,13 +67,20 @@ class CreateFBAOrderForm(forms.ModelForm):
             "product_ID",
             "product_SKU",
             "product_name",
-            "country",
+            "region",
             "selling_price",
             "FBA_fee",
             "aproximate_quantity",
             "notes",
         ]
         widgets = {"product_ID": forms.HiddenInput()}
+
+    def clean(self):
+        """Add region to cleaned data."""
+        cleaned_data = super().clean()
+        country = cleaned_data["country"]
+        cleaned_data["region"] = country.region
+        return cleaned_data
 
 
 class FBAOrderFilter(forms.Form):
@@ -91,10 +103,10 @@ class FulfillFBAOrderForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         """Set required fields."""
         super().__init__(*args, **kwargs)
-        dimension_unit = self.instance.country.dimension_unit
-        weight_unit = self.instance.country.weight_unit
-        max_weight = self.instance.country.max_weight
-        max_size = self.instance.country.max_size
+        dimension_unit = self.instance.region.dimension_unit
+        weight_unit = self.instance.region.weight_unit
+        max_weight = self.instance.region.max_weight
+        max_size = self.instance.region.max_size
         for field in ("box_width", "box_height", "box_depth"):
             self.fields[field].label += f" ({dimension_unit})"
             self.fields[field].widget.attrs["max"] = max_size
