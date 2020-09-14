@@ -10,7 +10,7 @@
     <div class="order_details">
         <p>
             <label for="country">Country</label>
-            <input type="text" name="country" value="{{ form.instance.country.country.name }}" disabled>
+            <input type="text" name="country" value="{{ form.instance.region.name }}" disabled>
         </p>
         <p>
             <label for="locations">Locations</label>
@@ -21,7 +21,7 @@
             <input type="number" name="approximate_quantity" value="{{ form.instance.aproximate_quantity }}" disabled>
         </p>
         <p>
-            <label for="weight_lb">Weight (lb)</label>
+            <label for="weight_lb">Box Weight (lb)</label>
             <input type="number" name="weight_lb" id="weight_lb" disabled>
         </p>
     </div>

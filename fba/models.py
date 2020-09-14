@@ -7,8 +7,8 @@ from django.shortcuts import reverse
 from shipping.models import Country
 
 
-class FBACountry(models.Model):
-    """Model for countries in which FBA items are sold."""
+class FBARegion(models.Model):
+    """Model for regions in which FBA items are sold."""
 
     INCHES = "inches"
     CM = "cm"
@@ -16,20 +16,35 @@ class FBACountry(models.Model):
     KG = "kg"
     LB = "lb"
 
-    country = models.ForeignKey(
-        Country, on_delete=models.CASCADE, related_name="fba_countries"
-    )
+    name = models.CharField(max_length=255)
     postage_price = models.PositiveIntegerField()
     max_weight = models.PositiveIntegerField(blank=True, null=True)
     max_size = models.FloatField(blank=True, null=True)
-    extra_countries = models.ManyToManyField(
-        Country, related_name="extra_fba_countries", blank=True
-    )
     dimension_unit = models.CharField(
         choices=((INCHES, "Inches"), (CM, "Centimeters")), max_length=10
     )
     weight_unit = models.CharField(
         choices=((LB, "Kilograms"), (KG, "Pounds")), max_length=2
+    )
+
+    class Meta:
+        """Meta class for FBARegion."""
+
+        verbose_name = "FBA Region"
+        verbose_name_plural = "FBA Regions"
+
+    def __str__(self):
+        return self.name
+
+
+class FBACountry(models.Model):
+    """Model for countries in which FBA items are sold."""
+
+    region = models.ForeignKey(
+        FBARegion, on_delete=models.CASCADE, related_name="fba_regions"
+    )
+    country = models.ForeignKey(
+        Country, on_delete=models.CASCADE, related_name="fba_countries"
     )
 
     class Meta:
@@ -51,7 +66,7 @@ class FBAOrder(models.Model):
         User, on_delete=models.PROTECT, blank=True, null=True
     )
     closed_at = models.DateTimeField(blank=True, null=True)
-    country = models.ForeignKey(FBACountry, on_delete=models.CASCADE)
+    region = models.ForeignKey(FBARegion, on_delete=models.CASCADE)
     product_SKU = models.CharField(max_length=20)
     product_ID = models.CharField(max_length=50)
     product_name = models.CharField(max_length=255)
