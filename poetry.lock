@@ -597,7 +597,7 @@ pylabels = "^1.2.1"
 reportlab = "^3.5.34"
 
 [package.source]
-reference = "543493ecb5f94987421e976e46764982d996ee03"
+reference = "e140903c75e98bf09a99cd51cc88236e24d60fba"
 type = "git"
 url = "https://github.com/lukeshiner/labeler.git"
 [[package]]
