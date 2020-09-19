@@ -130,6 +130,7 @@ ccapi = "branch master"
 reference = "17ce46956bb48b9981756663cd43e0cc0e98ae2c"
 type = "git"
 url = "https://github.com/stcstores/cc_products.git"
+
 [[package]]
 category = "main"
 description = ""
@@ -147,6 +148,7 @@ requests = "^2.23.0"
 reference = "66fc44ff6f3e3476c4a865dae58b24d5fb1a3da2"
 type = "git"
 url = "https://github.com/stcstores/ccapi.git"
+
 [[package]]
 category = "main"
 description = "Distributed Task Queue."
@@ -600,6 +602,7 @@ reportlab = "^3.5.34"
 reference = "e140903c75e98bf09a99cd51cc88236e24d60fba"
 type = "git"
 url = "https://github.com/lukeshiner/labeler.git"
+
 [[package]]
 category = "main"
 description = ""
@@ -615,6 +618,7 @@ django = "^3.0.3"
 reference = "42b0e2df3d39ab8921904c1ba3eab0763adf586d"
 type = "git"
 url = "https://github.com/lukeshiner/list_input.git"
+
 [[package]]
 category = "main"
 description = "Load me later. A lazy plugin management system."
@@ -1176,10 +1180,11 @@ description = "A Python module for creating Excel XLSX files."
 name = "xlsxwriter"
 optional = false
 python-versions = "*"
-version = "1.3.3"
+version = "1.3.4"
 
 [metadata]
 content-hash = "8838c5d8bf59e40604b3763cd75fa8b960b4f455dd8a99ec29337c0c96d99dec"
+lock-version = "1.0"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -1221,7 +1226,6 @@ billiard = [
     {file = "billiard-3.6.3.0.tar.gz", hash = "sha256:d91725ce6425f33a97dfa72fb6bfef0e47d4652acd98a032bd1a7fbf06d5fa6a"},
 ]
 black = [
-    {file = "black-20.8b1-py3-none-any.whl", hash = "sha256:70b62ef1527c950db59062cda342ea224d772abdf6adc58b86a45421bab20a6b"},
     {file = "black-20.8b1.tar.gz", hash = "sha256:1c02557aa099101b9d21496f8a914e9ed2222ef70336404eeeac8edba836fbea"},
 ]
 cc-products = []
@@ -1778,6 +1782,6 @@ wcwidth = [
     {file = "wcwidth-0.2.5.tar.gz", hash = "sha256:c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83"},
 ]
 xlsxwriter = [
-    {file = "XlsxWriter-1.3.3-py2.py3-none-any.whl", hash = "sha256:88ab71d464e8f6c3923335cc92d6035260aa9e7c8b27fcbb3a5bc07e2c671d22"},
-    {file = "XlsxWriter-1.3.3.tar.gz", hash = "sha256:830cad0a88f0f95e5a8945ee082182aa68ab89e7d9725d0c32c196207634244b"},
+    {file = "XlsxWriter-1.3.4-py2.py3-none-any.whl", hash = "sha256:d3f75d4caca3bcddfc7b138b2f2bce358cdac10819a33d2c250497b81bb989ba"},
+    {file = "XlsxWriter-1.3.4.tar.gz", hash = "sha256:d804881beb944c4fd73deed0ef2666b84437f30d72bdc1b3a6f0230458facbfd"},
 ]
