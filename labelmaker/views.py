@@ -315,7 +315,11 @@ class BayLabelForm(LabelmakerUserMixin, TemplateView):
     def get_context_data(self, **kwargs):
         """Return template context."""
         context = super().get_context_data(**kwargs)
-        context["rows"] = ascii_uppercase
+        letters = list(ascii_uppercase[: ascii_uppercase.index("U") + 1])
+        letters.extend(
+            [f"Z{_}" for _ in ascii_uppercase[: ascii_uppercase.index("O") + 1]]
+        )
+        context["rows"] = letters
         return context
 
 
