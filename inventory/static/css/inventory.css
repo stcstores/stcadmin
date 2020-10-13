@@ -40,12 +40,15 @@ table.new_product {
   float: left;
 }
 
-.new_product tr input, .new_product tr select, .new_product tr textarea {
+.new_product tr input,
+.new_product tr select,
+.new_product tr textarea {
   border-radius: 3px;
   padding: 0.25em;
 }
 
-.new_product tr input:required, .new_product tr select {
+.new_product tr input:required,
+.new_product tr select {
   border: solid 1px black;
 }
 
@@ -53,7 +56,7 @@ table.new_product {
   background: #e2edff;
 }
 
-.variation_table .variation_option:disabled{
+.variation_table .variation_option:disabled {
   color: black;
 }
 
@@ -78,7 +81,8 @@ table.new_product {
   border: solid 3px grey;
 }
 
-.invalid_page, .current_page {
+.invalid_page,
+.current_page {
   pointer-events: none;
 }
 
@@ -122,11 +126,71 @@ table.new_product {
 }
 
 .selectize-control {
-    display: inline-block;
-    vertical-align: middle;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .supplier_list {
   float: left;
   margin: 1em;
+}
+
+.product_locations {
+  display: flex;
+  flex-direction: column;
+}
+
+.product_locations .product {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #444;
+  margin: 0.25em;
+  padding: 0.5em;
+  border-radius: 1em;
+}
+
+.product_locations .details {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 50%;
+}
+
+.product_locations .bay_lists {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.product_locations .bay {
+  border-radius: 0.5em;
+  margin: 0.25em;
+  padding: 0.25em;
+  display: inline-block;
+  color: white;
+}
+
+.product_locations .bay a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.product_locations .current_bays .bay {
+  background: green;
+}
+
+.product_locations .to_add .bay {
+  background: orange;
+}
+
+.product_locations .to_remove .bay {
+  background: red;
+}
+
+.product_locations .bays p {
+  margin: 0;
+  padding: 0;
+  font-size: 0.75em;
 }

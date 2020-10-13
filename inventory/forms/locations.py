@@ -1,11 +1,13 @@
 """Forms for updating product locations."""
 
+import cc_products
+from ccapi import CCAPI
 from django import forms
 from django.core.exceptions import ValidationError
 
 from inventory import models
 from product_editor.editor_manager import ProductEditorBase
-from product_editor.forms.fields import Department, WarehouseBayField
+from product_editor.forms.fields import Department, Location
 from stcadmin.forms import KwargFormSet
 
 
@@ -64,8 +66,14 @@ class LocationsForm(forms.Form):
         """Add fields to form."""
         self.product = kwargs.pop("product")
         super().__init__(*args, **kwargs)
-        self.fields[self.LOCATIONS] = WarehouseBayField()
+        self.fields[self.LOCATIONS] = Location()
         self.cleaned_data = {}
+        bay_ids = [bay.id for bay in CCAPI.get_bays_for_product(self.product.id)]
+        self.bays = [bay for bay in models.Bay.objects.filter(bay_ID__in=bay_ids)]
+        self.fields[self.LOCATIONS].choices = [
+            (bay.bay_ID, bay.name) for bay in self.bays
+        ]
+        # self.fields[self.LOCATIONS].initial = self.bays
         self.initial.update(self.get_initial())
 
     def get_initial(self):
@@ -74,13 +82,7 @@ class LocationsForm(forms.Form):
         initial[self.PRODUCT_ID] = self.product.id
         initial[self.PRODUCT_NAME] = self.product.full_name
         initial[self.STOCK_LEVEL] = self.product.stock_level
-        bays = [bay for bay in models.Bay.objects.filter(bay_ID__in=self.product.bays)]
-        warehouses = list(set([bay.warehouse for bay in bays]))
-        if warehouses:
-            initial[self.LOCATIONS] = {
-                self.WAREHOUSE: warehouses[0].warehouse_ID,
-                self.BAYS: [bay.bay_ID for bay in bays],
-            }
+        initial[self.LOCATIONS] = [bay.bay_ID for bay in self.bays]
         return initial
 
     def clean(self):
@@ -96,7 +98,8 @@ class LocationsForm(forms.Form):
 
     def save(self):
         """Update product with new bays."""
-        self.product.bays = self.cleaned_data[self.LOCATIONS][self.BAYS]
+        product = cc_products.get_product(self.product.id)
+        product.bays = self.cleaned_data[self.LOCATIONS][self.BAYS]
 
 
 class LocationsFormSet(KwargFormSet):

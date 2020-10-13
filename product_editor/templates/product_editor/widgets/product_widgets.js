@@ -1,7 +1,9 @@
-{% load inventory_extras %}
+{
+    % load inventory_extras %
+}
 
 function vat_price_widget(vat_input, ex_vat_input, with_vat_input) {
-    vat_input.change(function() {
+    vat_input.change(function () {
         var value = $(this).val()
         if (value == '') {
             ex_vat_input.prop('disabled', true);
@@ -14,7 +16,7 @@ function vat_price_widget(vat_input, ex_vat_input, with_vat_input) {
         with_vat_input.change();
     });
 
-    ex_vat_input.change(function() {
+    ex_vat_input.change(function () {
         var value = $(this).val();
         if (value == '') {
             with_vat_input.val('');
@@ -40,7 +42,7 @@ function vat_price_widget(vat_input, ex_vat_input, with_vat_input) {
 }
 
 function warehouse_bay(warehouse, bay, lock_warehouse) {
-    var warehouses = {% warehouses %};
+
     var bay_options = bay[0].selectize.options;
 
     function filter_bays() {
@@ -48,7 +50,7 @@ function warehouse_bay(warehouse, bay, lock_warehouse) {
         return warehouses[department_id];
     }
 
-    warehouse.change(function() {
+    warehouse.change(function () {
         if (warehouse.val() == '') {
             bay[0].selectize.disable();
             return;
@@ -63,7 +65,7 @@ function warehouse_bay(warehouse, bay, lock_warehouse) {
         selectize.setValue(value);
     });
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         warehouse.change();
         var value = warehouse.val();
         var name = warehouse.attr('name');

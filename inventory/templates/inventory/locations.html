@@ -5,10 +5,10 @@
 
 {% block additional_head %}
 {{ block.super }}
-<script src="{% static 'scripts/stock_manager.js' %}"></script>
+{% comment %} <script src="{% static 'scripts/stock_manager.js' %}"></script> {% endcomment %}
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
-<script>{% include 'product_editor/widgets/product_widgets.js' %}</script>
+{% comment %} <script>{% include 'product_editor/widgets/product_widgets.js' %}</script> {% endcomment %}
 {% endblock %}
 
 {% block content %}{{ block.super }}
@@ -16,31 +16,254 @@
 {% help_button 'inventory_help' 'inventory-location_page' %}
 <h2>{{ product_range.name }}</h2>
 
-<form action="" method="POST">{% csrf_token %}
-    {{ bay_formset.management_form }}
-    <table>
-        {% for field in department_form %}
-        <tr>
-            <th><label for="{{ field.name }}">{{ field.label}}</label></th>
-            <td colspan="2">{{ field }}</td>
-        </tr>
-        {% endfor %}
-        <tr>
-            <th>Product</th>
-            <th>Stock Level</th>
-            <th>Bays</th>
-        </tr>
-        {% for form in bay_formset %}
-        <tr hidden><td>{{ form.product_id }}</td></tr>
-        <tr>
-            <td class="title_field">{{ form.product_name.value }}</td>
-            <td class="stock_level_field">{{ form.stock_level.value }}</td>
-            <td class="location_field">{{ form.locations }}</td>
-            {% if form.errors %}<td>{% for field in form %}{{ field.errors }}{% endfor %}</td>{% endif %}
-        </tr>
-        {% endfor %}
-    </table>
-    <input type="submit" value="Update Locations" />
-</form>
+<div class="product_locations">
+    {% for product in products %}
+    <div class="product" id="product_{{product.id}}">
+        <div class="details">
+            <div>{{ product.name }}</div>
+            <div>Stock Level: {{ product.stock_level }}</div>
+        </div>
+        <div class="bay_lists">
+            <div class="bays current_bays">
+                <p>Current Bays</p>
+            </div>
+            <div class="bays to_remove">
+                <p>Removing</p>
+            </div>
+            <div class="bays to_add">
+                <p>Adding</p>
+            </div>
+            <div class="add_bays">
+                <input type="text" class="product_id" value="{{ product.id }}" hidden>
+                <input list="bays" id="bays" class="add_bay" placeholder="Add...">
+                <button class="update">Update</button>
+                <button class="reset">Reset</button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<button id="update_all" class="update">Update All</button>
 
 {% endblock %}
+
+{% block script %}{{ block.super }}
+
+{{ bays|json_script:"bay_list" }}
+
+<script>
+var bays = JSON.parse(document.getElementById('bay_list').textContent);
+
+var BayManager = function(product_id, current_bays) {
+    var self = this;
+    this.product_id = product_id;
+    this.current_bays = current_bays.slice();
+    this.original_bays = current_bays.slice();
+    this.to_remove = [];
+    this.to_add = [];
+    this.div = $("#product_" + product_id);
+    this.current_bays_div = this.div.find(".current_bays");
+    this.to_remove_div = this.div.find(".to_remove");
+    this.to_add_div = this.div.find(".to_add");
+    this.add_bays_input = this.div.find('.add_bay');
+    this.update_button = this.div.find('.update');
+    this.reset_button = this.div.find('.reset');
+    this.reset_button.click(function() {
+        self.reset();
+    });
+    this.update_button.click(function () {
+        self.update_product_bays();
+    });
+    this.add_bays_input.autocomplete({
+        source: bays,
+        select: function( event, ui ) {
+            var name = ui.item.value
+            if ((self.original_bays.includes(name)) && (!self.current_bays.includes(name))) {
+                self.current_bays.push(name);
+            }
+            if (!self.original_bays.includes(name)) {
+                self.to_add.push(name);
+            }
+            if (self.to_remove.includes(name)) {
+                self.to_remove.splice(self.to_remove.indexOf(name), 1);
+            }
+            ui.item.value = "";
+            self.refresh();
+        },
+    });
+    this.refresh();
+}
+
+BayManager.prototype.reset = function() {
+    this.to_remove = [];
+    this.to_add = [];
+    this.current_bays = this.original_bays.slice();
+    this.refresh();
+}
+
+BayManager.prototype.add_bay_list = function (bay_list, target) {
+    for (var i=0; i<bay_list.length; i++) {
+        this.add_bay(bay_list, i, target);
+    }
+}
+
+BayManager.prototype.add_current_bays = function() {
+    var self = this;
+    this.add_bay_list(this.current_bays, this.current_bays_div);
+    self.current_bays_div.find('.bay a').click(function(e) {
+        e.preventDefault();
+        var index = $(this).attr('id').replace('remove_bay_', '');
+        self.move_bay(self.current_bays, self.to_remove, index);
+    });
+}
+
+BayManager.prototype.add_to_remove = function() {
+    var self = this;
+    this.add_bay_list(this.to_remove, this.to_remove_div);
+    self.to_remove_div.find('.bay a').click(function(e) {
+        e.preventDefault();
+        var index = $(this).attr('id').replace('remove_bay_', '');
+        self.move_bay(self.to_remove, self.current_bays, index);
+    });
+}
+
+BayManager.prototype.add_to_add = function() {
+    var self = this;
+    this.add_bay_list(this.to_add, this.to_add_div);
+    self.to_add_div.find('.bay a').click(function(e) {
+        e.preventDefault();
+        var index = $(this).attr('id').replace('remove_bay_', '');
+        var name = self.to_add[index];
+        self.to_add.splice(index, 1);
+        self.refresh();
+    });
+}
+
+BayManager.prototype.move_bay = function(from, to, index) {
+    var name = from[index];
+    from.splice(index, 1);
+    to.push(name);
+    this.refresh();
+}
+
+
+BayManager.prototype.add_bay = function(from, index, target) {
+    var name = from[index];
+    var bay = $(
+        '<div class="bay"><span class="name">' + name + '</span></div>'
+    );
+    remove_link = $('<a id="remove_bay_' + index + '" href="">&times;</a>');
+    bay.append(remove_link);
+    target.append(bay);
+}
+
+BayManager.prototype.refresh = function() {
+    this.current_bays_div.html('<p>Current Bays</p>');
+    this.to_remove_div.html('<p>Removing</p>');
+    this.to_add_div.html('<p>Adding</p>');
+    this.current_bays = this.clean_list(this.current_bays);
+    this.to_remove = this.clean_list(this.to_remove);
+    this.to_add = this.clean_list(this.to_add);
+    this.add_current_bays();
+    this.add_to_remove();
+    this.add_to_add();
+}
+
+BayManager.prototype.clean_list = function(array) {
+    var array = [...new Set(array)];
+    array.sort();
+    return array;
+}
+
+BayManager.prototype.reload = function(bays) {
+    this.original_bays = bays.slice();
+    this.current_bays = bays.slice();
+    this.to_remove = [];
+    this.to_add = [];
+    this.refresh();
+    $('.update').prop('disabled', false);
+}
+
+BayManager.prototype.update_data = function() {
+    return {
+        'product_id': this.product_id,
+        'add': this.to_add,
+        'remove': this.to_remove,
+        'original': this.original_bays
+    };
+}
+
+BayManager.prototype.update_product_bays = function() {
+    var data = this.update_data();
+    this.disable();
+    var self = this;
+    $.ajax({
+        url: "{% url 'inventory:update_bays' %}",
+        type: 'POST',
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify([data]),
+        success: function(data) {
+            console.log(data);
+            var bays = data[self.product_id]['bays'];
+            self.reload(bays);
+            $('.update').prop('disabled', false);
+        },
+        error: function(errMsg) {
+            console.log(errMsg);
+        }
+    });
+}
+
+BayManager.prototype.disable = function() {
+    $('.update').prop('disabled', true);
+    var loading_img = '<img src="{% static 'images/loading.gif' %}" alt="loading" height="50">';
+    this.current_bays_div.html(loading_img);
+    this.to_remove_div.html(loading_img);
+    this.to_add_div.html(loading_img);
+}
+
+$(document).ready(function(){
+    var bay_managers = {
+        {% for product in products %}
+        "{{product.id}}": new BayManager(
+            {{ product.id }}, [{% for bay in product.bays %}"{{ bay.name }}",{% endfor %}]
+        ),
+        {% endfor %}
+    };
+
+    $("#update_all").click(function() {
+        $('.update').prop('disabled', true);
+        var data = [];
+        var managers = Object.values(bay_managers);
+        for (var i=0; i<managers.length; i++) {
+            data.push(managers[i].update_data());
+            managers[i].disable();
+        }
+        $.ajax({
+            url: "{% url 'inventory:update_bays' %}",
+            type: 'POST',
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(data),
+            success: function(response) {
+                console.log(response);
+                var product_ids = Object.keys(bay_managers);
+                var product_id;
+                for (var i=0; i<product_ids.length; i++) {
+                    product_id = product_ids[i];
+                    var bays = response[product_id]['bays'];
+                    bay_managers[product_id].reload(response[product_id]['bays'])
+                }
+                $('.update').prop('disabled', false);
+            },
+            error: function(errMsg) {
+                console.log(errMsg);
+            }
+        });
+    });
+
+});
+</script>
+
+{% endblock script %}

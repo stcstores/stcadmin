@@ -365,6 +365,7 @@ class Location(fieldtypes.SelectizeField):
         "persist": False,
         "maxItems": None,
         "sortField": "text",
+        "create": True,
     }
 
     def __init__(self, department=None):
@@ -374,6 +375,7 @@ class Location(fieldtypes.SelectizeField):
 
     def get_choices(self):
         """Return choices for field."""
+        return []
         if self.department is None:
             warehouses = models.Warehouse.used_warehouses.all()
             options = [["", ""]]
