@@ -3,6 +3,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import reverse
+from django.utils import timezone
 
 from shipping.models import Country
 
@@ -26,6 +27,7 @@ class FBARegion(models.Model):
     weight_unit = models.CharField(
         choices=((LB, "Kilograms"), (KG, "Pounds")), max_length=2
     )
+    auto_close = models.BooleanField()
 
     class Meta:
         """Meta class for FBARegion."""
@@ -95,3 +97,37 @@ class FBAOrder(models.Model):
     def get_absolute_url(self):
         """Return the URL of the update FBA order page."""
         return reverse("fba:update_fba_order", kwargs={"pk": self.pk})
+
+    def get_fulfillment_url(self):
+        """Return the URL of the order's fulfillment page."""
+        return reverse("fba:fulfill_fba_order", kwargs={"pk": self.pk})
+
+    def details_complete(self):
+        """Return True if all fields required to complete the order are filled."""
+        return all(
+            (
+                self.box_width is not None,
+                self.box_height is not None,
+                self.box_depth is not None,
+                self.box_weight is not None,
+                self.quantity_sent is not None,
+            )
+        )
+
+    def close(self):
+        """Mark the order closed."""
+        self.closed_at = timezone.now()
+        self.save()
+
+    def update_stock_level(self):
+        """Update the product's stock level in Cloud Commerce."""
+        print(f"Reduce stock level for {self.product_SKU} by {self.quantity_sent}")
+
+    def status(self):
+        """Return a string describing the status of the order."""
+        if self.closed_at is not None:
+            return "Fulfilled"
+        if self.details_complete:
+            return "Awaiting Collection Booking"
+        else:
+            return "Not Processed"

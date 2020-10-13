@@ -236,6 +236,12 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
         return_value = super().form_valid(form)
         form.instance.fullfilled_by = self.request.user
         form.save()
+        if form.instance.details_complete():
+            if (
+                form.instance.region.auto_close
+                or "collection_booked" in self.request.POST
+            ):
+                self.close_order()
         return return_value
 
     def get_success_url(self):
@@ -245,4 +251,10 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
             messages.SUCCESS,
             f"FBA order fulfilled for product {self.object.product_SKU}.",
         )
-        return reverse("fba:order_list")
+        return self.object.get_fulfillment_url()
+
+    def close_order(self):
+        """Complete and close the order."""
+        self.object.close()
+        if self.object.region.auto_close is True:
+            self.object.update_stock_level()

@@ -16,6 +16,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "max_size",
         "dimension_unit",
         "weight_unit",
+        "auto_close",
     ]
     list_display = [
         "name",
@@ -24,6 +25,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "max_size",
         "dimension_unit",
         "weight_unit",
+        "auto_close",
     ]
     list_editable = [
         "postage_price",
@@ -31,6 +33,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "max_size",
         "dimension_unit",
         "weight_unit",
+        "auto_close",
     ]
 
 

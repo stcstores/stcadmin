@@ -21,9 +21,9 @@
             <th>Name</th>
             <th>Quantity</th>
             <th>Country</th>
-            <th>Fullfilled By</th>
-            <th>Fullfillment Date</th>
             <th>Status</th>
+            <th>Fullfillment Date</th>
+            <th>Fullfilled By</th>
             <th></th>
         </tr>
     {% for order in object_list %}
@@ -32,14 +32,20 @@
             <th>{{ order.product_name }} </th>
             <td>{{ order.aproximate_quantity}}</td>
             <td>{{ order.region }}</td>
-            <td>{{ order.fullfilled_by }}</td>
             <td>{{ order.status }}</td>
             <td>{{ order.closed_at|date:"Y-m-d H:i" }}</td>
+            <td>
+                {% if order.fullfilled_by != None %}
+                {{ order.fullfilled_by }}
+                {% endif %}
+            </td>
             <td>
                 {% if order.closed_at == None %}
                     <a href="{% url 'fba:fulfill_fba_order' order.id %}">
                         <button>Fulfill</button>
                     </a>
+                {% else %}
+                    Closed
                 {% endif %}
             </td>
         </tr>
