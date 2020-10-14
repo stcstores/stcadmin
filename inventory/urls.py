@@ -30,11 +30,6 @@ inventory_urlpatterns = [
         name="print_barcodes",
     ),
     path("barcode_pdf/", views.BarcodePDF.as_view(), name="barcode_pdf"),
-    path(
-        "create_warehouse_bay/",
-        views.CreateBayView.as_view(),
-        name="create_warehouse_bay",
-    ),
     path("suppliers/suppliers", views.Suppliers.as_view(), name="suppliers"),
     path("suppliers/<int:pk>/", views.Supplier.as_view(), name="supplier"),
     path(

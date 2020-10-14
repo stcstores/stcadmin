@@ -8,7 +8,6 @@ from django import forms
 from list_input import ListInput
 
 from inventory import models
-from product_editor.editor_manager import ProductEditorBase
 
 from . import fieldtypes, widgets
 from .fieldtypes import FormField, Validators
@@ -325,24 +324,17 @@ class Department(fieldtypes.SingleSelectize):
     @staticmethod
     def get_choices():
         """Get choice options for field."""
-        departments = [
-            (w.warehouse_ID, w.name) for w in models.Warehouse.used_warehouses.all()
-        ]
-        departments.sort(key=lambda x: x[1])
-        return [("", "")] + departments
+        departments = list(models.Department.objects.values_list("name", flat=True))
+        return [("", "")] + [(name, name) for name in departments]
 
     def clean(self, value):
         """Validate cleaned data."""
         value = super().clean(value)
         if self.required is False and value == "":
             return None
-        try:
-            department = models.Warehouse.used_warehouses.get(
-                warehouse_ID=int(value)
-            ).warehouse_ID
-        except (models.Warehouse.DoesNotExist, ValueError):
+        if not models.Department.objects.filter(name=value).exists():
             raise forms.ValidationError("Deparment not recognised")
-        return department
+        return value
 
 
 class Location(fieldtypes.SelectizeField):
@@ -367,105 +359,16 @@ class Location(fieldtypes.SelectizeField):
         "sortField": "text",
     }
 
-    def __init__(self, department=None):
-        """Set department."""
-        self.department = department
-        super().__init__()
-
     def get_choices(self):
         """Return choices for field."""
-        if self.department is None:
-            warehouses = models.Warehouse.used_warehouses.all()
-            options = [["", ""]]
-            for warehouse in warehouses:
-                options.append(
-                    [
-                        warehouse.name,
-                        [[bay.bay_ID, bay] for bay in warehouse.bay_set.all()],
-                    ]
-                )
-            return options
-        else:
-            try:
-                warehouse = self.get_warehouse()
-            except models.Warehouse.DoesNotExist:
-                return [("", "")]
-            else:
-                return [(bay.bay_ID, bay.name) for bay in warehouse.bay_set.all()]
-
-    def get_warehouse(self):
-        """Return Warehouse object matching the field's department."""
-        if isinstance(self.department, int):
-            return models.Warehouse.objects.get(warehouse_ID=self.department)
-        return models.Warehouse.objects.get(name=self.department)
-
-    def to_python(self, *args, **kwargs):
-        """Return submitted bays as a list of bay IDs."""
-        return [int(x) for x in super().to_python(*args, **kwargs)]
+        return [(bay.bay_ID, bay.name) for bay in models.Bay.objects.all()]
 
     def clean(self, value):
         """Validate bay selection."""
         value = super().clean(value)
-        bays = []
-        for bay_ID in value:
-            try:
-                bays.append(models.Bay.objects.get(bay_ID=bay_ID))
-            except models.Bay.DoesNotExist:
-                raise forms.ValidationError("Bay not recognised")
-        filtered_bays = [_ for _ in bays if "Backup" not in _.name and not _.is_default]
-        if filtered_bays:
-            bays = [b for b in bays if not b.is_default]
-        if len(set([bay.warehouse for bay in bays])) > 1:
-            raise forms.ValidationError("Bays from multiple warehouses selected.")
-        value = [b.bay_ID for b in bays]
-        if self.department is not None and len(value) == 0:
-            value = [self.get_warehouse().default_bay.bay_ID]
-        return value
-
-
-class WarehouseBayField(fieldtypes.CombinationField):
-    """Combined Department and Location fields."""
-
-    label = "Location"
-    help_text = (
-        "Select the <b>Warehouse</b> from which the item will be picked.<br>"
-        "Bays in this Warehouse can then be added to the Bay field."
-        "<br>If the bay field is left blank the default bay for the Warehouse"
-        " will be added."
-    )
-
-    WAREHOUSE = ProductEditorBase.WAREHOUSE
-    BAYS = ProductEditorBase.BAYS
-
-    def __init__(self, *args, **kwargs):
-        """Create sub fields."""
-        kwargs["label"] = "Location"
-        self.lock_warehouse = kwargs.pop("lock_warehouse", False)
-        fields = (Department(), Location())
-        choices = [field.get_choices() for field in fields]
-        selectize_options = [field.selectize_options for field in fields]
-        if self.lock_warehouse:
-            selectize_options[0]["readOnly"] = True
-        kwargs["widget"] = widgets.WarehouseBayWidget(
-            choices=choices,
-            selectize_options=selectize_options,
-            lock_warehouse=self.lock_warehouse,
-        )
-        super().__init__(fields=fields, require_all_fields=False, *args, **kwargs)
-
-    def compress(self, value):
-        """Return submitted values as a dict."""
-        return {self.WAREHOUSE: value[0], self.BAYS: value[1]}
-
-    def clean(self, value):
-        """Validate submitted values."""
-        value = super().clean(value)
-        warehouse = models.Warehouse.used_warehouses.get(
-            warehouse_ID=value[self.WAREHOUSE]
-        )
-        value[self.WAREHOUSE] = warehouse.warehouse_ID
-        if len(value[self.BAYS]) == 0:
-            value[self.BAYS] = [warehouse.default_bay.bay_ID]
+        bay_ids = set(models.Bay.objects.values_list("bay_ID", flat=True))
+        if not set(value).issubset(bay_ids):
+            raise forms.ValidationError("Bay not recognised")
         return value
 
 

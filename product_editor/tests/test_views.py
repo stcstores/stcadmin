@@ -52,7 +52,7 @@ class ProductEditorViewTest(STCAdminTest):
         )
 
     def make_basic_info(self):
-        warehouse = models.Warehouse.objects.all()[0]
+        department = models.Department.objects.all()[0]
         title = "New Product"
         description = "Product Description\nNew Product"
         bullets = ["Red", "Green", "Orange", "Blue", "Magenta"]
@@ -60,7 +60,7 @@ class ProductEditorViewTest(STCAdminTest):
         return {
             "title": title,
             "description": description,
-            "department": warehouse.warehouse_ID,
+            "department": department.name,
             "amazon_bullet_points": json.dumps(bullets),
             "amazon_search_terms": json.dumps(search_terms),
         }
@@ -75,8 +75,7 @@ class ProductEditorViewTest(STCAdminTest):
             "price_2": 22.52,
             "retail_price": 24.99,
             "stock_level": 5,
-            "location_0": warehouse.warehouse_ID,
-            "location_1": [warehouse.bay_set.all()[0].bay_ID],
+            "location": [warehouse.bay_set.all()[0].bay_ID],
             "supplier": models.Supplier.objects.all()[0].product_option_value_ID,
             "supplier_sku": "TY93283",
             "weight": 50,
@@ -113,7 +112,7 @@ class TestNewBasicInfo(ProductEditorViewTest, ViewTests):
 
     def setUp(self):
         super().setUp()
-        self.warehouse = models.Warehouse.objects.all()[0]
+        self.department = models.Department.objects.all()[0]
         self.title = "New Product"
         self.description = "Product Description\nNew Product"
         self.bullets = ["Red", "Green", "Orange", "Blue", "Magenta"]
@@ -126,7 +125,7 @@ class TestNewBasicInfo(ProductEditorViewTest, ViewTests):
 
     def test_post_method(self):
         response = self.client.post(
-            self.get_URL(), {"department": self.warehouse.warehouse_ID}
+            self.get_URL(), {"department": self.department.name}
         )
         self.assertRedirects(
             response,
@@ -135,33 +134,31 @@ class TestNewBasicInfo(ProductEditorViewTest, ViewTests):
         )
 
     def test_product_data_created_in_session(self):
-        self.client.post(self.get_URL(), {"department": self.warehouse.warehouse_ID})
+        self.client.post(self.get_URL(), {"department": self.department.name})
         self.assertIn(self.session_key, self.client.session)
 
     def test_basic_info_added_to_product_date(self):
-        self.client.post(self.get_URL(), {"department": self.warehouse.warehouse_ID})
+        self.client.post(self.get_URL(), {"department": self.department.name})
         self.assertIn("basic_info", self.client.session.get(self.session_key))
 
     def test_title_set(self):
         self.client.post(
             self.get_URL(),
-            {"department": self.warehouse.warehouse_ID, "title": self.title},
+            {"department": self.department.name, "title": self.title},
         )
         product_data = self.client.session[self.session_key]
         self.assertEqual(self.title, product_data["basic_info"]["title"])
 
     def test_department_set(self):
-        self.client.post(self.get_URL(), {"department": self.warehouse.warehouse_ID})
+        self.client.post(self.get_URL(), {"department": self.department.name})
         product_data = self.client.session[self.session_key]
-        self.assertEqual(
-            self.warehouse.warehouse_ID, product_data["basic_info"]["department"]
-        )
+        self.assertEqual(self.department.name, product_data["basic_info"]["department"])
 
     def test_description_set(self):
         self.client.post(
             self.get_URL(),
             {
-                "department": self.warehouse.warehouse_ID,
+                "department": self.department.name,
                 "description": self.description,
             },
         )
@@ -172,7 +169,7 @@ class TestNewBasicInfo(ProductEditorViewTest, ViewTests):
         self.client.post(
             self.get_URL(),
             {
-                "department": self.warehouse.warehouse_ID,
+                "department": self.department.name,
                 "amazon_bullet_points": json.dumps(self.bullets),
             },
         )
@@ -185,7 +182,7 @@ class TestNewBasicInfo(ProductEditorViewTest, ViewTests):
         self.client.post(
             self.get_URL(),
             {
-                "department": self.warehouse.warehouse_ID,
+                "department": self.department.name,
                 "amazon_search_terms": json.dumps(self.bullets),
             },
         )
@@ -212,9 +209,9 @@ class TestEditBasicInfo(ProductEditorViewTest, ViewTests):
 
     def setUp(self):
         super().setUp()
-        self.warehouse = models.Warehouse.objects.all()[0]
+        self.department = models.Department.objects.all()[0]
         self.product = mocks.MockCCProductsProductRange(
-            id=self.range_id, department=self.warehouse.name
+            id=self.range_id, department=self.department.name
         )
         self.mock_cc_products.get_range.return_value = self.product
         self.title = "New Product"
@@ -235,7 +232,7 @@ class TestEditBasicInfo(ProductEditorViewTest, ViewTests):
 
     def test_post_method(self):
         response = self.client.post(
-            self.get_URL(), {"department": self.warehouse.warehouse_ID}
+            self.get_URL(), {"department": self.department.name}
         )
         self.assertRedirects(
             response,
@@ -244,33 +241,31 @@ class TestEditBasicInfo(ProductEditorViewTest, ViewTests):
         )
 
     def test_product_data_created_in_session(self):
-        self.client.post(self.get_URL(), {"department": self.warehouse.warehouse_ID})
+        self.client.post(self.get_URL(), {"department": self.department.name})
         self.assertIn(self.session_key, self.client.session)
 
     def test_basic_info_added_to_product_date(self):
-        self.client.post(self.get_URL(), {"department": self.warehouse.warehouse_ID})
+        self.client.post(self.get_URL(), {"department": self.department.name})
         self.assertIn("basic_info", self.client.session.get(self.session_key))
 
     def test_title_set(self):
         self.client.post(
             self.get_URL(),
-            {"department": self.warehouse.warehouse_ID, "title": self.title},
+            {"department": self.department.name, "title": self.title},
         )
         product_data = self.client.session[self.session_key]
         self.assertEqual(self.title, product_data["basic_info"]["title"])
 
     def test_department_set(self):
-        self.client.post(self.get_URL(), {"department": self.warehouse.warehouse_ID})
+        self.client.post(self.get_URL(), {"department": self.department.name})
         product_data = self.client.session[self.session_key]
-        self.assertEqual(
-            self.warehouse.warehouse_ID, product_data["basic_info"]["department"]
-        )
+        self.assertEqual(self.department.name, product_data["basic_info"]["department"])
 
     def test_description_set(self):
         self.client.post(
             self.get_URL(),
             {
-                "department": self.warehouse.warehouse_ID,
+                "department": self.department.name,
                 "description": self.description,
             },
         )
@@ -281,7 +276,7 @@ class TestEditBasicInfo(ProductEditorViewTest, ViewTests):
         self.client.post(
             self.get_URL(),
             {
-                "department": self.warehouse.warehouse_ID,
+                "department": self.department.name,
                 "amazon_bullet_points": json.dumps(self.bullets),
             },
         )
@@ -294,7 +289,7 @@ class TestEditBasicInfo(ProductEditorViewTest, ViewTests):
         self.client.post(
             self.get_URL(),
             {
-                "department": self.warehouse.warehouse_ID,
+                "department": self.department.name,
                 "amazon_search_terms": json.dumps(self.bullets),
             },
         )
@@ -453,7 +448,7 @@ class TestNewProductInfo(ProductEditorViewTest, ViewTests):
         self.client.post(self.get_URL(), data)
         product_data = self.client.session[self.session_key]
         self.assertEqual(
-            {"warehouse": data["location_0"], "bays": data["location_1"]},
+            data["location"],
             product_data["product_info"]["location"],
         )
 
@@ -628,7 +623,7 @@ class TestEditProductInfo(ProductEditorViewTest, ViewTests):
         self.client.post(self.get_URL(), data)
         product_data = self.client.session[self.session_key]
         self.assertEqual(
-            {"warehouse": data["location_0"], "bays": data["location_1"]},
+            data["location"],
             product_data["product_info"]["location"],
         )
 
@@ -707,7 +702,7 @@ class TestEditProductInfo(ProductEditorViewTest, ViewTests):
                 "length": product.length,
                 "height": product.height,
             },
-            "location": {"warehouse": "", "bays": []},
+            "location": product.bays,
             "product_id": product.id,
             "stock_level": product.stock_level,
             "price": {"ex_vat": product.price, "vat_rate": product.vat_rate},

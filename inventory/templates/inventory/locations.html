@@ -17,20 +17,14 @@
 <h2>{{ product_range.name }}</h2>
 
 <form action="" method="POST">{% csrf_token %}
-    {{ bay_formset.management_form }}
+    {{ formset.management_form }}
     <table>
-        {% for field in department_form %}
-        <tr>
-            <th><label for="{{ field.name }}">{{ field.label}}</label></th>
-            <td colspan="2">{{ field }}</td>
-        </tr>
-        {% endfor %}
         <tr>
             <th>Product</th>
             <th>Stock Level</th>
             <th>Bays</th>
         </tr>
-        {% for form in bay_formset %}
+        {% for form in formset %}
         <tr hidden><td>{{ form.product_id }}</td></tr>
         <tr>
             <td class="title_field">{{ form.product_name.value }}</td>

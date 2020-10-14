@@ -57,8 +57,7 @@ class TestProductView(InventoryViewTest, ViewTests):
             "price_0": 20,
             "price_1": 5.50,
             "price_2": 6.80,
-            "location_0": bay.warehouse.warehouse_ID,
-            "location_1": bay.bay_ID,
+            "location": [bay.bay_ID],
             f"opt_{options[0].option_name}": ["Green"],
         }
         response = self.client.post(self.get_URL(), data)
@@ -88,19 +87,3 @@ class TestProductView(InventoryViewTest, ViewTests):
         self.mock_cc_products.get_product.side_effect = Exception
         with self.assertRaises(Exception):
             self.make_get_request()
-
-    def test_mixed_bays(self):
-        bays = list(models.Bay.objects.values_list("bay_ID", flat=True))
-        product = mocks.MockCCProductsProduct(bays=bays)
-        self.mock_CCAPI.get_product_options.return_value = [mocks.MockProductOption()]
-        self.mock_cc_products.get_product.return_value = product
-        bay = models.Bay.objects.all()[0]
-        data = {
-            "price_0": 20,
-            "price_1": 5.50,
-            "price_2": 6.80,
-            "location_0": bay.warehouse.warehouse_ID,
-            "location_1": bay.bay_ID,
-        }
-        response = self.client.post(self.get_URL(), data)
-        self.assertIn("location", response.context["form"].errors)
