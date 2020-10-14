@@ -317,7 +317,7 @@ class BayLabelForm(LabelmakerUserMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         letters = list(ascii_uppercase[: ascii_uppercase.index("U") + 1])
         letters.extend(
-            [f"Z{_}" for _ in ascii_uppercase[: ascii_uppercase.index("O") + 1]]
+            [f"Z{_}" for _ in ascii_uppercase[: ascii_uppercase.index("P") + 1]]
         )
         context["rows"] = letters
         return context
