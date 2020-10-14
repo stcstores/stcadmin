@@ -127,7 +127,7 @@ class FBAOrder(models.Model):
         """Return a string describing the status of the order."""
         if self.closed_at is not None:
             return "Fulfilled"
-        if self.details_complete:
+        if self.details_complete() is True:
             return "Awaiting Collection Booking"
         else:
             return "Not Processed"
