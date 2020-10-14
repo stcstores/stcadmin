@@ -4,11 +4,11 @@
 <h1>Refunds</h1>
 
 <a href="{% url 'orders:create_refund' %}"><button>Create Refund</button></a>
-<form action="" method="GET">
+<form action="" method="GET" id="refund_filter">
     <div class="filter">
         {{ form.as_p }}
         <p>
-            <button>Filter</button>
+            <input type="submit" value="Filter" form="refund_filter" />
             <button formaction="{% url 'orders:export_refunds' %}">Export</button>
         </p>
     </div>
@@ -61,7 +61,9 @@
     </tr>
 {% endfor %}
 </table>
+<form action="" method="GET" id="refund_filter">
 {% include 'orders/pagination_navigation.html' %}
+</form>
 
 {% endblock content %}
 
