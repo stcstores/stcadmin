@@ -236,6 +236,7 @@ class DataSanitizer(ProductEditorBase):
 
     SIMPLE_FIELDS = (
         ProductEditorBase.BRAND,
+        ProductEditorBase.DEPARTMENT,
         ProductEditorBase.DESCRIPTION,
         ProductEditorBase.GENDER,
         ProductEditorBase.MANUFACTURER,
@@ -289,11 +290,8 @@ class DataSanitizer(ProductEditorBase):
             data[key] = product_data[key]
 
     def set_location_data(self, product_data, data):
-        """Set location and department data."""
-        data[self.DEPARTMENT] = models.Warehouse.objects.get(
-            warehouse_ID=product_data[self.DEPARTMENT]
-        ).name
-        data[self.BAYS] = product_data[self.LOCATION][self.BAYS]
+        """Set location data."""
+        data[self.BAYS] = product_data[self.LOCATION]
 
     def set_dimension_fields(self, product_data, data):
         """Set dimension data."""
