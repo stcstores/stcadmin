@@ -51,8 +51,6 @@ class FBAOrderAdmin(admin.ModelAdmin):
     """Model admin for the FBAOrder models."""
 
     fields = [
-        "created_at",
-        "modified_at",
         "fullfilled_by",
         "closed_at",
         "region",
@@ -73,6 +71,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
 
     list_display = [
         "__str__",
+        "status",
         "created_at",
         "modified_at",
         "fullfilled_by",
@@ -97,4 +96,4 @@ class FBAOrderAdmin(admin.ModelAdmin):
 
     date_hierarchy = "created_at"
 
-    list_filter = ["region"]
+    list_filter = ["region", "status"]
