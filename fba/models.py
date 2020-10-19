@@ -90,6 +90,9 @@ class FBAOrder(models.Model):
         verbose_name_plural = "FBA Orders"
         ordering = ["priority"]
 
+    def __str__(self):
+        return f"{self.product_SKU} - {self.created_at.strftime('%Y-%m-%d')}"
+
     def is_closed(self):
         """Return True if the order is closed, otherwise False."""
         return self.closed_at is not None
