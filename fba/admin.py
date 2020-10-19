@@ -39,8 +39,62 @@ class FBARegionAdmin(admin.ModelAdmin):
 
 @admin.register(models.FBACountry)
 class FBACountryAdmin(admin.ModelAdmin):
-    """Model adming for the FBACountry model."""
+    """Model admin for the FBACountry model."""
 
     fields = ["region", "country"]
     list_display = ["__str__", "region", "country"]
     list_editable = ["region", "country"]
+
+
+@admin.register(models.FBAOrder)
+class FBAOrderAdmin(admin.ModelAdmin):
+    """Model admin for the FBAOrder models."""
+
+    fields = [
+        "created_at",
+        "modified_at",
+        "fullfilled_by",
+        "closed_at",
+        "region",
+        "product_SKU",
+        "product_ID",
+        "product_name",
+        "selling_price",
+        "FBA_fee",
+        "aproximate_quantity",
+        "quantity_sent",
+        "box_width",
+        "box_height",
+        "box_depth",
+        "box_weight",
+        "notes",
+        "priority",
+    ]
+
+    list_display = [
+        "__str__",
+        "created_at",
+        "modified_at",
+        "fullfilled_by",
+        "closed_at",
+        "region",
+        "product_SKU",
+        "product_ID",
+        "product_name",
+        "selling_price",
+        "FBA_fee",
+        "aproximate_quantity",
+        "quantity_sent",
+        "box_width",
+        "box_height",
+        "box_depth",
+        "box_weight",
+        "notes",
+        "priority",
+    ]
+
+    search_fields = ["product_SKU", "product_ID", "product_name"]
+
+    date_hierarchy = "created_at"
+
+    list_filter = ["region"]
