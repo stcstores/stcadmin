@@ -1,7 +1,10 @@
 """Forms for the FBA app."""
 
+from datetime import datetime
+
 from ccapi import CCAPI
 from django import forms
+from django.utils.timezone import make_aware
 
 from fba import models
 
@@ -86,14 +89,88 @@ class CreateFBAOrderForm(forms.ModelForm):
 class FBAOrderFilter(forms.Form):
     """Form for filtering the FBA order list."""
 
+    status = forms.ChoiceField(
+        choices=(
+            ("", ""),
+            (models.FBAOrder.NOT_PROCESSED, models.FBAOrder.NOT_PROCESSED),
+            (models.FBAOrder.AWAITING_BOOKING, models.FBAOrder.AWAITING_BOOKING),
+            (models.FBAOrder.FULFILLED, models.FBAOrder.FULFILLED),
+        ),
+        required=False,
+    )
+    created_from = forms.DateField(
+        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+    )
+    created_to = forms.DateField(
+        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+    )
+    fulfilled_from = forms.DateField(
+        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+    )
+    fulfilled_to = forms.DateField(
+        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+    )
+    country = forms.ModelChoiceField(models.FBARegion.objects.all(), required=False)
+    sort_by = forms.ChoiceField(
+        choices=(
+            ("", ""),
+            ("product_SKU", "SKU"),
+            ("product_name", "Name"),
+            ("created_at", "Date Created"),
+            ("closed_at", "Date Fulfilled"),
+            ("fullfilled_by__first_name", "Fulfilled By"),
+            ("status", "Status"),
+        ),
+        required=False,
+    )
+
+    def clean_created_from(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["created_from"]
+        if date is not None:
+            return make_aware(datetime.combine(date, datetime.min.time()))
+
+    def clean_created_to(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["created_to"]
+        if date is not None:
+            return make_aware(datetime.combine(date, datetime.max.time()))
+
+    def clean_fulfilled_from(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["fulfilled_from"]
+        if date is not None:
+            return make_aware(datetime.combine(date, datetime.min.time()))
+
+    def clean_fulfilled_to(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["fulfilled_to"]
+        if date is not None:
+            return make_aware(datetime.combine(date, datetime.max.time()))
+
     def query_kwargs(self, data):
         """Return a dict of filter kwargs."""
-        return {}
+        kwargs = {
+            "created_at__gte": data.get("created_from"),
+            "created_at__lte": data.get("created_to"),
+            "closed_at__gte": data.get("fulfilled_from"),
+            "closed_at__lte": data.get("fulfilled_to"),
+            "status": data.get("status"),
+            "region__name": data.get("country"),
+        }
+        return {
+            key: value
+            for key, value in kwargs.items()
+            if value is not None and value != ""
+        }
 
     def get_queryset(self):
         """Return a queryset of orders based on the submitted data."""
         kwargs = self.query_kwargs(self.cleaned_data)
         qs = models.FBAOrder.objects.filter(**kwargs)
+        if sort_by := self.cleaned_data["sort_by"]:
+            print(f"Sort by: {sort_by}")
+            qs = qs.order_by(sort_by)
         return qs
 
 

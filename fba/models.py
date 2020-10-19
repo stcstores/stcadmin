@@ -62,6 +62,10 @@ class FBACountry(models.Model):
 class FBAOrder(models.Model):
     """Model for FBA orders."""
 
+    FULFILLED = "Fulfilled"
+    AWAITING_BOOKING = "Awaiting Collection Booking"
+    NOT_PROCESSED = "Not Processed"
+
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     fullfilled_by = models.ForeignKey(
@@ -82,6 +86,14 @@ class FBAOrder(models.Model):
     box_weight = models.PositiveIntegerField(blank=True, null=True)
     notes = models.TextField(blank=True)
     priority = models.PositiveIntegerField(default=999)
+    status = models.CharField(
+        choices=(
+            (NOT_PROCESSED, NOT_PROCESSED),
+            (AWAITING_BOOKING, AWAITING_BOOKING),
+            (AWAITING_BOOKING, AWAITING_BOOKING),
+        ),
+        max_length=255,
+    )
 
     class Meta:
         """Meta class for FBAOrder."""
@@ -92,6 +104,11 @@ class FBAOrder(models.Model):
 
     def __str__(self):
         return f"{self.product_SKU} - {self.created_at.strftime('%Y-%m-%d')}"
+
+    def save(self, *args, **kwargs):
+        """Update the status field."""
+        self.status = self.get_status()
+        super().save(*args, **kwargs)
 
     def is_closed(self):
         """Return True if the order is closed, otherwise False."""
@@ -126,11 +143,10 @@ class FBAOrder(models.Model):
         """Update the product's stock level in Cloud Commerce."""
         print(f"Reduce stock level for {self.product_SKU} by {self.quantity_sent}")
 
-    def status(self):
+    def get_status(self):
         """Return a string describing the status of the order."""
         if self.closed_at is not None:
-            return "Fulfilled"
+            return self.FULFILLED
         if self.details_complete() is True:
-            return "Awaiting Collection Booking"
-        else:
-            return "Not Processed"
+            return self.AWAITING_BOOKING
+        return self.NOT_PROCESSED
