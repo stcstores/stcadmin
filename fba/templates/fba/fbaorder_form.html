@@ -72,18 +72,22 @@
 <script>
 
     function refresh_calculator() {
+        var data = {
+            "selling_price": $("#{{ form.selling_price.auto_id }}").val(),
+            "country": $("#{{ form.country.auto_id }}").val(),
+            "purchase_price": {{ product.purchase_price }},
+            "quantity": $("#{{ form.aproximate_quantity.auto_id }}").val(),
+            "fba_fee": $("#{{ form.FBA_fee.auto_id }}").val(),
+            "weight": {{ product.weight }},
+        }
+        if ((data["selling_price"] === "") || (data["fba_fee"] === "") || (data["country"] === "")) {
+            return
+        }
         $.ajax({
             url: "{% url 'fba:price_calculator' %}",
             type: "POST",
             dataType: "JSON",
-            data: {
-                "selling_price": $("#{{ form.selling_price.auto_id }}").val(),
-                "country": $("#{{ form.country.auto_id }}").val(),
-                "purchase_price": {{ product.purchase_price }},
-                "quantity": $("#{{ form.aproximate_quantity.auto_id }}").val(),
-                "fba_fee": $("#{{ form.FBA_fee.auto_id }}").val(),
-                "weight": {{ product.weight }},
-            },
+            data: data,
             success: function(result) {
                 $("#purchase_price").val(result["purchase_price"]);
                 $("#channel_fee").val(result["channel_fee"]);
@@ -94,6 +98,10 @@
                 $("#percentage").val(result["percentage"]);
                 $("#max_quantity").val(result["max_quantity"]);
                 $("span.currency_symbol").text(result["currency_symbol"]);
+                var aprox_quantity = $("#{{ form.aproximate_quantity.auto_id }}")
+                if (aprox_quantity.val() === ""){
+                    aprox_quantity.val(result["max_quantity"]);
+                }
             }
         })
     }
@@ -107,6 +115,7 @@
         });
 
         $("#{{ form.country.auto_id }}").change(function() {
+            $("#{{ form.aproximate_quantity.auto_id }}").val("");
             refresh_calculator();
         });
 

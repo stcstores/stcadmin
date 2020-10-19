@@ -141,15 +141,13 @@ class FBAPriceCalculator(FBAUserMixin, View):
             response["purchase_price"] = self.get_purchase_price()
             response["max_quantity"] = self.get_max_quantity()
             return JsonResponse(response)
-        except Exception as e:
-            print(e)
+        except Exception:
             return HttpResponseBadRequest()
 
     def parse_request(self):
         """Get request parameters from POST."""
         post_data = self.request.POST
         self.selling_price = float(post_data.get("selling_price"))
-        self.quantity = int(post_data.get("quantity"))
         self.country_id = int(post_data.get("country"))
         self.purchase_price = float(post_data.get("purchase_price"))
         self.fba_fee = float(post_data.get("fba_fee"))
@@ -157,6 +155,10 @@ class FBAPriceCalculator(FBAUserMixin, View):
         self.country = models.FBACountry.objects.get(id=country_id)
         self.exchange_rate = float(self.country.country.currency.exchange_rate)
         self.product_weight = int(post_data.get("weight"))
+        try:
+            self.quantity = int(post_data.get("quantity"))
+        except ValueError:
+            self.quantity = self.get_max_quantity()
 
     def get_channel_fee(self):
         """Return the caclulated channel fee."""
