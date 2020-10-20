@@ -6,7 +6,9 @@
 
 
 <p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
+<form action="" id="pagination">
 {% include 'orders/pagination_navigation.html' %}
+</form>
 <table class="orders">
     <tr>
         <th>SKU</th>
@@ -42,5 +44,7 @@
     </tr>
 {% endfor %}
 </table>
+<form action="" id="pagination">
 {% include 'orders/pagination_navigation.html' %}
+</form>
 {% endblock content %}
