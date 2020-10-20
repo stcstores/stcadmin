@@ -25,6 +25,11 @@ urlpatterns = [
     ),
     path("fba_order_list/", views.OrderList.as_view(), name="order_list"),
     path(
+        "awaiting_fulillment/",
+        views.AwaitingFullfilment.as_view(),
+        name="awaiting_fulfillment",
+    ),
+    path(
         "price_calculator/", views.FBAPriceCalculator.as_view(), name="price_calculator"
     ),
     path(
