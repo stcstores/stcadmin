@@ -122,6 +122,34 @@ class OrderList(FBAUserMixin, ListView):
             return list(range(1, 11)) + [paginator.num_pages]
 
 
+class AwaitingFullfilment(FBAUserMixin, ListView):
+    """Display a filterable list of orders."""
+
+    template_name = "fba/awaiting_fulfillment.html"
+    model = models.FBAOrder
+    paginate_by = 50
+    orphans = 3
+
+    def get_queryset(self):
+        """Return a queryset of orders awaiting fulillment."""
+        return self.model.objects.exclude(status=self.model.FULFILLED).order_by(
+            "status", "priority", "created_at"
+        )
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the template context."""
+        context = super().get_context_data(*args, **kwargs)
+        context["page_range"] = self.get_page_range(context["paginator"])
+        return context
+
+    def get_page_range(self, paginator):
+        """Return a list of pages to link to."""
+        if paginator.num_pages < 11:
+            return list(range(1, paginator.num_pages + 1))
+        else:
+            return list(range(1, 11)) + [paginator.num_pages]
+
+
 @method_decorator(csrf_exempt, name="dispatch")
 class FBAPriceCalculator(FBAUserMixin, View):
     """View for calculating FBA profit margins."""
