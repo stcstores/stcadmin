@@ -5,7 +5,7 @@ from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
 
-from shipping.models import Country
+from shipping.models import Country, Currency
 
 
 class FBARegion(models.Model):
@@ -28,6 +28,7 @@ class FBARegion(models.Model):
         choices=((LB, "Kilograms"), (KG, "Pounds")), max_length=2
     )
     auto_close = models.BooleanField()
+    currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
 
     class Meta:
         """Meta class for FBARegion."""

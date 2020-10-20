@@ -43,3 +43,32 @@ label.required:after {
 .menu a:hover {
     background-color: #fff;
 }
+
+#filter p {
+    display: inline-block;
+    margin-right: 0.5em;
+    padding: 0.5em;
+    background: #eee;
+    border-radius: 0.5em;
+}
+
+table.orders thead tr {
+    background: #444;
+    color: #eee;
+}
+
+table.orders tbody tr:nth-child(odd) {
+    background: #e5e5e5
+}
+
+table.orders tbody tr:nth-child(even) {
+    background: #efefef
+}
+
+textarea {
+    color: black;
+    font-weight: bold;
+    font-size: 1.5em;
+    width: 15em;
+    height: 5em;
+}

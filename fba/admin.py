@@ -16,6 +16,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "max_size",
         "dimension_unit",
         "weight_unit",
+        "currency",
         "auto_close",
     ]
     list_display = [
@@ -25,6 +26,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "max_size",
         "dimension_unit",
         "weight_unit",
+        "currency",
         "auto_close",
     ]
     list_editable = [
@@ -33,6 +35,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "max_size",
         "dimension_unit",
         "weight_unit",
+        "currency",
         "auto_close",
     ]
 

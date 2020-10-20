@@ -256,9 +256,13 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
     def get_context_data(self, *args, **kwargs):
         """Add the bay list to the context."""
         context = super().get_context_data(*args, **kwargs)
-        product_ID = context["form"].instance.product_ID
+        order = context["form"].instance
+        product_ID = order.product_ID
         bays = CCAPI.get_bays_for_product(product_ID)
         context["bays"] = ", ".join([bay.name for bay in bays])
+        context["selling_price"] = "{:.2f}".format(
+            order.selling_price / 100,
+        )
         return context
 
     def form_valid(self, form):
@@ -300,7 +304,9 @@ class FBAOrderPrintout(TemplateView):
         context = super().get_context_data(**kwargs)
         order = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
         context["order"] = order
-        # bays = CCAPI.get_bays_for_product(order.product_ID)
-        # context["locations"] = [bay.name for bay in bays]
-        context["locations"] = ["Z.005", "A-003"]
+        bays = CCAPI.get_bays_for_product(order.product_ID)
+        context["locations"] = [bay.name for bay in bays]
+        context["selling_price"] = "{:.2f}".format(
+            order.selling_price / 100,
+        )
         return context

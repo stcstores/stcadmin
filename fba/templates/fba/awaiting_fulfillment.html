@@ -10,39 +10,46 @@
 {% include 'orders/pagination_navigation.html' %}
 </form>
 <table class="orders">
-    <tr>
-        <th>SKU</th>
-        <th>Name</th>
-        <th>Aprox Quantity</th>
-        <th>Country</th>
-        <th>Status</th>
-        <th>Created At</th>
-        <th></th>
-        <th></th>
-    </tr>
-{% for order in object_list %}
-    <tr class="order">
-        <th>{{ order.product_SKU }} </th>
-        <th>{{ order.product_name }} </th>
-        <td>{{ order.aproximate_quantity}}</td>
-        <td>{{ order.region }}</td>
-        <td>{{ order.status }}</td>
-        <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
-        <td>
-            <a href="{% url 'fba:fulfill_fba_order' order.id %}">
+    <thead>
+        <tr>
+            <th>SKU</th>
+            <th>Name</th>
+            <th>Aprox Quantity</th>
+            <th>Country</th>
+            <th>Status</th>
+            <th>Created At</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in object_list %}
+        <tr class="order">
+            <th>{{ order.product_SKU }} </th>
+            <th>{{ order.product_name }} </th>
+            <td>{{ order.aproximate_quantity}}</td>
+            <td>{{ order.region }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+            <td>
+                <a href="{% url 'fba:fulfill_fba_order' order.id %}">
+                    {% if order.status == order.NOT_PROCESSED %}
+                    <button>Fulfill</button>
+                    {% else %}
+                    <button>Complete</button>
+                    {% endif %}
+                </a>
+            </td>
+            <td>
                 {% if order.status == order.NOT_PROCESSED %}
-                <button>Fulfill</button>
-                {% else %}
-                <button>Complete</button>
-                {% endif %}
-            </a>
-        </td>
-    <td>
-        {% if order.status == order.NOT_PROCESSED %}
-        <a href="{% url 'fba:order_printout' order.pk %}"><button>Print</button></a></td>
-        {% endif %}
-    </tr>
-{% endfor %}
+                <a href="{% url 'fba:order_printout' order.pk %}" target="_blank">
+                    <button>Print</button>
+                </a>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 <form action="" id="pagination">
 {% include 'orders/pagination_navigation.html' %}

@@ -101,16 +101,20 @@ class FBAOrderFilter(forms.Form):
         required=False,
     )
     created_from = forms.DateField(
-        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+        required=False,
+        widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
     )
     created_to = forms.DateField(
-        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+        required=False,
+        widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
     )
     fulfilled_from = forms.DateField(
-        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+        required=False,
+        widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
     )
     fulfilled_to = forms.DateField(
-        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+        required=False,
+        widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
     )
     country = forms.ModelChoiceField(models.FBARegion.objects.all(), required=False)
     sort_by = forms.ChoiceField(

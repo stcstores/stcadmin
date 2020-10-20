@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<h1>FBA Orders</h1>
+<h1>Manage FBA Orders</h1>
 
 <div class="filter">
     <form action="" method="GET" id="filter">
@@ -11,46 +11,52 @@
         <p>
             <button>Filter</button>
         </p>
+        <div>
         <p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
-        {% include 'orders/pagination_navigation.html' %}
+            {% include 'orders/pagination_navigation.html' %}
+        </div>
     </form>
 </div>
 
 <table class="orders">
-    <tr>
-        <th>SKU</th>
-        <th>Name</th>
-        <th>Quantity</th>
-        <th>Country</th>
-        <th>Status</th>
-        <th>Fullfillment Date</th>
-        <th>Fullfilled By</th>
-        <th></th>
-    </tr>
-{% for order in object_list %}
-    <tr class="order">
-        <th>{{ order.product_SKU }} </th>
-        <th>{{ order.product_name }} </th>
-        <td>{{ order.aproximate_quantity}}</td>
-        <td>{{ order.region }}</td>
-        <td>{{ order.status }}</td>
-        <td>{{ order.closed_at|date:"Y-m-d H:i" }}</td>
-        <td>
-            {% if order.fullfilled_by != None %}
-            {{ order.fullfilled_by }}
-            {% endif %}
-        </td>
-        <td>
-            {% if order.closed_at == None %}
-                <a href="{% url 'fba:fulfill_fba_order' order.id %}">
-                    <button>Fulfill</button>
-                </a>
-            {% else %}
-                Closed
-            {% endif %}
-        </td>
-    </tr>
-{% endfor %}
+    <thead>
+        <tr>
+            <th>SKU</th>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Country</th>
+            <th>Status</th>
+            <th>Fullfillment Date</th>
+            <th>Fullfilled By</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in object_list %}
+        <tr class="order">
+            <th>{{ order.product_SKU }} </th>
+            <th>{{ order.product_name }} </th>
+            <td>{{ order.aproximate_quantity}}</td>
+            <td>{{ order.region }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.closed_at|date:"Y-m-d H:i" }}</td>
+            <td>
+                {% if order.fullfilled_by != None %}
+                {{ order.fullfilled_by }}
+                {% endif %}
+            </td>
+            <td>
+                {% if order.closed_at == None %}
+                    <a href="{% url 'fba:fulfill_fba_order' order.id %}">
+                        <button>Fulfill</button>
+                    </a>
+                {% else %}
+                    Closed
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 <form action="" id="filter">
 {% include 'orders/pagination_navigation.html' %}

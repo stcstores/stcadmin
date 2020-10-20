@@ -56,6 +56,11 @@
                 <th>Aproximate Quantity</th>
                 <td>{{ order.aproximate_quantity }}</td>
             </tr>
+            <tr>
+                <th>Selling Price</th>
+                <td>{{ order.region.currency.symbol }}{{ selling_price }}</td>
+            </tr>
+            <tr><td colspan="2">{{ order.notes }}</td></tr>
         </table>
         <table id="fields">
             <tr>

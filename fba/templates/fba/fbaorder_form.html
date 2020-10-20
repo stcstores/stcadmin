@@ -107,6 +107,9 @@
     }
 
     $(document).ready(function() {
+        $("#profit").parent().css("font-weight", "bold");
+        $("#profit").css("font-weight", "bold");
+
         $('input,textarea,select').filter('[required]').filter(':enabled').parent().find("label").addClass("required");
         $('form').submit(function(e) {
             if (!confirm("Are you sure you want to create this FBA order?")) {

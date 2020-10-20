@@ -27,6 +27,10 @@
             <label for="weight_lb">Box Weight (lb)</label>
             <input type="number" name="weight_lb" id="weight_lb" disabled>
         </p>
+        <p>
+            <label for="selling_price">Selling Price {{ form.instance.region.currency.symbol }}</label>
+            <input type="text" name="selling_price", id="selling_price" value="{{ selling_price }}" disabled>
+        </p>
     </div>
     <div class="fba_order_form">
         <form action="" method="POST">{% csrf_token %}
