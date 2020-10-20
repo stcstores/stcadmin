@@ -23,3 +23,23 @@ label.required:after {
 .fba_order_form_container input:disabled {
     color: black;
 }
+
+.menu {
+    display: flex;
+    flex-direction: row;
+}
+
+.menu a {
+    display: flex;
+    padding: 2em;
+    margin: 1em;
+    text-decoration: none;
+    border: 1px solid #222;
+    border-radius: 2em;
+    color: black;
+    background-color: #eee;
+}
+
+.menu a:hover {
+    background-color: #fff;
+}
