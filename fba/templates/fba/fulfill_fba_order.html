@@ -1,0 +1,67 @@
+{% extends 'fba/base.html' %}
+
+{% block content %}{{ block.super }}
+
+<h1>Fulfill FBA Order</h1>
+
+<h3>{{ form.instance.product_SKU }} - {{ form.instance.product_name }}</h3>
+{% if form.instance.closed_at %}<h2>CLOSED: {{ form.instance.closed_at }}</h2>{% endif %}
+
+<a href="{% url 'fba:order_printout' form.instance.pk %}" target="_blank"><button>Print</button></a>
+
+<div class="fba_order_form_container">
+    <div class="order_details">
+        <p>
+            <label for="country">Country</label>
+            <input type="text" name="country" value="{{ form.instance.region.name }}" disabled>
+        </p>
+        <p>
+            <label for="locations">Locations</label>
+            <input type="text" name="locations" value="{{ bays }}" disabled>
+        </p>
+        <p>
+            <label for="approximate_quantity">Approximate Qauantity</label>
+            <input type="number" name="approximate_quantity" value="{{ form.instance.aproximate_quantity }}" disabled>
+        </p>
+        <p>
+            <label for="weight_lb">Box Weight (lb)</label>
+            <input type="number" name="weight_lb" id="weight_lb" disabled>
+        </p>
+        <p>
+            <label for="selling_price">Selling Price {{ form.instance.region.currency.symbol }}</label>
+            <input type="text" name="selling_price", id="selling_price" value="{{ selling_price }}" disabled>
+        </p>
+    </div>
+    <div class="fba_order_form">
+        <form action="" method="POST">{% csrf_token %}
+            {{ form.as_p }}
+            {% if not form.instance.closed_at %}
+                {% if form.instance.region.auto_close %}
+                    <button>Fulfill</button>
+                    {% else %}
+                    <button>Update</button>
+                    {% if form.instance.details_complete %}
+                    <button name="collection_booked">Collection Booked</button>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+    $(document).ready(function() {
+        $('input,textarea,select').filter('[required]').parent().find("label").addClass("required");
+
+        $("#{{ form.box_weight.auto_id }}").change(function() {
+            $("#weight_lb").val($(this).val() * 2.20462)
+        });
+        $("#{{ form.box_weight.auto_id }}").change();
+
+    });
+</script>
+{% endblock script %}

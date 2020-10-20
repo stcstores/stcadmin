@@ -1,9 +1,10 @@
 """Views for the FBA app."""
 
 import cc_products
+from ccapi import CCAPI
 from django.contrib import messages
 from django.http import HttpResponseBadRequest, JsonResponse
-from django.shortcuts import reverse
+from django.shortcuts import get_object_or_404, reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, TemplateView, View
@@ -121,6 +122,34 @@ class OrderList(FBAUserMixin, ListView):
             return list(range(1, 11)) + [paginator.num_pages]
 
 
+class AwaitingFullfilment(FBAUserMixin, ListView):
+    """Display a filterable list of orders."""
+
+    template_name = "fba/awaiting_fulfillment.html"
+    model = models.FBAOrder
+    paginate_by = 50
+    orphans = 3
+
+    def get_queryset(self):
+        """Return a queryset of orders awaiting fulillment."""
+        return self.model.objects.exclude(status=self.model.FULFILLED).order_by(
+            "status", "priority", "created_at"
+        )
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the template context."""
+        context = super().get_context_data(*args, **kwargs)
+        context["page_range"] = self.get_page_range(context["paginator"])
+        return context
+
+    def get_page_range(self, paginator):
+        """Return a list of pages to link to."""
+        if paginator.num_pages < 11:
+            return list(range(1, paginator.num_pages + 1))
+        else:
+            return list(range(1, 11)) + [paginator.num_pages]
+
+
 @method_decorator(csrf_exempt, name="dispatch")
 class FBAPriceCalculator(FBAUserMixin, View):
     """View for calculating FBA profit margins."""
@@ -138,22 +167,26 @@ class FBAPriceCalculator(FBAUserMixin, View):
             response["profit"] = self.get_profit()
             response["percentage"] = self.get_percentage()
             response["purchase_price"] = self.get_purchase_price()
+            response["max_quantity"] = self.get_max_quantity()
             return JsonResponse(response)
-        except Exception as e:
-            print(e)
+        except Exception:
             return HttpResponseBadRequest()
 
     def parse_request(self):
         """Get request parameters from POST."""
         post_data = self.request.POST
         self.selling_price = float(post_data.get("selling_price"))
-        self.quantity = int(post_data.get("quantity"))
         self.country_id = int(post_data.get("country"))
         self.purchase_price = float(post_data.get("purchase_price"))
         self.fba_fee = float(post_data.get("fba_fee"))
         country_id = int(post_data.get("country"))
         self.country = models.FBACountry.objects.get(id=country_id)
         self.exchange_rate = float(self.country.country.currency.exchange_rate)
+        self.product_weight = int(post_data.get("weight"))
+        try:
+            self.quantity = int(post_data.get("quantity"))
+        except ValueError:
+            self.quantity = self.get_max_quantity()
 
     def get_channel_fee(self):
         """Return the caclulated channel fee."""
@@ -175,7 +208,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
 
     def get_postage_to_fba(self):
         """Return the caclulated price to post to FBA."""
-        postage_to_fba = float(self.country.postage_price) / 100.0
+        postage_to_fba = float(self.country.region.postage_price) / 100.0
         return round(postage_to_fba, 2)
 
     def get_postage_per_item(self):
@@ -206,3 +239,74 @@ class FBAPriceCalculator(FBAUserMixin, View):
         """Return the purchase price in local currency."""
         purchase_price = self.purchase_price / self.exchange_rate
         return round(purchase_price, 2)
+
+    def get_max_quantity(self):
+        """Return the maximum number of the product that can be sent."""
+        max_quantity = (self.country.region.max_weight * 1000) // self.product_weight
+        return max_quantity
+
+
+class FulfillFBAOrder(FBAUserMixin, UpdateView):
+    """View for creating FBA orders."""
+
+    model = models.FBAOrder
+    form_class = forms.FulfillFBAOrderForm
+    template_name = "fba/fulfill_fba_order.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Add the bay list to the context."""
+        context = super().get_context_data(*args, **kwargs)
+        order = context["form"].instance
+        product_ID = order.product_ID
+        bays = CCAPI.get_bays_for_product(product_ID)
+        context["bays"] = ", ".join([bay.name for bay in bays])
+        context["selling_price"] = "{:.2f}".format(
+            order.selling_price / 100,
+        )
+        return context
+
+    def form_valid(self, form):
+        """Save the user fulfilling the order."""
+        return_value = super().form_valid(form)
+        form.instance.fullfilled_by = self.request.user
+        form.save()
+        if form.instance.details_complete():
+            if (
+                form.instance.region.auto_close
+                or "collection_booked" in self.request.POST
+            ):
+                self.close_order()
+        return return_value
+
+    def get_success_url(self):
+        """Redirect to the order list."""
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            f"FBA order fulfilled for product {self.object.product_SKU}.",
+        )
+        return self.object.get_fulfillment_url()
+
+    def close_order(self):
+        """Complete and close the order."""
+        self.object.close()
+        if self.object.region.auto_close is True:
+            self.object.update_stock_level()
+
+
+class FBAOrderPrintout(TemplateView):
+    """View for FBA order printouts."""
+
+    template_name = "fba/order_printout.html"
+
+    def get_context_data(self, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(**kwargs)
+        order = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
+        context["order"] = order
+        bays = CCAPI.get_bays_for_product(order.product_ID)
+        context["locations"] = [bay.name for bay in bays]
+        context["selling_price"] = "{:.2f}".format(
+            order.selling_price / 100,
+        )
+        return context

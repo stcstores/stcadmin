@@ -2,14 +2,17 @@
 
 {% block content %}
 
-<ul>
-    <a href="{% url 'fba:order_list' %}">
-        <li>Order List</li>
+
+<div class="menu">
+    <a href="{% url 'fba:awaiting_fulfillment' %}">
+        <h3>Fulfill an FBA Order</h3>
     </a>
-    <li>
-        <a href="{% url 'fba:select_product_for_order' %}">Create Order</a>
-    </li>
-    <li>Fullfill Order</li>
-</ul>
+    <a href="{% url 'fba:select_product_for_order' %}">
+        <h3>Create an FBA Order</h3>
+    </a>
+    <a href="{% url 'fba:order_list' %}">
+        <h3>Manage FBA Orders</h3>
+    </a>
+</div>
 
 {% endblock content %}
