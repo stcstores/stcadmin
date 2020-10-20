@@ -68,8 +68,6 @@ CC_DOMAIN = get_config("CC_DOMAIN_SECRET")
 CC_USERNAME = get_config("CC_USERNAME_SECRET")
 CC_PWD = get_config("CC_PASS")
 SCAYT_CUSTOMER_ID = get_config("SCAYT_CUSTOMER_ID_TOKEN")
-SECURED_MAIL_MANIFEST_EMAIL_ADDRESS = get_config("SECURED_MAIL_MANIFEST_EMAIL_ADDRESS")
-SECURED_MAIL_DOCKET_EMAIL_ADDRESS = get_config("SECURED_MAIL_DOCKET_EMAIL_ADDRESS")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -91,7 +89,6 @@ INSTALLED_APPS = [
     "user",
     "inventory",
     "list_input",
-    "spring_manifest",
     "price_calculator",
     "django_markup",
     "stock_check",
@@ -243,11 +240,6 @@ LOGGING = {
         },
         "product_creation": {
             "handlers": ["error_file_handler", "mail_admins"],
-            "level": "ERROR",
-            "propagate": False,
-        },
-        "file_manifest": {
-            "handlers": ["stdout", "error_file_handler", "mail_admins"],
             "level": "ERROR",
             "propagate": False,
         },

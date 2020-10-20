@@ -66,7 +66,6 @@ class TestIndexView(STCAdminTest, ViewTests):
             ("epos", "EPOS"),
             ("inventory", "Inventory"),
             ("labelmaker", "Labelmaker"),
-            ("manifests", "Manifests"),
             ("orders", "Orders"),
             ("stock_check", "Stock Check"),
         ]

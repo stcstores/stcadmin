@@ -24,9 +24,6 @@ urlpatterns = [
         "price_calculator/",
         include("price_calculator.urls", namespace="price_calculator"),
     ),
-    path(
-        "spring_manifest/", include("spring_manifest.urls", namespace="spring_manifest")
-    ),
     path("epos/", include("epos.urls", namespace="epos")),
     path("feedback/", include("feedback.urls", namespace="feedback")),
     path("orders/", include("orders.urls", namespace="orders")),
@@ -42,8 +39,8 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    from django.conf.urls.static import static
     import debug_toolbar
+    from django.conf.urls.static import static
 
     urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
