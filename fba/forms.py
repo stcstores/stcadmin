@@ -4,6 +4,7 @@ from datetime import datetime
 
 from ccapi import CCAPI
 from django import forms
+from django.db.models import Q
 from django.utils.timezone import make_aware
 
 from fba import models
@@ -89,6 +90,7 @@ class CreateFBAOrderForm(forms.ModelForm):
 class FBAOrderFilter(forms.Form):
     """Form for filtering the FBA order list."""
 
+    search = forms.CharField(required=False)
     status = forms.ChoiceField(
         choices=(
             ("", ""),
@@ -169,8 +171,19 @@ class FBAOrderFilter(forms.Form):
         kwargs = self.query_kwargs(self.cleaned_data)
         qs = models.FBAOrder.objects.filter(**kwargs)
         if sort_by := self.cleaned_data["sort_by"]:
-            print(f"Sort by: {sort_by}")
             qs = qs.order_by(sort_by)
+        if search_text := self.cleaned_data["search"]:
+            qs = self.text_search(search_text, qs)
+        return qs
+
+    def text_search(self, search_text, qs):
+        """Filter the queryset based on search text."""
+        qs = qs.filter(
+            Q(
+                Q(product_SKU__icontains=search_text)
+                | Q(product_name__icontains=search_text)
+            )
+        )
         return qs
 
 
