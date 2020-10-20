@@ -4,7 +4,7 @@ import cc_products
 from ccapi import CCAPI
 from django.contrib import messages
 from django.http import HttpResponseBadRequest, JsonResponse
-from django.shortcuts import reverse
+from django.shortcuts import get_object_or_404, reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, TemplateView, View
@@ -260,3 +260,19 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
         self.object.close()
         if self.object.region.auto_close is True:
             self.object.update_stock_level()
+
+
+class FBAOrderPrintout(TemplateView):
+    """View for FBA order printouts."""
+
+    template_name = "fba/order_printout.html"
+
+    def get_context_data(self, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(**kwargs)
+        order = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
+        context["order"] = order
+        # bays = CCAPI.get_bays_for_product(order.product_ID)
+        # context["locations"] = [bay.name for bay in bays]
+        context["locations"] = ["Z.005", "A-003"]
+        return context

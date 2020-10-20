@@ -32,4 +32,9 @@ urlpatterns = [
         views.FulfillFBAOrder.as_view(),
         name="fulfill_fba_order",
     ),
+    path(
+        "order_printout/<int:pk>/",
+        views.FBAOrderPrintout.as_view(),
+        name="order_printout",
+    ),
 ]
