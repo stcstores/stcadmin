@@ -52,9 +52,9 @@ class CreateFBAOrderForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         """Disable non-editable fields."""
         super().__init__(*args, **kwargs)
-        self.fields["product_SKU"].disabled = True
-        self.fields["product_ID"].disabled = True
-        self.fields["product_name"].disabled = True
+        self.fields["product_SKU"].widget = forms.HiddenInput()
+        self.fields["product_ID"].widget = forms.HiddenInput()
+        self.fields["product_name"].widget = forms.HiddenInput()
         self.fields["selling_price"].widget = CurrencyWidget()
         self.fields["selling_price"].to_python = lambda x: int(float(x) * 100)
         self.fields["region"].widget = forms.HiddenInput()

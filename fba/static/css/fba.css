@@ -5,11 +5,24 @@
 
 .fba_order_form {
     display: flex;
+    background: #efefef;
+    border-radius: 1em;
+    border: 2px solid #ddd;
+    margin: 1em;
 }
 
 .price_calculator {
     display: flex;
     flex-direction: column;
+    background: #efefef;
+    border-radius: 1em;
+    border: 2px solid #ddd;
+    margin: 1em;
+}
+
+.price_calculator p {
+    margin: 0.25em;
+    padding: 0.25em;
 }
 
 label.required {
