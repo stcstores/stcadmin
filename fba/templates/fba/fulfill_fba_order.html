@@ -22,6 +22,14 @@
             <input type="text" name="country" value="{{ form.instance.region.name }}" disabled>
         </p>
         <p>
+            <label for="product_weight">Product Weight (g)</label>
+            <input type="text" name="product_weight" value="{{ form.instance.product_weight }}" size="5">
+        </p>
+        <p>
+            <label for="hs_code">HS Code</label>
+            <input type="text" name="hs_code" value="{{ form.instance.product_hs_code }}">
+        </p>
+        <p>
             <label for="locations">Locations</label>
             <input type="text" name="locations" value="{{ bays }}" disabled>
         </p>
@@ -35,7 +43,7 @@
         </p>
         <p>
             <label for="selling_price">Selling Price {{ form.instance.region.currency.symbol }}</label>
-            <input type="text" name="selling_price", id="selling_price" value="{{ selling_price }}" disabled>
+            <input type="text" name="selling_price", id="selling_price" value="{{ selling_price }}" size="5" disabled>
         </p>
 
         {% if form.instance.small_and_light is True %}
@@ -70,7 +78,6 @@
         printWindow.addEventListener('load', function(){
             location.reload();
             printWindow.print();
-            printWindow.close();
         }, true);
     }
 
