@@ -60,6 +60,9 @@
                 <th>Selling Price</th>
                 <td>{{ order.region.currency.symbol }}{{ selling_price }}</td>
             </tr>
+            {% if order.small_and_light is True %}
+            <tr><td colspan="2">SMALL AND LIGHT</td></tr>
+            {% endif %}
             <tr><td colspan="2">{{ order.notes }}</td></tr>
         </table>
         <table id="fields">

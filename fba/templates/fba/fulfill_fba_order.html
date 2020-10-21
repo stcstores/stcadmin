@@ -37,6 +37,10 @@
             <label for="selling_price">Selling Price {{ form.instance.region.currency.symbol }}</label>
             <input type="text" name="selling_price", id="selling_price" value="{{ selling_price }}" disabled>
         </p>
+
+        {% if form.instance.small_and_light is True %}
+        <h3 class="error">SMALL AND LIGHT</h3>
+        {% endif %}
     </div>
     <div class="fba_order_form">
         <form action="" method="POST">{% csrf_token %}

@@ -114,6 +114,7 @@ class FBAOrder(models.Model):
     notes = models.TextField(blank=True)
     priority = models.PositiveIntegerField(default=999)
     printed = models.BooleanField(default=False)
+    small_and_light = models.BooleanField(default=False)
     status = models.CharField(
         choices=(
             (NOT_PROCESSED, NOT_PROCESSED),
