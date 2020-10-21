@@ -57,22 +57,23 @@ class FBAOrderAdmin(admin.ModelAdmin):
     """Model admin for the FBAOrder models."""
 
     fields = [
-        "fullfilled_by",
-        "closed_at",
         "region",
         "product_SKU",
         "product_ID",
         "product_name",
         "product_weight",
         "product_hs_code",
-        "selling_price",
         "FBA_fee",
+        "selling_price",
+        "small_and_light",
         "aproximate_quantity",
         "quantity_sent",
         "box_width",
         "box_height",
         "box_depth",
         "box_weight",
+        "closed_at",
+        "fullfilled_by",
         "notes",
         "priority",
     ]
@@ -80,16 +81,17 @@ class FBAOrderAdmin(admin.ModelAdmin):
     list_display = [
         "__str__",
         "status",
+        "region",
         "created_at",
         "modified_at",
-        "fullfilled_by",
+        "notes",
         "closed_at",
-        "region",
         "product_SKU",
         "product_ID",
         "product_name",
         "product_weight",
         "product_hs_code",
+        "small_and_light",
         "selling_price",
         "FBA_fee",
         "aproximate_quantity",
@@ -98,8 +100,8 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "box_height",
         "box_depth",
         "box_weight",
-        "notes",
         "priority",
+        "fullfilled_by",
     ]
 
     search_fields = ["product_SKU", "product_ID", "product_name"]
