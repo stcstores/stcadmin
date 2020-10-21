@@ -112,6 +112,7 @@ class FBAOrderFilter(forms.Form):
         choices=(
             ("", ""),
             (models.FBAOrder.NOT_PROCESSED, models.FBAOrder.NOT_PROCESSED),
+            (models.FBAOrder.PRINTED, models.FBAOrder.PRINTED),
             (models.FBAOrder.AWAITING_BOOKING, models.FBAOrder.AWAITING_BOOKING),
             (models.FBAOrder.FULFILLED, models.FBAOrder.FULFILLED),
         ),

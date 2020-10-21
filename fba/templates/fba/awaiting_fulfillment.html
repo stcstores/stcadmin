@@ -33,7 +33,7 @@
             <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
             <td>
                 <a href="{% url 'fba:fulfill_fba_order' order.id %}">
-                    {% if order.status == order.NOT_PROCESSED %}
+                    {% if order.status != order.AWAITING_BOOKING %}
                     <button>Fulfill</button>
                     {% else %}
                     <button>Complete</button>
@@ -41,9 +41,11 @@
                 </a>
             </td>
             <td>
-                {% if order.status == order.NOT_PROCESSED %}
+                {% if order.status != order.AWAITING_BOOKING %}
                 <a href="{% url 'fba:order_printout' order.pk %}" target="_blank">
-                    <button>Print</button>
+                    <button>
+                        {% if order.printed is False %}Print{% else %}Reprint{% endif %}
+                    </button>
                 </a>
             </td>
             {% endif %}

@@ -140,9 +140,7 @@ class AwaitingFullfilment(FBAUserMixin, ListView):
 
     def get_queryset(self):
         """Return a queryset of orders awaiting fulillment."""
-        return self.model.objects.exclude(status=self.model.FULFILLED).order_by(
-            "status", "priority", "created_at"
-        )
+        return self.model.awaiting_fulfillment.all()
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
