@@ -21,12 +21,12 @@ class SelectFBAOrderProduct(forms.Form):
         try:
             search_result = CCAPI.search_products(cleaned_data["product_SKU"])
             if len(search_result) > 1:
-                self.add_error("Too many products found")
+                self.add_error("product_SKU", "Too many products found")
             else:
                 product = search_result[0]
             cleaned_data["product_ID"] = product.variation_id
         except Exception:
-            self.add_error("Product not found")
+            self.add_error("product_SKU", "Product not found")
 
 
 class CurrencyWidget(forms.TextInput):
