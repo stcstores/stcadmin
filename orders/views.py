@@ -312,7 +312,7 @@ class RefundList(OrdersUserMixin, ListView):
                     "order__packingrecord",
                 )
                 .select_related("order", "order__channel", "order")
-                .order_by("order__dispatched_at")
+                .order_by("-order__dispatched_at")
             )
         return []
 

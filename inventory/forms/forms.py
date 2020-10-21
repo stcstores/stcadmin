@@ -1,9 +1,7 @@
 """Forms for inventory app."""
 
 from django import forms
-from django.core.exceptions import ValidationError
 
-from inventory import models
 from product_editor.editor_manager import ProductEditorBase
 from product_editor.forms import fields
 from product_editor.forms.fields import Description, Title
@@ -16,74 +14,6 @@ class DescriptionForm(forms.Form):
     description = Description()
     amazon_bullets = fields.AmazonBulletPoints()
     search_terms = fields.AmazonSearchTerms()
-
-
-class CreateBayForm(forms.Form):
-    """Form for creating new Warehouse Bays."""
-
-    BACKUP = "backup"
-    PRIMARY = "primary"
-    BAY_TYPE_CHOICES = ((PRIMARY, "Primary"), (BACKUP, "Backup"))
-
-    def __init__(self, *args, **kwargs):
-        """Add fields to form."""
-        super().__init__(*args, **kwargs)
-        self.fields["department"] = fields.Department(label="Department")
-        self.fields[
-            "department"
-        ].help_text = "The department to which the bay's contents belong."
-        self.fields["name"] = forms.CharField(max_length=255, required=True)
-        self.fields["name"].help_text = "The name of the bay to be created."
-        self.fields["bay_type"] = forms.ChoiceField(
-            choices=self.BAY_TYPE_CHOICES,
-            widget=forms.RadioSelect,
-            required=True,
-            initial=self.PRIMARY,
-        )
-        self.fields[
-            "bay_type"
-        ].help_text = "Is this a primary picking location or backup bay?"
-        self.fields["location"] = fields.Department(label="Location")
-        self.fields["location"].help_text = "The physical location of the bay."
-        self.fields["location"].required = False
-
-    def clean(self, *args, **kwargs):
-        """Create correct name for bay and ensure it does not already exist."""
-        data = super().clean(*args, **kwargs)
-        data["warehouse"] = models.Warehouse.objects.get(
-            warehouse_ID=data["department"]
-        )
-        if data["bay_type"] == self.BACKUP:
-            if not data["location"]:
-                self.add_error("location", "Location is required for backup bays.")
-                return
-            data["backup_location"] = models.Warehouse.objects.get(
-                warehouse_ID=data["location"]
-            )
-            name = models.Bay.objects.backup_bay_name(
-                name=data["name"],
-                department=data["warehouse"],
-                backup_location=data["backup_location"],
-            )
-        else:
-            name = data["name"]
-        if models.Bay.objects.filter(name=name).exists():
-            raise ValidationError(f"A Bay named {name} already exists")
-        return data
-
-    def save(self):
-        """Create Warehouse Bay."""
-        data = self.cleaned_data
-        if data["bay_type"] == self.BACKUP:
-            self.new_bay = models.Bay.objects.new_backup_bay(
-                name=data["name"],
-                department=data["warehouse"],
-                backup_location=data["backup_location"],
-            )
-        else:
-            self.new_bay = models.Bay.objects.new_bay(
-                name=data["name"], warehouse=data["warehouse"]
-            )
 
 
 class ImagesForm(forms.Form):
@@ -136,7 +66,7 @@ class ProductForm(ProductEditorBase, forms.Form):
         }
         super().__init__(*args, **kwargs)
         self.fields[self.PRICE] = fields.VATPrice()
-        self.fields[self.LOCATION] = fields.WarehouseBayField()
+        self.fields[self.LOCATION] = fields.Location()
         self.fields[self.WEIGHT] = fields.Weight()
         self.fields[self.DIMENSIONS] = fields.Dimensions()
         self.fields[self.PACKAGE_TYPE] = fields.PackageType()
@@ -162,15 +92,7 @@ class ProductForm(ProductEditorBase, forms.Form):
             self.EX_VAT: self.product.price,
             "with_vat_price": None,
         }
-        bays = [bay for bay in models.Bay.objects.filter(bay_ID__in=self.product.bays)]
-        warehouses = list(set([bay.warehouse for bay in bays]))
-        if len(warehouses) > 1:
-            self.add_error(self.LOCATION, "Mixed warehouses.")
-        elif len(warehouses) == 1:
-            initial[self.LOCATION] = {
-                self.WAREHOUSE: warehouses[0].warehouse_ID,
-                self.BAYS: [bay.bay_ID for bay in bays],
-            }
+        initial[self.LOCATION] = self.product.bays
         initial[self.DIMENSIONS] = {
             self.WIDTH: self.product.width,
             self.HEIGHT: self.product.height,
@@ -200,7 +122,7 @@ class ProductForm(ProductEditorBase, forms.Form):
         data = self.cleaned_data
         self.product.vat_rate = data[self.PRICE][self.VAT_RATE]
         self.product.price = data[self.PRICE][self.EX_VAT]
-        self.product.bays = data[self.LOCATION][self.BAYS]
+        self.product.bays = data[self.LOCATION]
         self.product.width = data[self.DIMENSIONS][self.WIDTH]
         self.product.height = data[self.DIMENSIONS][self.HEIGHT]
         self.product.length = data[self.DIMENSIONS][self.LENGTH]

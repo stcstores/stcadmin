@@ -25,7 +25,7 @@ from .suppliers import (
     ToggleSupplierActive,
     UpdateSupplierContact,
 )
-from .views import CreateBayView, InventoryUserMixin, SKUGeneratorView
+from .views import InventoryUserMixin, SKUGeneratorView
 
 __all__ = [
     "DeleteImage",
@@ -50,7 +50,6 @@ __all__ = [
     "Suppliers",
     "ToggleSupplierActive",
     "UpdateSupplierContact",
-    "CreateBayView",
     "InventoryUserMixin",
     "SKUGeneratorView",
 ]

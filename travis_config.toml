@@ -16,9 +16,6 @@ CC_PASS = "CC_PASSWORD"
 
 SCAYT_CUSTOMER_ID_TOKEN = "SCAYT_TOKEN"
 
-SECURED_MAIL_MANIFEST_EMAIL_ADDRESS = "manifest@email.host.com"
-SECURED_MAIL_DOCKET_EMAIL_ADDRESS = "docket@email.host.com"
-
 DATABASE_HOST = "localhost"
 DATABASE_NAME = "stcadmin"
 DATABASE_USER = "postgres"

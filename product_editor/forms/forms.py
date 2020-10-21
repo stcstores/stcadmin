@@ -44,7 +44,7 @@ class ProductInfo(ProductForm):
         self.fields[self.PRICE] = fields.VATPrice()
         self.fields[self.RETAIL_PRICE] = fields.RetailPrice()
         self.fields[self.STOCK_LEVEL] = fields.StockLevel()
-        self.fields[self.LOCATION] = fields.WarehouseBayField()
+        self.fields[self.LOCATION] = fields.Location()
         self.fields[self.SUPPLIER] = fields.Supplier()
         self.fields[self.SUPPLIER_SKU] = fields.SupplierSKU()
         self.fields[self.WEIGHT] = fields.Weight()
