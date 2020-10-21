@@ -4,6 +4,7 @@ from datetime import datetime
 
 from ccapi import CCAPI
 from django import forms
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.utils.timezone import make_aware
 
@@ -236,6 +237,10 @@ class FulfillFBAOrderForm(forms.ModelForm):
         self.fields["box_height"].required = True
         self.fields["box_depth"].required = True
         self.fields["quantity_sent"].required = True
+        self.fields["fullfilled_by"].required = True
+        self.fields["fullfilled_by"].queryset = User.objects.filter(
+            cloudcommerceuser__hidden=False
+        )
 
     class Meta:
         """Meta class for FulfillFBAOrderForm."""
@@ -247,5 +252,6 @@ class FulfillFBAOrderForm(forms.ModelForm):
             "box_height",
             "box_depth",
             "quantity_sent",
+            "fullfilled_by",
             "notes",
         ]

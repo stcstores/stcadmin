@@ -280,7 +280,6 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
     def form_valid(self, form):
         """Save the user fulfilling the order."""
         return_value = super().form_valid(form)
-        form.instance.fullfilled_by = self.request.user
         form.save()
         if form.instance.details_complete():
             if (
