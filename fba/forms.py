@@ -73,6 +73,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "selling_price",
             "FBA_fee",
             "aproximate_quantity",
+            "small_and_light",
             "notes",
         ] + self.__class__.Meta.fields
         new_fields = {key: self.fields[key] for key in field_order}
@@ -92,6 +93,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "selling_price",
             "FBA_fee",
             "aproximate_quantity",
+            "small_and_light",
             "notes",
         ]
         widgets = {"product_ID": forms.HiddenInput()}

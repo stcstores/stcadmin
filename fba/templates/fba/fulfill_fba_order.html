@@ -8,10 +8,12 @@
 {% if form.instance.closed_at %}<h2>CLOSED: {{ form.instance.closed_at }}</h2>{% endif %}
 
 <a href="{% url 'fba:order_printout' form.instance.pk %}" target="_blank">
-    <button>
-        {% if form.instance.printed is False %}Print{% else %}Reprint{% endif %}
-    </button>
-</a>
+    <button class="print_button">{% if form.instance.printed is False %}Print{% else %}Reprint{% endif %}</button></a>
+{% if form.instance.printed is True %}
+&nbsp;
+<a href="{% url 'fba:unmark_printed' form.instance.id %}?next={{ request.path }}">
+    <button>Unmark printed</button></a>
+{% endif %}
 
 <div class="fba_order_form_container">
     <div class="order_details">
@@ -35,6 +37,10 @@
             <label for="selling_price">Selling Price {{ form.instance.region.currency.symbol }}</label>
             <input type="text" name="selling_price", id="selling_price" value="{{ selling_price }}" disabled>
         </p>
+
+        {% if form.instance.small_and_light is True %}
+        <h3 class="error">SMALL AND LIGHT</h3>
+        {% endif %}
     </div>
     <div class="fba_order_form">
         <form action="" method="POST">{% csrf_token %}
@@ -58,6 +64,16 @@
 {% block script %}
 
 <script>
+
+    function printExternal(url) {
+        var printWindow = window.open( url, 'Print', 'left=200, top=200, width=950, height=500, toolbar=0, resizable=0');
+        printWindow.addEventListener('load', function(){
+            location.reload();
+            printWindow.print();
+            printWindow.close();
+        }, true);
+    }
+
     $(document).ready(function() {
         $('input,textarea,select').filter('[required]').parent().find("label").addClass("required");
 
@@ -65,6 +81,11 @@
             $("#weight_lb").val($(this).val() * 2.20462)
         });
         $("#{{ form.box_weight.auto_id }}").change();
+
+        $(".print_button").click(function(e) {
+            e.preventDefault();
+            printExternal("{% url 'fba:order_printout' form.instance.id %}");
+        });
 
     });
 </script>

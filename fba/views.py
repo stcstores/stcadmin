@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, TemplateView, View
+from django.views.generic.base import RedirectView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 
 from fba import forms, models
@@ -303,7 +304,7 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
             self.object.update_stock_level()
 
 
-class FBAOrderPrintout(TemplateView):
+class FBAOrderPrintout(FBAUserMixin, TemplateView):
     """View for FBA order printouts."""
 
     template_name = "fba/order_printout.html"
@@ -318,4 +319,17 @@ class FBAOrderPrintout(TemplateView):
         context["selling_price"] = "{:.2f}".format(
             order.selling_price / 100,
         )
+        order.printed = True
+        order.save()
         return context
+
+
+class UnmarkPrinted(FBAUserMixin, RedirectView):
+    """View to unmark FBA orders as printed."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Unmark an FBA order as printed and return to it's fulfillment page."""
+        order = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
+        order.printed = False
+        order.save()
+        return self.request.GET.get("next")

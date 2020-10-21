@@ -108,10 +108,13 @@ class FBAOrder(models.Model):
     box_width = models.PositiveIntegerField(blank=True, null=True)
     box_height = models.PositiveIntegerField(blank=True, null=True)
     box_depth = models.PositiveIntegerField(blank=True, null=True)
-    box_weight = models.PositiveIntegerField(blank=True, null=True)
+    box_weight = models.DecimalField(
+        max_digits=5, decimal_places=2, blank=True, null=True
+    )
     notes = models.TextField(blank=True)
     priority = models.PositiveIntegerField(default=999)
     printed = models.BooleanField(default=False)
+    small_and_light = models.BooleanField(default=False)
     status = models.CharField(
         choices=(
             (NOT_PROCESSED, NOT_PROCESSED),
