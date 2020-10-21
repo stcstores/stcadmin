@@ -200,7 +200,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
     def get_vat(self):
         """Return the caclulated VAT."""
         if self.country.country.vat_is_required():
-            vat = self.selling_price * 0.2
+            vat = self.selling_price / 6
             vat = round(vat, 2)
         else:
             vat = 0.0
