@@ -62,6 +62,19 @@ class CreateFBAOrderForm(forms.ModelForm):
         self.fields["country"] = forms.ModelChoiceField(
             queryset=models.FBACountry.objects.all()
         )
+        field_order = [
+            "product_ID",
+            "product_SKU",
+            "product_name",
+            "region",
+            "country",
+            "selling_price",
+            "FBA_fee",
+            "aproximate_quantity",
+            "notes",
+        ] + self.__class__.Meta.fields
+        new_fields = {key: self.fields[key] for key in field_order}
+        self.fields = new_fields
 
     class Meta:
         """Meta class for CreateFBAOrderForm."""
