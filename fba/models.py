@@ -101,6 +101,8 @@ class FBAOrder(models.Model):
     product_SKU = models.CharField(max_length=20)
     product_ID = models.CharField(max_length=50)
     product_name = models.CharField(max_length=255)
+    product_weight = models.PositiveIntegerField()
+    product_hs_code = models.CharField(max_length=255)
     selling_price = models.PositiveIntegerField()
     FBA_fee = models.PositiveIntegerField()
     aproximate_quantity = models.PositiveIntegerField()

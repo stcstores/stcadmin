@@ -57,6 +57,8 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
         initial["product_SKU"] = self.product.sku
         initial["product_ID"] = product_ID
         initial["product_name"] = self.product.full_name
+        initial["product_weight"] = self.product.weight
+        initial["product_hs_code"] = self.product.hs_code
         return initial
 
     def get_context_data(self, *args, **kwargs):
