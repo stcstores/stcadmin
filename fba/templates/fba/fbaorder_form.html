@@ -59,8 +59,18 @@
         </p>
 
         <p>
-            <label for="max_quantity">Max Quantity</label>
+            <label for="stock_level">Stock Level</label>
+            <input type="number" step="1" name="stock_level" id="stock_level" value="{{ product.stock_level }}" disabled>
+        </p>
+
+        <p>
+            <label for="max_quantity">Maximum Sendable</label>
             <input type="number" class="max_quantity" id="max_quantity" disabled>
+        </p>
+
+        <p>
+            <label for="max_quantity_no_stock">Maximum Sendable (Ignoring Stock Level)</label>
+            <input type="number" class="max_quantity_no_stock" id="max_quantity_no_stock" disabled>
         </p>
 
     </div>
@@ -79,6 +89,7 @@
             "quantity": $("#{{ form.aproximate_quantity.auto_id }}").val(),
             "fba_fee": $("#{{ form.FBA_fee.auto_id }}").val(),
             "weight": {{ product.weight }},
+            "stock_level": {{ product.stock_level }}
         }
         if ((data["selling_price"] === "") || (data["fba_fee"] === "") || (data["country"] === "")) {
             return
@@ -98,6 +109,7 @@
                 $("#percentage").val(result["percentage"]);
                 $("#max_quantity").val(result["max_quantity"]);
                 $("span.currency_symbol").text(result["currency_symbol"]);
+                $("#max_quantity_no_stock").val(result["max_quantity_no_stock"]);
                 var aprox_quantity = $("#{{ form.aproximate_quantity.auto_id }}")
                 if (aprox_quantity.val() === ""){
                     aprox_quantity.val(result["max_quantity"]);

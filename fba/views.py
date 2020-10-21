@@ -167,7 +167,9 @@ class FBAPriceCalculator(FBAUserMixin, View):
             response["profit"] = self.get_profit()
             response["percentage"] = self.get_percentage()
             response["purchase_price"] = self.get_purchase_price()
-            response["max_quantity"] = self.get_max_quantity()
+            max_quantity, max_quantity_no_stock = self.get_max_quantity()
+            response["max_quantity"] = max_quantity
+            response["max_quantity_no_stock"] = max_quantity_no_stock
             return JsonResponse(response)
         except Exception:
             return HttpResponseBadRequest()
@@ -183,10 +185,11 @@ class FBAPriceCalculator(FBAUserMixin, View):
         self.country = models.FBACountry.objects.get(id=country_id)
         self.exchange_rate = float(self.country.country.currency.exchange_rate)
         self.product_weight = int(post_data.get("weight"))
+        self.stock_level = int(post_data.get("stock_level"))
         try:
             self.quantity = int(post_data.get("quantity"))
         except ValueError:
-            self.quantity = self.get_max_quantity()
+            self.quantity, _ = self.get_max_quantity()
 
     def get_channel_fee(self):
         """Return the caclulated channel fee."""
@@ -243,7 +246,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
     def get_max_quantity(self):
         """Return the maximum number of the product that can be sent."""
         max_quantity = (self.country.region.max_weight * 1000) // self.product_weight
-        return max_quantity
+        return min((max_quantity, self.stock_level)), max_quantity
 
 
 class FulfillFBAOrder(FBAUserMixin, UpdateView):
