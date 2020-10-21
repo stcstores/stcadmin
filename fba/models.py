@@ -18,6 +18,7 @@ class FBARegion(models.Model):
     LB = "lb"
 
     name = models.CharField(max_length=255)
+    default_country = models.ForeignKey("FBACountry", on_delete=models.CASCADE)
     postage_price = models.PositiveIntegerField()
     max_weight = models.PositiveIntegerField(blank=True, null=True)
     max_size = models.FloatField(blank=True, null=True)

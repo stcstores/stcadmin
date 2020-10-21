@@ -2,7 +2,7 @@
 
 {% block content %}{{ block.super }}
 
-<h1>Create FBA Order</h1>
+<h1>{% if form.instance.id %}Edit{% else %}Create{% endif %} FBA Order</h1>
 
 <h2>{{ product.sku}} - {{ product.full_name }}</h2>
 
@@ -89,7 +89,7 @@
 {% endblock content %}
 
 {% block script %}
-{% if not form.instance.id %}
+
 <script>
 
     function refresh_calculator() {
@@ -135,7 +135,7 @@
 
         $('input,textarea,select').filter('[required]').filter(':enabled').parent().find("label").addClass("required");
         $('form').submit(function(e) {
-            if (!confirm("Are you sure you want to create this FBA order?")) {
+            if (!confirm("Are you sure you want to {% if form.instance.id %}update{% else %}create{% endif %} this FBA order?")) {
                 e.preventDefault();
             }
         });
@@ -158,5 +158,5 @@
         });
     });
 </script>
-{% endif %}
+
 {% endblock script %}

@@ -11,6 +11,7 @@ class FBARegionAdmin(admin.ModelAdmin):
 
     fields = [
         "name",
+        "default_country",
         "postage_price",
         "max_weight",
         "max_size",
@@ -21,6 +22,7 @@ class FBARegionAdmin(admin.ModelAdmin):
     ]
     list_display = [
         "name",
+        "default_country",
         "postage_price",
         "max_weight",
         "max_size",
@@ -30,6 +32,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "auto_close",
     ]
     list_editable = [
+        "default_country",
         "postage_price",
         "max_weight",
         "max_size",

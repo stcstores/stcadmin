@@ -57,6 +57,8 @@ class CreateFBAOrderForm(forms.ModelForm):
         self.fields["product_name"].widget = forms.HiddenInput()
         self.fields["selling_price"].widget = CurrencyWidget()
         self.fields["selling_price"].to_python = lambda x: int(float(x) * 100)
+        self.fields["FBA_fee"].widget = CurrencyWidget()
+        self.fields["FBA_fee"].to_python = lambda x: int(float(x) * 100)
         self.fields["region"].widget = forms.HiddenInput()
         self.fields["region"].required = False
         self.fields["country"] = forms.ModelChoiceField(
@@ -75,6 +77,8 @@ class CreateFBAOrderForm(forms.ModelForm):
         ] + self.__class__.Meta.fields
         new_fields = {key: self.fields[key] for key in field_order}
         self.fields = new_fields
+        if self.instance.id is not None:
+            self.initial["country"] = self.instance.region.default_country
 
     class Meta:
         """Meta class for CreateFBAOrderForm."""

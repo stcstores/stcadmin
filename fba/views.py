@@ -81,6 +81,14 @@ class FBAOrderUpdate(FBAUserMixin, UpdateView):
     model = models.FBAOrder
     template_name = "fba/fbaorder_form.html"
 
+    def get_context_data(self, **kwargs):
+        """Return template context."""
+        context = super().get_context_data(**kwargs)
+        context["product"] = cc_products.get_product(
+            context["form"].instance.product_ID
+        )
+        return context
+
     def get_success_url(self):
         """Redirect to the order's update page."""
         messages.add_message(self.request, messages.SUCCESS, "FBA order updated.")
