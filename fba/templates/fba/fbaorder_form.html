@@ -2,24 +2,40 @@
 
 {% block content %}{{ block.super }}
 
+<h1>{% if form.instance.id %}Edit{% else %}Create{% endif %} FBA Order</h1>
+
+<h2>{{ product.sku}} - {{ product.full_name }}</h2>
+
 <div class="fba_order_form_container">
-    <div class="fba_order_form">
-        <form action="" method="POST">{% csrf_token %}
-            {{ form.as_p }}
-            {% if form.instance.id %}
-            <button>Update</button>
-            {% else %}
-            <button>Create</button>
-            {% endif %}
-        </form>
-    </div>
 
     <div class="price_calculator">
+
+         <p>
+            <label for="stock_level">Stock Level</label>
+            <input type="number" step="1" name="stock_level" id="stock_level" value="{{ product.stock_level }}" disabled>
+        </p>
+
+        <p>
+            <label for="weight">Weight</label>
+            <input type="number" step="1" name="weight" id="weight" value="{{ product.weight }}" disabled>
+        </p>
 
         <p>
             <label for="purchase_price">Purchase Price</label>
             <span class="currency_symbol"></span>
             <input type="number" step="0.01" name="purchase_price" value="{{ product.purchase_price }}" id="purchase_price" disabled>
+        </p>
+
+        <p>
+            <label for="profit">Profit</label>
+            <span class="currency_symbol"></span>
+            <input type="number" step="0.01" name="profit" id="profit" disabled>
+        </p>
+        
+        <p>
+            <label for="percentage">Profit Percentage</label>
+            <span>%</span>
+            <input type="number" step="0.01" name="percentage" id="percentage" disabled>
         </p>
 
         <p>
@@ -35,19 +51,7 @@
         </p>
         
         <p>
-            <label for="profit">Profit</label>
-            <span class="currency_symbol"></span>
-            <input type="number" step="0.01" name="profit" id="profit" disabled>
-        </p>
-        
-        <p>
-            <label for="percentage">Percentage</label>
-            <span>%</span>
-            <input type="number" step="0.01" name="percentage" id="percentage" disabled>
-        </p>
-        
-        <p>
-            <label for="postage_to_fba">Postage to FBA</label>
+            <label for="postage_to_fba">Total Postage</label>
             <span class="currency_symbol"></span>
             <input type="number" step="0.01" name="postage_to_fba" id="postage_to_fba" disabled>
         </p>
@@ -59,16 +63,33 @@
         </p>
 
         <p>
-            <label for="max_quantity">Max Quantity</label>
+            <label for="max_quantity">Maximum Sendable</label>
             <input type="number" class="max_quantity" id="max_quantity" disabled>
         </p>
 
+        <p>
+            <label for="max_quantity_no_stock">Maximum Sendable (Ignoring Stock Level)</label>
+            <input type="number" class="max_quantity_no_stock" id="max_quantity_no_stock" disabled>
+        </p>
+
     </div>
+
+    <div class="fba_order_form">
+        <form action="" method="POST">{% csrf_token %}
+            {{ form.as_p }}
+            {% if form.instance.id %}
+            <button>Update</button>
+            {% else %}
+            <button>Create</button>
+            {% endif %}
+        </form>
+    </div>
+
 </div>
 {% endblock content %}
 
 {% block script %}
-{% if not form.instance.id %}
+
 <script>
 
     function refresh_calculator() {
@@ -79,6 +100,7 @@
             "quantity": $("#{{ form.aproximate_quantity.auto_id }}").val(),
             "fba_fee": $("#{{ form.FBA_fee.auto_id }}").val(),
             "weight": {{ product.weight }},
+            "stock_level": {{ product.stock_level }}
         }
         if ((data["selling_price"] === "") || (data["fba_fee"] === "") || (data["country"] === "")) {
             return
@@ -98,6 +120,7 @@
                 $("#percentage").val(result["percentage"]);
                 $("#max_quantity").val(result["max_quantity"]);
                 $("span.currency_symbol").text(result["currency_symbol"]);
+                $("#max_quantity_no_stock").val(result["max_quantity_no_stock"]);
                 var aprox_quantity = $("#{{ form.aproximate_quantity.auto_id }}")
                 if (aprox_quantity.val() === ""){
                     aprox_quantity.val(result["max_quantity"]);
@@ -112,7 +135,7 @@
 
         $('input,textarea,select').filter('[required]').filter(':enabled').parent().find("label").addClass("required");
         $('form').submit(function(e) {
-            if (!confirm("Are you sure you want to create this FBA order?")) {
+            if (!confirm("Are you sure you want to {% if form.instance.id %}update{% else %}create{% endif %} this FBA order?")) {
                 e.preventDefault();
             }
         });
@@ -135,5 +158,5 @@
         });
     });
 </script>
-{% endif %}
+
 {% endblock script %}

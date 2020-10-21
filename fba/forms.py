@@ -21,12 +21,12 @@ class SelectFBAOrderProduct(forms.Form):
         try:
             search_result = CCAPI.search_products(cleaned_data["product_SKU"])
             if len(search_result) > 1:
-                self.add_error("Too many products found")
+                self.add_error("product_SKU", "Too many products found")
             else:
                 product = search_result[0]
             cleaned_data["product_ID"] = product.variation_id
         except Exception:
-            self.add_error("Product not found")
+            self.add_error("product_SKU", "Product not found")
 
 
 class CurrencyWidget(forms.TextInput):
@@ -52,16 +52,33 @@ class CreateFBAOrderForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         """Disable non-editable fields."""
         super().__init__(*args, **kwargs)
-        self.fields["product_SKU"].disabled = True
-        self.fields["product_ID"].disabled = True
-        self.fields["product_name"].disabled = True
+        self.fields["product_SKU"].widget = forms.HiddenInput()
+        self.fields["product_ID"].widget = forms.HiddenInput()
+        self.fields["product_name"].widget = forms.HiddenInput()
         self.fields["selling_price"].widget = CurrencyWidget()
         self.fields["selling_price"].to_python = lambda x: int(float(x) * 100)
+        self.fields["FBA_fee"].widget = CurrencyWidget()
+        self.fields["FBA_fee"].to_python = lambda x: int(float(x) * 100)
         self.fields["region"].widget = forms.HiddenInput()
         self.fields["region"].required = False
         self.fields["country"] = forms.ModelChoiceField(
             queryset=models.FBACountry.objects.all()
         )
+        field_order = [
+            "product_ID",
+            "product_SKU",
+            "product_name",
+            "region",
+            "country",
+            "selling_price",
+            "FBA_fee",
+            "aproximate_quantity",
+            "notes",
+        ] + self.__class__.Meta.fields
+        new_fields = {key: self.fields[key] for key in field_order}
+        self.fields = new_fields
+        if self.instance.id is not None:
+            self.initial["country"] = self.instance.region.default_country
 
     class Meta:
         """Meta class for CreateFBAOrderForm."""
@@ -95,6 +112,7 @@ class FBAOrderFilter(forms.Form):
         choices=(
             ("", ""),
             (models.FBAOrder.NOT_PROCESSED, models.FBAOrder.NOT_PROCESSED),
+            (models.FBAOrder.PRINTED, models.FBAOrder.PRINTED),
             (models.FBAOrder.AWAITING_BOOKING, models.FBAOrder.AWAITING_BOOKING),
             (models.FBAOrder.FULFILLED, models.FBAOrder.FULFILLED),
         ),

@@ -18,6 +18,7 @@ class FBARegion(models.Model):
     LB = "lb"
 
     name = models.CharField(max_length=255)
+    default_country = models.ForeignKey("FBACountry", on_delete=models.CASCADE)
     postage_price = models.PositiveIntegerField()
     max_weight = models.PositiveIntegerField(blank=True, null=True)
     max_size = models.FloatField(blank=True, null=True)
@@ -60,11 +61,34 @@ class FBACountry(models.Model):
         return self.country.name
 
 
+class AwaitingFulfillmentManager(models.Manager):
+    """Model manager for FBA orders awaiting fulfillment."""
+
+    def get_queryset(self):
+        """Return a queryset of orders awaiting fulfillment."""
+        return (
+            super()
+            .get_queryset()
+            .exclude(status=FBAOrder.FULFILLED)
+            .annotate(
+                custom_order=models.Case(
+                    models.When(status=FBAOrder.AWAITING_BOOKING, then=models.Value(0)),
+                    models.When(status=FBAOrder.PRINTED, then=models.Value(1)),
+                    models.When(status=FBAOrder.NOT_PROCESSED, then=models.Value(2)),
+                    default=models.Value(3),
+                    output_field=models.IntegerField(),
+                )
+            )
+            .order_by("custom_order", "priority", "created_at")
+        )
+
+
 class FBAOrder(models.Model):
     """Model for FBA orders."""
 
     FULFILLED = "Fulfilled"
     AWAITING_BOOKING = "Awaiting Collection Booking"
+    PRINTED = "Printed"
     NOT_PROCESSED = "Not Processed"
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -87,14 +111,19 @@ class FBAOrder(models.Model):
     box_weight = models.PositiveIntegerField(blank=True, null=True)
     notes = models.TextField(blank=True)
     priority = models.PositiveIntegerField(default=999)
+    printed = models.BooleanField(default=False)
     status = models.CharField(
         choices=(
             (NOT_PROCESSED, NOT_PROCESSED),
             (AWAITING_BOOKING, AWAITING_BOOKING),
-            (AWAITING_BOOKING, AWAITING_BOOKING),
+            (PRINTED, PRINTED),
+            (FULFILLED, FULFILLED),
         ),
         max_length=255,
     )
+
+    objects = models.Manager()
+    awaiting_fulfillment = AwaitingFulfillmentManager()
 
     class Meta:
         """Meta class for FBAOrder."""
@@ -150,4 +179,6 @@ class FBAOrder(models.Model):
             return self.FULFILLED
         if self.details_complete() is True:
             return self.AWAITING_BOOKING
+        if self.printed is True:
+            return self.PRINTED
         return self.NOT_PROCESSED

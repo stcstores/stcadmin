@@ -81,6 +81,14 @@ class FBAOrderUpdate(FBAUserMixin, UpdateView):
     model = models.FBAOrder
     template_name = "fba/fbaorder_form.html"
 
+    def get_context_data(self, **kwargs):
+        """Return template context."""
+        context = super().get_context_data(**kwargs)
+        context["product"] = cc_products.get_product(
+            context["form"].instance.product_ID
+        )
+        return context
+
     def get_success_url(self):
         """Redirect to the order's update page."""
         messages.add_message(self.request, messages.SUCCESS, "FBA order updated.")
@@ -132,9 +140,7 @@ class AwaitingFullfilment(FBAUserMixin, ListView):
 
     def get_queryset(self):
         """Return a queryset of orders awaiting fulillment."""
-        return self.model.objects.exclude(status=self.model.FULFILLED).order_by(
-            "status", "priority", "created_at"
-        )
+        return self.model.awaiting_fulfillment.all()
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
@@ -167,7 +173,9 @@ class FBAPriceCalculator(FBAUserMixin, View):
             response["profit"] = self.get_profit()
             response["percentage"] = self.get_percentage()
             response["purchase_price"] = self.get_purchase_price()
-            response["max_quantity"] = self.get_max_quantity()
+            max_quantity, max_quantity_no_stock = self.get_max_quantity()
+            response["max_quantity"] = max_quantity
+            response["max_quantity_no_stock"] = max_quantity_no_stock
             return JsonResponse(response)
         except Exception:
             return HttpResponseBadRequest()
@@ -183,10 +191,11 @@ class FBAPriceCalculator(FBAUserMixin, View):
         self.country = models.FBACountry.objects.get(id=country_id)
         self.exchange_rate = float(self.country.country.currency.exchange_rate)
         self.product_weight = int(post_data.get("weight"))
+        self.stock_level = int(post_data.get("stock_level"))
         try:
             self.quantity = int(post_data.get("quantity"))
         except ValueError:
-            self.quantity = self.get_max_quantity()
+            self.quantity, _ = self.get_max_quantity()
 
     def get_channel_fee(self):
         """Return the caclulated channel fee."""
@@ -200,7 +209,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
     def get_vat(self):
         """Return the caclulated VAT."""
         if self.country.country.vat_is_required():
-            vat = self.selling_price * 0.2
+            vat = self.selling_price / 6
             vat = round(vat, 2)
         else:
             vat = 0.0
@@ -243,7 +252,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
     def get_max_quantity(self):
         """Return the maximum number of the product that can be sent."""
         max_quantity = (self.country.region.max_weight * 1000) // self.product_weight
-        return max_quantity
+        return min((max_quantity, self.stock_level)), max_quantity
 
 
 class FulfillFBAOrder(FBAUserMixin, UpdateView):

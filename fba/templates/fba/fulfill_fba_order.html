@@ -7,7 +7,11 @@
 <h3>{{ form.instance.product_SKU }} - {{ form.instance.product_name }}</h3>
 {% if form.instance.closed_at %}<h2>CLOSED: {{ form.instance.closed_at }}</h2>{% endif %}
 
-<a href="{% url 'fba:order_printout' form.instance.pk %}" target="_blank"><button>Print</button></a>
+<a href="{% url 'fba:order_printout' form.instance.pk %}" target="_blank">
+    <button>
+        {% if form.instance.printed is False %}Print{% else %}Reprint{% endif %}
+    </button>
+</a>
 
 <div class="fba_order_form_container">
     <div class="order_details">
