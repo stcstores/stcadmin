@@ -58,7 +58,7 @@
                 <a href="{% url 'fba:fulfill_fba_order' order.id %}"><button>Fulfill</button></a>
             </td>
             <td>
-                {% if order.status == order.NOT_PROCESSED %}
+                {% if order.status != order.FULFILLED %}
                 <a href="{% url 'fba:delete_order' order.pk %}"><button>Delete</button></a>
                 {% endif %}
             </td>

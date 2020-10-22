@@ -15,7 +15,7 @@
         {% endif %}
     </a>
     <a href="{% url 'fba:repeat_order' form.instance.id %}"><button>Repeat Order</button></a>
-    {% if form.status == form.NOT_PROCESSED %}
+    {% if form.instance.status != form.instance.FULFILLED %}
     <a href="{% url 'fba:delete_order' form.instance.id %}"><button class="error">DELETE ORDER</button></a>
     {% endif %}
 {% endif %}
