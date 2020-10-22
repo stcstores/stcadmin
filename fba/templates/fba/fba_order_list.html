@@ -26,8 +26,8 @@
             <th>Quantity</th>
             <th>Country</th>
             <th>Status</th>
-            <th>Fullfillment Date</th>
-            <th>Fullfilled By</th>
+            <th>Fulfillment Date</th>
+            <th>Fulfilled By</th>
             <th></th>
             <th></th>
             <th></th>
@@ -49,8 +49,8 @@
             <td>{{ order.status }}</td>
             <td>{{ order.closed_at|date:"Y-m-d H:i" }}</td>
             <td>
-                {% if order.fullfilled_by != None %}
-                {{ order.fullfilled_by }}
+                {% if order.fulfilled_by != None %}
+                {{ order.fulfilled_by }}
                 {% endif %}
             </td>
             {% if order.closed_at == None %}

@@ -26,7 +26,7 @@ urlpatterns = [
     path("fba_order_list/", views.OrderList.as_view(), name="order_list"),
     path(
         "awaiting_fulillment/",
-        views.AwaitingFullfilment.as_view(),
+        views.Awaitingfulfillment.as_view(),
         name="awaiting_fulfillment",
     ),
     path(

@@ -215,7 +215,7 @@ class OrderList(FBAUserMixin, ListView):
             return list(range(1, 11)) + [paginator.num_pages]
 
 
-class AwaitingFullfilment(FBAUserMixin, ListView):
+class Awaitingfulfillment(FBAUserMixin, ListView):
     """Display a filterable list of orders."""
 
     template_name = "fba/awaiting_fulfillment.html"

@@ -73,7 +73,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "box_depth",
         "box_weight",
         "closed_at",
-        "fullfilled_by",
+        "fulfilled_by",
         "notes",
         "priority",
     ]
@@ -101,7 +101,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "box_depth",
         "box_weight",
         "priority",
-        "fullfilled_by",
+        "fulfilled_by",
     ]
 
     search_fields = ["product_SKU", "product_ID", "product_name"]

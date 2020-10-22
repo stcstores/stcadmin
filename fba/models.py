@@ -93,7 +93,7 @@ class FBAOrder(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    fullfilled_by = models.ForeignKey(
+    fulfilled_by = models.ForeignKey(
         User, on_delete=models.PROTECT, blank=True, null=True
     )
     closed_at = models.DateTimeField(blank=True, null=True)
