@@ -30,6 +30,7 @@ class FBARegion(models.Model):
     )
     auto_close = models.BooleanField()
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
+    flag = models.CharField(max_length=20, blank=True)
 
     class Meta:
         """Meta class for FBARegion."""

@@ -19,6 +19,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "weight_unit",
         "currency",
         "auto_close",
+        "flag",
     ]
     list_display = [
         "name",
@@ -30,6 +31,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "weight_unit",
         "currency",
         "auto_close",
+        "flag",
     ]
     list_editable = [
         "default_country",
@@ -40,6 +42,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "weight_unit",
         "currency",
         "auto_close",
+        "flag",
     ]
 
 
