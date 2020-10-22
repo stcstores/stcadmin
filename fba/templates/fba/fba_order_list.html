@@ -54,6 +54,11 @@
                 Closed
             {% endif %}
             </td>
+            <td>
+                {% if order.status == order.NOT_PROCESSED %}
+                <a href="{% url 'fba:delete_order' order.pk %}"><button>Delete</button></a>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>
