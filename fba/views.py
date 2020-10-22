@@ -3,13 +3,14 @@
 import cc_products
 from ccapi import CCAPI
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, TemplateView, View
 from django.views.generic.base import RedirectView
-from django.views.generic.edit import CreateView, FormView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 
 from fba import forms, models
 from home.views import UserInGroupMixin
@@ -334,3 +335,20 @@ class UnmarkPrinted(FBAUserMixin, RedirectView):
         order.printed = False
         order.save()
         return self.request.GET.get("next")
+
+
+class DeleteFBAOrder(FBAUserMixin, DeleteView):
+    """View to delete FBA orders."""
+
+    model = models.FBAOrder
+
+    def get_object(self):
+        """Prevent deletion of in progress or completed FBA orders."""
+        order = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
+        if order.status == order.NOT_PROCESSED:
+            return order
+        raise PermissionDenied()
+
+    def get_success_url(self):
+        """Return the URL to redirect to after a succesfull deletion."""
+        return reverse("fba:order_list")

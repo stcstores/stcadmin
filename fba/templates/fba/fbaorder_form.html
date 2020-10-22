@@ -6,6 +6,12 @@
 
 <h2>{{ product.sku}} - {{ product.full_name }}</h2>
 
+{% if form.instance.id and form.status == form.NOT_PROCESSED %}
+
+<a href="{% url 'fba:delete_order' form.instance.id %}"><button class="error">DELETE ORDER</button></a>
+
+{% endif %}
+
 <div class="fba_order_form_container">
 
     <div class="price_calculator">
