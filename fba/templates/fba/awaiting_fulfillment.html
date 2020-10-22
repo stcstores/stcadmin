@@ -15,7 +15,7 @@
             <th>SKU</th>
             <th>Name</th>
             <th>Aprox Quantity</th>
-            <th>Country</th>
+            <th></th>
             <th>Status</th>
             <th>Created At</th>
             <th></th>
@@ -28,7 +28,7 @@
             <th>{{ order.product_SKU }} </th>
             <th>{{ order.product_name }} </th>
             <td>{{ order.aproximate_quantity}}</td>
-            <td>{{ order.region }}</td>
+            <td>{{ order.region.flag }}</td>
             <td>{{ order.status }}</td>
             <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
             <td>
