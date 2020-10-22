@@ -1,11 +1,15 @@
 """Views for the FBA app."""
 
+
+import datetime
+
 import cc_products
 from ccapi import CCAPI
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseBadRequest, JsonResponse
-from django.shortcuts import get_object_or_404, reverse
+from django.shortcuts import get_object_or_404, redirect, reverse
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, TemplateView, View
@@ -50,13 +54,21 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
     form_class = forms.CreateFBAOrderForm
     template_name = "fba/fbaorder_form.html"
 
+    def get(self, *args, **kwargs):
+        """Get product details."""
+        self.get_product()
+        return super().get(*args, **kwargs)
+
+    def get_product(self):
+        """Return the product included in the order."""
+        product_ID = self.kwargs["product_id"]
+        self.product = cc_products.get_product(product_ID)
+
     def get_initial(self, *args, **kwargs):
         """Return initial values for the form."""
         initial = super().get_initial(*args, **kwargs)
-        product_ID = self.kwargs["product_id"]
-        self.product = cc_products.get_product(product_ID)
         initial["product_SKU"] = self.product.sku
-        initial["product_ID"] = product_ID
+        initial["product_ID"] = self.product.id
         initial["product_name"] = self.product.full_name
         initial["product_weight"] = self.product.weight
         initial["product_hs_code"] = self.product.hs_code
@@ -70,12 +82,81 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
 
     def get_success_url(self):
         """Redirect to the order's update page."""
+        self.set_success_message()
+        return self.object.get_absolute_url()
+
+    def set_success_message(self):
+        """Set a success message."""
         messages.add_message(
             self.request,
             messages.SUCCESS,
             f"Created new FBA order for product {self.object.product_SKU}.",
         )
-        return self.object.get_absolute_url()
+
+
+class RepeatFBAOrder(FBAOrderCreate):
+    """View for creating repeated FBA orders."""
+
+    MAX_DUPLICATE_AGE = datetime.timedelta(days=30)
+
+    def get(self, *args, **kwargs):
+        """Duplicate the order if it is recent, otherwise use repeat order form."""
+        self.get_product()
+        order_age = timezone.now() - self.to_repeat.created_at
+        if order_age < self.MAX_DUPLICATE_AGE:
+            self.duplicate_order()
+            return redirect(reverse("fba:order_list"))
+        else:
+            return super().get(*args, **kwargs)
+
+    def duplicate_order(self):
+        """Create a duplicate of an FBA order."""
+        if quantity_sent := self.to_repeat.quantity_sent is None:
+            aprox_quantity = min((quantity_sent, self.product.stock_level))
+        else:
+            aprox_quantity = self.to_repeat.aproximate_quantity
+        self.repeated_order = models.FBAOrder(
+            product_SKU=self.to_repeat.product_SKU,
+            product_ID=self.to_repeat.product_ID,
+            product_name=self.to_repeat.product_name,
+            product_weight=self.product.weight,
+            product_hs_code=self.product.hs_code,
+            region=self.to_repeat.region,
+            selling_price=self.to_repeat.selling_price,
+            FBA_fee=self.to_repeat.FBA_fee,
+            aproximate_quantity=aprox_quantity,
+            small_and_light=self.to_repeat.small_and_light,
+        )
+        self.repeated_order.save()
+
+    def get_product(self):
+        """Return the product included in the order."""
+        self.to_repeat = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
+        self.product = cc_products.get_product(self.to_repeat.product_ID)
+
+    def get_initial(self, *args, **kwargs):
+        """Return initial form values."""
+        initial = super().get_initial(*args, **kwargs)
+        initial["region"] = self.to_repeat.region
+        initial["country"] = self.to_repeat.region.default_country
+        initial["selling_price"] = self.to_repeat.selling_price
+        initial["FBA_fee"] = self.to_repeat.FBA_fee
+        initial["small_and_light"] = self.to_repeat.small_and_light
+        return initial
+
+    def get_context_data(self, **kwargs):
+        """Return template context."""
+        context = super().get_context_data(**kwargs)
+        context["to_repeat"] = self.to_repeat
+        return context
+
+    def set_success_message(self):
+        """Set a success message."""
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            f"Repeated FBA order {self.to_repeat}.",
+        )
 
 
 class FBAOrderUpdate(FBAUserMixin, UpdateView):
@@ -134,7 +215,7 @@ class OrderList(FBAUserMixin, ListView):
             return list(range(1, 11)) + [paginator.num_pages]
 
 
-class AwaitingFullfilment(FBAUserMixin, ListView):
+class Awaitingfulfillment(FBAUserMixin, ListView):
     """Display a filterable list of orders."""
 
     template_name = "fba/awaiting_fulfillment.html"

@@ -19,6 +19,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "weight_unit",
         "currency",
         "auto_close",
+        "flag",
     ]
     list_display = [
         "name",
@@ -30,6 +31,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "weight_unit",
         "currency",
         "auto_close",
+        "flag",
     ]
     list_editable = [
         "default_country",
@@ -40,6 +42,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "weight_unit",
         "currency",
         "auto_close",
+        "flag",
     ]
 
 
@@ -73,7 +76,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "box_depth",
         "box_weight",
         "closed_at",
-        "fullfilled_by",
+        "fulfilled_by",
         "notes",
         "priority",
     ]
@@ -101,7 +104,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "box_depth",
         "box_weight",
         "priority",
-        "fullfilled_by",
+        "fulfilled_by",
     ]
 
     search_fields = ["product_SKU", "product_ID", "product_name"]

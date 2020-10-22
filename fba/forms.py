@@ -146,12 +146,11 @@ class FBAOrderFilter(forms.Form):
     country = forms.ModelChoiceField(models.FBARegion.objects.all(), required=False)
     sort_by = forms.ChoiceField(
         choices=(
-            ("", ""),
+            ("-created_at", "Date Created"),
             ("product_SKU", "SKU"),
             ("product_name", "Name"),
-            ("created_at", "Date Created"),
-            ("closed_at", "Date Fulfilled"),
-            ("fullfilled_by__first_name", "Fulfilled By"),
+            ("-closed_at", "Date Fulfilled"),
+            ("fulfilled_by__first_name", "Fulfilled By"),
             ("status", "Status"),
         ),
         required=False,
@@ -203,6 +202,8 @@ class FBAOrderFilter(forms.Form):
         qs = models.FBAOrder.objects.filter(**kwargs)
         if sort_by := self.cleaned_data["sort_by"]:
             qs = qs.order_by(sort_by)
+        else:
+            qs = qs.order_by("-created_at")
         if search_text := self.cleaned_data["search"]:
             qs = self.text_search(search_text, qs)
         return qs
@@ -219,7 +220,7 @@ class FBAOrderFilter(forms.Form):
 
 
 class FulfillFBAOrderForm(forms.ModelForm):
-    """Form for fullfilling FBA orders."""
+    """Form for fulfilling FBA orders."""
 
     def __init__(self, *args, **kwargs):
         """Set required fields."""
@@ -237,8 +238,8 @@ class FulfillFBAOrderForm(forms.ModelForm):
         self.fields["box_height"].required = True
         self.fields["box_depth"].required = True
         self.fields["quantity_sent"].required = True
-        self.fields["fullfilled_by"].required = True
-        self.fields["fullfilled_by"].queryset = User.objects.filter(
+        self.fields["fulfilled_by"].required = True
+        self.fields["fulfilled_by"].queryset = User.objects.filter(
             cloudcommerceuser__hidden=False
         )
 
@@ -252,6 +253,6 @@ class FulfillFBAOrderForm(forms.ModelForm):
             "box_height",
             "box_depth",
             "quantity_sent",
-            "fullfilled_by",
+            "fulfilled_by",
             "notes",
         ]

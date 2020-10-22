@@ -2,15 +2,24 @@
 
 {% block content %}{{ block.super }}
 
-<h1>{% if form.instance.id %}Edit{% else %}Create{% endif %} FBA Order</h1>
+<h1>{% if form.instance.id %}Edit{% elif to_repeat%}Repeat{% else %}Create{% endif %} FBA Order</h1>
 
 <h2>{{ product.sku}} - {{ product.full_name }}</h2>
 
-{% if form.instance.id and form.status == form.NOT_PROCESSED %}
-
-<a href="{% url 'fba:delete_order' form.instance.id %}"><button class="error">DELETE ORDER</button></a>
-
+{% if form.instance.id %}
+    <a href="{% url 'fba:fulfill_fba_order' form.instance.id %}">
+        {% if form.instance.status != form.instance.AWAITING_BOOKING %}
+        <button>Fulfill Order</button>
+        {% else %}
+        <button>Complete Order</button>
+        {% endif %}
+    </a>
+    <a href="{% url 'fba:repeat_order' form.instance.id %}"><button>Repeat Order</button></a>
+    {% if form.instance.status != form.instance.FULFILLED %}
+    <a href="{% url 'fba:delete_order' form.instance.id %}"><button class="error">DELETE ORDER</button></a>
+    {% endif %}
 {% endif %}
+
 
 <div class="fba_order_form_container">
 
@@ -91,6 +100,26 @@
         </form>
     </div>
 
+    {% if to_repeat %}
+    <div class="fba_order_form">
+    <form action="">
+        <p>
+            <label for="prev_aprox_quantity">Aproximate Quantity</label>
+            <input type="text" name="prev_aprox_quantity" value="{{ to_repeat.aproximate_quantity }}" size="5" disabled>
+        </p>
+        <p>
+            <label for="quantity_sent">Quantity Sent</label>
+            <input type="text" name="quantity_sent" value="{% if to_repeat.quantity_sent %}{{ to_repeat.quantity_sent }}{% else %}Not yet sent{% endif %}" disabled>
+        </p>
+        <p>
+            <textarea disabled>
+            {{ to_repeat.notes }}
+            </textarea>
+        </p>
+        </form>
+    </div>
+    {% endif %}
+
 </div>
 {% endblock content %}
 
@@ -162,6 +191,9 @@
         $("#{{ form.FBA_fee.auto_id }}").change(function() {
             refresh_calculator();
         });
+
+        refresh_calculator();
+
     });
 </script>
 
