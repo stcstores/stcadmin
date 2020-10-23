@@ -54,10 +54,10 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
     form_class = forms.CreateFBAOrderForm
     template_name = "fba/fbaorder_form.html"
 
-    def get(self, *args, **kwargs):
+    def dispatch(self, *args, **kwargs):
         """Get product details."""
         self.get_product()
-        return super().get(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_product(self):
         """Return the product included in the order."""
