@@ -72,7 +72,12 @@
                 {% endif %}
             </td>
             {% else %}
-                <th colspan="2">Closed</td>
+                {% if order.region.auto_close %}
+                <th>CLOSED</th>
+                {% else %}
+                <td><a href="{% url 'fba:shipping_price' order.pk %}"><button>Set Price</button></a></td>
+                {% endif %}
+                <td><a href="{% url 'fba:update_fba_order' order.pk %}"><button>View</button></a></td>
             {% endif %}
             <td>
                 <a href="{% url 'fba:repeat_order' order.pk %}"><button>Repeat</button></a>

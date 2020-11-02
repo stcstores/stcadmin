@@ -188,3 +188,20 @@ class FBAOrder(models.Model):
         if self.printed is True:
             return self.PRINTED
         return self.NOT_PROCESSED
+
+
+class FBAShippingPrice(models.Model):
+    """Model for prices to send items to FBA."""
+
+    added = models.DateTimeField(auto_now_add=True)
+    product_SKU = models.CharField(max_length=20, unique=True)
+    price_per_item = models.PositiveIntegerField()
+
+    class Meta:
+        """Meta class for FBAShippingPrice."""
+
+        verbose_name = "FBA Shipping Price"
+        verbose_name_plural = "FBA Shipping Prices"
+
+    def __str__(self):
+        return f"Shipping Price: {self.product_SKU}"

@@ -1,0 +1,25 @@
+{% extends 'fba/base.html' %}
+
+{% block content %}
+
+<form action="" method="POST">{% csrf_token %}
+{{ form.as_p }}
+<button>Save</button>
+</form>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+
+$(document).ready(function() {
+    $("#{{ form.shipping_price.auto_id }}").change(function() {
+        var full_price = $(this).val();
+        var per_item = full_price / {{ form.fba_order.quantity_sent }};
+        var per_item_p = parseInt(full_price * 100);
+        $("#{{ form.price_per_item.auto_id }}").val(per_item.toFixed(2));
+    });
+});
+
+</script>
+{% endblock script %}

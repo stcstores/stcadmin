@@ -47,4 +47,7 @@ urlpatterns = [
     ),
     path("delete_order/<int:pk>/", views.DeleteFBAOrder.as_view(), name="delete_order"),
     path("repeat_order/<int:pk>/", views.RepeatFBAOrder.as_view(), name="repeat_order"),
+    path(
+        "shipping_price/<int:pk>/", views.ShippingPrice.as_view(), name="shipping_price"
+    ),
 ]
