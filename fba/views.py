@@ -278,6 +278,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
         self.exchange_rate = float(self.country.country.currency.exchange_rate)
         self.product_weight = int(post_data.get("weight"))
         self.stock_level = int(post_data.get("stock_level"))
+        self.zero_rated = post_data.get("zero_rated") == "true"
         try:
             self.quantity = int(post_data.get("quantity"))
         except ValueError:
@@ -294,7 +295,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
 
     def get_vat(self):
         """Return the caclulated VAT."""
-        if self.country.country.vat_is_required():
+        if self.country.country.vat_is_required() and not self.zero_rated:
             vat = self.selling_price / 6
             vat = round(vat, 2)
         else:

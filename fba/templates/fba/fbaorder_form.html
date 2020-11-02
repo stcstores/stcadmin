@@ -132,6 +132,7 @@
     function refresh_calculator() {
         var data = {
             "sku": "{{ product.sku }}",
+            "zero_rated": {% if product.vat_rate == 0 %}true{% else %}false{% endif %},
             "selling_price": $("#{{ form.selling_price.auto_id }}").val(),
             "country": $("#{{ form.country.auto_id }}").val(),
             "purchase_price": {{ product.purchase_price }},
