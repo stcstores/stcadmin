@@ -8,7 +8,7 @@
 
 {% if form.instance.id %}
     <a href="{% url 'fba:fulfill_fba_order' form.instance.id %}">
-        {% if form.instance.status != form.instance.AWAITING_BOOKING %}
+        {% if form.instance.status == form.instance.NOT_PROCESSED or form.instance.status == form.instance.AWAITING_BOOKING %}
         <button>Fulfill Order</button>
         {% else %}
         <button>Complete Order</button>
@@ -17,6 +17,8 @@
     <a href="{% url 'fba:repeat_order' form.instance.id %}"><button>Repeat Order</button></a>
     {% if form.instance.status != form.instance.FULFILLED %}
     <a href="{% url 'fba:delete_order' form.instance.id %}"><button class="error">DELETE ORDER</button></a>
+    {% elif form.instance.country.region.auto_close %}
+    <a href="{% url 'fba:shipping_price' form.instance.id %}"><button>Add Shipping Price</button></a>
     {% endif %}
 {% endif %}
 
@@ -129,6 +131,7 @@
 
     function refresh_calculator() {
         var data = {
+            "sku": "{{ product.sku }}",
             "selling_price": $("#{{ form.selling_price.auto_id }}").val(),
             "country": $("#{{ form.country.auto_id }}").val(),
             "purchase_price": {{ product.purchase_price }},

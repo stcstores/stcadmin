@@ -256,3 +256,26 @@ class FulfillFBAOrderForm(forms.ModelForm):
             "fulfilled_by",
             "notes",
         ]
+
+
+class ShippingPriceForm(forms.ModelForm):
+    """Form for setting corrected shipping prices."""
+
+    def __init__(self, *args, **kwargs):
+        """Set fields."""
+        self.fba_order = kwargs.pop("fba_order")
+        super().__init__(*args, **kwargs)
+        self.fields["price_per_item"].widget = CurrencyWidget()
+        self.fields["price_per_item"].to_python = lambda x: int(float(x) * 100)
+        self.fields["shipping_price"] = forms.DecimalField(
+            max_digits=7, decimal_places=2
+        )
+        self.fields["product_SKU"].widget = forms.HiddenInput()
+        self.initial["product_SKU"] = self.fba_order.product_SKU
+        self.fields = {key: value for key, value in reversed(list(self.fields.items()))}
+
+    class Meta:
+        """Meta class for ShippingPriceForm."""
+
+        model = models.FBAShippingPrice
+        fields = ["price_per_item", "product_SKU"]

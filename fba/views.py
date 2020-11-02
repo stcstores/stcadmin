@@ -268,6 +268,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
     def parse_request(self):
         """Get request parameters from POST."""
         post_data = self.request.POST
+        self.sku = post_data.get("sku")
         self.selling_price = float(post_data.get("selling_price"))
         self.country_id = int(post_data.get("country"))
         self.purchase_price = float(post_data.get("purchase_price"))
@@ -307,7 +308,15 @@ class FBAPriceCalculator(FBAUserMixin, View):
 
     def get_postage_per_item(self):
         """Return the caclulated price per item to post to FBA."""
-        postage_per_item = self.get_postage_to_fba() / int(self.quantity)
+        postage_per_item = None
+        if not self.country.region.auto_close:
+            try:
+                record = models.FBAShippingPrice.objects.get(product_SKU=self.sku)
+                postage_per_item = record.price_per_item / 100
+            except models.FBAShippingPrice.DoesNotExist:
+                pass
+        if postage_per_item is None:
+            postage_per_item = self.get_postage_to_fba() / int(self.quantity)
         return round(postage_per_item, 2)
 
     def get_profit(self):
@@ -433,3 +442,34 @@ class DeleteFBAOrder(FBAUserMixin, DeleteView):
     def get_success_url(self):
         """Return the URL to redirect to after a succesfull deletion."""
         return reverse("fba:order_list")
+
+
+class ShippingPrice(FBAUserMixin, FormView):
+    """View for adding correct shipping prices."""
+
+    form_class = forms.ShippingPriceForm
+    template_name = "fba/shipping_price.html"
+
+    def get_form_kwargs(self, *args, **kwargs):
+        """Add the FBA order to the form kwargs."""
+        kwargs = super().get_form_kwargs(*args, **kwargs)
+        kwargs["fba_order"] = get_object_or_404(
+            models.FBAOrder, id=self.kwargs.get("pk")
+        )
+        try:
+            kwargs["instance"] = models.FBAShippingPrice.objects.get(
+                product_SKU=kwargs["fba_order"].product_SKU
+            )
+        except models.FBAShippingPrice.DoesNotExist:
+            pass
+        return kwargs
+
+    def form_valid(self, form):
+        """Get the FBA Order from the form."""
+        self.fba_order = form.fba_order
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the url to redirect to on successful submission."""
+        return self.fba_order.get_absolute_url()
