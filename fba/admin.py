@@ -112,3 +112,12 @@ class FBAOrderAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
 
     list_filter = ["region", "status"]
+
+
+@admin.register(models.FBAShippingPrice)
+class FBAShippingPriceAdmin(admin.ModelAdmin):
+    """Model admin for the FBAShippingPrice model."""
+
+    fields = ["product_SKU", "price_per_item"]
+    list_display = ["__str__", "product_SKU", "price_per_item", "added"]
+    list_editable = ["product_SKU", "price_per_item"]
