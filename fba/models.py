@@ -26,7 +26,7 @@ class FBARegion(models.Model):
         choices=((INCHES, "Inches"), (CM, "Centimeters")), max_length=10
     )
     weight_unit = models.CharField(
-        choices=((LB, "Kilograms"), (KG, "Pounds")), max_length=2
+        choices=((KG, "Kilograms"), (LB, "Pounds")), max_length=2
     )
     auto_close = models.BooleanField()
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
@@ -108,9 +108,6 @@ class FBAOrder(models.Model):
     FBA_fee = models.PositiveIntegerField()
     aproximate_quantity = models.PositiveIntegerField()
     quantity_sent = models.PositiveIntegerField(blank=True, null=True)
-    box_width = models.PositiveIntegerField(blank=True, null=True)
-    box_height = models.PositiveIntegerField(blank=True, null=True)
-    box_depth = models.PositiveIntegerField(blank=True, null=True)
     box_weight = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, null=True
     )
@@ -162,9 +159,6 @@ class FBAOrder(models.Model):
         """Return True if all fields required to complete the order are filled."""
         return all(
             (
-                self.box_width is not None,
-                self.box_height is not None,
-                self.box_depth is not None,
                 self.box_weight is not None,
                 self.quantity_sent is not None,
             )

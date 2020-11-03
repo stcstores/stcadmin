@@ -25,11 +25,15 @@
             text-align: right;
         }
 
-        #fields td {
+        .write_space {
             width: 6em;
             height: 2em;
             border-bottom: solid black 2px;
             margin: 5em;
+        }
+
+        .max {
+            font-size: 0.75em;
         }
 
     </style>
@@ -76,17 +80,19 @@
         <table id="fields">
             <tr>
                 <th>Weight (kg)</th>
-                <td></td>
+                <td class="write_space"></td>
+                <td class="max">Max: {{ order.region.max_weight }} {{ order.region.weight_unit }}</td>
             </tr>
             <tr>
                 <th>Box Dimensions</th>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td class="write_space"></td>
+                <td class="write_space"></td>
+                <td class="write_space"></td>
+                <td class="max">Max: {{ order.region.max_size }} {{ order.region.dimension_unit }}</td>
             </tr>
             <tr>
                 <th>Quantity</th>
-                <td></td>
+                <td class="write_space"></td>
             </tr>
         </table>
     </div>

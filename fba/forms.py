@@ -225,18 +225,10 @@ class FulfillFBAOrderForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         """Set required fields."""
         super().__init__(*args, **kwargs)
-        dimension_unit = self.instance.region.dimension_unit
         max_weight = self.instance.region.max_weight
-        max_size = self.instance.region.max_size
-        for field in ("box_width", "box_height", "box_depth"):
-            self.fields[field].label += f" ({dimension_unit})"
-            self.fields[field].widget.attrs["max"] = max_size
         self.fields["box_weight"].label += " (kg)"
         self.fields["box_weight"].widget.attrs["max"] = max_weight
         self.fields["box_weight"].required = True
-        self.fields["box_width"].required = True
-        self.fields["box_height"].required = True
-        self.fields["box_depth"].required = True
         self.fields["quantity_sent"].required = True
         self.fields["fulfilled_by"].required = True
         self.fields["fulfilled_by"].queryset = User.objects.filter(
@@ -249,9 +241,6 @@ class FulfillFBAOrderForm(forms.ModelForm):
         model = models.FBAOrder
         fields = [
             "box_weight",
-            "box_width",
-            "box_height",
-            "box_depth",
             "quantity_sent",
             "fulfilled_by",
             "notes",
