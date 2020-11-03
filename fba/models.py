@@ -26,7 +26,7 @@ class FBARegion(models.Model):
         choices=((INCHES, "Inches"), (CM, "Centimeters")), max_length=10
     )
     weight_unit = models.CharField(
-        choices=((LB, "Kilograms"), (KG, "Pounds")), max_length=2
+        choices=((KG, "Kilograms"), (LB, "Pounds")), max_length=2
     )
     auto_close = models.BooleanField()
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
