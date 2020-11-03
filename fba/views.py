@@ -72,6 +72,7 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
         initial["product_name"] = self.product.full_name
         initial["product_weight"] = self.product.weight
         initial["product_hs_code"] = self.product.hs_code
+        initial["product_asin"] = self.product.barcode
         return initial
 
     def get_context_data(self, *args, **kwargs):
@@ -121,6 +122,7 @@ class RepeatFBAOrder(FBAOrderCreate):
             product_name=self.to_repeat.product_name,
             product_weight=self.product.weight,
             product_hs_code=self.product.hs_code,
+            product_asin=self.product.barcode,
             region=self.to_repeat.region,
             selling_price=self.to_repeat.selling_price,
             FBA_fee=self.to_repeat.FBA_fee,

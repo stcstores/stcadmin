@@ -66,6 +66,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "product_name",
         "product_weight",
         "product_hs_code",
+        "product_asin",
         "FBA_fee",
         "selling_price",
         "small_and_light",
@@ -91,6 +92,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "product_name",
         "product_weight",
         "product_hs_code",
+        "product_asin",
         "small_and_light",
         "selling_price",
         "FBA_fee",
@@ -101,7 +103,12 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "fulfilled_by",
     ]
 
-    search_fields = ["product_SKU", "product_ID", "product_name"]
+    search_fields = [
+        "product_SKU",
+        "product_ID",
+        "product_name",
+        "product_asin",
+    ]
 
     date_hierarchy = "created_at"
 
