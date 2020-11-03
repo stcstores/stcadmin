@@ -70,7 +70,7 @@ class AwaitingFulfillmentManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .exclude(status=FBAOrder.FULFILLED)
+            .exclude(status__in=(FBAOrder.FULFILLED, FBAOrder.ON_HOLD))
             .annotate(
                 custom_order=models.Case(
                     models.When(status=FBAOrder.AWAITING_BOOKING, then=models.Value(0)),
@@ -91,6 +91,7 @@ class FBAOrder(models.Model):
     AWAITING_BOOKING = "Awaiting Collection Booking"
     PRINTED = "Printed"
     NOT_PROCESSED = "Not Processed"
+    ON_HOLD = "On Hold"
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -116,12 +117,14 @@ class FBAOrder(models.Model):
     priority = models.PositiveIntegerField(default=999)
     printed = models.BooleanField(default=False)
     small_and_light = models.BooleanField(default=False)
+    on_hold = models.BooleanField(default=False)
     status = models.CharField(
         choices=(
             (NOT_PROCESSED, NOT_PROCESSED),
             (AWAITING_BOOKING, AWAITING_BOOKING),
             (PRINTED, PRINTED),
             (FULFILLED, FULFILLED),
+            (ON_HOLD, ON_HOLD),
         ),
         max_length=255,
     )
@@ -176,6 +179,8 @@ class FBAOrder(models.Model):
 
     def get_status(self):
         """Return a string describing the status of the order."""
+        if self.on_hold:
+            return self.ON_HOLD
         if self.closed_at is not None:
             return self.FULFILLED
         if self.details_complete() is True:

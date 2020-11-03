@@ -7,7 +7,7 @@
 <h2>{{ product.sku}} - {{ product.full_name }}</h2>
 <h2>ASIN: {{ product.barcode }}</h2>
 
-{% if form.instance.id %}
+{% if form.instance.id and form.instance.status != form.instance.ON_HOLD %}
     <a href="{% url 'fba:fulfill_fba_order' form.instance.id %}">
         {% if form.instance.status == form.instance.NOT_PROCESSED or form.instance.status == form.instance.AWAITING_BOOKING %}
         <button>Fulfill Order</button>
@@ -161,9 +161,16 @@
                 $("#max_quantity").val(result["max_quantity"]);
                 $("span.currency_symbol").text(result["currency_symbol"]);
                 $("#max_quantity_no_stock").val(result["max_quantity_no_stock"]);
-                var aprox_quantity = $("#{{ form.aproximate_quantity.auto_id }}")
-                if (aprox_quantity.val() === ""){
+                var aprox_quantity = $("#{{ form.aproximate_quantity.auto_id }}");
+                var aprox_quantity_val = aprox_quantity.val();
+                if (aprox_quantity_val === ""){
                     aprox_quantity.val(result["max_quantity"]);
+                }
+                var on_hold = $("#{{ form.on_hold.auto_id }}").parent();
+                if (aprox_quantity_val > {{ product.stock_level }}) {
+                    on_hold.addClass("error");
+                } else {
+                    on_hold.removeClass("error");
                 }
             }
         })

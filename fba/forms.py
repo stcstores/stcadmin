@@ -81,6 +81,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "FBA_fee",
             "aproximate_quantity",
             "small_and_light",
+            "on_hold",
             "notes",
         ] + self.__class__.Meta.fields
         new_fields = {key: self.fields[key] for key in field_order}
@@ -104,6 +105,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "FBA_fee",
             "aproximate_quantity",
             "small_and_light",
+            "on_hold",
             "notes",
         ]
         widgets = {"product_ID": forms.HiddenInput()}
@@ -127,6 +129,7 @@ class FBAOrderFilter(forms.Form):
             (models.FBAOrder.PRINTED, models.FBAOrder.PRINTED),
             (models.FBAOrder.AWAITING_BOOKING, models.FBAOrder.AWAITING_BOOKING),
             (models.FBAOrder.FULFILLED, models.FBAOrder.FULFILLED),
+            (models.FBAOrder.ON_HOLD, models.FBAOrder.ON_HOLD),
         ),
         required=False,
     )
