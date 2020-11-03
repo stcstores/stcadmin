@@ -5,6 +5,7 @@
 <h1>Fulfill FBA Order</h1>
 
 <h3>{{ form.instance.product_SKU }} - {{ form.instance.product_name }}</h3>
+<h3>ASIN: {{ form.instance.product_asin }}</h3>
 {% if form.instance.closed_at %}<h2>CLOSED: {{ form.instance.closed_at }}</h2>{% endif %}
 
 <a href="{% url 'fba:order_printout' form.instance.pk %}" target="_blank">
