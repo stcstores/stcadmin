@@ -64,7 +64,9 @@
             </td>
             {% if order.closed_at == None %}
             <td>
+                {% if order.status != order.ON_HOLD %}
                 <a href="{% url 'fba:fulfill_fba_order' order.id %}"><button>Fulfill</button></a>
+                {% endif %}
             </td>
             <td>
                 {% if order.status != order.FULFILLED %}
