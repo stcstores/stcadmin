@@ -446,9 +446,9 @@ class DeleteFBAOrder(FBAUserMixin, DeleteView):
     def get_object(self):
         """Prevent deletion of in progress or completed FBA orders."""
         order = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
-        if order.status == order.NOT_PROCESSED:
-            return order
-        raise PermissionDenied()
+        if order.status == order.FULFILLED:
+            raise PermissionDenied()
+        return order
 
     def get_success_url(self):
         """Return the URL to redirect to after a succesfull deletion."""
