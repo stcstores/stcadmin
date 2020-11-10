@@ -72,7 +72,6 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
         initial["product_name"] = self.product.full_name
         initial["product_weight"] = self.product.weight
         initial["product_hs_code"] = self.product.hs_code
-        initial["product_asin"] = self.product.barcode
         return initial
 
     def get_context_data(self, *args, **kwargs):
@@ -122,7 +121,7 @@ class RepeatFBAOrder(FBAOrderCreate):
             product_name=self.to_repeat.product_name,
             product_weight=self.product.weight,
             product_hs_code=self.product.hs_code,
-            product_asin=self.product.barcode,
+            product_asin=self.to_repeat.product_asin,
             region=self.to_repeat.region,
             selling_price=self.to_repeat.selling_price,
             FBA_fee=self.to_repeat.FBA_fee,
@@ -320,7 +319,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
                 pass
         if postage_per_item is None:
             postage_per_item = self.get_postage_to_fba() / int(self.quantity)
-        return round(postage_per_item, 2)
+        return round(postage_per_item / self.exchange_rate, 2)
 
     def get_profit(self):
         """Return the calculated per item profit."""
@@ -333,7 +332,6 @@ class FBAPriceCalculator(FBAUserMixin, View):
                 self.fba_fee,
             ]
         )
-        profit *= self.exchange_rate
         return round(profit, 2)
 
     def get_percentage(self):
