@@ -319,7 +319,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
                 pass
         if postage_per_item is None:
             postage_per_item = self.get_postage_to_fba() / int(self.quantity)
-        return round(postage_per_item, 2)
+        return round(postage_per_item / self.exchange_rate, 2)
 
     def get_profit(self):
         """Return the calculated per item profit."""
@@ -332,7 +332,6 @@ class FBAPriceCalculator(FBAUserMixin, View):
                 self.fba_fee,
             ]
         )
-        profit *= self.exchange_rate
         return round(profit, 2)
 
     def get_percentage(self):
