@@ -74,6 +74,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "aproximate_quantity",
         "quantity_sent",
         "box_weight",
+        "tracking_number",
         "closed_at",
         "fulfilled_by",
         "notes",
@@ -101,6 +102,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "aproximate_quantity",
         "quantity_sent",
         "box_weight",
+        "tracking_number",
         "priority",
         "fulfilled_by",
     ]
@@ -110,6 +112,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "product_ID",
         "product_name",
         "product_asin",
+        "tracking_number",
     ]
 
     date_hierarchy = "created_at"

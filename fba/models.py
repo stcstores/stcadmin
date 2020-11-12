@@ -113,6 +113,7 @@ class FBAOrder(models.Model):
     box_weight = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, null=True
     )
+    tracking_number = models.CharField(max_length=255, blank=True)
     notes = models.TextField(blank=True)
     priority = models.PositiveIntegerField(default=999)
     printed = models.BooleanField(default=False)
@@ -176,6 +177,13 @@ class FBAOrder(models.Model):
     def update_stock_level(self):
         """Update the product's stock level in Cloud Commerce."""
         print(f"Reduce stock level for {self.product_SKU} by {self.quantity_sent}")
+
+    def set_tracking_number(self, tracking_number):
+        """Set the order's tracking number."""
+        self.tracking_number = tracking_number
+        self.save()
+        if self.status == self.AWAITING_BOOKING:
+            self.close()
 
     def get_status(self):
         """Return a string describing the status of the order."""
