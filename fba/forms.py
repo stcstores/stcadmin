@@ -80,6 +80,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "FBA_fee",
             "aproximate_quantity",
             "small_and_light",
+            "tracking_number",
             "on_hold",
             "notes",
         ] + self.__class__.Meta.fields
@@ -87,6 +88,8 @@ class CreateFBAOrderForm(forms.ModelForm):
         self.fields = new_fields
         if self.instance.id is not None:
             self.initial["country"] = self.instance.region.default_country
+        else:
+            self.fields["tracking_number"].widget = forms.HiddenInput()
 
     class Meta:
         """Meta class for CreateFBAOrderForm."""
@@ -104,6 +107,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "FBA_fee",
             "aproximate_quantity",
             "small_and_light",
+            "tracking_number",
             "on_hold",
             "notes",
         ]
