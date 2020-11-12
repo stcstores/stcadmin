@@ -50,4 +50,9 @@ urlpatterns = [
     path(
         "shipping_price/<int:pk>/", views.ShippingPrice.as_view(), name="shipping_price"
     ),
+    path(
+        "set_tracking_number/",
+        views.SetTrackingNumber.as_view(),
+        name="set_tracking_number",
+    ),
 ]
