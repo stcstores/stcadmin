@@ -307,7 +307,7 @@ class PackageType(fieldtypes.SingleSelectize):
     def get_choices():
         """Return choices for field."""
         package_types = [
-            (service.name, service.name)
+            (service.name, f"{service.name} - {service.description}")
             for service in models.PackageType.objects.filter(inactive=False)
         ]
         return [("", "")] + package_types

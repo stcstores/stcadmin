@@ -35,7 +35,7 @@
       <span class="InputAddOn-item">Shipping Method</span>
       <select name="shipping_method" id="shipping_method">
         {% for product_type in product_types %}
-        <option value="{{ product_type }}">{{ product_type }}</option>
+        <option value="{{ product_type }}">{{ product_type }} - {{ product_type.description }}</option>
         {% endfor %}
       </select>
     </div>

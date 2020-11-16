@@ -114,6 +114,7 @@ class PackageType(BaseNonListingProductOptionModel):
     ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
 
     large_letter_compatible = models.BooleanField(default=False)
+    description = models.CharField(max_length=255, blank=True)
     ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
 
     class Meta:
