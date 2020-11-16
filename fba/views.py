@@ -111,7 +111,7 @@ class RepeatFBAOrder(FBAOrderCreate):
 
     def duplicate_order(self):
         """Create a duplicate of an FBA order."""
-        if quantity_sent := self.to_repeat.quantity_sent is None:
+        if (quantity_sent := self.to_repeat.quantity_sent) is not None:
             aprox_quantity = min((quantity_sent, self.product.stock_level))
         else:
             aprox_quantity = self.to_repeat.aproximate_quantity
