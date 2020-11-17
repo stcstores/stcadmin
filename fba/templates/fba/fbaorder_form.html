@@ -23,6 +23,7 @@
     {% endif %}
 {% endif %}
 
+<img src="{% if form.instance.id %}{{ form.instance.product_image_url }}{% else %}{{ image_url }}{% endif %}" alt="" height="200">
 
 <div class="fba_order_form_container">
 
