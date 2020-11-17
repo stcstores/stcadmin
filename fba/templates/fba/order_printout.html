@@ -6,6 +6,7 @@
                 width: 21cm;
                 height: 29.7cm;
                 margin: 10mm 10mm 10mm 10mm;
+                vertical-align: middle;
             } 
         }
 
@@ -36,6 +37,16 @@
             font-size: 0.75em;
         }
 
+        img {
+            border: 1px solid black;
+            border-radius: 1em;
+        }
+
+        .top {
+            display: flex;
+            flex-direction: row;
+        }
+
     </style>
 </head>
 
@@ -44,40 +55,43 @@
     <h2>{{ order.product_name }}</h2>
     <h2>ASIN: {{ order.product_asin }}</h2>
     <div id="fba_order_form">
-        <table id="info">
-            <tr>
-                <th>Country</th>
-                <td>{{ order.region.name }}</td>
-            </tr>
-            <tr>
-                <th>Locations</th>
-                <td>
-                    {% for location in locations %}
-                        <div class="location">{{ location }}</div>
-                    {% endfor %}
-                </td>
-            </tr>
-            <tr>
-                <th>Product Weight (g)</th>
-                <td>{{ order.product_weight }}</td>
-            </tr>
-            <tr>
-                <th>HS Code</th>
-                <td>{{ order.product_hs_code }}</td>
-            </tr>
-            <tr>
-                <th>Aproximate Quantity</th>
-                <td>{{ order.aproximate_quantity }}</td>
-            </tr>
-            <tr>
-                <th>Selling Price</th>
-                <td>{{ order.region.currency.symbol }}{{ selling_price }}</td>
-            </tr>
-            {% if order.small_and_light is True %}
-            <tr><td colspan="2">SMALL AND LIGHT</td></tr>
-            {% endif %}
-            <tr><td colspan="2">{{ order.notes }}</td></tr>
-        </table>
+        <div class="top">
+            <table id="info">
+                <tr>
+                    <th>Country</th>
+                    <td>{{ order.region.name }}</td>
+                </tr>
+                <tr>
+                    <th>Locations</th>
+                    <td>
+                        {% for location in locations %}
+                            <div class="location">{{ location }}</div>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Product Weight (g)</th>
+                    <td>{{ order.product_weight }}</td>
+                </tr>
+                <tr>
+                    <th>HS Code</th>
+                    <td>{{ order.product_hs_code }}</td>
+                </tr>
+                <tr>
+                    <th>Aproximate Quantity</th>
+                    <td>{{ order.aproximate_quantity }}</td>
+                </tr>
+                <tr>
+                    <th>Selling Price</th>
+                    <td>{{ order.region.currency.symbol }}{{ selling_price }}</td>
+                </tr>
+                {% if order.small_and_light is True %}
+                <tr><td colspan="2">SMALL AND LIGHT</td></tr>
+                {% endif %}
+                <tr><td colspan="2">{{ order.notes }}</td></tr>
+            </table>
+            <img src="{{ order.product_image_url }}" alt="" height="200">
+        </div>
         <table id="fields">
             <tr>
                 <th>Weight (kg)</th>

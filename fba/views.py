@@ -72,12 +72,24 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
         initial["product_name"] = self.product.full_name
         initial["product_weight"] = self.product.weight
         initial["product_hs_code"] = self.product.hs_code
+        initial["product_image_url"] = self.get_image_url()
         return initial
+
+    def get_image_url(self):
+        """Return the URL of the product's image."""
+        image_data = CCAPI.get_product_images(
+            range_id=self.product.range_id, product_id=self.product.id
+        )
+        try:
+            return image_data[0].url
+        except IndexError:
+            return ""
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
         context = super().get_context_data(*args, **kwargs)
         context["product"] = self.product
+        context["image_url"] = context["form"].initial["product_image_url"]
         return context
 
     def get_success_url(self):

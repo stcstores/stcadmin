@@ -67,6 +67,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "product_weight",
         "product_hs_code",
         "product_asin",
+        "product_image_url",
         "FBA_fee",
         "selling_price",
         "small_and_light",

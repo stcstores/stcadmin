@@ -58,6 +58,7 @@ class CreateFBAOrderForm(forms.ModelForm):
         self.fields["product_name"].widget = forms.HiddenInput()
         self.fields["product_weight"].widget = forms.HiddenInput()
         self.fields["product_hs_code"].widget = forms.HiddenInput()
+        self.fields["product_image_url"].widget = forms.HiddenInput()
         self.fields["selling_price"].widget = CurrencyWidget()
         self.fields["selling_price"].to_python = lambda x: int(float(x) * 100)
         self.fields["FBA_fee"].widget = CurrencyWidget()
@@ -73,6 +74,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "product_name",
             "product_weight",
             "product_hs_code",
+            "product_image_url",
             "region",
             "country",
             "product_asin",
@@ -101,6 +103,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "product_name",
             "product_weight",
             "product_hs_code",
+            "product_image_url",
             "product_asin",
             "region",
             "selling_price",
