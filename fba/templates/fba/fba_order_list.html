@@ -21,7 +21,7 @@
 <table class="orders">
     <thead>
         <tr>
-            <th colspan="4"></th>
+            <th colspan="5"></th>
             <th colspan="2">Quantity</th>
             <th colspan="2"></th>
             <th colspan="2">Fulfilled</th>
@@ -31,6 +31,7 @@
             <th>SKU</th>
             <th>Name</th>
             <th></th>
+            <th>Supplier</th>
             <th>Created</th>
             <th>Aprox</th>
             <th>Sent</th>
@@ -53,6 +54,7 @@
                 {% endif %}
             </th>
             <td>{{ order.region.flag }}</td>
+            <td>{{ order.product_supplier }}</td>
             <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
             <td>{{ order.aproximate_quantity }}</td>
             <td>{% if order.quantity_sent %}{{ order.quantity_sent }}{% endif %}</td>

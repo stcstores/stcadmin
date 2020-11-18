@@ -73,6 +73,7 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
         initial["product_weight"] = self.product.weight
         initial["product_hs_code"] = self.product.hs_code
         initial["product_image_url"] = self.get_image_url()
+        initial["product_supplier"] = self.product.supplier.factory_name
         return initial
 
     def get_image_url(self):
