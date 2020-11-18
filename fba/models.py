@@ -107,6 +107,7 @@ class FBAOrder(models.Model):
     product_hs_code = models.CharField(max_length=255)
     product_asin = models.CharField(max_length=24, blank=True)
     product_image_url = models.URLField(blank=True)
+    product_supplier = models.CharField(max_length=255, blank=True)
     selling_price = models.PositiveIntegerField()
     FBA_fee = models.PositiveIntegerField()
     aproximate_quantity = models.PositiveIntegerField()
