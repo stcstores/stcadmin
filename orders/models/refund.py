@@ -24,6 +24,7 @@ class Refund(PolymorphicModel):
     closed = models.BooleanField(default=False)
     images_required = False
     created_at = models.DateTimeField(auto_now_add=True)
+    is_partial = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         """Return the URL for this refund."""

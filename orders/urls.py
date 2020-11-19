@@ -92,4 +92,9 @@ urlpatterns = [
         views.SetParcelNotReturnedForRefund.as_view(),
         name="set_refund_parcel_not_returned",
     ),
+    path(
+        "refund/<int:refund_pk>/mark_refund_parital",
+        views.MarkRefundPartial.as_view(),
+        name="mark_refund_parital",
+    ),
 ]
