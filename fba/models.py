@@ -1,5 +1,7 @@
 """Models for the FBA app."""
 
+import cc_products
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import reverse
@@ -121,6 +123,7 @@ class FBAOrder(models.Model):
     printed = models.BooleanField(default=False)
     small_and_light = models.BooleanField(default=False)
     on_hold = models.BooleanField(default=False)
+    update_stock_level_when_complete = models.BooleanField(default=True)
     status = models.CharField(
         choices=(
             (NOT_PROCESSED, NOT_PROCESSED),
@@ -175,10 +178,20 @@ class FBAOrder(models.Model):
         """Mark the order closed."""
         self.closed_at = timezone.now()
         self.save()
+        self.update_stock_level()
 
     def update_stock_level(self):
         """Update the product's stock level in Cloud Commerce."""
-        print(f"Reduce stock level for {self.product_SKU} by {self.quantity_sent}")
+        if settings.DEBUG is True:
+            print("Skipping stock update due to DEBUG mode")
+        if self.update_stock_level_when_complete is True:
+            print(f"Reduce stock level for {self.product_SKU} by {self.quantity_sent}")
+            product = cc_products.get_product(self.product_ID)
+            product.stock_level -= self.quantity_sent
+        else:
+            print(
+                "Skipping stock update becuase update_stock_level_when_complete is False"
+            )
 
     def set_tracking_number(self, tracking_number):
         """Set the order's tracking number."""

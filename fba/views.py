@@ -406,8 +406,6 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
     def close_order(self):
         """Complete and close the order."""
         self.object.close()
-        if self.object.region.auto_close is True:
-            self.object.update_stock_level()
 
 
 class FBAOrderPrintout(FBAUserMixin, TemplateView):
