@@ -258,6 +258,7 @@ class FulfillFBAOrderForm(forms.ModelForm):
             "box_weight",
             "quantity_sent",
             "fulfilled_by",
+            "update_stock_level_when_complete",
             "notes",
         ]
 
