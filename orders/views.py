@@ -622,3 +622,14 @@ class SetParcelNotReturnedForRefund(OrdersUserMixin, RedirectView):
         refund.returned = False
         refund.save()
         return refund.get_absolute_url()
+
+
+class MarkRefundPartial(OrdersUserMixin, RedirectView):
+    """View for setting refunds as partial."""
+
+    def get_redirect_url(self, refund_pk):
+        """Set a refund as partial."""
+        refund = get_object_or_404(models.Refund, id=refund_pk)
+        refund.is_partial = True
+        refund.save()
+        return refund.get_absolute_url()
