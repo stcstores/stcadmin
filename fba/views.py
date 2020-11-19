@@ -345,7 +345,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
                 self.fba_fee,
             ]
         )
-        return round(profit, 2)
+        return round(profit * self.exchange_rate, 2)
 
     def get_percentage(self):
         """Return the percentage fo the sale price that is profit."""
