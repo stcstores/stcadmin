@@ -2,6 +2,7 @@
 
 import cc_products
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import reverse
@@ -178,19 +179,36 @@ class FBAOrder(models.Model):
         """Mark the order closed."""
         self.closed_at = timezone.now()
         self.save()
-        self.update_stock_level()
+        return self.update_stock_level()
 
     def update_stock_level(self):
         """Update the product's stock level in Cloud Commerce."""
         if settings.DEBUG is True:
-            print("Skipping stock update due to DEBUG mode")
+            return messages.WARNING, "Stock update skipped: DEBUG mode"
         if self.update_stock_level_when_complete is True:
-            print(f"Reduce stock level for {self.product_SKU} by {self.quantity_sent}")
-            product = cc_products.get_product(self.product_ID)
-            product.stock_level -= self.quantity_sent
+            try:
+                product = cc_products.get_product(self.product_ID)
+                stock_level = product.stock_level
+                product.stock_level -= self.quantity_sent
+                return messages.SUCCESS, (
+                    f"Changed stock level for {self.product_SKU} from {stock_level} "
+                    f"to {product.stock_level}"
+                )
+            except Exception:
+                return (
+                    messages.ERROR,
+                    (
+                        f"Stock Level failed to update for {self.product_SKU}, "
+                        "please check stock level."
+                    ),
+                )
         else:
-            print(
-                "Skipping stock update becuase update_stock_level_when_complete is False"
+            return (
+                messages.WARNING,
+                (
+                    f"Set to skip stock update, the stock level for {self.product_SKU}"
+                    " is unchanged."
+                ),
             )
 
     def set_tracking_number(self, tracking_number):

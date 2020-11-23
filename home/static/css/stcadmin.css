@@ -275,6 +275,8 @@ th {
 
 .messages li.warning {
   background: orange;
+  color: black;
+  font-weight: bold;
 }
 
 .messages li.error {

@@ -267,8 +267,12 @@ class FBAPriceCalculator(FBAUserMixin, View):
             response["channel_fee"] = self.get_channel_fee()
             response["currency_symbol"] = self.get_currency_symbol()
             response["vat"] = self.get_vat()
-            response["postage_to_fba"] = self.get_postage_to_fba()
-            response["postage_per_item"] = self.get_postage_per_item()
+            response["postage_to_fba"] = round(
+                self.get_postage_to_fba() * self.exchange_rate, 2
+            )
+            response["postage_per_item"] = round(
+                self.get_postage_per_item() * self.exchange_rate, 2
+            )
             response["profit"] = self.get_profit()
             response["percentage"] = self.get_percentage()
             response["purchase_price"] = self.get_purchase_price()
@@ -392,20 +396,23 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
                 or "collection_booked" in self.request.POST
             ):
                 self.close_order()
+
         return return_value
 
     def get_success_url(self):
         """Redirect to the order list."""
+        return self.object.get_fulfillment_url()
+
+    def close_order(self):
+        """Complete and close the order."""
+        message_type, text = self.object.close()
+        print(message_type, text)
         messages.add_message(
             self.request,
             messages.SUCCESS,
             f"FBA order fulfilled for product {self.object.product_SKU}.",
         )
-        return self.object.get_fulfillment_url()
-
-    def close_order(self):
-        """Complete and close the order."""
-        self.object.close()
+        messages.add_message(self.request, message_type, text)
 
 
 class FBAOrderPrintout(FBAUserMixin, TemplateView):
