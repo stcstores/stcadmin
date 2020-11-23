@@ -267,8 +267,12 @@ class FBAPriceCalculator(FBAUserMixin, View):
             response["channel_fee"] = self.get_channel_fee()
             response["currency_symbol"] = self.get_currency_symbol()
             response["vat"] = self.get_vat()
-            response["postage_to_fba"] = self.get_postage_to_fba()
-            response["postage_per_item"] = self.get_postage_per_item()
+            response["postage_to_fba"] = round(
+                self.get_postage_to_fba() * self.exchange_rate, 2
+            )
+            response["postage_per_item"] = round(
+                self.get_postage_per_item() * self.exchange_rate, 2
+            )
             response["profit"] = self.get_profit()
             response["percentage"] = self.get_percentage()
             response["purchase_price"] = self.get_purchase_price()
