@@ -396,20 +396,23 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
                 or "collection_booked" in self.request.POST
             ):
                 self.close_order()
+
         return return_value
 
     def get_success_url(self):
         """Redirect to the order list."""
+        return self.object.get_fulfillment_url()
+
+    def close_order(self):
+        """Complete and close the order."""
+        message_type, text = self.object.close()
+        print(message_type, text)
         messages.add_message(
             self.request,
             messages.SUCCESS,
             f"FBA order fulfilled for product {self.object.product_SKU}.",
         )
-        return self.object.get_fulfillment_url()
-
-    def close_order(self):
-        """Complete and close the order."""
-        self.object.close()
+        messages.add_message(self.request, message_type, text)
 
 
 class FBAOrderPrintout(FBAUserMixin, TemplateView):
