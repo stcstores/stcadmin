@@ -275,12 +275,8 @@ class FBAPriceCalculator(FBAUserMixin, View):
             response["channel_fee"] = self.get_channel_fee()
             response["currency_symbol"] = self.get_currency_symbol()
             response["vat"] = self.get_vat()
-            response["postage_to_fba"] = round(
-                self.get_postage_to_fba() * self.exchange_rate, 2
-            )
-            response["postage_per_item"] = round(
-                self.get_postage_per_item() * self.exchange_rate, 2
-            )
+            response["postage_to_fba"] = self.postage_gbp
+            response["postage_per_item"] = self.postage_per_item_gbp
             response["profit"] = self.get_profit()
             response["percentage"] = self.get_percentage()
             response["purchase_price"] = self.get_purchase_price()
@@ -309,6 +305,8 @@ class FBAPriceCalculator(FBAUserMixin, View):
             self.quantity = int(post_data.get("quantity"))
         except ValueError:
             self.quantity, _ = self.get_max_quantity()
+        self.get_postage_to_fba()
+        self.get_profit()
 
     def get_channel_fee(self):
         """Return the caclulated channel fee."""
@@ -330,8 +328,8 @@ class FBAPriceCalculator(FBAUserMixin, View):
 
     def get_postage_to_fba(self):
         """Return the caclulated price to post to FBA."""
-        postage_to_fba = float(self.country.region.postage_price) / 100.0
-        return round(postage_to_fba, 2)
+        self.postage_gbp = round(float(self.country.region.postage_price) / 100.0, 2)
+        self.postage_local = round(self.postage_gbp / self.exchange_rate, 2)
 
     def get_postage_per_item(self):
         """Return the caclulated price per item to post to FBA."""
@@ -339,18 +337,21 @@ class FBAPriceCalculator(FBAUserMixin, View):
         if not self.country.region.auto_close:
             try:
                 record = models.FBAShippingPrice.objects.get(product_SKU=self.sku)
-                postage_per_item = record.price_per_item / 100
+                self.postage_per_item_gbp = record.price_per_item / 100
             except models.FBAShippingPrice.DoesNotExist:
                 pass
         if postage_per_item is None:
-            postage_per_item = self.get_postage_to_fba() / int(self.quantity)
-        return round(postage_per_item / self.exchange_rate, 2)
+            self.postage_per_item_gbp = round(self.postage_gbp / int(self.quantity), 2)
+        self.postage_per_item_local = round(
+            self.postage_per_item_gbp / self.exchange_rate, 2
+        )
 
     def get_profit(self):
         """Return the calculated per item profit."""
+        self.get_postage_per_item()
         profit = self.selling_price - sum(
             [
-                self.get_postage_per_item(),
+                self.postage_per_item_local,
                 self.get_channel_fee(),
                 self.get_vat(),
                 self.get_purchase_price(),
