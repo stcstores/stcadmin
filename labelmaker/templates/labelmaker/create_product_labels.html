@@ -41,9 +41,7 @@
 <script>
     {% if sizes %}
     $(document).ready(function () {
-        var size_data = {
-            {% for size in sizes %} {{ size.id }}: {{ size.uk_size }},{% endfor %}
-        };
+        var size_data = { {% for size in sizes %} {{ size.id }}: "{{ size.uk_size }}",{% endfor %} };
 
         var colour_list = LabelForm($('#add_colours'), ['colour']);
 
