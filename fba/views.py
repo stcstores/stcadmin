@@ -239,12 +239,20 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
 
     def get_queryset(self):
         """Return a queryset of orders awaiting fulillment."""
-        return self.model.awaiting_fulfillment.all()
+        filter_kwargs = {}
+        region_name = self.request.GET.get("region")
+        if region_name is not None and region_name != "":
+            filter_kwargs["region__name"] = region_name
+        return self.model.awaiting_fulfillment.filter(**filter_kwargs).prefetch_related(
+            "region"
+        )
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
         context = super().get_context_data(*args, **kwargs)
+        context["regions"] = models.FBARegion.objects.values("name", "flag")
         context["page_range"] = self.get_page_range(context["paginator"])
+        context["selected_region"] = self.request.GET.get("region")
         return context
 
     def get_page_range(self, paginator):
