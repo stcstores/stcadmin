@@ -24,6 +24,7 @@
         <th>Department</th>
         <th>Packed By</th>
         <th>Reason</th>
+        <th></th>
         <th>Status</th>
         <th></th>
         <th></th>
@@ -38,6 +39,7 @@
         <td>{{ refund.order.department}}</td>
         <td>{{ refund.order.packed_by }}</td>
         <td>{{ refund.reason }}</td>
+        <td>{% if refund.is_partial %}Partial{% endif %}</td>
         <td>
             {% if refund.contact_name %}
                 {% if refund.contact_contacted is False %}

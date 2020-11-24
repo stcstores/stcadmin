@@ -74,6 +74,13 @@ class ProductType(models.Model):
         """Return a list of package types as a string."""
         return ", ".join([_.name for _ in self.package_types.all()])
 
+    def description(self):
+        """Return the description of the first associated package type."""
+        try:
+            return self.package_types.all()[0].description
+        except IndexError:
+            return ""
+
 
 class VATRate(models.Model):
     """Model for VAT rates."""

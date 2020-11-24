@@ -75,6 +75,13 @@
                     {% endif %}
             {% endif %}
         </div>
+        <div>
+            {% if refund.is_partial %}
+            <p class="error">PARTIAL</p>
+            {% else %}
+            <a href="{% url 'orders:mark_refund_parital' refund.id %}"><button>Mark Partial</button></a>
+            {% endif %}
+        </div>
         <div class="notes">
             <form action="{% url 'orders:set_refund_notes' refund.id %}" method="GET">
                 <label for="notes">Notes</label>

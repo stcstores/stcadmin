@@ -113,10 +113,10 @@ class SupplierContactAdmin(admin.ModelAdmin):
 class ProductOptionAdmin(admin.ModelAdmin):
     """Model admin for the ProductOptionModel abstract model."""
 
-    fields = ("name", "product_option_value_ID", "inactive")
-    list_display = ("__str__", "name", "product_option_value_ID", "inactive")
-    list_editable = ("name", "product_option_value_ID", "inactive")
-    search_fields = ("name", "product_option_value_ID")
+    fields = ["name", "product_option_value_ID", "inactive"]
+    list_display = ["__str__", "name", "product_option_value_ID", "inactive"]
+    list_editable = ["name", "product_option_value_ID", "inactive"]
+    search_fields = ["name", "product_option_value_ID"]
 
 
 @admin.register(models.Department)
@@ -145,7 +145,15 @@ class DepartmentAdmin(ProductOptionAdmin):
 class PackageTypeAdmin(SortableAdminMixin, ProductOptionAdmin):
     """Model admin for the PackageType model."""
 
-    pass
+    fields = ProductOptionAdmin.fields + ["description", "large_letter_compatible"]
+    list_display = ProductOptionAdmin.list_display + [
+        "description",
+        "large_letter_compatible",
+    ]
+    list_editable = ProductOptionAdmin.list_editable + [
+        "description",
+        "large_letter_compatible",
+    ]
 
 
 @admin.register(models.InternationalShipping)
