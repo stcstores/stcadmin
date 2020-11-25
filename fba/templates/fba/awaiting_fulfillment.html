@@ -7,9 +7,9 @@
 
 <p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
 <form action="" class="region_filter" method="GET">
-<button name="region" value="">All</button>
+<button class="region_select" name="region" value="">All</button>
 {% for region in regions %}
-<button name="region" value="{{region.name}}" {% if region.name == selected_region %}disabled{% endif %}>{{region.flag}} {{region.name}}</button>
+<button class="region_select" name="region" value="{{region.name}}" {% if region.name == selected_region %}disabled{% endif %}>{{region.flag}} {{region.name}}</button>
 {% endfor %}
 </form>
 <form action="" id="pagination">
