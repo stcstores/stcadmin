@@ -27,7 +27,7 @@ class RegionAdmin(admin.ModelAdmin):
 class CountryAdmin(admin.ModelAdmin):
     """Model Admin for shipping.Country."""
 
-    fields = ("country_ID", "name", "region", "currency", "vat_required")
+    fields = ("country_ID", "name", "region", "currency", "vat_required", "flag")
     list_display = (
         "__str__",
         "country_ID",
@@ -35,6 +35,7 @@ class CountryAdmin(admin.ModelAdmin):
         "region",
         "currency",
         "vat_required",
+        "flag",
     )
     list_editable = ("country_ID", "name", "region", "currency", "vat_required")
     list_filter = ("region",)

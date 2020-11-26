@@ -81,6 +81,7 @@ class Country(models.Model):
         Currency, blank=True, null=True, on_delete=models.SET_NULL
     )
     vat_required = models.BooleanField(blank=True, null=True)
+    flag = models.ImageField(upload_to="flags", blank=True, null=True)
 
     class Meta:
         """Meta class for Country."""
