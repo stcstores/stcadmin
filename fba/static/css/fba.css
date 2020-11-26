@@ -86,8 +86,18 @@ textarea {
     height: 5em;
 }
 
+.region_filter {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    justify-content: space-evenly;
+    max-width: 1000px;
+}
+
 .region_select {
     font-size: 1.5em;
-    ;
+    display: flex;
     padding: 1em;
+    flex-grow: 1;
+    text-align: center;
 }
