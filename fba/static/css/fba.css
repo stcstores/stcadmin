@@ -101,3 +101,7 @@ textarea {
     flex-grow: 1;
     text-align: center;
 }
+
+.region_select img {
+    margin-right: 0.25em;
+}

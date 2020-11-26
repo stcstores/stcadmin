@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 
 from shipping.models import Country, Currency
 
@@ -33,7 +34,6 @@ class FBARegion(models.Model):
     )
     auto_close = models.BooleanField()
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
-    flag = models.CharField(max_length=20, blank=True)
 
     class Meta:
         """Meta class for FBARegion."""
@@ -43,6 +43,13 @@ class FBARegion(models.Model):
 
     def __str__(self):
         return self.name
+
+    def flag(self):
+        """Return an image tag with the countries flag."""
+        return mark_safe(
+            f'<img src="{self.default_country.country.flag.url}" height="20" '
+            f'width="20" alt="{self.default_country.country.ISO_code}">'
+        )
 
 
 class FBACountry(models.Model):
