@@ -250,7 +250,9 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
         context = super().get_context_data(*args, **kwargs)
-        context["regions"] = models.FBARegion.objects.values("name", "flag")
+        context["regions"] = models.FBARegion.objects.all().prefetch_related(
+            "default_country__country"
+        )
         context["page_range"] = self.get_page_range(context["paginator"])
         context["selected_region"] = self.request.GET.get("region")
         return context
