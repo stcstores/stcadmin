@@ -186,7 +186,6 @@ class FBAOrder(models.Model):
         """Mark the order closed."""
         self.closed_at = timezone.now()
         self.save()
-        return self.update_stock_level()
 
     def update_stock_level(self):
         """Update the product's stock level in Cloud Commerce."""
