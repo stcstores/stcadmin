@@ -15,19 +15,19 @@
         }
 
         table {
-            margin: 1em;
-            padding: 1em;
-            border-spacing: 20px;
+            margin: 0.5em;
+            padding: 0.25em;
+            border-spacing: 15px;
             border-collapse: separate;
-            font-size: 1.5em;
+            font-size: 1.25em;
         }
 
-        th {
+        .info th {
             text-align: right;
         }
 
         .write_space {
-            width: 6em;
+            width: 3em;
             height: 2em;
             border-bottom: solid black 2px;
             margin: 5em;
@@ -37,7 +37,7 @@
             font-size: 0.75em;
         }
 
-        img {
+        .product_img {
             border: 1px solid black;
             border-radius: 1em;
         }
@@ -45,6 +45,26 @@
         .top {
             display: flex;
             flex-direction: row;
+        }
+
+        .inputs {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .fields, .warehouses {
+            border: black 2px solid;
+        }
+
+        .notes {
+            margin-left: 1em;
+            font-size: 1.5em;
+        }
+
+        .checkbox {
+            height: 20px;
+            width: 20px;
+            border: 1px black solid;
         }
 
     </style>
@@ -59,7 +79,7 @@
             <table id="info">
                 <tr>
                     <th>Country</th>
-                    <td>{{ order.region.name }}</td>
+                    <td>{{ order.region.name }} {{ order.region.flag }}</td>
                 </tr>
                 <tr>
                     <th>Locations</th>
@@ -88,27 +108,59 @@
                 {% if order.small_and_light is True %}
                 <tr><td colspan="2">SMALL AND LIGHT</td></tr>
                 {% endif %}
-                <tr><td colspan="2">{{ order.notes }}</td></tr>
             </table>
-            <img src="{{ order.product_image_url }}" alt="" height="200">
+            <img src="{{ order.product_image_url }}" class="product_img" alt="" height="200">
+            <div class="notes">
+                <h4>Notes:</h4>
+                {{ order.notes }}
+            </div>
         </div>
-        <table id="fields">
+        <div class="inputs">
+            <table class="fields">
+                <thead><tr><th colspan="5">Amazon Details</th></tr></thead>
+                <tr>
+                    <th>Weight ({{ order.region.weight_unit }})</th>
+                    <td class="write_space"></td>
+                    <td class="max">Max: {{ order.region.max_weight_local }}</td>
+                </tr>
+                <tr>
+                    <th>Box ({{ order.region.size_unit }}</th>
+                    <td class="write_space"></td>
+                    <td class="write_space"></td>
+                    <td class="write_space"></td>
+                    <td class="max">Max: {{ order.region.max_size_local }}</td>
+                </tr>
+                <tr>
+                    <th>Quantity</th>
+                    <td class="write_space"></td>
+                </tr>
+            </table>
+            <table class="fields">
+                <thead><tr><th colspan="5">Delivery Details</th></tr></thead>
+                <tr>
+                    <th>Weight (kg)</th>
+                    <td class="write_space"></td>
+                </tr>
+                <tr>
+                    <th>Box (cm)</th>
+                    <td class="write_space"></td>
+                    <td class="write_space"></td>
+                    <td class="write_space"></td>
+                </tr>
+            </table>
+        </div>
+        {% if warehouses %}
+        <div>
+            <table class="warehouses">
+            <tr><thead><th colspan="2">Warehouses</th></thead></tr>
+            {% for warehouse in warehouses %}
             <tr>
-                <th>Weight (kg)</th>
-                <td class="write_space"></td>
-                <td class="max">Max: {{ max_weight }} {{ order.region.weight_unit }}</td>
+                <td>{{ warehouse.name }}</td>
+                <td class="checkbox"></td>
             </tr>
-            <tr>
-                <th>Box Dimensions</th>
-                <td class="write_space"></td>
-                <td class="write_space"></td>
-                <td class="write_space"></td>
-                <td class="max">Max: {{ order.region.max_size }} {{ order.region.dimension_unit }}</td>
-            </tr>
-            <tr>
-                <th>Quantity</th>
-                <td class="write_space"></td>
-            </tr>
-        </table>
+            {% endfor %}
+            </table>
+        </div>
+        {% endif %}
     </div>
 </body>

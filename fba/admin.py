@@ -15,8 +15,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "postage_price",
         "max_weight",
         "max_size",
-        "dimension_unit",
-        "weight_unit",
+        "fulfillment_unit",
         "currency",
         "auto_close",
     ]
@@ -26,8 +25,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "postage_price",
         "max_weight",
         "max_size",
-        "dimension_unit",
-        "weight_unit",
+        "fulfillment_unit",
         "currency",
         "auto_close",
     ]
@@ -36,8 +34,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "postage_price",
         "max_weight",
         "max_size",
-        "dimension_unit",
-        "weight_unit",
+        "fulfillment_unit",
         "currency",
         "auto_close",
     ]
@@ -125,3 +122,13 @@ class FBAShippingPriceAdmin(admin.ModelAdmin):
     fields = ["product_SKU", "price_per_item"]
     list_display = ["__str__", "product_SKU", "price_per_item", "added"]
     list_editable = ["product_SKU", "price_per_item"]
+
+
+@admin.register(models.FBAWarehouse)
+class FBAWarehouseAdmin(admin.ModelAdmin):
+    """Model admin for the FBAWarehouse model."""
+
+    fields = ["name", "region"]
+    list_display = ["__str__", "name", "region"]
+    list_editable = ["name", "region"]
+    list_filter = ["region"]
