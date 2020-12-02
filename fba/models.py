@@ -271,3 +271,20 @@ class FBAShippingPrice(models.Model):
 
     def __str__(self):
         return f"Shipping Price: {self.product_SKU}"
+
+
+class FBAWarehouse(models.Model):
+    """Model for FBA fulfillment warehouses."""
+
+    name = models.CharField(max_length=255)
+    region = models.ForeignKey(FBARegion, on_delete=models.CASCADE)
+
+    class Meta:
+        """Meta class for FBAWarehouse."""
+
+        verbose_name = "FBA Warehouse"
+        verbose_name_plural = "FBA Warehouses"
+        ordering = ("name",)
+
+    def __str__(self):
+        return f"{self.region.name}: {self.name}"

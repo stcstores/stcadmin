@@ -52,13 +52,19 @@
             flex-direction: row;
         }
 
-        .fields {
+        .fields, .warehouses {
             border: black 2px solid;
         }
 
         .notes {
             margin-left: 1em;
             font-size: 1.5em;
+        }
+
+        .checkbox {
+            height: 20px;
+            width: 20px;
+            border: 1px black solid;
         }
 
     </style>
@@ -143,5 +149,18 @@
                 </tr>
             </table>
         </div>
+        {% if warehouses %}
+        <div>
+            <table class="warehouses">
+            <tr><thead><th colspan="2">Warehouses</th></thead></tr>
+            {% for warehouse in warehouses %}
+            <tr>
+                <td>{{ warehouse.name }}</td>
+                <td class="checkbox"></td>
+            </tr>
+            {% endfor %}
+            </table>
+        </div>
+        {% endif %}
     </div>
 </body>
