@@ -455,17 +455,9 @@ class FBAOrderPrintout(FBAUserMixin, TemplateView):
         context["selling_price"] = "{:.2f}".format(
             order.selling_price / 100,
         )
-        context["max_weight"] = self.max_weight(order)
         order.printed = True
         order.save()
         return context
-
-    def max_weight(self, order):
-        """Return the maximum weight to display."""
-        max_weight = order.region.max_weight
-        if order.region.weight_unit == order.region.LB:
-            max_weight *= 2.20462
-        return "{:.2f}".format(max_weight)
 
 
 class UnmarkPrinted(FBAUserMixin, RedirectView):

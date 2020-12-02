@@ -15,23 +15,17 @@ from shipping.models import Country, Currency
 class FBARegion(models.Model):
     """Model for regions in which FBA items are sold."""
 
-    INCHES = "inches"
-    CM = "cm"
+    METRIC = "m"
+    IMPERIAL = "i"
 
-    KG = "kg"
-    LB = "lb"
+    unit_choices = ((METRIC, "Metric"), (IMPERIAL, "Imperial"))
 
     name = models.CharField(max_length=255)
     default_country = models.ForeignKey("FBACountry", on_delete=models.CASCADE)
     postage_price = models.PositiveIntegerField()
     max_weight = models.PositiveIntegerField(blank=True, null=True)
     max_size = models.FloatField(blank=True, null=True)
-    dimension_unit = models.CharField(
-        choices=((INCHES, "Inches"), (CM, "Centimeters")), max_length=10
-    )
-    weight_unit = models.CharField(
-        choices=((KG, "Kilograms"), (LB, "Pounds")), max_length=2
-    )
+    fulfillment_unit = models.CharField(choices=unit_choices, max_length=1)
     auto_close = models.BooleanField()
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
 
@@ -50,6 +44,31 @@ class FBARegion(models.Model):
             f'<img src="{self.default_country.country.flag.url}" height="20" '
             f'width="20" alt="{self.default_country.country.ISO_code}">'
         )
+
+    def size_unit(self):
+        """Return the size unit for the region."""
+        if self.fulfillment_unit == self.METRIC:
+            return "cm"
+        else:
+            return "inches"
+
+    def weight_unit(self):
+        """Return the weight unit for the region."""
+        if self.fulfillment_unit == self.METRIC:
+            return "kg"
+        else:
+            return "lb"
+
+    def max_weight_local(self):
+        """Return the maximum sendable weight in the fulfillment unit."""
+        weight = self.max_weight
+        if self.fulfillment_unit == self.IMPERIAL:
+            weight *= 2.20462
+        return f"{int(weight)} {self.weight_unit()}"
+
+    def max_size_local(self):
+        """Return the maximum sendable size in the fulfillment unit."""
+        return f"{int(self.max_size)} {self.size_unit()}"
 
 
 class FBACountry(models.Model):

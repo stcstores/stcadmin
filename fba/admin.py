@@ -15,8 +15,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "postage_price",
         "max_weight",
         "max_size",
-        "dimension_unit",
-        "weight_unit",
+        "fulfillment_unit",
         "currency",
         "auto_close",
     ]
@@ -26,8 +25,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "postage_price",
         "max_weight",
         "max_size",
-        "dimension_unit",
-        "weight_unit",
+        "fulfillment_unit",
         "currency",
         "auto_close",
     ]
@@ -36,8 +34,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "postage_price",
         "max_weight",
         "max_size",
-        "dimension_unit",
-        "weight_unit",
+        "fulfillment_unit",
         "currency",
         "auto_close",
     ]
