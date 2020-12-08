@@ -23,6 +23,7 @@
         <th>Products</th>
         <th>Department</th>
         <th>Packed By</th>
+        <th>Supplier</th>
         <th>Reason</th>
         <th></th>
         <th>Status</th>
@@ -38,6 +39,7 @@
         <td>{{ refund.order.productsale_set.first.name}}{% if refund.order.productsale_set.count > 1 %} + {{ refund.order.productsale_set.count|add:"-1" }} more{% endif %}</td>
         <td>{{ refund.order.department}}</td>
         <td>{{ refund.order.packed_by }}</td>
+        <td>{{ refund.supplier.name }}</td>
         <td>{{ refund.reason }}</td>
         <td>{% if refund.is_partial %}Partial{% endif %}</td>
         <td>
