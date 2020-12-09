@@ -130,6 +130,9 @@ class CreateFBAOrderForm(forms.ModelForm):
 class FBAOrderFilter(forms.Form):
     """Form for filtering the FBA order list."""
 
+    CLOSED = "closed"
+    NOT_CLOSED = "not_closed"
+
     search = forms.CharField(required=False)
     status = forms.ChoiceField(
         choices=(
@@ -159,6 +162,10 @@ class FBAOrderFilter(forms.Form):
         widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
     )
     country = forms.ModelChoiceField(models.FBARegion.objects.all(), required=False)
+    closed = forms.ChoiceField(
+        choices=(("", ""), (CLOSED, "Closed"), (NOT_CLOSED, "Not Closed")),
+        required=False,
+    )
     sort_by = forms.ChoiceField(
         choices=(
             ("-created_at", "Date Created"),
@@ -221,6 +228,8 @@ class FBAOrderFilter(forms.Form):
             qs = qs.order_by("-created_at")
         if search_text := self.cleaned_data["search"]:
             qs = self.text_search(search_text, qs)
+        if closed := self.cleaned_data.get("closed"):
+            qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
         return qs
 
     def text_search(self, search_text, qs):
@@ -229,6 +238,7 @@ class FBAOrderFilter(forms.Form):
             Q(
                 Q(product_SKU__icontains=search_text)
                 | Q(product_name__icontains=search_text)
+                | Q(tracking_number__icontains=search_text)
             )
         )
         return qs
