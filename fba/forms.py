@@ -238,6 +238,7 @@ class FBAOrderFilter(forms.Form):
             Q(
                 Q(product_SKU__icontains=search_text)
                 | Q(product_name__icontains=search_text)
+                | Q(tracking_number__icontains=search_text)
             )
         )
         return qs
