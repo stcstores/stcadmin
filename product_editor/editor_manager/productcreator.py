@@ -191,6 +191,7 @@ class ProductCreator(ProductSaver):
             kwargs[self.BARCODE], kwargs[self.DESCRIPTION], kwargs[self.VAT_RATE]
         )
         self.update_product(self, product, **kwargs)
+        product.country_of_origin = 60
 
     def get_variation(self, **kwargs):
         """Return variation to be saved."""
