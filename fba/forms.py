@@ -162,6 +162,7 @@ class FBAOrderFilter(forms.Form):
         widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
     )
     country = forms.ModelChoiceField(models.FBARegion.objects.all(), required=False)
+    supplier = forms.ChoiceField(choices=[], required=False)
     closed = forms.ChoiceField(
         choices=(("", ""), (CLOSED, "Closed"), (NOT_CLOSED, "Not Closed")),
         required=False,
@@ -177,6 +178,18 @@ class FBAOrderFilter(forms.Form):
         ),
         required=False,
     )
+
+    def __init__(self, *args, **kwargs):
+        """Add supplier choices."""
+        super().__init__(*args, **kwargs)
+        self.fields["supplier"].choices = [
+            (name, name)
+            for name in models.FBAOrder.objects.values_list(
+                "product_supplier", flat=True
+            )
+            .order_by("product_supplier")
+            .distinct()
+        ]
 
     def clean_created_from(self):
         """Return a timezone aware datetime object from the submitted date."""
@@ -211,6 +224,7 @@ class FBAOrderFilter(forms.Form):
             "closed_at__lte": data.get("fulfilled_to"),
             "status": data.get("status"),
             "region__name": data.get("country"),
+            "product_supplier": data.get("supplier"),
         }
         return {
             key: value
@@ -230,6 +244,7 @@ class FBAOrderFilter(forms.Form):
             qs = self.text_search(search_text, qs)
         if closed := self.cleaned_data.get("closed"):
             qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
+        qs = qs.select_related("region__default_country__country")
         return qs
 
     def text_search(self, search_text, qs):
