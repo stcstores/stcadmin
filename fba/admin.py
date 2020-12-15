@@ -18,6 +18,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "fulfillment_unit",
         "currency",
         "auto_close",
+        "warehouse_required",
     ]
     list_display = [
         "name",
@@ -28,6 +29,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "fulfillment_unit",
         "currency",
         "auto_close",
+        "warehouse_required",
     ]
     list_editable = [
         "default_country",
@@ -37,6 +39,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "fulfillment_unit",
         "currency",
         "auto_close",
+        "warehouse_required",
     ]
 
 
@@ -122,13 +125,3 @@ class FBAShippingPriceAdmin(admin.ModelAdmin):
     fields = ["product_SKU", "price_per_item"]
     list_display = ["__str__", "product_SKU", "price_per_item", "added"]
     list_editable = ["product_SKU", "price_per_item"]
-
-
-@admin.register(models.FBAWarehouse)
-class FBAWarehouseAdmin(admin.ModelAdmin):
-    """Model admin for the FBAWarehouse model."""
-
-    fields = ["name", "region"]
-    list_display = ["__str__", "name", "region"]
-    list_editable = ["name", "region"]
-    list_filter = ["region"]

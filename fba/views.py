@@ -455,7 +455,6 @@ class FBAOrderPrintout(FBAUserMixin, TemplateView):
         context["selling_price"] = "{:.2f}".format(
             order.selling_price / 100,
         )
-        context["warehouses"] = order.region.fbawarehouse_set.all()
         order.printed = True
         order.save()
         return context

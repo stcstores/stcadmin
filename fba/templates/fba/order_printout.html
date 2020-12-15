@@ -7,7 +7,12 @@
                 height: 29.7cm;
                 margin: 10mm 10mm 10mm 10mm;
                 vertical-align: middle;
+                text-align: center;
             } 
+        }
+
+        img {
+            vertical-align: middle;
         }
 
         .location {
@@ -27,7 +32,7 @@
         }
 
         .write_space {
-            width: 3em;
+            width: 5em;
             height: 2em;
             border-bottom: solid black 2px;
             margin: 5em;
@@ -47,17 +52,16 @@
             flex-direction: row;
         }
 
-        .inputs {
-            display: flex;
-            flex-direction: row;
-        }
-
         .fields, .warehouses {
-            border: black 2px solid;
+            border: black 3px solid;
+            border-radius: 1em;
         }
 
         .notes {
-            margin-left: 1em;
+            margin: 0.5em;
+            padding: 0.5em;
+            border: 3px solid black;
+            border-radius: 2em;
             font-size: 1.5em;
         }
 
@@ -67,6 +71,10 @@
             border: 1px black solid;
         }
 
+        .wide {
+            width: 20em;
+        }
+
     </style>
 </head>
 
@@ -74,13 +82,10 @@
     <h1>FBA Order - {{ order.product_SKU }}</h1>
     <h2>{{ order.product_name }}</h2>
     <h2>ASIN: {{ order.product_asin }}</h2>
+    <h2>{{ order.region.name }} <img src="{{ order.region.default_country.country.flag.url}}" height="64"></h2>
     <div id="fba_order_form">
         <div class="top">
             <table id="info">
-                <tr>
-                    <th>Country</th>
-                    <td>{{ order.region.name }} {{ order.region.flag }}</td>
-                </tr>
                 <tr>
                     <th>Locations</th>
                     <td>
@@ -110,10 +115,9 @@
                 {% endif %}
             </table>
             <img src="{{ order.product_image_url }}" class="product_img" alt="" height="200">
-            <div class="notes">
-                <h4>Notes:</h4>
-                {{ order.notes }}
-            </div>
+        </div>
+        <div class="notes">
+            Notes: {{ order.notes }}
         </div>
         <div class="inputs">
             <table class="fields">
@@ -124,7 +128,7 @@
                     <td class="max">Max: {{ order.region.max_weight_local }}</td>
                 </tr>
                 <tr>
-                    <th>Box ({{ order.region.size_unit }}</th>
+                    <th>Box ({{ order.region.size_unit }})</th>
                     <td class="write_space"></td>
                     <td class="write_space"></td>
                     <td class="write_space"></td>
@@ -149,16 +153,10 @@
                 </tr>
             </table>
         </div>
-        {% if warehouses %}
-        <div>
-            <table class="warehouses">
-            <tr><thead><th colspan="2">Warehouses</th></thead></tr>
-            {% for warehouse in warehouses %}
-            <tr>
-                <td>{{ warehouse.name }}</td>
-                <td class="checkbox"></td>
-            </tr>
-            {% endfor %}
+        {% if order.region.warehouse_required %}
+        <div class="warehouse">
+            <table class="fields">
+            <tr><td>Warehouse</td><td class="write_space wide"></td></tr>
             </table>
         </div>
         {% endif %}
