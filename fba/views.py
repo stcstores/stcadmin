@@ -135,6 +135,8 @@ class RepeatFBAOrder(FBAOrderCreate):
             product_weight=self.product.weight,
             product_hs_code=self.product.hs_code,
             product_asin=self.to_repeat.product_asin,
+            product_image_url=self.to_repeat.product_image_url,
+            product_supplier=self.to_repeat.product_supplier,
             region=self.to_repeat.region,
             selling_price=self.to_repeat.selling_price,
             FBA_fee=self.to_repeat.FBA_fee,
