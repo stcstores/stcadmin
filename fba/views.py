@@ -450,8 +450,8 @@ class FBAOrderPrintout(FBAUserMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         order = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
         context["order"] = order
-        bays = CCAPI.get_bays_for_product(order.product_ID)
-        context["locations"] = [bay.name for bay in bays]
+        context["product"] = CCAPI.get_product(order.product_ID)
+        context["pending_stock"] = CCAPI.get_pending_stock(order.product_ID)
         context["selling_price"] = "{:.2f}".format(
             order.selling_price / 100,
         )
