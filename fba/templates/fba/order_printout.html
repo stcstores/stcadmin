@@ -47,12 +47,13 @@
             border-radius: 1em;
         }
 
-        .top {
+        .picking {
             display: flex;
             flex-direction: row;
+            justify-content: space-between;
         }
 
-        .fields, .warehouses {
+        .fields, .warehouses, .stock {
             border: black 3px solid;
             border-radius: 1em;
         }
@@ -75,21 +76,42 @@
             width: 20em;
         }
 
+        .header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .stock {
+            display: flex;
+            flex-direction: column;
+            margin: 1em;
+            padding: 1em;
+        }
+
     </style>
 </head>
 
 <body>
     <h1>FBA Order - {{ order.product_SKU }}</h1>
-    <h2>{{ order.product_name }}</h2>
-    <h2>ASIN: {{ order.product_asin }}</h2>
-    <h2>{{ order.region.name }} <img src="{{ order.region.default_country.country.flag.url}}" height="64"></h2>
+    <div class="header">
+        <div class="order_info">
+            <h2>{{ order.product_name }}</h2>
+            <h2>ASIN: {{ order.product_asin }}</h2>
+            <h2>{{ order.region.name }} <img src="{{ order.region.default_country.country.flag.url}}" height="64"></h2>
+        </div>
+        <div class="stock">
+            <h3>Stock Level: {{ product.stock_level }}</h3>
+            <h3>Pending Stock: {{ pending_stock }}</h3></h3>
+        </div>
+    </div>
     <div id="fba_order_form">
-        <div class="top">
+        <div class="picking">
             <table id="info">
                 <tr>
                     <th>Locations</th>
                     <td>
-                        {% for location in locations %}
+                        {% for location in product.bays %}
                             <div class="location">{{ location }}</div>
                         {% endfor %}
                     </td>
@@ -139,6 +161,7 @@
                     <td class="write_space"></td>
                 </tr>
             </table>
+            {% if order.region.fulfillment_unit == order.region.IMPERIAL %}
             <table class="fields">
                 <thead><tr><th colspan="5">Delivery Details</th></tr></thead>
                 <tr>
@@ -152,6 +175,7 @@
                     <td class="write_space"></td>
                 </tr>
             </table>
+            {% endif %}
         </div>
         {% if order.region.warehouse_required %}
         <div class="warehouse">
