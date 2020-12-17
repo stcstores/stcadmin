@@ -98,7 +98,10 @@
         <div class="order_info">
             <h2>{{ order.product_name }}</h2>
             <h2>ASIN: {{ order.product_asin }}</h2>
-            <h2>{{ order.region.name }} <img src="{{ order.region.default_country.country.flag.url}}" height="64"></h2>
+            <h2>
+                {{ order.region.name }} <img src="{{ order.region.default_country.country.flag.url}}" height="64">
+                {% if order.is_combinable %}&nbsp;COMBINABLE{% endif %}
+            </h2>
         </div>
         <div class="stock">
             <h3>Stock Level: {{ product.stock_level }}</h3>
@@ -129,8 +132,8 @@
                     <td>{{ order.aproximate_quantity }}</td>
                 </tr>
                 <tr>
-                    <th>Selling Price</th>
-                    <td>{{ order.region.currency.symbol }}{{ selling_price }}</td>
+                    <th>Purchase Price</th>
+                    <td>{{ order.region.currency.symbol }}{{ order.product_purchase_price }}</td>
                 </tr>
                 {% if order.small_and_light is True %}
                 <tr><td colspan="2">SMALL AND LIGHT</td></tr>

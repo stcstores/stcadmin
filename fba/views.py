@@ -454,9 +454,6 @@ class FBAOrderPrintout(FBAUserMixin, TemplateView):
         context["order"] = order
         context["product"] = CCAPI.get_product(order.product_ID)
         context["pending_stock"] = CCAPI.get_pending_stock(order.product_ID)
-        context["selling_price"] = "{:.2f}".format(
-            order.selling_price / 100,
-        )
         order.printed = True
         order.save()
         return context
