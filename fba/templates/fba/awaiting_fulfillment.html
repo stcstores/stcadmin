@@ -20,10 +20,10 @@
         <tr>
             <th>SKU</th>
             <th>Name</th>
-            <th>Aprox Quantity</th>
-            <th></th>
+            <th colspan="2">Aprox Quantity</th>
             <th>Status</th>
             <th>Created At</th>
+            <th></th>
             <th></th>
             <th></th>
         </tr>
@@ -37,6 +37,7 @@
             <td>{{ order.region.flag }}</td>
             <td>{{ order.status }}</td>
             <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+            <td class="success">{% if order.is_combinable %}Combinable{% endif %}</td>
             <td>
                 <a href="{% url 'fba:fulfill_fba_order' order.id %}">
                     {% if order.status != order.AWAITING_BOOKING %}
