@@ -23,6 +23,7 @@ class SelectFBAOrderProduct(forms.Form):
             search_result = CCAPI.search_products(cleaned_data["product_SKU"])
             if len(search_result) > 1:
                 self.add_error("product_SKU", "Too many products found")
+                return
             else:
                 product = search_result[0]
             cleaned_data["product_ID"] = product.variation_id
@@ -60,6 +61,7 @@ class CreateFBAOrderForm(forms.ModelForm):
         self.fields["product_hs_code"].widget = forms.HiddenInput()
         self.fields["product_image_url"].widget = forms.HiddenInput()
         self.fields["product_supplier"].widget = forms.HiddenInput()
+        self.fields["product_purchase_price"].widget = forms.HiddenInput()
         self.fields["selling_price"].widget = CurrencyWidget()
         self.fields["selling_price"].to_python = lambda x: int(float(x) * 100)
         self.fields["FBA_fee"].widget = CurrencyWidget()
@@ -77,6 +79,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "product_hs_code",
             "product_image_url",
             "product_supplier",
+            "product_purchase_price",
             "region",
             "country",
             "product_asin",
@@ -108,6 +111,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "product_hs_code",
             "product_image_url",
             "product_supplier",
+            "product_purchase_price",
             "product_asin",
             "region",
             "selling_price",
