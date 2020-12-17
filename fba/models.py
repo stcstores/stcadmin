@@ -153,6 +153,7 @@ class FBAOrder(models.Model):
     small_and_light = models.BooleanField(default=False)
     on_hold = models.BooleanField(default=False)
     update_stock_level_when_complete = models.BooleanField(default=True)
+    is_combinable = models.BooleanField(default=False)
     status = models.CharField(
         choices=(
             (NOT_PROCESSED, NOT_PROCESSED),

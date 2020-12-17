@@ -85,6 +85,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "aproximate_quantity",
             "small_and_light",
             "tracking_number",
+            "is_combinable",
             "on_hold",
             "notes",
         ] + self.__class__.Meta.fields
@@ -114,6 +115,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "aproximate_quantity",
             "small_and_light",
             "tracking_number",
+            "is_combinable",
             "on_hold",
             "notes",
         ]
