@@ -604,7 +604,7 @@ django = "^3.0.3"
 type = "git"
 url = "https://github.com/lukeshiner/list_input.git"
 reference = "master"
-resolved_reference = "42b0e2df3d39ab8921904c1ba3eab0763adf586d"
+resolved_reference = "6760f06c661b4d42f46123405d681a605d902320"
 
 [[package]]
 name = "lml"
@@ -1169,8 +1169,8 @@ python-versions = "*"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.8"
-content-hash = "66258286480e259a7fe8065486014ab80ceb1b907b1062b5b23d23b7b444c5d0"
+python-versions = "^3.9"
+content-hash = "395df14cf4b9fdc0baa604b6c0dc3fb2caafffe1605b7d18ecd82a9478f5e2aa"
 
 [metadata.files]
 alabaster = [
