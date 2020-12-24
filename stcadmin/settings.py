@@ -10,7 +10,7 @@ from django.db import models
 
 models.FieldDoesNotExist = FieldDoesNotExist  # Compatibility for django-polymorphic
 
-TRAVIS_ENVIRONMENT = "TRAVIS" in os.environ
+CI_ENVIRONMENT = "CI" in os.environ
 
 SOURCE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 BASE_DIR = os.path.dirname(SOURCE_DIR)
@@ -305,7 +305,7 @@ TESTING = (
 
 def create_CCAPI_session():
     """Create the Cloud Commerce session."""
-    if not TESTING and not TRAVIS_ENVIRONMENT:
+    if not TESTING and not CI_ENVIRONMENT:
         CCAPI.create_session(domain=CC_DOMAIN, username=CC_USERNAME, password=CC_PWD)
         print("Created Cloud Commerce session.", file=sys.stderr)
     else:
