@@ -1,0 +1,38 @@
+{% extends 'channels/base.html' %}
+
+{% block content %}
+
+<h1>Order {{order.order_id}}</h1>
+<p>Order ID: {{order.order_id}}</p>
+<p>Customer ID: {{order.customer_id}}</p>
+<p>Total Price: {{order.price}}</p>
+<p>Shipping Price: {{order.shipping_price}}</p>
+<p>Total To Pay: {{order.total_to_pay}}</p>
+<p>
+    <a href="{{ order.customer_url }}" target="_blank">
+        <button>View Customer on Cloud Commerce</button>
+    </a>
+</p>
+<p>
+    <a href="{{ order.order_url }}" target="_blank">
+        <button>View Order on Cloud Commerce</button>
+    </a>
+</p>
+
+<table>
+    <tr>
+        <th>Product ID</th>
+        <th>Quantity</th>
+        <th>Item Price</th>
+        <th>Total Price</th>
+    </tr>
+    {% for product in order.createdorderproduct_set.all %}
+    <tr>
+        <td>{{product.product_id}}</td>
+        <td>{{product.quantity}}</td>
+        <td>{{product.item_price}}</td>
+        <td>{{product.total_price}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock content %}

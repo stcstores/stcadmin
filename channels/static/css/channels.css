@@ -1,0 +1,8 @@
+label.required:after {
+    content: " *";
+}
+
+.order_products {
+    display: flex;
+    flex-direction: row;
+}

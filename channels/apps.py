@@ -7,5 +7,5 @@ class ChannelsConfig(AppConfig):
     """Config for the channels app."""
 
     name = "channels"
-    verbose_name = "Crders"
+    verbose_name = "Channels"
     create_group = True
