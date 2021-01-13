@@ -1,0 +1,58 @@
+{% extends 'fba/base.html' %}
+{% load orders_extras %}
+
+{% block content %}
+
+<h1>On Hold</h1>
+
+<table class="orders">
+    <thead>
+        <tr>
+            <th colspan="5"></th>
+            <th colspan="2">Quantity</th>
+            <th colspan="3"></th>
+        </tr>
+        <tr>
+            <th>SKU</th>
+            <th>Name</th>
+            <th></th>
+            <th>Supplier</th>
+            <th>Created</th>
+            <th>Aprox</th>
+            <th>Pending</th>
+            <th colspan="3"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in object_list %}
+        <tr class="order">
+            <th>{{ order.product_SKU }} </th>
+            <th>
+                {% if order.closed_at == None %}
+                <a href="{% url 'fba:update_fba_order' order.id %}">{{ order.product_name }}</a>
+                {% else %}
+                {{ order.product_name }}
+                {% endif %}
+            </th>
+            <td>{{ order.region.flag }}</td>
+            <td>{{ order.product_supplier }}</td>
+            <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+            <td>{{ order.aproximate_quantity }}</td>
+            <td>{{ order.pending_stock }}</td>
+            <td>
+                {% if order.status != order.FULFILLED %}
+                <a href="{% url 'fba:delete_order' order.pk %}"><button>Delete</button></a>
+                {% endif %}
+            </td>
+            <td><a href="{% url 'fba:update_fba_order' order.pk %}"><button>View</button></a></td>
+            <td>
+                <a href="{% url 'fba:repeat_order' order.pk %}"><button>Repeat</button></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<form action="" id="filter">
+{% include 'orders/pagination_navigation.html' %}
+</form>
+{% endblock content %}
