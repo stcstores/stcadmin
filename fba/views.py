@@ -233,6 +233,34 @@ class OrderList(FBAUserMixin, ListView):
             return list(range(1, 11)) + [paginator.num_pages]
 
 
+class OnHold(FBAUserMixin, ListView):
+    """Display a filterable list of orders."""
+
+    template_name = "fba/on_hold.html"
+    model = models.FBAOrder
+    paginate_by = 50
+    orphans = 3
+
+    def get_queryset(self):
+        """Return a queryset of orders based on GET data."""
+        return models.FBAOrder.objects.filter(on_hold=True, closed_at__isnull=True)
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the template context."""
+        context = super().get_context_data(*args, **kwargs)
+        context["page_range"] = self.get_page_range(context["paginator"])
+        for order in context["object_list"]:
+            order.pending_stock = CCAPI.get_pending_stock(order.product_ID)
+        return context
+
+    def get_page_range(self, paginator):
+        """Return a list of pages to link to."""
+        if paginator.num_pages < 11:
+            return list(range(1, paginator.num_pages + 1))
+        else:
+            return list(range(1, 11)) + [paginator.num_pages]
+
+
 class Awaitingfulfillment(FBAUserMixin, ListView):
     """Display a filterable list of orders."""
 

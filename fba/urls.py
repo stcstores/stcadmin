@@ -29,6 +29,7 @@ urlpatterns = [
         views.Awaitingfulfillment.as_view(),
         name="awaiting_fulfillment",
     ),
+    path("on_hold/", views.OnHold.as_view(), name="on_hold"),
     path(
         "price_calculator/", views.FBAPriceCalculator.as_view(), name="price_calculator"
     ),
