@@ -250,7 +250,10 @@ class OnHold(FBAUserMixin, ListView):
         context = super().get_context_data(*args, **kwargs)
         context["page_range"] = self.get_page_range(context["paginator"])
         for order in context["object_list"]:
+            product = CCAPI.get_product(order.product_ID)
             order.pending_stock = CCAPI.get_pending_stock(order.product_ID)
+            order.stock_level = product.stock_level
+            order.current_stock = order.stock_level - order.pending_stock
         return context
 
     def get_page_range(self, paginator):
