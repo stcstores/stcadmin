@@ -314,7 +314,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
             response["vat"] = self.get_vat()
             response["postage_to_fba"] = self.postage_gbp
             response["postage_per_item"] = self.postage_per_item_gbp
-            response["profit"] = self.get_profit()
+            response["profit"] = round(self.get_profit() * self.exchange_rate, 2)
             response["percentage"] = self.get_percentage()
             response["purchase_price"] = self.get_purchase_price()
             max_quantity, max_quantity_no_stock = self.get_max_quantity()
@@ -395,7 +395,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
                 self.fba_fee,
             ]
         )
-        return round(profit * self.exchange_rate, 2)
+        return profit
 
     def get_percentage(self):
         """Return the percentage fo the sale price that is profit."""
