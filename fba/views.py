@@ -7,7 +7,7 @@ import cc_products
 from ccapi import CCAPI
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -249,11 +249,11 @@ class OnHold(FBAUserMixin, ListView):
         """Return the template context."""
         context = super().get_context_data(*args, **kwargs)
         context["page_range"] = self.get_page_range(context["paginator"])
-        for order in context["object_list"]:
-            product = CCAPI.get_product(order.product_ID)
-            order.pending_stock = CCAPI.get_pending_stock(order.product_ID)
-            order.stock_level = product.stock_level
-            order.current_stock = order.stock_level - order.pending_stock
+        # for order in context["object_list"]:
+        #     product = CCAPI.get_product(order.product_ID)
+        #     order.pending_stock = CCAPI.get_pending_stock(order.product_ID)
+        #     order.stock_level = product.stock_level
+        #     order.current_stock = order.stock_level - order.pending_stock
         return context
 
     def get_page_range(self, paginator):
@@ -262,6 +262,37 @@ class OnHold(FBAUserMixin, ListView):
             return list(range(1, paginator.num_pages + 1))
         else:
             return list(range(1, 11)) + [paginator.num_pages]
+
+
+class ProductStock(View):
+    """View for getting current stock information for a product."""
+
+    def get(self, *args, **kwargs):
+        """Return product stock information."""
+        product_id = self.request.GET.get("product_id")
+        product = CCAPI.get_product(product_id)
+        stock_level = product.stock_level
+        pending_stock = CCAPI.get_pending_stock(product_id)
+        current_stock = stock_level - pending_stock
+        return JsonResponse(
+            {
+                "stock_level": stock_level,
+                "pending_stock": pending_stock,
+                "current_stock": current_stock,
+            }
+        )
+
+
+class TakeOffHold(View):
+    """View for takeing order off hold."""
+
+    def get(self, *args, **kwargs):
+        """Take order off hold."""
+        pk = self.request.GET.get("order_id")
+        order = get_object_or_404(models.FBAOrder, pk=pk)
+        order.on_hold = False
+        order.save()
+        return HttpResponse("ok")
 
 
 class Awaitingfulfillment(FBAUserMixin, ListView):

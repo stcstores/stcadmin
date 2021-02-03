@@ -56,4 +56,6 @@ urlpatterns = [
         views.SetTrackingNumber.as_view(),
         name="set_tracking_number",
     ),
+    path("product_stock", views.ProductStock.as_view(), name="product_stock"),
+    path("take_off_hold", views.TakeOffHold.as_view(), name="take_off_hold"),
 ]
