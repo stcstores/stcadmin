@@ -1,0 +1,177 @@
+{% load static %}
+
+<div class="product_select">
+    <label for="search_name">Name</label>
+    <input type="text" id="product_name" name="search_name"><button class="search">Search</button>
+    <br>
+    <label for="search_sku">SKU</label>
+    <input type="text" id="product_sku" name="search_sku"><button class="search">Search</button>
+    <div class="order_products">
+        <div class="result">
+            <table id="search_results">
+                <thead>
+                <tr>
+                    <th>SKU</th>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="basket">
+            <table id="basket">
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Name</th>
+                        <th>Quantity</th>
+                        <th>Price (per item)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+
+class OrderBasket {
+    constructor() {
+        this.search_results = [];
+        this.basket = [];
+        this.name_search_url = "{% url 'inventory:search_product_name' %}";
+        this.sku_search_url = "{% url 'inventory:search_product_sku' %}";
+        this.search_results_body = $("#search_results tbody");
+        this.basket_body = $("#basket tbody");
+        this.name_search_input = $("#product_name");
+        this.sku_search_input = $("#product_sku");
+    }
+
+    show_search_result() {
+        var self = this;
+        var html = ""
+        for (var i=0; i<this.search_results.length; i++) {
+            html += this.result_row(i);
+        }
+        this.search_results_body.html(html);
+        $('.add_product').click(function(){
+            var row = $(this).closest('tr');
+            var index = row.find('.add_product').attr('name');
+            var quantity = parseInt(row.find('.quantity').val());
+            self.add_to_basket(index, quantity);
+        });
+    }
+
+
+    product_search(url, search_text) {
+        var self = this;
+        $.get(
+                url,
+                {"search_text": search_text, "channel_id": "{{ form.channel.channel_id }}"},
+                function(data) {
+                    self.search_results = data;
+                    self.show_search_result();
+                }
+            );
+    }
+
+    product_name_search() {
+        var search_text = this.name_search_input.val();
+        this.product_search(this.name_search_url, search_text);
+    }
+
+    product_sku_search() {
+        var search_text = this.sku_search_input.val();
+        this.product_search(this.sku_search_url, search_text);
+    }
+
+    
+    result_row(index) {
+        var product = this.search_results[index];
+        return "<tr><td>" + product.sku + "</td><td>" + product.name +"</td><td><input class='quantity' type='number' value='1'></td><td><button name=" + index + " class='add_product'>Add</button></td></tr>"
+    }
+
+    basket_row(index) {
+        var product = this.basket[index];
+        return "<tr><td>" + product.sku + "</td><td>" + product.name +"</td><td><input  class='basket_quantity' type='number' value='" + product.quantity + "'></td><td><input type='number' min='0' step='0.01' class='basket_price' value='0'></td><td><button name='" + index + "' class='remove_product'>Remove</button></td></tr>"
+    }
+
+    add_to_basket(index, quantity) {
+        var search_result = this.search_results[index];
+        var updated = false;
+        for (var i=0; i<this.basket.length; i++) {
+            if (this.basket[i].product_id == search_result.product_id) {
+                this.basket[i].quantity += quantity;
+                updated = true;
+                break;
+            }
+        }
+        if (updated === false) {
+            var basket_item = JSON.parse(JSON.stringify(search_result));
+            basket_item.quantity = quantity;
+            basket_item.price = "0.00";
+            this.basket.push(basket_item);
+        }
+        this.show_basket();
+    }
+
+    show_basket() {
+        var self = this;
+        var html = ""
+        for (var i=0; i<this.basket.length; i++) {
+            html += this.basket_row(i);
+        }
+        this.basket_body.html(html);
+        $('.remove_product').click(function(){
+            var index = $(this).closest('tr').find('.remove_product').attr('name');
+            self.basket.splice(index, 1);
+            self.show_basket();
+        });
+        $('.basket_quantity').change(function() {
+            var index = $(this).closest('tr').find('.remove_product').attr('name');
+            self.basket[index].quantity = parseInt($(this).val());
+        });
+        $('.basket_price').change(function() {
+            var index = $(this).closest('tr').find('.remove_product').attr('name');
+            self.basket[index].price = $(this).val();
+        });
+    }
+
+    json_basket() {
+            return JSON.stringify(this.basket);
+        }
+}
+
+    $(document).ready(function() {
+        var order_basket = new OrderBasket();
+        $('#product_name').change(function() {
+            order_basket.product_name_search($(this).val());
+            $('#product_sku').val("");
+        });
+        $('#product_name').bind("enterKey",function(e){
+            order_basket.product_name_search($(this).val());
+            $('#product_sku').val("");
+        });
+        $('#product_sku').change(function() {
+            order_basket.product_sku_search($(this).val());
+            $('#product_name').val("");
+        });
+        $('#product_sku').bind("enterKey",function(e){
+            order_basket.product_sku_search($(this).val());
+            $('#product_name').val("");
+        });
+
+        $("#order_form").submit(function(e) {
+            $("#{{ form.basket.auto_id }}").val(order_basket.json_basket());
+            return true;
+        });
+
+        $(".search").click(function(e) {
+            $(this).closest("input").change();
+        });
+    });
+</script>

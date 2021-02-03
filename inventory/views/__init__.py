@@ -6,6 +6,8 @@ from .api import (
     GetNewSKUView,
     GetStockForProductView,
     SearchHSCode,
+    SearchProductName,
+    SearchProductSKU,
     SetImageOrderView,
     UpdateStockLevelView,
 )
@@ -33,6 +35,8 @@ __all__ = [
     "GetNewSKUView",
     "GetStockForProductView",
     "SearchHSCode",
+    "SearchProductName",
+    "SearchProductSKU",
     "SetImageOrderView",
     "UpdateStockLevelView",
     "DescriptionsView",

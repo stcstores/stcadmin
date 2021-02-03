@@ -79,6 +79,16 @@ api_urlpatterns = [
     path("set_image_order/", views.SetImageOrderView.as_view(), name="set_image_order"),
     path("delete_image/", views.DeleteImage.as_view(), name="delete_image"),
     path("search_hs_code/", views.SearchHSCode.as_view(), name="search_hs_code"),
+    path(
+        "search_product_name/",
+        views.SearchProductName.as_view(),
+        name="search_product_name",
+    ),
+    path(
+        "search_product_sku/",
+        views.SearchProductSKU.as_view(),
+        name="search_product_sku",
+    ),
 ]
 
 urlpatterns = inventory_urlpatterns + api_urlpatterns

@@ -113,6 +113,18 @@ class DeleteImage(InventoryUserMixin, View):
         return HttpResponse("ok")
 
 
+def _product_search_result_to_dict(search_result):
+    return [
+        {
+            "product_id": result.variation_id,
+            "name": result.name,
+            "sku": result.sku,
+            "thumbnail": result.thumbnail,
+        }
+        for result in search_result
+    ]
+
+
 @method_decorator(csrf_exempt, name="dispatch")
 class SearchHSCode(InventoryUserMixin, View):
     """Return a list of matching HS codes."""
@@ -123,3 +135,29 @@ class SearchHSCode(InventoryUserMixin, View):
         hs_codes = CCAPI.find_hs_code(search_term)
         result = {key: f"{key}: {value}" for key, value in hs_codes.items()}
         return JsonResponse(result)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class SearchProductName(InventoryUserMixin, View):
+    """Return a list of products by name."""
+
+    def get(self, *args, **kwargs):
+        """Process HTTP request."""
+        search_text = self.request.GET.get("search_text")
+        channel_id = self.request.GET.get("channel_id")
+        products = CCAPI.search_product_name(search_text, channel_id=channel_id)
+        data = _product_search_result_to_dict(products)
+        return JsonResponse(data, safe=False)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class SearchProductSKU(InventoryUserMixin, View):
+    """Return a list of products by SKU."""
+
+    def get(self, *args, **kwargs):
+        """Process HTTP request."""
+        search_text = self.request.GET.get("search_text")
+        channel_id = self.request.GET.get("channel_id")
+        products = CCAPI.search_product_SKU(search_text, channel_id=channel_id)
+        data = _product_search_result_to_dict(products)
+        return JsonResponse(data, safe=False)
