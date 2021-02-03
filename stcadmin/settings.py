@@ -99,6 +99,7 @@ INSTALLED_APPS = [
     "shipping",
     "feedback",
     "fba",
+    "channels",
     "debug_toolbar",
 ]
 

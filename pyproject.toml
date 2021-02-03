@@ -26,7 +26,7 @@ ccapi = {git = "https://github.com/stcstores/ccapi.git"}
 cc-products = {git = "https://github.com/stcstores/cc_products.git"}
 labeler = {git = "https://github.com/lukeshiner/labeler.git"}
 list-input = {git = "https://github.com/lukeshiner/list_input.git"}
-django-solo = "^1.1.3"
+django-solo = "^1.1.5"
 celery = "^4.4.2"
 django-polymorphic = "^2.1.2"
 django-imagekit = "^4.0.2"

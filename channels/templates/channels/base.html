@@ -1,0 +1,14 @@
+{% extends "home/base.html" %}
+{% load static %}
+
+{% block additional_head %}
+    <link rel="stylesheet" href="{% static 'css/channels.css' %}">
+{% endblock additional_head %}
+
+{% block page_title %}Channels{% endblock %}
+
+{% block section_navigation %}
+    {% include "channels/section_navigation.html" %}
+{% endblock %}
+
+{% block content %}{% endblock %}
