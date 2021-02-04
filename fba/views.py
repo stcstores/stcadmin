@@ -240,20 +240,24 @@ class OnHold(FBAUserMixin, ListView):
     model = models.FBAOrder
     paginate_by = 50
     orphans = 3
+    form_class = forms.OnHoldOrderFilter
+
+    def get(self, *args, **kwargs):
+        """Instanciate the form."""
+        self.form = self.form_class(self.request.GET)
+        return super().get(*args, **kwargs)
 
     def get_queryset(self):
         """Return a queryset of orders based on GET data."""
-        return models.FBAOrder.objects.filter(on_hold=True, closed_at__isnull=True)
+        if self.form.is_valid():
+            return self.form.get_queryset()
+        return []
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
         context = super().get_context_data(*args, **kwargs)
         context["page_range"] = self.get_page_range(context["paginator"])
-        # for order in context["object_list"]:
-        #     product = CCAPI.get_product(order.product_ID)
-        #     order.pending_stock = CCAPI.get_pending_stock(order.product_ID)
-        #     order.stock_level = product.stock_level
-        #     order.current_stock = order.stock_level - order.pending_stock
+        context["form"] = self.form
         return context
 
     def get_page_range(self, paginator):

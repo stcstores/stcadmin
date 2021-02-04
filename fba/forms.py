@@ -315,3 +315,100 @@ class ShippingPriceForm(forms.ModelForm):
 
         model = models.FBAShippingPrice
         fields = ["price_per_item", "product_SKU"]
+
+
+class OnHoldOrderFilter(forms.Form):
+    """Form for filtering the FBA order list."""
+
+    CLOSED = "closed"
+    NOT_CLOSED = "not_closed"
+
+    search = forms.CharField(required=False)
+    created_from = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
+    )
+    created_to = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
+    )
+    country = forms.ModelChoiceField(models.FBARegion.objects.all(), required=False)
+    supplier = forms.ChoiceField(choices=[], required=False)
+    closed = forms.ChoiceField(
+        choices=(("", ""), (CLOSED, "Closed"), (NOT_CLOSED, "Not Closed")),
+        required=False,
+    )
+    sort_by = forms.ChoiceField(
+        choices=(
+            ("-created_at", "Date Created"),
+            ("product_SKU", "SKU"),
+            ("product_name", "Name"),
+        ),
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        """Add supplier choices."""
+        super().__init__(*args, **kwargs)
+        self.fields["supplier"].choices = [("", "")] + [
+            (name, name)
+            for name in models.FBAOrder.objects.filter(
+                on_hold=True, closed_at__isnull=True
+            )
+            .values_list("product_supplier", flat=True)
+            .order_by("product_supplier")
+            .distinct()
+        ]
+
+    def clean_created_from(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["created_from"]
+        if date is not None:
+            return make_aware(datetime.combine(date, datetime.min.time()))
+
+    def clean_created_to(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["created_to"]
+        if date is not None:
+            return make_aware(datetime.combine(date, datetime.max.time()))
+
+    def query_kwargs(self, data):
+        """Return a dict of filter kwargs."""
+        kwargs = {
+            "created_at__gte": data.get("created_from"),
+            "created_at__lte": data.get("created_to"),
+            "region__name": data.get("country"),
+            "product_supplier": data.get("supplier"),
+            "on_hold": True,
+            "closed_at__isnull": True,
+        }
+        return {
+            key: value
+            for key, value in kwargs.items()
+            if value is not None and value != ""
+        }
+
+    def get_queryset(self):
+        """Return a queryset of orders based on the submitted data."""
+        kwargs = self.query_kwargs(self.cleaned_data)
+        qs = models.FBAOrder.objects.filter(**kwargs)
+        if sort_by := self.cleaned_data["sort_by"]:
+            qs = qs.order_by(sort_by)
+        else:
+            qs = qs.order_by("-created_at")
+        if search_text := self.cleaned_data["search"]:
+            qs = self.text_search(search_text, qs)
+        if closed := self.cleaned_data.get("closed"):
+            qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
+        qs = qs.select_related("region__default_country__country")
+        return qs
+
+    def text_search(self, search_text, qs):
+        """Filter the queryset based on search text."""
+        qs = qs.filter(
+            Q(
+                Q(product_SKU__icontains=search_text)
+                | Q(product_name__icontains=search_text)
+            )
+        )
+        return qs
