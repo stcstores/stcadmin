@@ -5,6 +5,19 @@
 
 <h1>On Hold</h1>
 
+<div class="filter">
+    <form action="" method="GET" id="filter">
+        {{ form.as_p }}
+        <p>
+            <button>Filter</button>
+        </p>
+        <div>
+        <p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
+            {% include 'orders/pagination_navigation.html' %}
+        </div>
+    </form>
+</div>
+
 <table class="orders">
     <thead>
         <tr>
