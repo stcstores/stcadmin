@@ -144,7 +144,6 @@ class ProductSaver(ProductEditorBase):
         product.bays = kwargs[self.BAYS]
         product.price = kwargs[self.PRICE]
         product.purchase_price = kwargs[self.PURCHASE_PRICE]
-        product.supplier = kwargs[self.SUPPLIER]
         product.weight = kwargs[self.WEIGHT]
         product.height = kwargs[self.HEIGHT]
         product.height = kwargs[self.HEIGHT]
@@ -160,6 +159,7 @@ class ProductSaver(ProductEditorBase):
             product.retail_price = kwargs[self.RETAIL_PRICE]
         if kwargs[self.SUPPLIER_SKU]:
             product.supplier_sku = kwargs[self.SUPPLIER_SKU]
+        product.supplier = kwargs[self.SUPPLIER]
         if kwargs[self.GENDER]:
             product.gender = kwargs[self.GENDER]
         if kwargs[self.AMAZON_BULLET_POINTS]:
