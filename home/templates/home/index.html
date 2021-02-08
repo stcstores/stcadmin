@@ -47,6 +47,12 @@
   </ul>
 </div>
 <div class="homepage_feedback">
+  <div>
+    <h3>External Links</h3>
+    {% for link in external_links %}
+    <p><a href="{{ link.url }}">{{ link.name }}</a></p>
+    {% endfor %}
+  </div>
   <table class="feedback" id="feedback">
 
   </table>
