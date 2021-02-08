@@ -39,3 +39,18 @@ class CloudCommerceUser(models.Model):
     def full_name(self):
         """Return user's full name."""
         return "{} {}".format(self.first_name, self.second_name)
+
+
+class ExternalLink(models.Model):
+    """Model for external links."""
+
+    name = models.CharField(max_length=255)
+    url = models.URLField()
+    ordering = models.PositiveSmallIntegerField(default=100)
+
+    class Meta:
+        """Meta class for the ExternalLink model."""
+
+        verbose_name = "External Link"
+        verbose_name_plural = "External Links"
+        ordering = ("ordering",)
