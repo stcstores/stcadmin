@@ -9,6 +9,8 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic.base import TemplateView
 
+from home import models
+
 
 class UserLoginMixin(LoginRequiredMixin):
     """View mixin to enusure request comes from a logged in user."""
@@ -28,6 +30,12 @@ class Index(LoginRequiredMixin, TemplateView):
     """View for homepage."""
 
     template_name = "home/index.html"
+
+    def get_context_data(self, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(**kwargs)
+        context["external_links"] = models.ExternalLink.objects.all()
+        return context
 
 
 class Version(TemplateView):
