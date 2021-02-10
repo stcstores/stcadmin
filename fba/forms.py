@@ -71,6 +71,9 @@ class CreateFBAOrderForm(forms.ModelForm):
         self.fields["country"] = forms.ModelChoiceField(
             queryset=models.FBACountry.objects.all()
         )
+        self.fields[
+            "fulfillment_center"
+        ].queryset = models.FulfillmentCenter.active.all()
         field_order = [
             "product_ID",
             "product_SKU",
@@ -90,6 +93,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "tracking_number",
             "is_combinable",
             "on_hold",
+            "fulfillment_center",
             "notes",
         ] + self.__class__.Meta.fields
         new_fields = {key: self.fields[key] for key in field_order}
@@ -121,6 +125,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "tracking_number",
             "is_combinable",
             "on_hold",
+            "fulfillment_center",
             "notes",
         ]
         widgets = {"product_ID": forms.HiddenInput()}
@@ -277,6 +282,9 @@ class FulfillFBAOrderForm(forms.ModelForm):
         self.fields["box_weight"].required = True
         self.fields["quantity_sent"].required = True
         self.fields["fulfilled_by"].required = True
+        self.fields[
+            "fulfillment_center"
+        ].queryset = models.FulfillmentCenter.active.all()
         self.fields["fulfilled_by"].queryset = User.objects.filter(
             cloudcommerceuser__hidden=False
         )
@@ -290,6 +298,7 @@ class FulfillFBAOrderForm(forms.ModelForm):
             "quantity_sent",
             "fulfilled_by",
             "update_stock_level_when_complete",
+            "fulfillment_center",
             "notes",
         ]
 

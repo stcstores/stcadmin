@@ -58,4 +58,25 @@ urlpatterns = [
     ),
     path("product_stock", views.ProductStock.as_view(), name="product_stock"),
     path("take_off_hold", views.TakeOffHold.as_view(), name="take_off_hold"),
+    path(
+        "create_fulfillment_center",
+        views.CreateFulfillemntCenter.as_view(),
+        name="create_fulfillment_center",
+    ),
+    path(
+        "update_fulfillment_center/<int:pk>/",
+        views.UpdateFulfillmentCenter.as_view(),
+        name="update_fulfillment_center",
+    ),
+    path(
+        "delete_fulfillment_center/<int:pk>/",
+        views.DeleteFulfillmentCenter.as_view(),
+        name="delete_fulfillment_center",
+    ),
+    path(
+        "fulfillment_center",
+        views.FulfillmentCenterList.as_view(),
+        name="fulfillment_center_list",
+    ),
+    path("invoice/<int:pk>/", views.FBAInvoice.as_view(), name="invoice"),
 ]
