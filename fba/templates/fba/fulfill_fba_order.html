@@ -18,6 +18,10 @@
 <a href="{% url 'fba:unmark_printed' form.instance.id %}?next={{ request.path }}">
     <button>Unmark printed</button></a>
 {% endif %}
+&nbsp;
+{% if form.instance.tracking_number and form.instance.fulfillment_center %}
+    <a href="{% url 'fba:invoice' form.instance.pk %}"><button>Invoice</button></a>
+{% endif %}
 
 <img src="{{ form.instance.product_image_url }}" alt="" height="200">
 

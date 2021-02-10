@@ -129,3 +129,10 @@ class FBAShippingPriceAdmin(admin.ModelAdmin):
     fields = ["product_SKU", "price_per_item"]
     list_display = ["__str__", "product_SKU", "price_per_item", "added"]
     list_editable = ["product_SKU", "price_per_item"]
+
+
+@admin.register(models.FulfillmentCenter)
+class FulfillmentCenterAdmin(admin.ModelAdmin):
+    """Model admin for the FulfilmentCenter model."""
+
+    fields = ("name", "country", "address_1", "address_2", "address_3")

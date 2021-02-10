@@ -20,6 +20,9 @@
     {% elif form.instance.country.region.auto_close %}
     <a href="{% url 'fba:shipping_price' form.instance.id %}"><button>Add Shipping Price</button></a>
     {% endif %}
+    {% if form.instance.tracking_number and form.instance.fulfillment_center %}
+    <a href="{% url 'fba:invoice' form.instance.pk %}"><button>Invoice</button></a>
+    {% endif %}
 {% endif %}
 
 <img src="{% if form.instance.id %}{{ form.instance.product_image_url }}{% else %}{{ image_url }}{% endif %}" alt="" height="200">

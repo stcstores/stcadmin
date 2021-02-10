@@ -88,7 +88,12 @@
                 {% if order.region.auto_close %}
                 <th>CLOSED</th>
                 {% else %}
-                <td><a href="{% url 'fba:shipping_price' order.pk %}"><button>Set Price</button></a></td>
+                <td>
+                    <a href="{% url 'fba:shipping_price' order.pk %}"><button>Set Price</button></a>
+                    {% if order.tracking_number and order.fulfillment_center %}
+                    <a href="{% url 'fba:invoice' order.pk %}"><button>Invoice</button></a>
+                    {% endif %}
+                </td>
                 {% endif %}
                 <td><a href="{% url 'fba:update_fba_order' order.pk %}"><button>View</button></a></td>
             {% endif %}
