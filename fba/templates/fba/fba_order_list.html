@@ -84,6 +84,7 @@
                 <a href="{% url 'fba:delete_order' order.pk %}"><button>Delete</button></a>
                 {% endif %}
             </td>
+            <td><button class="prioritise" id="prioritise_{{ order.pk }}">Prioritise</button></td>
             {% else %}
                 {% if order.region.auto_close %}
                 <th>CLOSED</th>
@@ -125,6 +126,17 @@ $(document).ready(function() {
                 $("#set_tracking_number_" + order_id).parent().html(result['tracking_number']);
                 $("#closed_at_" + order_id).html(result["closed_at"]);
                 $("#status_" + order_id).html(result['status']);
+            }
+        })
+    });
+    $(".prioritise").click(function() {
+        var order_id = $(this).attr("id").split("_").pop();
+        $.ajax({
+            url: "{% url 'fba:priortise_fba_order' %}",
+            data: {'order_id': order_id},
+            type: "GET",
+            success: function(response) {
+                alert("Order set to top priority")
             }
         })
     });

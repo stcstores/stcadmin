@@ -157,6 +157,7 @@ class FBAOrder(models.Model):
     PRINTED = "Printed"
     NOT_PROCESSED = "Not Processed"
     ON_HOLD = "On Hold"
+    MAX_PRIORITY = 999
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -183,12 +184,13 @@ class FBAOrder(models.Model):
     )
     tracking_number = models.CharField(max_length=255, blank=True)
     notes = models.TextField(blank=True)
-    priority = models.PositiveIntegerField(default=999)
+    priority = models.PositiveIntegerField(default=MAX_PRIORITY)
     printed = models.BooleanField(default=False)
     small_and_light = models.BooleanField(default=False)
     on_hold = models.BooleanField(default=False)
     update_stock_level_when_complete = models.BooleanField(default=True)
     is_combinable = models.BooleanField(default=False)
+    is_fragile = models.BooleanField(default=False)
     fulfillment_center = models.ForeignKey(
         FulfillmentCenter, on_delete=models.PROTECT, blank=True, null=True
     )
@@ -245,6 +247,14 @@ class FBAOrder(models.Model):
     def close(self):
         """Mark the order closed."""
         self.closed_at = timezone.now()
+        self.save()
+
+    def prioritise(self):
+        """Mark the order as top priority."""
+        FBAOrder.objects.filter(priority__lt=self.MAX_PRIORITY).update(
+            priority=models.F("priority") + 1
+        )
+        self.priority = 1
         self.save()
 
     def update_stock_level(self):

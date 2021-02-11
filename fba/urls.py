@@ -79,4 +79,5 @@ urlpatterns = [
         name="fulfillment_center_list",
     ),
     path("invoice/<int:pk>/", views.FBAInvoice.as_view(), name="invoice"),
+    path("prioritise", views.PrioritiseOrder.as_view(), name="priortise_fba_order"),
 ]

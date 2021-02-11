@@ -663,3 +663,13 @@ class FBAInvoice(FBAUserMixin, View):
         order = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
         invoice = models.FBAInvoice(order)
         return invoice.http_response()
+
+
+class PrioritiseOrder(FBAUserMixin, View):
+    """View for prioritising FBA orders."""
+
+    def get(self, request, *args, **kwargs):
+        """Make an FBA order the top priority."""
+        order = get_object_or_404(models.FBAOrder, pk=int(request.GET["order_id"]))
+        order.prioritise()
+        return HttpResponse("ok")
