@@ -189,6 +189,7 @@ class FBAOrder(models.Model):
     on_hold = models.BooleanField(default=False)
     update_stock_level_when_complete = models.BooleanField(default=True)
     is_combinable = models.BooleanField(default=False)
+    is_fragile = models.BooleanField(default=False)
     fulfillment_center = models.ForeignKey(
         FulfillmentCenter, on_delete=models.PROTECT, blank=True, null=True
     )

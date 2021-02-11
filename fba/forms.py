@@ -93,6 +93,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "tracking_number",
             "is_combinable",
             "on_hold",
+            "is_fragile",
             "fulfillment_center",
             "notes",
         ] + self.__class__.Meta.fields
@@ -124,6 +125,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "small_and_light",
             "tracking_number",
             "is_combinable",
+            "is_fragile",
             "on_hold",
             "fulfillment_center",
             "notes",

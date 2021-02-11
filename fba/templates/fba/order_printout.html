@@ -100,7 +100,10 @@
             <h2>ASIN: {{ order.product_asin }}</h2>
             <h2>
                 {{ order.region.name }} <img src="{{ order.region.default_country.country.flag.url}}" height="64">
+            </h2>
+            <h2>
                 {% if order.is_combinable %}&nbsp;COMBINABLE{% endif %}
+                {% if order.is_fragile %}&nbsp;FRAGILE, NO LABELS NEEDED{% endif %}
             </h2>
         </div>
         <div class="stock">
