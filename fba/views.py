@@ -149,6 +149,7 @@ class RepeatFBAOrder(FBAOrderCreate):
             FBA_fee=self.to_repeat.FBA_fee,
             aproximate_quantity=aprox_quantity,
             small_and_light=self.to_repeat.small_and_light,
+            is_fragile=self.to_repeat.is_fragile,
         )
         self.repeated_order.save()
 
