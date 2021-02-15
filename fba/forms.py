@@ -351,7 +351,7 @@ class OnHoldOrderFilter(forms.Form):
     )
     sort_by = forms.ChoiceField(
         choices=(
-            ("-created_at", "Date Created"),
+            ("created_at", "Date Created"),
             ("product_SKU", "SKU"),
             ("product_name", "Name"),
         ),
