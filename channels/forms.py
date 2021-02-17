@@ -24,6 +24,7 @@ class CreateOrder(forms.Form):
     phone_number = forms.CharField(
         validators=[phone_regex], max_length=17, required=False
     )
+    sale_price = forms.FloatField(required=False)
     shipping_price = forms.FloatField(min_value=0)
     basket = forms.CharField(widget=forms.HiddenInput())
 
