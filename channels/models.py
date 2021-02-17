@@ -88,7 +88,7 @@ class CreatedOrderProduct(models.Model):
 
     def total_price(self):
         """Return the total price for the item."""
-        return self.item_price * self.quantity
+        return round(self.item_price * self.quantity, 2)
 
 
 class CreateOrder:
@@ -127,7 +127,18 @@ class CreateOrder:
                     quantity=quantity,
                 )
             )
-        self.price = sum((product.total_gross for product in self.products))
+        print(data)
+        if data["sale_price"] is not None:
+            self.price = data["sale_price"]
+            product_count = sum([product.quantity for product in self.products])
+            item_price = round(self.price / product_count, 2)
+            for product in self.products:
+                product.item_net = item_price
+                product.item_gross = item_price
+                product.total_net = item_price * product.quantity
+                product.total_gross = item_price * product.quantity
+        else:
+            self.price = sum((product.total_gross for product in self.products))
         self.to_pay = self.price + self.shipping_price
 
     def create_customer(self):
