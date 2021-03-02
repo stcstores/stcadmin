@@ -127,7 +127,6 @@ class CreateOrder:
                     quantity=quantity,
                 )
             )
-        print(data)
         if data["sale_price"] is not None:
             self.price = data["sale_price"]
             product_count = sum([product.quantity for product in self.products])
@@ -139,7 +138,7 @@ class CreateOrder:
                 product.total_gross = item_price * product.quantity
         else:
             self.price = sum((product.total_gross for product in self.products))
-        self.to_pay = self.price + self.shipping_price
+        self.to_pay = round(self.price + self.shipping_price, 2)
 
     def create_customer(self):
         """Create the customer."""
@@ -236,3 +235,21 @@ class CreateOrder:
                 order=order,
             ).save()
         return order
+
+
+class WishImport(models.Model):
+    """Model for Wish order imports."""
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class WishOrder(models.Model):
+    """Model for imported Wish orders."""
+
+    wish_import = models.ForeignKey(WishImport, on_delete=models.CASCADE)
+    wish_transaction_id = models.CharField(max_length=255)
+    wish_order_id = models.CharField(max_length=255)
+    order = models.ForeignKey(
+        CreatedOrder, blank=True, null=True, on_delete=models.PROTECT
+    )
+    error = models.TextField(blank=True)

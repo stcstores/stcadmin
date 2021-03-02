@@ -1,6 +1,13 @@
 """Views for the channels app."""
 
-from django.views.generic.base import TemplateView
+import json
+from io import BytesIO
+
+import openpyxl
+from ccapi import CCAPI
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
+from django.views.generic.base import RedirectView, TemplateView
 from django.views.generic.edit import FormView
 
 from channels import forms, models
@@ -60,6 +67,101 @@ class CreateOrder(ChannelsUserMixin, FormView):
     def get_success_url(self):
         """Redirect after successful submission."""
         return self.order_object.get_absolute_url()
+
+
+class ImportOrders(ChannelsUserMixin, TemplateView):
+    """View for uploading orders via .csv."""
+
+    template_name = "channels/import_orders.html"
+
+
+class ImportWishOrders(ChannelsUserMixin, RedirectView):
+    """View for importing orders from Wish."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Redirect to the results page."""
+        return reverse(
+            "channels:wish_import_results", kwargs={"pk": self.import_object.pk}
+        )
+
+    def post(self, request, *args, **kwargs):
+        """Import orders from a Wish template."""
+        uploaded_file = request.FILES["wish_file"]
+        workbook = openpyxl.load_workbook(filename=BytesIO(uploaded_file.read()))
+        worksheet = workbook.active
+        channel_id = models.Channel.objects.get(name="Telephone Channel").channel_id
+        self.import_object = models.WishImport()
+        self.import_object.save()
+        for row_number, row_data in enumerate(worksheet.iter_rows()):
+            if row_number == 0:
+                header = [_.value for _ in row_data]
+                continue
+            row = dict(zip(header, [_.value for _ in row_data]))
+            if models.WishOrder.objects.filter(
+                wish_order_id=row["Order Id"], order__isnull=False
+            ).exists():
+                models.WishOrder(
+                    wish_import=self.import_object,
+                    wish_transaction_id=row["Transaction ID"],
+                    wish_order_id=row["Order Id"],
+                    error="Already Created",
+                ).save()
+                continue
+            product_id = CCAPI.search_product_SKU(
+                row["SKU"],
+                channel_id=channel_id,
+            )[0].variation_id
+            product = {
+                "product_id": product_id,
+                "price": float(row["Price (each)"][1:]),
+                "quantity": row["Quantity"],
+            }
+            data = {
+                "basket": json.dumps([product]),
+                "customer_name": row["Name"],
+                "address_line_1": row["Street Address 1"],
+                "address_line_2": row["Street Address 2"],
+                "town": row["City"],
+                "post_code": row["Zipcode"],
+                "country": row["Country"],
+                "channel": channel_id,
+                "shipping_price": float(row["Shipping (each)"][1:]),
+                "phone_number": row["Phone Number"],
+                "email": None,
+                "sale_price": None,
+            }
+            try:
+                order = models.CreateOrder(data).create()
+            except Exception as e:
+                models.WishOrder(
+                    wish_import=self.import_object,
+                    wish_transaction_id=row["Transaction ID"],
+                    wish_order_id=row["Order Id"],
+                    error=str(e),
+                ).save()
+            else:
+                models.WishOrder(
+                    wish_import=self.import_object,
+                    wish_transaction_id=row["Transaction ID"],
+                    wish_order_id=row["Order Id"],
+                    order=order,
+                ).save()
+        return super().post(request, *args, **kwargs)
+
+
+class WishImportResults(ChannelsUserMixin, TemplateView):
+    """View for wish import results."""
+
+    template_name = "channels/wish_import_result.html"
+
+    def get_context_data(self, **kwargs):
+        """Return context for the view."""
+        context = super().get_context_data(**kwargs)
+        context["wish_import"] = get_object_or_404(
+            models.WishImport, pk=self.kwargs["pk"]
+        )
+        context["orders"] = context["wish_import"].wishorder_set.all()
+        return context
 
 
 class CreatedOrder(ChannelsUserMixin, TemplateView):

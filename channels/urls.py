@@ -22,4 +22,15 @@ urlpatterns = [
         views.CreatedOrder.as_view(),
         name="created_order",
     ),
+    path("import_orders/", views.ImportOrders.as_view(), name="import_orders"),
+    path(
+        "import_wish_orders/",
+        views.ImportWishOrders.as_view(),
+        name="import_wish_orders",
+    ),
+    path(
+        "wish_import_results/<int:pk>/",
+        views.WishImportResults.as_view(),
+        name="wish_import_results",
+    ),
 ]

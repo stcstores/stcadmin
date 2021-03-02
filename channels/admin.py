@@ -35,3 +35,25 @@ class CreatedOrderAdmin(admin.ModelAdmin):
     )
     list_display = fields
     search_fields = ("customer_id", "order_id")
+
+
+@admin.register(models.WishImport)
+class WishImportAdmin(admin.ModelAdmin):
+    """Admin for the WishImport model."""
+
+    fields = ("created_at",)
+    list_display = ("created_at",)
+
+
+@admin.register(models.WishOrder)
+class WishOrderAdmin(admin.ModelAdmin):
+    """Admin for the WishOrder model."""
+
+    fields = ("wish_import", "wish_transaction_id", "wish_order_id", "order", "error")
+    list_display = (
+        "wish_import",
+        "wish_transaction_id",
+        "wish_order_id",
+        "order",
+        "error",
+    )
