@@ -1,9 +1,10 @@
 """Views for the channels app."""
 
+import csv
 import json
-from io import BytesIO
+import traceback
+from io import StringIO
 
-import openpyxl
 from ccapi import CCAPI
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -87,16 +88,15 @@ class ImportWishOrders(ChannelsUserMixin, RedirectView):
     def post(self, request, *args, **kwargs):
         """Import orders from a Wish template."""
         uploaded_file = request.FILES["wish_file"]
-        workbook = openpyxl.load_workbook(filename=BytesIO(uploaded_file.read()))
-        worksheet = workbook.active
+        reader = csv.reader(StringIO(uploaded_file.read().decode("utf8")))
         channel_id = models.Channel.objects.get(name="Telephone Channel").channel_id
         self.import_object = models.WishImport()
         self.import_object.save()
-        for row_number, row_data in enumerate(worksheet.iter_rows()):
+        for row_number, row_data in enumerate(reader):
             if row_number == 0:
-                header = [_.value for _ in row_data]
+                header = row_data
                 continue
-            row = dict(zip(header, [_.value for _ in row_data]))
+            row = dict(zip(header, [value for value in row_data]))
             if models.WishOrder.objects.filter(
                 wish_order_id=row["Order Id"], order__isnull=False
             ).exists():
@@ -114,7 +114,7 @@ class ImportWishOrders(ChannelsUserMixin, RedirectView):
             product = {
                 "product_id": product_id,
                 "price": float(row["Price (each)"][1:]),
-                "quantity": row["Quantity"],
+                "quantity": int(row["Quantity"]),
             }
             data = {
                 "basket": json.dumps([product]),
@@ -137,7 +137,7 @@ class ImportWishOrders(ChannelsUserMixin, RedirectView):
                     wish_import=self.import_object,
                     wish_transaction_id=row["Transaction ID"],
                     wish_order_id=row["Order Id"],
-                    error=str(e),
+                    error=str(e) + traceback.format_exc(),
                 ).save()
             else:
                 models.WishOrder(
