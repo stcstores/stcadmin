@@ -79,11 +79,19 @@ class ImportOrders(ChannelsUserMixin, TemplateView):
 class ImportWishOrders(ChannelsUserMixin, RedirectView):
     """View for importing orders from Wish."""
 
+    COUNTRY_CONVERSION = {"United Kingdom (Great Britain)": "United Kingdom"}
+
     def get_redirect_url(self, *args, **kwargs):
         """Redirect to the results page."""
         return reverse(
             "channels:wish_import_results", kwargs={"pk": self.import_object.pk}
         )
+
+    def convert_country(self, country_name):
+        """Replace a Wish country name with a Cloud Commerce country name."""
+        if country_name in self.COUNTRY_CONVERSION:
+            return self.COUNTRY_CONVERSION[country_name]
+        return country_name
 
     def post(self, request, *args, **kwargs):
         """Import orders from a Wish template."""
@@ -123,7 +131,7 @@ class ImportWishOrders(ChannelsUserMixin, RedirectView):
                 "address_line_2": row["Street Address 2"],
                 "town": row["City"],
                 "post_code": row["Zipcode"],
-                "country": row["Country"],
+                "country": self.convert_country(row["Country"]),
                 "channel": channel_id,
                 "shipping_price": float(row["Shipping (each)"][1:]),
                 "phone_number": row["Phone Number"],
