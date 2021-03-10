@@ -133,7 +133,8 @@ class ImportWishOrders(ChannelsUserMixin, RedirectView):
                 "post_code": row["Zipcode"],
                 "country": self.convert_country(row["Country"]),
                 "channel": channel_id,
-                "shipping_price": float(row["Shipping (each)"][1:]),
+                "shipping_price": float(row["Shipping (each)"][1:])
+                * product["quantity"],
                 "phone_number": row["Phone Number"],
                 "email": None,
                 "sale_price": None,
