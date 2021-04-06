@@ -33,7 +33,7 @@
     {% if 'fba' in groups %}
     <li><a href="{% url 'fba:index' %}">FBA</a></li>
     {% endif %}
-    {% if 'purchase' in groups or 'purchase_manager' in groups%}
+    {% if 'purchase_manager' in groups%}
     <li><a href="{% url 'purchases:purchase' %}">Purchases</a></li>
     {% endif %}
     {% if 'validation' in groups %}
