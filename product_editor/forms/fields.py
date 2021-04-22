@@ -324,8 +324,12 @@ class Department(fieldtypes.SingleSelectize):
     @staticmethod
     def get_choices():
         """Get choice options for field."""
-        departments = list(models.Department.objects.values_list("name", flat=True))
-        return [("", "")] + [(name, name) for name in departments]
+        departments = list(
+            models.Department.objects.filter(inactive=False).values_list(
+                "name", flat=True
+            )
+        )
+        return [(name, name) for name in departments]
 
     def clean(self, value):
         """Validate cleaned data."""
