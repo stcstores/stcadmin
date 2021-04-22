@@ -15,6 +15,7 @@ class Purchase(PolymorphicModel):
     modified_at = models.DateTimeField(auto_now=True)
     to_pay = models.IntegerField()
     paid = models.BooleanField(default=False)
+    cancelled = models.BooleanField(default=False)
 
 
 class StockPurchase(Purchase):

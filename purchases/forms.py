@@ -37,7 +37,11 @@ class PurchaseManagement(forms.Form):
     def __init__(self, *args, **kwargs):
         """Set the month select fields."""
         super().__init__(*args, **kwargs)
-        years = set(models.Purchase.objects.values_list("created_at__year", flat=True))
+        years = set(
+            models.Purchase.objects.filter(cancelled=False).values_list(
+                "created_at__year", flat=True
+            )
+        )
         self.fields["year"] = forms.IntegerField(
             widget=forms.Select(choices=((year, year) for year in years))
         )
