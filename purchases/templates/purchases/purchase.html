@@ -4,7 +4,7 @@
 
 <a href="{% url 'purchases:from_stock' %}"><button>Purchase From Stock</button></a>
 <a href="{% url 'purchases:manage_purchases' %}"><button>Manage Purchases</button></a>
-<a href=""><button>Purchase Shipping</button></a>
+<a href="{% url 'purchases:shipping' %}"><button>Purchase Shipping</button></a>
 <a href=""><button>Send Note</button></a>
 
 {% endblock content %}

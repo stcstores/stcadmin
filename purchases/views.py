@@ -14,6 +14,7 @@ from django.views.generic import FormView, TemplateView
 
 from home.views import UserInGroupMixin
 from purchases import forms, models
+from shipping.models import ShippingPrice
 
 
 class PurchaseUserMixin(UserInGroupMixin):
@@ -176,3 +177,40 @@ class MarkOrderCancelled(View):
         purchase.cancelled = True
         purchase.save()
         return JsonResponse({purchase_id: "ok"})
+
+
+class PurchaseShipping(PurchaseManagerUserMixin, FormView):
+    """View for creating stock purchases."""
+
+    form_class = forms.PurchaseShipping
+    template_name = "purchases/shipping.html"
+
+    def form_valid(self, form):
+        """Handle completed form."""
+        purchase = models.ShippingPurchase(
+            user=form.cleaned_data["purchaser"],
+            to_pay=form.cleaned_data["price"],
+            shipping_price=form.cleaned_data["shipping_price"],
+        )
+        purchase.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the sucess url."""
+        return reverse("purchases:manage_purchases")
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class GetShippingPrice(View):
+    """Get the shipping price for a given service and weight."""
+
+    def post(self, *args, **kwargs):
+        """Get the shipping price for a given service and weight."""
+        country = self.request.POST["country"]
+        shipping_service = self.request.POST["shipping_service"]
+        weight = int(self.request.POST["weight"])
+        shipping_price = ShippingPrice.objects.get(
+            country=country, shipping_service=shipping_service, inactive=False
+        )
+        to_pay = shipping_price.price(weight)
+        return JsonResponse({"price": to_pay})

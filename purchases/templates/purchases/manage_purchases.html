@@ -24,10 +24,17 @@
 {% for purchase in purchases %}
 <tr>
     <td>{{ purchase.created_at }}</td>
+    {% if purchase.stockpurchase %}
     <td>{{ purchase.product_sku }}</td>
     <td>{{ purchase.product_name }}</td>
     <td>{{ purchase.quantity }}</td>
     <td>{{ purchase.product_purchase_price|div:100|stringformat:".2f" }}</td>
+    {% elif purchase.shippingpurchase %}
+    <td></td>
+    <td>{{ purchase.shipping_price }}</td>
+    <td></td>
+    <td></td>
+    {% endif %}
     <td>{{ purchase.to_pay|div:100|stringformat:".2f" }}</td>
     <td>{{ purchase.paid }}</td>
     {% if purchase.paid is False %}

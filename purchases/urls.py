@@ -10,6 +10,7 @@ urlpatterns = [
     path("purchase/", views.Purchase.as_view(), name="purchase"),
     path("manage/", views.Manage.as_view(), name="manage"),
     path("from_stock/", views.PurchaseFromStock.as_view(), name="from_stock"),
+    path("shipping/", views.PurchaseShipping.as_view(), name="shipping"),
     path(
         "search_product_name/",
         views.SearchProductName.as_view(),
@@ -34,4 +35,5 @@ urlpatterns = [
         views.MarkOrderCancelled.as_view(),
         name="mark_purchase_cancelled",
     ),
+    path("shipping_price/", views.GetShippingPrice.as_view(), name="shipping_price"),
 ]
