@@ -110,6 +110,9 @@ class ShippingPriceFactory(factory.django.DjangoModelFactory):
     region = None
     item_price = 550
     price_per_kg = 0
+    item_surcharge = 0
+    fuel_surcharge = 0
+    covid_surcharge = 0
     inactive = False
 
 
