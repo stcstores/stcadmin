@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from channels.models import Channel
 from purchases import models
+from shipping.models import Country, ShippingPrice, ShippingService
 
 
 class PurchaseFromStock(forms.Form):
@@ -37,7 +38,35 @@ class PurchaseManagement(forms.Form):
     def __init__(self, *args, **kwargs):
         """Set the month select fields."""
         super().__init__(*args, **kwargs)
-        years = set(models.Purchase.objects.values_list("created_at__year", flat=True))
+        years = set(
+            models.Purchase.objects.filter(cancelled=False).values_list(
+                "created_at__year", flat=True
+            )
+        )
         self.fields["year"] = forms.IntegerField(
             widget=forms.Select(choices=((year, year) for year in years))
         )
+
+
+class PurchaseShipping(forms.Form):
+    """Form for purchasing shipping."""
+
+    purchaser = forms.ModelChoiceField(
+        queryset=get_user_model().objects.filter(groups__name="purchase")
+    )
+    country = forms.ModelChoiceField(queryset=Country.objects.all())
+    shipping_service = forms.ModelChoiceField(queryset=ShippingService.objects.all())
+    weight = forms.IntegerField()
+
+    def clean(self):
+        """Add the shipping price to the form data."""
+        cleaned_data = super().clean()
+        shipping_price = ShippingPrice.objects.get(
+            country=cleaned_data["country"],
+            shipping_service=cleaned_data["shipping_service"],
+            inactive=False,
+        )
+        cleaned_data["shipping_price"] = shipping_price
+        cleaned_data["price"] = shipping_price.price(cleaned_data["weight"])
+        print(cleaned_data)
+        return cleaned_data
