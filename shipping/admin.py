@@ -99,6 +99,9 @@ class ShippingPriceAdmin(admin.ModelAdmin):
         "item_price",
         "price_per_kg",
         "price_per_g",
+        "item_surcharge",
+        "fuel_surcharge",
+        "covid_surcharge",
         "inactive",
     )
     list_display = (
@@ -109,12 +112,18 @@ class ShippingPriceAdmin(admin.ModelAdmin):
         "item_price",
         "price_per_kg",
         "price_per_g",
+        "item_surcharge",
+        "fuel_surcharge",
+        "covid_surcharge",
         "inactive",
     )
     list_editable = (
         "item_price",
         "price_per_kg",
         "price_per_g",
+        "item_surcharge",
+        "fuel_surcharge",
+        "covid_surcharge",
         "inactive",
     )
     list_filter = (

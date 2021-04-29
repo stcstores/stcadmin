@@ -110,6 +110,7 @@ class CreateOrder:
         self.phone_number = data["phone_number"] or self.default_contact.phone
         self.post_code = data["post_code"]
         self.country = data["country"]
+        self.region = data["region"]
         self.channel_id = data["channel"]
         self.shipping_price = data["shipping_price"]
         self.products = []
@@ -162,6 +163,7 @@ class CreateOrder:
             last_name=self.last_name,
             address_1=self.address_1,
             address_2=self.address_2,
+            region=self.region,
             post_code=self.post_code,
             town=self.town,
             country=self.country,
