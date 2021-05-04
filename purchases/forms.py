@@ -55,7 +55,11 @@ class PurchaseShipping(forms.Form):
         queryset=get_user_model().objects.filter(groups__name="purchase")
     )
     country = forms.ModelChoiceField(queryset=Country.objects.all())
-    shipping_service = forms.ModelChoiceField(queryset=ShippingService.objects.all())
+    shipping_service = forms.ModelChoiceField(
+        queryset=ShippingService.objects.filter(
+            shippingprice__inactive=False
+        ).distinct()
+    )
     weight = forms.IntegerField()
 
     def clean(self):
