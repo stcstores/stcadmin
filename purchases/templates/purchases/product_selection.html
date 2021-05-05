@@ -29,6 +29,8 @@
                         <th>Quantity</th>
                         <th>Price (per item)</th>
                         <th>Price (total)</th>
+                        <th>Discount</th>
+                        <th>Final Price</th>
                         <th>Update Stock</th>
                         <th></th>
                     </tr>
@@ -94,12 +96,30 @@ class OrderBasket {
     
     result_row(index) {
         var product = this.search_results[index];
-        return "<tr><td>" + product.sku + "</td><td>" + product.name +"</td><td><input class='quantity' type='number' value='1'></td><td><button name=" + index + " class='add_product'>Add</button></td></tr>"
+        return "<tr><td>" + product.sku + "</td><td>" + product.name +
+        "</td><td><input class='quantity' type='number' value='1'></td><td><button name=" +
+        index + " class='add_product'>Add</button></td></tr>"
     }
 
     basket_row(index) {
         var product = this.basket[index];
-        return "<tr><td>" + product.sku + "</td><td>" + product.name +"</td><td><input  class='basket_quantity' type='number' value='" + product.quantity + "'></td><td><input type='number' min='0' step='0.01' class='basket_price' value='" + product.price + "' disabled></td><td><input type='number' min='0' step='0.01' class='total_price' value='" + (product.price * product.quantity) + "' disabled></td><td><input class='update_stock' type='checkbox'></td><td><button name='" + index + "' class='remove_product'>Remove</button></td></tr>"
+        var item_price = parseFloat(product.price).toFixed(2);
+        var total_price = parseFloat(product.price * product.quantity).toFixed(2);
+        var discount_percentage = parseInt($("#{{ form.discount.auto_id }}").val());
+        var discount = parseFloat(total_price * discount_percentage / 100).toFixed(2);
+        var final_price = parseFloat(total_price - discount).toFixed(2);
+        var sku_field = "<td>" + product.sku + "</td>";
+        var name_field = "<td>" + product.name +"</td>";
+        var quantity_field = "</td><td><input  class='basket_quantity' type='number' value='" + product.quantity + "'></td>"
+        var price_per_item_field = "<td><input type='number' min='0' step='0.01' class='basket_price' value='" + item_price + "' readonly></td>";
+        var total_price_field = "<td><input type='number' min='0' step='0.01' class='total_price' value='" + total_price + "' readonly></td>";
+        var discount_field = "<td><input type='number' min='0' step='0.01' class='discount' value='" + discount + "' readonly></td>"
+        var final_price_field = "<td><input type='number' min='0' step='0.01' class='final_price' value='" + final_price + "' readonly></td>"
+        var update_stock_field = "<td><input class='update_stock' type='checkbox'></td>";
+        var remove_field = "<td><button name='" + index + "' class='remove_product'>Remove</button></td></tr>";
+        return "<tr>" + sku_field + name_field + quantity_field + 
+            price_per_item_field + total_price_field + discount_field + 
+            final_price_field + update_stock_field + remove_field + "</tr>";
     }
 
     add_to_basket(index, quantity) {
@@ -127,8 +147,7 @@ class OrderBasket {
         url: "{% url 'purchases:product_purchase_price' %}?product_id="+basket_item.product_id,
         success: function (result) {
             basket_item.purchase_price = result['purchase_price'];
-            basket_item.price = basket_item.purchase_price * 2;
-            console.log(basket_item);
+            basket_item.price = basket_item.purchase_price;
             self.basket.push(basket_item);
             self.show_basket();
             },
@@ -182,6 +201,9 @@ class OrderBasket {
         $('#product_sku').bind("enterKey",function(e){
             order_basket.product_sku_search($(this).val());
             $('#product_name').val("");
+        });
+        $("#{{ form.discount.auto_id }}").change(function() {
+            order_basket.show_basket();
         });
 
         $("#order_form").submit(function(e) {
