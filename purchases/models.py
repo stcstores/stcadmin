@@ -1,6 +1,7 @@
 """Models for the Purhcases app."""
 
 from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from polymorphic.models import PolymorphicModel
 
@@ -25,6 +26,9 @@ class StockPurchase(Purchase):
     product_sku = models.CharField(max_length=20)
     product_name = models.CharField(max_length=255)
     product_purchase_price = models.IntegerField()
+    discount_percentage = models.PositiveSmallIntegerField(
+        validators=(MinValueValidator(0), MaxValueValidator(100))
+    )
     quantity = models.IntegerField()
 
 

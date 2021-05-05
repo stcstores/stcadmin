@@ -11,12 +11,25 @@ from purchases import models
 from shipping.models import Country, ShippingPrice, ShippingService
 
 
+class DiscountField(forms.TypedChoiceField):
+    """Field for selecting purchase discount amount."""
+
+    discount_values = ((50, "50%"), (20, "20%"), (0, "No Discount"))
+
+    def __init__(self, *args, **kwargs):
+        """Field for selecting purchase discount amount."""
+        kwargs["coerce"] = int
+        kwargs["choices"] = self.discount_values
+        super().__init__(*args, **kwargs)
+
+
 class PurchaseFromStock(forms.Form):
     """Form for creating stock purchases."""
 
     purchaser = forms.ModelChoiceField(
         queryset=get_user_model().objects.filter(groups__name="purchase")
     )
+    discount = DiscountField()
     basket = forms.CharField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
@@ -72,5 +85,4 @@ class PurchaseShipping(forms.Form):
         )
         cleaned_data["shipping_price"] = shipping_price
         cleaned_data["price"] = shipping_price.price(cleaned_data["weight"])
-        print(cleaned_data)
         return cleaned_data

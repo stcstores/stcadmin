@@ -50,10 +50,14 @@ class PurchaseFromStock(PurchaseManagerUserMixin, FormView):
     def form_valid(self, form):
         """Handle completed form."""
         user = form.cleaned_data["purchaser"]
+        discount_percentage = form.cleaned_data["discount"]
         stock_purchases = []
+        print(form.cleaned_data)
         for product in json.loads(form.cleaned_data["basket"]):
             purchase_price = int(float(product["purchase_price"]) * 100)
-            to_pay = purchase_price * product["quantity"] * 2
+            total_price = purchase_price * product["quantity"]
+            discount = total_price * (discount_percentage / 100)
+            to_pay = int(total_price - discount)
             purchase = models.StockPurchase(
                 user=user,
                 to_pay=to_pay,
@@ -62,6 +66,7 @@ class PurchaseFromStock(PurchaseManagerUserMixin, FormView):
                 product_name=product["name"],
                 product_purchase_price=purchase_price,
                 quantity=product["quantity"],
+                discount_percentage=discount_percentage,
             )
             stock_purchases.append(purchase)
         with transaction.atomic():
