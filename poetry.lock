@@ -1167,7 +1167,7 @@ python-versions = "*"
 
 [[package]]
 name = "xlsxwriter"
-version = "1.4.0"
+version = "1.4.1"
 description = "A Python module for creating Excel XLSX files."
 category = "main"
 optional = false
@@ -1373,6 +1373,7 @@ flake8-docstrings = [
     {file = "flake8_docstrings-1.6.0-py2.py3-none-any.whl", hash = "sha256:99cac583d6c7e32dd28bbfbef120a7c0d1b6dde4adb5a9fd441c4227a6534bde"},
 ]
 gunicorn = [
+    {file = "gunicorn-20.1.0-py3-none-any.whl", hash = "sha256:9dcc4547dbb1cb284accfb15ab5667a0e5d1881cc443e0677b4882a4067a807e"},
     {file = "gunicorn-20.1.0.tar.gz", hash = "sha256:e0a968b5ba15f8a328fdfd7ab1fcb5af4470c28aaf7e55df02a99bc13138e6e8"},
 ]
 idna = [
@@ -1851,6 +1852,6 @@ wcwidth = [
     {file = "wcwidth-0.2.5.tar.gz", hash = "sha256:c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83"},
 ]
 xlsxwriter = [
-    {file = "XlsxWriter-1.4.0-py2.py3-none-any.whl", hash = "sha256:1a6dd98892e8010d3e089d1cb61385baa8f76fa547598df2c221cc37238c72d3"},
-    {file = "XlsxWriter-1.4.0.tar.gz", hash = "sha256:82be5a58c09bdc2ff8afc25acc815c465275239ddfc56d6e7b2a7e6c5d2e213b"},
+    {file = "XlsxWriter-1.4.1-py2.py3-none-any.whl", hash = "sha256:403fd5ca1aeaf76405062219eb3134428eeb4f60e15c11ea9ccf484bdbe1a831"},
+    {file = "XlsxWriter-1.4.1.tar.gz", hash = "sha256:172cf07e8b9149c88a57438f059f483b641245c25ecf25391b31e22cd63f23af"},
 ]
