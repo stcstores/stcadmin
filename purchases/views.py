@@ -50,10 +50,31 @@ class StockPurchase(PurchaseManagerUserMixin, FormView):
         """Handle completed form."""
         user = form.cleaned_data["purchaser"]
         discount_percentage = form.cleaned_data["discount"]
+        basket = form.cleaned_data["basket"]
+        self.add_purchases(
+            basket=basket,
+            user=user,
+            discount_percentage=discount_percentage,
+            profit_margin=form.profit_margin,
+        )
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the sucess url."""
+        return reverse("purchases:manage_purchases")
+
+
+class PurchaseFromStock(StockPurchase):
+    """View for creating stock purchases."""
+
+    template_name = "purchases/from_stock.html"
+
+    def add_purchases(self, basket, user, discount_percentage, profit_margin=0):
+        """Add purchase to the database."""
         stock_purchases = []
-        for product in json.loads(form.cleaned_data["basket"]):
+        for product in json.loads(basket):
             purchase_price = int(float(product["purchase_price"]) * 100)
-            total_price = purchase_price * product["quantity"] * form.profit_margin
+            total_price = purchase_price * product["quantity"] * profit_margin
             discount = total_price * (discount_percentage / 100)
             to_pay = int(total_price - discount)
             purchase = models.StockPurchase(
@@ -70,23 +91,32 @@ class StockPurchase(PurchaseManagerUserMixin, FormView):
         with transaction.atomic():
             for purchase in stock_purchases:
                 purchase.save()
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        """Return the sucess url."""
-        return reverse("purchases:manage_purchases")
-
-
-class PurchaseFromStock(StockPurchase):
-    """View for creating stock purchases."""
-
-    template_name = "purchases/from_stock.html"
 
 
 class PurchaseFromShop(StockPurchase):
     """View for creating shop purchases."""
 
     template_name = "purchases/from_shop.html"
+
+    def add_purchases(self, basket, user, discount_percentage, profit_margin=0):
+        """Add purchase to the database."""
+        product = json.loads(basket)
+        quantity = int(product["quantity"])
+        shop_price = int(float(product["price"]) * 100)
+        total_price = shop_price * quantity
+        discount = total_price * (discount_percentage / 100)
+        to_pay = int(total_price - discount)
+        purchase = models.StockPurchase(
+            user=user,
+            to_pay=to_pay,
+            product_id="SHOP PURCHASE",
+            product_sku="SHOP PURCHASE",
+            product_name=product["name"],
+            product_purchase_price=shop_price,
+            quantity=quantity,
+            discount_percentage=discount_percentage,
+        )
+        purchase.save()
 
 
 @method_decorator(csrf_exempt, name="dispatch")
