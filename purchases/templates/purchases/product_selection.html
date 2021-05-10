@@ -103,8 +103,8 @@ class OrderBasket {
 
     basket_row(index) {
         var product = this.basket[index];
-        var item_price = parseFloat(product.price).toFixed(2);
-        var total_price = parseFloat(product.price * product.quantity).toFixed(2);
+        var item_price = parseFloat(product.price * {{ form.profit_margin }}).toFixed(2);
+        var total_price = parseFloat(item_price * product.quantity).toFixed(2);
         var discount_percentage = parseInt($("#{{ form.discount.auto_id }}").val());
         var discount = parseFloat(total_price * discount_percentage / 100).toFixed(2);
         var final_price = parseFloat(total_price - discount).toFixed(2);
