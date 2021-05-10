@@ -11,12 +11,8 @@
         <input type="number" min="0" step="1" id="quantity" name="quantity" value="1">
     </p>
     <p>
-        <label for="purchase_price">Purchase Price</label>
-        <input type="number" id="purchase_price" name="purhcase_price" min="0" step="0.01">
-    </p>
-    <p>
-        <label for="item_price">Price Per Item</label>
-        <input type="text" id="item_price" name="item_price" readonly>
+        <label for="shop_price">Shop Price</label>
+        <input type="number" min="0" step="0.01" id="shop_price" name="shop_price">
     </p>
     <p>
         <label for="total_price">Total Price</label>
@@ -43,23 +39,19 @@
 <script>
 
 function update() {
-    var purchase_price = parseFloat(purchase_price_field.val()).toFixed(2);
+    var shop_price = parseFloat(shop_price_field.val()).toFixed(2);
     var quantity = parseInt(quantity_field.val());
-    var item_price = parseFloat(purchase_price * {{ form.profit_margin }}).toFixed(2);
-    var total_price = parseFloat(item_price * quantity).toFixed(2);
+    var total_price = parseFloat(shop_price * quantity).toFixed(2);
     var discount_percentage = parseInt(discount_field.val());
     var discount = parseFloat(total_price * discount_percentage / 100).toFixed(2);
     var final_price = parseFloat(total_price - discount).toFixed(2);
-    item_price_field.val(item_price);
     total_price_field.val(total_price);
     discount_value_field.val(discount);
     final_price_field.val(final_price);
-    basket[0] = {
-        "product_id": "SHOP PURCHASE",
-        "sku": "SHOP PURCHASE",
+    basket = {
         "name": name_field.val(),
         "quantity": quantity,
-        "purchase_price": purchase_price,
+        "price": shop_price,
 
     };
     console.log(basket);
@@ -68,17 +60,16 @@ function update() {
 $(document).ready(function() {
     name_field = $("#product_name");
     quantity_field = $("#quantity");
-    purchase_price_field = $("#purchase_price");
-    item_price_field = $("#item_price");
+    shop_price_field = $("#shop_price");
     total_price_field = $("#total_price");
     discount_value_field = $("#discount_value");
     final_price_field = $("#final_price");
     discount_field = $("#{{ form.discount.auto_id }}");
 
-    basket = [];
+    basket = {};
     
     quantity_field.change(function() {update()});
-    purchase_price_field.change(function() {update()});
+    shop_price_field.change(function() {update()});
     discount_field.change(function() {update()});
 
     $("#order_form").submit(function(e) {
