@@ -26,6 +26,7 @@ class DiscountField(forms.TypedChoiceField):
 class PurchaseFromStock(forms.Form):
     """Form for creating stock purchases."""
 
+    profit_margin = 2.5
     purchaser = forms.ModelChoiceField(
         queryset=get_user_model().objects.filter(groups__name="purchase")
     )

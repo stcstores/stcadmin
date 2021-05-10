@@ -41,21 +41,19 @@ class Manage(PurchaseManagerUserMixin, TemplateView):
     template_name = "purchases/manage.html"
 
 
-class PurchaseFromStock(PurchaseManagerUserMixin, FormView):
-    """View for creating stock purchases."""
+class StockPurchase(PurchaseManagerUserMixin, FormView):
+    """Base view for product purchases."""
 
     form_class = forms.PurchaseFromStock
-    template_name = "purchases/from_stock.html"
 
     def form_valid(self, form):
         """Handle completed form."""
         user = form.cleaned_data["purchaser"]
         discount_percentage = form.cleaned_data["discount"]
         stock_purchases = []
-        print(form.cleaned_data)
         for product in json.loads(form.cleaned_data["basket"]):
             purchase_price = int(float(product["purchase_price"]) * 100)
-            total_price = purchase_price * product["quantity"]
+            total_price = purchase_price * product["quantity"] * form.profit_margin
             discount = total_price * (discount_percentage / 100)
             to_pay = int(total_price - discount)
             purchase = models.StockPurchase(
@@ -77,6 +75,18 @@ class PurchaseFromStock(PurchaseManagerUserMixin, FormView):
     def get_success_url(self):
         """Return the sucess url."""
         return reverse("purchases:manage_purchases")
+
+
+class PurchaseFromStock(StockPurchase):
+    """View for creating stock purchases."""
+
+    template_name = "purchases/from_stock.html"
+
+
+class PurchaseFromShop(StockPurchase):
+    """View for creating shop purchases."""
+
+    template_name = "purchases/from_shop.html"
 
 
 @method_decorator(csrf_exempt, name="dispatch")
