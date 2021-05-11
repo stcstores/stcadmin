@@ -74,7 +74,7 @@ class PurchaseShipping(forms.Form):
             shippingprice__inactive=False
         ).distinct()
     )
-    weight = forms.IntegerField()
+    weight = forms.IntegerField(label="Weight (g)")
 
     def clean(self):
         """Add the shipping price to the form data."""
