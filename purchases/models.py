@@ -25,7 +25,7 @@ class StockPurchase(Purchase):
     product_id = models.CharField(max_length=20)
     product_sku = models.CharField(max_length=20)
     product_name = models.CharField(max_length=255)
-    product_purchase_price = models.IntegerField()
+    full_price = models.IntegerField()
     discount_percentage = models.PositiveSmallIntegerField(
         validators=(MinValueValidator(0), MaxValueValidator(100))
     )

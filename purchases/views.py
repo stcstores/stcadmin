@@ -83,7 +83,7 @@ class PurchaseFromStock(StockPurchase):
                 product_id=product["product_id"],
                 product_sku=product["sku"],
                 product_name=product["name"],
-                product_purchase_price=purchase_price,
+                full_price=total_price,
                 quantity=product["quantity"],
                 discount_percentage=discount_percentage,
             )
@@ -112,7 +112,7 @@ class PurchaseFromShop(StockPurchase):
             product_id="SHOP PURCHASE",
             product_sku="SHOP PURCHASE",
             product_name=product["name"],
-            product_purchase_price=shop_price,
+            full_price=shop_price,
             quantity=quantity,
             discount_percentage=discount_percentage,
         )
