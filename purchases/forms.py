@@ -14,7 +14,7 @@ from shipping.models import Country, ShippingPrice, ShippingService
 class DiscountField(forms.TypedChoiceField):
     """Field for selecting purchase discount amount."""
 
-    discount_values = ((50, "50%"), (20, "20%"), (0, "No Discount"))
+    discount_values = ((20, "20%"), (50, "50%"), (0, "No Discount"))
 
     def __init__(self, *args, **kwargs):
         """Field for selecting purchase discount amount."""
