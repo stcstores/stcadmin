@@ -20,7 +20,7 @@
     <th>Full Price</th>
     <th>Discount</th>
     <th>To Pay</th>
-    <th colspan="2">Is Paid</th>
+    <th>Cancel</th>
 </tr>
 {% for purchase in purchases %}
 <tr>
@@ -39,15 +39,9 @@
     <td></td>
     {% endif %}
     <td>{{ purchase.to_pay|div:100|stringformat:".2f" }}</td>
-    <td>{{ purchase.paid }}</td>
-    {% if purchase.paid is False %}
     <td>
-        <button class="mark_paid" id="mark_paid_{{ purchase.id }}">Mark Paid</button>
         <button class="mark_cancelled error" id="mark_cancelled_{{ purchase.id }}">Cancel</button>
     </td>
-    {% else %}
-    <td></td>
-    {% endif %}
 
 </tr>
 
@@ -60,14 +54,6 @@
 <script>
 
 $(document).ready(function(){
-
-    $('.mark_paid').click(function() {
-        var purchase_id = $(this).attr('id').replace('mark_paid_', '');
-
-        $.post('{% url "purchases:mark_purchase_paid" %}', {'purchase_id': purchase_id}, function() {
-            location.reload();
-        });
-    });
 
     $('.mark_cancelled').click(function() {
         var purchase_id = $(this).attr('id').replace('mark_cancelled_', '');

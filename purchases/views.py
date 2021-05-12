@@ -199,19 +199,6 @@ class ManagePurchases(PurchaseManagerUserMixin, TemplateView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class MarkOrderPaid(View):
-    """Mark a purchase as paid."""
-
-    def post(self, *args, **kwargs):
-        """Mark a purchase as paid."""
-        purchase_id = self.request.POST.get("purchase_id")
-        purchase = get_object_or_404(models.Purchase, pk=purchase_id)
-        purchase.paid = True
-        purchase.save()
-        return JsonResponse({purchase_id: "ok"})
-
-
-@method_decorator(csrf_exempt, name="dispatch")
 class MarkOrderCancelled(View):
     """Mark a purchase as cancelled."""
 
