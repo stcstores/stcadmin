@@ -40,14 +40,22 @@ $(document).ready(function() {
             data,
             function(response) {
                 console.log(response);
-                price_display.val("£"+response.price / 100);
+                price_display.val("£"+ parseFloat(response.price / 100).toFixed(2));
             }
         );
     }
 
+    country_field.change(function (){
+        get_shipping_price();
+    });
+
     wieght_field.change(function (){
         get_shipping_price();
-    })
+    });
+
+    shipping_service_field.change(function (){
+        get_shipping_price();
+    });
 
 });
 </script>
