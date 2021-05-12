@@ -29,9 +29,6 @@ urlpatterns = [
     ),
     path("manage_purchases/", views.ManagePurchases.as_view(), name="manage_purchases"),
     path(
-        "mark_purchase_paid/", views.MarkOrderPaid.as_view(), name="mark_purchase_paid"
-    ),
-    path(
         "mark_purchase_cancelled/",
         views.MarkOrderCancelled.as_view(),
         name="mark_purchase_cancelled",
