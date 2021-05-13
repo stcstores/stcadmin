@@ -232,6 +232,27 @@ class PurchaseShipping(PurchaseManagerUserMixin, FormView):
         return reverse("purchases:manage_purchases")
 
 
+class PurchaseNote(FormView):
+    """View for creating purchase notes."""
+
+    form_class = forms.PurchaseNote
+    template_name = "purchases/purchase_note.html"
+
+    def form_valid(self, form):
+        """Add purchase note to the database."""
+        purchase = models.PurchaseNote(
+            user=form.cleaned_data["purchaser"],
+            to_pay=int(form.cleaned_data["to_pay"] * 100),
+            text=form.cleaned_data["text"],
+        )
+        purchase.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the sucess url."""
+        return reverse("purchases:manage_purchases")
+
+
 @method_decorator(csrf_exempt, name="dispatch")
 class GetShippingPrice(View):
     """Get the shipping price for a given service and weight."""

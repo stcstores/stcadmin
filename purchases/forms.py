@@ -87,3 +87,15 @@ class PurchaseShipping(forms.Form):
         cleaned_data["shipping_price"] = shipping_price
         cleaned_data["price"] = shipping_price.price(cleaned_data["weight"])
         return cleaned_data
+
+
+class PurchaseNote(forms.Form):
+    """Form for creating purchase notes."""
+
+    purchaser = forms.ModelChoiceField(
+        queryset=get_user_model().objects.filter(groups__name="purchase")
+    )
+    to_pay = forms.FloatField(
+        min_value=0, initial=0, widget=forms.NumberInput(attrs={"step": 0.01})
+    )
+    text = forms.CharField(widget=forms.Textarea())

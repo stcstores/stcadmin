@@ -35,3 +35,9 @@ class ShippingPurchase(Purchase):
     """Model for shipping purchaes."""
 
     shipping_price = models.ForeignKey(ShippingPrice, on_delete=models.PROTECT)
+
+
+class PurchaseNote(Purchase):
+    """Model for purchase notes."""
+
+    text = models.TextField()

@@ -34,4 +34,5 @@ urlpatterns = [
         name="mark_purchase_cancelled",
     ),
     path("shipping_price/", views.GetShippingPrice.as_view(), name="shipping_price"),
+    path("purchase_note", views.PurchaseNote.as_view(), name="purchase_note"),
 ]
