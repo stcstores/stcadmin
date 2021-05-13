@@ -28,6 +28,7 @@ class VariationForm(forms.Form):
         "Linn SKU",
         "Linn Title",
         "Retail Price",
+        "Created By",
     ]
 
     product_id = forms.CharField(widget=forms.HiddenInput)

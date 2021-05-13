@@ -59,6 +59,21 @@ def test_sets_price_per_g(new_shipping_price):
 
 
 @pytest.mark.django_db
+def test_sets_item_surcharge(new_shipping_price):
+    assert new_shipping_price.item_surcharge == 0
+
+
+@pytest.mark.django_db
+def test_sets_fuel_surcharge(new_shipping_price):
+    assert new_shipping_price.fuel_surcharge == 0
+
+
+@pytest.mark.django_db
+def test_sets_covid_surcharge(new_shipping_price):
+    assert new_shipping_price.covid_surcharge == 0
+
+
+@pytest.mark.django_db
 def test_sets_inactive(new_shipping_price):
     assert new_shipping_price.inactive is False
 
@@ -141,6 +156,32 @@ def test_weight_band_with_g_price(shipping_price_factory, weight_band_factory):
         min_weight=100, max_weight=2000, price=220, shipping_price=shipping_price
     )
     assert shipping_price.price(1500) == 340
+
+
+@pytest.mark.django_db
+def test_item_surcharge(shipping_price_factory):
+    shipping_price = shipping_price_factory.create(item_price=600, item_surcharge=70)
+    assert shipping_price.price(1500) == 670
+
+
+@pytest.mark.django_db
+def test_fuel_surcharge(shipping_price_factory):
+    shipping_price = shipping_price_factory.create(item_price=600, fuel_surcharge=10)
+    assert shipping_price.price(1500) == 660
+
+
+@pytest.mark.django_db
+def test_covid_surcharge(shipping_price_factory):
+    shipping_price = shipping_price_factory.create(item_price=600, covid_surcharge=70)
+    assert shipping_price.price(1500) == 670
+
+
+@pytest.mark.django_db
+def test_surcharges(shipping_price_factory):
+    shipping_price = shipping_price_factory.create(
+        item_price=600, item_surcharge=70, fuel_surcharge=10, covid_surcharge=70
+    )
+    assert shipping_price.price(1500) == 800
 
 
 @pytest.mark.django_db

@@ -1,0 +1,82 @@
+{% extends 'purchases/base.html' %}
+
+{% block content %}
+<div class="product_select">
+    <p>
+        <label for="search_name">Product Name</label>
+        <input type="text" id="product_name" name="search_name">
+    </p>
+    <p>
+        <label for="quantity">Quantity</label>
+        <input type="number" min="0" step="1" id="quantity" name="quantity" value="1">
+    </p>
+    <p>
+        <label for="shop_price">Shop Price</label>
+        <input type="number" min="0" step="0.01" id="shop_price" name="shop_price">
+    </p>
+    <p>
+        <label for="total_price">Total Price</label>
+        <input type="text" id="total_price" name="total_price" readonly>
+    </p>
+    <p>
+        <label for="discount_value">Discount</label>
+        <input type="text" id="discount_value" name="discount_value" readonly>
+    </p>
+    <p>
+        <label for="final_price">Final Price</label>
+        <input type="text" id="final_price" name="final_price" readonly>
+    </p>
+</div>
+
+<form method="post" id="order_form">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Create Order">
+</form>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+
+function update() {
+    var shop_price = parseFloat(shop_price_field.val()).toFixed(2);
+    var quantity = parseInt(quantity_field.val());
+    var total_price = parseFloat(shop_price * quantity).toFixed(2);
+    var discount_percentage = parseInt(discount_field.val());
+    var discount = parseFloat(total_price * discount_percentage / 100).toFixed(2);
+    var final_price = parseFloat(total_price - discount).toFixed(2);
+    total_price_field.val(total_price);
+    discount_value_field.val(discount);
+    final_price_field.val(final_price);
+    basket = {
+        "name": name_field.val(),
+        "quantity": quantity,
+        "price": shop_price,
+
+    };
+    console.log(basket);
+}
+
+$(document).ready(function() {
+    name_field = $("#product_name");
+    quantity_field = $("#quantity");
+    shop_price_field = $("#shop_price");
+    total_price_field = $("#total_price");
+    discount_value_field = $("#discount_value");
+    final_price_field = $("#final_price");
+    discount_field = $("#{{ form.discount.auto_id }}");
+
+    basket = {};
+    
+    quantity_field.change(function() {update()});
+    shop_price_field.change(function() {update()});
+    discount_field.change(function() {update()});
+
+    $("#order_form").submit(function(e) {
+        $("#{{ form.basket.auto_id }}").val(JSON.stringify(basket));
+        return true;
+    });
+});
+
+</script>
+{% endblock script %}

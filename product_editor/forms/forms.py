@@ -80,7 +80,7 @@ class BaseOptionsForm(ProductForm):
         return [
             (option.option_name, [value.value for value in option])
             for option in self.option_data
-            if option.exclusions["tesco"] is False
+            if option.exclusions["google"] is False
         ]
 
     def _get_choice_values(self, option_name, values):
@@ -267,6 +267,6 @@ class VariationListingOptionsSet(BaseVariationFormSet):
         option_values = {
             option.option_name: [value.value for value in option]
             for option in option_data
-            if option.exclusions["tesco"] is False
+            if option.exclusions["google"] is False
         }
         return {"option_values": option_values}

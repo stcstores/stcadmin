@@ -174,6 +174,7 @@ class ProductSaver(ProductEditorBase):
             if option_name not in (self.PRODUCT_ID, self.RANGE_ID):
                 product.options[option_name] = option_value
         if self.PRODUCT_ID not in kwargs or not kwargs[self.PRODUCT_ID]:
+            product.created_by = self.user.get_full_name()
             product.date_created = datetime.datetime.now()
 
 

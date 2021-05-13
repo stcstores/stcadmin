@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "adminsortable2",
+    "mathfilters",
     "solo",
     "imagekit",
     "validation",
@@ -100,6 +101,7 @@ INSTALLED_APPS = [
     "feedback",
     "fba",
     "channels",
+    "purchases",
     "debug_toolbar",
 ]
 

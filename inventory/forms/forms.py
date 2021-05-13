@@ -54,6 +54,7 @@ class ProductForm(ProductEditorBase, forms.Form):
         "Height MM",
         "Length MM",
         "Width MM",
+        "Created By",
     ]
 
     def __init__(self, *args, **kwargs):

@@ -233,6 +233,10 @@ class ShippingPrice(models.Model):
     item_price = models.PositiveIntegerField(default=0)
     price_per_kg = models.PositiveIntegerField(default=0)
     price_per_g = models.DecimalField(max_digits=7, decimal_places=3, default=0)
+    item_surcharge = models.PositiveIntegerField(default=0)
+    fuel_surcharge = models.PositiveIntegerField(default=0)
+    covid_surcharge = models.PositiveIntegerField(default=0)
+
     inactive = models.BooleanField(default=False)
 
     objects = ShippingPriceManager()
@@ -272,6 +276,9 @@ class ShippingPrice(models.Model):
         price += self._per_g_price(weight)
         if self.weightband_set.count() > 0:
             price += self._weight_band_price(weight)
+        price += price * (self.fuel_surcharge / 100)
+        price += self.item_surcharge
+        price += self.covid_surcharge
         return price
 
     def _per_kg_price(self, weight):

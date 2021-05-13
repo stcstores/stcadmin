@@ -16,6 +16,7 @@ class CreateOrder(forms.Form):
     town = forms.CharField()
     address_line_1 = forms.CharField()
     address_line_2 = forms.CharField(required=False)
+    region = forms.CharField(required=False)
     email = forms.EmailField(required=False)
     phone_regex = RegexValidator(
         regex=r"^\+?1?\d{9,15}$",
