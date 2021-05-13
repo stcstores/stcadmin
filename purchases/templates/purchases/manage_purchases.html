@@ -37,6 +37,12 @@
     <td></td>
     <td></td>
     <td></td>
+    {% elif purchase.purchasenote %}
+    <td>PURCHASE_NOTE</td>
+    <td>{{ purchase.text }}</td>
+    <td></td>
+    <td></td>
+    <td></td>
     {% endif %}
     <td>{{ purchase.to_pay|div:100|stringformat:".2f" }}</td>
     <td>
