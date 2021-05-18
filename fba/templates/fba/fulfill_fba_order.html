@@ -4,9 +4,13 @@
 
 <h1>Fulfill FBA Order</h1>
 
+
 <h3>{{ form.instance.product_SKU }} - {{ form.instance.product_name }}</h3>
 <h3>ASIN: {{ form.instance.product_asin }}</h3>
 <h2>Supplier: {{ form.instance.product_supplier }}</h2>
+{% if form.instance.product_is_multipack %}
+<h1 class="error">MULTIPACK ITEM Update stock manually</h1>
+{% endif %}
 {% if form.instance.closed_at %}<h2>CLOSED: {{ form.instance.closed_at }}</h2>{% endif %}
 
 {% if form.instance.is_combinable %}<p class="success">Combinable</p>{% endif %}
