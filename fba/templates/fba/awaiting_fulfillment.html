@@ -20,6 +20,7 @@
         <tr>
             <th>SKU</th>
             <th>Name</th>
+            <th>ASIN</th>
             <th colspan="2">Aprox Quantity</th>
             <th>Status</th>
             <th>Created At</th>
@@ -33,6 +34,7 @@
         <tr class="order">
             <th>{{ order.product_SKU }} </th>
             <th>{{ order.product_name }} </th>
+            <td>{{ order.product_asin }}</td>
             <td>{{ order.aproximate_quantity}}</td>
             <td>{{ order.region.flag }}</td>
             <td>{{ order.status }}</td>
