@@ -30,6 +30,7 @@
             <th>Name</th>
             <th></th>
             <th>Supplier</th>
+            <th>ASIN</th>
             <th>Created</th>
             <th>Aprox</th>
             <th>Stock</th>
@@ -51,6 +52,7 @@
             </th>
             <td>{{ order.region.flag }}</td>
             <td>{{ order.product_supplier }}</td>
+            <td>{{ order.product_asin }}</td>
             <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
             <td>{{ order.aproximate_quantity }}</td>
             <td class="stock_level">{{ order.stock_level }}</td>
