@@ -80,6 +80,7 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
         initial["product_image_url"] = self.get_image_url()
         initial["product_supplier"] = self.product.supplier.factory_name
         initial["product_purchase_price"] = self.product.purchase_price
+        initial["product_is_multipack"] = self.product.is_multipack
         return initial
 
     def get_image_url(self):
@@ -144,6 +145,7 @@ class RepeatFBAOrder(FBAOrderCreate):
             product_image_url=self.to_repeat.product_image_url,
             product_supplier=self.to_repeat.product_supplier,
             product_purchase_price=self.to_repeat.product_purchase_price,
+            product_is_multipack=self.to_repeat.product_is_multipack,
             region=self.to_repeat.region,
             selling_price=self.to_repeat.selling_price,
             FBA_fee=self.to_repeat.FBA_fee,
