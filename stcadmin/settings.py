@@ -102,6 +102,7 @@ INSTALLED_APPS = [
     "fba",
     "channels",
     "purchases",
+    "hardware",
     "debug_toolbar",
 ]
 
