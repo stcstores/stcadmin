@@ -194,6 +194,8 @@ class ManagePurchases(PurchaseManagerUserMixin, TemplateView):
         context["purchases"] = models.Purchase.objects.filter(
             user=user, created_at__year=year, created_at__month=month, cancelled=False
         )
+        total = sum([_.to_pay for _ in context["purchases"]]) / 100
+        context["total"] = f"{total:.2f}"
         context["form"] = form
         return context
 
