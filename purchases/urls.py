@@ -8,7 +8,8 @@ app_name = "purchases"
 
 urlpatterns = [
     path("purchase/", views.Purchase.as_view(), name="purchase"),
-    path("manage/", views.Manage.as_view(), name="manage"),
+    path("view_purchases/", views.ViewPurchases.as_view(), name="view_purchases"),
+    path("manage_purchases/", views.ManagePurchases.as_view(), name="manage_purchases"),
     path("from_stock/", views.PurchaseFromStock.as_view(), name="from_stock"),
     path("from_shop/", views.PurchaseFromShop.as_view(), name="from_shop"),
     path("shipping/", views.PurchaseShipping.as_view(), name="shipping"),
@@ -27,7 +28,6 @@ urlpatterns = [
         views.ProductPurchasePrice.as_view(),
         name="product_purchase_price",
     ),
-    path("manage_purchases/", views.ManagePurchases.as_view(), name="manage_purchases"),
     path(
         "mark_purchase_cancelled/",
         views.MarkOrderCancelled.as_view(),

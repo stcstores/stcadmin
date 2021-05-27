@@ -23,20 +23,19 @@ class DiscountField(forms.TypedChoiceField):
         super().__init__(*args, **kwargs)
 
 
-class PurchaseFromStock(forms.Form):
-    """Form for creating stock purchases."""
-
-    profit_margin = 2.5
-    purchaser = forms.ModelChoiceField(
-        queryset=get_user_model().objects.filter(groups__name="purchase")
-    )
-    discount = DiscountField()
-    basket = forms.CharField(widget=forms.HiddenInput())
+class PurchaseUserField(forms.ModelChoiceField):
+    """Field for selecing users."""
 
     def __init__(self, *args, **kwargs):
-        """Add the selling channel to the form."""
+        """Set the queryset."""
+        kwargs["queryset"] = get_user_model().objects.filter(
+            is_active=True, groups__name="purchaser"
+        )
         super().__init__(*args, **kwargs)
-        self.channel = get_object_or_404(Channel, name="Telephone Channel")
+
+    def label_from_instance(self, obj):
+        """Use the users full name as the label."""
+        return obj.get_full_name()
 
 
 class PurchaseManagement(forms.Form):
@@ -45,9 +44,7 @@ class PurchaseManagement(forms.Form):
     MONTHS = list(enumerate(calendar.month_name[1:], 1))
 
     month = forms.IntegerField(widget=forms.Select(choices=MONTHS))
-    user = forms.ModelChoiceField(
-        queryset=get_user_model().objects.filter(groups__name="purchase")
-    )
+    user = PurchaseUserField()
 
     def __init__(self, *args, **kwargs):
         """Set the month select fields."""
@@ -60,14 +57,29 @@ class PurchaseManagement(forms.Form):
         self.fields["year"] = forms.IntegerField(
             widget=forms.Select(choices=((year, year) for year in years))
         )
+        field_order = ["month", "year", "user"]
+        new_fields = {key: self.fields[key] for key in field_order}
+        self.fields = new_fields
+
+
+class PurchaseFromStock(forms.Form):
+    """Form for creating stock purchases."""
+
+    profit_margin = 2.5
+    purchaser = PurchaseUserField()
+    discount = DiscountField()
+    basket = forms.CharField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        """Add the selling channel to the form."""
+        super().__init__(*args, **kwargs)
+        self.channel = get_object_or_404(Channel, name="Telephone Channel")
 
 
 class PurchaseShipping(forms.Form):
     """Form for purchasing shipping."""
 
-    purchaser = forms.ModelChoiceField(
-        queryset=get_user_model().objects.filter(groups__name="purchase")
-    )
+    purchaser = PurchaseUserField()
     country = forms.ModelChoiceField(queryset=Country.objects.all())
     shipping_service = forms.ModelChoiceField(
         queryset=ShippingService.objects.filter(
@@ -92,9 +104,6 @@ class PurchaseShipping(forms.Form):
 class PurchaseNote(forms.Form):
     """Form for creating purchase notes."""
 
-    purchaser = forms.ModelChoiceField(
-        queryset=get_user_model().objects.filter(groups__name="purchase")
-    )
     to_pay = forms.FloatField(
         min_value=0, initial=0, widget=forms.NumberInput(attrs={"step": 0.01})
     )
