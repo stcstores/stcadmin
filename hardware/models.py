@@ -306,3 +306,23 @@ class Name(models.Model):
         """Mark the name used."""
         self.is_available = False
         self.save()
+
+
+class ComputerMaintainanceJob(models.Model):
+    """Model for computer maintainance jobs."""
+
+    completed_at = models.DateTimeField()
+    computer = models.ForeignKey(Computer, on_delete=models.CASCADE)
+    cleaned = models.BooleanField()
+    os_reinstalled = models.BooleanField()
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        """Meta class for ComputerMaintainanceJob."""
+
+        verbose_name = "Computer Maintainance Job"
+        verbose_name_plural = "Computer Maintainance Jobs"
+        ordering = ["completed_at"]
+
+    def __str__(self):
+        return f"{self.computer.name} on {self.completed_at.strftime('%d %B %Y')}"

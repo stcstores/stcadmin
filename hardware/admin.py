@@ -255,3 +255,24 @@ class NameAdmin(admin.ModelAdmin):
     list_editable = ("name", "is_available")
     list_filter = ("is_available",)
     search_fields = ("name",)
+
+
+@admin.register(models.ComputerMaintainanceJob)
+class ComputerMaintainanceJobAdmin(admin.ModelAdmin):
+    """Model admin for the ComputerMaintainanceJob model."""
+
+    fields = ("completed_at", "computer", "cleaned", "os_reinstalled", "notes")
+    list_display = (
+        "__str__",
+        "completed_at",
+        "computer",
+        "cleaned",
+        "os_reinstalled",
+        "notes",
+    )
+    search_fields = (
+        "computer__name",
+        "computer__network_name",
+        "computer__user__primary_user",
+    )
+    date_hierarchy = "completed_at"
