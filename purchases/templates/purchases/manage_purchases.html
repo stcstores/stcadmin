@@ -1,7 +1,5 @@
 {% extends 'purchases/base.html' %}
 
-{% load mathfilters %}
-
 {% block content %}
 
 <h1>Manage Purchases</h1>
@@ -11,48 +9,7 @@
 <button>Go</button>
 </form>
 
-<table>
-<tr>
-    <th>Date</th>
-    <th>SKU</th>
-    <th>Product</th>
-    <td>Quantity</td>
-    <th>Full Price</th>
-    <th>Discount</th>
-    <th>To Pay</th>
-    <th>Cancel</th>
-</tr>
-{% for purchase in purchases %}
-<tr>
-    <td>{{ purchase.created_at }}</td>
-    {% if purchase.stockpurchase %}
-    <td>{{ purchase.product_sku }}</td>
-    <td>{{ purchase.product_name }}</td>
-    <td>{{ purchase.quantity }}</td>
-    <td>{{ purchase.full_price|div:100|stringformat:".2f" }}</td>
-    <td>{{ purchase.discount_percentage }}%</td>
-    {% elif purchase.shippingpurchase %}
-    <td></td>
-    <td>{{ purchase.shipping_price }}</td>
-    <td></td>
-    <td></td>
-    <td></td>
-    {% elif purchase.purchasenote %}
-    <td>PURCHASE_NOTE</td>
-    <td>{{ purchase.text }}</td>
-    <td></td>
-    <td></td>
-    <td></td>
-    {% endif %}
-    <td>{{ purchase.to_pay|div:100|stringformat:".2f" }}</td>
-    <td>
-        <button class="mark_cancelled error" id="mark_cancelled_{{ purchase.id }}">Cancel</button>
-    </td>
-
-</tr>
-
-{% endfor %}
-</table>
+{% include "purchases/purchase_list.html" with is_manager=True %}
 
 {% endblock content %}
 

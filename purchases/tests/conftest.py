@@ -1,0 +1,10 @@
+import pytest_factoryboy
+
+from purchases import factories
+from shipping.tests.conftest import ShippingPriceFactory
+
+pytest_factoryboy.register(ShippingPriceFactory)
+pytest_factoryboy.register(factories.UserFactory)
+pytest_factoryboy.register(factories.PurchaseNoteFactory)
+pytest_factoryboy.register(factories.StockPurchaseFactory)
+pytest_factoryboy.register(factories.ShippingPurchaseFactory)

@@ -1,0 +1,16 @@
+{% extends 'purchases/base.html' %}
+
+{% load mathfilters %}
+
+{% block content %}
+
+<h1>View Purchases - {{ request.user.get_full_name }}</h1>
+
+<form action="" method="GET">
+{{ form }}
+<button>Go</button>
+</form>
+
+{% include "purchases/purchase_list.html" with is_manager=False %}
+
+{% endblock content %}

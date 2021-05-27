@@ -1,0 +1,56 @@
+{% load mathfilters %}
+
+
+<table>
+<tr>
+    <th>Date</th>
+    <th>SKU</th>
+    <th>Product</th>
+    <th>Quantity</th>
+    <th>Full Price</th>
+    <th>Discount</th>
+    <th>To Pay</th>
+    <th>Created By</th>
+    {% if is_manager %}
+    <th>Cancel</th>
+    {% endif %}
+</tr>
+{% for purchase in purchases %}
+<tr>
+    <td>{{ purchase.created_at }}</td>
+    {% if purchase.stockpurchase %}
+    <td>{{ purchase.product_sku }}</td>
+    <td>{{ purchase.product_name }}</td>
+    <td>{{ purchase.quantity }}</td>
+    <td>{{ purchase.full_price|div:100|stringformat:".2f" }}</td>
+    <td>{{ purchase.discount_percentage }}%</td>
+    {% elif purchase.shippingpurchase %}
+    <td></td>
+    <td>{{ purchase.shipping_price }}</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    {% elif purchase.purchasenote %}
+    <td>PURCHASE_NOTE</td>
+    <td>{{ purchase.text }}</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    {% endif %}
+    <td>{{ purchase.to_pay|div:100|stringformat:".2f" }}</td>
+    <td>{{ purchase.created_by.get_full_name }}</td>
+    {% if is_manager %}
+    <td>
+        <button class="mark_cancelled error" id="mark_cancelled_{{ purchase.id }}">Cancel</button>
+    </td>
+    {% endif %}
+
+</tr>
+{% endfor %}
+<tr>
+    <td colspan="5"></td>
+    <td>Total</td>
+    <td>{{ total }}</td>
+    <td {% if is_manager %} colspan="2"{% endif %}></td>
+</tr>
+</table>
