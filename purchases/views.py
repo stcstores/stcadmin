@@ -1,8 +1,11 @@
 """Views for the Purchases app."""
 
+import datetime
 import json
+from collections import defaultdict
 
 from ccapi import CCAPI
+from django.contrib import messages
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, reverse
@@ -12,36 +15,133 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, TemplateView
 
-from home.views import UserInGroupMixin
+from home.views import UserInGroupMixin, UserLoginMixin
 from purchases import forms, models
 from shipping.models import ShippingPrice
 
 
-class PurchaseUserMixin(UserInGroupMixin):
-    """View mixin to ensure user is in the purchase group."""
+class PurchaserUserMixin(UserInGroupMixin):
+    """View mixin to ensure user is in the purchaser group."""
 
-    groups = ["purchase"]
+    groups = ["purchaser"]
+
+
+class PurchaseCreatorUserMixin(UserInGroupMixin):
+    """View mixin to ensure user is in the purchase_creator group."""
+
+    groups = ["purchase_creator"]
 
 
 class PurchaseManagerUserMixin(UserInGroupMixin):
     """View mixin to ensure user is in the purchase_manager group."""
 
-    groups = ["purchase", "purchase_manager"]
+    groups = ["purchase_manager"]
 
 
-class Purchase(PurchaseManagerUserMixin, TemplateView):
+class Purchase(UserLoginMixin, TemplateView):
     """View for creating new purchases."""
 
     template_name = "purchases/purchase.html"
 
+    def get_user_purchases_for_month(self, month, year):
+        """Return a queryset of purchases for the request user for a given month."""
+        return models.Purchase.objects.filter(
+            user=self.request.user,
+            created_at__month=month,
+            created_at__year=year,
+        )
 
-class Manage(PurchaseManagerUserMixin, TemplateView):
-    """View for managing purchases."""
+    def get_purchase_count(self, month, year):
+        """Return a dict of user purchase counts for a given month."""
+        queryset = models.Purchase.objects.filter(
+            created_at__month=month,
+            created_at__year=year,
+        )
+        purchase_counts = {}
+        for purchase in queryset:
+            if purchase.user not in purchase_counts:
+                purchase_counts[purchase.user] = defaultdict(int)
+            purchase_counts[purchase.user][purchase.__class__.__name__] += 1
+            purchase_counts[purchase.user]["total"] += 1
+        return purchase_counts
 
-    template_name = "purchases/manage.html"
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the view."""
+        context = super().get_context_data()
+        context["this_month"] = timezone.now().replace(day=1)
+        context["last_month"] = context["this_month"] - datetime.timedelta(days=1)
+        if self.request.user.groups.filter(name="purchaser").exists():
+            context["this_month_purchases"] = self.get_user_purchases_for_month(
+                context["this_month"].month, context["this_month"].year
+            )
+            context["last_month_purchases"] = self.get_user_purchases_for_month(
+                context["last_month"].month, context["last_month"].year
+            )
+        if self.request.user.groups.filter(name="purchase_manager").exists():
+            context["this_month_purchase_counts"] = self.get_purchase_count(
+                context["this_month"].month, context["this_month"].year
+            )
+            context["last_month_purchase_counts"] = self.get_purchase_count(
+                context["last_month"].month, context["last_month"].year
+            )
+        return context
 
 
-class StockPurchase(PurchaseManagerUserMixin, FormView):
+class PurchaseView(TemplateView):
+    """Base view for purchase lists."""
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the view."""
+        context = super().get_context_data()
+        form = forms.PurchaseManagement(self.request.GET)
+        if form.is_valid():
+            month = int(form.cleaned_data["month"])
+            year = int(form.cleaned_data["year"])
+            if "user" in form.cleaned_data:
+                self.user = form.cleaned_data["user"]
+        else:
+            date = timezone.now()
+            month = date.month
+            year = date.year
+            form = forms.PurchaseManagement(initial={"month": month, "year": year})
+        context["purchases"] = models.Purchase.objects.filter(
+            user=self.user,
+            created_at__year=year,
+            created_at__month=month,
+            cancelled=False,
+        )
+        total = sum([_.to_pay for _ in context["purchases"]]) / 100
+        context["total"] = f"{total:.2f}"
+        context["form"] = form
+        return context
+
+
+class ViewPurchases(PurchaserUserMixin, PurchaseView):
+    """View for purchase history."""
+
+    template_name = "purchases/view_purchases.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the view."""
+        self.user = self.request.user
+        context = super().get_context_data()
+        del context["form"].fields["user"]
+        return context
+
+
+class ManagePurchases(PurchaseManagerUserMixin, PurchaseView):
+    """View for purchase history."""
+
+    template_name = "purchases/manage_purchases.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the view."""
+        self.user = None
+        context = super().get_context_data(*args, **kwargs)
+        return context
+
+
+class StockPurchase(PurchaseCreatorUserMixin, FormView):
     """Base view for product purchases."""
 
     form_class = forms.PurchaseFromStock
@@ -52,8 +152,8 @@ class StockPurchase(PurchaseManagerUserMixin, FormView):
         discount_percentage = form.cleaned_data["discount"]
         basket = form.cleaned_data["basket"]
         self.add_purchases(
-            basket=basket,
             user=user,
+            basket=basket,
             discount_percentage=discount_percentage,
             profit_margin=form.profit_margin,
         )
@@ -80,6 +180,7 @@ class PurchaseFromStock(StockPurchase):
             purchase = models.StockPurchase(
                 user=user,
                 to_pay=to_pay,
+                created_by=self.request.user,
                 product_id=product["product_id"],
                 product_sku=product["sku"],
                 product_name=product["name"],
@@ -109,6 +210,7 @@ class PurchaseFromShop(StockPurchase):
         purchase = models.StockPurchase(
             user=user,
             to_pay=to_pay,
+            created_by=self.request.user,
             product_id="SHOP PURCHASE",
             product_sku="SHOP PURCHASE",
             product_name=product["name"],
@@ -120,7 +222,7 @@ class PurchaseFromShop(StockPurchase):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class ProductSearch(PurchaseManagerUserMixin, View):
+class ProductSearch(PurchaseCreatorUserMixin, View):
     """View for product searches."""
 
     def get(self, *args, **kwargs):
@@ -160,7 +262,7 @@ class SearchProductSKU(ProductSearch):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class ProductPurchasePrice(PurchaseManagerUserMixin, View):
+class ProductPurchasePrice(PurchaseCreatorUserMixin, View):
     """View for product purchase price requests."""
 
     def get(self, *args, **kwargs):
@@ -172,36 +274,8 @@ class ProductPurchasePrice(PurchaseManagerUserMixin, View):
         return JsonResponse(data, safe=False)
 
 
-class ManagePurchases(PurchaseManagerUserMixin, TemplateView):
-    """View for purchase history."""
-
-    template_name = "purchases/manage_purchases.html"
-
-    def get_context_data(self, *args, **kwargs):
-        """Return context for the view."""
-        context = super().get_context_data()
-        form = forms.PurchaseManagement(self.request.GET)
-        user = None
-        if form.is_valid():
-            month = int(form.cleaned_data["month"])
-            year = int(form.cleaned_data["year"])
-            user = form.cleaned_data["user"]
-        else:
-            date = timezone.now()
-            month = date.month
-            year = date.year
-            form = forms.PurchaseManagement(initial={"month": month, "year": year})
-        context["purchases"] = models.Purchase.objects.filter(
-            user=user, created_at__year=year, created_at__month=month, cancelled=False
-        )
-        total = sum([_.to_pay for _ in context["purchases"]]) / 100
-        context["total"] = f"{total:.2f}"
-        context["form"] = form
-        return context
-
-
 @method_decorator(csrf_exempt, name="dispatch")
-class MarkOrderCancelled(View):
+class MarkOrderCancelled(PurchaseManagerUserMixin, View):
     """Mark a purchase as cancelled."""
 
     def post(self, *args, **kwargs):
@@ -213,7 +287,7 @@ class MarkOrderCancelled(View):
         return JsonResponse({purchase_id: "ok"})
 
 
-class PurchaseShipping(PurchaseManagerUserMixin, FormView):
+class PurchaseShipping(PurchaseCreatorUserMixin, FormView):
     """View for creating stock purchases."""
 
     form_class = forms.PurchaseShipping
@@ -224,6 +298,7 @@ class PurchaseShipping(PurchaseManagerUserMixin, FormView):
         purchase = models.ShippingPurchase(
             user=form.cleaned_data["purchaser"],
             to_pay=form.cleaned_data["price"],
+            created_by=self.request.user,
             shipping_price=form.cleaned_data["shipping_price"],
         )
         purchase.save()
@@ -234,7 +309,7 @@ class PurchaseShipping(PurchaseManagerUserMixin, FormView):
         return reverse("purchases:manage_purchases")
 
 
-class PurchaseNote(FormView):
+class PurchaseNote(PurchaserUserMixin, FormView):
     """View for creating purchase notes."""
 
     form_class = forms.PurchaseNote
@@ -243,8 +318,9 @@ class PurchaseNote(FormView):
     def form_valid(self, form):
         """Add purchase note to the database."""
         purchase = models.PurchaseNote(
-            user=form.cleaned_data["purchaser"],
+            user=self.request.user,
             to_pay=int(form.cleaned_data["to_pay"] * 100),
+            created_by=self.request.user,
             text=form.cleaned_data["text"],
         )
         purchase.save()
@@ -252,11 +328,12 @@ class PurchaseNote(FormView):
 
     def get_success_url(self):
         """Return the sucess url."""
-        return reverse("purchases:manage_purchases")
+        messages.success(self.request, "Note added.")
+        return reverse("purchases:purchase")
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class GetShippingPrice(View):
+class GetShippingPrice(PurchaseCreatorUserMixin, View):
     """Get the shipping price for a given service and weight."""
 
     def post(self, *args, **kwargs):

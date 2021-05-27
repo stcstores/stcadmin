@@ -11,8 +11,13 @@ from shipping.models import ShippingPrice
 class Purchase(PolymorphicModel):
     """Base model for purchases."""
 
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="purchaser"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="purchase_creator"
+    )
     modified_at = models.DateTimeField(auto_now=True)
     to_pay = models.IntegerField()
     cancelled = models.BooleanField(default=False)
