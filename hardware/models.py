@@ -322,7 +322,7 @@ class ComputerMaintainanceJob(models.Model):
 
         verbose_name = "Computer Maintainance Job"
         verbose_name_plural = "Computer Maintainance Jobs"
-        ordering = ["completed_at"]
+        ordering = ["-completed_at"]
 
     def __str__(self):
         return f"{self.computer.name} on {self.completed_at.strftime('%d %B %Y')}"
