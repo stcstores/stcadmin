@@ -68,6 +68,7 @@ CC_DOMAIN = get_config("CC_DOMAIN_SECRET")
 CC_USERNAME = get_config("CC_USERNAME_SECRET")
 CC_PWD = get_config("CC_PASS")
 SCAYT_CUSTOMER_ID = get_config("SCAYT_CUSTOMER_ID_TOKEN")
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 INSTALLED_APPS = [
     "django.contrib.admin",
