@@ -6,6 +6,6 @@ from django.apps import AppConfig
 class ValidationConfig(AppConfig):
     """Config for the Validation app."""
 
-    name = "Validation"
+    name = "validation"
     verbose_name = "Validation"
     create_group = True

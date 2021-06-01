@@ -55,10 +55,7 @@ class TestWarehouse(CreateBays, STCAdminTest):
     def test_bays_property(self):
         self.assertQuerysetEqual(
             self.warehouse_1.bays,
-            map(
-                repr,
-                models.Bay.objects.filter(warehouse=self.warehouse_1, is_default=False),
-            ),
+            models.Bay.objects.filter(warehouse=self.warehouse_1, is_default=False),
         )
 
     def test_default_bay_property(self):

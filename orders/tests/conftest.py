@@ -27,7 +27,7 @@ pytest_factoryboy.register(ProviderFactory)
 
 
 @pytest_factoryboy.register
-class DepartmentFactory(factory.DjangoModelFactory):
+class DepartmentFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Department
 
@@ -38,7 +38,7 @@ class DepartmentFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class SupplierFactory(factory.DjangoModelFactory):
+class SupplierFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Supplier
 
@@ -49,7 +49,7 @@ class SupplierFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class CloudCommerceUserFactory(factory.DjangoModelFactory):
+class CloudCommerceUserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = CloudCommerceUser
 
@@ -61,7 +61,7 @@ class CloudCommerceUserFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class ChannelFactory(factory.DjangoModelFactory):
+class ChannelFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Channel
 
@@ -69,7 +69,7 @@ class ChannelFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class OrderFactory(factory.DjangoModelFactory):
+class OrderFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Order
 
@@ -93,7 +93,7 @@ class OrderFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class PackingRecordFactory(factory.DjangoModelFactory):
+class PackingRecordFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.PackingRecord
 
@@ -102,7 +102,7 @@ class PackingRecordFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class ProductSaleFactory(factory.DjangoModelFactory):
+class ProductSaleFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.ProductSale
 
@@ -121,7 +121,7 @@ class ProductSaleFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class OrderUpdateFactory(factory.DjangoModelFactory):
+class OrderUpdateFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.OrderUpdate
 
@@ -131,7 +131,7 @@ class OrderUpdateFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class OrderDetailsUpdateFactory(factory.DjangoModelFactory):
+class OrderDetailsUpdateFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.OrderDetailsUpdate
 
@@ -141,7 +141,7 @@ class OrderDetailsUpdateFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class OrderDetailsUpdateErrorFactory(factory.DjangoModelFactory):
+class OrderDetailsUpdateErrorFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.OrderDetailsUpdateError
 
@@ -151,7 +151,7 @@ class OrderDetailsUpdateErrorFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class RefundFactory(factory.DjangoModelFactory):
+class RefundFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Refund
 
@@ -161,7 +161,7 @@ class RefundFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class BreakageRefundFactory(factory.DjangoModelFactory):
+class BreakageRefundFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.BreakageRefund
 
@@ -175,7 +175,7 @@ class BreakageRefundFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class PackingMistakeRefundFactory(factory.DjangoModelFactory):
+class PackingMistakeRefundFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.PackingMistakeRefund
 
@@ -185,7 +185,7 @@ class PackingMistakeRefundFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class LinkingMistakeRefundFactory(factory.DjangoModelFactory):
+class LinkingMistakeRefundFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.LinkingMistakeRefund
 
@@ -195,7 +195,7 @@ class LinkingMistakeRefundFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class LostInPostRefundFactory(factory.DjangoModelFactory):
+class LostInPostRefundFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.LostInPostRefund
 
@@ -210,7 +210,7 @@ class LostInPostRefundFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class DemicRefundFactory(factory.DjangoModelFactory):
+class DemicRefundFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.DemicRefund
 
@@ -224,7 +224,7 @@ class DemicRefundFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class ProductRefundFactory(factory.DjangoModelFactory):
+class ProductRefundFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.ProductRefund
 
@@ -234,7 +234,7 @@ class ProductRefundFactory(factory.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
-class RefundImageFactory(factory.DjangoModelFactory):
+class RefundImageFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.RefundImage
 
