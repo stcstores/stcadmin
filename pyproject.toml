@@ -27,7 +27,7 @@ cc-products = {git = "https://github.com/stcstores/cc_products.git"}
 labeler = {git = "https://github.com/lukeshiner/labeler.git"}
 list-input = {git = "https://github.com/lukeshiner/list_input.git"}
 django-solo = "^1.1.5"
-celery = "^4.4.7"
+celery = {extras = ["pytest"], version = "^5.1.0"}
 django-polymorphic = "^3.0.0"
 django-mathfilters = "^1.0.0"
 easy-thumbnails = "^2.7.1"
@@ -43,6 +43,7 @@ flake8-docstrings = "^1.6.0"
 isort = "^5.8.0"
 factory_boy = "^3.2.0"
 pytest_factoryboy = "^2.1.0"
+pytest-celery = "^0.0.0"
 
 [build-system]
 requires = ["poetry>=1.1.6"]
