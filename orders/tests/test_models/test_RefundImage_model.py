@@ -34,7 +34,7 @@ def image():
 @pytest.fixture
 def new_refund_image(refund, product_refund, image):
     refund_image = models.RefundImage(
-        refund=refund, product_refund=product_refund, image=image, thumbnail=image
+        refund=refund, product_refund=product_refund, image=image
     )
     refund_image.save()
     refund_image.refresh_from_db()
@@ -61,12 +61,6 @@ def test_sets_image(new_refund_image):
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 @pytest.mark.django_db
-def test_sets_thumbnail(new_refund_image):
-    assert bool(new_refund_image.thumbnail) is True
-
-
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-@pytest.mark.django_db
 def test_image_path(new_refund_image, image):
     assert os.path.dirname(new_refund_image.image.path) == os.path.join(
         settings.MEDIA_ROOT,
@@ -79,25 +73,6 @@ def test_image_path(new_refund_image, image):
 
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 @pytest.mark.django_db
-def test_thumb_path(new_refund_image, image):
-    assert os.path.dirname(new_refund_image.thumbnail.path) == os.path.join(
-        settings.MEDIA_ROOT,
-        "refunds",
-        "thumbs",
-        str(new_refund_image.refund.id),
-        str(new_refund_image.product_refund.id),
-    )
-
-
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-@pytest.mark.django_db
 def test_image_size(new_refund_image):
     assert new_refund_image.image_height == 500
     assert new_refund_image.image_width == 700
-
-
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-@pytest.mark.django_db
-def test_thumb_size(new_refund_image):
-    assert new_refund_image.thumb_height <= models.RefundImage.THUMB_SIZE
-    assert new_refund_image.thumb_width <= models.RefundImage.THUMB_SIZE

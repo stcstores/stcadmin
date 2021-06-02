@@ -79,9 +79,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "adminsortable2",
+    "easy_thumbnails",
     "mathfilters",
     "solo",
-    "imagekit",
     "validation",
     "formtools",
     "stcadmin",
@@ -300,6 +300,7 @@ LOGIN_REDIRECT_URL = "home:index"
 CELERY_BROKER_URL = get_config("CELERY_BROKER_URL")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
+
 
 TESTING = (
     len(sys.argv) > 1

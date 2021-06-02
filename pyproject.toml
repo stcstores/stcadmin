@@ -26,11 +26,11 @@ ccapi = {git = "https://github.com/stcstores/ccapi.git"}
 cc-products = {git = "https://github.com/stcstores/cc_products.git"}
 labeler = {git = "https://github.com/lukeshiner/labeler.git"}
 list-input = {git = "https://github.com/lukeshiner/list_input.git"}
-django-imagekit = "^4.0.2"
 django-solo = "^1.1.5"
 celery = "^4.4.7"
 django-polymorphic = "^3.0.0"
 django-mathfilters = "^1.0.0"
+easy-thumbnails = "^2.7.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"

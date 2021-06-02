@@ -139,18 +139,6 @@ def test_links_to_set_notes(refund, valid_get_response_content):
 
 @pytest.mark.django_db
 @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_shows_images(image, valid_get_response_content):
-    assert f'src="{image.thumbnail.url}"' in valid_get_response_content
-
-
-@pytest.mark.django_db
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_shows_product_images(product_image, valid_get_response_content):
-    assert f'src="{product_image.thumbnail.url}"' in valid_get_response_content
-
-
-@pytest.mark.django_db
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 def test_links_to_images(image, valid_get_response_content):
     assert f'href="{image.image.url}"' in valid_get_response_content
 
