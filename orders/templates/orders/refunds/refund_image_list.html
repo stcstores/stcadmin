@@ -1,8 +1,10 @@
+{% load thumbnail %}
+
 <div class="refund_images">
     {% for image in images %}
     <div class="refund_image">
         <div class="image">
-            <img src="{{ image.thumbnail.url }}" alt="{{ image.image.filename }}">
+            <img src="{% thumbnail image.image 200x200 quality="60" crop="smart" %}" alt="{{ image.image.filename }}">
         </div>
         <div class="buttons">
             <a href="{{ image.image.url }}" target="_blank"><button>View</button></a>

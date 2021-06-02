@@ -477,7 +477,6 @@ class AddRefundImages(OrdersUserMixin, RedirectView):
                 refund=refund,
                 product_refund=product_refund,
                 image=image,
-                thumbnail=image,
             )
             refund_image.save()
         return refund.get_absolute_url()

@@ -241,4 +241,3 @@ class RefundImageFactory(factory.django.DjangoModelFactory):
     refund = factory.SubFactory(RefundFactory)
     product_refund = None
     image = factory.django.ImageField(width=1000, height=1000)
-    thumbnail = factory.django.ImageField(width=200, height=200)
