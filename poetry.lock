@@ -130,7 +130,7 @@ ccapi = "branch master"
 type = "git"
 url = "https://github.com/stcstores/cc_products.git"
 reference = "master"
-resolved_reference = "1b55f43dbb8f89dcfea154bba8313689a4e0ec2c"
+resolved_reference = "c0b7b65bc1f6bfb0699d5f2880661c7de5be10cd"
 
 [[package]]
 name = "ccapi"
@@ -150,7 +150,7 @@ requests = "^2.23.0"
 type = "git"
 url = "https://github.com/stcstores/ccapi.git"
 reference = "master"
-resolved_reference = "e5bcdf479ad0a849371400715c5412a00ed3e4ba"
+resolved_reference = "372b7dd93c552a5059259c1926cf64ee88f257bf"
 
 [[package]]
 name = "celery"
@@ -272,7 +272,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "django"
-version = "3.2.3"
+version = "3.2.4"
 description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
 category = "main"
 optional = false
@@ -589,7 +589,7 @@ reportlab = "^3.5.34"
 type = "git"
 url = "https://github.com/lukeshiner/labeler.git"
 reference = "master"
-resolved_reference = "ebc9fe6e1ddb5567e8bdd577af24f0c2f02380fb"
+resolved_reference = "0531030a30a373b1ff5f02bdb3868618cb3e4f9e"
 
 [[package]]
 name = "list-input"
@@ -607,7 +607,7 @@ django = "^3.0.3"
 type = "git"
 url = "https://github.com/lukeshiner/list_input.git"
 reference = "master"
-resolved_reference = "6760f06c661b4d42f46123405d681a605d902320"
+resolved_reference = "a602fde12b7fe84dc13f7a6dff83fffd3eb6eae3"
 
 [[package]]
 name = "lml"
@@ -1207,7 +1207,6 @@ click = [
 ]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
-    {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
 ]
 coverage = [
     {file = "coverage-5.5-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:b6d534e4b2ab35c9f93f46229363e17f63c53ad01330df9f2d6bd1187e5eaacf"},
@@ -1272,8 +1271,8 @@ defusedxml = [
     {file = "defusedxml-0.7.1.tar.gz", hash = "sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69"},
 ]
 django = [
-    {file = "Django-3.2.3-py3-none-any.whl", hash = "sha256:7e0a1393d18c16b503663752a8b6790880c5084412618990ce8a81cc908b4962"},
-    {file = "Django-3.2.3.tar.gz", hash = "sha256:13ac78dbfd189532cad8f383a27e58e18b3d33f80009ceb476d7fcbfc5dcebd8"},
+    {file = "Django-3.2.4-py3-none-any.whl", hash = "sha256:ea735cbbbb3b2fba6d4da4784a0043d84c67c92f1fdf15ad6db69900e792c10f"},
+    {file = "Django-3.2.4.tar.gz", hash = "sha256:66c9d8db8cc6fe938a28b7887c1596e42d522e27618562517cc8929eb7e7f296"},
 ]
 django-admin-sortable2 = [
     {file = "django-admin-sortable2-1.0.tar.gz", hash = "sha256:e62624f5c8ea66d8564205abf2e4a46d862ee62f87103571004623b51d0e4ced"},
@@ -1471,7 +1470,6 @@ pillow = [
     {file = "Pillow-8.2.0-pp37-pypy37_pp73-manylinux2010_i686.whl", hash = "sha256:aac00e4bc94d1b7813fe882c28990c1bc2f9d0e1aa765a5f2b516e8a6a16a9e4"},
     {file = "Pillow-8.2.0-pp37-pypy37_pp73-manylinux2010_x86_64.whl", hash = "sha256:22fd0f42ad15dfdde6c581347eaa4adb9a6fc4b865f90b23378aa7914895e120"},
     {file = "Pillow-8.2.0-pp37-pypy37_pp73-win32.whl", hash = "sha256:e98eca29a05913e82177b3ba3d198b1728e164869c613d76d0de4bde6768a50e"},
-    {file = "Pillow-8.2.0-pp37-pypy37_pp73-win_amd64.whl", hash = "sha256:8b56553c0345ad6dcb2e9b433ae47d67f95fc23fe28a0bde15a120f25257e291"},
     {file = "Pillow-8.2.0.tar.gz", hash = "sha256:a787ab10d7bb5494e5f76536ac460741788f1fbce851068d73a87ca7c35fc3e1"},
 ]
 pluggy = [
