@@ -4,6 +4,7 @@ import datetime
 import json
 from collections import defaultdict
 
+import cc_products
 from ccapi import CCAPI
 from django.contrib import messages
 from django.db import transaction
@@ -189,6 +190,9 @@ class PurchaseFromStock(StockPurchase):
                 discount_percentage=discount_percentage,
             )
             stock_purchases.append(purchase)
+            if product["update_stock"] is True:
+                cc_product = cc_products.get_product(product["product_id"])
+                cc_product.stock_level -= product["quantity"]
         with transaction.atomic():
             for purchase in stock_purchases:
                 purchase.save()
