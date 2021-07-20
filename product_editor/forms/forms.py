@@ -85,6 +85,8 @@ class BaseOptionsForm(ProductForm):
 
     def _get_choice_values(self, option_name, values):
         if option_name in self.initial:
+            if self.initial[option_name] is None:
+                return []
             new_values = [v for v in self.initial[option_name] if v not in values]
             values += new_values
         return values
