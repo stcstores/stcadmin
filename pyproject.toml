@@ -31,6 +31,7 @@ celery = {extras = ["pytest"], version = "^5.1.0"}
 django-polymorphic = "^3.0.0"
 django-mathfilters = "^1.0.0"
 easy-thumbnails = "^2.7.1"
+file-exchange = {git = "https://github.com/lukeshiner/django-file_exchange.git", rev = "main"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
