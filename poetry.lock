@@ -1212,7 +1212,7 @@ python-versions = "*"
 
 [[package]]
 name = "xlsxwriter"
-version = "1.4.4"
+version = "1.4.5"
 description = "A Python module for creating Excel XLSX files."
 category = "main"
 optional = false
@@ -1874,6 +1874,6 @@ wcwidth = [
     {file = "wcwidth-0.2.5.tar.gz", hash = "sha256:c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83"},
 ]
 xlsxwriter = [
-    {file = "XlsxWriter-1.4.4-py2.py3-none-any.whl", hash = "sha256:15b65f02f7ecdcfb1f22794b1fcfed8e9a49e8b7414646f90347be5cbf464234"},
-    {file = "XlsxWriter-1.4.4.tar.gz", hash = "sha256:791567acccc485ba76e0b84bccced2651981171de5b47d541520416f2f9f93e3"},
+    {file = "XlsxWriter-1.4.5-py2.py3-none-any.whl", hash = "sha256:f9335f1736e2c4fd80e940fe1b6d92d967bf454a1e5d639b0b7a4459ade790cc"},
+    {file = "XlsxWriter-1.4.5.tar.gz", hash = "sha256:0956747859567ec01907e561a7d8413de18a7aae36860f979f9da52b9d58bc19"},
 ]
