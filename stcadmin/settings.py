@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "adminsortable2",
     "easy_thumbnails",
+    "file_exchange",
     "mathfilters",
     "solo",
     "validation",

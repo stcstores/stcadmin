@@ -57,3 +57,17 @@ class WishOrderAdmin(admin.ModelAdmin):
         "order",
         "error",
     )
+
+
+@admin.register(models.WishBulkFulfilmentExport)
+class WishBulkFulfilmentExportAdmin(admin.ModelAdmin):
+    """Admin for the WishBulkFulfilmentExport model."""
+
+    fields = ("created_at", "completed_at", "download_file", "error_message")
+    list_display = (
+        "__str__",
+        "created_at",
+        "completed_at",
+        "download_file",
+        "error_message",
+    )

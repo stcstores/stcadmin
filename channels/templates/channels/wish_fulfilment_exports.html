@@ -1,0 +1,38 @@
+{% extends 'channels/base.html' %}
+
+{% block content %}
+<h1>Wish Fulfilment Exports</h1>
+
+{% include "file_exchange/download_status.html" %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Created At</th>
+            <th>Orders</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for export in exports %}
+        <tr>
+            <td>{{ export.completed_at }}</td>
+            <td>{{ export.wishorder_set.count }}</td>
+            <td>
+                <a href="{% url 'channels:wish_fulfilment_export' export.id %}">
+                    <button>Review</button>
+                </a>
+            </td>
+            <td>
+                <a href="{{ export.download_file.url }}">
+                    <button>Download</button>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+{% endblock content %}

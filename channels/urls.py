@@ -33,4 +33,39 @@ urlpatterns = [
         views.WishImportResults.as_view(),
         name="wish_import_results",
     ),
+    path(
+        "wish_fulfilment_exports",
+        views.WishFulfilmentExports.as_view(),
+        name="wish_fulfilment_exports",
+    ),
+    path(
+        "wish_fulfilment_export/<int:pk>/",
+        views.WishFulfilmentExport.as_view(),
+        name="wish_fulfilment_export",
+    ),
+    path(
+        "create_new_wish_order_fulflment_file/",
+        views.CreateNewWishOrderFulfilmentFile.as_view(),
+        name="create_new_wish_order_fulflment_file",
+    ),
+    path(
+        "wish_fulfilment_file_download/",
+        views.DownloadWishfulfilmentFile.as_view(),
+        name="wish_fulfilment_file_download",
+    ),
+    path(
+        "mark_wish_order_unfulfiled/",
+        views.MarkWishOrderUnfulfiled.as_view(),
+        name="mark_wish_order_unfulfiled",
+    ),
+    path(
+        "delay_wish_order_fulfilment/",
+        views.DelayWishOrderFulfilment.as_view(),
+        name="delay_wish_order_fulfilment",
+    ),
+    path(
+        "wish_order_fulfilment_file_status/",
+        views.WishOrderFulfilmentFileStatus.as_view(),
+        name="wish_order_fulfilment_file_status",
+    ),
 ]

@@ -6,10 +6,15 @@ import traceback
 from io import StringIO
 
 from ccapi import CCAPI
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.urls import reverse
-from django.views.generic.base import RedirectView, TemplateView
+from django.urls import reverse, reverse_lazy
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import FormView
+from file_exchange.views import DownloadFileView, FileDownloadStatusView
 
 from channels import forms, models
 from home.views import UserInGroupMixin
@@ -184,3 +189,90 @@ class CreatedOrder(ChannelsUserMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context["order"] = models.CreatedOrder.objects.get(pk=self.kwargs.get("pk"))
         return context
+
+
+class WishFulfilmentExports(ChannelsUserMixin, DownloadFileView):
+    """View for displaying recent Wish Order Fulfilment files."""
+
+    template_name = "channels/wish_fulfilment_exports.html"
+    create_file_url = reverse_lazy("channels:create_new_wish_order_fulflment_file")
+    status_url = reverse_lazy("channels:wish_order_fulfilment_file_status")
+
+    def get_context_data(self, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(**kwargs)
+        context["exports"] = models.WishBulkFulfilmentExport.objects.exclude(
+            download_file=""
+        ).order_by("-completed_at")[:50]
+        return context
+
+
+class WishFulfilmentExport(ChannelsUserMixin, TemplateView):
+    """View for reviewing Wish Order Fulfilment files."""
+
+    template_name = "channels/wish_fulfilment_export.html"
+
+    def get_context_data(self, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(**kwargs)
+        export_id = self.kwargs.get("pk")
+        object = get_object_or_404(models.WishBulkFulfilmentExport, pk=export_id)
+        context["object"] = object
+        context["orders"] = object.wishorder_set.select_related("order").all()
+        return context
+
+
+class DownloadWishfulfilmentFile(ChannelsUserMixin, View):
+    """View for downloading Wish Order Fulfilment files."""
+
+    def get(self, *args, **kwargs):
+        """Return a wish order fulfilment file download."""
+        contents = models.WishBulkfulfilFile.get_file()
+        response = HttpResponse(contents, content_type="text/csv")
+        filename = f"wish_bulk_filfillment_{timezone.now().strftime('%Y-%m-%d')}.csv"
+        response["Content-Disposition"] = f"attachment; filename={filename}"
+        return response
+
+
+class CreateNewWishOrderFulfilmentFile(ChannelsUserMixin, View):
+    """View for triggering the generation of a new wish order fulfilment file."""
+
+    def get(self, *args, **kwargs):
+        """Generate a new wish order fulfilment file."""
+        models.WishBulkFulfilmentExport.objects.create_download()
+        return HttpResponse("ok")
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class MarkWishOrderUnfulfiled(ChannelsUserMixin, View):
+    """View for marking wish orders as unfulfiled."""
+
+    def post(self, *args, **kwargs):
+        """Mark a wish order as unfulfiled."""
+        order = get_object_or_404(
+            models.WishOrder, pk=self.request.POST.get("order_id")
+        )
+        order.fulfiled = False
+        order.save()
+        return HttpResponse("ok")
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class DelayWishOrderFulfilment(ChannelsUserMixin, View):
+    """View for removing wish orders from existing fulfilment file records."""
+
+    def post(self, *args, **kwargs):
+        """Mark a wish order unfulfiled and remove it from any fulfilment exports."""
+        order = get_object_or_404(
+            models.WishOrder, pk=self.request.POST.get("order_id")
+        )
+        order.fulfiled = False
+        order.fulfilment_export = None
+        order.save()
+        return HttpResponse("ok")
+
+
+class WishOrderFulfilmentFileStatus(ChannelsUserMixin, FileDownloadStatusView):
+    """View for wish order fulfilment file status."""
+
+    model = models.WishBulkFulfilmentExport
