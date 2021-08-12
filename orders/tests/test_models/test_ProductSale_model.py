@@ -482,7 +482,7 @@ def test__vat_paid(price, quantity, vat_rate, expected, product_sale_factory):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "price,quantity,expected", [(550, 1, 82), (550, 2, 165), (720, 3, 324)]
+    "price,quantity,expected", [(550, 1, 85), (550, 2, 170), (720, 3, 334)]
 )
 def test_channel_fee_paid(price, quantity, expected, product_sale_factory):
     sale = product_sale_factory.create(price=price, quantity=quantity)

@@ -8,9 +8,9 @@ from orders import models
 class ChannelAdmin(admin.ModelAdmin):
     """Admin for the Channel model."""
 
-    fields = ("name",)
-    list_display = ("__str__", "name")
-    list_editable = ("name",)
+    fields = ("name", "channel_fee")
+    list_display = ("__str__", "name", "channel_fee")
+    list_editable = ("name", "channel_fee")
 
 
 @admin.register(models.Order)

@@ -84,7 +84,8 @@ class ProductSale(models.Model):
         return int(((self._price_paid() / vat_divisor) - self._price_paid()) * -1)
 
     def _channel_fee_paid(self):
-        return int(float(self._price_paid() / 100) * 15)
+        channel_fee = self.order.channel.channel_fee
+        return int(float(self._price_paid() / 100) * channel_fee)
 
     def _purchase_price_total(self):
         return self.purchase_price * self.quantity

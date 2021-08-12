@@ -1120,7 +1120,7 @@ def test_channel_fee_paid(order_factory, product_sale_factory):
     order = order_factory.create()
     product_sale_factory.create(order=order, price=550, quantity=1)
     product_sale_factory.create(order=order, price=550, quantity=2)
-    assert order.channel_fee_paid() == 247
+    assert order.channel_fee_paid() == 255
 
 
 @pytest.mark.django_db
@@ -1143,7 +1143,7 @@ def test_profit(order_factory, product_sale_factory):
     product_sale_factory.create(
         order=order, purchase_price=550, price=550, quantity=1, vat_rate=0
     )
-    assert order.profit() == 197
+    assert order.profit() == 186
 
 
 @pytest.mark.django_db
