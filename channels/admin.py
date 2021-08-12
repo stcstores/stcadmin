@@ -49,12 +49,21 @@ class WishImportAdmin(admin.ModelAdmin):
 class WishOrderAdmin(admin.ModelAdmin):
     """Admin for the WishOrder model."""
 
-    fields = ("wish_import", "wish_transaction_id", "wish_order_id", "order", "error")
+    fields = (
+        "wish_import",
+        "wish_transaction_id",
+        "wish_order_id",
+        "order",
+        "fulfiled",
+        "error",
+    )
     list_display = (
         "wish_import",
         "wish_transaction_id",
         "wish_order_id",
         "order",
+        "fulfiled",
+        "is_on_fulfilment_export",
         "error",
     )
 
