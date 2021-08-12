@@ -463,29 +463,43 @@ def test_price_paid(price, quantity, expected, product_sale_factory):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "price,quantity,vat_rate,expected",
+    "price,quantity,vat_rate,channel_include_vat,expected",
     [
-        (550, 1, 0, 0),
-        (550, 2, 0, 0),
-        (720, 3, 0, 0),
-        (550, 1, 20, 91),
-        (550, 2, 20, 183),
-        (720, 3, 20, 360),
+        (550, 1, 0, True, 0),
+        (550, 2, 0, True, 0),
+        (720, 3, 0, True, 0),
+        (550, 1, 20, True, 91),
+        (550, 2, 20, True, 183),
+        (720, 3, 20, True, 360),
+        (550, 1, 0, False, 0),
+        (550, 2, 0, False, 0),
+        (720, 3, 0, False, 0),
+        (550, 1, 20, False, 0),
+        (550, 2, 20, False, 0),
+        (720, 3, 20, False, 0),
     ],
 )
-def test__vat_paid(price, quantity, vat_rate, expected, product_sale_factory):
+def test__vat_paid(
+    price, quantity, vat_rate, channel_include_vat, expected, product_sale_factory
+):
     sale = product_sale_factory.create(
-        price=price, quantity=quantity, vat_rate=vat_rate
+        price=price,
+        quantity=quantity,
+        vat_rate=vat_rate,
+        order__channel__include_vat=channel_include_vat,
     )
     assert sale._vat_paid() == expected
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "price,quantity,expected", [(550, 1, 85), (550, 2, 170), (720, 3, 334)]
+    "price,quantity,channel_fee, expected",
+    [(550, 1, 15.5, 85), (550, 2, 15.5, 170), (720, 3, 15.5, 334), (720, 3, 0, 0)],
 )
-def test_channel_fee_paid(price, quantity, expected, product_sale_factory):
-    sale = product_sale_factory.create(price=price, quantity=quantity)
+def test_channel_fee_paid(price, quantity, expected, channel_fee, product_sale_factory):
+    sale = product_sale_factory.create(
+        price=price, quantity=quantity, order__channel__channel_fee=channel_fee
+    )
     assert sale._channel_fee_paid() == expected
 
 

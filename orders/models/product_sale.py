@@ -80,8 +80,11 @@ class ProductSale(models.Model):
         return self.price * self.quantity
 
     def _vat_paid(self):
-        vat_divisor = 1 + (self.vat_rate / 100)
-        return int(((self._price_paid() / vat_divisor) - self._price_paid()) * -1)
+        if self.order.channel.include_vat is True:
+            vat_divisor = 1 + (self.vat_rate / 100)
+            return int(((self._price_paid() / vat_divisor) - self._price_paid()) * -1)
+        else:
+            return 0
 
     def _channel_fee_paid(self):
         channel_fee = self.order.channel.channel_fee
