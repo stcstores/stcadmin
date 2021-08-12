@@ -268,6 +268,10 @@ class WishOrder(models.Model):
         "WishBulkFulfilmentExport", blank=True, null=True, on_delete=models.SET_NULL
     )
 
+    def is_on_fulfilment_export(self):
+        """Return True if the order is included in a fulfilment export, othwise False."""
+        return bool(self.fulfilment_export)
+
 
 @dataclass
 class ExportOrder:
@@ -283,7 +287,9 @@ class WishBulkfulfilExportManager(FileDownloadManager):
     @classmethod
     def _get_orders(cls):
         """Return a list of EportOrder for orders awaiting fulfillment."""
-        wish_orders = WishOrder.objects.filter(order__isnull=False, fulfiled=False)
+        wish_orders = WishOrder.objects.filter(
+            order__isnull=False, fulfiled=False, fulfilment_export__isnull=True
+        )
         order_ids = wish_orders.values_list("order__order_id", flat=True)
         cc_orders = CloudCommerceOrder.objects.filter(
             order_ID__in=order_ids, dispatched_at__isnull=False
@@ -320,6 +326,7 @@ class WishBulkFulfilmentExport(FileDownload):
         """Add orders to the export."""
         for order in self.orders:
             order.wish_order.fulfilment_export = self
+            order.wish_order.fulfiled = True
             order.wish_order.save()
 
     def get_download_link(self):
