@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 
 from orders import models
+from shipping.models import Country
 
 
 @pytest.fixture
@@ -463,30 +464,62 @@ def test_price_paid(price, quantity, expected, product_sale_factory):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "price,quantity,vat_rate,channel_include_vat,expected",
+    "price,quantity,vat_rate,channel_include_vat, country_vat_required, expected",
     [
-        (550, 1, 0, True, 0),
-        (550, 2, 0, True, 0),
-        (720, 3, 0, True, 0),
-        (550, 1, 20, True, 91),
-        (550, 2, 20, True, 183),
-        (720, 3, 20, True, 360),
-        (550, 1, 0, False, 0),
-        (550, 2, 0, False, 0),
-        (720, 3, 0, False, 0),
-        (550, 1, 20, False, 0),
-        (550, 2, 20, False, 0),
-        (720, 3, 20, False, 0),
+        (550, 1, 0, True, Country.VAT_VARIABLE, 0),
+        (550, 2, 0, True, Country.VAT_VARIABLE, 0),
+        (720, 3, 0, True, Country.VAT_VARIABLE, 0),
+        (550, 1, 20, True, Country.VAT_VARIABLE, 91),
+        (550, 2, 20, True, Country.VAT_VARIABLE, 183),
+        (720, 3, 20, True, Country.VAT_VARIABLE, 360),
+        (550, 1, 0, False, Country.VAT_VARIABLE, 0),
+        (550, 2, 0, False, Country.VAT_VARIABLE, 0),
+        (720, 3, 0, False, Country.VAT_VARIABLE, 0),
+        (550, 1, 20, False, Country.VAT_VARIABLE, 0),
+        (550, 2, 20, False, Country.VAT_VARIABLE, 0),
+        (720, 3, 20, False, Country.VAT_VARIABLE, 0),
+        (550, 1, 0, True, Country.VAT_NEVER, 0),
+        (550, 2, 0, True, Country.VAT_NEVER, 0),
+        (720, 3, 0, True, Country.VAT_NEVER, 0),
+        (550, 1, 20, True, Country.VAT_NEVER, 0),
+        (550, 2, 20, True, Country.VAT_NEVER, 0),
+        (720, 3, 20, True, Country.VAT_NEVER, 0),
+        (550, 1, 0, False, Country.VAT_NEVER, 0),
+        (550, 2, 0, False, Country.VAT_NEVER, 0),
+        (720, 3, 0, False, Country.VAT_NEVER, 0),
+        (550, 1, 20, False, Country.VAT_NEVER, 0),
+        (550, 2, 20, False, Country.VAT_NEVER, 0),
+        (720, 3, 20, False, Country.VAT_NEVER, 0),
+        (550, 1, 0, True, Country.VAT_ALWAYS, 183),
+        (550, 2, 0, True, Country.VAT_ALWAYS, 366),
+        (720, 3, 0, True, Country.VAT_ALWAYS, 720),
+        (550, 1, 20, True, Country.VAT_ALWAYS, 183),
+        (550, 2, 20, True, Country.VAT_ALWAYS, 366),
+        (720, 3, 20, True, Country.VAT_ALWAYS, 720),
+        (550, 1, 0, False, Country.VAT_ALWAYS, 0),
+        (550, 2, 0, False, Country.VAT_ALWAYS, 0),
+        (720, 3, 0, False, Country.VAT_ALWAYS, 0),
+        (550, 1, 20, False, Country.VAT_ALWAYS, 0),
+        (550, 2, 20, False, Country.VAT_ALWAYS, 0),
+        (720, 3, 20, False, Country.VAT_ALWAYS, 0),
     ],
 )
 def test__vat_paid(
-    price, quantity, vat_rate, channel_include_vat, expected, product_sale_factory
+    price,
+    quantity,
+    vat_rate,
+    channel_include_vat,
+    country_vat_required,
+    expected,
+    product_sale_factory,
 ):
     sale = product_sale_factory.create(
         price=price,
         quantity=quantity,
         vat_rate=vat_rate,
         order__channel__include_vat=channel_include_vat,
+        order__country__vat_required=country_vat_required,
+        order__country__default_vat_rate=50,
     )
     assert sale._vat_paid() == expected
 
