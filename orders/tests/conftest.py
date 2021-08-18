@@ -66,6 +66,8 @@ class ChannelFactory(factory.django.DjangoModelFactory):
         model = models.Channel
 
     name = factory.Sequence(lambda n: f"Test Channel {n}")
+    channel_fee = 15.5
+    include_vat = True
 
 
 @pytest_factoryboy.register

@@ -102,6 +102,17 @@ def test_country_filter(country_factory, order_factory, url, group_logged_in_cli
 
 
 @pytest.mark.django_db
+def test_channel_filter(order_factory, channel_factory, url, group_logged_in_client):
+    channel = channel_factory.create()
+    order = order_factory.create(channel=channel)
+    other_order = order_factory.create()
+    response = group_logged_in_client.get(url, {"channel": channel.id})
+    content = response.content.decode("utf8")
+    assert order.order_ID in content
+    assert other_order.order_ID not in content
+
+
+@pytest.mark.django_db
 @pytest.mark.parametrize(
     "recieved_at,shown",
     [

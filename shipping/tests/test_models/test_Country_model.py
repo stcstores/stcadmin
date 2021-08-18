@@ -24,6 +24,16 @@ def currency(currency_factory):
 
 
 @pytest.fixture
+def vat_required():
+    return models.Country.VAT_NEVER
+
+
+@pytest.fixture
+def default_vat_rate():
+    return 17.5
+
+
+@pytest.fixture
 def new_country(country_ID, name, region, currency):
     country = models.Country(
         country_ID=country_ID, name=name, region=region, currency=currency
@@ -53,22 +63,41 @@ def test_currency_is_set(currency, new_country):
 
 
 @pytest.mark.django_db
-def test_vat_required_defaults_to_null(new_country):
-    assert new_country.vat_required is None
+def test_vat_required_defaults_as_region(new_country):
+    assert new_country.vat_required == models.Country.VAT_FROM_REGION
 
 
 @pytest.mark.django_db
-def test_can_set_vat_required(country_ID, name, region, currency):
+def test_default_vat_rate_defaults_to_null(new_country):
+    assert new_country.default_vat_rate is None
+
+
+@pytest.mark.django_db
+def test_can_set_vat_required(country_ID, name, region, currency, vat_required):
     country = models.Country(
         country_ID=country_ID,
         name=name,
         region=region,
         currency=currency,
-        vat_required=True,
+        vat_required=vat_required,
     )
     country.save()
     country.refresh_from_db()
-    assert country.vat_required is True
+    assert country.vat_required == vat_required
+
+
+@pytest.mark.django_db
+def test_can_set_default_vat_rate(country_ID, name, region, currency, default_vat_rate):
+    country = models.Country(
+        country_ID=country_ID,
+        name=name,
+        region=region,
+        currency=currency,
+        default_vat_rate=default_vat_rate,
+    )
+    country.save()
+    country.refresh_from_db()
+    assert country.default_vat_rate == default_vat_rate
 
 
 @pytest.mark.django_db
@@ -78,12 +107,31 @@ def test_str_method(country_factory):
 
 
 @pytest.mark.django_db
-def test_vat_is_required_method_returns_region_value_when_none(country_factory):
-    country = country_factory.create(vat_required=None, region__vat_required=True)
-    assert country.vat_is_required() is True
+def test_vat_is_required_method_returns_region_value_as_region(country_factory):
+    country = country_factory.create(
+        vat_required=models.Country.VAT_FROM_REGION,
+        region__vat_required=models.Region.VAT_ALWAYS,
+    )
+    assert country.vat_is_required() == models.Region.VAT_ALWAYS
 
 
 @pytest.mark.django_db
-def test_vat_is_required_method_returns_vat_requred_when_not_none(country_factory):
-    country = country_factory.create(vat_required=True, region__vat_required=False)
-    assert country.vat_is_required() is True
+def test_vat_is_required_method_returns_vat_required_when_not_none(
+    country_factory, vat_required
+):
+    country = country_factory.create(
+        vat_required=vat_required, region__vat_required=models.Region.VAT_VARIABLE
+    )
+    assert country.vat_is_required() == vat_required
+
+
+@pytest.mark.django_db
+def test_vat_rate_method_returns_region_value_if_none(country_factory):
+    country = country_factory.create(default_vat_rate=None, region__default_vat_rate=23)
+    assert country.vat_rate() == 23
+
+
+@pytest.mark.django_db
+def test_vat_rate_method_returns_defualt_vat_rate_if_not_none(country_factory):
+    country = country_factory.create(default_vat_rate=52, region__default_vat_rate=23)
+    assert country.vat_rate() == 52

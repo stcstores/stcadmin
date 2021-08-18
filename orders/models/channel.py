@@ -6,6 +6,8 @@ class Channel(models.Model):
     """Model for sales channels."""
 
     name = models.CharField(max_length=255, unique=True, db_index=True)
+    channel_fee = models.FloatField(default=15.5)
+    include_vat = models.BooleanField(default=True)
 
     class Meta:
         """Meta class for the Channel model."""

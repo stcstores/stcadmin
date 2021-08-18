@@ -33,6 +33,9 @@ class OrderListFilter(forms.Form):
     country = forms.ModelChoiceField(
         Country.objects.all().order_by("name"), required=False
     )
+    channel = forms.ModelChoiceField(
+        models.Channel.objects.all().order_by("name"), required=False
+    )
     recieved_from = forms.DateField(
         required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
     )
@@ -79,6 +82,7 @@ class OrderListFilter(forms.Form):
         """Return a dict of filter kwargs."""
         kwargs = {
             "country": data.get("country"),
+            "channel": data.get("channel"),
             "recieved_at__gte": data.get("recieved_from"),
             "recieved_at__lte": data.get("recieved_to"),
             "order_ID": data.get("order_ID") or None,

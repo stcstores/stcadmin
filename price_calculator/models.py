@@ -24,7 +24,7 @@ class ChannelFee(models.Model):
     """Model for channel fees."""
 
     name = models.CharField(max_length=50, unique=True)
-    fee_percentage = models.PositiveSmallIntegerField()
+    fee_percentage = models.FloatField()
     ordering = models.PositiveSmallIntegerField(default=100)
 
     class Meta:
