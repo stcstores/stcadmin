@@ -346,7 +346,7 @@ class WishBulkfulfilFile:
     TRACKING_NUMBER = "Tracking Number"
     SHIP_NOTE = "Ship Note"
 
-    DEFAULT_ORIGIN_CODE = "CN"
+    DEFAULT_ORIGIN_CODE = "GB"
     DEFAULT_SHIPPING_PROVIDER = "N/A"
 
     HEADER = [
@@ -356,6 +356,8 @@ class WishBulkfulfilFile:
         TRACKING_NUMBER,
         SHIP_NOTE,
     ]
+
+    SHIPPING_PROVIDER_NAME_OVERRIDES = {"Landmark": "LandmarkGlobal"}
 
     @classmethod
     def create_rows(cls, orders):
@@ -373,9 +375,12 @@ class WishBulkfulfilFile:
         """Return a row for the .csv."""
         row = {key: "" for key in WishBulkfulfilFile.HEADER}
         if cc_order.shipping_rule is not None:
-            row[
-                cls.SHIPPING_PROVIDER
-            ] = cc_order.shipping_rule.courier_service.courier.name
+            provider_name = cc_order.shipping_rule.courier_service.courier.name
+            provider_name = cls.SHIPPING_PROVIDER_NAME_OVERRIDES.get(
+                provider_name, provider_name
+            )
+            row[cls.SHIPPING_PROVIDER] = provider_name
+
         else:
             row[cls.SHIPPING_PROVIDER] = cls.DEFAULT_SHIPPING_PROVIDER
         row[cls.ORIGIN_COUNTRY_CODE] = cls.DEFAULT_ORIGIN_CODE
