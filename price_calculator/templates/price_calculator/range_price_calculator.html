@@ -123,9 +123,15 @@
 {% endblock %}
 
 {% block script %}
+
+{{ country_vat|json_script:"country_vat" }}
+
+
 <script>
 
     get_postage_price_url = "{% url 'price_calculator:get_range_shipping_price' %}";
+
+    country_vat = JSON.parse(document.getElementById('country_vat').textContent);
 
     function update_vat_rates(vat_rates, calculator) {
         if (vat_rates.length == 0) {
@@ -135,7 +141,13 @@
         }
         $(vat_rates).each(function() {
             {% for product in product_range.products %}
-            calcs['{{ product.id }}'].set_vat_rate({{ product.vat_rate }});
+            var country_vat_rate = country_vat[$("#country").val()];
+            if (country_vat_rate !== null) {
+              var vat_rate = country_vat_rate;
+            } else {
+              var vat_rate = {{ product.vat_rate }};
+            }
+            calcs['{{ product.id }}'].set_vat_rate(vat_rate);
             {% endfor %}
         });
     }
@@ -161,7 +173,6 @@
 
         $(document).on('calculator_update', function() {
           $('#{{ product.id }}_shipping_service').html(calcs['{{ product.id }}'].shipping_service);
-          console.log($('#product_{{ product.id }}'));
           if (!calcs['{{ product.id }}'].valid) {
             $('#product_{{ product.id }}').addClass('invalid');
           } else {
