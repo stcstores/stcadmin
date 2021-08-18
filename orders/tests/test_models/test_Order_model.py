@@ -5,6 +5,7 @@ import pytest
 from django.utils import timezone
 
 from orders import models
+from shipping.models import Country
 
 
 @pytest.fixture
@@ -1067,7 +1068,7 @@ def test_update_postage_prices(
 
 @pytest.mark.django_db
 def test_vat_paid(order_factory, product_sale_factory):
-    order = order_factory.create(country__vat_required=True)
+    order = order_factory.create(country__vat_required=Country.VAT_VARIABLE)
     product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=20)
     product_sale_factory.create(order=order, price=550, quantity=2, vat_rate=20)
     product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=0)
@@ -1108,7 +1109,7 @@ def test_postage_price_success_is_false_if_total_paid_GBP_is_zero(
 
 @pytest.mark.django_db
 def test_vat_paid_returns_zero_if_vat_not_required(order_factory, product_sale_factory):
-    order = order_factory.create(country__vat_required=False)
+    order = order_factory.create(country__vat_required=Country.VAT_NEVER)
     product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=20)
     product_sale_factory.create(order=order, price=550, quantity=2, vat_rate=20)
     product_sale_factory.create(order=order, price=550, quantity=1, vat_rate=0)

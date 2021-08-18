@@ -48,9 +48,22 @@ class Currency(models.Model):
 class Region(models.Model):
     """Model for shipping regions."""
 
+    VAT_ALWAYS = "Always"
+    VAT_NEVER = "Never"
+    VAT_VARIABLE = "Variable"
+
+    VAT_REQUIRED_CHOICES = (
+        (VAT_ALWAYS, VAT_ALWAYS),
+        (VAT_NEVER, VAT_NEVER),
+        (VAT_VARIABLE, VAT_VARIABLE),
+    )
+
     name = models.CharField(max_length=255)
     abriviation = models.CharField(max_length=10, blank=True, null=True)
-    vat_required = models.BooleanField(default=False)
+    vat_required = models.CharField(
+        max_length=10, choices=VAT_REQUIRED_CHOICES, default=VAT_VARIABLE
+    )
+    default_vat_rate = models.FloatField(default=20)
 
     class Meta:
         """Meta class for the Region model."""
@@ -66,12 +79,17 @@ class Region(models.Model):
 class Country(models.Model):
     """Model for shipping countries."""
 
-    EU = "EU"
-    EUROPE = "Europe"
-    UK = "UK"
-    ROW = "ROW"
-    REST_OF_WORLD = "Rest of World"
-    REGION_CHOICES = ((EU, EUROPE), (UK, UK), (ROW, REST_OF_WORLD))
+    VAT_ALWAYS = Region.VAT_ALWAYS
+    VAT_NEVER = Region.VAT_NEVER
+    VAT_VARIABLE = Region.VAT_VARIABLE
+    VAT_FROM_REGION = "As Region"
+
+    VAT_REQUIRED_CHOICES = (
+        (VAT_ALWAYS, VAT_ALWAYS),
+        (VAT_NEVER, VAT_NEVER),
+        (VAT_VARIABLE, VAT_VARIABLE),
+        (VAT_FROM_REGION, VAT_FROM_REGION),
+    )
 
     country_ID = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=255)
@@ -80,7 +98,12 @@ class Country(models.Model):
     currency = models.ForeignKey(
         Currency, blank=True, null=True, on_delete=models.SET_NULL
     )
-    vat_required = models.BooleanField(blank=True, null=True)
+    vat_required = models.CharField(
+        max_length=10,
+        choices=VAT_REQUIRED_CHOICES,
+        default=VAT_FROM_REGION,
+    )
+    default_vat_rate = models.FloatField(blank=True, null=True)
     flag = models.ImageField(upload_to="flags", blank=True, null=True)
 
     class Meta:
@@ -95,9 +118,15 @@ class Country(models.Model):
 
     def vat_is_required(self):
         """Return True if VAT is required for this country, otherwise False."""
-        if self.vat_required is None:
+        if self.vat_required == self.VAT_FROM_REGION:
             return self.region.vat_required
         return self.vat_required
+
+    def vat_rate(self):
+        """Return the default VAT rate for the country or region."""
+        if self.default_vat_rate is not None:
+            return self.default_vat_rate
+        return self.region.default_vat_rate
 
 
 class VATRate(models.Model):
