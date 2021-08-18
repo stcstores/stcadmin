@@ -78,7 +78,13 @@ class GetShippingPrice(InventoryUserMixin, View):
             weight=weight,
             price=price,
         )
-        vat_rates = list(shipping_method.vat_rates.values())
+        if self.country.vat_is_required() == Country.VAT_ALWAYS:
+            rate = self.country.vat_rate()
+            vat_rates = [{"name": f"Default VAT {rate}%", "percentage": rate}]
+        elif self.country.vat_is_required() == Country.VAT_NEVER:
+            vat_rates = [{"name": "VAT not applicable", "percentage": 0}]
+        elif self.country.vat_is_required() == Country.VAT_VARIABLE:
+            vat_rates = list(shipping_method.vat_rates.values())
         return self.format_response(
             success=True,
             price=shipping_price,
@@ -143,7 +149,41 @@ class GetRangeShippingPrice(GetShippingPrice):
             )
 
 
-class RangePriceCalculatorView(InventoryUserMixin, TemplateView):
+class BasePriceCalculatorView(InventoryUserMixin, TemplateView):
+    """Base view for price calculator pages."""
+
+    def get_context_data(self, *args, **kwargs):
+        """Get context data for template."""
+        context_data = super().get_context_data(*args, **kwargs)
+        country_ids = models.ShippingMethod.objects.values_list("country", flat=True)
+        context_data["countries"] = Country.objects.filter(id__in=country_ids)
+        context_data["channel_fees"] = models.ChannelFee.objects.all()
+        context_data["channels"] = models.Channel.objects.all()
+        context_data["country_vat"] = self._get_country_vat(context_data["countries"])
+        for country in context_data["countries"]:
+            vat_required = country.vat_is_required()
+            if vat_required == country.VAT_ALWAYS:
+                context_data["country_vat"][country.name] = country.vat_rate()
+            elif vat_required == country.VAT_NEVER:
+                context_data["country_vat"][country.name] = 0
+            else:
+                context_data["country_vat"][country.name] = None
+        return context_data
+
+    def _get_country_vat(self, countries):
+        vat = {}
+        for country in countries:
+            vat_required = country.vat_is_required()
+            if vat_required == country.VAT_ALWAYS:
+                vat[country.name] = country.vat_rate()
+            elif vat_required == country.VAT_NEVER:
+                vat[country.name] = 0
+            else:
+                vat[country.name] = None
+        return vat
+
+
+class RangePriceCalculatorView(BasePriceCalculatorView):
     """View calcualting prices for an existing Product Range."""
 
     template_name = "price_calculator/range_price_calculator.html"
@@ -153,14 +193,10 @@ class RangePriceCalculatorView(InventoryUserMixin, TemplateView):
         context_data = super().get_context_data(*args, **kwargs)
         product_range = cc_products.get_range(self.kwargs.get("range_id"))
         context_data["product_range"] = product_range
-        country_ids = models.ShippingMethod.objects.values_list("country", flat=True)
-        context_data["countries"] = Country.objects.filter(id__in=country_ids)
-        context_data["channel_fees"] = models.ChannelFee.objects.all()
-        context_data["channels"] = models.Channel.objects.all()
         return context_data
 
 
-class PriceCalculator(InventoryUserMixin, TemplateView):
+class PriceCalculator(BasePriceCalculatorView):
     """View for using price calcualtor without an existing Product."""
 
     template_name = "price_calculator/price_calculator.html"
@@ -168,9 +204,5 @@ class PriceCalculator(InventoryUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Get context data for template."""
         context_data = super().get_context_data(*args, **kwargs)
-        country_ids = models.ShippingMethod.objects.values_list("country", flat=True)
-        context_data["countries"] = Country.objects.filter(id__in=country_ids)
         context_data["product_types"] = models.ProductType.objects.all()
-        context_data["channel_fees"] = models.ChannelFee.objects.all()
-        context_data["channels"] = models.Channel.objects.all()
         return context_data

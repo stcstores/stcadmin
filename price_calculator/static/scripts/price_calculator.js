@@ -126,7 +126,7 @@ class PriceCalculator {
     }
   }
   change() {
-    console.log(this.profit);
+
   }
 }
 
@@ -159,14 +159,12 @@ function get_postage_price(
     'weight': weight,
     'price': price,
   }
-  console.log(data);
   $.post(
     get_postage_price_url,
     data,
 
     function (response) {
       data = response;
-      console.log(response);
       update_vat_rates(response['vat_rates'], calculator);
       calculator.set_postage_price(parseInt(response['price']) / 100);
       calculator.set_exchange_rate(parseFloat(response['exchange_rate']));
