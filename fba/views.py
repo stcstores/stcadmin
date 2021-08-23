@@ -399,11 +399,16 @@ class FBAPriceCalculator(FBAUserMixin, View):
 
     def get_vat(self):
         """Return the caclulated VAT."""
-        if self.country.country.vat_is_required() and not self.zero_rated:
+        if self.country.country.vat_is_required() == self.country.country.VAT_NEVER:
+            return 0.0
+        elif (
+            self.country.country.vat_is_required() != self.country.country.VAT_ALWAYS
+            and self.zero_rated
+        ):
+            return 0.0
+        else:
             vat = self.selling_price / 6
             vat = round(vat, 2)
-        else:
-            vat = 0.0
         return vat
 
     def get_postage_to_fba(self):
