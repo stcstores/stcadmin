@@ -161,3 +161,11 @@ class InternationalShippingAdmin(SortableAdminMixin, ProductOptionAdmin):
     """Model admin for the InternationalShipping model."""
 
     pass
+
+
+@admin.register(models.ProductImage)
+class ProductImageAdmin(admin.ModelAdmin):
+    """Model admin for the ProductImage model."""
+
+    fields = ("product_id", "range_sku", "sku", "image_file")
+    list_display = ("product_id", "range_sku", "sku", "image_file")
