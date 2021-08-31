@@ -1,9 +1,17 @@
 """Mocks for CCAPI objects."""
 import random
+from string import ascii_uppercase
 
 
 def get_id():
     return random.randint(100000, 999999)
+
+
+def get_sku():
+    def get_block():
+        return "".join([random.choice(ascii_uppercase) for i in range(3)])
+
+    return "_".join([get_block() for _ in range(3)])
 
 
 class MockCCAPIProductRangeOptions:
@@ -19,6 +27,7 @@ class MockCCAPIProductRange:
     def __init__(
         self,
         id=None,
+        sku=None,
         name=None,
         products=None,
         end_of_line=False,
@@ -26,6 +35,7 @@ class MockCCAPIProductRange:
         options=None,
     ):
         self.id = id or get_id()
+        self.sku = sku or get_sku()
         self.name = name or "Mock Product Range"
         self.range_id = range_id or get_id()
         self.products = products or [MockCCAPIProduct()]
@@ -48,6 +58,7 @@ class MockCCAPIProduct:
     def __init__(
         self,
         id=None,
+        sku=None,
         name=None,
         full_name=None,
         options=None,
@@ -55,6 +66,7 @@ class MockCCAPIProduct:
         locations=None,
     ):
         self.id = id or get_id()
+        self.sku = sku or get_sku()
         self.name = name or "Mock Product"
         self.full_name = full_name or "Mock Product - Red"
         self.options = options or [MockCCAPIProductProductOption()]
