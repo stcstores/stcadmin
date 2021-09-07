@@ -1,0 +1,28 @@
+{% extends 'fba/base.html' %}
+
+{% block content %}{{ block.super }}
+
+<h1>FBA Shipment Destinations</h1>
+
+<a href="{% url 'fba:create_shipment_destination' %}">
+    <button>Create New Destination</button>
+</a>
+
+<table>
+    {% for destination in destinations %}
+    <tr>
+        <td>{{ destination.name }}</td>
+        <td>
+            <a href="{% url 'fba:update_shipment_destination' destination.pk %}">
+                <button>Edit Destination</button>
+            </a>
+        </td>
+        <td>
+            <a href="{% url 'fba:remove_destination' destination.pk %}">
+                <button>Remove Destination</button>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

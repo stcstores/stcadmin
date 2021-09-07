@@ -1,0 +1,18 @@
+{% extends 'fba/base.html' %}
+
+{% block content %}{{ block.super }}
+
+<h1>
+    {% if form.instance %}
+    Update Shipment Destination
+    {% else %}
+    Create Shipment Destination
+    {% endif %}
+</h1>
+
+<form action="" method="POST">{% csrf_token %}
+    {{ form.as_p }}
+    <button typw="submit">Save</button>
+</form>
+
+{% endblock %}

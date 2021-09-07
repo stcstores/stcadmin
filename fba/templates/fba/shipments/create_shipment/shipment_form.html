@@ -1,0 +1,43 @@
+{% extends 'fba/base.html' %}
+
+{% block content %}{{ block.super }}
+
+{% if form.instance %}
+<h1>Update Shipment Order {{ form.instance.order_number }}</h1>
+{% else %}
+<h1>Create Shipment Order</h1>
+{% endif %}
+
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <table>
+        {{ packages.management_form }}
+
+        {% for package_form in packages.forms %}
+        {% if forloop.first %}
+        <tr>
+            {% for field in package_form.visible_fields %}
+            <th>{{ field.label }}</th>
+            {% endfor %}
+        </tr>
+        {% endif %}
+        <tr>
+            {% for field in package_form.visible_fields %}
+            <td>{{ field }}</td>
+            {% endfor %}
+            <td>
+                {% for hidden in package_form.hidden_fields %}
+                {{ hidden }}
+                {% endfor %}
+                {{ package_form.errors.as_ul }}
+            </td>
+        </tr>
+        {% endfor %}
+
+
+    </table>
+    <button type="submit">Save</button>
+</form>
+
+{% endblock %}

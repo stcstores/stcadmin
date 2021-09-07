@@ -1,0 +1,20 @@
+{% extends 'fba/base.html' %}
+
+{% block content %}{{ block.super }}
+
+<a href="{% url 'fba:create_shipment_create_destination' %}">Add New Destination Address</a>
+<br>
+<table>
+    {% for destination in destinations %}
+    <tr>
+        <td>{{ destination }}</td>
+        <td>
+            <a href="{% url 'fba:create_shipment' destination.pk %}">
+                <button>Select</button>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

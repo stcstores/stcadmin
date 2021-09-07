@@ -1,0 +1,78 @@
+{% extends 'fba/base.html' %}
+
+{% block content %}{{ block.super }}
+
+<h1>FBA Shipments</h1>
+<br>
+<a href="{% url 'fba:shipment_destinations' %}">
+    <button>Manage Destination Addresses</button>
+</a>
+&nbsp;
+<a href="{% url 'fba:create_shipment_select_destination' %}">
+    <button>Create New Shipment Order</button>
+</a>
+&nbsp;
+
+<button id="create_shipment_button" {% if current_shipments.count == 0 %}disabled{% endif %}>
+    Create Shipment File
+</button>
+
+<br><br>
+<div>
+    <h3>Awaiting Shipment</h3>
+    {% if current_shipments %}
+    {% include "fba/shipments/shipment_table.html" with shipments=current_shipments %}
+    {% else %}
+    No current shipments
+    <a href="{% url 'fba:create_shipment_select_destination' %}">
+        <button>Create New Shipment Order</button>
+    </a>
+    {% endif %}
+</div>
+<br>
+<div>
+    <h3>Held Shipments</h3>
+    {% if held_shipments %}
+    {% include "fba/shipments/shipment_table.html" with shipments=held_shipments %}<br>
+    {% else %}
+    No shipments currently on hold
+    {% endif %}
+</div>
+<br>
+<div>
+    <h3>Previous Shipment Files</h3>
+    <table>
+        <tr>
+            <th>Export</th>
+            <th>Order Count</th>
+            <td></td>
+        </tr>
+        {% for export in previous_exports %}
+        <th>{{ export}}</th>
+        <td>{{ export.shipment_order.count }}</td>
+        <td><a href="{% url 'fba:download_shipment_file' export.pk %}">
+                <button>Recreate File</button>
+            </a>
+        </td>
+    </table>
+
+    <br>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block script %}
+
+<script>
+    $(document).ready(function () {
+        $("#create_shipment_button").click(function () {
+            document.location.href = "{% url 'fba:create_shipment_file' %}";
+            setTimeout(function () {
+                // Should be triggered after download started
+                location.reload();
+            }, 5000);
+        });
+    });
+</script>
+
+{% endblock script %}

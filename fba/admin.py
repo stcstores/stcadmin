@@ -136,3 +136,131 @@ class FulfillmentCenterAdmin(admin.ModelAdmin):
     """Model admin for the FulfilmentCenter model."""
 
     fields = ("name", "country", "address_1", "address_2", "address_3")
+
+
+@admin.register(models.FBAShipmentDestination)
+class FBAShipmentDestinationAdmin(admin.ModelAdmin):
+    """Model admin for the FBAShipmentDestination model."""
+
+    fields = (
+        "name",
+        "is_enabled",
+        "recipient_last_name",
+        "address_line_1",
+        "address_line_2",
+        "address_line_3",
+        "city",
+        "state",
+        "country",
+        "postcode",
+    )
+    list_display = (
+        "__str__",
+        "name",
+        "is_enabled",
+        "recipient_last_name",
+        "address_line_1",
+        "address_line_2",
+        "address_line_3",
+        "city",
+        "state",
+        "country",
+        "postcode",
+    )
+    list_editable = (
+        "name",
+        "is_enabled",
+        "recipient_last_name",
+        "address_line_1",
+        "address_line_2",
+        "address_line_3",
+        "city",
+        "state",
+        "country",
+        "postcode",
+    )
+
+
+@admin.register(models.FBAShipmentExport)
+class FBAShipmentExportAdmin(admin.ModelAdmin):
+    """Model admin for the FBAShipmentExport model."""
+
+    list_display = ("created_at",)
+
+
+@admin.register(models.FBAShipmentMethod)
+class FBAShipmentMethodAdmin(admin.ModelAdmin):
+    """Model admin for the FBAShipmentMethod model."""
+
+    fields = ("name", "identifier", "priority", "is_enabled")
+    list_display = ("__str__", "name", "identifier", "priority", "is_enabled")
+    list_editable = ("name", "identifier", "priority", "is_enabled")
+
+
+@admin.register(models.FBAShipmentOrder)
+class FBAShipmentOrderAdmin(admin.ModelAdmin):
+    """Model admin for the FBAShipmentOrder model."""
+
+    fields = (
+        "export",
+        "destination",
+        "shipment_method",
+        "is_on_hold",
+    )
+    list_display = (
+        "__str__",
+        "export",
+        "destination",
+        "shipment_method",
+        "is_on_hold",
+    )
+    list_editable = (
+        "destination",
+        "shipment_method",
+        "is_on_hold",
+    )
+
+
+@admin.register(models.FBAShipmentPackage)
+class FBAShipmentPackageAdmin(admin.ModelAdmin):
+    """Model admin for the FBAShipmentPackage model."""
+
+    fields = (
+        "order",
+        "sku",
+        "description",
+        "quantity",
+        "length_cm",
+        "width_cm",
+        "height_cm",
+        "weight_kg",
+        "value",
+        "country_of_origin",
+        "hr_code",
+    )
+    list_display = (
+        "__str__",
+        "order",
+        "sku",
+        "description",
+        "quantity",
+        "length_cm",
+        "width_cm",
+        "height_cm",
+        "weight_kg",
+        "value",
+        "country_of_origin",
+        "hr_code",
+    )
+    list_editable = (
+        "sku",
+        "description",
+        "quantity",
+        "length_cm",
+        "width_cm",
+        "height_cm",
+        "weight_kg",
+        "value",
+        "country_of_origin",
+        "hr_code",
+    )
