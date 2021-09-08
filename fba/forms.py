@@ -426,3 +426,47 @@ class OnHoldOrderFilter(forms.Form):
             )
         )
         return qs
+
+
+class ShipmentDestinationForm(forms.ModelForm):
+    """Model form for fba.models.FBAShipmentDestination."""
+
+    class Meta:
+        """Meta class for fba.forms.ShipmentDestinationForm."""
+
+        model = models.FBAShipmentDestination
+        exclude = ("is_enabled",)
+
+
+class ShipmentOrderForm(forms.ModelForm):
+    """Model form for fba.models.FBAShipmentOrder."""
+
+    class Meta:
+        """Meta class for fba.forms.ShipmentOrderForm."""
+
+        model = models.FBAShipmentOrder
+        exclude = ("is_on_hold", "export")
+
+
+class PackageForm(forms.ModelForm):
+    """Model form for fba.models.FBAShipmentPackage."""
+
+    def __init__(self, *args, **kwargs):
+        """Set the value field to convert pence and pounds."""
+        super().__init__(*args, **kwargs)
+        self.fields["value"].widget = CurrencyWidget()
+        self.fields["value"].to_python = lambda x: int(float(x) * 100)
+
+    class Meta:
+        """Meta class for fba.forms.PackageForm."""
+
+        model = models.FBAShipmentPackage
+        exclude = ()
+
+
+PackageFormset = forms.inlineformset_factory(
+    models.FBAShipmentOrder,
+    models.FBAShipmentPackage,
+    form=PackageForm,
+    extra=5,
+)

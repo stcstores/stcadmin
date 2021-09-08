@@ -1,4 +1,5 @@
-"""Models for the FBA app."""
+"""Models for managing FBA orders."""
+
 from io import BytesIO
 from pathlib import Path
 from tempfile import NamedTemporaryFile

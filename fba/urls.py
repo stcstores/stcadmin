@@ -80,4 +80,65 @@ urlpatterns = [
     ),
     path("invoice/<int:pk>/", views.FBAInvoice.as_view(), name="invoice"),
     path("prioritise", views.PrioritiseOrder.as_view(), name="priortise_fba_order"),
+    path("shipments", views.Shipments.as_view(), name="shipments"),
+    path(
+        "shipments/destinations",
+        views.ShipmentDestinations.as_view(),
+        name="shipment_destinations",
+    ),
+    path(
+        "shipments/create_destination/",
+        views.CreateDestination.as_view(),
+        name="create_shipment_destination",
+    ),
+    path(
+        "shipments/update_destination/<int:pk>/",
+        views.UpdateDestination.as_view(),
+        name="update_shipment_destination",
+    ),
+    path(
+        "shipments/create_shipment_file/",
+        views.CreateFBAShipmentFile.as_view(),
+        name="create_shipment_file",
+    ),
+    path(
+        "shipments/remove_destination/<int:pk>/",
+        views.DisableDestination.as_view(),
+        name="remove_destination",
+    ),
+    path(
+        "shipments/create_shipment/select_destination",
+        views.CreateShipment_SelectDestination.as_view(),
+        name="create_shipment_select_destination",
+    ),
+    path(
+        "shipments/create_shipment/create_destination",
+        views.CreateShipment_CreateDestination.as_view(),
+        name="create_shipment_create_destination",
+    ),
+    path(
+        "shipments/create_shipment/<int:destination_pk>/",
+        views.CreateShipment.as_view(),
+        name="create_shipment",
+    ),
+    path(
+        "shipments/update_shipment/<int:pk>/",
+        views.UpdateShipment.as_view(),
+        name="update_shipment",
+    ),
+    path(
+        "shipments/download_shipment_file/<int:pk>/",
+        views.DownloadFBAShipmentFile.as_view(),
+        name="download_shipment_file",
+    ),
+    path(
+        "shipments/toggle_held/<int:pk>/",
+        views.ToggleShipmentHeld.as_view(),
+        name="toggle_shipment_held",
+    ),
+    path(
+        "shipments/delete_shipment/<int:pk>/",
+        views.DeleteShipment.as_view(),
+        name="delete_shipment",
+    ),
 ]

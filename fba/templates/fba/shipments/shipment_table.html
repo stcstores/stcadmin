@@ -1,0 +1,22 @@
+<table>
+    <tr>
+        <th>Shipment Order</th>
+        <th>Destination</th>
+        <th>Package Count</th>
+        <td colspan="3"></td>
+    </tr>
+    {% for shipment in shipments %}
+    <tr>
+        <th {% if shipment.is_on_hold %}class="error" {% endif %}>{{ shipment }}</th>
+        <td>{{ shipment.destination }}</td>
+        <td>{{ shipment.shipment_package.count }}</td>
+        <td><a href="{% url 'fba:update_shipment' shipment.pk %}"><button>Edit</button></a></td>
+        <td>
+            <a href="{% url 'fba:toggle_shipment_held' shipment.pk %}">
+                <button>{% if shipment.is_on_hold %}Take off Hold{% else %}Hold{% endif %}</button>
+            </a>
+        </td>
+        <td><a href="{% url 'fba:delete_shipment' shipment.pk %}"><button>Delete</button></a></td>
+    </tr>
+    {% endfor %}
+</table>

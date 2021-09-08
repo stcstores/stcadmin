@@ -1,4 +1,4 @@
-"""Views for the FBA app."""
+"""Views for managing FBA orders."""
 
 import datetime
 
