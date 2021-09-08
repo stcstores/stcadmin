@@ -451,6 +451,18 @@ class ShipmentOrderForm(forms.ModelForm):
 class PackageForm(forms.ModelForm):
     """Model form for fba.models.FBAShipmentPackage."""
 
+    class Meta:
+        """Meta class for fba.forms.PackageForm."""
+
+        model = models.FBAShipmentPackage
+        exclude = ()
+
+        widgets = {"order": forms.HiddenInput()}
+
+
+class ItemForm(forms.ModelForm):
+    """Model form for fba.models.FBAShipmentItem."""
+
     def __init__(self, *args, **kwargs):
         """Set the value field to convert pence and pounds."""
         super().__init__(*args, **kwargs)
@@ -460,7 +472,7 @@ class PackageForm(forms.ModelForm):
     class Meta:
         """Meta class for fba.forms.PackageForm."""
 
-        model = models.FBAShipmentPackage
+        model = models.FBAShipmentItem
         exclude = ()
 
 
@@ -469,4 +481,8 @@ PackageFormset = forms.inlineformset_factory(
     models.FBAShipmentPackage,
     form=PackageForm,
     extra=5,
+)
+
+ItemFormset = forms.inlineformset_factory(
+    models.FBAShipmentPackage, models.FBAShipmentItem, form=ItemForm, extra=5
 )

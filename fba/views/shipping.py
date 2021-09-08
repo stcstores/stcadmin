@@ -135,46 +135,92 @@ class CreateShipment_CreateDestination(CreateDestination):
         )
 
 
-class BaseShipmentFormView:
-    """Base view for shipment form pages."""
+class CreateShipment(FBAUserMixin, RedirectView):
+    """View for creating FBA Shipment orders."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Return URL to redirect to after a succesful creation."""
+        destination = get_object_or_404(
+            models.FBAShipmentDestination, pk=self.kwargs["destination_pk"]
+        )
+        shipment_method = models.FBAShipmentMethod.objects.all()[0]
+        shipment = models.FBAShipmentOrder.objects.create(
+            destination=destination, shipment_method=shipment_method
+        )
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            f"Shipment {shipment.order_number()} created.",
+        )
+        return reverse_lazy("fba:update_shipment", kwargs={"pk": shipment.pk})
+
+
+class UpdateShipment(FBAUserMixin, UpdateView):
+    """View for updating FBA Shipment orders."""
 
     model = models.FBAShipmentOrder
-    template_name = "fba/shipments/create_shipment/shipment_form.html"
+    template_name = "fba/shipments/create_shipment/update_shipment.html"
     form_class = forms.ShipmentOrderForm
+
+    def get_success_url(self):
+        """Return URL to redirect to after a succesful update."""
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            f"Shipment {self.object.order_number()} updated.",
+        )
+        if "new_package" in self.request.POST:
+            return reverse_lazy(
+                "fba:create_package", kwargs={"order_pk": self.object.pk}
+            )
+        elif "edit_package" in self.request.POST:
+            package_id = self.request.POST["edit_package"]
+            return reverse_lazy("fba:update_package", kwargs={"pk": package_id})
+        elif "delete_package" in self.request.POST:
+            package_id = self.request.POST["delete_package"]
+            return reverse_lazy("fba:delete_package", kwargs={"pk": package_id})
+        return reverse_lazy("fba:update_shipment", args=[self.object.pk])
+
+
+class BasePackageFormView:
+    """Base view for package form pages."""
+
+    model = models.FBAShipmentPackage
+    template_name = "fba/shipments/create_shipment/package_form.html"
+    form_class = forms.PackageForm
 
     def get_context_data(self, *args, **kwargs):
         """Return context for the template."""
         context = super().get_context_data(*args, **kwargs)
-        context["packages"] = self.get_formset()
+        context["item_formset"] = self.get_item_formset()
         return context
 
     def form_valid(self, form):
         """Save shipment and packages if the form is valid."""
         context = self.get_context_data()
-        packages = context["packages"]
+        item_formset = context["item_formset"]
         with transaction.atomic():
             self.object = form.save()
-            if packages.is_valid():
-                packages.instance = self.object
-                packages.save()
+            if item_formset.is_valid():
+                item_formset.instance = self.object
+                item_formset.save()
         return super().form_valid(form)
 
     def get_success_url(self, *args, **kwargs):
         """Redirect to the update shipment page."""
         self.set_message()
-        return reverse_lazy("fba:update_shipment", kwargs={"pk": self.object.pk})
+        return reverse_lazy("fba:update_shipment", kwargs={"pk": self.object.order.pk})
 
 
-class CreateShipment(BaseShipmentFormView, FBAUserMixin, CreateView):
-    """View for creating shipments and packages."""
+class CreatePackage(BasePackageFormView, FBAUserMixin, CreateView):
+    """View for creating packages and items."""
 
     def get_initial(self, *args, **kwargs):
-        """Set initial values for the shipment."""
+        """Set the package's shipment."""
         initial = super().get_initial(*args, **kwargs)
-        initial["destination"] = get_object_or_404(
-            models.FBAShipmentDestination, pk=self.kwargs["destination_pk"]
+        initial["order"] = get_object_or_404(
+            models.FBAShipmentOrder, pk=self.kwargs["order_pk"]
         )
-        initial["shipment_method"] = models.FBAShipmentMethod.objects.all()[0]
         return initial
 
     def set_message(self):
@@ -182,36 +228,38 @@ class CreateShipment(BaseShipmentFormView, FBAUserMixin, CreateView):
         messages.add_message(
             self.request,
             messages.SUCCESS,
-            f"Shipment Order {self.object.order_number()} created.",
+            f"Package {self.object.package_number()} added to Shipment {self.object.order.order_number()}.",
         )
 
-    def get_formset(self):
-        """Return a formset for package."""
+    def get_item_formset(self):
+        """Return a formset for packages."""
         if self.request.POST:
-            formset = forms.PackageFormset(self.request.POST)
+            formset = forms.ItemFormset(self.request.POST)
+            formset.item_formset = forms.ItemFormset(self.request.POST)
         else:
-            formset = forms.PackageFormset()
+            formset = forms.ItemFormset()
+            formset.item_formset = forms.ItemFormset()
         return formset
 
 
-class UpdateShipment(BaseShipmentFormView, FBAUserMixin, UpdateView):
-    """View for updating shipments and packages."""
+class UpdatePackage(BasePackageFormView, FBAUserMixin, UpdateView):
+    """View for updating packages and items."""
 
     def set_message(self):
         """Create a success message."""
         messages.add_message(
             self.request,
             messages.SUCCESS,
-            f"Shipment Order {self.object.order_number()} updated.",
+            f"Shipment Order {self.object.package_number()} updated.",
         )
 
-    def get_formset(self):
-        """Return a formset for package."""
+    def get_item_formset(self):
+        """Return a formset for packages."""
         if self.request.POST:
-            formset = forms.PackageFormset(self.request.POST, instance=self.object)
+            formset = forms.ItemFormset(self.request.POST, instance=self.object)
         else:
-            formset = forms.PackageFormset(
-                instance=self.object, queryset=self.object.shipment_package.all()
+            formset = forms.ItemFormset(
+                instance=self.object, queryset=self.object.shipment_item.all()
             )
         return formset
 
@@ -233,3 +281,14 @@ class DeleteShipment(FBAUserMixin, DeleteView):
     template_name = "fba/shipments/confirm_delete_shipment.html"
     model = models.FBAShipmentOrder
     success_url = reverse_lazy("fba:shipments")
+
+
+class DeletePackage(FBAUserMixin, DeleteView):
+    """View for deleting packages."""
+
+    template_name = "fba/shipments/confirm_delete_package.html"
+    model = models.FBAShipmentPackage
+
+    def get_success_url(self):
+        """Redirect to the deleted package's shipment order."""
+        return reverse_lazy("fba:update_shipment", kwargs={"pk": self.object.order.pk})
