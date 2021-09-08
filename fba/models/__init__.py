@@ -11,6 +11,7 @@ from .fba import (
 from .shipments import (
     FBAShipmentDestination,
     FBAShipmentExport,
+    FBAShipmentItem,
     FBAShipmentMethod,
     FBAShipmentOrder,
     FBAShipmentPackage,
@@ -25,6 +26,7 @@ __all__ = [
     "FulfillmentCenter",
     "FBAShipmentDestination",
     "FBAShipmentExport",
+    "FBAShipmentItem",
     "FBAShipmentMethod",
     "FBAShipmentOrder",
     "FBAShipmentPackage",

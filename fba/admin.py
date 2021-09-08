@@ -227,6 +227,32 @@ class FBAShipmentPackageAdmin(admin.ModelAdmin):
 
     fields = (
         "order",
+        "length_cm",
+        "width_cm",
+        "height_cm",
+        "weight_kg",
+    )
+    list_display = (
+        "__str__",
+        "order",
+        "length_cm",
+        "width_cm",
+        "height_cm",
+        "weight_kg",
+    )
+    list_editable = (
+        "length_cm",
+        "width_cm",
+        "height_cm",
+    )
+
+
+@admin.register(models.FBAShipmentItem)
+class FBAShipmentItemAdmin(admin.ModelAdmin):
+    """Model admin for the FBAShipmentItem model."""
+
+    fields = (
+        "package",
         "sku",
         "description",
         "quantity",
@@ -240,13 +266,10 @@ class FBAShipmentPackageAdmin(admin.ModelAdmin):
     )
     list_display = (
         "__str__",
-        "order",
+        "package",
         "sku",
         "description",
         "quantity",
-        "length_cm",
-        "width_cm",
-        "height_cm",
         "weight_kg",
         "value",
         "country_of_origin",
@@ -256,9 +279,6 @@ class FBAShipmentPackageAdmin(admin.ModelAdmin):
         "sku",
         "description",
         "quantity",
-        "length_cm",
-        "width_cm",
-        "height_cm",
         "weight_kg",
         "value",
         "country_of_origin",

@@ -27,9 +27,11 @@ from .fba import (
 from .shipping import (
     CreateDestination,
     CreateFBAShipmentFile,
+    CreatePackage,
     CreateShipment,
     CreateShipment_CreateDestination,
     CreateShipment_SelectDestination,
+    DeletePackage,
     DeleteShipment,
     DisableDestination,
     DownloadFBAShipmentFile,
@@ -37,6 +39,7 @@ from .shipping import (
     Shipments,
     ToggleShipmentHeld,
     UpdateDestination,
+    UpdatePackage,
     UpdateShipment,
 )
 
@@ -66,9 +69,11 @@ __all__ = [
     "UpdateFulfillmentCenter",
     "CreateDestination",
     "CreateFBAShipmentFile",
+    "CreatePackage",
     "CreateShipment",
     "CreateShipment_CreateDestination",
     "CreateShipment_SelectDestination",
+    "DeletePackage",
     "DeleteShipment",
     "DisableDestination",
     "DownloadFBAShipmentFile",
@@ -76,5 +81,6 @@ __all__ = [
     "Shipments",
     "ToggleShipmentHeld",
     "UpdateDestination",
+    "UpdatePackage",
     "UpdateShipment",
 ]

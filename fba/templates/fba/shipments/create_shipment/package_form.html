@@ -12,25 +12,25 @@
     {{ form.as_p }}
     <button type="submit">Save</button>
     <table>
-        {{ packages.management_form }}
+        {{ item_formset.management_form }}
 
-        {% for package_form in packages.forms %}
+        {% for item_form in item_formset.forms %}
         {% if forloop.first %}
         <tr>
-            {% for field in package_form.visible_fields %}
+            {% for field in item_form.visible_fields %}
             <th>{{ field.label }}</th>
             {% endfor %}
         </tr>
         {% endif %}
         <tr>
-            {% for field in package_form.visible_fields %}
+            {% for field in item_form.visible_fields %}
             <td>{{ field }}</td>
             {% endfor %}
             <td>
-                {% for hidden in package_form.hidden_fields %}
+                {% for hidden in item_form.hidden_fields %}
                 {{ hidden }}
                 {% endfor %}
-                {{ package_form.errors.as_ul }}
+                {{ item_form.errors.as_ul }}
             </td>
         </tr>
         {% endfor %}

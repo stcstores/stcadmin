@@ -107,16 +107,9 @@ class FBAShipmentPackage(models.Model):
     order = models.ForeignKey(
         FBAShipmentOrder, related_name="shipment_package", on_delete=models.CASCADE
     )
-    sku = models.CharField(max_length=255)
-    description = models.TextField()
-    quantity = models.SmallIntegerField()
     length_cm = models.SmallIntegerField()
     width_cm = models.SmallIntegerField()
     height_cm = models.SmallIntegerField()
-    weight_kg = models.FloatField()
-    value = models.SmallIntegerField(default=100)
-    country_of_origin = models.CharField(max_length=255, default="United Kingdom")
-    hr_code = models.CharField(max_length=255)
 
     class Meta:
         """Meta class for FBAShipmentPackage."""
@@ -125,7 +118,39 @@ class FBAShipmentPackage(models.Model):
         verbose_name_plural = "FBA Shipment Packages"
 
     def __str__(self):
-        return f"{self.order} package {self.sku}"
+        return f"{self.order} - {self.package_number()}"
+
+    def package_number(self):
+        """Return a package number for the package."""
+        return f"{self.order.order_number()}_{self.pk}"
+
+    def weight_kg(self):
+        """Return the total weight of the package."""
+        return self.shipment_item.aggregate(models.Sum("weight_kg"))["weight_kg__sum"]
+
+
+class FBAShipmentItem(models.Model):
+    """Model for FBA Shipment items."""
+
+    package = models.ForeignKey(
+        FBAShipmentPackage, related_name="shipment_item", on_delete=models.CASCADE
+    )
+    sku = models.CharField(max_length=255)
+    description = models.TextField()
+    quantity = models.SmallIntegerField()
+    weight_kg = models.FloatField()
+    value = models.SmallIntegerField(default=100)
+    country_of_origin = models.CharField(max_length=255, default="United Kingdom")
+    hr_code = models.CharField(max_length=255)
+
+    class Meta:
+        """Meta class for FBAShipmentItem."""
+
+        verbose_name = "FBA Shipment Item"
+        verbose_name_plural = "FBA Shipment Items"
+
+    def __str__(self):
+        return f"{self.order} package {self.package.package_number()} - {self.sku}"
 
 
 class ITDShipmentFile:
@@ -140,6 +165,7 @@ class ITDShipmentFile:
     COUNTRY = "Ship to Country"
     POSTCODE = "Ship to Zip/Postcode"
     ORDER_NUMBER = "Order Number"
+    PACKAGE_NUMBER = "Package Number"
     LENGTH = "Package Length"
     WIDTH = "Package Width"
     HEIGHT = "Package Height"
@@ -162,6 +188,7 @@ class ITDShipmentFile:
         COUNTRY,
         POSTCODE,
         ORDER_NUMBER,
+        PACKAGE_NUMBER,
         LENGTH,
         WIDTH,
         HEIGHT,
@@ -180,13 +207,16 @@ class ITDShipmentFile:
         rows = []
         for order in shipment_export.shipment_order.all():
             for package in order.shipment_package.all():
-                row_data = cls._create_row_data(order=order, package=package)
-                row = [row_data[header] for header in cls.HEADER]
-                rows.append(row)
+                for item in package.shipment_item.all():
+                    row_data = cls._create_row_data(
+                        order=order, package=package, item=item
+                    )
+                    row = [row_data[header] for header in cls.HEADER]
+                    rows.append(row)
         return rows
 
     @classmethod
-    def _create_row_data(cls, order, package):
+    def _create_row_data(cls, order, package, item):
         row_data = {
             cls.LAST_NAME: order.destination.recipient_last_name,
             cls.ADDRESS_1: order.destination.address_line_1,
@@ -197,16 +227,17 @@ class ITDShipmentFile:
             cls.COUNTRY: order.destination.country,
             cls.POSTCODE: order.destination.postcode,
             cls.ORDER_NUMBER: order.order_number(),
+            cls.PACKAGE_NUMBER: package.package_number(),
             cls.LENGTH: package.length_cm,
             cls.WIDTH: package.width_cm,
             cls.HEIGHT: package.height_cm,
-            cls.DESCRIPTION: package.description,
-            cls.SKU: package.sku,
-            cls.WEIGHT: package.weight_kg,
-            cls.VALUE: str(float(package.value / 100)).format("{:2f}"),
-            cls.QUANTITY: package.quantity,
-            cls.COUNTRY_OF_ORIGIN: package.country_of_origin,
-            cls.HR_CODE: package.hr_code,
+            cls.DESCRIPTION: item.description,
+            cls.SKU: item.sku,
+            cls.WEIGHT: item.weight_kg,
+            cls.VALUE: str(float(item.value / 100)).format("{:2f}"),
+            cls.QUANTITY: item.quantity,
+            cls.COUNTRY_OF_ORIGIN: item.country_of_origin,
+            cls.HR_CODE: item.hr_code,
             cls.SHIPMENT_METHOD: order.shipment_method.identifier,
         }
         return row_data

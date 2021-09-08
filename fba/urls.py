@@ -127,6 +127,21 @@ urlpatterns = [
         name="update_shipment",
     ),
     path(
+        "shipments/create_package/<int:order_pk>",
+        views.CreatePackage.as_view(),
+        name="create_package",
+    ),
+    path(
+        "shipments/update_package/<int:pk>",
+        views.UpdatePackage.as_view(),
+        name="update_package",
+    ),
+    path(
+        "shipments/delete_package/<int:pk>",
+        views.DeletePackage.as_view(),
+        name="delete_package",
+    ),
+    path(
         "shipments/download_shipment_file/<int:pk>/",
         views.DownloadFBAShipmentFile.as_view(),
         name="download_shipment_file",
