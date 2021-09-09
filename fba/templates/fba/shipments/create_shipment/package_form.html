@@ -3,9 +3,9 @@
 {% block content %}{{ block.super }}
 
 {% if form.instance %}
-<h1>Update Shipment Order {{ form.instance.order_number }}</h1>
+<h1>Update Package {{ form.instance.order_number }}</h1>
 {% else %}
-<h1>Create Shipment Order</h1>
+<h1>Create Package</h1>
 {% endif %}
 
 <form method="post">{% csrf_token %}
