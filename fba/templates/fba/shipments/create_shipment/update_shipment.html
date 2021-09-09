@@ -1,35 +1,50 @@
 {% extends 'fba/base.html' %}
 
+{% load fba_extras %}
+
 {% block content %}{{ block.super }}
 
-<h1>Shipment {{ form.instance.order_id }}</h1>
+<h1>Update Shipment {{ form.instance.order_id }}</h1>
 
 <form action="" method="POST">{% csrf_token %}
     {{ form.as_p }}
+    <p>
+        Weight: {{ form.instance.weight_kg }}kg
+        &nbsp;
+        Value: {% format_price form.instance.value %}
+    </p>
     <button type="submit">Save</button>
     <button type="submit" name="new_package">Add Package</button>
+
     <div>
         {% for package in form.instance.shipment_package.all %}
         <div>
-            <b>{{ package.package_number }}</b>
-            &nbsp;
-            Dimensions: {{ package.length_cm }}x{{ package.width_cm }}x{{ package.height_cm }}cm
-            &nbsp;
-            Weight: {{ package.weight_kg }}kg
-            &nbsp;
-            <button type="submit" name="edit_package" value="{{ package.pk }}">Edit Package</button>
-            <button type="submit" name="delete_package" value="{{ package.pk }}">Delete Package</button>
+            <hr>
+            <p>
+                <b>{{ package.package_number }}</b>
+                &nbsp;
+                Dimensions: {{ package.length_cm }}x{{ package.width_cm }}x{{ package.height_cm }}cm
+                &nbsp;
+                Weight: {{ package.weight_kg }}kg
+                &nbsp;
+                Value: {% format_price package.value %}
+                &nbsp;
+                <button type="submit" name="edit_package" value="{{ package.pk }}">Edit Package</button>
+                <button type="submit" name="delete_package" value="{{ package.pk }}">Delete Package</button>
+            </p>
             <table>
                 <tr>
                     <th>SKU</th>
                     <th>Quantity</th>
                     <th>Weight (kg)</th>
+                    <th>Value</th>
                 </tr>
                 {% for item in package.shipment_item.all %}
                 <tr>
                     <td>{{ item.sku }}</td>
                     <td>{{ item.quantity }}</td>
                     <td>{{ item.weight_kg }}</td>
+                    <td>{% format_price item.value %}</td>
 
                 </tr>
                 {% endfor %}
@@ -37,6 +52,7 @@
         </div>
         {% endfor %}
     </div>
+    <hr>
 </form>
 
 {% endblock %}

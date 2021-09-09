@@ -1,8 +1,12 @@
+{% load fba_extras %}
+
 <table>
     <tr>
         <th>Shipment Order</th>
         <th>Destination</th>
         <th>Package Count</th>
+        <th>Weight (kg)</th>
+        <th>Value</th>
         <td colspan="3"></td>
     </tr>
     {% for shipment in shipments %}
@@ -10,6 +14,8 @@
         <th {% if shipment.is_on_hold %}class="error" {% endif %}>{{ shipment }}</th>
         <td>{{ shipment.destination }}</td>
         <td>{{ shipment.shipment_package.count }}</td>
+        <td>{{ shipment.weight_kg }}</td>
+        <td>{% format_price shipment.value %}</td>
         <td><a href="{% url 'fba:update_shipment' shipment.pk %}"><button>Edit</button></a></td>
         <td>
             <a href="{% url 'fba:toggle_shipment_held' shipment.pk %}">

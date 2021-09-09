@@ -100,6 +100,18 @@ class FBAShipmentOrder(models.Model):
     def __str__(self):
         return f"FBA Shipment Order {self.order_number()}"
 
+    def weight_kg(self):
+        """Return the total weight of the shipment."""
+        return self.shipment_package.aggregate(models.Sum("shipment_item__weight_kg"))[
+            "shipment_item__weight_kg__sum"
+        ]
+
+    def value(self):
+        """Return the total value of the shipment."""
+        return self.shipment_package.aggregate(models.Sum("shipment_item__value"))[
+            "shipment_item__value__sum"
+        ]
+
 
 class FBAShipmentPackage(models.Model):
     """Model for FBA Shipment packages."""
@@ -126,7 +138,11 @@ class FBAShipmentPackage(models.Model):
 
     def weight_kg(self):
         """Return the total weight of the package."""
-        return self.shipment_item.aggregate(models.Sum("weight_kg"))["weight_kg__sum"]
+        return self.shipment_item.aggregate(weight=models.Sum("weight_kg"))["weight"]
+
+    def value(self):
+        """Return the total value of the package."""
+        return self.shipment_item.aggregate(value=models.Sum("value"))["value"]
 
 
 class FBAShipmentItem(models.Model):
