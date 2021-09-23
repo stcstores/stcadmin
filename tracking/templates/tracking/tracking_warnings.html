@@ -1,0 +1,23 @@
+<table>
+    <tr>
+        <th>Order ID</th>
+        <th>Destination</th>
+        <th>Dispatched At</th>
+        <th>Carrier</th>
+        <th>Tracking Number</th>
+        <th colstpan="4">Latest Tracking Event</th>
+    </tr>
+    {% for package in packages %}
+    <tr>
+        <td>{{ package.order.order_ID }}</td>
+        <td>{{ package.order.country }}</td>
+        <td>{{ package.order.dispatched_at }}</td>
+        <td>{{ package.carrier.name }}</td>
+        <td>{{ package.tracking_number }}</td>
+        <th>{{ package.latest_event.timestamp }}</th>
+        <td>{{ package.latest_event.status }}</td>
+        <td>{{ package.latest_event.description }}</td>
+        <td>{{ package.latest_event.location }}</td>
+    </tr>
+    {% endfor %}
+</table>

@@ -68,6 +68,10 @@ CC_DOMAIN = get_config("CC_DOMAIN_SECRET")
 CC_USERNAME = get_config("CC_USERNAME_SECRET")
 CC_PWD = get_config("CC_PASS")
 SCAYT_CUSTOMER_ID = get_config("SCAYT_CUSTOMER_ID_TOKEN")
+
+SCURRI_USERNAME = get_config("SCURRI_USERNAME")
+SCURRI_PASSWORD = get_config("SCURRI_PASSWORD")
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 INSTALLED_APPS = [
@@ -104,6 +108,7 @@ INSTALLED_APPS = [
     "fba",
     "channels",
     "purchases",
+    "tracking",
     "hardware",
     "debug_toolbar",
 ]
