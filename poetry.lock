@@ -412,7 +412,7 @@ Django = ">=2.1"
 
 [[package]]
 name = "django-solo"
-version = "1.1.5"
+version = "1.2.0"
 description = "Django Solo helps working with singletons"
 category = "main"
 optional = false
@@ -1475,7 +1475,8 @@ django-polymorphic = [
     {file = "django_polymorphic-3.0.0-py2.py3-none-any.whl", hash = "sha256:73b75eb44ea302bd32820f8661e469509d245ce7f7ff09cd2ad149e5c42034ff"},
 ]
 django-solo = [
-    {file = "django-solo-1.1.5.tar.gz", hash = "sha256:e412f0f844aa101fa77ba5d07768a8a77ea0e0a6e098b87a6eef3bedb2e5ecd4"},
+    {file = "django-solo-1.2.0.tar.gz", hash = "sha256:b42487d5b82b24232edc09b54a8cc3919e7a79bd684c1ac6346ecaf9942c4288"},
+    {file = "django_solo-1.2.0-py3-none-any.whl", hash = "sha256:ef63bce7b6d0225821de0b29fa00be17c3996d41ab340ca6c51d004129742c32"},
 ]
 docopt = [
     {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
