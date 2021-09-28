@@ -3,6 +3,7 @@
 from django.http import HttpResponse
 from django.views.generic import TemplateView, View
 
+from orders.forms import TrackingWarningFilter
 from tracking import models
 
 
@@ -44,8 +45,6 @@ class TrackingWarnings(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         """Return context for the template."""
-        from orders.forms import TrackingWarningFilter
-
         context = super().get_context_data(*args, **kwargs)
         form = TrackingWarningFilter(self.request.POST)
         if form.is_valid():
