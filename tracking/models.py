@@ -224,13 +224,13 @@ class TrackingEvent(models.Model):
     OUT_FOR_DELIVERY = "OUT_FOR_DELIVERY"
 
     STATUS_CHOICES = (
-        (ATTEMPTED_DELIVERY, ATTEMPTED_DELIVERY),
-        (UNKNOWN, UNKNOWN),
         (MANIFESTED, MANIFESTED),
         (IN_TRANSIT, IN_TRANSIT),
-        (EXCEPTION, EXCEPTION),
-        (DELIVERED, DELIVERED),
         (OUT_FOR_DELIVERY, OUT_FOR_DELIVERY),
+        (ATTEMPTED_DELIVERY, ATTEMPTED_DELIVERY),
+        (DELIVERED, DELIVERED),
+        (EXCEPTION, EXCEPTION),
+        (UNKNOWN, UNKNOWN),
     )
 
     event_id = models.CharField(max_length=255)
@@ -258,25 +258,48 @@ class TrackingStatus:
     ORDER_CHECK_MAX_DAYS_OLD = 10
 
     @classmethod
-    def get_tracking_warnings(cls):
+    def get_tracking_warnings(cls, filters):
         """Return a list of overdue packages."""
         packages = []
         for region in ShippingRegion.objects.all():
             dispatched_after = timezone.now() - datetime.timedelta(
                 days=region.flag_if_not_delivered_by_days
             )
-            region_packages = (
-                TrackedPackage.objects.select_related("order")
-                .filter(
-                    order__dispatched_at__lte=dispatched_after,
-                    order__country__region=region,
-                )
-                .exclude(tracking_event__status=TrackingEvent.DELIVERED)
-                .exclude(tracking_event__description="Secure delivery - To household")
+            region_packages = cls.get_packages_for_region(
+                region=region, dispatched_after=dispatched_after, filters=filters
             )
+            cls.add_latest_event_attribute_to_packages(region_packages)
             packages.extend(region_packages)
             packages.sort(key=lambda x: x.order.dispatched_at)
         return packages
+
+    @classmethod
+    def get_packages_for_region(cls, region, dispatched_after, filters):
+        """Return a queryset of packages with tracking warnings for a region."""
+        region_packages = (
+            TrackedPackage.objects.select_related("order")
+            .select_related("order__country")
+            .select_related("carrier")
+            .prefetch_related("tracking_event")
+            .filter(
+                order__dispatched_at__lte=dispatched_after,
+                order__country__region=region,
+            )
+            .exclude(tracking_event__status=TrackingEvent.DELIVERED)
+            .exclude(tracking_event__description="Secure delivery - To household")
+            .exclude(carrier__slug="landmark")  # Remove when landmark works
+            .filter(**filters)
+        )
+        return region_packages
+
+    @classmethod
+    def add_latest_event_attribute_to_packages(cls, packages):
+        """Add the latest tracking event as an attribute to packages."""
+        for package in packages:
+            try:
+                package.latest_event = package.tracking_event.first()
+            except TrackingEvent.DoesNotExist:
+                package.latest_event = None
 
     @classmethod
     def get_min_max_order_dates(cls):

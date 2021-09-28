@@ -38,13 +38,18 @@ class TrackingWarnings(TemplateView):
 
     template_name = "tracking/tracking_warnings.html"
 
+    def post(self, *args, **kwargs):
+        """Allow POST requests."""
+        return super().get(*args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         """Return context for the template."""
+        from orders.forms import TrackingWarningFilter
+
         context = super().get_context_data(*args, **kwargs)
-        context["packages"] = models.TrackingStatus.get_tracking_warnings()
-        for package in context["packages"]:
-            try:
-                package.latest_event = package.tracking_event.latest("timestamp")
-            except models.TrackingEvent.DoesNotExist:
-                package.latest_event = None
+        form = TrackingWarningFilter(self.request.POST)
+        if form.is_valid():
+            context["packages"] = models.TrackingStatus.get_tracking_warnings(
+                filters=form.filter_kwargs
+            )
         return context
