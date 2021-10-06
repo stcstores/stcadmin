@@ -19,8 +19,23 @@ class TrackingCarrierAdmin(admin.ModelAdmin):
 class TrackedPackageAdmin(admin.ModelAdmin):
     """Admin for the tracking.TrackedPackage model."""
 
-    fields = ("scurri_id", "carrier", "tracking_number", "created_at")
-    list_display = ("scurri_id", "carrier", "tracking_number", "created_at")
+    fields = (
+        "scurri_id",
+        "carrier",
+        "tracking_number",
+        "created_at",
+        "carrier_contacted",
+        "notes",
+    )
+    list_display = (
+        "scurri_id",
+        "carrier",
+        "tracking_number",
+        "created_at",
+        "carrier_contacted",
+        "notes",
+    )
+    list_editable = ("carrier_contacted", "notes")
     search_fields = ("scurri_id", "tracking_number")
     date_hierarchy = "created_at"
     list_filter = ("carrier",)

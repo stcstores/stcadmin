@@ -175,6 +175,8 @@ class TrackedPackage(models.Model):
     )
     tracking_number = models.CharField(max_length=255)
     created_at = models.DateTimeField()
+    carrier_contacted = models.BooleanField(default=False)
+    notes = models.TextField(blank=True)
     order = models.ForeignKey(
         CloudCommerceOrder,
         related_name="tracked_package",
@@ -255,7 +257,7 @@ class TrackingStatus:
     """Find overdue packages."""
 
     ORDER_CHECK_MIN_DAYS_OLD = 2
-    ORDER_CHECK_MAX_DAYS_OLD = 10
+    ORDER_CHECK_MAX_DAYS_OLD = 60
 
     @classmethod
     def get_tracking_warnings(cls, filters):
@@ -336,7 +338,9 @@ class TrackingStatus:
                 except Exception:
                     continue
                 else:
-                    package = TrackedPackage.objects.create_from_scurri(package_info)
+                    package = TrackedPackage.objects.get_or_create_by_scurri_id(
+                        package_info.id, package_info
+                    )
             else:
                 try:
                     package.update_tracking()
