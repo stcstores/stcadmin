@@ -20,4 +20,9 @@ urlpatterns = [
     path(
         "tracking_warnings", views.TrackingWarnings.as_view(), name="tracking_warnings"
     ),
+    path(
+        "update_tracked_package",
+        views.UpdateTrackedPackage.as_view(),
+        name="update_tracked_package",
+    ),
 ]
