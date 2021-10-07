@@ -4,7 +4,6 @@ from datetime import datetime
 
 from ccapi import CCAPI
 from django import forms
-from django.contrib.auth.models import User
 from django.db.models import Q
 from django.utils.timezone import make_aware
 
@@ -72,9 +71,6 @@ class CreateFBAOrderForm(forms.ModelForm):
         self.fields["country"] = forms.ModelChoiceField(
             queryset=models.FBACountry.objects.all()
         )
-        self.fields[
-            "fulfillment_center"
-        ].queryset = models.FulfillmentCenter.active.all()
         field_order = [
             "product_ID",
             "product_SKU",
@@ -96,7 +92,6 @@ class CreateFBAOrderForm(forms.ModelForm):
             "is_combinable",
             "on_hold",
             "is_fragile",
-            "fulfillment_center",
             "notes",
         ] + self.__class__.Meta.fields
         new_fields = {key: self.fields[key] for key in field_order}
@@ -130,7 +125,6 @@ class CreateFBAOrderForm(forms.ModelForm):
             "is_combinable",
             "is_fragile",
             "on_hold",
-            "fulfillment_center",
             "notes",
         ]
         widgets = {"product_ID": forms.HiddenInput()}
@@ -287,12 +281,6 @@ class FulfillFBAOrderForm(forms.ModelForm):
         self.fields["box_weight"].required = True
         self.fields["quantity_sent"].required = True
         self.fields["fulfilled_by"].required = True
-        self.fields[
-            "fulfillment_center"
-        ].queryset = models.FulfillmentCenter.active.all()
-        self.fields["fulfilled_by"].queryset = User.objects.filter(
-            cloudcommerceuser__hidden=False
-        )
 
     class Meta:
         """Meta class for FulfillFBAOrderForm."""
@@ -303,7 +291,6 @@ class FulfillFBAOrderForm(forms.ModelForm):
             "quantity_sent",
             "fulfilled_by",
             "update_stock_level_when_complete",
-            "fulfillment_center",
             "notes",
         ]
 
@@ -457,7 +444,10 @@ class PackageForm(forms.ModelForm):
         model = models.FBAShipmentPackage
         exclude = ()
 
-        widgets = {"order": forms.HiddenInput()}
+        widgets = {
+            "fba_order": forms.HiddenInput(),
+            "shipment_order": forms.HiddenInput(),
+        }
 
 
 class ItemForm(forms.ModelForm):
@@ -485,4 +475,20 @@ PackageFormset = forms.inlineformset_factory(
 
 ItemFormset = forms.inlineformset_factory(
     models.FBAShipmentPackage, models.FBAShipmentItem, form=ItemForm, extra=5
+)
+
+
+class SplitFBAOrderShipmentForm(forms.Form):
+    """Form for splitting an FBA order into packages."""
+
+    length_cm = forms.IntegerField()
+    width_cm = forms.IntegerField()
+    height_cm = forms.IntegerField()
+    weight = forms.IntegerField()
+    quantity = forms.IntegerField()
+    value = forms.FloatField(initial=1.00)
+
+
+SplitFBAOrderShipmentFormset = forms.formset_factory(
+    form=SplitFBAOrderShipmentForm, extra=5
 )

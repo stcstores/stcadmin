@@ -1,16 +1,10 @@
 """Models for managing FBA orders."""
 
-from io import BytesIO
-from pathlib import Path
-from tempfile import NamedTemporaryFile
-
 import cc_products
-import openpyxl
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db import models
-from django.http import HttpResponse
 from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -129,27 +123,6 @@ class ActiveFulfillmentCenter(models.Manager):
         return super().get_queryset().filter(inactive=False)
 
 
-class FulfillmentCenter(models.Model):
-    """Model for FBA Fulfillment centers."""
-
-    name = models.CharField(max_length=255)
-    country = models.ForeignKey(FBARegion, on_delete=models.CASCADE)
-    address_1 = models.CharField(max_length=255)
-    address_2 = models.CharField(max_length=255, blank=True)
-    address_3 = models.CharField(max_length=255, blank=True)
-    inactive = models.BooleanField(default=False)
-
-    objects = models.Manager()
-    active = ActiveFulfillmentCenter()
-
-    def __str__(self):
-        return self.name
-
-    def address_lines(self):
-        """Return a tuple of address lines."""
-        return (self.address_1, self.address_2, self.address_3)
-
-
 class FBAOrder(models.Model):
     """Model for FBA orders."""
 
@@ -193,9 +166,6 @@ class FBAOrder(models.Model):
     update_stock_level_when_complete = models.BooleanField(default=True)
     is_combinable = models.BooleanField(default=False)
     is_fragile = models.BooleanField(default=False)
-    fulfillment_center = models.ForeignKey(
-        FulfillmentCenter, on_delete=models.PROTECT, blank=True, null=True
-    )
     status = models.CharField(
         choices=(
             (NOT_PROCESSED, NOT_PROCESSED),
@@ -324,58 +294,3 @@ class FBAShippingPrice(models.Model):
 
     def __str__(self):
         return f"Shipping Price: {self.product_SKU}"
-
-
-class FBAInvoice:
-    """Customs Declaration Generator."""
-
-    TEMPLATE_PATH = Path(settings.CONFIG_DIR) / "fba_invoice_template.xlsx"
-    TRACKING_NUMBER_FIELD = "F9"
-    ADDRESS_FIELDS = ("D26", "D27", "D28")
-    UNITS_FIELD = "A31"
-    DESCRIPTION_FIELD = "C31"
-    HS_CODE_FIELD = "E31"
-    UNIT_VALUE_FIELD = "H31"
-    LINE_VALUE_FIELD = "I31"
-    LINE_TOTAL_FIELD = "H42"
-    SUB_TOTAL_FIELD = "H44"
-    TOTAL_AMOUNT_FIELD = "H48"
-    TOTAL_WEIGHT_FIELD = "F50"
-
-    def __init__(self, order):
-        """Create a customs declartion for an FBA order."""
-        self.workbook = openpyxl.load_workbook(self.TEMPLATE_PATH)
-        self.order = order
-        self.fill_worksheet(self.workbook.active, order)
-
-    def fill_worksheet(self, worksheet, order):
-        """Add data to the worksheet template."""
-        purchase_price = float(order.product_purchase_price)
-        total_value = purchase_price * order.quantity_sent
-        address_lines = order.fulfillment_center.address_lines()
-        for i, field in enumerate(self.ADDRESS_FIELDS):
-            worksheet[field] = address_lines[i]
-        worksheet[self.TRACKING_NUMBER_FIELD] = order.tracking_number
-        worksheet[self.UNITS_FIELD] = order.quantity_sent
-        worksheet[self.DESCRIPTION_FIELD] = order.product_name
-        worksheet[self.HS_CODE_FIELD] = order.product_hs_code
-        worksheet[self.UNIT_VALUE_FIELD] = purchase_price
-        worksheet[self.LINE_VALUE_FIELD] = total_value
-        worksheet[self.LINE_TOTAL_FIELD] = total_value
-        worksheet[self.SUB_TOTAL_FIELD] = total_value
-        worksheet[self.TOTAL_AMOUNT_FIELD] = total_value
-        worksheet[self.TOTAL_WEIGHT_FIELD] = order.product_weight / 1000
-
-    def http_response(self):
-        """Return an HttpResponse containing the completed invoice."""
-        with NamedTemporaryFile() as tmp:
-            self.workbook.save(tmp.name)
-            output = BytesIO(tmp.read())
-        response = HttpResponse(
-            content=output,
-            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        )
-        response[
-            "Content-Disposition"
-        ] = f"attachment; filename=commercial_invoice_{self.order.pk}.xlsx"
-        return response

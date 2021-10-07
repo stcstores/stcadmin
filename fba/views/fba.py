@@ -6,14 +6,8 @@ import cc_products
 from ccapi import CCAPI
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.http import (
-    HttpResponse,
-    HttpResponseBadRequest,
-    HttpResponseRedirect,
-    JsonResponse,
-)
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, reverse
-from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -478,6 +472,9 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
         context["selling_price"] = "{:.2f}".format(
             order.selling_price / 100,
         )
+        context["shipment_packages"] = models.FBAShipmentPackage.objects.filter(
+            fba_order=context["form"].instance
+        )
         return context
 
     def form_valid(self, form):
@@ -619,58 +616,6 @@ class SetTrackingNumber(FBAUserMixin, View):
                 "closed_at": closed_at,
             }
         )
-
-
-class CreateFulfillemntCenter(FBAUserMixin, CreateView):
-    """View for creating fulfillment centers."""
-
-    model = models.FulfillmentCenter
-    fields = ("name", "country", "address_1", "address_2", "address_3")
-    success_url = reverse_lazy("fba:fulfillment_center_list")
-
-
-class UpdateFulfillmentCenter(FBAUserMixin, UpdateView):
-    """View for updateing fulfillment centers."""
-
-    model = models.FulfillmentCenter
-    fields = ("name", "country", "address_1", "address_2", "address_3")
-    success_url = reverse_lazy("fba:fulfillment_center_list")
-
-
-class DeleteFulfillmentCenter(FBAUserMixin, DeleteView):
-    """View for deleting fulfillment centers."""
-
-    model = models.FulfillmentCenter
-    success_url = reverse_lazy("fba:fulfillment_center_list")
-
-    def delete(self, request, *args, **kwargs):
-        """Set the fulfillment center inactive."""
-        self.object = self.get_object()
-        success_url = self.get_success_url()
-        self.object.inactive = True
-        self.object.save()
-        return HttpResponseRedirect(success_url)
-
-
-class FulfillmentCenterList(FBAUserMixin, ListView):
-    """View for listing fulfillment centers."""
-
-    model = models.FulfillmentCenter
-    template_name = "fba/fulfillment_center_list.html"
-
-    def get_queryset(self):
-        """Return a queyrset of fulfillment centers."""
-        return models.FulfillmentCenter.objects.all()
-
-
-class FBAInvoice(FBAUserMixin, View):
-    """View for generating FBA invoices."""
-
-    def get(self, *args, **kwargs):
-        """Return an HTTP response with the invoice."""
-        order = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
-        invoice = models.FBAInvoice(order)
-        return invoice.http_response()
 
 
 class PrioritiseOrder(FBAUserMixin, View):

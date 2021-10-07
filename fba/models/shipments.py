@@ -4,6 +4,16 @@ import io
 
 from django.db import models
 
+from .fba import FBAOrder
+
+
+class FBAShipmentDestinationActiveManager(models.Manager):
+    """Manager for active shipment destinations."""
+
+    def get_queryset(self):
+        """Return a queryset of shipment destinations that are enabled."""
+        return super().get_queryset().filter(is_enabled=True)
+
 
 class FBAShipmentDestination(models.Model):
     """Model for FBA Shipment desinations."""
@@ -18,6 +28,9 @@ class FBAShipmentDestination(models.Model):
     state = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
     postcode = models.CharField(max_length=255)
+
+    objects = models.Manager()
+    active = FBAShipmentDestinationActiveManager()
 
     class Meta:
         """Meta class for FBAShipmentDestination."""
@@ -116,8 +129,15 @@ class FBAShipmentOrder(models.Model):
 class FBAShipmentPackage(models.Model):
     """Model for FBA Shipment packages."""
 
-    order = models.ForeignKey(
+    shipment_order = models.ForeignKey(
         FBAShipmentOrder, related_name="shipment_package", on_delete=models.CASCADE
+    )
+    fba_order = models.ForeignKey(
+        FBAOrder,
+        related_name="shipment_package",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
     )
     length_cm = models.SmallIntegerField()
     width_cm = models.SmallIntegerField()
@@ -130,11 +150,11 @@ class FBAShipmentPackage(models.Model):
         verbose_name_plural = "FBA Shipment Packages"
 
     def __str__(self):
-        return f"{self.order} - {self.package_number()}"
+        return f"{self.shipment_order} - {self.package_number()}"
 
     def package_number(self):
         """Return a package number for the package."""
-        return f"{self.order.order_number()}_{self.pk}"
+        return f"{self.shipment_order.order_number()}_{self.pk}"
 
     def weight_kg(self):
         """Return the total weight of the package."""
@@ -166,7 +186,7 @@ class FBAShipmentItem(models.Model):
         verbose_name_plural = "FBA Shipment Items"
 
     def __str__(self):
-        return f"{self.order} package {self.package.package_number()} - {self.sku}"
+        return f"{self.shipment_order} package {self.package.package_number()} - {self.sku}"
 
 
 class ITDShipmentFile:
@@ -225,7 +245,7 @@ class ITDShipmentFile:
             for package in order.shipment_package.all():
                 for item in package.shipment_item.all():
                     row_data = cls._create_row_data(
-                        order=order, package=package, item=item
+                        shipment_order=order, package=package, item=item
                     )
                     row = [row_data[header] for header in cls.HEADER]
                     rows.append(row)

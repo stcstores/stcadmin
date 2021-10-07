@@ -33,6 +33,7 @@ django-mathfilters = "^1.0.0"
 easy-thumbnails = "^2.7.1"
 file-exchange = {git = "https://github.com/lukeshiner/django-file_exchange.git", rev = "main"}
 scurri = {git = "https://github.com/stcstores/scurri.git", rev = "main"}
+flake8-docstrings = "^1.6.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"

@@ -58,27 +58,6 @@ urlpatterns = [
     ),
     path("product_stock", views.ProductStock.as_view(), name="product_stock"),
     path("take_off_hold", views.TakeOffHold.as_view(), name="take_off_hold"),
-    path(
-        "create_fulfillment_center",
-        views.CreateFulfillemntCenter.as_view(),
-        name="create_fulfillment_center",
-    ),
-    path(
-        "update_fulfillment_center/<int:pk>/",
-        views.UpdateFulfillmentCenter.as_view(),
-        name="update_fulfillment_center",
-    ),
-    path(
-        "delete_fulfillment_center/<int:pk>/",
-        views.DeleteFulfillmentCenter.as_view(),
-        name="delete_fulfillment_center",
-    ),
-    path(
-        "fulfillment_center",
-        views.FulfillmentCenterList.as_view(),
-        name="fulfillment_center_list",
-    ),
-    path("invoice/<int:pk>/", views.FBAInvoice.as_view(), name="invoice"),
     path("prioritise", views.PrioritiseOrder.as_view(), name="priortise_fba_order"),
     path("shipments", views.Shipments.as_view(), name="shipments"),
     path(
@@ -107,14 +86,29 @@ urlpatterns = [
         name="remove_destination",
     ),
     path(
+        "shipments/create_shipment/select_destination/<int:fba_order_pk>/",
+        views.CreateShipment_SelectDestination.as_view(),
+        name="create_shipment_select_destination",
+    ),
+    path(
         "shipments/create_shipment/select_destination",
         views.CreateShipment_SelectDestination.as_view(),
         name="create_shipment_select_destination",
     ),
     path(
+        "shipments/create_shipment/create_destination/<int:fba_order_pk>/",
+        views.CreateShipment_CreateDestination.as_view(),
+        name="create_shipment_create_destination",
+    ),
+    path(
         "shipments/create_shipment/create_destination",
         views.CreateShipment_CreateDestination.as_view(),
         name="create_shipment_create_destination",
+    ),
+    path(
+        "shipments/create_shipment/<int:destination_pk>/<int:fba_order_pk>/",
+        views.CreateShipment.as_view(),
+        name="create_shipment",
     ),
     path(
         "shipments/create_shipment/<int:destination_pk>/",
@@ -155,5 +149,15 @@ urlpatterns = [
         "shipments/delete_shipment/<int:pk>/",
         views.DeleteShipment.as_view(),
         name="delete_shipment",
+    ),
+    path(
+        "shipments/add_order_to_shipment/<int:fba_order_pk>/",
+        views.AddFBAOrderToShipment.as_view(),
+        name="add_fba_order_to_shipment",
+    ),
+    path(
+        "shipments/add_order_packages_to_shipment/<int:fba_order_pk>/<int:shipment_pk>/",
+        views.AddFBAOrderPackages.as_view(),
+        name="add_order_packages_to_shipment",
     ),
 ]

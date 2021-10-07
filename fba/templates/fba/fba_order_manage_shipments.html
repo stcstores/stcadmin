@@ -1,0 +1,13 @@
+<div class="shipments">
+    <h2>Shipments</h2>
+    {% if shipment_packages %}
+    {% for package in shipment_packages %}
+    <a href="{% url 'fba:update_package' package.pk %}">{{ package }}</a>
+    <br>
+    {% endfor %}
+    {% else %}
+    <a href="{% url 'fba:add_fba_order_to_shipment' fba_order.pk %}">
+        <button>Add to Shipment</button>
+    </a>
+    {% endif %}
+</div>

@@ -2,16 +2,22 @@
 
 {% block content %}{{ block.super }}
 
+{% if fba_order %}
+<a href="{% url 'fba:create_shipment_create_destination' fba_order.pk%}">Add New Destination Address</a>
+{% else %}
 <a href="{% url 'fba:create_shipment_create_destination' %}">Add New Destination Address</a>
+{% endif %}
 <br>
 <table>
     {% for destination in destinations %}
     <tr>
         <td>{{ destination }}</td>
         <td>
-            <a href="{% url 'fba:create_shipment' destination.pk %}">
-                <button>Select</button>
-            </a>
+            {% if fba_order %}<a href="{% url 'fba:create_shipment' destination.pk fba_order.pk %}">
+                {% else %}<a href="{% url 'fba:create_shipment' destination.pk %}">
+                    {% endif %}
+                    <button>Select</button>
+                </a>
         </td>
     </tr>
     {% endfor %}

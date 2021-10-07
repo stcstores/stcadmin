@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.http.response import HttpResponseServerError
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, View
+from django.views.generic import FormView, TemplateView, View
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
@@ -119,6 +119,10 @@ class CreateShipment_SelectDestination(FBAUserMixin, TemplateView):
         context["destinations"] = models.FBAShipmentDestination.objects.filter(
             is_enabled=True
         )
+        if "fba_order_pk" in self.kwargs:
+            context["fba_order"] = models.FBAOrder.objects.get(
+                pk=self.kwargs["fba_order_pk"]
+            )
         return context
 
 
@@ -129,10 +133,19 @@ class CreateShipment_CreateDestination(CreateDestination):
 
     def get_success_url(self, *args, **kwargs):
         """Redirect to the create shipment page."""
-        return reverse_lazy(
-            "fba:create_shipment",
-            kwargs={"destination_pk": self.object.pk},
-        )
+        if "fba_order_pk" in self.kwargs:
+            return reverse_lazy(
+                "fba:add_order_packages_to_shipment",
+                kwargs={
+                    "fba_order_pk": self.kwargs["fba_order_pk"],
+                    "shipment_pk": self.object.pk,
+                },
+            )
+        else:
+            return reverse_lazy(
+                "fba:create_shipment",
+                kwargs={"destination_pk": self.object.pk},
+            )
 
 
 class CreateShipment(FBAUserMixin, RedirectView):
@@ -152,7 +165,16 @@ class CreateShipment(FBAUserMixin, RedirectView):
             messages.SUCCESS,
             f"Shipment {shipment.order_number()} created.",
         )
-        return reverse_lazy("fba:update_shipment", kwargs={"pk": shipment.pk})
+        if "fba_order_pk" in self.kwargs:
+            return reverse_lazy(
+                "fba:add_order_packages_to_shipment",
+                kwargs={
+                    "shipment_pk": shipment.pk,
+                    "fba_order_pk": self.kwargs["fba_order_pk"],
+                },
+            )
+        else:
+            return reverse_lazy("fba:update_shipment", kwargs={"pk": shipment.pk})
 
 
 class UpdateShipment(FBAUserMixin, UpdateView):
@@ -209,7 +231,9 @@ class BasePackageFormView:
     def get_success_url(self, *args, **kwargs):
         """Redirect to the update shipment page."""
         self.set_message()
-        return reverse_lazy("fba:update_shipment", kwargs={"pk": self.object.order.pk})
+        return reverse_lazy(
+            "fba:update_shipment", kwargs={"pk": self.object.shipment_order.pk}
+        )
 
 
 class CreatePackage(BasePackageFormView, FBAUserMixin, CreateView):
@@ -218,7 +242,7 @@ class CreatePackage(BasePackageFormView, FBAUserMixin, CreateView):
     def get_initial(self, *args, **kwargs):
         """Set the package's shipment."""
         initial = super().get_initial(*args, **kwargs)
-        initial["order"] = get_object_or_404(
+        initial["shipment_order"] = get_object_or_404(
             models.FBAShipmentOrder, pk=self.kwargs["order_pk"]
         )
         return initial
@@ -228,7 +252,7 @@ class CreatePackage(BasePackageFormView, FBAUserMixin, CreateView):
         messages.add_message(
             self.request,
             messages.SUCCESS,
-            f"Package {self.object.package_number()} added to Shipment {self.object.order.order_number()}.",
+            f"Package {self.object.package_number()} added to Shipment {self.object.shipment_order.order_number()}.",
         )
 
     def get_item_formset(self):
@@ -291,4 +315,72 @@ class DeletePackage(FBAUserMixin, DeleteView):
 
     def get_success_url(self):
         """Redirect to the deleted package's shipment order."""
-        return reverse_lazy("fba:update_shipment", kwargs={"pk": self.object.order.pk})
+        return reverse_lazy(
+            "fba:update_shipment", kwargs={"pk": self.object.shipment_order.pk}
+        )
+
+
+class AddFBAOrderToShipment(FBAUserMixin, TemplateView):
+    """View for adding FBA orders to shipments."""
+
+    template_name = "fba/shipments/create_shipment/add_order_to_shipment.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(**kwargs)
+        order_id = self.kwargs.get("fba_order_pk")
+        context["fba_order"] = get_object_or_404(models.FBAOrder, pk=order_id)
+        context["current_shipments"] = models.FBAShipmentOrder.objects.filter(
+            export__isnull=True, is_on_hold=False
+        )
+        return context
+
+
+class AddFBAOrderPackages(FBAUserMixin, FormView):
+    """View for adding FBA Order packages to shipments."""
+
+    template_name = "fba/shipments/create_shipment/add_order_packages.html"
+    form_class = forms.SplitFBAOrderShipmentFormset
+
+    def get_context_data(self, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(**kwargs)
+        context["formset"] = context["form"]
+        return context
+
+    def form_valid(self, formset):
+        """Save form data."""
+        shipment_order = get_object_or_404(
+            models.FBAShipmentOrder, pk=self.kwargs["shipment_pk"]
+        )
+        fba_order = get_object_or_404(models.FBAOrder, pk=self.kwargs["fba_order_pk"])
+        with transaction.atomic():
+            for form in formset:
+                form_data = form.cleaned_data
+                if not form_data:
+                    continue
+                package = models.FBAShipmentPackage(
+                    shipment_order=shipment_order,
+                    fba_order=fba_order,
+                    length_cm=form_data["length_cm"],
+                    width_cm=form_data["width_cm"],
+                    height_cm=form_data["height_cm"],
+                )
+                package.save()
+                item = models.FBAShipmentItem(
+                    package=package,
+                    sku=fba_order.product_SKU,
+                    description=fba_order.product_name,
+                    quantity=form_data["quantity"],
+                    weight_kg=form_data["weight"],
+                    hr_code=fba_order.product_hs_code,
+                    value=form_data["value"],
+                )
+                item.save()
+        return super().form_valid(formset)
+
+    def get_success_url(self):
+        """Redirect to FBA order page."""
+        return reverse_lazy(
+            "fba:update_fba_order", kwargs={"pk": self.kwargs["fba_order_pk"]}
+        )
