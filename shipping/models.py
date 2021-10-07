@@ -64,6 +64,7 @@ class Region(models.Model):
         max_length=10, choices=VAT_REQUIRED_CHOICES, default=VAT_VARIABLE
     )
     default_vat_rate = models.FloatField(default=20)
+    flag_if_not_delivered_by_days = models.PositiveSmallIntegerField(null=True)
 
     class Meta:
         """Meta class for the Region model."""

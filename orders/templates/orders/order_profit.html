@@ -6,26 +6,68 @@
 {% block page_title %}Profit Loss Order {{ order.order_ID }}{% endblock %}
 
 {% block content %}
-<h1>Order: {{ order.order_ID }}</h1>
+<h1>Order: {{ order.order_ID }} - {{ order.tracking_number }}</h1>
 <a href="{% ccp_order_page order.order_ID order.customer_ID %}" target="_blank">View on Cloud Commerce</a>
 {% if order.error %}
 <h1 class="error">An error occured processing the details of this order</h1>
 {% endif %}
 <table>
-    <tr><th>Department</th><td>{{ order.department }}</td></tr>
-    <tr><th>Destination</th><td>{{ order.country.name }}</td></tr>
-    <tr><th>Recieved At</th><td class="date">{{ order.recieved_at|date:'D jS N h:iA' }}</td></tr>
-    <tr><th>Dispatched At</th><td class="date">{{ order.dispatched_at|date:'D jS N h:iA' }}</td></tr>
-    <tr><th>Number of Items</th><td>{{ order.item_count }}</td></tr>
-    <tr><th>Weight (g)</th><td>{{ order.total_weight }}</td></tr>
-    <tr><th>Shipping Service</th><td>{{ order.shipping_rule.shipping_service }}</td></tr>
-    <tr><th>Price</th><td>{% format_price order.total_paid_GBP %}</td></tr>
-    <tr><th>Purchase Price</th><td>{% format_price order.purchase_price %}</td></tr>
-    <tr><th>Postage Price</th><td>{% format_price order.postage_price %}</td></tr>
-    <tr><th>VAT</th><td>{% format_price order.vat_paid %}</td></tr>
-    <tr><th>Channel Fee</th><td>{% format_price order.channel_fee_paid %}</td></tr>
-    <tr><th>Profit</th><td>{% format_price order.profit %}</td></tr>
-    <tr><th>Profit Percentage</th><td>{% if order.profit_percentage %}{{ order.profit_percentage }}%{% endif %}</td></tr>
+    <tr>
+        <th>Department</th>
+        <td>{{ order.department }}</td>
+    </tr>
+    <tr>
+        <th>Destination</th>
+        <td>{{ order.country.name }}</td>
+    </tr>
+    <tr>
+        <th>Recieved At</th>
+        <td class="date">{{ order.recieved_at|date:'D jS N h:iA' }}</td>
+    </tr>
+    <tr>
+        <th>Dispatched At</th>
+        <td class="date">{{ order.dispatched_at|date:'D jS N h:iA' }}</td>
+    </tr>
+    <tr>
+        <th>Number of Items</th>
+        <td>{{ order.item_count }}</td>
+    </tr>
+    <tr>
+        <th>Weight (g)</th>
+        <td>{{ order.total_weight }}</td>
+    </tr>
+    <tr>
+        <th>Shipping Service</th>
+        <td>{{ order.shipping_rule.shipping_service }}</td>
+    </tr>
+    <tr>
+        <th>Price</th>
+        <td>{% format_price order.total_paid_GBP %}</td>
+    </tr>
+    <tr>
+        <th>Purchase Price</th>
+        <td>{% format_price order.purchase_price %}</td>
+    </tr>
+    <tr>
+        <th>Postage Price</th>
+        <td>{% format_price order.postage_price %}</td>
+    </tr>
+    <tr>
+        <th>VAT</th>
+        <td>{% format_price order.vat_paid %}</td>
+    </tr>
+    <tr>
+        <th>Channel Fee</th>
+        <td>{% format_price order.channel_fee_paid %}</td>
+    </tr>
+    <tr>
+        <th>Profit</th>
+        <td>{% format_price order.profit %}</td>
+    </tr>
+    <tr>
+        <th>Profit Percentage</th>
+        <td>{% if order.profit_percentage %}{{ order.profit_percentage }}%{% endif %}</td>
+    </tr>
 </table>
 
 <h3>Products</h3>
@@ -43,4 +85,33 @@
     </tr>
     {% endfor %}
 </table>
+
+<h3>Tracking History</h3>
+<button id="refresh_tracking_history">Refresh</button>
+<div id="tracking_history"></div>
+
 {% endblock %}
+
+{% block script %}
+
+<script>
+    function get_tracking() {
+        var update_tracking_url = "{% url 'tracking:update_tracking' order.tracking_number %}";
+        var tracking_history_url = "{% url 'tracking:tracking_history' order.tracking_number %}";
+
+        $.get(update_tracking_url, function (data) {
+            $.get(tracking_history_url, function (data) {
+                $('#tracking_history').html(data);
+            });
+        });
+    }
+
+    $(document).ready(function () {
+        get_tracking();
+        $('#refresh_tracking_history').click(function () {
+            get_tracking();
+        });
+    });
+</script>
+
+{% endblock script %}

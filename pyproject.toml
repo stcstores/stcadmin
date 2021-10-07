@@ -5,7 +5,7 @@ description = ""
 authors = ["Luke Shiner <luke@lukeshiner.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 gunicorn = "^20.1.0"
 django = "^3.2.3"
 django-formtools = "^2.3"
@@ -16,10 +16,10 @@ django-debug-toolbar = "^3.2.1"
 psycopg2 = "^2.8.6"
 pytz = "^2021.1"
 sphinx = "^4.0.2"
-sphinx_rtd_theme = "^0.5.2"
+sphinx_rtd_theme = "^1.0.0"
 tabler = "^2.4.0"
 toml = "^0.10.2"
-xlsxwriter = "^1.4.3"
+xlsxwriter = "^3.0.1"
 openpyxl = "^3.0.7"
 isoweek = "^1.3.3"
 ccapi = {git = "https://github.com/stcstores/ccapi.git"}
@@ -32,15 +32,15 @@ django-polymorphic = "^3.0.0"
 django-mathfilters = "^1.0.0"
 easy-thumbnails = "^2.7.1"
 file-exchange = {git = "https://github.com/lukeshiner/django-file_exchange.git", rev = "main"}
+scurri = {git = "https://github.com/stcstores/scurri.git", rev = "main"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
 pytest-django = "^4.3.0"
-pytest-cov = "^2.12.0"
+pytest-cov = "^3.0.0"
 coveralls = "^3.1.0"
 black = "^21.5b2"
 flake8 = "^3.9.2"
-flake8-docstrings = "^1.6.0"
 isort = "^5.8.0"
 factory_boy = "^3.2.0"
 pytest_factoryboy = "^2.1.0"

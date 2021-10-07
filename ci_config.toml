@@ -26,3 +26,6 @@ TEST_DATABASE_NAME = "stcadmin_test"
 CC_IMAGE_URL = "https://images.testserver.com/"
 
 CELERY_BROKER_URL = "amqp://localhost//"
+
+SCURRI_USERNAME = "SCURRI_USERNAME"
+SCURRI_PASSWORD = "SCURRI_PASSWORD"

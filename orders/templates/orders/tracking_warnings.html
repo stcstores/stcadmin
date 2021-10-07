@@ -1,0 +1,114 @@
+{% extends 'orders/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<form action="" id="warning_filter_form">{% csrf_token %}
+    {{ form.as_p }}
+    <button id="filter_warnings">Filter</button>
+</form>
+
+
+<div id="tracking_warnings">
+</div>
+
+{% endblock content %}
+
+{% block script %}
+
+<script>
+    var tracking_url = "{% url 'tracking:tracking_warnings' %}";
+    var update_tracked_package_url = "{% url 'tracking:update_tracked_package' %}";
+    var tracking_warnings_div = $('#tracking_warnings');
+    var warning_filter_form = $("#warning_filter_form");
+
+    function get_package_id(input_element) {
+        var element_id = input_element.attr('id');
+        return element_id.split("_")[0];
+    }
+
+    function set_status_loading(package_id) {
+        var element = $("#" + package_id + "_status");
+        console.log(element)
+        element.html(
+            "<img src={% static 'images/loading.gif' %} alt=Loading width=20 height=20/>")
+    }
+
+    function set_status_updated(package_id) {
+        $("#" + package_id + "_status").html("Updated");
+    }
+
+    function set_status_error(package_id) {
+        $("#" + package_id + "_status").html("Error");
+    }
+
+    function set_carrier_contacted_value(checkbox) {
+        var package_id = get_package_id(checkbox);
+        set_status_loading(package_id);
+        var data = {
+            'carrier_contacted': checkbox.is(":checked")
+        };
+        update_package(package_id, data);
+    }
+
+
+    function set_package_note(text_input) {
+        var package_id = get_package_id(text_input);
+        set_status_loading(package_id);
+        var data = {
+            'notes': text_input.val()
+        };
+        update_package(package_id, data);
+
+    }
+
+    function set_callbacks() {
+        $(".contacted_toggle").change(function () {
+            set_carrier_contacted_value($(this));
+        });
+        $(".package_note").change(function () {
+            set_package_note($(this));
+        });
+    }
+
+    function update_package(package_id, data) {
+        data['package_id'] = package_id;
+        $.ajax({
+            type: "POST",
+            url: update_tracked_package_url,
+            data: data,
+            success: function (response) {
+                set_status_updated(package_id);
+            },
+            error: function (response) {
+                set_status_error(package_id);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+
+        warning_filter_form.submit(function (e) {
+            e.preventDefault();
+            tracking_warnings_div.html("<img src={% static 'images/loading.gif' %} alt=Loading/>");
+            var form = $(this);
+
+            $.ajax({
+                type: "POST",
+                url: tracking_url,
+                data: form.serialize(),
+                success: function (response) {
+                    $('#tracking_warnings').html(response);
+                    set_callbacks();
+                }
+            });
+
+
+        });
+
+        warning_filter_form.submit();
+    });
+</script>
+
+{% endblock script %}
