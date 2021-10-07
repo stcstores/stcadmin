@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/psf/black
-    rev: 21.5b2
+    rev: 21.9b0
     hooks:
       - id: black
   - repo: https://github.com/pycqa/flake8
@@ -9,7 +9,7 @@ repos:
       - id: flake8
         additional_dependencies: [flake8-docstrings]
   - repo: https://github.com/pycqa/isort
-    rev: 5.8.0
+    rev: 5.9.3
     hooks:
       - id: isort
         name: isort
