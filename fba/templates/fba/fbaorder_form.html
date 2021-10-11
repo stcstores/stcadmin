@@ -146,37 +146,14 @@
     function refresh_calculator() {
         var data = {
             "sku": "{{ product.sku }}",
-            "zero_rated": {
-                %
-                if product.vat_rate == 0 %
-            }
-            true {
-                %
-                else %
-            }
-            false {
-                %
-                endif %
-            },
+            "zero_rated": ("{% if product.vat_rate == 0 %}true{% else %}false{% endif %}") === "true",
             "selling_price": $("#{{ form.selling_price.auto_id }}").val(),
             "country": $("#{{ form.country.auto_id }}").val(),
-            "purchase_price": {
-                {
-                    product.purchase_price
-                }
-            },
+            "purchase_price": parseFloat("{{ product.purchase_price }}"),
             "quantity": $("#{{ form.aproximate_quantity.auto_id }}").val(),
             "fba_fee": $("#{{ form.FBA_fee.auto_id }}").val(),
-            "weight": {
-                {
-                    product.weight
-                }
-            },
-            "stock_level": {
-                {
-                    product.stock_level
-                }
-            }
+            "weight": parseFloat("{{ product.weight}}"),
+            "stock_level": parseInt("{{ product.stock_level }}")
         }
         if ((data["selling_price"] === "") || (data["fba_fee"] === "") || (data["country"] === "")) {
             return
@@ -203,11 +180,7 @@
                     aprox_quantity.val(result["max_quantity"]);
                 }
                 var on_hold = $("#{{ form.on_hold.auto_id }}").parent();
-                if (aprox_quantity_val > {
-                        {
-                            product.stock_level
-                        }
-                    }) {
+                if (aprox_quantity_val > parseInt("{{product.stock_level}}")) {
                     on_hold.addClass("error");
                 } else {
                     on_hold.removeClass("error");
