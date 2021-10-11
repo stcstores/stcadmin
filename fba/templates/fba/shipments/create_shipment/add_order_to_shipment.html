@@ -1,0 +1,19 @@
+{% extends 'fba/base.html' %}
+
+{% block content %}{{ block.super }}
+
+<h1>Add FBA Order {{ fba_order }} to Shipment</h1>
+<br>
+<a href="{% url 'fba:create_shipment_select_destination' fba_order.pk %}">
+    <button>Add to new Shipment</button>
+</a>
+<br><br>
+{% for shipment in current_shipments %}
+{{ shipment }}&nbsp;
+<a href="{% url 'fba:add_order_packages_to_shipment' fba_order.pk shipment.pk %}">
+    <button>Add</button>
+</a>
+<br><br>
+
+{% endfor %}
+{% endblock %}

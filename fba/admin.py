@@ -131,13 +131,6 @@ class FBAShippingPriceAdmin(admin.ModelAdmin):
     list_editable = ["product_SKU", "price_per_item"]
 
 
-@admin.register(models.FulfillmentCenter)
-class FulfillmentCenterAdmin(admin.ModelAdmin):
-    """Model admin for the FulfilmentCenter model."""
-
-    fields = ("name", "country", "address_1", "address_2", "address_3")
-
-
 @admin.register(models.FBAShipmentDestination)
 class FBAShipmentDestinationAdmin(admin.ModelAdmin):
     """Model admin for the FBAShipmentDestination model."""
@@ -226,7 +219,8 @@ class FBAShipmentPackageAdmin(admin.ModelAdmin):
     """Model admin for the FBAShipmentPackage model."""
 
     fields = (
-        "order",
+        "shipment_order",
+        "fba_order",
         "length_cm",
         "width_cm",
         "height_cm",
@@ -234,7 +228,8 @@ class FBAShipmentPackageAdmin(admin.ModelAdmin):
     )
     list_display = (
         "__str__",
-        "order",
+        "shipment_order",
+        "fba_order",
         "length_cm",
         "width_cm",
         "height_cm",

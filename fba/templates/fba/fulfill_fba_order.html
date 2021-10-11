@@ -28,9 +28,8 @@
 <a href="{% url 'fba:unmark_printed' form.instance.id %}?next={{ request.path }}">
     <button>Unmark printed</button></a>
 {% endif %}
-&nbsp;
-{% if form.instance.tracking_number and form.instance.fulfillment_center %}
-    <a href="{% url 'fba:invoice' form.instance.pk %}"><button>Invoice</button></a>
+{% if form.instance.closed_at %}
+
 {% endif %}
 
 <img src="{{ form.instance.product_image_url }}" alt="" height="200">
@@ -63,49 +62,52 @@
         </p>
         <p>
             <label for="selling_price">Selling Price {{ form.instance.region.currency.symbol }}</label>
-            <input type="text" name="selling_price", id="selling_price" value="{{ selling_price }}" size="5" disabled>
+            <input type="text" name="selling_price" , id="selling_price" value="{{ selling_price }}" size="5" disabled>
         </p>
     </div>
     <div class="fba_order_form">
         <form action="" method="POST">{% csrf_token %}
             {{ form.as_p }}
             {% if not form.instance.closed_at %}
-                {% if form.instance.region.auto_close %}
-                    <button>Fulfill</button>
-                    {% else %}
-                    <button>Update</button>
-                    {% if form.instance.details_complete %}
-                    <button name="collection_booked">Collection Booked</button>
-                    {% endif %}
-                {% endif %}
+            {% if form.instance.region.auto_close %}
+            <button>Fulfill</button>
+            {% else %}
+            <button>Update</button>
+            {% if form.instance.details_complete %}
+            <button name="collection_booked">Collection Booked</button>
+            {% endif %}
+            {% endif %}
             {% endif %}
         </form>
     </div>
 </div>
+
+{% if form.instance.status == form.instance.CLOSED %}
+{% include 'fba/fba_order_manage_shipments.html' with fba_order=form.instance %}
+{% endif %}
 
 {% endblock %}
 
 {% block script %}
 
 <script>
-
     function printExternal(url) {
-        var printWindow = window.open( url, 'Print', 'left=200, top=200, width=950, height=500, toolbar=0, resizable=0');
-        printWindow.addEventListener('load', function(){
+        var printWindow = window.open(url, 'Print', 'left=200, top=200, width=950, height=500, toolbar=0, resizable=0');
+        printWindow.addEventListener('load', function () {
             location.reload();
             printWindow.print();
         }, true);
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('input,textarea,select').filter('[required]').parent().find("label").addClass("required");
 
-        $("#{{ form.box_weight.auto_id }}").change(function() {
+        $("#{{ form.box_weight.auto_id }}").change(function () {
             $("#weight_lb").val($(this).val() * 2.20462)
         });
         $("#{{ form.box_weight.auto_id }}").change();
 
-        $(".print_button").click(function(e) {
+        $(".print_button").click(function (e) {
             e.preventDefault();
             printExternal("{% url 'fba:order_printout' form.instance.id %}");
         });

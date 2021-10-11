@@ -1,0 +1,35 @@
+{% extends 'fba/base.html' %}
+
+{% block content %}{{ block.super }}
+
+<h1>Add FBA Order {{ fba_order }} to Shipment</h1>
+<br>
+<form action="" method="POST">{% csrf_token %}
+    {{ formset.management_form }}
+    {% if formset.errors %}
+    <p class="error">{{ formset.errors }}</p>
+    {% endif %}
+    <table>
+        <tr>
+            {% for field in formset.0.visible_fields %}
+            <th>{{ field.label }}</th>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for form in formset %}
+            {% for field in form.visible_fields %}
+            <td>{{ field }}</td>
+            {% endfor %}
+
+            {% for field in form.hidden_fields %}
+            {{ field }}
+            {% endfor %}
+            {% if form.errors %}
+            <td>{{ form.errors }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+    <input type="submit">
+</form>
+{% endblock %}
