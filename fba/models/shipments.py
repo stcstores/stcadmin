@@ -15,6 +15,8 @@ def shortened_description(desc, max_length=30):
 def shortened_description_list(descriptions, max_length=30):
     """Return a shortened description from a list of descriptions."""
     descriptions = list(set(descriptions))
+    if len(descriptions) == 0:
+        return ""
     description_text = shortened_description(descriptions[0], max_length=max_length)
     description = (
         f"{description_text} + {len(descriptions) - 1} other items"
