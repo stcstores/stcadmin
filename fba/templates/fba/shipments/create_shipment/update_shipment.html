@@ -4,7 +4,7 @@
 
 {% block content %}{{ block.super }}
 
-<h1>Update Shipment {{ form.instance.order_id }}</h1>
+<h1>Update Shipment {{ form.instance.order_number }} - {{ form.instance.description }}</h1>
 
 <form action="" method="POST">{% csrf_token %}
     {{ form.as_p }}
@@ -15,6 +15,7 @@
     </p>
     <button type="submit">Save</button>
     <button type="submit" name="new_package">Add Package</button>
+
 
     <div>
         {% for package in form.instance.shipment_package.all %}
@@ -31,6 +32,7 @@
                 &nbsp;
                 <button type="submit" name="edit_package" value="{{ package.pk }}">Edit Package</button>
                 <button type="submit" name="delete_package" value="{{ package.pk }}">Delete Package</button>
+                {{ package.description }}
             </p>
             <table>
                 <tr>
@@ -38,6 +40,7 @@
                     <th>Quantity</th>
                     <th>Weight (kg)</th>
                     <th>Value</th>
+                    <th>Description</th>
                 </tr>
                 {% for item in package.shipment_item.all %}
                 <tr>
@@ -45,6 +48,7 @@
                     <td>{{ item.quantity }}</td>
                     <td>{{ item.weight_kg }}</td>
                     <td>{% format_price item.value %}</td>
+                    <th>{{ item.short_description }}</th>
 
                 </tr>
                 {% endfor %}

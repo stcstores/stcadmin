@@ -7,6 +7,23 @@ from django.db import models
 from .fba import FBAOrder
 
 
+def shortened_description(desc, max_length=30):
+    """Return a shortened description."""
+    return desc[:max_length] + "..." if len(desc) > max_length else desc
+
+
+def shortened_description_list(descriptions, max_length=30):
+    """Return a shortened description from a list of descriptions."""
+    descriptions = list(set(descriptions))
+    description_text = shortened_description(descriptions[0], max_length=max_length)
+    description = (
+        f"{description_text} + {len(descriptions) - 1} other items"
+        if len(descriptions) > 1
+        else description_text
+    )
+    return description
+
+
 class FBAShipmentDestinationActiveManager(models.Manager):
     """Manager for active shipment destinations."""
 
@@ -125,6 +142,13 @@ class FBAShipmentOrder(models.Model):
             "shipment_item__value__sum"
         ]
 
+    def description(self, max_length=30):
+        """Return a text description of the shipment."""
+        descriptons = self.shipment_package.values_list(
+            "shipment_item__description", flat=True
+        )
+        return shortened_description_list(descriptons, max_length=max_length)
+
 
 class FBAShipmentPackage(models.Model):
     """Model for FBA Shipment packages."""
@@ -164,6 +188,11 @@ class FBAShipmentPackage(models.Model):
         """Return the total value of the package."""
         return self.shipment_item.aggregate(value=models.Sum("value"))["value"]
 
+    def description(self, max_length=30):
+        """Return a description string for the package."""
+        descriptions = self.shipment_item.values_list("description", flat=True)
+        return shortened_description_list(descriptions, max_length=max_length)
+
 
 class FBAShipmentItem(models.Model):
     """Model for FBA Shipment items."""
@@ -187,6 +216,10 @@ class FBAShipmentItem(models.Model):
 
     def __str__(self):
         return f"{self.shipment_order} package {self.package.package_number()} - {self.sku}"
+
+    def short_description(self, max_length=30):
+        """Return a shortended description."""
+        return shortened_description(self.description, max_length=max_length)
 
 
 class ITDShipmentFile:

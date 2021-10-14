@@ -3,7 +3,7 @@
 {% block content %}{{ block.super }}
 
 {% if form.instance %}
-<h1>Update Package {{ form.instance.order_number }}</h1>
+<h1>Update Package {{ form.instance.order_number }} - {{ form.instance.description }}</h1>
 {% else %}
 <h1>Create Package</h1>
 {% endif %}
