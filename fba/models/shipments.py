@@ -252,17 +252,17 @@ class ITDShipmentFile:
         return rows
 
     @classmethod
-    def _create_row_data(cls, order, package, item):
+    def _create_row_data(cls, shipment_order, package, item):
         row_data = {
-            cls.LAST_NAME: order.destination.recipient_last_name,
-            cls.ADDRESS_1: order.destination.address_line_1,
-            cls.ADDRESS_2: order.destination.address_line_2,
-            cls.ADDRESS_3: order.destination.address_line_3,
-            cls.CITY: order.destination.city,
-            cls.STATE: order.destination.state,
-            cls.COUNTRY: order.destination.country,
-            cls.POSTCODE: order.destination.postcode,
-            cls.ORDER_NUMBER: order.order_number(),
+            cls.LAST_NAME: shipment_order.destination.recipient_last_name,
+            cls.ADDRESS_1: shipment_order.destination.address_line_1,
+            cls.ADDRESS_2: shipment_order.destination.address_line_2,
+            cls.ADDRESS_3: shipment_order.destination.address_line_3,
+            cls.CITY: shipment_order.destination.city,
+            cls.STATE: shipment_order.destination.state,
+            cls.COUNTRY: shipment_order.destination.country,
+            cls.POSTCODE: shipment_order.destination.postcode,
+            cls.ORDER_NUMBER: shipment_order.order_number(),
             cls.PACKAGE_NUMBER: package.package_number(),
             cls.LENGTH: package.length_cm,
             cls.WIDTH: package.width_cm,
@@ -274,7 +274,7 @@ class ITDShipmentFile:
             cls.QUANTITY: item.quantity,
             cls.COUNTRY_OF_ORIGIN: item.country_of_origin,
             cls.HR_CODE: item.hr_code,
-            cls.SHIPMENT_METHOD: order.shipment_method.identifier,
+            cls.SHIPMENT_METHOD: shipment_order.shipment_method.identifier,
         }
         return row_data
 
