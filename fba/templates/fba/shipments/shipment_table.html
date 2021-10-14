@@ -7,15 +7,17 @@
         <th>Package Count</th>
         <th>Weight (kg)</th>
         <th>Value</th>
+        <th>Order Number</th>
         <td colspan="3"></td>
     </tr>
     {% for shipment in shipments %}
     <tr>
-        <th {% if shipment.is_on_hold %}class="error" {% endif %}>{{ shipment }}</th>
+        <th {% if shipment.is_on_hold %}class="error" {% endif %}>{{ shipment.description }}</th>
         <td>{{ shipment.destination }}</td>
         <td>{{ shipment.shipment_package.count }}</td>
         <td>{{ shipment.weight_kg }}</td>
         <td>{% format_price shipment.value %}</td>
+        <th>{{ shipment.order_number }}</th>
         <td><a href="{% url 'fba:update_shipment' shipment.pk %}"><button>Edit</button></a></td>
         <td>
             <a href="{% url 'fba:toggle_shipment_held' shipment.pk %}">
