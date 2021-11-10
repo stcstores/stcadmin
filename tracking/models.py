@@ -289,7 +289,6 @@ class TrackingStatus:
             )
             .exclude(tracking_event__status=TrackingEvent.DELIVERED)
             .exclude(tracking_event__description="Secure delivery - To household")
-            .exclude(carrier__slug="landmark")  # Remove when landmark works
             .filter(**filters)
         )
         return region_packages
