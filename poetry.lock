@@ -423,7 +423,7 @@ python-versions = "*"
 
 [[package]]
 name = "django-polymorphic"
-version = "3.0.0"
+version = "3.1.0"
 description = "Seamless polymorphic inheritance for Django models"
 category = "main"
 optional = false
@@ -1369,7 +1369,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "7a30a8bd87edcaea74f16cc784ed6fb380c8286679ebc0bf65079cc0b80ba2af"
+content-hash = "0e3ddeb065047309d56716f27070ec5dd0e9ec39b5ebb90069e3cab85346f1ac"
 
 [metadata.files]
 alabaster = [
@@ -1537,8 +1537,8 @@ django-mathfilters = [
     {file = "django_mathfilters-1.0.0-py3-none-any.whl", hash = "sha256:64200a21bb249fbf27be601d4bbb788779e09c6e063170c097cd82c4d18ebb83"},
 ]
 django-polymorphic = [
-    {file = "django-polymorphic-3.0.0.tar.gz", hash = "sha256:9d886f19f031d26bb1391c055ed9be06fb226a04a4cec1842b372c58873b3caa"},
-    {file = "django_polymorphic-3.0.0-py2.py3-none-any.whl", hash = "sha256:73b75eb44ea302bd32820f8661e469509d245ce7f7ff09cd2ad149e5c42034ff"},
+    {file = "django-polymorphic-3.1.0.tar.gz", hash = "sha256:d6955b5308bf6e41dcb22ba7c96f00b51dfa497a8a5ab1e9c06c7951bf417bf8"},
+    {file = "django_polymorphic-3.1.0-py3-none-any.whl", hash = "sha256:08bc4f4f4a773a19b2deced5a56deddd1ef56ebd15207bf4052e2901c25ef57e"},
 ]
 django-solo = [
     {file = "django-solo-1.2.0.tar.gz", hash = "sha256:b42487d5b82b24232edc09b54a8cc3919e7a79bd684c1ac6346ecaf9942c4288"},

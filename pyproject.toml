@@ -28,7 +28,7 @@ labeler = {git = "https://github.com/lukeshiner/labeler.git"}
 list-input = {git = "https://github.com/lukeshiner/list_input.git"}
 django-solo = "^1.1.5"
 celery = {extras = ["pytest"], version = "^5.2.0"}
-django-polymorphic = "^3.0.0"
+django-polymorphic = "^3.1.0"
 django-mathfilters = "^1.0.0"
 easy-thumbnails = "^2.8"
 file-exchange = {git = "https://github.com/lukeshiner/django-file_exchange.git", rev = "main"}
