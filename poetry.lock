@@ -974,7 +974,7 @@ testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtuale
 
 [[package]]
 name = "pytest-django"
-version = "4.5.0"
+version = "4.5.1"
 description = "A Django plugin for pytest."
 category = "dev"
 optional = false
@@ -1360,7 +1360,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "8a1fda616416cac0f27b43b82790ff07961ccc9f7b174f3675c8c564652d18b8"
+content-hash = "a44f8aa8d2b9e6515f68bc69e701ac2dfc1faab110d3389ea48e5aa6df3dfeb8"
 
 [metadata.files]
 alabaster = [
@@ -1885,8 +1885,8 @@ pytest-cov = [
     {file = "pytest_cov-3.0.0-py3-none-any.whl", hash = "sha256:578d5d15ac4a25e5f961c938b85a05b09fdaae9deef3bb6de9a6e766622ca7a6"},
 ]
 pytest-django = [
-    {file = "pytest-django-4.5.0.tar.gz", hash = "sha256:4b1120c364404cfa9f54e2229b5c39151821bb17819e4bcf357e0f62a3e925a0"},
-    {file = "pytest_django-4.5.0-py3-none-any.whl", hash = "sha256:10cb6e5baacd56ca1f0134ce448b050c31824ba4e480eb7e0fa3832f3a0f8b4c"},
+    {file = "pytest-django-4.5.1.tar.gz", hash = "sha256:01fe1242e706375d7c942d206a30826bd9c0dffde99bfac627050cdc91f0d792"},
+    {file = "pytest_django-4.5.1-py3-none-any.whl", hash = "sha256:13a956a0016cd37f889d5d3a8a36c0c90da44d6fdc7704e4e13f08d2f76f78f7"},
 ]
 pytest-factoryboy = [
     {file = "pytest-factoryboy-2.1.0.tar.gz", hash = "sha256:23bc562ab32cc39eddfbbbf70e618a1b30e834a4cfa451c4bedc36216f0a7b19"},
