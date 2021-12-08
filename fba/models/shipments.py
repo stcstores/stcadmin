@@ -9,6 +9,8 @@ from .fba import FBAOrder
 
 def shortened_description(desc, max_length=30):
     """Return a shortened description."""
+    if desc is None:
+        return ""
     return desc[:max_length] + "..." if len(desc) > max_length else desc
 
 
