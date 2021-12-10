@@ -619,17 +619,17 @@ python-versions = "*"
 
 [[package]]
 name = "jinja2"
-version = "2.11.3"
+version = "3.0.3"
 description = "A very fast and expressive template engine."
 category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+python-versions = ">=3.6"
 
 [package.dependencies]
-MarkupSafe = ">=0.23"
+MarkupSafe = ">=2.0"
 
 [package.extras]
-i18n = ["Babel (>=0.8)"]
+i18n = ["Babel (>=2.7)"]
 
 [[package]]
 name = "kombu"
@@ -1244,18 +1244,18 @@ tinycss2 = ">=0.6.0"
 
 [[package]]
 name = "tabler"
-version = "2.4.1"
+version = "2.4.2"
 description = "Simple interface for tabulated data and .csv files"
 category = "main"
 optional = false
-python-versions = ">=3.6,<4.0"
+python-versions = ">=3.7,<4.0"
 
 [package.dependencies]
-jinja2 = ">=2.11.0,<3.0.0"
-openpyxl = ">=3.0.3,<4.0.0"
-pyexcel-ods3 = ">=0.6.0,<0.7.0"
-requests = ">=2.25.1,<3.0.0"
-urllib3 = ">=1.25.8,<2.0.0"
+jinja2 = ">=3.0.0"
+openpyxl = ">=3.0.3"
+pyexcel-ods3 = ">=0.6.0"
+requests = ">=2.25.1"
+urllib3 = ">=1.25.8"
 
 [[package]]
 name = "text-unidecode"
@@ -1360,7 +1360,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "8db802bdac5344054a71145c3e910c83bb2fe29c03d9f3905a9e9df3614e4ede"
+content-hash = "c7a536b0c2edd6721e2c13aff09bbd87359446f7c12399134a3e0b8405c1cf70"
 
 [metadata.files]
 alabaster = [
@@ -1596,8 +1596,8 @@ isoweek = [
     {file = "isoweek-1.3.3.tar.gz", hash = "sha256:73f3f7bac443e05a3ab45c32a72048b0c4f26d53d81462ec4b142c7581d3ffe8"},
 ]
 jinja2 = [
-    {file = "Jinja2-2.11.3-py2.py3-none-any.whl", hash = "sha256:03e47ad063331dd6a3f04a43eddca8a966a26ba0c5b7207a9a9e4e08f1b29419"},
-    {file = "Jinja2-2.11.3.tar.gz", hash = "sha256:a6d58433de0ae800347cab1fa3043cebbabe8baa9d29e668f1c768cb87a333c6"},
+    {file = "Jinja2-3.0.3-py3-none-any.whl", hash = "sha256:077ce6014f7b40d03b47d1f1ca4b0fc8328a692bd284016f806ed0eaca390ad8"},
+    {file = "Jinja2-3.0.3.tar.gz", hash = "sha256:611bb273cd68f3b993fabdc4064fc858c5b47a973cb5aa7999ec1ba405c87cd7"},
 ]
 kombu = [
     {file = "kombu-5.2.2-py3-none-any.whl", hash = "sha256:d36f0cde6a18d9eb7b6b3aa62a59bfdff7f5724689850e447eca5be8efc9d501"},
@@ -2013,8 +2013,8 @@ svglib = [
     {file = "svglib-1.1.0.tar.gz", hash = "sha256:520ee5290ee2ebeebd20ca0d7d995c08c903b364fcf515826bab43a1288d422e"},
 ]
 tabler = [
-    {file = "tabler-2.4.1-py3-none-any.whl", hash = "sha256:58b09345d3950707544a136c3a59be8555af24aea9280be7258095226baec28a"},
-    {file = "tabler-2.4.1.tar.gz", hash = "sha256:f227647c01dc761dfb3b1702b3b14066cbe06279a4fe3e030ae474e4241ea39d"},
+    {file = "tabler-2.4.2-py3-none-any.whl", hash = "sha256:7f0c5046c3ffe766ddd7f9213562925512f3c400cfaa7c2463b52c0a9c42aa10"},
+    {file = "tabler-2.4.2.tar.gz", hash = "sha256:8a8ecc7e94391cc6af208eed4fde41ed0daeb3dda051b0e769bc1a62b2688f26"},
 ]
 text-unidecode = [
     {file = "text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93"},
