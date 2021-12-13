@@ -341,14 +341,14 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 name = "django-admin-sortable2"
-version = "1.0.2"
+version = "1.0.3"
 description = "Generic drag-and-drop sorting for the List, the Stacked- and the Tabular-Inlines Views in the Django Admin"
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-Django = ">=1.8,<3.3"
+Django = ">=3.2,<4.1"
 
 [[package]]
 name = "django-celery-results"
@@ -1500,8 +1500,8 @@ django = [
     {file = "Django-3.2.10.tar.gz", hash = "sha256:074e8818b4b40acdc2369e67dcd6555d558329785408dcd25340ee98f1f1d5c4"},
 ]
 django-admin-sortable2 = [
-    {file = "django-admin-sortable2-1.0.2.tar.gz", hash = "sha256:669e47c908d1ae5dd77876bb6bf369b3c333e013b98f0a8b6da42da83cf6440c"},
-    {file = "django_admin_sortable2-1.0.2-py3-none-any.whl", hash = "sha256:0108b003907fcdaf18af4f7bf4a84599e1ebd789c6be9fcd0dd86555f9526fc5"},
+    {file = "django-admin-sortable2-1.0.3.tar.gz", hash = "sha256:fbc193dbb169d9e05c1325e567158e4da7568b6d121d149f6665e692fafc7857"},
+    {file = "django_admin_sortable2-1.0.3-py3-none-any.whl", hash = "sha256:40a9942317d66db2c5cee289d284754ae3f95470143f4914afa06fb864d38fb4"},
 ]
 django-celery-results = [
     {file = "django_celery_results-2.2.0-py2.py3-none-any.whl", hash = "sha256:d5f83fad9091e52cd6dbb3ca80632153ad14b6cdac4d73258e040f92717237cb"},
