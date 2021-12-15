@@ -433,11 +433,14 @@ Django = ">=2.1"
 
 [[package]]
 name = "django-solo"
-version = "1.2.0"
+version = "2.0.0"
 description = "Django Solo helps working with singletons"
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.6"
+
+[package.dependencies]
+django = ">=2.2"
 
 [[package]]
 name = "docopt"
@@ -1360,7 +1363,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "bb462af1509c17f6a6308ba8315c2f7af3b8d9fb4e7cf0e207e65f256ba8e1f1"
+content-hash = "c42aa99c446eb236b542d21b41f3338d3f9f6ec88b85328b91b46722fde24c56"
 
 [metadata.files]
 alabaster = [
@@ -1532,8 +1535,8 @@ django-polymorphic = [
     {file = "django_polymorphic-3.1.0-py3-none-any.whl", hash = "sha256:08bc4f4f4a773a19b2deced5a56deddd1ef56ebd15207bf4052e2901c25ef57e"},
 ]
 django-solo = [
-    {file = "django-solo-1.2.0.tar.gz", hash = "sha256:b42487d5b82b24232edc09b54a8cc3919e7a79bd684c1ac6346ecaf9942c4288"},
-    {file = "django_solo-1.2.0-py3-none-any.whl", hash = "sha256:ef63bce7b6d0225821de0b29fa00be17c3996d41ab340ca6c51d004129742c32"},
+    {file = "django-solo-2.0.0.tar.gz", hash = "sha256:7c6dbe04ae858a4645b580ec83a31a960a067ad4525d8227cca50b7fc5983a62"},
+    {file = "django_solo-2.0.0-py3-none-any.whl", hash = "sha256:9046eca738f2ed64dbef38c2107a02af1065a8899b4f9fabf61b06b8325de1b4"},
 ]
 docopt = [
     {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
