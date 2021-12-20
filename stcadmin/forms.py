@@ -1,6 +1,7 @@
 """KwargFormSet class."""
 
 from django.forms.formsets import BaseFormSet
+from django.forms.renderers import get_default_renderer
 
 
 class KwargFormSet(BaseFormSet):
@@ -9,6 +10,7 @@ class KwargFormSet(BaseFormSet):
     extra = 0
     can_order = False
     can_delete = False
+    renderer = get_default_renderer()
 
     def __init__(self, *args, **kwargs):
         """Set formset attributes."""
@@ -37,6 +39,7 @@ class KwargFormSet(BaseFormSet):
             "prefix": self.add_prefix(i),
             "error_class": self.error_class,
             "use_required_attribute": False,
+            "renderer": self.renderer,
         }
         defaults.update(self.get_form_kwargs(i))
         if self.is_bound:

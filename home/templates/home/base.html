@@ -3,16 +3,16 @@
 {% load feedback_extras %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{% static 'css/stcadmin.css' %}">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     <script src="{% static 'scripts/jquery.cookie.js' %}"></script>
     <script src="{% static 'scripts/stcadmin.js' %}"></script>
-    <script src="{% static 'scripts/jquery.qtip.min.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'css/jquery.qtip.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/awesomplete.css' %}">
     <script src="{% static 'list_input/scripts/list_widget.js' %}"></script>
@@ -23,12 +23,14 @@
     {% block additional_head %}{% endblock %}
     <title>STCAdmin - {% block page_title %}{% endblock %}</title>
 </head>
+
 <body>
     <div class="container">
         <div class="head">
             {% include "home/main_navigation.html" %}
             <div class="header_feedback">
-                {% feedback_badges request.user %}&nbsp;<a href="{% url 'feedback:feedback_quickview' %}">[ view all feedback ]</a>
+                {% feedback_badges request.user %}&nbsp;<a href="{% url 'feedback:feedback_quickview' %}">[ view all
+                    feedback ]</a>
             </div>
             <div class="user_details">
                 <p>Welcome <a href="{% url 'user:user' %}">{{ request.user.username|title }}</a></p>
@@ -36,11 +38,11 @@
             </div>
             {% block section_navigation %}{% endblock %}
             {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
                     {% endfor %}
-                </ul>
+            </ul>
             {% endif %}
         </div>
         <div class="content">
@@ -51,15 +53,15 @@
     </div>
     {% block script %}{% endblock %}
     <script>
-        $(document).ready(function() {
-            $('.tooltip').each(function() {
+        $(document).ready(function () {
+            $('.tooltip').each(function () {
                 var text = $(this).attr('tooltiptext');
                 var title = $(this).attr('tooltiptitle');
                 $(this).qtip({
                     prerender: true,
                     style: {
-                       classes: 'mytooltip',
-                   },
+                        classes: 'mytooltip',
+                    },
                     content: {
                         title: title,
                         text: text
@@ -69,4 +71,5 @@
         });
     </script>
 </body>
+
 </html>
