@@ -7,7 +7,7 @@ authors = ["Luke Shiner <luke@lukeshiner.com>"]
 [tool.poetry.dependencies]
 python = "^3.10"
 gunicorn = "^20.1.0"
-django = "^3.2.10"
+django = "^3.2.11"
 django-formtools = "^2.3"
 django-markup = "^1.5.0"
 django-jchart = "^0.4.2"
