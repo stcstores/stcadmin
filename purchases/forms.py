@@ -66,7 +66,6 @@ class PurchaseFromStock(forms.Form):
     """Form for creating stock purchases."""
 
     profit_margin = 2.5
-    purchaser = PurchaseUserField()
     discount = DiscountField()
     basket = forms.CharField(widget=forms.HiddenInput())
 
@@ -79,7 +78,6 @@ class PurchaseFromStock(forms.Form):
 class PurchaseShipping(forms.Form):
     """Form for purchasing shipping."""
 
-    purchaser = PurchaseUserField()
     country = forms.ModelChoiceField(queryset=Country.objects.all())
     shipping_service = forms.ModelChoiceField(
         queryset=ShippingService.objects.filter(

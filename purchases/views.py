@@ -27,12 +27,6 @@ class PurchaserUserMixin(UserInGroupMixin):
     groups = ["purchaser"]
 
 
-class PurchaseCreatorUserMixin(UserInGroupMixin):
-    """View mixin to ensure user is in the purchase_creator group."""
-
-    groups = ["purchase_creator"]
-
-
 class PurchaseManagerUserMixin(UserInGroupMixin):
     """View mixin to ensure user is in the purchase_manager group."""
 
@@ -142,14 +136,14 @@ class ManagePurchases(PurchaseManagerUserMixin, PurchaseView):
         return context
 
 
-class StockPurchase(PurchaseCreatorUserMixin, FormView):
+class StockPurchase(PurchaserUserMixin, FormView):
     """Base view for product purchases."""
 
     form_class = forms.PurchaseFromStock
 
     def form_valid(self, form):
         """Handle completed form."""
-        user = form.cleaned_data["purchaser"]
+        user = self.request.user
         discount_percentage = form.cleaned_data["discount"]
         basket = form.cleaned_data["basket"]
         self.add_purchases(
@@ -162,7 +156,7 @@ class StockPurchase(PurchaseCreatorUserMixin, FormView):
 
     def get_success_url(self):
         """Return the sucess url."""
-        return reverse("purchases:manage_purchases")
+        return reverse("purchases:view_purchases")
 
 
 class PurchaseFromStock(StockPurchase):
@@ -179,7 +173,7 @@ class PurchaseFromStock(StockPurchase):
             discount = total_price * (discount_percentage / 100)
             to_pay = int(total_price - discount)
             purchase = models.StockPurchase(
-                user=user,
+                user=self.request.user,
                 to_pay=to_pay,
                 created_by=self.request.user,
                 product_id=product["product_id"],
@@ -212,7 +206,7 @@ class PurchaseFromShop(StockPurchase):
         discount = total_price * (discount_percentage / 100)
         to_pay = int(total_price - discount)
         purchase = models.StockPurchase(
-            user=user,
+            user=self.request.user,
             to_pay=to_pay,
             created_by=self.request.user,
             product_id="SHOP PURCHASE",
@@ -226,7 +220,7 @@ class PurchaseFromShop(StockPurchase):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class ProductSearch(PurchaseCreatorUserMixin, View):
+class ProductSearch(PurchaserUserMixin, View):
     """View for product searches."""
 
     def get(self, *args, **kwargs):
@@ -266,7 +260,7 @@ class SearchProductSKU(ProductSearch):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class ProductPurchasePrice(PurchaseCreatorUserMixin, View):
+class ProductPurchasePrice(PurchaserUserMixin, View):
     """View for product purchase price requests."""
 
     def get(self, *args, **kwargs):
@@ -291,7 +285,7 @@ class MarkOrderCancelled(PurchaseManagerUserMixin, View):
         return JsonResponse({purchase_id: "ok"})
 
 
-class PurchaseShipping(PurchaseCreatorUserMixin, FormView):
+class PurchaseShipping(PurchaserUserMixin, FormView):
     """View for creating stock purchases."""
 
     form_class = forms.PurchaseShipping
@@ -310,7 +304,7 @@ class PurchaseShipping(PurchaseCreatorUserMixin, FormView):
 
     def get_success_url(self):
         """Return the sucess url."""
-        return reverse("purchases:manage_purchases")
+        return reverse("purchases:view_purchases")
 
 
 class PurchaseNote(PurchaserUserMixin, FormView):
@@ -337,7 +331,7 @@ class PurchaseNote(PurchaserUserMixin, FormView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class GetShippingPrice(PurchaseCreatorUserMixin, View):
+class GetShippingPrice(PurchaserUserMixin, View):
     """Get the shipping price for a given service and weight."""
 
     def post(self, *args, **kwargs):
