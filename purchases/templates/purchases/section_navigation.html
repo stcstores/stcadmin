@@ -7,8 +7,6 @@
         {% if 'purchaser' in groups %}
         <li><a href="{% url 'purchases:view_purchases' %}">View Purchases</a></li>
         <li><a href="{% url 'purchases:purchase_note' %}">Add Note</a></li>
-        {% endif %}
-        {% if 'purchase_creator' in groups %}
         <li><a href="{% url 'purchases:from_stock' %}">Purchase From Stock</a></li>
         <li><a href="{% url 'purchases:from_shop' %}">Purchase From Shop</a></li>
         <li><a href="{% url 'purchases:shipping' %}">Purchase Shipping</a></li>
