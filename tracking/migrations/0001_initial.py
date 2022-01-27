@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("orders", "0023_channel_include_vat"),
+        ("orders", "0001_initial_squashed_0023_channel_include_vat"),
     ]
 
     operations = [

@@ -187,7 +187,7 @@ class OrderManager(models.Manager):
         kwargs = {
             "order_ID": order.order_id,
             "customer_ID": order.customer_id,
-            "recieved_at": timezone.make_aware(order.date_recieved, is_dst=False),
+            "recieved_at": timezone.make_aware(order.date_recieved),
             "dispatched_at": dispatched_at,
             "cancelled": order.cancelled,
             "channel": channel,
