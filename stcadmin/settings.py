@@ -5,6 +5,7 @@ import sys
 
 import toml
 from ccapi import CCAPI
+from django.contrib.staticfiles.storage import ManifestStaticFilesStorage
 from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
 from django.db import models
 
@@ -290,9 +291,24 @@ TIME_ZONE = "Europe/London"
 USE_I18N = True
 USE_TZ = True
 
+
+class ManifestStaticFilesStorageForgiving(ManifestStaticFilesStorage):
+    """Subclass ManifestStaticFilesStorage to ignore missing files."""
+
+    manifest_strict = False
+
+    def hashed_name(self, name, content=None, filename=None):
+        """Ignore missing static files."""
+        try:
+            result = super().hashed_name(name, content, filename)
+        except ValueError:
+            result = name
+        return result
+
+
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+STATICFILES_STORAGE = "stcadmin.settings.ManifestStaticFilesStorageForgiving"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
