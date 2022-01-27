@@ -1,5 +1,6 @@
 DEBUG = true
 ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = ["http://*", "https://*"]
 
 TEST_ADMINS = []
 ADMINS = []

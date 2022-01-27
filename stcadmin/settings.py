@@ -57,6 +57,7 @@ DATABASES = {
     }
 }
 ALLOWED_HOSTS = get_config("ALLOWED_HOSTS")
+CSRF_TRUSTED_ORIGINS = get_config("CSRF_TRUSTED_ORIGINS")
 ADMINS = get_config("ADMINS")
 EMAIL_HOST = get_config("EMAIL_HOST")
 EMAIL_HOST_USER = get_config("EMAIL_HOST_USER")
