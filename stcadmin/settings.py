@@ -8,6 +8,7 @@ from ccapi import CCAPI
 from django.contrib.staticfiles.storage import ManifestStaticFilesStorage
 from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
 from django.db import models
+from storages.backends.s3boto3 import S3Boto3Storage
 
 models.FieldDoesNotExist = FieldDoesNotExist  # Compatibility for django-polymorphic
 
@@ -74,6 +75,15 @@ SCAYT_CUSTOMER_ID = get_config("SCAYT_CUSTOMER_ID_TOKEN")
 SCURRI_USERNAME = get_config("SCURRI_USERNAME")
 SCURRI_PASSWORD = get_config("SCURRI_PASSWORD")
 
+BUCKET_DOMAIN = get_config("BUCKET_DOMAIN")
+BUCKET_ACCESS_KEY = get_config("BUCKET_ACCESS_KEY")
+BUCKET_SECRET_KEY = get_config("BUCKET_SECRET_KEY")
+
+AWS_S3_ACCESS_KEY_ID = BUCKET_ACCESS_KEY
+AWS_S3_SECRET_ACCESS_KEY = BUCKET_SECRET_KEY
+AWS_S3_ENDPOINT_URL = f"https://{BUCKET_DOMAIN}"
+
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 INSTALLED_APPS = [
@@ -84,6 +94,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "storages",
     "adminsortable2",
     "easy_thumbnails",
     "file_exchange",
@@ -322,6 +333,14 @@ LOGIN_REDIRECT_URL = "home:index"
 CELERY_BROKER_URL = get_config("CELERY_BROKER_URL")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
+
+
+class ProductImageStorage(S3Boto3Storage):
+    """Storage class for product images."""
+
+    bucket_name = "product-images.stcstores"
+    default_acl = "public-read"
+    file_overwrite = True
 
 
 TESTING = (
