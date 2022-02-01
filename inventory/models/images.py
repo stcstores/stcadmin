@@ -3,9 +3,9 @@
 # from django.db import models
 
 
-def product_image_path(instance, filename):
-    """Return path to save product images."""
-    return f"product_images/{instance.range_sku}/{instance.sku}/{filename}"
+# def product_image_path(instance, filename):
+#     """Return path to save product images."""
+#     return f"product_images/{instance.range_sku}/{instance.sku}/{filename}"
 
 
 # class ProductImage(models.Model):
