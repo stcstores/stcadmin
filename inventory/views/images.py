@@ -7,7 +7,6 @@ from ccapi import CCAPI
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 
-from inventory import models
 from inventory.forms import ImagesForm
 
 from .views import InventoryUserMixin
@@ -62,18 +61,18 @@ class ImageFormView(InventoryUserMixin, FormView):
     def form_valid(self, form):
         """Process form request and return HttpResponse."""
         self.get_products()
-        product_lookup = {str(product.id): product for product in self.products}
+        # product_lookup = {str(product.id): product for product in self.products}
         product_ids = json.loads(form.cleaned_data["product_ids"])
         cc_files = self.request.FILES.getlist("cloud_commerce_images")
         for image in cc_files:
             image_file = image
             CCAPI.upload_image(product_ids=product_ids, image_file=image_file)
-            for product_id in product_ids:
-                product = product_lookup[str(product_id)]
-                models.ProductImage(
-                    product_id=product_id,
-                    range_sku=self.product_range.sku,
-                    sku=product.sku,
-                    image_file=image,
-                ).save()
+            # for product_id in product_ids:
+            #     product = product_lookup[str(product_id)]
+            #     models.ProductImage(
+            #         product_id=product_id,
+            #         range_sku=self.product_range.sku,
+            #         sku=product.sku,
+            #         image_file=image,
+            #     ).save()
         return super().form_valid(form)

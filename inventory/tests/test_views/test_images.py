@@ -8,7 +8,6 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from pytest_django.asserts import assertRedirects, assertTemplateUsed
 
-from inventory import models
 from inventory.tests import mocks
 
 
@@ -183,20 +182,20 @@ def test_post_calls_add_images(mock_CCAPI, post_request_response):
     mock_CCAPI.upload_image.assert_called_once()
 
 
-@pytest.mark.django_db
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_post_creates_images_in_database(
-    product_range,
-    products,
-    post_request_response,
-):
-    for product in products:
-        assert models.ProductImage.objects.filter(
-            product_id=product.id,
-            range_sku=product_range.sku,
-            sku=product.sku,
-            image_file__isnull=False,
-        ).exists()
+# @pytest.mark.django_db
+# @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+# def test_post_creates_images_in_database(
+#     product_range,
+#     products,
+#     post_request_response,
+# ):
+#     for product in products:
+#         assert models.ProductImage.objects.filter(
+#             product_id=product.id,
+#             range_sku=product_range.sku,
+#             sku=product.sku,
+#             image_file__isnull=False,
+#         ).exists()
 
 
 @pytest.mark.django_db

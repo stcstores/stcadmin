@@ -1,7 +1,6 @@
 """Models for the inventory app."""
 
 from .barcodes import Barcode
-from .images import ProductImage
 from .locations import Bay, Warehouse, check_location_integrity
 from .product_exports import ProductExport
 from .product_options import Department, InternationalShipping, PackageType
@@ -10,7 +9,6 @@ from .suppliers import Supplier, SupplierContact
 
 __all__ = [
     "Barcode",
-    "ProductImage",
     "Bay",
     "Warehouse",
     "check_location_integrity",
