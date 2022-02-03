@@ -80,3 +80,10 @@ class WishBulkFulfilmentExportAdmin(admin.ModelAdmin):
         "download_file",
         "error_message",
     )
+
+
+@admin.register(models.ShopifyConfig)
+class ShopifyConfigAdmin(SingletonModelAdmin):
+    """Admin for the ShopifyConfig model."""
+
+    fields = ("channel_id",)

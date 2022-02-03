@@ -8,7 +8,8 @@ from .cloud_commerce_order import (
     CreateOrder,
     DefaultContact,
 )
-from .wish import (
+from .shopify_models import ShopifyConfig, ShopifyInventoryUpdater
+from .wish_models import (
     ExportOrder,
     WishBulkfulfilFile,
     WishBulkFulfilmentExport,
@@ -23,6 +24,8 @@ __all__ = [
     "CreatedOrder",
     "CreatedOrderProduct",
     "CreateOrder",
+    "ShopifyConfig",
+    "ShopifyInventoryUpdater",
     "ExportOrder",
     "WishBulkfulfilFile",
     "WishBulkFulfilmentExport",

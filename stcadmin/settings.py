@@ -8,6 +8,7 @@ from ccapi import CCAPI
 from django.contrib.staticfiles.storage import ManifestStaticFilesStorage
 from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
 from django.db import models
+from shopify_api_py import ShopifyAPISession
 from storages.backends.s3boto3 import S3Boto3Storage
 
 models.FieldDoesNotExist = FieldDoesNotExist  # Compatibility for django-polymorphic
@@ -79,9 +80,19 @@ BUCKET_DOMAIN = get_config("BUCKET_DOMAIN")
 BUCKET_ACCESS_KEY = get_config("BUCKET_ACCESS_KEY")
 BUCKET_SECRET_KEY = get_config("BUCKET_SECRET_KEY")
 
+SHOPIFY_SHOP_URL = get_config("SHOPIFY_SHOP_URL")
+SHOPIFY_API_VERSION = get_config("SHOPIFY_API_VERSION")
+SHOPIFY_API_PASSWORD = get_config("SHOPIFY_API_PASSWORD")
+
 AWS_S3_ACCESS_KEY_ID = BUCKET_ACCESS_KEY
 AWS_S3_SECRET_ACCESS_KEY = BUCKET_SECRET_KEY
 AWS_S3_ENDPOINT_URL = f"https://{BUCKET_DOMAIN}"
+
+ShopifyAPISession.set_login(
+    shop_url=SHOPIFY_SHOP_URL,
+    api_version=SHOPIFY_API_VERSION,
+    api_password=SHOPIFY_API_PASSWORD,
+)
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
