@@ -35,7 +35,7 @@ file-exchange = {git = "https://github.com/lukeshiner/django-file_exchange.git",
 scurri = {git = "https://github.com/stcstores/scurri.git", rev = "main"}
 flake8-docstrings = ">=1.6.0"
 django-storages = "^1.12.3"
-boto3 = "^1.20.46"
+boto3 = "^1.20.47"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=6.2.4"
