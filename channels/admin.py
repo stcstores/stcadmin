@@ -87,3 +87,29 @@ class ShopifyConfigAdmin(SingletonModelAdmin):
     """Admin for the ShopifyConfig model."""
 
     fields = ("channel_id",)
+
+
+@admin.register(models.ShopifyImport)
+class ShopifyImportAdmin(admin.ModelAdmin):
+    """Admin for the ShopifyImport model."""
+
+    fields = ("created_at",)
+    list_display = ("created_at",)
+
+
+@admin.register(models.ShopifyOrder)
+class ShopifyOrderAdmin(admin.ModelAdmin):
+    """Admin for the ShopifyOrder model."""
+
+    fields = (
+        "shopify_import",
+        "shopify_order_id",
+        "order",
+        "error",
+    )
+    fields = (
+        "shopify_import",
+        "shopify_order_id",
+        "order",
+        "error",
+    )
