@@ -36,7 +36,7 @@ class ShopifyOrder(models.Model):
         CreatedOrder, blank=True, null=True, on_delete=models.PROTECT
     )
     error = models.TextField(blank=True)
-    fulfiled = models.BooleanField(default=False)
+    fulfilled = models.BooleanField(default=False)
 
 
 class ShopifyFulfillmentError(models.Model):
@@ -232,7 +232,7 @@ class ShopifyFulfillment:
     @classmethod
     def _get_fulfilled_orders(cls):
         unfulfilled_shopify_orders = ShopifyOrder.objects.filter(
-            fulfiled=False, order__isnull=False
+            fulfilled=False, order__isnull=False
         )
         unfulfilled_shopify_order_ids = unfulfilled_shopify_orders.values_list(
             "order__order_id", flat=True
@@ -265,5 +265,5 @@ class ShopifyFulfillment:
                 shopify_order=order, error=str(e) + traceback.format_exc()
             ).save()
         else:
-            order.fulfiled = True
+            order.fulfilled = True
             order.save()

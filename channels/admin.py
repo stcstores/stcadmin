@@ -105,14 +105,14 @@ class ShopifyOrderAdmin(admin.ModelAdmin):
         "shopify_import",
         "shopify_order_id",
         "order",
-        "fulfiled",
+        "fulfilled",
         "error",
     )
     list_display = (
         "shopify_import",
         "shopify_order_id",
         "order",
-        "fulfiled",
+        "fulfilled",
         "error",
     )
 
