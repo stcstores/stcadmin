@@ -10,12 +10,12 @@ logger = logging.getLogger("management_commands")
 
 
 class Command(BaseCommand):
-    """Check Location Integrity command."""
+    """Update Shopify Stock command."""
 
-    help = "Check integrity of product location database."
+    help = "Update stock levels on Shopify and hide out of stock products."
 
     def handle(self, *args, **options):
-        """Check integity of bay database."""
+        """Update stock levels on Shopify and hide out of stock products."""
         try:
             ShopifyInventoryUpdater.update_stock()
         except Exception as e:
