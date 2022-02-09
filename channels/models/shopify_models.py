@@ -10,6 +10,7 @@ from django.db import models
 from solo.models import SingletonModel
 
 from inventory.models import ProductExport
+from orders.models import Order as CloudCommerceOrder
 
 from .cloud_commerce_order import CreatedOrder, CreateOrder
 
@@ -36,6 +37,13 @@ class ShopifyOrder(models.Model):
     )
     error = models.TextField(blank=True)
     fulfiled = models.BooleanField(default=False)
+
+
+class ShopifyFulfillmentError(models.Model):
+    """Model for recording errors fulfilling Shopify orders."""
+
+    shopify_order = models.ForeignKey(ShopifyOrder, on_delete=models.CASCADE)
+    error = models.TextField(blank=True)
 
 
 class ShopifyInventoryUpdater:
@@ -94,7 +102,6 @@ class ShopifyInventoryUpdater:
                 new_stock_level=new_stock_level,
                 location_id=location_id,
             )
-            print(f"{variant.sku} from {current_stock_level} to {new_stock_level}")
             time.sleep(cls.REQUEST_PAUSE)
 
     @classmethod
@@ -107,7 +114,6 @@ class ShopifyInventoryUpdater:
 
     @classmethod
     def _set_product_status(cls, product, status):
-        print(f"{product.handle} from {product.status} to {status}")
         product.status = status
         product.save()
         time.sleep(cls.REQUEST_PAUSE)
@@ -141,7 +147,7 @@ class ShopifyOrderImporter:
                 continue
             try:
                 data = cls._get_order_data(order, channel_id)
-                order = CreateOrder(data).create()
+                created_order = CreateOrder(data).create()
             except Exception as e:
                 ShopifyOrder(
                     shopify_import=import_object,
@@ -152,7 +158,7 @@ class ShopifyOrderImporter:
                 ShopifyOrder(
                     shopify_import=import_object,
                     shopify_order_id=str(order.id),
-                    order=order,
+                    order=created_order,
                 ).save()
 
     @classmethod
@@ -211,3 +217,53 @@ class ShopifyOrderImporter:
             "sale_price": None,
         }
         return data
+
+
+class ShopifyFulfillment:
+    """Methods for marking Shopify orders fulfilled."""
+
+    @classmethod
+    def fulfill_completed_orders(cls):
+        """Fulfill completed Shopify orders."""
+        orders = cls._get_fulfilled_orders()
+        for order in orders:
+            cls._mark_order_fulfilled(order)
+
+    @classmethod
+    def _get_fulfilled_orders(cls):
+        unfulfilled_shopify_orders = ShopifyOrder.objects.filter(
+            fulfiled=False, order__isnull=False
+        )
+        unfulfilled_shopify_order_ids = unfulfilled_shopify_orders.values_list(
+            "order__order_id", flat=True
+        )
+        dispatched_cc_order_ids = set(
+            CloudCommerceOrder.objects.filter(
+                order_ID__in=unfulfilled_shopify_order_ids, dispatched_at__isnull=False
+            ).values_list("order_ID", flat=True)
+        )
+        return [
+            order
+            for order in unfulfilled_shopify_orders
+            if order.order.order_id in dispatched_cc_order_ids
+        ]
+
+    @classmethod
+    @shopify_api_py.shopify_api_session
+    def _mark_order_fulfilled_on_shopify(cls, order):
+        location_id = shopify_api_py.locations.get_inventory_locations()[0].id
+        shopify_api_py.fulfillment.create_fulfill_order(
+            order_id=order.shopify_order_id, location_id=location_id
+        )
+
+    @classmethod
+    def _mark_order_fulfilled(cls, order):
+        try:
+            cls._mark_order_fulfilled_on_shopify(order)
+        except Exception as e:
+            ShopifyFulfillmentError(
+                shopify_order=order, error=str(e) + traceback.format_exc()
+            ).save()
+        else:
+            order.fulfiled = True
+            order.save()

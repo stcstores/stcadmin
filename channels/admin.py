@@ -105,11 +105,21 @@ class ShopifyOrderAdmin(admin.ModelAdmin):
         "shopify_import",
         "shopify_order_id",
         "order",
+        "fulfiled",
         "error",
     )
-    fields = (
+    list_display = (
         "shopify_import",
         "shopify_order_id",
         "order",
+        "fulfiled",
         "error",
     )
+
+
+@admin.register(models.ShopifyFulfillmentError)
+class ShopifyFulfillmentErrorAdmin(admin.ModelAdmin):
+    """Admin for the ShopifyFulfillmentError model."""
+
+    fields = ("shopify_order", "error")
+    list_display = ("shopify_order", "error")

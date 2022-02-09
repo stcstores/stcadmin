@@ -10,6 +10,8 @@ from .cloud_commerce_order import (
 )
 from .shopify_models import (
     ShopifyConfig,
+    ShopifyFulfillment,
+    ShopifyFulfillmentError,
     ShopifyImport,
     ShopifyInventoryUpdater,
     ShopifyOrder,
@@ -31,6 +33,8 @@ __all__ = [
     "CreatedOrderProduct",
     "CreateOrder",
     "ShopifyConfig",
+    "ShopifyFulfillment",
+    "ShopifyFulfillmentError",
     "ShopifyImport",
     "ShopifyInventoryUpdater",
     "ShopifyOrder",
