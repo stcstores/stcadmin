@@ -6,14 +6,19 @@
 <script src="{% static 'scripts/stock_manager.js' %}"></script>
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
-<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
+<script>
+  {
+    % include 'inventory/widgets/product_widgets.js' %
+  }
+</script>
 <link rel="stylesheet" href="{% static 'css/range_page.css' %}">
 {% endblock %}
 
 {% block content %}{{ block.super }}
 <div class="field_selection">
   {% for field in formset.0.visible_fields %}
-  <button id="hide_{{ field.name }}" class="field_select{% if field.name in error_fields %} error{% endif %}">{{ field.label }}</button>
+  <button id="hide_{{ field.name }}"
+    class="field_select{% if field.name in error_fields %} error{% endif %}">{{ field.label }}</button>
   {% endfor %}
 </div>
 <div class="variation_selectors">
@@ -65,8 +70,8 @@
     </tr>
 
     <script>
-      $(document).ready(function() {
-        $('.copyrow input, .copyrow select').each(function() {
+      $(document).ready(function () {
+        $('.copyrow input, .copyrow select').each(function () {
           $(this).removeAttr('name');
           $(this).removeAttr('id');
         });
@@ -87,7 +92,7 @@
       {% endfor %}
       {% for field in form.visible_fields %}
       {% if field.errors %}
-        <td class="error field_cell {{ field.name }}">{{ field.errors }}</td>
+      <td class="error field_cell {{ field.name }}">{{ field.errors }}</td>
       {% endif %}
       {% endfor %}
 
@@ -96,7 +101,7 @@
     </tr>
     {% endfor %}
     <th colspan="{{ formset.0.variation_options | length | add:"2" }}">
-      <a href="{% url 'inventory:edit_product' edit.pk %}">
+      <a href="{% url 'inventory:edit_product' product_range.pk %}">
         <button type="button">Back</button>
       </a>
       <button type="submit">Save</button>
@@ -109,7 +114,7 @@
 {% block script %}{{ block.super }}
 <script src="{% static 'scripts/variation_form.js' %}"></script>
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
     var table_width = $('.variation_table').find("tr:first th").length;
     $('.save_row').attr('colspan', table_width);
   });

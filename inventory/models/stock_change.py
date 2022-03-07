@@ -10,7 +10,6 @@ class StockChange(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     timestamp = models.DateTimeField(auto_now=True)
     product_sku = models.CharField(max_length=11)
-    product_id = models.CharField(max_length=50)
     stock_before = models.PositiveIntegerField()
     stock_after = models.PositiveIntegerField()
 

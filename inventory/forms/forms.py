@@ -5,11 +5,8 @@ from django import forms
 from django.db import transaction
 
 from inventory import models
-from inventory.cloud_commerce_updater import PartialRangeUpdater
-from inventory.forms import fields
+from inventory.forms import fields as inventory_fields
 from stcadmin.forms import KwargFormSet
-
-from .base import ProductEditorBase
 
 
 class ProductRangeForm(forms.Form):
@@ -24,14 +21,23 @@ class ProductRangeForm(forms.Form):
     )
 
 
-class DescriptionForm(forms.Form):
+class CreateRangeForm(forms.ModelForm):
     """Form for editing attributes that are the same across a range."""
 
-    title = fields.Title()
-    department = fields.Department()
-    description = fields.Description()
-    amazon_bullets = fields.AmazonBulletPoints()
-    search_terms = fields.AmazonSearchTerms()
+    class Meta:
+        """Meta for CreateRangeForm."""
+
+        model = models.ProductRange
+        exclude = ["end_of_line", "hidden", "status"]
+        field_classes = {
+            "name": inventory_fields.Title,
+            "description": inventory_fields.Description,
+            "amazon_search_terms": inventory_fields.AmazonSearchTerms,
+            "amazon_bullet_points": inventory_fields.AmazonBulletPoints,
+        }
+        widgets = {"managed_by": forms.HiddenInput}
+
+    sku = forms.CharField(required=False, widget=forms.HiddenInput)
 
     def clean(self, *args, **kwargs):
         """Format amazon list strings."""
@@ -44,6 +50,7 @@ class DescriptionForm(forms.Form):
             cleaned_data["search_terms"] = self.format_amazon_list(
                 cleaned_data["search_terms"]
             )
+        cleaned_data["sku"] = models.new_range_sku()
         return cleaned_data
 
     def format_amazon_list(self, amazon_list_json):
@@ -51,57 +58,122 @@ class DescriptionForm(forms.Form):
         return "|".join(amazon_list_json)
 
 
-class CreateBayForm(forms.Form):
-    """Form for creating new Warehouse Bays."""
+class InitialProductForm(forms.ModelForm):
+    """Form for setting initial product attributes."""
 
-    BACKUP = "backup"
-    PRIMARY = "primary"
-    BAY_TYPE_CHOICES = ((PRIMARY, "Primary"), (BACKUP, "Backup"))
+    class Meta:
+        """Meta for InitialProductForm."""
 
-    def __init__(self, *args, **kwargs):
-        """Add fields to form."""
-        super().__init__(*args, **kwargs)
-        self.fields["department"] = fields.Department(label="Department")
-        self.fields[
-            "department"
-        ].help_text = "The department to which the bay's contents belong."
-        self.fields["name"] = forms.CharField(max_length=255, required=True)
-        self.fields["name"].help_text = "The name of the bay to be created."
-        self.fields["bay_type"] = forms.ChoiceField(
-            choices=self.BAY_TYPE_CHOICES,
-            widget=forms.RadioSelect,
-            required=True,
-            initial=self.PRIMARY,
+        model = models.Product
+        exclude = (
+            "end_of_line",
+            "gender",
+            "range_order",
         )
-        self.fields[
-            "bay_type"
-        ].help_text = "Is this a primary picking location or backup bay?"
-        self.fields["location"] = fields.Warehouse(label="Location")
-        self.fields["location"].help_text = "The physical location of the bay."
-        self.fields["location"].required = False
+        field_classes = {
+            # "barcode": inventory_fields.Barcode,
+            # "purchase_price": inventory_fields.PurchasePrice,
+            # "retail_price": inventory_fields.RetailPrice,
+            # "vat_rate": inventory_fields.VATRateField,
+            # "stock_level": inventory_fields.StockLevel,
+            # "bay": inventory_fields.BayField,
+            # "weight_grans": inventory_fields.Weight,
+            # "brand": inventory_fields.Brand,
+            # "manufacturer": inventory_fields.Manufacturer,
+            # "package_type": inventory_fields.PackageType,
+        }
+        widgets = {"product_range": forms.HiddenInput, "sku": forms.HiddenInput}
+
+        field_order = (
+            "barcode",
+            "purchase_prce",
+            "retail_price",
+            "vat_rate",
+            "stock_level",
+            "bay",
+            "weight_grams",
+            "length_mm",
+            "height_mm",
+            "width_mm",
+            "dimensions",
+            "package_type",
+            "hs_code",
+            "brand",
+            "manufacturer",
+        )
+
+    sku = forms.CharField(required=False, widget=forms.HiddenInput)
 
     def clean(self, *args, **kwargs):
-        """Create correct name for bay and ensure it does not already exist."""
-        data = super().clean(*args, **kwargs)
-        data["warehouse"] = data["department"].default_warehouse()
-        if data["bay_type"] == self.BACKUP:
-            if "location" not in data or not data["location"]:
-                self.add_error("location", "Location is required for backup bays.")
-                return
-            self.new_bay = models.Bay.new_backup_bay(
-                name=data["name"],
-                department=data["warehouse"],
-                backup_location=data["location"],
-            )
-        else:
-            self.new_bay = models.Bay(name=data["name"], warehouse=data["warehouse"])
-        self.new_bay.clean()
-        self.new_bay.validate_unique()
-        return data
+        """Return cleaned form data."""
+        cleaned_data = super().clean(*args, **kwargs)
+        cleaned_data["sku"] = models.new_product_sku()
+        return cleaned_data
 
-    def save(self):
-        """Create Warehouse Bay."""
-        self.new_bay.save()
+
+class SetupVariationsForm(forms.Form):
+    """Setup variaion product options for a new product."""
+
+    variations = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        """Add fields."""
+        super().__init__(*args, **kwargs)
+        for variation_option in models.VariationOption.objects.all():
+            self.fields[str(variation_option.pk)] = inventory_fields.VariationOptions(
+                required=False,
+                variation_option=variation_option,
+                label=variation_option.name,
+            )
+
+
+class ProductForm(forms.ModelForm):
+    """Form for editing indivdual Products."""
+
+    class Meta:
+        """Meta for InitialProductForm."""
+
+        model = models.Product
+        exclude = ("end_of_line", "gender", "range_order", "sku")
+        field_classes = {
+            # "barcode": inventory_fields.Barcode,
+            # "purchase_price": inventory_fields.PurchasePrice,
+            # "retail_price": inventory_fields.RetailPrice,
+            # "vat_rate": inventory_fields.VATRateField,
+            # "stock_level": inventory_fields.StockLevel,
+            # "bay": inventory_fields.BayField,
+            # "weight_grans": inventory_fields.Weight,
+            # "brand": inventory_fields.Brand,
+            # "manufacturer": inventory_fields.Manufacturer,
+            # "package_type": inventory_fields.PackageType,
+        }
+        widgets = {
+            "product_range": forms.HiddenInput,
+        }
+
+        field_order = (
+            "barcode",
+            "purchase_prce",
+            "retail_price",
+            "vat_rate",
+            "stock_level",
+            "bay",
+            "weight_grams",
+            "length_mm",
+            "height_mm",
+            "width_mm",
+            "dimensions",
+            "package_type",
+            "hs_code",
+            "brand",
+            "manufacturer",
+        )
+
+
+class ProductFormset(KwargFormSet):
+    """Formset for updating the locations of all Products within a Range."""
+
+    form = ProductForm
 
 
 class ImagesForm(forms.Form):
@@ -115,110 +187,6 @@ class ImagesForm(forms.Form):
             attrs={"multiple": True, "accept": ".jpg, .png"}
         ),
     )
-
-
-class ProductForm(ProductEditorBase, forms.Form):
-    """Form for editing indivdual Products."""
-
-    def __init__(self, *args, **kwargs):
-        """Configure form fields."""
-        self.product = kwargs.pop("product")
-        self.user = kwargs.pop("user")
-        super().__init__(*args, **kwargs)
-        self.fields[self.BRAND] = fields.Brand()
-        self.fields[self.MANUFACTURER] = fields.Manufacturer()
-        self.fields[self.BARCODE] = fields.Barcode()
-        self.fields[self.SUPPLIER_SKU] = fields.SupplierSKU()
-        self.fields[self.SUPPLIER] = fields.Supplier()
-        self.fields[self.PURCHASE_PRICE] = fields.PurchasePrice()
-        self.fields[self.VAT_RATE] = fields.VATRate()
-        self.fields[self.PRICE] = fields.Price()
-        self.fields[self.RETAIL_PRICE] = fields.RetailPrice()
-        self.fields[self.LOCATION] = fields.WarehouseBayField()
-        self.fields[self.PACKAGE_TYPE] = fields.PackageType()
-        self.fields[self.INTERNATIONAL_SHIPPING] = fields.InternationalShipping()
-        self.fields[self.WEIGHT] = fields.Weight()
-        self.fields[self.DIMENSIONS] = fields.Dimensions()
-        self.fields[self.GENDER] = fields.Gender()
-        self.initial = self.get_initial()
-
-    def get_initial(self):
-        """Get initial values for form."""
-        initial = {}
-        initial[self.BRAND] = self.product.brand
-        initial[self.MANUFACTURER] = self.product.manufacturer
-        initial[self.BARCODE] = self.product.barcode
-        initial[self.PRICE] = self.product.price
-        initial[self.VAT_RATE] = self.product.VAT_rate
-        bays = self.product.bays.all()
-        warehouses = list(set([bay.warehouse for bay in bays]))
-        if len(warehouses) > 1:
-            raise ValueError(f"Product {self.product.SKU} is in multiple warehouses.")
-        elif len(warehouses) == 1:
-            initial[self.LOCATION] = {
-                self.WAREHOUSE: warehouses[0].id,
-                self.BAYS: [bay.id for bay in bays],
-            }
-        initial[self.DIMENSIONS] = {
-            self.HEIGHT: self.product.height_mm,
-            self.LENGTH: self.product.length_mm,
-            self.WIDTH: self.product.width_mm,
-        }
-        initial[self.WEIGHT] = self.product.weight_grams
-        initial[self.PURCHASE_PRICE] = self.product.purchase_price
-        initial[self.RETAIL_PRICE] = self.product.retail_price
-        initial[self.PACKAGE_TYPE] = self.product.package_type
-        initial[self.SUPPLIER] = self.product.supplier
-        initial[self.SUPPLIER_SKU] = self.product.supplier_SKU
-        initial[self.INTERNATIONAL_SHIPPING] = self.product.international_shipping
-        initial[self.GENDER] = self.product.gender
-        return initial
-
-    def clean(self):
-        """Clean submitted data."""
-        cleaned_data = super().clean()
-        if self.LOCATION in cleaned_data:
-            bay_IDs = [bay.id for bay in cleaned_data[self.LOCATION][self.BAYS]]
-            cleaned_data[self.BAYS] = list(models.Bay.objects.filter(id__in=bay_IDs))
-        return cleaned_data
-
-    def save(self, *args, **kwargs):
-        """Update product."""
-        data = self.cleaned_data
-        updater_class = kwargs["updater_class"]
-        updater = updater_class(self.product, self.user)
-        updater.set_brand(data[self.BRAND])
-        updater.set_manufacturer(data[self.MANUFACTURER])
-        updater.set_barcode(data[self.BARCODE])
-        updater.set_price(data[self.PRICE])
-        updater.set_VAT_rate(data[self.VAT_RATE])
-        updater.set_bays(data[self.BAYS])
-        updater.set_width(data[self.DIMENSIONS][self.WIDTH])
-        updater.set_height(data[self.DIMENSIONS][self.HEIGHT])
-        updater.set_length(data[self.DIMENSIONS][self.LENGTH])
-        updater.set_weight(data[self.WEIGHT])
-        updater.set_package_type(data[self.PACKAGE_TYPE])
-        updater.set_international_shipping(data[self.INTERNATIONAL_SHIPPING])
-        updater.set_purchase_price(data[self.PURCHASE_PRICE])
-        updater.set_retail_price(data[self.RETAIL_PRICE])
-        updater.set_supplier(data[self.SUPPLIER])
-        updater.set_supplier_SKU(data[self.SUPPLIER_SKU])
-        updater.set_gender(data[self.GENDER])
-
-
-class VariationForm(ProductForm):
-    """Form for the variation page."""
-
-    def __init__(self, *args, **kwargs):
-        """Make the location field inline."""
-        super().__init__(*args, **kwargs)
-        self.fields[self.LOCATION] = fields.WarehouseBayField(inline=True)
-
-
-class VariationsFormSet(KwargFormSet):
-    """Formset for updating the locations of all Products within a Range."""
-
-    form = VariationForm
 
 
 class AddProductOption(forms.Form):
@@ -235,13 +203,13 @@ class AddProductOption(forms.Form):
 
     def add_fields(self):
         """Add fields to the form."""
-        self.fields["option"] = fields.SelectProductOption(
+        self.fields["option"] = inventory_fields.SelectProductOption(
             product_range=self.product_range
         )
         for option_ID, name in self.fields["option"].choices:
             if not option_ID:
                 continue
-            self.fields[f"values_{option_ID}"] = fields.VariationOptions(
+            self.fields[f"values_{option_ID}"] = inventory_fields.VariationOptions(
                 product_option=models.ProductOption.objects.get(pk=option_ID),
                 product_range=self.product_range,
                 label=name,
@@ -264,15 +232,16 @@ class AddProductOption(forms.Form):
     @transaction.atomic
     def save(self):
         """Save changes to the database."""
-        product_option = self.cleaned_data["option"]
-        product_option_values = self.cleaned_data["values"]
-        updater = PartialRangeUpdater(self.product_range, self.user)
-        if self.variation is True:
-            updater.add_variation_product_option(product_option)
-        else:
-            updater.add_listing_product_option(product_option)
-        for value in product_option_values:
-            self.edit.product_option_values.add(value)
+        pass
+        # product_option = self.cleaned_data["option"]
+        # product_option_values = self.cleaned_data["values"]
+        # updater = PartialRangeUpdater(self.product_range, self.user)
+        # if self.variation is True:
+        #     updater.add_variation_product_option(product_option)
+        # else:
+        #     updater.add_listing_product_option(product_option)
+        # for value in product_option_values:
+        #     self.edit.product_option_values.add(value)
 
 
 class SetProductOptionValues(forms.Form):
@@ -299,7 +268,7 @@ class SetProductOptionValues(forms.Form):
     def add_option_field(self, option, variation):
         """Add a product option field to the form."""
         name = f"option_{option.name}"
-        self.fields[name] = fields.PartialProductOptionValueSelect(
+        self.fields[name] = inventory_fields.PartialProductOptionValueSelect(
             edit=self.edit, product_option=option
         )
         if variation is True:
@@ -417,7 +386,7 @@ class AddProductOptionValuesForm(forms.Form):
         self.edit = kwargs.pop("edit")
         self.product_option = kwargs.pop("product_option")
         super().__init__(*args, **kwargs)
-        self.fields["values"] = fields.VariationOptions(
+        self.fields["values"] = inventory_fields.VariationOptions(
             product_option=self.product_option,
             product_range=self.edit.partial_product_range,
             label=self.product_option.name,
@@ -427,30 +396,3 @@ class AddProductOptionValuesForm(forms.Form):
         """Add product option values to the produt edit."""
         for value in self.cleaned_data["values"]:
             self.edit.product_option_values.add(value)
-
-
-class SetupVariationsForm(forms.Form):
-    """Setup variaion product options for a new product."""
-
-    def __init__(self, *args, **kwargs):
-        """Add fields."""
-        super().__init__(*args, **kwargs)
-        for product_option in models.ProductOption.objects.all():
-            self.fields[str(product_option.pk)] = fields.VariationOptions(
-                required=False, product_option=product_option, label=product_option.name
-            )
-
-    def clean(self):
-        """Return the submitted variations as {product_option: product_option_value}."""
-        data = dict(super().clean())
-        for field, values in data.items():
-            if len(values) == 1:
-                self.add_error(
-                    field,
-                    "At least two values must be selected for any used drop down.",
-                )
-        cleaned_data = {
-            models.ProductOption.objects.get(id=int(key)): value
-            for key, value in data.items()
-        }
-        return cleaned_data

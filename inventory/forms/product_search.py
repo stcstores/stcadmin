@@ -25,12 +25,10 @@ class ProductSearchForm(forms.Form):
     )
 
     SEARCH_FIELDS = (
-        "product_range__range_ID",
         "product_range__name",
-        "product_range__SKU",
-        "product_ID",
-        "SKU",
-        "supplier_SKU",
+        "product_range__sku",
+        "sku",
+        "supplier_sku",
         "barcode",
     )
 
@@ -42,7 +40,6 @@ class ProductSearchForm(forms.Form):
         label="End of Line",
         help_text="Hide End of Line Ranges",
     )
-    department = fields.Department(required=False)
     supplier = fields.Supplier(required=False)
     show_hidden = forms.BooleanField(required=False)
 
@@ -68,7 +65,6 @@ class ProductSearchForm(forms.Form):
 
     def _filter_ranges(self, ranges):
         ranges = self._filter_end_of_line(ranges)
-        ranges = self._filter_department(ranges)
         ranges = self._filter_hidden(ranges)
         return ranges
 
@@ -82,11 +78,6 @@ class ProductSearchForm(forms.Form):
             ranges = ranges.filter(end_of_line=False)
         elif eol == self.ONLY_EOL:
             ranges = ranges.filter(end_of_line=True)
-        return ranges
-
-    def _filter_department(self, ranges):
-        if self.cleaned_data.get("department"):
-            ranges = ranges.filter(department=self.cleaned_data["department"])
         return ranges
 
     def _filter_supplier(self, products):

@@ -22,7 +22,7 @@ class PrintBarcodeLabels(InventoryUserMixin, TemplateView):
         """Get template context data."""
         context = super().get_context_data(*args, **kwargs)
         context["product_range"] = get_object_or_404(
-            models.ProductRange, range_ID=self.kwargs.get("range_id")
+            models.ProductRange, pk=self.kwargs.get("range_pk")
         )
         return context
 

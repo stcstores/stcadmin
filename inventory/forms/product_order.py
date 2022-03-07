@@ -10,7 +10,7 @@ from stcadmin.forms import KwargFormSet
 class ProductOrderForm(forms.Form):
     """Form for setting the order of products within a range."""
 
-    product_ID = forms.CharField()
+    product_id = forms.CharField()
     range_order = forms.IntegerField()
 
     def __init__(self, *args, **kwargs):
@@ -22,14 +22,14 @@ class ProductOrderForm(forms.Form):
     def get_initial(self):
         """Return initial data."""
         initial = {}
-        initial["product_ID"] = self.product.product_ID
+        initial["product_id"] = self.product.pk
         initial["range_order"] = self.product.range_order
         return initial
 
     def save(self):
         """Update the order of products."""
         data = self.cleaned_data
-        product = get_object_or_404(models.Product, product_ID=data["product_ID"])
+        product = get_object_or_404(models.Product, product_id=data["product_id"])
         product.range_order = data["range_order"]
         product.save()
 

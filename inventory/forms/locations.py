@@ -2,11 +2,10 @@
 
 from django import forms
 
-from inventory.cloud_commerce_updater import ProductUpdater
 from stcadmin.forms import KwargFormSet
 
 from .base import ProductEditorBase
-from .fields import WarehouseBayField
+from .fields import BayField
 
 
 class LocationsForm(forms.Form):
@@ -14,7 +13,6 @@ class LocationsForm(forms.Form):
 
     PRODUCT_NAME = "product_name"
     LOCATION = "locations"
-    WAREHOUSE = ProductEditorBase.WAREHOUSE
     BAYS = ProductEditorBase.BAYS
 
     def __init__(self, *args, **kwargs):
@@ -22,7 +20,7 @@ class LocationsForm(forms.Form):
         self.product = kwargs.pop("product")
         self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
-        self.fields[self.LOCATION] = WarehouseBayField(inline=True)
+        self.fields[self.LOCATION] = BayField(inline=True)
         self.cleaned_data = {}
         self.initial.update(self.get_initial())
 
@@ -48,8 +46,9 @@ class LocationsForm(forms.Form):
 
     def save(self):
         """Update product with new bays."""
-        updater = ProductUpdater(self.product, self.user)
-        updater.set_bays(self.cleaned_data[self.BAYS])
+        pass
+        # updater = ProductUpdater(self.product, self.user)
+        # updater.set_bays(self.cleaned_data[self.BAYS])
 
 
 class LocationsFormSet(KwargFormSet):

@@ -7,7 +7,6 @@ from django.db import models
 class VATRate(models.Model):
     """Model for VAT rates."""
 
-    VAT_rate_ID = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=50, unique=True)
     percentage = models.FloatField(
         validators=[MinValueValidator(0.0), MaxValueValidator(1)]

@@ -9,40 +9,32 @@ app_name = "inventory"
 inventory_urlpatterns = [
     path("product_search/", views.ProductSearchView.as_view(), name="product_search"),
     path(
-        "product_range/<int:range_id>/",
+        "product_range/<int:range_pk>/",
         views.ProductRangeView.as_view(),
         name="product_range",
     ),
     path(
-        "locations/<int:range_id>/", views.LocationFormView.as_view(), name="locations"
+        "locations/<int:range_pk>/", views.LocationFormView.as_view(), name="locations"
     ),
-    path("images/<int:range_id>/", views.ImageFormView.as_view(), name="images"),
+    path("images/<int:range_pk>/", views.ImageFormView.as_view(), name="images"),
     path("product/<int:product_id>/", views.ProductView.as_view(), name="product"),
     path(
-        "variations/<int:range_id>/", views.VariationsView.as_view(), name="variations"
-    ),
-    path(
-        "descriptions/<int:range_id>/",
+        "descriptions/<int:range_pk>/",
         views.DescriptionsView.as_view(),
         name="descriptions",
     ),
     path("sku_generator/", views.SKUGeneratorView.as_view(), name="sku_generator"),
     path(
-        "product_order/<int:range_id>/",
+        "product_order/<int:range_pk>/",
         views.ProductOrderView.as_view(),
         name="product_order",
     ),
     path(
-        "print_barcodes/<int:range_id>/",
+        "print_barcodes/<int:range_pk>/",
         views.PrintBarcodeLabels.as_view(),
         name="print_barcodes",
     ),
     path("barcode_pdf/", views.BarcodePDF.as_view(), name="barcode_pdf"),
-    path(
-        "create_warehouse_bay/",
-        views.CreateBayView.as_view(),
-        name="create_warehouse_bay",
-    ),
     path("suppliers/suppliers/", views.Suppliers.as_view(), name="suppliers"),
     path("suppliers/<int:pk>/", views.Supplier.as_view(), name="supplier"),
     path(
@@ -91,26 +83,21 @@ api_urlpatterns = [
 
 product_editor_patterns = [
     path(
-        "start_editing_product/<int:range_ID>/",
-        views.StartEditingProduct.as_view(),
-        name="start_editing_product",
-    ),
-    path(
         "start_new_product/", views.StartNewProduct.as_view(), name="start_new_product"
     ),
     path(
-        "edit_product/<int:edit_ID>/", views.EditProduct.as_view(), name="edit_product"
+        "edit_product/<int:range_pk>/", views.EditProduct.as_view(), name="edit_product"
     ),
     path(
-        "edit_variations/<int:edit_ID>/",
+        "edit_variations/<int:range_pk>/",
         views.EditVariations.as_view(),
         name="edit_variations",
     ),
     path("continue/", views.Continue.as_view(), name="continue"),
     path(
-        "edit_range_details/<int:edit_ID>/",
+        "range_form/<int:edit_ID>/",
         views.EditRangeDetails.as_view(),
-        name="edit_range_details",
+        name="range_form",
     ),
     path(
         "add_dropdown/<int:edit_ID>/", views.AddDropdown.as_view(), name="add_dropdown"
@@ -141,12 +128,12 @@ product_editor_patterns = [
         name="edit_variation",
     ),
     path(
-        "create_initial_variation/<int:edit_ID>/<int:product_ID>/",
+        "create_initial_variation/<int:range_pk>/",
         views.CreateInitialVariation.as_view(),
         name="create_initial_variation",
     ),
     path(
-        "edit_all_variations/<int:edit_ID>/",
+        "edit_all_variations/<int:range_pk>/",
         views.EditAllVariations.as_view(),
         name="edit_all_variations",
     ),
@@ -174,7 +161,7 @@ product_editor_patterns = [
         "save_changes/<int:edit_ID>/", views.SaveChanges.as_view(), name="save_changes"
     ),
     path(
-        "setup_variations/<int:edit_ID>/",
+        "setup_variations/<int:range_pk>/",
         views.SetupVariations.as_view(),
         name="setup_variations",
     ),

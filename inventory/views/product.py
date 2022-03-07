@@ -6,7 +6,6 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 
 from inventory import forms, models
-from inventory.cloud_commerce_updater import ProductUpdater
 
 from .views import InventoryUserMixin
 
@@ -32,7 +31,7 @@ class ProductView(InventoryUserMixin, FormView):
 
     def form_valid(self, form):
         """Process form request and return HttpResponse."""
-        form.save(updater_class=ProductUpdater)
+        form.save()
         messages.add_message(self.request, messages.SUCCESS, "Product Updated")
         return super().form_valid(form)
 

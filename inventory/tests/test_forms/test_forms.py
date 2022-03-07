@@ -8,7 +8,7 @@ from inventory.tests import fixtures
 from .form_test import FormTest
 
 
-class TestDescriptionForm(FormTest):
+class TestCreateRangeForm(FormTest):
     TITLE = "title"
     DEPARTMENT = "department"
     DESCRIPTION = "description"
@@ -36,7 +36,7 @@ class TestDescriptionForm(FormTest):
             self.AMAZON_BULLETS: json.dumps(self.AMAZON_BULLETS_VALUE),
             self.SEARCH_TERMS: json.dumps(self.SEARCH_TERMS_VALUE),
         }
-        form = forms.DescriptionForm(form_data)
+        form = forms.CreateRangeForm(form_data)
         self.assert_form_is_valid(form)
         self.assertEqual(form.cleaned_data[self.TITLE], self.TITLE_VALUE)
         self.assertEqual(form.cleaned_data[self.DEPARTMENT], self.department)
@@ -55,7 +55,7 @@ class TestDescriptionForm(FormTest):
             self.AMAZON_BULLETS: json.dumps(self.AMAZON_BULLETS_VALUE),
             self.SEARCH_TERMS: json.dumps(self.SEARCH_TERMS_VALUE),
         }
-        form = forms.DescriptionForm(form_data)
+        form = forms.CreateRangeForm(form_data)
         self.assert_form_invalid(form)
         self.assertIn(self.TITLE, form.errors)
 
@@ -66,7 +66,7 @@ class TestDescriptionForm(FormTest):
             self.AMAZON_BULLETS: json.dumps(self.AMAZON_BULLETS_VALUE),
             self.SEARCH_TERMS: json.dumps(self.SEARCH_TERMS_VALUE),
         }
-        form = forms.DescriptionForm(form_data)
+        form = forms.CreateRangeForm(form_data)
         self.assert_form_invalid(form)
         self.assertIn(self.DEPARTMENT, form.errors)
 
@@ -77,7 +77,7 @@ class TestDescriptionForm(FormTest):
             self.AMAZON_BULLETS: json.dumps(self.AMAZON_BULLETS_VALUE),
             self.SEARCH_TERMS: json.dumps(self.SEARCH_TERMS_VALUE),
         }
-        form = forms.DescriptionForm(form_data)
+        form = forms.CreateRangeForm(form_data)
         self.assert_form_is_valid(form)
         self.assertEqual(form.cleaned_data[self.DESCRIPTION], "")
 
@@ -88,7 +88,7 @@ class TestDescriptionForm(FormTest):
             self.DESCRIPTION: self.DESCRIPTION_VALUE,
             self.SEARCH_TERMS: json.dumps(self.SEARCH_TERMS_VALUE),
         }
-        form = forms.DescriptionForm(form_data)
+        form = forms.CreateRangeForm(form_data)
         self.assert_form_is_valid(form)
         self.assertEqual(form.cleaned_data[self.AMAZON_BULLETS], "")
 
@@ -102,7 +102,7 @@ class TestDescriptionForm(FormTest):
             ),
             self.SEARCH_TERMS: json.dumps(self.SEARCH_TERMS_VALUE),
         }
-        form = forms.DescriptionForm(form_data)
+        form = forms.CreateRangeForm(form_data)
         self.assert_form_invalid(form)
 
     def test_form_without_search_terms(self):
@@ -112,7 +112,7 @@ class TestDescriptionForm(FormTest):
             self.DESCRIPTION: self.DESCRIPTION_VALUE,
             self.AMAZON_BULLETS: json.dumps(self.AMAZON_BULLETS_VALUE),
         }
-        form = forms.DescriptionForm(form_data)
+        form = forms.CreateRangeForm(form_data)
         self.assert_form_is_valid(form)
         self.assertEqual(form.cleaned_data[self.SEARCH_TERMS], "")
 
@@ -126,7 +126,7 @@ class TestDescriptionForm(FormTest):
                 ["One", "Two", "Three", "Four", "Five", "Six"]
             ),
         }
-        form = forms.DescriptionForm(form_data)
+        form = forms.CreateRangeForm(form_data)
         self.assert_form_invalid(form)
 
 

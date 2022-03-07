@@ -5,7 +5,7 @@
 {% block content %}{{ block.super }}
 
 <div class="buttons">
-  <a href="{% url 'inventory:start_editing_product' product_range.range_ID %}">
+  <a href="{% url 'inventory:edit_product' product_range.pk %}">
     <button>Product Editor</button>
   </a>
   <a href="" class="button_link">
@@ -33,7 +33,7 @@
     <tr class="row">
       <td class="column SKU sku">{{ product.SKU }}</td>
       <td class="column edit">
-        <a href="{% url 'inventory:product' product.product_ID %}">
+        <a href="{% url 'inventory:product' product.pk %}">
           <button>Edit</button>
         </a>
       </td>
@@ -43,7 +43,7 @@
       {% for option, value in product.listing_options.items %}
       <td class="column option listing_option name">{{ value }}</td>
       {% endfor %}
-      <td class="column supplier_SKU sku">{{ product.supplier_SKU }}</td>
+      <td class="column supplier_SKU sku">{{ product.supplier_sku }}</td>
       <td class="column SKU sku">{{ product.barcode }}</td>
       <td class="column stock_level">{% include 'inventory/update_stock.html' %}</td>
     </tr>

@@ -17,45 +17,44 @@
       <span class="name">{{ product_range.name }}</span>&nbsp;&nbsp;&nbsp;
       {% help_button 'inventory_help' 'inventory-range_page' %}
     </div>
-    <div>Range SKU: <span class="sku">{{ product_range.SKU}}</span></div>
-    <div>ID: <span class="sku">{{ product_range.range_ID }}</span></div>
+    <div>Range SKU: <span class="sku">{{ product_range.sku}}</span></div>
     <div>Department: {{ product_range.department }}</div>
   </div>
 
   {% with request.get_full_path as current_url %}
   <div class="range_nav">
-    {% url 'inventory:product_range' product_range.range_ID as url %}
-    <div {% if current_url == url %} class="active"{% endif %}>
+    {% url 'inventory:product_range' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Range</a>
     </div>
-    {% url 'inventory:descriptions' product_range.range_ID as url %}
-    <div {% if current_url == url %} class="active"{% endif %}>
+    {% url 'inventory:descriptions' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Description</a>
     </div>
     {% if product_range.has_variations %}
-    {% url 'inventory:variations' product_range.range_ID as url %}
-    <div {% if current_url == url %} class="active"{% endif %}>
+    {% url 'inventory:variations' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Variations</a>
     </div>
-    {% url 'inventory:product_order' product_range.range_ID as url %}
-    <div {% if current_url == url %} class="active"{% endif %}>
+    {% url 'inventory:product_order' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Variation Order</a>
     </div>
     {% endif %}
-    {% url 'inventory:locations' product_range.range_ID as url %}
-    <div {% if current_url == url %} class="active"{% endif %}>
+    {% url 'inventory:locations' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Location</a>
     </div>
-    {% url 'inventory:images' product_range.range_ID as url %}
-    <div {% if current_url == url %} class="active"{% endif %}>
+    {% url 'inventory:images' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Images</a>
     </div>
-    {% url 'price_calculator:range_price_calculator' product_range.range_ID as url %}
-    <div {% if current_url == url %} class="active"{% endif %}>
+    {% url 'price_calculator:range_price_calculator' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Range Price Calculator</a>
     </div>
-    {% url 'inventory:print_barcodes' product_range.range_ID as url %}
-    <div {% if current_url == url %} class="active"{% endif %}>
+    {% url 'inventory:print_barcodes' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Barcode Labels</a>
     </div>
   </div>

@@ -8,7 +8,6 @@ from list_input import ListInput
 from inventory import models
 
 from . import fieldtypes, widgets
-from .base import ProductEditorBase
 from .fieldtypes import Validators
 
 
@@ -65,7 +64,7 @@ class Barcode(fieldtypes.TextField):
     )
 
 
-class VATRate(fieldtypes.SelectizeModelChoiceField):
+class VATRateField(fieldtypes.SelectizeModelChoiceField):
     """Field for VAT rates."""
 
     label = "VAT Rate"
@@ -189,7 +188,7 @@ class Supplier(fieldtypes.SelectizeModelChoiceField):
 
     def get_queryset(self):
         """Return field choices."""
-        return models.Supplier.objects.filter(inactive=False)
+        return models.Supplier.objects.filter(active=True)
 
 
 class SupplierSKU(fieldtypes.TextField):
@@ -255,7 +254,7 @@ class Dimensions(fieldtypes.CombinationField):
         fields = (Height(), Width(), Length())
         kwargs["widget"] = widgets.DimensionsWidget()
         super().__init__(
-            *args, fields=fields, require_all_fields=False, required=False, **kwargs
+            *args, fields=fields, require_all_fields=True, required=True, **kwargs
         )
 
     def compress(self, value):
@@ -280,54 +279,10 @@ class PackageType(fieldtypes.SelectizeModelChoiceField):
 
     def get_queryset(self):
         """Return a queryset of selectable options."""
-        return models.PackageType.objects.filter(inactive=False)
+        return models.PackageType.objects.filter(active=True)
 
 
-class InternationalShipping(fieldtypes.SelectizeModelChoiceField):
-    """Field for selecting the International Shipping class of a product."""
-
-    label = "International Shipping"
-    name = "international_shipping"
-    variable = True
-    required_message = "An <b>International Shipping type</b> must be supplied."
-    help_text = (
-        "The <b>Shipping Rule</b> will be selected acording to the "
-        "<b>International Shipping type</b>."
-    )
-    selectize_options = {"maxItems": 1}
-
-    def get_queryset(self):
-        """Return a queryset of selectable options."""
-        return models.InternationalShipping.objects.filter(inactive=False)
-
-
-class Department(fieldtypes.SelectizeModelChoiceField):
-    """Field for product department."""
-
-    label = "Department"
-    name = "department"
-    required_message = "A <b>Department</b> must be selected."
-    help_text = "The <b>Department</b> to which the product belongs."
-
-    def get_queryset(self):
-        """Return a queryset of selectable options."""
-        return models.Department.objects.filter(inactive=False)
-
-
-class Warehouse(fieldtypes.SelectizeModelChoiceField):
-    """Field for product department."""
-
-    label = "Warehouse"
-    name = "warehouse"
-    required_message = "A <b>Warehouse</b> must be selected."
-    help_text = "The <b>Warehouse</b> to which the bay belongs."
-
-    def get_queryset(self):
-        """Return a queryset of selectable options."""
-        return models.Warehouse.objects.all()
-
-
-class Location(fieldtypes.SelectizeField):
+class BayField(fieldtypes.SelectizeField):
     """Field for choosing warehouse bays."""
 
     label = "Location"
@@ -349,119 +304,9 @@ class Location(fieldtypes.SelectizeField):
         "sortField": "text",
     }
 
-    def __init__(self, **kwargs):
-        """Set department."""
-        self.warehouse = kwargs.get("department")
-        super().__init__(required=kwargs.get("required"), choices=self.get_choices())
-
     def get_choices(self):
         """Return choices for field."""
-        if self.warehouse is None:
-            warehouses = models.Warehouse.used_warehouses.all()
-            options = [["", ""]]
-            for warehouse in warehouses:
-                options.append(
-                    [warehouse.name, [[bay.id, bay] for bay in warehouse.bay_set.all()]]
-                )
-            return options
-        else:
-            try:
-                warehouse = self.get_warehouse()
-            except models.Warehouse.DoesNotExist:
-                return [("", "")]
-            else:
-                return [(bay.id, bay.name) for bay in warehouse.bay_set.all()]
-
-    def get_warehouse(self):
-        """Return Warehouse object matching the field's warehouse."""
-        if isinstance(self.warehouse, int):
-            return models.Warehouse.objects.get(warehouse_ID=self.warehouse)
-        return models.Warehouse.objects.get(name=self.warehouse)
-
-    def to_python(self, *args, **kwargs):
-        """Return submitted bays as a list of bay IDs."""
-        return [int(x) for x in super().to_python(*args, **kwargs)]
-
-    def get_bay_objects(self, value):
-        """Return the subbmitted bays as a list of Bay model objects."""
-        bays = []
-        for bay_id in value:
-            try:
-                bays.append(models.Bay.objects.get(id=bay_id))
-            except models.DoesNotExist:
-                raise forms.ValidationError("Bay not recognised")
-        return bays
-
-    def check_warehouse(self, bays):
-        """Return the warehouse to which the bays belong or raise ValidationError."""
-        if self.warehouse is None and not bays:
-            raise forms.ValidationError("At least one bay must be provided.")
-            return
-        warehouse = self.warehouse or bays[0].warehouse
-        if not all((bay.warehouse == warehouse for bay in bays)):
-            raise forms.ValidationError("All bays must be in the same warehouse.")
-        return warehouse
-
-    def clean(self, value):
-        """Validate bay selection."""
-        value = super().clean(value)
-        bays = self.get_bay_objects(value)
-        warehouse = self.check_warehouse(bays)
-        primary_bays = [bay for bay in bays if bay.is_primary]
-        if primary_bays:
-            bays = [bay for bay in bays if not bay.is_default]
-        else:
-            if warehouse and not any((bay.is_default for bay in bays)):
-                bays.append(warehouse.default_bay)
-        return [b.id for b in bays]
-
-
-class WarehouseBayField(fieldtypes.CombinationField):
-    """Combined Department and Location fields."""
-
-    label = "Location"
-    help_text = (
-        "Select the <b>Warehouse</b> from which the item will be picked.<br>"
-        "Bays in this Warehouse can then be added to the Bay field."
-        "<br>If the bay field is left blank the default bay for the Warehouse"
-        " will be added."
-    )
-
-    WAREHOUSE = ProductEditorBase.WAREHOUSE
-    BAYS = ProductEditorBase.BAYS
-
-    def __init__(self, *args, **kwargs):
-        """Create sub fields."""
-        kwargs["label"] = "Location"
-        self.lock_warehouse = kwargs.pop("lock_warehouse", False)
-        fields = (Warehouse(), Location(required=False))
-        selectize_options = [field.selectize_options for field in fields]
-        if self.lock_warehouse:
-            selectize_options[0]["readOnly"] = True
-        warehouse_choices = fields[0].choices
-        location_choices = fields[1].get_choices()
-        kwargs["widget"] = widgets.WarehouseBayWidget(
-            choices=[warehouse_choices, location_choices],
-            selectize_options=selectize_options,
-            lock_warehouse=self.lock_warehouse,
-            inline=kwargs.pop("inline", False),
-        )
-        super().__init__(fields=fields, require_all_fields=False, *args, **kwargs)
-
-    def compress(self, value):
-        """Return submitted values as a dict."""
-        return {self.WAREHOUSE: value[0], self.BAYS: value[1]}
-
-    def clean(self, value):
-        """Validate submitted values."""
-        value = super().clean(value)
-        bays = models.Bay.objects.filter(id__in=value[self.BAYS], is_default=False)
-        if not all((bay.warehouse == bays[0].warehouse for bay in bays)):
-            raise Exception("FIX THIS")
-        if len(bays) == 0:
-            bays = [value[self.WAREHOUSE].default_bay]
-        cleaned_value = {self.WAREHOUSE: value[self.WAREHOUSE], self.BAYS: list(bays)}
-        return cleaned_value
+        models.Bay.objects.filter(active=True)
 
 
 class ProductOptionValueField(fieldtypes.SelectizeField):
@@ -476,20 +321,24 @@ class ProductOptionValueField(fieldtypes.SelectizeField):
 
     def __init__(self, *args, **kwargs):
         """Set options for selectize."""
-        self.product_option = kwargs.pop("product_option")
+        self.variation_option = kwargs.pop("variation_option")
         self.product_range = kwargs.pop("product_range", None)
         self.selectize_options = self.selectize_options.copy()
         self.selectize_options["create"] = True
         self.allowed_characters = self.option_allowed_characters.get(
-            self.product_option.name
+            self.variation_option.name
         )
         super().__init__(*args, **kwargs)
 
     def get_choices(self):
         """Return the choices for the field."""
         choices = [("", "")]
-        available_options = models.ProductOptionValue.objects.filter(
-            product_option=self.product_option
+        available_options = (
+            models.VariationOptionValue.objects.filter(
+                variation_option=self.variation_option
+            )
+            .values_list("value", flat=True)
+            .distinct()
         )
         if self.product_range is not None:
             available_options = self.remove_used_options(
@@ -502,7 +351,7 @@ class ProductOptionValueField(fieldtypes.SelectizeField):
         """Filter values already used by the product from the choices."""
         existing_links = models.PartialProductOptionValueLink.objects.filter(
             product__product_range=self.product_range,
-            product_option_value__product_option=self.product_option,
+            product_option_value__product_option=self.variation_option,
         )
         existing_values = models.ProductOptionValue.objects.filter(
             id__in=existing_links.values_list("product_option_value__id", flat=True)
@@ -518,27 +367,6 @@ class ProductOptionValueField(fieldtypes.SelectizeField):
         if self.allowed_characters is not None:
             for value in values:
                 Validators.allow_characters(value, self.allowed_characters)
-
-    def clean(self, values):
-        """
-        Return the values as model objects.
-
-        Create any non-existant values.
-        """
-        options = []
-        if values is None:
-            values = []
-        for value in values:
-            try:
-                option = models.ProductOptionValue.objects.get(
-                    product_option=self.product_option, value=value
-                )
-            except models.ProductOptionValue.DoesNotExist:
-                raise NotImplementedError(
-                    "Creating new product options is not implemented."
-                )
-            options.append(option)
-        return options
 
 
 class VariationOptions(ProductOptionValueField):
@@ -583,7 +411,7 @@ class Brand(fieldtypes.SelectizeModelChoiceField):
 
     def get_queryset(self):
         """Return a queryset of selectable options."""
-        return models.Brand.objects.filter(inactive=False)
+        return models.Brand.objects.filter(active=True)
 
 
 class Manufacturer(fieldtypes.SelectizeModelChoiceField):
@@ -599,7 +427,7 @@ class Manufacturer(fieldtypes.SelectizeModelChoiceField):
 
     def get_queryset(self):
         """Return a queryset of selectable options."""
-        return models.Manufacturer.objects.filter(inactive=False)
+        return models.Manufacturer.objects.filter(active=True)
 
 
 class Gender(fieldtypes.SelectizeModelChoiceField):
@@ -673,7 +501,7 @@ class SelectProductOption(fieldtypes.SelectizeModelChoiceField):
 
     def get_queryset(self):
         """Return a queryset of selectable options."""
-        queryset = models.ProductOption.objects.filter(inactive=False)
+        queryset = models.ProductOption.objects.filter(active=True)
         if self.product_range is not None:
             selected_options = self.product_range.product_options.values_list(
                 "pk", flat=True

@@ -23,24 +23,13 @@ class BarcodeAdmin(admin.ModelAdmin):
     list_filter = ("available", "used_by")
 
 
-@admin.register(models.Warehouse)
-class WarehouseAdmin(admin.ModelAdmin):
-    """ModelAdmin for the Warehouse model."""
-
-    fields = ("warehouse_ID", "name", "abriviation")
-    list_display = ("warehouse_ID", "name", "abriviation")
-    search_fields = ("name", "abriviation")
-
-
 @admin.register(models.Bay)
 class BayAdmin(admin.ModelAdmin):
     """ModelAdmin for the Bay model."""
 
-    fields = ("bay_ID", "name", "warehouse", "is_default")
-    list_display = ("bay_ID", "__str__", "name", "warehouse", "is_default")
-    list_editable = ("is_default",)
-    search_fields = ("name", "bay_ID")
-    list_filter = ("warehouse", "is_default")
+    fields = ("name",)
+    list_display = ("__str__", "name")
+    search_fields = ("name",)
 
 
 @admin.register(models.StockChange)
@@ -51,7 +40,6 @@ class StockChangeAdmin(admin.ModelAdmin):
         "user",
         "timestamp",
         "product_sku",
-        "product_id",
         "stock_before",
         "stock_after",
     )
@@ -60,7 +48,6 @@ class StockChangeAdmin(admin.ModelAdmin):
         "get_user_name",
         "timestamp",
         "product_sku",
-        "product_id",
         "stock_before",
         "stock_after",
     )
@@ -88,15 +75,13 @@ class ProductExportAdmin(admin.ModelAdmin):
 class SupplierAdmin(admin.ModelAdmin):
     """Model admin for the Supplier model."""
 
-    fields = ("name", "product_option_value_ID", "factory_ID", "inactive")
+    fields = ("name", "active")
     list_display = (
         "__str__",
         "name",
-        "product_option_value_ID",
-        "factory_ID",
-        "inactive",
+        "active",
     )
-    list_editable = ("name", "product_option_value_ID", "factory_ID", "inactive")
+    list_editable = ("name", "active")
     search_fields = ("name",)
 
 
@@ -111,69 +96,35 @@ class SupplierContactAdmin(admin.ModelAdmin):
     list_filter = ("supplier",)
 
 
-class BaseNonListingProductOptionModel(admin.ModelAdmin):
-    """Model admin for the BaseNonListingProductOptionModel abstract model."""
-
-    fields = ("name", "product_option_value_ID", "inactive")
-    list_display = ("__str__", "name", "product_option_value_ID", "inactive")
-    list_editable = ("name", "product_option_value_ID", "inactive")
-    search_fields = ("name", "product_option_value_ID")
-
-
-@admin.register(models.Department)
-class DepartmentAdmin(BaseNonListingProductOptionModel):
-    """Model admin for the Department model."""
-
-    fields = ("name", "abriviation", "product_option_value_ID", "inactive")
-    list_display = (
-        "__str__",
-        "name",
-        "abriviation",
-        "product_option_value_ID",
-        "inactive",
-    )
-    list_editable = (
-        "name",
-        "name",
-        "abriviation",
-        "product_option_value_ID",
-        "inactive",
-    )
-    search_fields = ("name", "abriviation", "product_option_value_ID")
-
-
 @admin.register(models.PackageType)
-class PackageTypeAdmin(SortableAdminMixin, BaseNonListingProductOptionModel):
+class PackageTypeAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the PackageType model."""
 
-    fields = BaseNonListingProductOptionModel.fields + ("large_letter_compatible",)
-    list_display = BaseNonListingProductOptionModel.list_display + (
+    fields = (
+        "name",
         "large_letter_compatible",
     )
-    list_editable = BaseNonListingProductOptionModel.list_editable + (
+    list_display = (
+        "name",
         "large_letter_compatible",
     )
-
-
-@admin.register(models.InternationalShipping)
-class InternationalShippingAdmin(SortableAdminMixin, BaseNonListingProductOptionModel):
-    """Model admin for the InternationalShipping model."""
-
-    pass
+    list_editable = ("large_letter_compatible",)
 
 
 @admin.register(models.Brand)
-class BrandAdmin(BaseNonListingProductOptionModel):
+class BrandAdmin(admin.ModelAdmin):
     """Model admin for the Brand model."""
 
-    pass
+    fields = ("name",)
+    list_display = ("name",)
 
 
 @admin.register(models.Manufacturer)
-class ManufacturerAdmin(BaseNonListingProductOptionModel):
+class ManufacturerAdmin(admin.ModelAdmin):
     """Model admin for the Manufacturer model."""
 
-    pass
+    fields = ("name",)
+    list_display = ("name",)
 
 
 @admin.register(models.ProductRange)
@@ -181,60 +132,64 @@ class ProductRangeAdmin(admin.ModelAdmin):
     """Model admin for the Product Range model."""
 
     fields = (
-        "range_ID",
-        "SKU",
+        "sku",
         "name",
-        "department",
         "description",
         "amazon_bullet_points",
         "amazon_search_terms",
         "end_of_line",
         "hidden",
+        "status",
     )
     list_display = (
         "__str__",
-        "range_ID",
-        "SKU",
+        "sku",
         "name",
-        "department",
         "product_count",
         "end_of_line",
         "hidden",
+        "status",
     )
-    list_editable = ("range_ID", "SKU", "name", "department", "end_of_line", "hidden")
-    search_fields = ("range_ID", "SKU", "name")
-    list_filter = ("department", "end_of_line", "hidden")
+    list_editable = (
+        "sku",
+        "name",
+        "end_of_line",
+        "hidden",
+        "status",
+    )
+    search_fields = ("sku", "name")
+    list_filter = ("end_of_line", "hidden", "status")
 
 
-@admin.register(models.ProductOption)
-class ProductOptionAdmin(SortableAdminMixin, admin.ModelAdmin):
+@admin.register(models.VariationOption)
+class VariationOptionAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the Product Option model."""
 
-    fields = ("name", "product_option_ID", "inactive")
-    list_display = ("__str__", "name", "product_option_ID", "inactive")
-    list_editable = ("name", "product_option_ID", "inactive")
-    search_fields = ("name", "product_option_ID")
-    list_filter = ("inactive",)
+    fields = ("name", "ordering", "active")
+    list_display = ("__str__", "name", "active")
+    list_editable = ("name", "active")
+    search_fields = ("name",)
+    list_filter = ("active",)
 
 
-@admin.register(models.ProductOptionValue)
-class ProductOptionValueAdmin(admin.ModelAdmin):
-    """Model admin for the ProductOptionValue model."""
+@admin.register(models.ListingAttribute)
+class ListingAttributeAdmin(SortableAdminMixin, admin.ModelAdmin):
+    """Model admin for the ListingAttribute model."""
 
-    fields = ("value", "product_option", "product_option_value_ID")
-    list_display = ("__str__", "value", "product_option", "product_option_value_ID")
-    list_editable = ("value", "product_option", "product_option_value_ID")
-    list_filter = ("product_option",)
-    search_fields = ("value",)
+    fields = ("name", "ordering", "active")
+    list_display = ("__str__", "name", "active")
+    list_editable = ("name", "active")
+    search_fields = ("name",)
+    list_filter = ("active",)
 
 
 @admin.register(models.VATRate)
-class VATRateAdmin(SortableAdminMixin, BaseNonListingProductOptionModel):
+class VATRateAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the VATRate model."""
 
-    fields = ("VAT_rate_ID", "name", "percentage")
-    list_display = ("__str__", "VAT_rate_ID", "name", "percentage")
-    list_editable = ("VAT_rate_ID", "name", "percentage")
+    fields = ("name", "percentage")
+    list_display = ("__str__", "name", "percentage")
+    list_editable = ("name", "percentage")
 
 
 @admin.register(models.Product)
@@ -242,147 +197,71 @@ class ProductAdmin(admin.ModelAdmin):
     """Model admin for the Product model."""
 
     fields = (
-        "product_ID",
         "product_range",
-        "SKU",
+        "sku",
         "supplier",
-        "supplier_SKU",
+        "supplier_sku",
         "barcode",
         "purchase_price",
-        "VAT_rate",
-        "price",
+        "vat_rate",
         "retail_price",
         "brand",
         "manufacturer",
         "package_type",
-        "international_shipping",
         "bays",
         "weight_grams",
         "length_mm",
         "height_mm",
         "width_mm",
-        "multipack",
         "gender",
         "end_of_line",
-        "status",
         "range_order",
     )
     list_display = (
-        "range_SKU",
-        "SKU",
+        "sku",
         "full_name",
-        "department",
-        "multipack",
         "date_created",
         "last_modified",
-        "status",
         "end_of_line",
         "range_order",
     )
-    list_display_links = ("SKU",)
-    list_filter = ("product_range__department", "end_of_line")
+    list_display_links = ("sku",)
+    list_filter = ("end_of_line",)
     search_fields = (
-        "SKU",
+        "sku",
         "product_range__name",
-        "supplier_SKU",
-        "product_range__SKU",
-        "product_ID",
-        "product_range__range_ID",
+        "supplier_sku",
+        "product_range__sku",
     )
     list_editable = ("range_order",)
 
 
-@admin.register(models.ProductRangeSelectedOption)
-class ProductRangeSelectedOptionAdmin(admin.ModelAdmin):
-    """Model admin for the ProductRangeSelectedOptions model."""
-
-    fields = ("product_range", "product_option", "variation")
-    list_display = ("product_range", "product_option", "variation")
-    list_editable = ("variation",)
-    list_filter = ("product_option", "variation")
-    search_fields = (
-        "product_range__name",
-        "product_range__SKU",
-        "product_range__range_ID",
-        "product_option__name",
-    )
-
-
-@admin.register(models.ProductOptionValueLink)
-class ProductOptionValueLinkAdmin(admin.ModelAdmin):
-    """Model admin for the ProductOptionValueLink model."""
-
-    fields = ("product", "product_option_value")
-    list_display = ("product", "product_option_value")
-    list_filter = ("product_option_value__product_option",)
-    search_fields = (
-        "product__SKU",
-        "product__product_range__SKU",
-        "product__product_range__name",
-        "product__product_range__range_ID",
-        "product_option_value__value",
-        "product__product_ID",
-    )
-
-
 @admin.register(models.Gender)
-class GenderAdmin(SortableAdminMixin, BaseNonListingProductOptionModel):
+class GenderAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the PackageType model."""
 
-    fields = BaseNonListingProductOptionModel.fields + ("readable_name",)
-    list_display = BaseNonListingProductOptionModel.list_display + ("readable_name",)
-    list_editable = BaseNonListingProductOptionModel.list_editable + ("readable_name",)
+    fields = ("name",)
+    list_display = ("name",)
 
 
 @admin.register(models.ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):
     """Model admin for the ProductImage model."""
 
-    fields = ("image_ID", "product", "filename", "URL", "position")
-    list_display = ("__str__", "image_ID", "product", "filename", "URL", "position")
-    list_display_links = ("__str__",)
-    search_fields = (
-        "product__SKU",
-        "product__product_range__SKU",
-        "product__product_range__name",
-        "product__product_range__range_ID",
-        "product__product_ID",
+    fields = (
+        "product_id",
+        "range_sku",
+        "sku",
+        "cloud_commerce_name",
+        "postition",
+        "image_file",
     )
-
-
-@admin.register(models.ProductEdit)
-class ProductEditAdmin(admin.ModelAdmin):
-    """Model admin for the ProductEdit model."""
-
-    fields = ("user", "product_range", "partial_product_range", "product_option_values")
-    list_display = ("__str__", "user", "product_range", "partial_product_range")
-
-
-@admin.register(models.PartialProductRange)
-class PartialProductRangeAdmin(ProductRangeAdmin):
-    """Model admin for the PartialProductRange model."""
-
-    pass
-
-
-@admin.register(models.PartialProduct)
-class PartialProductAdmin(ProductAdmin):
-    """Model admin for the PartialProduct model."""
-
-    fields = ProductAdmin.fields + ("pre_existing",)
-    list_display = ProductAdmin.list_display + ("pre_existing",)
-
-
-@admin.register(models.PartialProductOptionValueLink)
-class PartialProductOptionValueLinkAdmin(ProductOptionValueLinkAdmin):
-    """Model admin for the PartialProductOptionValueLink model."""
-
-    pass
-
-
-@admin.register(models.PartialProductRangeSelectedOption)
-class PartialProductRangeSelectedOptionAdmin(ProductRangeSelectedOptionAdmin):
-    """Model admin for the PartialProductRangeSelectedOption model."""
-
-    fields = ProductRangeSelectedOptionAdmin.fields + ("pre_existing",)
-    list_display = ProductRangeSelectedOptionAdmin.list_display + ("pre_existing",)
+    list_display = (
+        "product_id",
+        "range_sku",
+        "sku",
+        "cloud_commerce_name",
+        "position",
+        "image_file",
+    )
+    search_fields = ("product_id", "range_sku", "sku", "cloud_commerce_name")

@@ -2,12 +2,19 @@
 {% if form.non_field_errors %}
 <div class="error">
   <ul>
-{% for error in form.non_field_errors %}
-  <li>{{ error }}</li>
-  {% endfor %}
+    {% for error in form.non_field_errors %}
+    <li>{{ error }}</li>
+    {% endfor %}
   </ul>
 </div>
 {% endif %}
+{% for field in form.hidden_fields %}
+<ul>
+  {% for error in field.errors %}
+  <li>{{ field.name }} - {{ error }}</li>
+  {% endfor %}
+</ul>
+{% endfor %}
 {% for field in form.visible_fields %}
 <div class="InputAddOn">
   {% if field.help_text %}

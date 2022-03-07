@@ -17,9 +17,8 @@ class ProductOrderView(InventoryUserMixin, TemplateView):
 
     def dispatch(self, *args, **kwargs):
         """Load the formset."""
-        self.range_id = self.kwargs.get("range_id")
         self.product_range = get_object_or_404(
-            models.ProductRange, range_ID=self.range_id
+            models.ProductRange, pk=self.kwargs.get("range_pk")
         )
         self.formset = ProductOrderFormSet(
             self.request.POST or None,
@@ -42,7 +41,7 @@ class ProductOrderView(InventoryUserMixin, TemplateView):
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
         return reverse_lazy(
-            "inventory:product_order", kwargs={"range_id": self.range_id}
+            "inventory:product_order", kwargs={"range_id": self.product_range.pk}
         )
 
     def get_context_data(self, *args, **kwargs):

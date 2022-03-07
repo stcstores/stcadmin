@@ -45,13 +45,15 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "HOST": get_config("DATABASE_HOST"),
-        "NAME": get_config("DATABASE_NAME"),
+        "NAME": get_config("DATABASE_NAME") + "2",
         "USER": get_config("DATABASE_USER"),
         "PASSWORD": get_config("DATABASE_PASSWORD"),
         "PORT": get_config("DATABASE_PORT"),
         "TEST": {"NAME": get_config("TEST_DATABASE_NAME")},
     }
 }
+
+
 ALLOWED_HOSTS = get_config("ALLOWED_HOSTS")
 ADMINS = get_config("ADMINS")
 EMAIL_HOST = get_config("EMAIL_HOST")

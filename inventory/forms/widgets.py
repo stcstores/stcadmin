@@ -94,64 +94,6 @@ class VATPriceWidget(forms.MultiWidget):
             return ["", "", ""]
 
 
-class WarehouseBayWidget(forms.MultiWidget):
-    """Widget for WarehouseBay field."""
-
-    template_name = "inventory/widgets/warehouse_bay.html"
-    required = False
-    is_required = False
-
-    WAREHOUSE = ProductEditorBase.WAREHOUSE
-    BAYS = ProductEditorBase.BAYS
-
-    def __init__(
-        self,
-        attrs=None,
-        choices=[],
-        selectize_options=[],
-        lock_warehouse=False,
-        inline=False,
-    ):
-        """Configure sub widgets."""
-        self.inline = inline
-        self.lock_warehouse = lock_warehouse
-        if attrs is None:
-            department_attrs = {}
-            bay_attrs = {}
-        else:
-            department_attrs = attrs.copy()
-            bay_attrs = attrs.copy()
-        widgets = [
-            SingleSelectizeWidget(
-                attrs=department_attrs,
-                choices=choices[0],
-                selectize_options=selectize_options[0],
-            ),
-            MultipleSelectizeWidget(
-                attrs=bay_attrs,
-                choices=choices[1],
-                selectize_options=selectize_options[1],
-            ),
-        ]
-        widgets[1].is_required = False
-        super().__init__(widgets, attrs)
-
-    def decompress(self, value):
-        """Return value as a list of values."""
-        if value:
-            return [value[self.WAREHOUSE], value[self.BAYS]]
-        else:
-            return ["", []]
-
-    def get_context(self, *args, **kwargs):
-        """Return context for template."""
-        context = super().get_context(*args, **kwargs)
-        context["widget"]["inline"] = self.inline
-        context["widget"]["subwidgets"][1]["attrs"]["required"] = False
-        context["widget"]["lock_warehouse"] = self.lock_warehouse
-        return context
-
-
 class DimensionsWidget(forms.MultiWidget):
     """Widget for Dimensions field."""
 

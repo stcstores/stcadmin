@@ -22,9 +22,8 @@ class LocationFormView(InventoryUserMixin, TemplateView):
 
     def get(self, *args, **kwargs):
         """Process GET HTTP request."""
-        self.range_id = self.kwargs.get("range_id")
         self.product_range = get_object_or_404(
-            models.ProductRange, range_ID=self.range_id
+            models.ProductRange, pk=self.kwargs.get("range_pk")
         )
         self.formset = LocationsFormSet(
             form_kwargs=[{"product": p} for p in self.product_range.products()]
@@ -33,9 +32,8 @@ class LocationFormView(InventoryUserMixin, TemplateView):
 
     def post(self, *args, **kwargs):
         """Process POST HTTP request."""
-        self.range_id = self.kwargs.get("range_id")
         self.product_range = get_object_or_404(
-            models.ProductRange, range_ID=self.range_id
+            models.ProductRange, pk=self.kwargs.get("range_pk")
         )
         self.formset = LocationsFormSet(
             self.request.POST,

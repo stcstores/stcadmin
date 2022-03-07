@@ -1,29 +1,29 @@
-"""Model for product images."""
-from ccapi import CCAPI
+"""Models for storing product images."""
+
 from django.db import models
 
-from .products import Product
+from stcadmin import settings
+
+
+def get_storage():
+    """Return the storage method for the ProductImage model."""
+    if settings.DEBUG or settings.TESTING:
+        return None
+    else:
+        return settings.ProductImageStorage
 
 
 class ProductImage(models.Model):
-    """Model for product images."""
+    """Models for storing product images."""
 
-    image_ID = models.CharField(max_length=20, unique=True, db_index=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    filename = models.CharField(max_length=200)
-    URL = models.URLField()
-    position = models.PositiveSmallIntegerField()
+    product_id = models.CharField(max_length=20)
+    range_sku = models.CharField(max_length=20)
+    sku = models.CharField(max_length=20)
+    cloud_commerce_name = models.CharField(max_length=50)
+    position = models.PositiveIntegerField()
+    image_file = models.ImageField(storage=get_storage())
 
-    class Meta:
-        """Meta class for ProductImage."""
-
-        verbose_name = "Product Image"
-        verbose_name_plural = "Product Images"
-        ordering = ("position",)
-
-    @classmethod
-    def update_CC_image_order(cls, product):
-        """Set the order of images for a product in Cloud Commerce."""
-        images = cls.objects.filter(product=product).order_by("position")
-        image_order = [image.image_ID for image in images]
-        CCAPI.set_image_order(product_id=product.product_ID, image_ids=image_order)
+    def delete(self, *args, **kwargs):
+        """Delete image file from storage when deleting the object."""
+        self.image_file.delete()
+        super().delete(*args, **kwargs)

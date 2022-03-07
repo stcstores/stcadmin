@@ -24,9 +24,8 @@ class ProductRangeView(InventoryUserMixin, TemplateView):
 
     def get_range(self):
         """Get product range details from Cloud Commerce."""
-        self.range_id = self.kwargs.get("range_id")
         self.product_range = get_object_or_404(
-            models.ProductRange, range_ID=self.kwargs["range_id"]
+            models.ProductRange, pk=self.kwargs.get("range_pk")
         )
 
     def get_initial(self):
@@ -44,7 +43,7 @@ class ProductRangeView(InventoryUserMixin, TemplateView):
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
         return reverse_lazy(
-            "inventory:product_range", kwargs={"range_id": self.range_id}
+            "inventory:product_range", kwargs={"range_pk": self.product_range.pk}
         )
 
     def get_context_data(self, *args, **kwargs):

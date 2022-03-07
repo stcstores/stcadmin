@@ -1,13 +1,13 @@
 {% load inventory_extras %}
 
-<div class="collapsed" id="collapsed_{{ range.range_ID }}">
-  <button class="expand_variations" id="expand_{{ range.range_ID }}">
+<div class="collapsed" id="collapsed_{{ range.pk }}">
+  <button class="expand_variations" id="expand_{{ range.pk }}">
     Show {{ range.product_set.count }} Variations &#9660;
   </button>
 </div>
 
-<div class="expanded" id="expanded_{{ range.range_ID }}" hidden>
-  <button class="collapse_variations" id="collapse_{{ range.range_ID }}">
+<div class="expanded" id="expanded_{{ range.pk }}" hidden>
+  <button class="collapse_variations" id="collapse_{{ range.pk }}">
     Hide {{ range.product_set.count }} Variations &#9650;
   </button>
   <table class="variation_table">
@@ -24,8 +24,8 @@
     </tr>
     {% for product in range.product_set.all %}
     <tr>
-      <td class="sku">{{ product.SKU }}</td>
-      <td class="sku">{{ product.supplier_SKU }}</td>
+      <td class="sku">{{ product.sku }}</td>
+      <td class="sku">{{ product.supplier_sku }}</td>
       {% for option, value in product.variation.items %}
       <td class="name">{{ value }}</td>
       {% endfor %}
@@ -33,7 +33,7 @@
       <td class="listing_option name">{{ value }}</td>
       {% endfor %}
       <td>
-        <a href="{% url 'inventory:product' product.product_ID %}">
+        <a href="{% url 'inventory:product' product.pk %}">
           <button>Edit</button>
         </a>
       </td>

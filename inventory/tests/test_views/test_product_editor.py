@@ -58,7 +58,7 @@ class TestStartEditingProductView(
     fixtures = fixtures.VariationProductRangeFixture.fixtures
 
     def get_URL(self):
-        return f"/inventory/start_editing_product/{self.product_range.range_ID}/"
+        return f"/inventory/edit_product/{self.product_range.range_ID}/"
 
     def test_get_method(self):
         self.assertFalse(models.ProductEdit.objects.filter().exists())
@@ -113,11 +113,9 @@ class TestStartNewProductView(
 
     def test_get_method(self):
         response = self.make_get_request()
-        self.assertTemplateUsed(
-            response, "inventory/product_editor/edit_range_details.html"
-        )
+        self.assertTemplateUsed(response, "inventory/product_editor/range_form.html")
         self.assertEqual(200, response.status_code)
-        self.assertIsInstance(response.context["form"], forms.DescriptionForm)
+        self.assertIsInstance(response.context["form"], forms.CreateRangeForm)
 
     def test_post_method(self):
         self.assertFalse(models.ProductEdit.objects.filter().exists())
@@ -590,7 +588,7 @@ class TestEditRangeDetailsView(
     def get_URL(self, edit_ID=None):
         if edit_ID is None:
             edit_ID = self.product_edit.id
-        return f"/inventory/edit_range_details/{edit_ID}/"
+        return f"/inventory/range_form/{edit_ID}/"
 
     TITLE_VALUE = "Updated Title"
     DESCRIPTION_VALUE = "Updated description.\nOf a product."
@@ -600,15 +598,13 @@ class TestEditRangeDetailsView(
     def test_get_method(self):
         response = self.make_get_request()
         self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed(
-            response, "inventory/product_editor/edit_range_details.html"
-        )
+        self.assertTemplateUsed(response, "inventory/product_editor/range_form.html")
 
     def test_context(self):
         response = response = self.make_get_request()
         self.assertEqual(self.product_edit, response.context["edit"])
         self.assertEqual(self.product_range, response.context["product_range"])
-        self.assertIsInstance(response.context["form"], forms.DescriptionForm)
+        self.assertIsInstance(response.context["form"], forms.CreateRangeForm)
 
     def test_post_method(self):
         form_data = {

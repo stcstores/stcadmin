@@ -2,7 +2,6 @@
 
 import json
 
-from ccapi import CCAPI
 from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -21,7 +20,7 @@ class GetNewSKUView(InventoryUserMixin, View):
 
     def post(*args, **kwargs):
         """Return a new product SKU."""
-        sku = CCAPI.get_sku(range_sku=False)
+        sku = models.new_product_sku()
         return HttpResponse(sku)
 
 
@@ -31,7 +30,7 @@ class GetNewRangeSKUView(InventoryUserMixin, View):
 
     def post(self, *args, **kwargs):
         """Process HTTP request."""
-        sku = CCAPI.get_sku(range_sku=True)
+        sku = models.new_range_sku()
         return HttpResponse(sku)
 
 
@@ -95,7 +94,6 @@ class DeleteImage(InventoryUserMixin, View):
         try:
             data = json.loads(self.request.body)
             image = get_object_or_404(models.ProductImage, image_ID=data["image_id"])
-            CCAPI.delete_image(image.image_ID)
             image.delete()
         except Exception:
             return HttpResponse(status=500)
