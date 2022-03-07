@@ -5,9 +5,9 @@ from django.contrib import admin
 from stock_check import models
 
 
-@admin.register(models.Product)
-class ProductAdmin(admin.ModelAdmin):
-    """Model admin for the Product model."""
+@admin.register(models.StockCheckProduct)
+class StockCheckProductAdmin(admin.ModelAdmin):
+    """Model admin for the StockCheckProduct model."""
 
     fields = ("range_id", "product_id", "sku")
     list_display = ("__str__", "range_id", "product_id", "sku", "bay_names")

@@ -1,0 +1,109 @@
+{% extends "inventory/product_editor/base.html" %}
+{% load static %}
+
+{% block content %}{{ block.super }}
+<a href="{% url 'inventory:range_form' product_range.pk %}">
+  <button>Edit Range details</button>
+</a>
+<a href="{% url 'inventory:edit_variations' product_range.pk %}">
+  <button>Edit Variation Options</button>
+</a>
+
+<table class="variation_table">
+  <tr>
+    <th>SKU</th>
+    {% for option in product_range.variation_options %}
+    <th class="name">{{ option }}</th>
+    {% endfor %}
+    {% for option in product_range.listing_options %}
+    <th class="listing_option">{{ option }}</th>
+    {% endfor %}
+    <th colspan="3">
+      <a href="{% url 'inventory:edit_all_variations' product_range.pk %}">
+        <button>Edit All</button>
+      </a>
+    </th>
+  </tr>
+  {% for options, product in variations.items %}
+  <tr>
+    <th class="sku">{% if product %}{{ product.sku }}{% else %}-{% endif %}</th>
+    {% for option in options %}<td class="name">{{ option.value }}</td>{% endfor %}
+    {% if product %}
+    {% for option, value in product.listing_options.items %}
+    <td class="listing_option name">{{ value }}</td>
+    {% endfor %}
+    {% else %}
+    {% for option in product_range.listing_options %}
+    <th class="listing_option name">-</th>
+    {% endfor %}
+    {% endif %}
+    {% if product %}
+    <th>
+      <div class="buttons">
+        <a href="{% url 'inventory:edit_variation' product_range.pk product.pk %}">
+          <button>Edit</button>
+        </a>
+        {% if product.pre_existing is False %}
+        <a class="delete_variation" href="{% url 'inventory:delete_variation' product_range.id product.id %}">
+          <button>Delete</button>
+        </a>
+        {% endif %}
+      </div>
+    </th>
+    {% if product.pre_existing %}
+    <td>Existing</td>
+    {% else %}
+    <td>New</td>
+    {% endif %}
+    {% if product.is_complete %}
+    <td class="positive">Complete</td>
+    {% else %}
+    <td class="error">Incomplete</td>
+    {% endif %}
+    {% else %}
+    <th>
+      <div class="buttons">
+        <form action="{% url 'inventory:create_variation' product_range.id %}" method="POST"
+          class="create_variation_form">
+          {% csrf_token %}
+          {% for option in options %}
+          <input type="hidden" name="{{ option.product_option.id }}" value="{{ option.id }}">
+          {% endfor %}
+          <button>Create</button>
+        </form>
+      </div>
+    </th>
+    <td>Does not exist</td>
+    <td>-</td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+</table>
+
+<a href="{% url 'inventory:save_changes' product_range.pk %}">
+  <button{% if not ready_to_save %} disabled{% endif %}>
+    {% if product_range.product_range %}Save Changes{% else %}Create Product{% endif %}
+    </button>
+</a>
+<a id="discard_changes" href="{% url 'inventory:discard_changes' product_range.id %}">
+  <button>Discard Changes</button>
+</a>
+
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+  $(document).ready(function () {
+    $(".delete_variation").click(function (e) {
+      if (!confirm('Are you sure you want to delete this variation?')) {
+        e.preventDefault();
+      }
+    });
+    $("#discard_changes").click(function (e) {
+      if (!confirm('Are you sure you want to discard all changes?')) {
+        e.preventDefault();
+      }
+    });
+  });
+</script>
+{% endblock %}

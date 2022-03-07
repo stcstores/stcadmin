@@ -1,8 +1,8 @@
 import json
-from unittest.mock import Mock, patch
 
 from django.contrib.auth.models import Group
 
+from inventory.models import ProductRange
 from price_calculator import models
 from shipping.models import Country
 from stcadmin.tests.stcadmin_test import STCAdminTest, ViewTests
@@ -61,6 +61,9 @@ class TestPriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
 
 class TestRangePriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
     fixtures = (
+        "inventory/product_requirements",
+        "inventory/location",
+        "inventory/variation_product_range",
         "shipping/currency",
         "shipping/region",
         "shipping/country",
@@ -77,33 +80,25 @@ class TestRangePriceCalcualtorView(PriceCalculatorViewTest, ViewTests):
 
     def setUp(self):
         super().setUp()
-        cc_products_patcher = patch("price_calculator.views.cc_products")
-        self.mock_cc_products = cc_products_patcher.start()
-        self.addCleanup(cc_products_patcher.stop)
+        self.product_range = ProductRange.objects.get(id=1)
 
     def get_URL(self, range_ID=None):
         if range_ID is None:
-            range_ID = self.range_ID
+            range_ID = self.product_range.range_ID
         return f"/price_calculator/price_calculator/{range_ID}/"
 
     def test_get_method(self):
-        mock_product_range = Mock(id=self.range_ID, products=[Mock(), Mock()])
-        self.mock_cc_products.get_range.return_value = mock_product_range
         response = self.make_get_request()
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(self.template)
-        self.mock_cc_products.get_range.assert_called_once()
-        self.assertEqual(1, len(self.mock_cc_products.mock_calls))
 
     def test_context(self):
-        mock_product_range = Mock(id=self.range_ID, products=[Mock(), Mock()])
-        self.mock_cc_products.get_range.return_value = mock_product_range
         response = self.make_get_request()
         self.assertTrue(hasattr(response, "context"))
         self.assertIsNotNone(response.context)
         context = response.context
         self.assertIn("product_range", context)
-        self.assertEqual(mock_product_range, context["product_range"])
+        self.assertEqual(self.product_range, context["product_range"])
         self.assertIn("countries", context)
         self.assertEqual(set(Country.objects.all()), set(context["countries"]))
         self.assertIn("channel_fees", context)

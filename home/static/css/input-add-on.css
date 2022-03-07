@@ -23,7 +23,7 @@
 .InputAddOn-field,
 .InputAddOn-item {
   border: 1px solid #bbb;
-  padding: 0.5em 0.75em;
+  padding: 0.25em 0.75em;
   display: flex;
 }
 .InputAddOn-field:first-child,

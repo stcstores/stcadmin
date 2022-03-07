@@ -43,12 +43,12 @@ function product_row_copy(row) {
   }
 
   function select_products(option, value) {
-    var column_headers = $('.new_product').find('tr').eq(0).find('th');
+    var column_headers = $('.variation_table').find('tr').eq(0).find('th');
     var checkboxes = [];
     column_headers.each(function() {
       if ($(this).text() == option) {
         var column_number = $(this).index();
-        $('.new_product tr').each(function() {
+        $('.variation_table tr').each(function() {
           header = $(this).children().eq(column_number);
           if (header.text() == value) {
             checkboxes.push($(this).find('.copy_checkbox'));
@@ -80,6 +80,8 @@ function product_row_copy(row) {
   $(document).ready(function() {
       $('.field_cell').prop('hidden', true);
       $('.field_select').click(function() {
+        $('.field_select').removeClass('selected');
+        $(this).addClass('selected');
           hide_field($(this));
       });
 
@@ -91,5 +93,11 @@ function product_row_copy(row) {
 
       $('#select_all').click(function() {select_all()});
       $('#select_none').click(function() {select_none()});
+
+      $('.select_option').click(function() {
+        var value = $(this).text();
+        var option = $(this).closest('tr').find('th').text();
+        select_products(option, value);
+      });
 
   });

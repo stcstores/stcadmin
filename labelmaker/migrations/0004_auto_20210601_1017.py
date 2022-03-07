@@ -6,7 +6,10 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("labelmaker", "0003_auto_20191118_1547"),
+        (
+            "labelmaker",
+            "0003_auto_20191118_1547",
+        ),
     ]
 
     operations = [

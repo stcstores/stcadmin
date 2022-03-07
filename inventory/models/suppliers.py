@@ -1,60 +1,28 @@
 """Model for suppliers."""
 
-from ccapi import CCAPI
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 
-from .product_options import BaseNonListingProductOptionModel
 
-
-class Supplier(BaseNonListingProductOptionModel):
+class Supplier(models.Model):
     """Model for suppliers."""
 
-    PRODUCT_OPTION_ID = 35131
-    PRODUCT_OPTION_NAME = "Supplier"
+    name = models.CharField(max_length=50)
+    active = models.BooleanField(default=True)
 
-    factory_ID = models.CharField(max_length=20, unique=True)
-    inactive = models.BooleanField(default=False)
-
-    class Meta(BaseNonListingProductOptionModel.Meta):
+    class Meta:
         """Meta class for Supplier."""
 
         verbose_name = "Supplier"
         verbose_name_plural = "Suppliers"
 
+    def __str__(self):
+        return self.name
+
     def get_absolute_url(self):
         """Return the absolute URL for the supplier instance."""
         return reverse("inventory:supplier", kwargs={"pk": self.pk})
-
-    def save(self, *args, **kwargs):
-        """
-        Create or update the Supplier object.
-
-        Create a Product Option and Factory in Cloud Commerce if neither exist.
-        """
-        if not self.factory_ID:
-            self.factory_ID = self.create_factory(self.name)
-        super().save(*args, **kwargs)
-
-    @staticmethod
-    def get_factories():
-        """Return all Cloud Commerce factories."""
-        return CCAPI.get_factories()
-
-    @classmethod
-    def create_factory(cls, name):
-        """
-        Return the ID of the Cloud Commerce Factory matching name.
-
-        If it does not exist it will be created.
-        """
-        factories = cls.get_factories()
-        for factory in factories:
-            if factory.name == name:
-                return factory.id
-        new_factory = CCAPI.create_factory(name)
-        return new_factory.id
 
 
 class SupplierContact(models.Model):

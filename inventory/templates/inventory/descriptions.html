@@ -1,6 +1,6 @@
 {% extends "inventory/range_settings.html" %}
 {% load static %}
-{% load inventory_extras %}
+
 {% load stcadmin_extras %}
 {% load reference_extras %}
 
@@ -8,7 +8,11 @@
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <link rel="stylesheet" href="{% static 'css/inventory.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
-<script>{% include 'product_editor/widgets/product_widgets.js' %}</script>
+<script>
+    {
+        % include 'inventory/widgets/product_widgets.js' %
+    }
+</script>
 <script src="{% static 'scripts/new_product.js' %}"></script>
 {% include 'home/froala_head.html' %}
 {% endblock %}
@@ -25,11 +29,13 @@
             <td>{{ field }}</td>
             <td>{% tooltip_help_text field %}</td>
             {% if field.errors %}
-                <td class="error">{{ field.errors }}</td>
+            <td class="error">{{ field.errors }}</td>
             {% endif %}
         </tr>
         {% endfor %}
-        <tr><td colspan="3"><input type="submit" value="Update"></td></tr>
+        <tr>
+            <td colspan="3"><input type="submit" value="Update"></td>
+        </tr>
     </table>
 </form>
 
@@ -37,8 +43,10 @@
     <ul class="formside">
         <li>Must <b>not</b> start with the title of the product. It will be added automatically on ebay.</li>
         <li>Must <b>not</b> include information about <b>price</b> or <b>postage</b>.</li>
-        <li>The description can <b>contain</b> bullet points to hightlight key information but <b>MUST NOT</b> consist only of bullet ponts.</li>
-        <li>Do <b>not</b> use abrieviations such as "L" for length as this cannot be translated for foriegn listings.</li>
+        <li>The description can <b>contain</b> bullet points to hightlight key information but <b>MUST NOT</b> consist
+            only of bullet ponts.</li>
+        <li>Do <b>not</b> use abrieviations such as "L" for length as this cannot be translated for foriegn listings.
+        </li>
         <li>Sentences must end with full stops.</li>
         <li>Proper use of capitalisation is required.</li>
     </ul>

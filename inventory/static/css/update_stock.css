@@ -1,0 +1,8 @@
+.product_stock_level .InputAddOn {
+  margin: 0;
+}
+
+.status_container {
+  min-height: 30px;
+  min-width: 30px;
+}

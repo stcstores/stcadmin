@@ -1,0 +1,140 @@
+{% extends "inventory/product_editor/base.html" %}
+
+{% block content %}{{ block.super }}
+<h3>Add the variation options for the product.</h3>
+<h3>Leave this form blank to create a single item product.</h3>
+<form action="" method="POST" id="setup_variations_form">{% csrf_token %}
+  <div style="display: flex;">
+    <div style="display: flex; flex-direction: column;">
+      <h3>Variation Values</h3>
+      {% include "inventory/input_add_on_form.html" %}
+    </div>
+    <div class="variations col w-50">
+      <h3>Variations</h3>
+      <table id="variation_table">
+
+      </table>
+    </div>
+  </div>
+  <button>Continue</button>
+</form>
+{% endblock %}
+
+{% block script %}
+
+<script>
+  function product(args) {
+    if (!args.length)
+      return [
+        []
+      ];
+    var prod = product(args.slice(1)),
+      r = [];
+    args[0].forEach(function (x) {
+      prod.forEach(function (p) {
+        r.push([x].concat(p));
+      });
+    });
+    return r;
+  }
+
+  function objectProduct(obj) {
+    var keys = Object.keys(obj),
+      values = keys.map(function (x) {
+        return obj[x]
+      });
+
+    return product(values).map(function (p) {
+      var e = {};
+      keys.forEach(function (k, n) {
+        e[k] = p[n]
+      });
+      return e;
+    });
+  }
+
+  function optionChanged(field) {
+    var field_id = field.attr("name");
+    var field_name = fields[field_id];
+    values = field.val();
+    if ((values === null) || (values.length < 2)) {
+      delete options[field_name];
+    } else {
+      options[field_name] = values;
+    }
+    updateVariationTable();
+  }
+
+  function updateVariationTable() {
+    updateVariations();
+    $("#variation_table").html("");
+    if (variations.length > 0) {
+      console.log(variations);
+      var table = "";
+      var header = "";
+      $.each(variations[0].options, function (option, value) {
+        header = header + "<th>" + option + "</th>";
+      });
+      table = $([
+        "<thead>",
+        header,
+        '<th>Included</th>',
+        "</thead>"
+      ].join("\n"));
+      $.each(variations, function (index, variation) {
+        variation_values = ";"
+        $.each(variation.options, function (option, value) {
+          variation_values = variation_values + "<td>" + value + "</td>"
+        })
+        row = $([
+          "<tr>",
+          variation_values,
+          '<td><input id="included_' + index + '" type="checkbox" checked></td>',
+          "</tr>"
+        ].join("\n"));
+        console.log('<td><input id="included_' + index + '" type="checkbox" checked></td>');
+        table = table.append(row);
+      });
+      $("#variation_table").html(table);
+      updateVariationField();
+      $.each(variations, function (index, variation) {
+        $("#included_" + index).change(function () {
+          variations[index]["included"] = $(this).is(":checked");
+          updateVariationField();
+        });
+      });
+    }
+  }
+
+  function updateVariationField() {
+    variations_field.val(JSON.stringify(variations));
+  }
+
+  function updateVariations() {
+    variations = [];
+    $.each(objectProduct(options), function (index, options) {
+      variations.push({
+        'options': options,
+        'included': true
+      });
+    });
+    if (variations.length < 2) {
+      variations = [];
+    }
+  }
+
+  $(document).ready(function () {
+    /* beautify preserve:start */fields = {{ options|safe }};/* beautify preserve:end */
+    options = {}
+    variations = [];
+    variations_field = $("#id_variations");
+    $(".InputAddOn-field.selectized").each(function () {
+      $(this).change(function () {
+        optionChanged($(this));
+      })
+    });
+
+  });
+</script>
+
+{% endblock script %}

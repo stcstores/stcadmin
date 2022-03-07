@@ -1,0 +1,555 @@
+[{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$150000$Qg9ySArJutDF$VGySyzoM2S1e4RjXMLmuKcY5HBQVA9aO7MCLTiMQWJM=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "testuser",
+    "first_name": "",
+    "last_name": "",
+    "email": "tester@test.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2019-10-17T14:30:56.814Z",
+    "groups": [],
+    "user_permissions": []
+  }
+}, {
+  "model": "inventory.partialproductrange",
+  "pk": 1,
+  "fields": {
+    "original_range": null,
+    "range_ID": null,
+    "SKU": "RNG_A8D_D83_NFU",
+    "name": "Test Range",
+    "department": 1,
+    "description": "A test product<br>Line Two",
+    "amazon_search_terms": "Ceramic Mug|Dad's Army",
+    "amazon_bullet_points": "Dad's Army - Service Issue Mug.|Ceramic Boxed Mug.|Height: 11 cm x Width: 8 cm approx.|Officially Licensed Product.",
+    "end_of_line": false,
+    "hidden": false
+  }
+}, {
+  "model": "inventory.partialproduct",
+  "pk": 1,
+  "fields": {
+    "product_ID": null,
+    "original_product": null,
+    "product_range": 1,
+    "SKU": "G1B_L2M_LNL",
+    "supplier": 1,
+    "supplier_SKU": "TV009",
+    "barcode": "29485839",
+    "purchase_price": "5.60",
+    "VAT_rate": 1,
+    "price": "6.80",
+    "retail_price": "12.70",
+    "brand": 1,
+    "manufacturer": 1,
+    "package_type": 1,
+    "international_shipping": 1,
+    "weight_grams": 500,
+    "length_mm": 50,
+    "height_mm": 150,
+    "width_mm": 24,
+    "multipack": false,
+    "end_of_line": false,
+    "last_modified": "2019-10-17T14:41:30.391Z",
+    "gender": 1,
+    "range_order": 0,
+    "status": "creating",
+    "date_created": "2019-10-17",
+    "pre_existing": false,
+    "bays": [3, 4]
+  }
+}, {
+  "model": "inventory.partialproduct",
+  "pk": 2,
+  "fields": {
+    "product_ID": null,
+    "original_product": null,
+    "product_range": 1,
+    "SKU": "AZN_JCN_4LK",
+    "supplier": 1,
+    "supplier_SKU": "TV009",
+    "barcode": "29485839",
+    "purchase_price": "5.60",
+    "VAT_rate": 1,
+    "price": "6.80",
+    "retail_price": "12.70",
+    "brand": 1,
+    "manufacturer": 1,
+    "package_type": 1,
+    "international_shipping": 1,
+    "weight_grams": 500,
+    "length_mm": 50,
+    "height_mm": 150,
+    "width_mm": 24,
+    "multipack": false,
+    "end_of_line": false,
+    "last_modified": "2019-10-17T14:41:30.382Z",
+    "gender": 1,
+    "range_order": 0,
+    "status": "creating",
+    "date_created": "2019-10-17",
+    "pre_existing": false,
+    "bays": [3, 4]
+  }
+}, {
+  "model": "inventory.partialproduct",
+  "pk": 3,
+  "fields": {
+    "product_ID": null,
+    "original_product": null,
+    "product_range": 1,
+    "SKU": "ZDY_7MW_QJD",
+    "supplier": 1,
+    "supplier_SKU": "TV009",
+    "barcode": "29485839",
+    "purchase_price": "5.60",
+    "VAT_rate": 1,
+    "price": "6.80",
+    "retail_price": "12.70",
+    "brand": 1,
+    "manufacturer": 1,
+    "package_type": 1,
+    "international_shipping": 1,
+    "weight_grams": 500,
+    "length_mm": 50,
+    "height_mm": 150,
+    "width_mm": 24,
+    "multipack": false,
+    "end_of_line": false,
+    "last_modified": "2019-10-17T14:41:30.374Z",
+    "gender": 1,
+    "range_order": 0,
+    "status": "creating",
+    "date_created": "2019-10-17",
+    "pre_existing": false,
+    "bays": [3, 4]
+  }
+}, {
+  "model": "inventory.partialproduct",
+  "pk": 4,
+  "fields": {
+    "product_ID": null,
+    "original_product": null,
+    "product_range": 1,
+    "SKU": "5L0_B13_0Y7",
+    "supplier": 1,
+    "supplier_SKU": "TV009",
+    "barcode": "29485839",
+    "purchase_price": "5.60",
+    "VAT_rate": 1,
+    "price": "6.80",
+    "retail_price": "12.70",
+    "brand": 1,
+    "manufacturer": 1,
+    "package_type": 1,
+    "international_shipping": 1,
+    "weight_grams": 500,
+    "length_mm": 50,
+    "height_mm": 150,
+    "width_mm": 24,
+    "multipack": false,
+    "end_of_line": false,
+    "last_modified": "2019-10-17T14:41:30.365Z",
+    "gender": 1,
+    "range_order": 0,
+    "status": "creating",
+    "date_created": "2019-10-17",
+    "pre_existing": false,
+    "bays": [3, 4]
+  }
+}, {
+  "model": "inventory.partialproduct",
+  "pk": 5,
+  "fields": {
+    "product_ID": null,
+    "original_product": null,
+    "product_range": 1,
+    "SKU": "4LC_X6H_6NO",
+    "supplier": 1,
+    "supplier_SKU": "TV009",
+    "barcode": "29485839",
+    "purchase_price": "5.60",
+    "VAT_rate": 1,
+    "price": "6.80",
+    "retail_price": "12.70",
+    "brand": 1,
+    "manufacturer": 1,
+    "package_type": 1,
+    "international_shipping": 1,
+    "weight_grams": 500,
+    "length_mm": 50,
+    "height_mm": 150,
+    "width_mm": 24,
+    "multipack": false,
+    "end_of_line": false,
+    "last_modified": "2019-10-17T14:41:30.356Z",
+    "gender": 1,
+    "range_order": 0,
+    "status": "creating",
+    "date_created": "2019-10-17",
+    "pre_existing": false,
+    "bays": [3, 4]
+  }
+}, {
+  "model": "inventory.partialproduct",
+  "pk": 6,
+  "fields": {
+    "product_ID": null,
+    "original_product": null,
+    "product_range": 1,
+    "SKU": "TIZ_X2O_ZRQ",
+    "supplier": 1,
+    "supplier_SKU": "TV009",
+    "barcode": "29485839",
+    "purchase_price": "5.60",
+    "VAT_rate": 1,
+    "price": "6.80",
+    "retail_price": "12.70",
+    "brand": 1,
+    "manufacturer": 1,
+    "package_type": 1,
+    "international_shipping": 1,
+    "weight_grams": 500,
+    "length_mm": 50,
+    "height_mm": 150,
+    "width_mm": 24,
+    "multipack": false,
+    "end_of_line": false,
+    "last_modified": "2019-10-17T14:41:30.348Z",
+    "gender": 1,
+    "range_order": 0,
+    "status": "creating",
+    "date_created": "2019-10-17",
+    "pre_existing": false,
+    "bays": [3, 4]
+  }
+}, {
+  "model": "inventory.partialproduct",
+  "pk": 7,
+  "fields": {
+    "product_ID": null,
+    "original_product": null,
+    "product_range": 1,
+    "SKU": "WPA_467_IVK",
+    "supplier": 1,
+    "supplier_SKU": "TV009",
+    "barcode": "29485839",
+    "purchase_price": "5.60",
+    "VAT_rate": 1,
+    "price": "6.80",
+    "retail_price": "12.70",
+    "brand": 1,
+    "manufacturer": 1,
+    "package_type": 1,
+    "international_shipping": 1,
+    "weight_grams": 500,
+    "length_mm": 50,
+    "height_mm": 150,
+    "width_mm": 24,
+    "multipack": false,
+    "end_of_line": false,
+    "last_modified": "2019-10-17T14:41:30.339Z",
+    "gender": 1,
+    "range_order": 0,
+    "status": "creating",
+    "date_created": "2019-10-17",
+    "pre_existing": false,
+    "bays": [3, 4]
+  }
+}, {
+  "model": "inventory.partialproduct",
+  "pk": 8,
+  "fields": {
+    "product_ID": null,
+    "original_product": null,
+    "product_range": 1,
+    "SKU": "R12_UGL_HN6",
+    "supplier": 1,
+    "supplier_SKU": "TV009",
+    "barcode": "29485839",
+    "purchase_price": "5.60",
+    "VAT_rate": 1,
+    "price": "6.80",
+    "retail_price": "12.70",
+    "brand": 1,
+    "manufacturer": 1,
+    "package_type": 1,
+    "international_shipping": 1,
+    "weight_grams": 500,
+    "length_mm": 50,
+    "height_mm": 150,
+    "width_mm": 24,
+    "multipack": false,
+    "end_of_line": false,
+    "last_modified": "2019-10-17T14:41:30.330Z",
+    "gender": 1,
+    "range_order": 0,
+    "status": "creating",
+    "date_created": "2019-10-17",
+    "pre_existing": false,
+    "bays": [3, 4]
+  }
+}, {
+  "model": "inventory.partialproduct",
+  "pk": 9,
+  "fields": {
+    "product_ID": null,
+    "original_product": null,
+    "product_range": 1,
+    "SKU": "P4X_E5S_GHT",
+    "supplier": 1,
+    "supplier_SKU": "TV009",
+    "barcode": "29485839",
+    "purchase_price": "5.60",
+    "VAT_rate": 1,
+    "price": "6.80",
+    "retail_price": "12.70",
+    "brand": 1,
+    "manufacturer": 1,
+    "package_type": 1,
+    "international_shipping": 1,
+    "weight_grams": 500,
+    "length_mm": 50,
+    "height_mm": 150,
+    "width_mm": 24,
+    "multipack": false,
+    "end_of_line": false,
+    "last_modified": "2019-10-17T14:41:30.312Z",
+    "gender": 1,
+    "range_order": 0,
+    "status": "creating",
+    "date_created": "2019-10-17",
+    "pre_existing": false,
+    "bays": [3, 4]
+  }
+}, {
+  "model": "inventory.partialproductrangeselectedoption",
+  "pk": 1,
+  "fields": {
+    "product_range": 1,
+    "product_option": 1,
+    "variation": true,
+    "pre_existing": true
+  }
+}, {
+  "model": "inventory.partialproductrangeselectedoption",
+  "pk": 2,
+  "fields": {
+    "product_range": 1,
+    "product_option": 2,
+    "variation": true,
+    "pre_existing": true
+  }
+}, {
+  "model": "inventory.partialproductrangeselectedoption",
+  "pk": 3,
+  "fields": {
+    "product_range": 1,
+    "product_option": 3,
+    "variation": false,
+    "pre_existing": true
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 1,
+  "fields": {
+    "product": 1,
+    "product_option_value": 6
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 2,
+  "fields": {
+    "product": 1,
+    "product_option_value": 1
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 3,
+  "fields": {
+    "product": 1,
+    "product_option_value": 11
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 4,
+  "fields": {
+    "product": 2,
+    "product_option_value": 6
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 5,
+  "fields": {
+    "product": 2,
+    "product_option_value": 2
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 6,
+  "fields": {
+    "product": 2,
+    "product_option_value": 11
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 7,
+  "fields": {
+    "product": 3,
+    "product_option_value": 6
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 8,
+  "fields": {
+    "product": 3,
+    "product_option_value": 3
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 9,
+  "fields": {
+    "product": 3,
+    "product_option_value": 11
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 10,
+  "fields": {
+    "product": 4,
+    "product_option_value": 7
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 11,
+  "fields": {
+    "product": 4,
+    "product_option_value": 1
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 12,
+  "fields": {
+    "product": 4,
+    "product_option_value": 11
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 13,
+  "fields": {
+    "product": 5,
+    "product_option_value": 7
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 14,
+  "fields": {
+    "product": 5,
+    "product_option_value": 2
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 15,
+  "fields": {
+    "product": 5,
+    "product_option_value": 11
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 16,
+  "fields": {
+    "product": 6,
+    "product_option_value": 7
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 17,
+  "fields": {
+    "product": 6,
+    "product_option_value": 3
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 18,
+  "fields": {
+    "product": 6,
+    "product_option_value": 11
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 19,
+  "fields": {
+    "product": 7,
+    "product_option_value": 8
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 20,
+  "fields": {
+    "product": 7,
+    "product_option_value": 1
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 21,
+  "fields": {
+    "product": 7,
+    "product_option_value": 11
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 22,
+  "fields": {
+    "product": 8,
+    "product_option_value": 8
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 23,
+  "fields": {
+    "product": 8,
+    "product_option_value": 2
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 24,
+  "fields": {
+    "product": 8,
+    "product_option_value": 11
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 25,
+  "fields": {
+    "product": 9,
+    "product_option_value": 8
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 26,
+  "fields": {
+    "product": 9,
+    "product_option_value": 3
+  }
+}, {
+  "model": "inventory.partialproductoptionvaluelink",
+  "pk": 27,
+  "fields": {
+    "product": 9,
+    "product_option_value": 11
+  }
+}, {
+  "model": "inventory.productedit",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "product_range": null,
+    "partial_product_range": 1,
+    "product_option_values": [1, 2, 3, 6, 7, 8, 11]
+  }
+}]

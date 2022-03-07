@@ -3,99 +3,51 @@ from unittest.mock import Mock, patch
 from django.shortcuts import reverse
 
 from inventory import models
+from inventory.tests import fixtures
 from stcadmin.tests.stcadmin_test import ViewTests
 
 from .test_views import InventoryViewTest
 
 
-class TestSuppliers(InventoryViewTest, ViewTests):
-    fixtures = ("inventory/supplier",)
-
-    URL = "/inventory/suppliers/suppliers"
-    template = "inventory/suppliers.html"
-
-    def test_get_method(self):
-        response = self.make_get_request()
-        self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed(self.template)
-
-    def test_context(self):
-        response = self.make_get_request()
-        self.assertEqual(
-            list(models.Supplier.objects.all()), list(response.context["suppliers"])
-        )
-
-    def test_content(self):
-        response = self.make_get_request()
-        content = response.content.decode("utf8")
-        for supplier in models.Supplier.objects.all():
-            self.assertIn(supplier.name, content)
-            self.assertIn(supplier.get_absolute_url(), content)
-
-
-class TestSupplier(InventoryViewTest, ViewTests):
-    fixtures = ("inventory/supplier",)
-
-    template = "inventory/supplier.html"
-
-    def get_URL(self, supplier_id=1):
-        return f"/inventory/suppliers/{supplier_id}/"
+class TestSuppliersView(
+    InventoryViewTest, fixtures.ProductRequirementsFixture, ViewTests
+):
+    fixtures = fixtures.ProductRequirementsFixture.fixtures
+    URL = "/inventory/suppliers/suppliers/"
 
     def test_get_method(self):
         response = self.make_get_request()
         self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed(self.template)
-
-    def test_context(self):
-        response = self.make_get_request()
-        self.assertEqual(
-            models.Supplier.objects.get(id=1), response.context["supplier"]
+        self.assertContains(response, self.supplier.name)
+        self.assertQuerysetEqual(
+            response.context["suppliers"], map(repr, models.Supplier.objects.all())
         )
 
-    def test_content(self):
+
+class TestSupplierView(
+    InventoryViewTest, fixtures.ProductRequirementsFixture, ViewTests
+):
+    fixtures = fixtures.ProductRequirementsFixture.fixtures
+
+    def get_URL(self):
+        return f"/inventory/suppliers/{self.supplier.id}/"
+
+    def test_get_method(self):
         response = self.make_get_request()
-        content = response.content.decode("utf8")
-        supplier = models.Supplier.objects.get(id=1)
-        self.assertIn(supplier.name, content)
-        self.assertIn(
-            reverse("inventory:create_supplier_contact", args=[supplier.id]), content
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.supplier.name)
+        self.assertEqual(response.context["supplier"], self.supplier)
+        self.assertQuerysetEqual(
+            response.context["contacts"],
+            map(repr, models.SupplierContact.objects.filter(supplier=self.supplier)),
         )
-        for contact in supplier.suppliercontact_set.all():
-            self.assertIn(contact.name, content)
-            self.assertIn(contact.phone, content)
-            self.assertIn(contact.email, content)
-            self.assertIn(contact.notes, content)
-            self.assertIn(
-                reverse("inventory:update_supplier_contact", args=[contact.id]), content
-            )
-            self.assertIn(
-                reverse("inventory:delete_supplier_contact", args=[contact.id]), content
-            )
-
-    def test_no_contacts(self):
-        models.SupplierContact.objects.all().delete()
-        response = self.make_get_request()
-        content = response.content.decode("utf8")
-        self.assertIn("No contacts for supplier", content)
-
-    def test_active_supplier(self):
-        models.Supplier.objects.filter(id=1).update(inactive=False)
-        response = self.make_get_request()
-        content = response.content.decode("utf8")
-        self.assertIn(reverse("inventory:toggle_supplier_active", args=[1]), content)
-        self.assertIn("Set Inactive", content)
-
-    def test_inactive_supplier(self):
-        models.Supplier.objects.filter(id=1).update(inactive=True)
-        response = self.make_get_request()
-        content = response.content.decode("utf8")
-        self.assertIn(reverse("inventory:toggle_supplier_active", args=[1]), content)
-        self.assertIn("Reactivate Supplier", content)
+        self.assertContains(response, self.supplier_contact.name)
 
 
-class TestCreateSupplier(InventoryViewTest, ViewTests):
-    fixtures = ("inventory/supplier",)
-
+class TestCreateSupplierView(
+    InventoryViewTest, fixtures.ProductRequirementsFixture, ViewTests
+):
+    fixtures = fixtures.ProductRequirementsFixture.fixtures
     URL = "/inventory/suppliers/create_supplier/"
 
     def factories_response(self, factories):

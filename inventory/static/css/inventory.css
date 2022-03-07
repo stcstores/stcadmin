@@ -29,7 +29,7 @@
 }
 
 .update_status {
-  width: 20px;
+  width: 30px;
 }
 
 .end_of_line {
@@ -129,4 +129,173 @@ table.new_product {
 .supplier_list {
   float: left;
   margin: 1em;
+}
+
+.sku {
+  font-family: 'Source Code Pro', monospace;
+  -webkit-user-select: all;  /* Chrome 49+ */
+  -moz-user-select: all;     /* Firefox 43+ */
+  -ms-user-select: all;      /* No support yet */
+  user-select: all;
+  white-space: nowrap;
+}
+
+.name {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: bold;
+  -webkit-user-select: all;  /* Chrome 49+ */
+  -moz-user-select: all;     /* Firefox 43+ */
+  -ms-user-select: all;      /* No support yet */
+  user-select: all;
+}
+
+.variation_table {
+  background: #eee;
+  border-collapse:separate;
+  border-radius: 1em;
+  border-spacing: 0 0.25em;
+  padding: 0.5em;
+}
+
+.variation_table form {
+  margin: 0;
+  padding: 0;
+}
+
+.variation_table td .selectize-input {
+  text-align: left;
+}
+
+.variation_table td, .variation_table th {
+  border-style: hidden;
+  padding: 0.25em 1em;
+}
+
+.variation_table button {
+  font-size: 0.75em;
+}
+
+.variation_table th {
+  background: #f1fffb;
+}
+
+.variation_table tr {
+  margin: 10em;
+  padding: 0.25em;
+  padding-left: 0.5em;
+  text-align: center;
+  vertical-align: top;
+}
+
+.variation_table tr:nth-child(odd) td {
+  background: #f1fffb;
+}
+
+.variation_table tr:nth-child(even) td {
+  background: #f1f6ff;
+}
+
+.InputAddOn {
+  white-space: nowrap;
+}
+
+.variation_table tr td:first-child, .variation_table tr th:first-child {
+  border-top-left-radius: 1em;
+  border-bottom-left-radius: 1em;
+}
+
+.variation_table tr td:last-child, .variation_table tr th:last-child {
+  border-top-right-radius: 1em;
+  border-bottom-right-radius: 1em;
+}
+
+a {
+  text-decoration: none;
+}
+
+button:not(.fr-box)  {
+  background: #ddd;
+  border-radius: 4px;
+  box-shadow: 3px 2px rgba(0, 0, 0, 0.4);
+  color: #444;
+  font-weight: bold;
+  margin: 0;
+  padding: 0.25em 1em;
+  text-decoration: none;
+}
+
+button:hover {
+  background: #ccc;
+  box-shadow: 0 0;
+}
+
+button:disabled {
+  background: #ccc;
+  box-shadow: 0 0;
+  color: #eee;
+}
+
+#barcode_table tr:nth-child(even) {
+    background: #CCC;
+}
+#barcode_table tr:nth-child(odd) {
+    background: #FFF;
+}
+
+.listing_option {
+  font-weight: normal;
+  font-size: 0.75em;;
+}
+
+.page_center {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.InputAddOn {
+  margin-bottom: 1em;
+}
+
+.required {
+  font-weight: bold;
+}
+
+.selectize-control .option, .selectize-input .option{
+  font-family: 'Open Sans', sans-serif;
+}
+
+.save_button {
+  width: 100%;
+}
+
+.product_form {
+  background: #fbfbfb;
+  border: #dddddd 3px solid;
+  border-radius: 1em;
+  max-width: 90%;
+}
+
+.listinput {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.list_input {
+  margin: 0;
+  padding: 0;
+}
+
+.fr-box {
+  flex-direction: column;
+}
+
+.locations .option, .locations .value, .locations .sku, .locations th {
+  font-size: 0.75em;
+}
+
+button.selected {
+  box-shadow: none;
 }

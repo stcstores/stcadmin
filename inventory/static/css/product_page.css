@@ -1,0 +1,32 @@
+.product_header {
+  display: flex;
+  flex-direction: row;
+}
+
+.product_header div {
+  padding: 1em;
+}
+
+.variation_table tr.selected td {
+  background: #fff;
+  border-color: black;
+  border-style: solid;
+  border-width: 3px 0;
+}
+
+.variation_table tr.selected td:first-child {
+  border-width: 3px 0 3px 3px;
+}
+
+.variation_table tr.selected td:last-child {
+  border-width: 3px 3px 3px 0;
+}
+
+.variation_table tr.not_selected td {
+  cursor: pointer;
+}
+
+.description_instructions {
+  margin: 1em;
+  width: 40%;
+}

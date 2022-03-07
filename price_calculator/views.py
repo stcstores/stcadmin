@@ -1,6 +1,6 @@
 """Views for price_calculator."""
 
-import cc_products
+
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -191,7 +191,9 @@ class RangePriceCalculatorView(BasePriceCalculatorView):
     def get_context_data(self, *args, **kwargs):
         """Get context data for template."""
         context_data = super().get_context_data(*args, **kwargs)
-        product_range = cc_products.get_range(self.kwargs.get("range_id"))
+        product_range = get_object_or_404(
+            models.ProductRange, pk=self.kwargs.get("range_pk")
+        )
         context_data["product_range"] = product_range
         return context_data
 

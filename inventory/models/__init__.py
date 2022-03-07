@@ -1,25 +1,48 @@
 """Models for the inventory app."""
 
 from .barcodes import Barcode
-from .images import ProductImage
-from .locations import Bay, Warehouse, check_location_integrity
+from .locations import Bay
+from .product import (
+    Brand,
+    Gender,
+    ListingAttribute,
+    ListingAttributeValue,
+    Manufacturer,
+    PackageType,
+    Product,
+    ProductRange,
+    VariationOption,
+    VariationOptionValue,
+    new_product_sku,
+    new_range_sku,
+)
 from .product_exports import ProductExport
-from .product_options import Department, InternationalShipping, PackageType
+from .product_image import ProductImage
 from .stock_change import StockChange
 from .suppliers import Supplier, SupplierContact
+from .vat_rates import VATRate
 
 __all__ = [
     "Barcode",
     "ProductImage",
     "Bay",
-    "Warehouse",
-    "check_location_integrity",
     "ProductExport",
+    "ProductImage",
+    "Brand",
+    "Manufacturer",
     "Department",
-    "InternationalShipping",
+    "Gender",
+    "ListingAttribute",
+    "ListingAttributeValue",
+    "VariationOption",
+    "VariationOptionValue",
+    "new_product_sku",
+    "new_range_sku",
     "PackageType",
-    "get_product_image_upload_to",
+    "Product",
+    "ProductRange",
     "StockChange",
     "Supplier",
     "SupplierContact",
+    "VATRate",
 ]

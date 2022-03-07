@@ -94,6 +94,11 @@
   flex-wrap: wrap;
   margin: 0.5em;
   padding: 1em;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.product p {
+  margin: 0;
 }
 
 .product_row {

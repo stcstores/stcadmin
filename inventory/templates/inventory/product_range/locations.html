@@ -1,0 +1,65 @@
+{% extends "inventory/product_range/product_range_base.html" %}
+{% load static %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+<link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
+<script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
+<link rel="stylesheet" href="{% static 'css/range_page.css' %}">
+{% endblock %}
+
+{% block content %}{{ block.super }}
+<form action="" method="POST" autocomplete="off">{% csrf_token %}
+  {{ formset.management_form }}
+  {{ formset.non_form_errors }}
+  <table class="variation_table locations">
+    <tr>
+      <th class="column header SKU">SKU</th>
+      {% for option in product_range.variation_options %}
+      <th class="column header option">{{ option }}</th>
+      {% endfor %}
+      <th class="column header supplier_SKU">Supplier SKU</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+    {% for form in formset %}
+    {% with form.product as product %}
+    <tr hidden>
+      <td>{{ form.product_id }}</td>
+    </tr>
+    <tr>
+      <td class="column SKU sku">{{ product.SKU }}</td>
+      {% for option, value in product.variation.items %}
+      <td class="column option name">{{ value }}</td>
+      {% endfor %}
+      <td class="column supplier_SKU sku">{{ product.supplier_SKU }}</td>
+      {% for field in form %}
+      <td class="location_field">
+        {{ field }}
+        {{ field.errors }}
+      </td>
+      {% endfor %}
+      <td>{% include "inventory/update_stock.html" %}</td>
+      <td>{{ form.non_field_errors }}</td>
+    </tr>
+    {% endwith %}
+    {% endfor %}
+    <tr>
+      <td class="save_row"><button type="submit" class="save_button">Save</button></td>
+    </tr>
+  </table>
+</form>
+
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+  $(document).ready(function() {
+    var table_width = $('.variation_table').find("tr:first th").length;
+    $('.save_row').attr('colspan', table_width);
+  });
+</script>
+{% endblock %}

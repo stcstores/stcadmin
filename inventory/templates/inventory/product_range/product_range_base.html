@@ -1,0 +1,63 @@
+{% extends "inventory/base.html" %}
+{% load static %}
+{% load reference_extras %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/range_page.css' %}">
+{% endblock %}
+
+{% block page_title %}{{ product_range.name }}{% endblock %}
+
+{% block content %}
+<div class="range_header">
+  <div class="range_details">
+    <div>
+      <span class="name">{{ product_range.name }}</span>&nbsp;&nbsp;&nbsp;
+      {% help_button 'inventory_help' 'inventory-range_page' %}
+    </div>
+    <div>Range SKU: <span class="sku">{{ product_range.sku}}</span></div>
+    <div>Department: {{ product_range.department }}</div>
+  </div>
+
+  {% with request.get_full_path as current_url %}
+  <div class="range_nav">
+    {% url 'inventory:product_range' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
+      <a href="{{ url }}">Range</a>
+    </div>
+    {% url 'inventory:descriptions' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
+      <a href="{{ url }}">Description</a>
+    </div>
+    {% if product_range.has_variations %}
+    {% url 'inventory:variations' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
+      <a href="{{ url }}">Variations</a>
+    </div>
+    {% url 'inventory:product_order' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
+      <a href="{{ url }}">Variation Order</a>
+    </div>
+    {% endif %}
+    {% url 'inventory:locations' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
+      <a href="{{ url }}">Location</a>
+    </div>
+    {% url 'inventory:images' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
+      <a href="{{ url }}">Images</a>
+    </div>
+    {% url 'price_calculator:range_price_calculator' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
+      <a href="{{ url }}">Range Price Calculator</a>
+    </div>
+    {% url 'inventory:print_barcodes' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
+      <a href="{{ url }}">Barcode Labels</a>
+    </div>
+  </div>
+</div>
+{% endwith %}
+{% endblock %}

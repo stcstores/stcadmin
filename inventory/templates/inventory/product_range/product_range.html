@@ -1,0 +1,53 @@
+{% extends "inventory/product_range/product_range_base.html" %}
+
+
+
+{% block content %}{{ block.super }}
+
+<div class="buttons">
+  <a href="{% url 'inventory:edit_product' product_range.pk %}">
+    <button>Product Editor</button>
+  </a>
+  <a href="" class="button_link">
+    <button>End-of-Line Range</button>
+  </a>
+</div>
+
+<div class="variations">
+  <h3>{% if product_range.has_variations %}Variations{% else %}Single Product{% endif %}</h3>
+  <table class="variation_table">
+    <tr class="row">
+      <th class="column header SKU">SKU</th>
+      <th class="column header edit"></th>
+      {% for option in product_range.variation_options %}
+      <th class="column header option">{{ option }}</th>
+      {% endfor %}
+      {% for option in product_range.listing_options %}
+      <th class="column header listing_option">{{ option }}</th>
+      {% endfor %}
+      <th class="column header supplier_SKU">Supplier SKU</th>
+      <th class="column header barcode">Barcode</th>
+      <th class="column header stock_level">Stock Level</th>
+    </tr>
+    {% for product in product_range.products %}
+    <tr class="row">
+      <td class="column SKU sku">{{ product.SKU }}</td>
+      <td class="column edit">
+        <a href="{% url 'inventory:product' product.pk %}">
+          <button>Edit</button>
+        </a>
+      </td>
+      {% for option, value in product.variation.items %}
+      <td class="column option name">{{ value }}</td>
+      {% endfor %}
+      {% for option, value in product.listing_options.items %}
+      <td class="column option listing_option name">{{ value }}</td>
+      {% endfor %}
+      <td class="column supplier_SKU sku">{{ product.supplier_sku }}</td>
+      <td class="column SKU sku">{{ product.barcode }}</td>
+      <td class="column stock_level">{% include 'inventory/update_stock.html' %}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

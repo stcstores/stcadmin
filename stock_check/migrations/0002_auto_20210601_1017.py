@@ -6,6 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
+        ("inventory", "0004_auto_20220301_1107"),
         ("stock_check", "0001_initial"),
     ]
 

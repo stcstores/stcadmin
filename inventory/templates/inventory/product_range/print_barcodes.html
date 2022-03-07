@@ -1,0 +1,148 @@
+{% extends "inventory/product_range/product_range_base.html" %}
+
+{% block content %}{{ block.super }}
+
+<div>
+  <input type="number" id="update_selected_quantity" min="0" step="1" value="0">
+  <input type="button" value="Update Selected" id="update_selected_button" disabled>
+  <input type="submit" value="Produce Barcodes" id="produce_barcodes" disabled>
+</div>
+<table id="barcode_table">
+  <thead>
+    <tr>
+      <th>SKU</th>
+      {% for option in product_range.variation_options.all %}
+      <th>{{ option.name }}</th>
+      {% endfor %}
+      <th>Supplier SKU</th>
+      <th>Barcode</th>
+      <th>Quantity</th>
+      <th><input type="button" id="toggle_selected" class="toggle_selected" value="Toggle"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in product_range.products %}
+    <tr>
+      <td class="sku">{{ product.SKU }}</td>
+      {% if product.variation %}
+      {% for value in product.variation.values %}
+      <td class="name">{{ value }}</td>
+      {% endfor %}
+      <td class="sku">{{ product.supplier_SKU }}</td>
+      {% endif %}
+      <td><input type="text" value="{{ product.barcode }}" class="barcode" id="{{ product.product_ID }}_barcode"></td>
+      <td><input type="number" class="quantity" id="{{ product.product_ID }}_quantity" min="0" step="1" value="" disabled></td>
+      <td><input type="checkbox" class="product_selected" id="{{ product.product_ID }}_selected" selected></td>
+      <td hidden><input type="text" value="{% if product.supplier_SKU %}{{ product.supplier_SKU }} - {% endif %}{{ product.variation.values|join:" - " }}" class="option_text" id="{{ product.product_ID }}_option_text"></td>
+      <td hidden><input type="text" value="{{ product.product_ID }}" class="id" id="{{ product.product_ID }}_id"></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<form action="{% url 'inventory:barcode_pdf' %}" method="POST" id="barcode_form" target='_blank' hidden>{% csrf_token %}
+  <input type="text" name="data" id="barcode_json_input">
+</form>
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+  get_stock_url = "{% url 'inventory:get_stock_level' %}";
+  stock_levels_to_get = []
+
+  function get_data() {
+    var data = [];
+    $('#barcode_table tbody tr').each(function() {
+      var id = $(this).find('.id').val();
+      var barcode = $(this).find('.barcode').val();
+      var option_text = $(this).find('.option_text').val();
+      var quantity = $(this).find('.quantity').val();
+      var row_data = {
+        'barcode': barcode,
+        'option_text': option_text,
+        'quantity': quantity
+      }
+      data.push(row_data);
+    });
+    return data;
+  }
+
+  function all_stock_levels_loaded() {
+    enable_inputs();
+  }
+
+  function enable_inputs() {
+    $('.quantity').prop('disabled', false);
+    $('#update_selected_button').prop('disabled', false);
+    $('#produce_barcodes').prop('disabled', false);
+  }
+
+  function set_inputs() {
+    $('.quantity').val('')
+    $('.quantity').prop('disabled', true);
+    $('#update_selected_button').prop('disabled', true);
+    $('#produce_barcodes').prop('disabled', true);
+  }
+
+  function get_next_stock_level() {
+    if (stock_levels_to_get.length > 0) {
+      get_stock_level(stock_levels_to_get[0]);
+    } else {
+      all_stock_levels_loaded();
+    }
+  }
+
+  function get_stock_levels() {
+    $('.quantity').each(function() {
+      var product_id = this.id.replace('_quantity', '');
+      stock_levels_to_get.push(product_id);
+    });
+    get_next_stock_level();
+  }
+
+  function get_stock_level(product_id) {
+    $.post(
+      get_stock_url,
+      {'product_ID': product_id},
+      function(data) {
+        $('#' + product_id + '_quantity').val(data.stock_level);
+        stock_levels_to_get.splice($.inArray(product_id, stock_levels_to_get), 1);
+        get_next_stock_level();
+      },
+      "json"
+    );
+  }
+
+  function set_toggle_selected_button() {
+    $('#toggle_selected').click(function() {
+      var checkboxes = $('#barcode_table :checkbox');
+      checkboxes.prop('checked', !checkboxes.first().prop('checked'));
+    });
+  }
+
+  function set_update_button() {
+    $('#update_selected_button').click(function() {
+      $('#barcode_table tbody tr').each(function() {
+        if ($(this).find(':checkbox').prop('checked')) {
+          $(this).find('.quantity').val($('#update_selected_quantity').val());
+        }
+      });
+    });
+  }
+
+  function set_submit_button() {
+    $('#produce_barcodes').click(function() {
+      var barcode_data = JSON.stringify(get_data());
+      $('#barcode_json_input').val(barcode_data);
+      $('#barcode_form').submit();
+    });
+  }
+
+  $(document).ready(function() {
+    set_inputs();
+    set_toggle_selected_button();
+    set_update_button();
+    set_submit_button();
+    get_stock_levels();
+  });
+</script>
+{% endblock %}

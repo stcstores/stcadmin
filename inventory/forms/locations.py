@@ -2,32 +2,22 @@
 
 from django import forms
 
+from inventory.forms.fields import Location
 from product_editor.editor_manager import ProductEditorBase
-from product_editor.forms.fields import Location
 from stcadmin.forms import KwargFormSet
 
 
 class LocationsForm(forms.Form):
     """Form for changing the Warehouse Bays associated with a product."""
 
-    PRODUCT_ID = "product_id"
     PRODUCT_NAME = "product_name"
-    STOCK_LEVEL = "stock_level"
-    LOCATIONS = "locations"
-    WAREHOUSE = ProductEditorBase.WAREHOUSE
+    LOCATION = "locations"
     BAYS = ProductEditorBase.BAYS
-
-    product_id = forms.CharField(widget=forms.TextInput(attrs={"class": "product_id"}))
-    product_name = forms.CharField(
-        disabled=True,
-        required=False,
-        widget=forms.TextInput(attrs={"size": 200, "class": "product_title"}),
-    )
-    stock_level = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         """Add fields to form."""
         self.product = kwargs.pop("product")
+        self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
         self.fields[self.LOCATIONS] = Location()
         self.cleaned_data = {}

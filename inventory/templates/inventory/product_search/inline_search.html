@@ -1,0 +1,4 @@
+<form action="{% url 'inventory:product_search' %}" method="POST">{% csrf_token %}
+  <input type="text" name="search_term" required>
+  <button>Search Products</button>
+</form>

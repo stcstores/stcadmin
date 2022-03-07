@@ -1,0 +1,311 @@
+[{
+  "model": "inventory.productoption",
+  "pk": 1,
+  "fields": {
+    "ordering": 0,
+    "name": "Size",
+    "product_option_ID": "32123",
+    "inactive": false
+  }
+}, {
+  "model": "inventory.productoption",
+  "pk": 2,
+  "fields": {
+    "ordering": 1,
+    "name": "Colour",
+    "product_option_ID": "32130",
+    "inactive": false
+  }
+}, {
+  "model": "inventory.productoption",
+  "pk": 3,
+  "fields": {
+    "ordering": 2,
+    "name": "Model",
+    "product_option_ID": "32142",
+    "inactive": false
+  }
+}, {
+  "model": "inventory.productoption",
+  "pk": 4,
+  "fields": {
+    "ordering": 3,
+    "name": "Design",
+    "product_option_ID": "32129",
+    "inactive": false
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 1,
+  "fields": {
+    "product_option_value_ID": "3040595",
+    "product_option": 2,
+    "value": "Red"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 2,
+  "fields": {
+    "product_option_value_ID": "3040634",
+    "product_option": 2,
+    "value": "Green"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 3,
+  "fields": {
+    "product_option_value_ID": "3040589",
+    "product_option": 2,
+    "value": "Blue"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 4,
+  "fields": {
+    "product_option_value_ID": "3040953",
+    "product_option": 2,
+    "value": "Purple"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 5,
+  "fields": {
+    "product_option_value_ID": "4894405",
+    "product_option": 2,
+    "value": "Magenta"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 6,
+  "fields": {
+    "product_option_value_ID": "3040560",
+    "product_option": 1,
+    "value": "Small"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 7,
+  "fields": {
+    "product_option_value_ID": "3040559",
+    "product_option": 1,
+    "value": "Medium"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 8,
+  "fields": {
+    "product_option_value_ID": "3040558",
+    "product_option": 1,
+    "value": "Large"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 9,
+  "fields": {
+    "product_option_value_ID": "3040618",
+    "product_option": 1,
+    "value": "XL"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 10,
+  "fields": {
+    "product_option_value_ID": "3040677",
+    "product_option": 1,
+    "value": "XXL"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 11,
+  "fields": {
+    "product_option_value_ID": "4456701",
+    "product_option": 3,
+    "value": "DB25"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 12,
+  "fields": {
+    "product_option_value_ID": "4456989",
+    "product_option": 3,
+    "value": "DB50"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 13,
+  "fields": {
+    "product_option_value_ID": "3040822",
+    "product_option": 4,
+    "value": "Cat"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 14,
+  "fields": {
+    "product_option_value_ID": "3041336",
+    "product_option": 4,
+    "value": "Dog"
+  }
+}, {
+  "model": "inventory.productoptionvalue",
+  "pk": 15,
+  "fields": {
+    "product_option_value_ID": "3040714",
+    "product_option": 4,
+    "value": "Horse"
+  }
+}, {
+  "model": "inventory.department",
+  "pk": 1,
+  "fields": {
+    "product_option_value_ID": "839944",
+    "name": "Home",
+    "inactive": false,
+    "abriviation": "HH"
+  }
+}, {
+  "model": "inventory.department",
+  "pk": 2,
+  "fields": {
+    "product_option_value_ID": "641648",
+    "name": "Sports",
+    "inactive": false,
+    "abriviation": "SS"
+  }
+}, {
+  "model": "inventory.packagetype",
+  "pk": 1,
+  "fields": {
+    "ordering": 1,
+    "product_option_value_ID": "398540",
+    "name": "Basic Shipping",
+    "inactive": false,
+    "large_letter_compatible": false
+  }
+}, {
+  "model": "inventory.packagetype",
+  "pk": 2,
+  "fields": {
+    "ordering": 2,
+    "product_option_value_ID": "398456",
+    "name": "Express Shipping",
+    "inactive": false,
+    "large_letter_compatible": true
+  }
+}, {
+  "model": "inventory.internationalshipping",
+  "pk": 1,
+  "fields": {
+    "ordering": 1,
+    "product_option_value_ID": "26578",
+    "name": "Standard",
+    "inactive": false
+  }
+}, {
+  "model": "inventory.internationalshipping",
+  "pk": 2,
+  "fields": {
+    "ordering": 2,
+    "product_option_value_ID": "26587",
+    "name": "Express",
+    "inactive": false
+  }
+}, {
+  "model": "inventory.brand",
+  "pk": 1,
+  "fields": {
+    "product_option_value_ID": "394503",
+    "name": "Shop Inc",
+    "inactive": false
+  }
+}, {
+  "model": "inventory.brand",
+  "pk": 2,
+  "fields": {
+    "product_option_value_ID": "394746",
+    "name": "Shoes Shop",
+    "inactive": false
+  }
+}, {
+  "model": "inventory.manufacturer",
+  "pk": 1,
+  "fields": {
+    "product_option_value_ID": "394565",
+    "name": "Shop Inc",
+    "inactive": false
+  }
+}, {
+  "model": "inventory.manufacturer",
+  "pk": 2,
+  "fields": {
+    "product_option_value_ID": "394584",
+    "name": "Shoes Shop",
+    "inactive": false
+  }
+}, {
+  "model": "inventory.gender",
+  "pk": 1,
+  "fields": {
+    "ordering": 1,
+    "product_option_value_ID": "416164",
+    "name": "mens",
+    "inactive": false,
+    "readable_name": "Mens"
+  }
+}, {
+  "model": "inventory.gender",
+  "pk": 2,
+  "fields": {
+    "ordering": 2,
+    "product_option_value_ID": "416115",
+    "name": "womens",
+    "inactive": false,
+    "readable_name": "Womens"
+  }
+}, {
+  "model": "inventory.supplier",
+  "pk": 1,
+  "fields": {
+    "product_option_value_ID": "289493",
+    "name": "Shop Inc",
+    "factory_ID": "164868",
+    "inactive": false
+  }
+}, {
+  "model": "inventory.supplier",
+  "pk": 2,
+  "fields": {
+    "product_option_value_ID": "289485",
+    "name": "Wholesale",
+    "factory_ID": "164416",
+    "inactive": false
+  }
+}, {
+  "model": "inventory.suppliercontact",
+  "pk": 1,
+  "fields": {
+    "supplier": 1,
+    "name": "Jeff",
+    "email": "jeff@stockinc.com",
+    "phone": "0742156456",
+    "notes": "A note about the supplier"
+  }
+}, {
+  "model": "inventory.vatrate",
+  "pk": 1,
+  "fields": {
+    "ordering": 1,
+    "VAT_rate_ID": "0",
+    "name": "Basic",
+    "percentage": 0.2
+  }
+}, {
+  "model": "inventory.vatrate",
+  "pk": 2,
+  "fields": {
+    "ordering": 2,
+    "VAT_rate_ID": "5",
+    "name": "VAT Free",
+    "percentage": 0.0
+  }
+}]

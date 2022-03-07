@@ -51,13 +51,15 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "HOST": get_config("DATABASE_HOST"),
-        "NAME": get_config("DATABASE_NAME"),
+        "NAME": get_config("DATABASE_NAME") + "2",
         "USER": get_config("DATABASE_USER"),
         "PASSWORD": get_config("DATABASE_PASSWORD"),
         "PORT": get_config("DATABASE_PORT"),
         "TEST": {"NAME": get_config("TEST_DATABASE_NAME")},
     }
 }
+
+
 ALLOWED_HOSTS = get_config("ALLOWED_HOSTS")
 CSRF_TRUSTED_ORIGINS = get_config("CSRF_TRUSTED_ORIGINS")
 ADMINS = get_config("ADMINS")
@@ -124,7 +126,7 @@ INSTALLED_APPS = [
     "django_markup",
     "stock_check",
     "jchart",
-    "product_editor",
+    "profit_loss",
     "epos",
     "orders",
     "shipping",

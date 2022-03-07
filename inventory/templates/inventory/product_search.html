@@ -1,7 +1,7 @@
 {% extends "inventory/base.html" %}
 {% load static %}
 {% load inventory_extras %}
-{% load product_editor_extras %}
+
 {% load stcadmin_extras %}
 {% load reference_extras %}
 
@@ -53,7 +53,7 @@
                     {% else %}
                     <td>
                         <a title="Descriptions" href="{% url 'inventory:descriptions' range.id %}" target="_blank"><button>D</button></a>
-                        <a title="Edit" href="{% edit_product_url range.id %}" target="_blank"><button>E</button></a>
+                        <a title="Edit" href="{% url 'inventory:edit_product' range.id %}" target="_blank"><button>E</button></a>
                         <a title="Images" href="{% url 'inventory:images' range.id %}" target="_blank"><button>I</button></a>
                         <a title="Locations" href="{% url 'inventory:locations' range.id %}" target="_blank"><button>L</button></a>
                         <a title="Price Calulator" href="{% url 'price_calculator:range_price_calculator' range.id %}" target="_blank"><button>P</button></a>

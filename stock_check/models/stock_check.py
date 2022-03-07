@@ -5,8 +5,8 @@ from django.db import models
 from inventory.models import Bay
 
 
-class Product(models.Model):
-    """The Product models stores Cloud Commerce Products."""
+class StockCheckProduct(models.Model):
+    """The StockCheckProduct models stores Cloud Commerce Products."""
 
     range_id = models.PositiveIntegerField(
         verbose_name="Range ID", primary_key=False, null=True, blank=True
@@ -23,10 +23,10 @@ class Product(models.Model):
     bays = models.ManyToManyField(Bay, through="ProductBay")
 
     class Meta:
-        """Meta class for Product."""
+        """Meta class for StockCheckProduct."""
 
-        verbose_name = "Product"
-        verbose_name_plural = "Products"
+        verbose_name = "StockCheckProduct"
+        verbose_name_plural = "StockCheckProducts"
 
     def bay_names(self):
         """Return list of bay names as a string."""
@@ -39,7 +39,7 @@ class Product(models.Model):
 class ProductBay(models.Model):
     """THe ProductBay model stores the quantity of a product in a Bay."""
 
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(StockCheckProduct, on_delete=models.CASCADE)
     bay = models.ForeignKey(Bay, on_delete=models.CASCADE)
     stock_level = models.PositiveIntegerField(blank=True, null=True, default=None)
 

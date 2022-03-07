@@ -1,0 +1,75 @@
+[{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$150000$Qg9ySArJutDF$VGySyzoM2S1e4RjXMLmuKcY5HBQVA9aO7MCLTiMQWJM=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "testuser",
+    "first_name": "",
+    "last_name": "",
+    "email": "tester@test.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2019-10-17T14:30:56.814Z",
+    "groups": [],
+    "user_permissions": []
+  }
+}, {
+  "model": "inventory.partialproductrange",
+  "pk": 1,
+  "fields": {
+    "original_range": null,
+    "range_ID": null,
+    "SKU": "RNG_JIQ_WB7_T4P",
+    "name": "Test Range",
+    "department": 1,
+    "description": "A test product<br>Line Two",
+    "amazon_search_terms": "Ceramic Mug|Dad's Army",
+    "amazon_bullet_points": "Dad's Army - Service Issue Mug.|Ceramic Boxed Mug.|Height: 11 cm x Width: 8 cm approx.|Officially Licensed Product.",
+    "end_of_line": false,
+    "hidden": false
+  }
+}, {
+  "model": "inventory.partialproduct",
+  "pk": 1,
+  "fields": {
+    "product_ID": null,
+    "original_product": null,
+    "product_range": 1,
+    "SKU": "KK9_7NY_W0E",
+    "supplier": null,
+    "supplier_SKU": null,
+    "barcode": null,
+    "purchase_price": null,
+    "VAT_rate": null,
+    "price": null,
+    "retail_price": null,
+    "brand": null,
+    "manufacturer": null,
+    "package_type": null,
+    "international_shipping": null,
+    "weight_grams": null,
+    "length_mm": null,
+    "height_mm": null,
+    "width_mm": null,
+    "multipack": false,
+    "end_of_line": false,
+    "last_modified": "2019-10-23T14:35:18.741Z",
+    "gender": null,
+    "range_order": 0,
+    "status": "creating",
+    "date_created": "2019-10-23",
+    "pre_existing": false,
+    "bays": []
+  }
+}, {
+  "model": "inventory.productedit",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "product_range": null,
+    "partial_product_range": 1,
+    "product_option_values": []
+  }
+}]
