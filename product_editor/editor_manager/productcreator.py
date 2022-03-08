@@ -7,9 +7,8 @@ import threading
 import cc_products
 
 from inventory import models
+from inventory.forms.base import ProductEditorBase
 from product_editor import exceptions
-
-from .productbase import ProductEditorBase
 
 logger = logging.getLogger("product_creation")
 

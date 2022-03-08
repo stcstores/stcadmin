@@ -4,7 +4,7 @@ from ccapi import CCAPI
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
-from inventory.models import Department, Supplier
+from inventory.models import Supplier
 from shipping.models import VATRate
 
 
@@ -18,9 +18,6 @@ class ProductSale(models.Model):
     weight = models.PositiveIntegerField(null=True)
     quantity = models.PositiveSmallIntegerField()
     price = models.PositiveIntegerField()
-    department = models.ForeignKey(
-        Department, blank=True, null=True, on_delete=models.PROTECT
-    )
     supplier = models.ForeignKey(
         Supplier, blank=True, null=True, on_delete=models.PROTECT
     )
@@ -60,9 +57,6 @@ class ProductSale(models.Model):
     def _update_details(self):
         product = CCAPI.get_product(self.product_ID)
         self.vat_rate = VATRate.objects.get(cc_id=product.vat_rate_id).percentage
-        self.department = Department.objects.get(
-            product_option_value_ID=str(product.options["Department"].value.id)
-        )
         self.supplier = Supplier.objects.get(
             product_option_value_ID=str(product.options["Supplier"].value.id)
         )

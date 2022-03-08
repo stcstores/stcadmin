@@ -8,7 +8,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("stock_check", "0002_auto_20210601_1017"),
-        ("inventory", "0004_auto_20220301_1107"),
     ]
 
     operations = [

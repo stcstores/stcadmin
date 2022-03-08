@@ -2,9 +2,10 @@
 
 from django import forms
 
-from inventory.forms.fields import Location
-from product_editor.editor_manager import ProductEditorBase
+from inventory.forms.fields import BayField
 from stcadmin.forms import KwargFormSet
+
+from .base import ProductEditorBase
 
 
 class LocationsForm(forms.Form):
@@ -19,7 +20,7 @@ class LocationsForm(forms.Form):
         self.product = kwargs.pop("product")
         self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
-        self.fields[self.LOCATIONS] = Location()
+        self.fields[self.LOCATIONS] = BayField()
         self.cleaned_data = {}
         self.initial.update(self.get_initial())
 

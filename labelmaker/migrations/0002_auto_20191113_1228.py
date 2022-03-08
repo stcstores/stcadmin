@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("labelmaker", "0001_initial_squashed_0003_auto_20180514_0933"),
-        ("inventory", "0004_auto_20220301_1107"),
+        ("inventory", "0003_productimage"),
     ]
 
     operations = [
