@@ -5,9 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("inventory", "0002_alter_barcode_added_on"),
-    ]
+    dependencies = [("inventory", "0002_alter_barcode_added_on")]
 
     operations = [
         migrations.CreateModel(

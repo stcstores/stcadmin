@@ -107,6 +107,7 @@ class InitialProductForm(BaseProductForm):
     class Meta(BaseProductForm.Meta):
         """Meta for InitialProductForm."""
 
+        model = models.SingleProduct
         field_classes = {
             # "barcode": inventory_fields.Barcode,
             # "purchase_price": inventory_fields.PurchasePrice,

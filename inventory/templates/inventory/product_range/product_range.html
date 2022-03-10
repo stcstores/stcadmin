@@ -31,7 +31,7 @@
     </tr>
     {% for product in product_range.products.all %}
     <tr class="row">
-      <td class="column SKU sku">{{ product.SKU }}</td>
+      <td class="column SKU sku">{{ product.sku }}</td>
       <td class="column edit">
         <a href="{% url 'inventory:product' product.pk %}">
           <button>Edit</button>

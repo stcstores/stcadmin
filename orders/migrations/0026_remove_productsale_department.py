@@ -6,8 +6,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("orders", "0025_alter_refund_created_at"),
         ("inventory", "0003_productimage"),
+        ("orders", "0025_alter_refund_created_at"),
     ]
 
     operations = [

@@ -2,8 +2,10 @@
 
 import itertools
 import json
+from itertools import chain
 
 from django.contrib import messages
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic.base import RedirectView, TemplateView
@@ -76,7 +78,7 @@ class CreateInitialVariation(CreateView):
     """Create the first product in a new range."""
 
     form_class = forms.InitialProductForm
-    template_name = "inventory/product_editor/product_form.html"
+    template_name = "inventory/product_editor/create_initial_variation.html"
 
     def get_initial(self, *args, **kwargs):
         """Return initial form values."""
@@ -89,9 +91,14 @@ class CreateInitialVariation(CreateView):
 
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
-        return reverse_lazy(
-            "inventory:setup_variations", kwargs={"range_pk": self.product_range.pk}
-        )
+        if "create_single_product" in self.request.POST:
+            return reverse_lazy(
+                "inventory:edit_new_product", kwargs={"range_pk": self.product_range.pk}
+            )
+        elif "create_variations" in self.request.POST:
+            return reverse_lazy(
+                "inventory:setup_variations", kwargs={"range_pk": self.product_range.pk}
+            )
 
 
 class SetupVariations(InventoryUserMixin, FormView):
@@ -124,24 +131,38 @@ class SetupVariations(InventoryUserMixin, FormView):
             for _ in json.loads(form.cleaned_data["variations"])
             if _["included"] is True
         ]
-        for i, variation in enumerate(variations):
-            product = base_product
-            if i > 0:
+        with transaction.atomic():
+            for variation in variations:
                 product = self.duplicate_product(base_product)
-            for option, value in variation.items():
-                variation_option = models.VariationOption.objects.get(name=option)
-                models.VariationOptionValue(
-                    product=product, variation_option=variation_option, value=value
-                ).save()
+                for option, value in variation.items():
+                    variation_option = models.VariationOption.objects.get(name=option)
+                    models.VariationOptionValue(
+                        product=product, variation_option=variation_option, value=value
+                    ).save()
+            base_product.delete()
         return super().form_valid(form)
 
     def duplicate_product(self, to_copy):
         """Create a duplicate product with a new SKU."""
         product = models.Product.creating.get(id=to_copy.id)
-        product.id = None
-        product.sku = models.new_product_sku()
-        product.save()
-        return product
+        product_kwargs = self.model_to_dict(product)
+        product_kwargs.pop("id")
+        product_kwargs["sku"] = models.new_product_sku()
+        new_product = models.VariationProduct(**product_kwargs)
+        new_product.save()
+        return new_product
+
+    def model_to_dict(self, instance):
+        """Return a dict of model instance attributes."""
+        opts = instance._meta
+        data = {}
+        for f in chain(opts.concrete_fields, opts.private_fields, opts.many_to_many):
+            if f.name in ("baseproduct_ptr"):
+                continue
+            if not getattr(f, "editable", False):
+                continue
+            data[f.name] = getattr(instance, f.name)
+        return data
 
     def get_success_url(self, *args, **kwargs):
         """Redirect on successful validation of the form."""

@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
+from polymorphic.models import PolymorphicManager, PolymorphicModel
 
 from .suppliers import Supplier
 
@@ -141,60 +142,6 @@ class VATRate(models.Model):
         return self.name
 
 
-class VariationOptionValue(models.Model):
-    """Model for product variation option values."""
-
-    product = models.ForeignKey(
-        "Product", on_delete=models.CASCADE, related_name="variation_option_values"
-    )
-    variation_option = models.ForeignKey(
-        VariationOption,
-        on_delete=models.PROTECT,
-        related_name="variation_option_values",
-    )
-    value = models.CharField(max_length=255)
-
-    class Meta:
-        """Meta class for VariationOptionValue."""
-
-        verbose_name = "Variation Option Value"
-        verbose_name_plural = "Variation Option Values"
-        ordering = ("variation_option", "value")
-
-    def __str__(self):
-        return (
-            f"VariationOptionValue: {self.product.sku} - "
-            f"{self.variation_option.name}"
-        )
-
-
-class ListingAttributeValue(models.Model):
-    """Model for product listing attribute values."""
-
-    product = models.ForeignKey(
-        "Product", on_delete=models.CASCADE, related_name="listing_attribute_values"
-    )
-    listing_attribute = models.ForeignKey(
-        ListingAttribute,
-        on_delete=models.PROTECT,
-        related_name="listing_attribute_values",
-    )
-    value = models.CharField(max_length=255)
-
-    class Meta:
-        """Meta class for ListingAttributeValue."""
-
-        verbose_name = "Listing Attribute Value"
-        verbose_name_plural = "Listing Attribute Values"
-        ordering = ("value",)
-
-    def __str__(self):
-        return (
-            f"VariationOptionValue: {self.product.sku} - "
-            f"{self.variation_option.name}"
-        )
-
-
 class ProductRangeManager(models.Manager):
     """Manager for complete products."""
 
@@ -312,7 +259,7 @@ class ProductRange(models.Model):
         )
 
 
-class ProductManager(models.Manager):
+class ProductManager(PolymorphicManager):
     """Manager for complete products."""
 
     def get_queryset(self, *args, **kwargs):
@@ -324,7 +271,7 @@ class ProductManager(models.Manager):
         )
 
 
-class CreatingProductManager(models.Manager):
+class CreatingProductManager(PolymorphicManager):
     """Manager for incomplete products."""
 
     def get_queryset(self, *args, **kwargs):
@@ -336,8 +283,8 @@ class CreatingProductManager(models.Manager):
         )
 
 
-class Product(models.Model):
-    """Model for inventory products."""
+class BaseProduct(PolymorphicModel):
+    """Base model for products."""
 
     product_range = models.ForeignKey(
         ProductRange, on_delete=models.PROTECT, related_name="products"
@@ -345,6 +292,15 @@ class Product(models.Model):
     sku = models.CharField(
         max_length=255, unique=True, db_index=True, blank=False, null=False
     )
+
+    objects = PolymorphicManager()
+    products = ProductManager()
+    creating = CreatingProductManager()
+
+
+class Product(BaseProduct):
+    """Model for inventory products."""
+
     supplier = models.ForeignKey(
         Supplier, on_delete=models.PROTECT, related_name="products"
     )
@@ -381,10 +337,6 @@ class Product(models.Model):
         related_name="products",
     )
     range_order = models.PositiveSmallIntegerField(default=0)
-
-    objects = models.Manager()
-    products = ProductManager()
-    creating = CreatingProductManager()
 
     class Meta:
         """Meta class for Products."""
@@ -461,6 +413,121 @@ class Product(models.Model):
     def update_stock_level(self, *, old, new):
         """Set the product's stock level in Cloud Commerce."""
         raise NotImplementedError()
+
+
+class SingleProduct(Product):
+    """Model for single products."""
+
+    pass
+
+
+class VariationProduct(Product):
+    """Model for variation products."""
+
+    pass
+
+
+class MultipackProduct(BaseProduct):
+    """Model for multipack items."""
+
+    base_product = models.ForeignKey(
+        Product, on_delete=models.PROTECT, related_name="multipacks"
+    )
+    quantity = models.PositiveIntegerField()
+    name = models.CharField(max_length=50)
+
+
+class CombinationProductLink(models.Model):
+    """Model for linking combination products."""
+
+    class Meta:
+        """Meta class for the CombinationProductLink model."""
+
+        verbose_name = "Combination Product Link"
+        verbose_name_plural = "Combination Product Links"
+        unique_together = ("product", "combination_product")
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.PROTECT,
+        related_name="combination_product_links",
+    )
+    combination_product = models.ForeignKey(
+        "CombinationProduct",
+        on_delete=models.CASCADE,
+        related_name="combination_product_links",
+    )
+    quantity = models.PositiveIntegerField()
+
+
+class CombinationProduct(BaseProduct):
+    """Model for combination items."""
+
+    products = models.ManyToManyField(
+        Product,
+        through=CombinationProductLink,
+        related_name="combination_products",
+    )
+
+
+class VariationOptionValue(models.Model):
+    """Model for product variation option values."""
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="variation_option_values",
+    )
+    variation_option = models.ForeignKey(
+        VariationOption,
+        on_delete=models.PROTECT,
+        related_name="variation_option_values",
+    )
+    value = models.CharField(max_length=255)
+
+    class Meta:
+        """Meta class for VariationOptionValue."""
+
+        verbose_name = "Variation Option Value"
+        verbose_name_plural = "Variation Option Values"
+        ordering = ("variation_option", "value")
+        unique_together = ("product", "variation_option")
+
+    def __str__(self):
+        return (
+            f"VariationOptionValue: {self.product.sku} - "
+            f"{self.variation_option.name}"
+        )
+
+
+class ListingAttributeValue(models.Model):
+    """Model for product listing attribute values."""
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="listing_attribute_values",
+    )
+    listing_attribute = models.ForeignKey(
+        ListingAttribute,
+        on_delete=models.PROTECT,
+        related_name="listing_attribute_values",
+    )
+    value = models.CharField(max_length=255)
+
+    class Meta:
+        """Meta class for ListingAttributeValue."""
+
+        verbose_name = "Listing Attribute Value"
+        verbose_name_plural = "Listing Attribute Values"
+        ordering = ("value",)
+        unique_together = ("product", "listing_attribute")
+
+    def __str__(self):
+        return (
+            f"VariationOptionValue: {self.product.sku} - "
+            f"{self.variation_option.name}"
+        )
 
 
 def generate_sku():
