@@ -14,7 +14,7 @@ class ProductView(InventoryUserMixin, FormView):
     """View for ProductForm."""
 
     template_name = "inventory/product.html"
-    form_class = forms.ProductForm
+    form_class = forms.EditProductForm
 
     def dispatch(self, *args, **kwargs):
         """Process HTTP request."""

@@ -1,6 +1,5 @@
 """Forms for inventory app."""
 
-
 from django import forms
 from django.db import transaction
 
@@ -58,8 +57,8 @@ class CreateRangeForm(forms.ModelForm):
         return "|".join(amazon_list_json)
 
 
-class InitialProductForm(forms.ModelForm):
-    """Form for setting initial product attributes."""
+class BaseProductForm(forms.ModelForm):
+    """Form for editing indivdual Products."""
 
     class Meta:
         """Meta for InitialProductForm."""
@@ -69,7 +68,45 @@ class InitialProductForm(forms.ModelForm):
             "end_of_line",
             "gender",
             "range_order",
+            "length_mm",
+            "height_mm",
+            "width_mm",
         )
+        field_classes = {
+            # "barcode": inventory_fields.Barcode,
+            # "purchase_price": inventory_fields.PurchasePrice,
+            # "retail_price": inventory_fields.RetailPrice,
+            # "vat_rate": inventory_fields.VATRateField,
+            # "stock_level": inventory_fields.StockLevel,
+            # "bay": inventory_fields.BayField,
+            # "weight_grans": inventory_fields.Weight,
+            # "brand": inventory_fields.Brand,
+            # "manufacturer": inventory_fields.Manufacturer,
+            # "package_type": inventory_fields.PackageType,
+        }
+
+        field_order = (
+            "barcode",
+            "purchase_prce",
+            "retail_price",
+            "vat_rate",
+            "stock_level",
+            "bay",
+            "weight_grams",
+            "dimensions",
+            "package_type",
+            "hs_code",
+            "brand",
+            "manufacturer",
+        )
+
+
+class InitialProductForm(BaseProductForm):
+    """Form for setting initial product attributes."""
+
+    class Meta(BaseProductForm.Meta):
+        """Meta for InitialProductForm."""
+
         field_classes = {
             # "barcode": inventory_fields.Barcode,
             # "purchase_price": inventory_fields.PurchasePrice,
@@ -84,24 +121,6 @@ class InitialProductForm(forms.ModelForm):
         }
         widgets = {"product_range": forms.HiddenInput, "sku": forms.HiddenInput}
 
-        field_order = (
-            "barcode",
-            "purchase_prce",
-            "retail_price",
-            "vat_rate",
-            "stock_level",
-            "bay",
-            "weight_grams",
-            "length_mm",
-            "height_mm",
-            "width_mm",
-            "dimensions",
-            "package_type",
-            "hs_code",
-            "brand",
-            "manufacturer",
-        )
-
     sku = forms.CharField(required=False, widget=forms.HiddenInput)
 
     def clean(self, *args, **kwargs):
@@ -109,6 +128,21 @@ class InitialProductForm(forms.ModelForm):
         cleaned_data = super().clean(*args, **kwargs)
         cleaned_data["sku"] = models.new_product_sku()
         return cleaned_data
+
+
+class EditProductForm(BaseProductForm):
+    """Form for editing the Product model."""
+
+    class Meta(BaseProductForm.Meta):
+        """Meta class for EditProductForm."""
+
+        exclude = BaseProductForm.Meta.exclude + ("product_range",)
+
+
+class ProductFormset(KwargFormSet):
+    """Formset for updating the locations of all Products within a Range."""
+
+    form = EditProductForm
 
 
 class SetupVariationsForm(forms.Form):
@@ -125,55 +159,6 @@ class SetupVariationsForm(forms.Form):
                 variation_option=variation_option,
                 label=variation_option.name,
             )
-
-
-class ProductForm(forms.ModelForm):
-    """Form for editing indivdual Products."""
-
-    class Meta:
-        """Meta for InitialProductForm."""
-
-        model = models.Product
-        exclude = ("end_of_line", "gender", "range_order", "sku")
-        field_classes = {
-            # "barcode": inventory_fields.Barcode,
-            # "purchase_price": inventory_fields.PurchasePrice,
-            # "retail_price": inventory_fields.RetailPrice,
-            # "vat_rate": inventory_fields.VATRateField,
-            # "stock_level": inventory_fields.StockLevel,
-            # "bay": inventory_fields.BayField,
-            # "weight_grans": inventory_fields.Weight,
-            # "brand": inventory_fields.Brand,
-            # "manufacturer": inventory_fields.Manufacturer,
-            # "package_type": inventory_fields.PackageType,
-        }
-        widgets = {
-            "product_range": forms.HiddenInput,
-        }
-
-        field_order = (
-            "barcode",
-            "purchase_prce",
-            "retail_price",
-            "vat_rate",
-            "stock_level",
-            "bay",
-            "weight_grams",
-            "length_mm",
-            "height_mm",
-            "width_mm",
-            "dimensions",
-            "package_type",
-            "hs_code",
-            "brand",
-            "manufacturer",
-        )
-
-
-class ProductFormset(KwargFormSet):
-    """Formset for updating the locations of all Products within a Range."""
-
-    form = ProductForm
 
 
 class ImagesForm(forms.Form):

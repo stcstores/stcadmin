@@ -2,23 +2,36 @@
 
 {% block content %}
 <div>
-  <h2>Your in progress product changes</h2>
-  {% if user_edits %}
-  {% for edit in user_edits %}
-  <a href="{% url 'inventory:edit_product' edit.id %}">{{ edit }}</a>
-  {% endfor %}
+  <h2>Your in progress products</h2>
+  {% if user_product_ranges %}
+  <ul>
+    {% for product_range in user_product_ranges %}
+    <li>
+      <a href="{% url 'inventory:resume_editing_product' product_range.pk %}">{{ product_range }}</a>
+    </li>
+    {% endfor %}
+  </ul>
   {% else %}
-  <p>You do not have any in progress product changes.</p>
+  <p>You do not have any in progress products.</p>
   {% endif %}
 </div>
 <div>
-  <h2>Other User's in progress product changes</h2>
-  {% if others_edits %}
-  {% for edit in others_edits %}
-  {{ edit.user }}: <a href="{% url 'inventory:edit_product' edit.id %}">{{ edit }}</a>
+  <h2>Other User's in progress products</h2>
+  {% if others_product_ranges %}
+  {% for user, product_ranges in others_product_ranges.items %}
+  <div>
+    {{ user }}:
+    <ul>
+      {% for product_range in product_ranges %}
+      <li>
+        <a href="{% url 'inventory:resume_editing_product' product_range.pk %}">{{ product_range }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
   {% endfor %}
   {% else %}
-  <p>No other users have in progress product changes.</p>
+  <p>No other users have in progress products.</p>
   {% endif %}
 </div>
 {% endblock %}

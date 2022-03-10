@@ -1,7 +1,7 @@
 """Models for the inventory app."""
 
 from .barcodes import Barcode
-from .locations import Bay
+from .location import Bay, ProductBayHistory, ProductBayLink
 from .product import (
     Brand,
     Gender,
@@ -13,6 +13,7 @@ from .product import (
     ProductRange,
     VariationOption,
     VariationOptionValue,
+    VATRate,
     new_product_sku,
     new_range_sku,
 )
@@ -20,22 +21,23 @@ from .product_exports import ProductExport
 from .product_image import ProductImage
 from .stock_change import StockChange
 from .suppliers import Supplier, SupplierContact
-from .vat_rates import VATRate
 
 __all__ = [
     "Barcode",
     "ProductImage",
     "Bay",
+    "ProductBayHistory",
+    "ProductBayLink",
     "ProductExport",
     "ProductImage",
     "Brand",
     "Manufacturer",
-    "Department",
     "Gender",
     "ListingAttribute",
     "ListingAttributeValue",
     "VariationOption",
     "VariationOptionValue",
+    "VATRate",
     "new_product_sku",
     "new_range_sku",
     "PackageType",
@@ -44,5 +46,4 @@ __all__ = [
     "StockChange",
     "Supplier",
     "SupplierContact",
-    "VATRate",
 ]

@@ -295,12 +295,12 @@ class PackageType(fieldtypes.SelectizeModelChoiceField):
         return models.PackageType.objects.filter(active=True)
 
 
-class BayField(fieldtypes.SelectizeField):
+class BayField(fieldtypes.SelectizeModelMultipleChoiceField):
     """Field for choosing warehouse bays."""
 
-    label = "Location"
-    name = "location"
-    placeholder = "Location"
+    label = "Bays"
+    name = "bays"
+    placeholder = "Bays"
     variable = True
     html_class = "location_field"
     required = False
@@ -310,16 +310,10 @@ class BayField(fieldtypes.SelectizeField):
         "specific <b>Bay</b>.<br>If additional bays are required they "
         "must be added after the product has been created."
     )
-    selectize_options = {
-        "delimiter": ",",
-        "persist": False,
-        "maxItems": None,
-        "sortField": "text",
-    }
 
-    def get_choices(self):
+    def get_queryset(self):
         """Return choices for field."""
-        models.Bay.objects.filter(active=True)
+        return models.Bay.objects.filter(active=True)
 
 
 class ProductOptionValueField(fieldtypes.SelectizeField):
@@ -357,17 +351,21 @@ class ProductOptionValueField(fieldtypes.SelectizeField):
             available_options = self.remove_used_options(
                 available_options, self.product_range
             )
-        choices += [(option.value, option.value) for option in available_options]
+        choices += [(option, option) for option in available_options]
         return choices
 
     def remove_used_options(self, available_options, product_range):
         """Filter values already used by the product from the choices."""
-        existing_links = models.PartialProductOptionValueLink.objects.filter(
-            product__product_range=self.product_range,
-            product_option_value__product_option=self.variation_option,
+        existing_links = (
+            models.VariationOptionValue.objects.filter(
+                product__product_range=self.product_range,
+            )
+            .values_list("variation_option", flat=True)
+            .distinct()
+            .order_by()
         )
-        existing_values = models.ProductOptionValue.objects.filter(
-            id__in=existing_links.values_list("product_option_value__id", flat=True)
+        existing_values = models.VariationOption.objects.filter(
+            id__in=existing_links.values_list("name", flat=True)
         )
         return available_options.difference(existing_values)
 
@@ -394,28 +392,8 @@ class ListingOption(ProductOptionValueField):
     pass
 
 
-class PartialProductOptionValueSelect(fieldtypes.SelectizeModelChoiceField):
-    """Select a product option value for a parital product."""
-
-    def __init__(self, *args, **kwargs):
-        """Select a product option value for a parital product."""
-        self.edit = kwargs.pop("edit")
-        self.product_option = kwargs.pop("product_option")
-        super().__init__(*args, **kwargs)
-
-    def label_from_instance(self, obj):
-        """Return the name of the option as it should appear in the form."""
-        return obj.value
-
-    def get_queryset(self):
-        """Return a queryset of selectable options."""
-        return self.edit.product_option_values.filter(
-            product_option=self.product_option
-        )
-
-
 class Brand(fieldtypes.SelectizeModelChoiceField):
-    """Field for product department."""
+    """Field for product brand."""
 
     label = "Brand"
     name = "brand"

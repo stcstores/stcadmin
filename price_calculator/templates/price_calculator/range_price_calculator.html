@@ -48,7 +48,7 @@
 </div>
 
 <div class="range">
-  {% for product in product_range.product_set.all %}
+  {% for product in product_range.products.all %}
   <div class="product" id="product_{{ product.id }}">
     <div class="product_row title">
       <span class="sku">{{ product.SKU }}</span>&nbsp;-&nbsp;<span class="name">{{ product.name }}</span>
@@ -148,7 +148,7 @@
     if (vat_rates.length == 0) {
       {
         %
-        for product in product_range.product_set.all %
+        for product in product_range.products.all %
       }
       calcs['{{ product.id }}'].set_vat_rate(0); {
         % endfor %
@@ -178,7 +178,7 @@
   $(document).ready(function () {
     calcs = {}; {
       %
-      for product in product_range.product_set.all %
+      for product in product_range.products.all %
     }
     var ex_vat_price = {
       {
@@ -333,7 +333,7 @@
     $('#channel_fee_input').change(function () {
       {
         %
-        for product in product_range.product_set.all %
+        for product in product_range.products.all %
       }
       calcs['{{ product.id }}'].set_channel_fee_percentage($(this).val()); {
         % endfor %

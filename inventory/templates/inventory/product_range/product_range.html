@@ -29,7 +29,7 @@
       <th class="column header barcode">Barcode</th>
       <th class="column header stock_level">Stock Level</th>
     </tr>
-    {% for product in product_range.products %}
+    {% for product in product_range.products.all %}
     <tr class="row">
       <td class="column SKU sku">{{ product.SKU }}</td>
       <td class="column edit">

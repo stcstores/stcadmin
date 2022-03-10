@@ -16,6 +16,7 @@ class Supplier(models.Model):
 
         verbose_name = "Supplier"
         verbose_name_plural = "Suppliers"
+        ordering = ("name",)
 
     def __str__(self):
         return self.name
@@ -35,7 +36,9 @@ class SupplierContact(models.Model):
         verbose_name_plural = "Supplier Contacts"
         ordering = ("name",)
 
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    supplier = models.ForeignKey(
+        Supplier, on_delete=models.CASCADE, related_name="supplier_contacts"
+    )
     name = models.CharField(max_length=200, null=True, blank=True)
     email = models.EmailField(max_length=200, null=True, blank=True)
     phone = models.CharField(max_length=200, null=True, blank=True)

@@ -17,7 +17,7 @@ inventory_urlpatterns = [
         "locations/<int:range_pk>/", views.LocationFormView.as_view(), name="locations"
     ),
     path("images/<int:range_pk>/", views.ImageFormView.as_view(), name="images"),
-    path("product/<int:product_id>/", views.ProductView.as_view(), name="product"),
+    path("product/<int:product_pk>/", views.ProductView.as_view(), name="product"),
     path(
         "descriptions/<int:range_pk>/",
         views.DescriptionsView.as_view(),
@@ -86,6 +86,16 @@ product_editor_patterns = [
         "start_new_product/", views.StartNewProduct.as_view(), name="start_new_product"
     ),
     path(
+        "resume_editing_product/<int:range_pk>/",
+        views.ResumeEditingProduct.as_view(),
+        name="resume_editing_product",
+    ),
+    path(
+        "edit_new_product/<int:range_pk>/",
+        views.EditNewProduct.as_view(),
+        name="edit_new_product",
+    ),
+    path(
         "edit_product/<int:range_pk>/", views.EditProduct.as_view(), name="edit_product"
     ),
     path(
@@ -148,9 +158,9 @@ product_editor_patterns = [
         name="delete_variation",
     ),
     path(
-        "discard_changes/<int:edit_ID>/",
-        views.DiscardChanges.as_view(),
-        name="discard_changes",
+        "discard_new_range/<int:range_pk>/",
+        views.DiscardNewRange.as_view(),
+        name="discard_new_range",
     ),
     path(
         "remove_dowpdown/<int:edit_ID>/<int:product_option_ID>/",
@@ -158,7 +168,9 @@ product_editor_patterns = [
         name="remove_dropdown",
     ),
     path(
-        "save_changes/<int:edit_ID>/", views.SaveChanges.as_view(), name="save_changes"
+        "complete_new_product/<int:range_pk>/",
+        views.CompleteNewProduct.as_view(),
+        name="complete_new_product",
     ),
     path(
         "setup_variations/<int:range_pk>/",

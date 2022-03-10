@@ -5,11 +5,11 @@ import string
 from collections import defaultdict
 
 from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.urls import reverse
 
-from .locations import Bay
 from .suppliers import Supplier
-from .vat_rates import VATRate
 
 UNIQUE_SKU_ATTEMPTS = 100
 
@@ -21,8 +21,8 @@ class VariationOption(models.Model):
         """Meta class for VariationOption."""
 
         verbose_name = "Variation Option"
-        verbose_name_plural = "Variation Option"
-        ordering = ["ordering"]
+        verbose_name_plural = "Variation Options"
+        ordering = ("ordering",)
 
     name = models.CharField(max_length=50, unique=True)
     ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
@@ -40,7 +40,7 @@ class ListingAttribute(models.Model):
 
         verbose_name = "Listing Attribute"
         verbose_name_plural = "Listing Attributes"
-        ordering = ["ordering"]
+        ordering = ("ordering",)
 
     name = models.CharField(max_length=50, unique=True)
     ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
@@ -63,7 +63,7 @@ class PackageType(models.Model):
 
         verbose_name = "Package Type"
         verbose_name_plural = "Package Types"
-        ordering = ["ordering"]
+        ordering = ("ordering",)
 
     def __str__(self):
         return self.name
@@ -80,6 +80,7 @@ class Brand(models.Model):
 
         verbose_name = "Brand"
         verbose_name_plural = "Brands"
+        ordering = ("name",)
 
     def __str__(self):
         return self.name
@@ -96,6 +97,7 @@ class Manufacturer(models.Model):
 
         verbose_name = "Manufacturer"
         verbose_name_plural = "Manufacturers"
+        ordering = ("name",)
 
     def __str__(self):
         return self.name
@@ -113,6 +115,26 @@ class Gender(models.Model):
 
         verbose_name = "Gender"
         verbose_name_plural = "Genders"
+        ordering = ("ordering",)
+
+    def __str__(self):
+        return self.name
+
+
+class VATRate(models.Model):
+    """Model for VAT rates."""
+
+    name = models.CharField(max_length=50, unique=True)
+    percentage = models.FloatField(
+        validators=[MinValueValidator(0.0), MaxValueValidator(1)]
+    )
+    ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
+
+    class Meta:
+        """Meta class for VAT Rate."""
+
+        verbose_name = "VAT Rate"
+        verbose_name_plural = "VAT Rates"
         ordering = ["ordering"]
 
     def __str__(self):
@@ -122,8 +144,14 @@ class Gender(models.Model):
 class VariationOptionValue(models.Model):
     """Model for product variation option values."""
 
-    product = models.ForeignKey("Product", on_delete=models.CASCADE)
-    variation_option = models.ForeignKey(VariationOption, on_delete=models.PROTECT)
+    product = models.ForeignKey(
+        "Product", on_delete=models.CASCADE, related_name="variation_option_values"
+    )
+    variation_option = models.ForeignKey(
+        VariationOption,
+        on_delete=models.PROTECT,
+        related_name="variation_option_values",
+    )
     value = models.CharField(max_length=255)
 
     class Meta:
@@ -131,7 +159,7 @@ class VariationOptionValue(models.Model):
 
         verbose_name = "Variation Option Value"
         verbose_name_plural = "Variation Option Values"
-        ordering = ("value",)
+        ordering = ("variation_option", "value")
 
     def __str__(self):
         return (
@@ -143,8 +171,14 @@ class VariationOptionValue(models.Model):
 class ListingAttributeValue(models.Model):
     """Model for product listing attribute values."""
 
-    product = models.ForeignKey("Product", on_delete=models.CASCADE)
-    listing_attribute = models.ForeignKey(ListingAttribute, on_delete=models.PROTECT)
+    product = models.ForeignKey(
+        "Product", on_delete=models.CASCADE, related_name="listing_attribute_values"
+    )
+    listing_attribute = models.ForeignKey(
+        ListingAttribute,
+        on_delete=models.PROTECT,
+        related_name="listing_attribute_values",
+    )
     value = models.CharField(max_length=255)
 
     class Meta:
@@ -161,6 +195,22 @@ class ListingAttributeValue(models.Model):
         )
 
 
+class ProductRangeManager(models.Manager):
+    """Manager for complete products."""
+
+    def get_queryset(self, *args, **kwargs):
+        """Return a queryset of complete products."""
+        return super().get_queryset(*args, **kwargs).filter(status=self.model.COMPLETE)
+
+
+class CreatingProductRangeManager(models.Manager):
+    """Manager for incomplete products."""
+
+    def get_queryset(self, *args, **kwargs):
+        """Return a queryset of incomplete products."""
+        return super().get_queryset(*args, **kwargs).filter(status=self.model.CREATING)
+
+
 class ProductRange(models.Model):
     """Model for Product Ranges."""
 
@@ -175,14 +225,22 @@ class ProductRange(models.Model):
     )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=CREATING)
 
-    sku = models.CharField(max_length=15, unique=True, db_index=True)
+    sku = models.CharField(
+        max_length=255, unique=True, db_index=True, blank=False, null=False
+    )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, default="")
     amazon_search_terms = models.TextField(blank=True, default="")
     amazon_bullet_points = models.TextField(blank=True, default="")
     end_of_line = models.BooleanField(default=False)
     hidden = models.BooleanField(default=False)
-    managed_by = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
+    managed_by = models.ForeignKey(
+        get_user_model(), on_delete=models.PROTECT, related_name="product_ranges"
+    )
+
+    objects = models.Manager()
+    ranges = ProductRangeManager()
+    creating = CreatingProductRangeManager()
 
     class Meta:
         """Meta class for Product Ranges."""
@@ -193,9 +251,18 @@ class ProductRange(models.Model):
     def __str__(self):
         return f"{self.sku} - {self.name}"
 
+    def get_absolute_url(self):
+        """Return the absolute url for the product range."""
+        return reverse("inventory:product_range", kwargs={"range_pk": self.pk})
+
+    def complete_new_range(self):
+        """Make product range complete and active."""
+        self.status = self.COMPLETE
+        self.save()
+
     def has_variations(self):
         """Return True if the product has multiple variations, otherwise return False."""
-        return self.products().count() > 1
+        return self.products.count() > 1
 
     def variation_options(self):
         """Return the Range's variable product options."""
@@ -215,32 +282,24 @@ class ProductRange(models.Model):
             .order_by()
         )
 
-    def product_count(self):
-        """Return the number of products in this Range."""
-        return self.product_set.count()
-
-    def products(self):
-        """Return a queryset of the Product Range's products."""
-        return self.product_set.all().order_by("range_order", "id")
-
     def variation_option_values(self):
         """Return a dict of varition keys and values."""
         variation_values = VariationOptionValue.objects.filter(
             product__product_range=self
-        )
+        ).order_by("variation_option", "value")
         variation_options = defaultdict(list)
         for value in variation_values:
             if value.value not in variation_options[value.variation_option]:
                 variation_options[value.variation_option].append(value.value)
-        return variation_options
+        return dict(variation_options)
 
     def variation_values(self):
         """Return a list of the product range's variation option values."""
         return (
             VariationOptionValue.objects.filter(product__product_range=self)
-            .values_list("value", flat=True)
             .distinct()
             .order_by()
+            .values_list("value", flat=True)
         )
 
     def listing_attribute_values(self):
@@ -253,23 +312,59 @@ class ProductRange(models.Model):
         )
 
 
+class ProductManager(models.Manager):
+    """Manager for complete products."""
+
+    def get_queryset(self, *args, **kwargs):
+        """Return a queryset of complete products."""
+        return (
+            super()
+            .get_queryset(*args, **kwargs)
+            .filter(product_range__status=ProductRange.COMPLETE)
+        )
+
+
+class CreatingProductManager(models.Manager):
+    """Manager for incomplete products."""
+
+    def get_queryset(self, *args, **kwargs):
+        """Return a queryset of incomplete products."""
+        return (
+            super()
+            .get_queryset(*args, **kwargs)
+            .filter(product_range__status=ProductRange.CREATING)
+        )
+
+
 class Product(models.Model):
     """Model for inventory products."""
 
-    product_range = models.ForeignKey(ProductRange, on_delete=models.PROTECT)
-    sku = models.CharField(max_length=255, unique=True, db_index=True)
-    supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT)
+    product_range = models.ForeignKey(
+        ProductRange, on_delete=models.PROTECT, related_name="products"
+    )
+    sku = models.CharField(
+        max_length=255, unique=True, db_index=True, blank=False, null=False
+    )
+    supplier = models.ForeignKey(
+        Supplier, on_delete=models.PROTECT, related_name="products"
+    )
     supplier_sku = models.CharField(max_length=255, null=True, blank=True)
     barcode = models.CharField(max_length=20)
+    supplier_barcode = models.CharField(max_length=20, blank=True, null=True)
     purchase_price = models.DecimalField(decimal_places=2, max_digits=8)
-    vat_rate = models.ForeignKey(VATRate, on_delete=models.PROTECT)
+    vat_rate = models.ForeignKey(
+        VATRate, on_delete=models.PROTECT, related_name="products"
+    )
     retail_price = models.DecimalField(
         decimal_places=2, max_digits=8, null=True, blank=True
     )
-    brand = models.ForeignKey(Brand, on_delete=models.PROTECT)
-    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT)
-    package_type = models.ForeignKey(PackageType, on_delete=models.PROTECT)
-    bays = models.ManyToManyField(Bay, blank=True)
+    brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name="products")
+    manufacturer = models.ForeignKey(
+        Manufacturer, on_delete=models.PROTECT, related_name="products"
+    )
+    package_type = models.ForeignKey(
+        PackageType, on_delete=models.PROTECT, related_name="products"
+    )
     weight_grams = models.PositiveSmallIntegerField()
     length_mm = models.PositiveSmallIntegerField(blank=True, null=True)
     height_mm = models.PositiveSmallIntegerField(blank=True, null=True)
@@ -278,8 +373,18 @@ class Product(models.Model):
     date_created = models.DateField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
     hs_code = models.CharField(max_length=50)
-    gender = models.ForeignKey(Gender, null=True, blank=True, on_delete=models.SET_NULL)
+    gender = models.ForeignKey(
+        Gender,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="products",
+    )
     range_order = models.PositiveSmallIntegerField(default=0)
+
+    objects = models.Manager()
+    products = ProductManager()
+    creating = CreatingProductManager()
 
     class Meta:
         """Meta class for Products."""
@@ -289,6 +394,10 @@ class Product(models.Model):
 
     def __str__(self):
         return f"{self.sku}: {self.full_name}"
+
+    def get_absolute_url(self):
+        """Return the absolute url of the object."""
+        return reverse("inventory:product", kwargs={"pk": self.pk})
 
     @property
     def full_name(self):
@@ -308,13 +417,6 @@ class Product(models.Model):
         """Return the product's variation product options as a dict."""
         options = VariationOptionValue.objects.filter(product=self)
         return {option.variation_option.name: option.value for option in options}
-        variation = {
-            option.product_option: option for option in self.variable_options()
-        }
-        for option in options:
-            if option not in variation:
-                variation[option] = None
-        return variation
 
     # def listing_options(self):
     #     """Return the product's listing product options as a dict."""
@@ -324,14 +426,18 @@ class Product(models.Model):
 
     def variable_options(self):
         """Return list of Product Options which are variable for the range."""
-        return VariationOptionValue.objects.filter(product=self).values_list(
-            "name", "value"
+        return (
+            VariationOptionValue.objects.filter(product=self)
+            .values_list("name", "value")
+            .order_by("variation_option", "value")
         )
 
     def variation_values(self):
         """Return a list of the product's variation option values."""
-        return VariationOptionValue.objects.filter(product=self).values_list(
-            "value", flat=True
+        return (
+            VariationOptionValue.objects.filter(product=self)
+            .values_list("value", flat=True)
+            .order_by("variation_option", "value")
         )
 
     # def selected_listing_options(self):
@@ -387,11 +493,11 @@ def unique_sku(existing_skus, sku_function):
 
 def new_product_sku():
     """Return a new product SKU."""
-    existing_skus = set(Product.objects.values_list("sku", flat=True).distinct())
+    existing_skus = set(Product.products.values_list("sku", flat=True).distinct())
     return unique_sku(existing_skus=existing_skus, sku_function=generate_sku)
 
 
 def new_range_sku():
     """Return a new product range SKU."""
-    existing_skus = set(ProductRange.objects.values_list("sku", flat=True).distinct())
+    existing_skus = set(ProductRange.ranges.values_list("sku", flat=True).distinct())
     return unique_sku(existing_skus=existing_skus, sku_function=generate_range_sku)

@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.postgres.search import SearchVector
 
 from inventory import models
-from inventory.forms import fields
+from inventory.forms import fields as inventory_fields
 
 from .widgets import HorizontalRadio
 
@@ -40,7 +40,7 @@ class ProductSearchForm(forms.Form):
         label="End of Line",
         help_text="Hide End of Line Ranges",
     )
-    supplier = fields.Supplier(required=False)
+    supplier = inventory_fields.Supplier(required=False)
     show_hidden = forms.BooleanField(required=False)
 
     def save(self):
@@ -51,17 +51,17 @@ class ProductSearchForm(forms.Form):
 
     def _query_products(self):
         if self.cleaned_data["search_term"]:
-            return models.Product.objects.annotate(
+            return models.Product.products.annotate(
                 search=SearchVector(*self.SEARCH_FIELDS)
             ).filter(search=self.cleaned_data["search_term"])
         else:
-            return models.Product.objects.all()
+            return models.Product.products.all()
 
     def _query_ranges(self, products):
         range_IDs = (
             products.order_by().values_list("product_range", flat=True).distinct()
         )
-        return models.ProductRange.objects.filter(pk__in=range_IDs).order_by("name")
+        return models.ProductRange.ranges.filter(pk__in=range_IDs).order_by("name")
 
     def _filter_ranges(self, ranges):
         ranges = self._filter_end_of_line(ranges)

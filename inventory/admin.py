@@ -145,7 +145,6 @@ class ProductRangeAdmin(admin.ModelAdmin):
         "__str__",
         "sku",
         "name",
-        "product_count",
         "end_of_line",
         "hidden",
         "status",
@@ -165,7 +164,7 @@ class ProductRangeAdmin(admin.ModelAdmin):
 class VariationOptionAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the Product Option model."""
 
-    fields = ("name", "ordering", "active")
+    fields = ("name", "active")
     list_display = ("__str__", "name", "active")
     list_editable = ("name", "active")
     search_fields = ("name",)
@@ -176,7 +175,7 @@ class VariationOptionAdmin(SortableAdminMixin, admin.ModelAdmin):
 class ListingAttributeAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the ListingAttribute model."""
 
-    fields = ("name", "ordering", "active")
+    fields = ("name", "active")
     list_display = ("__str__", "name", "active")
     list_editable = ("name", "active")
     search_fields = ("name",)

@@ -62,6 +62,25 @@ class SingleSelectizeWidget(BaseSelectizeWidget, forms.Select):
         return context
 
 
+class SelectizeModelMultipleChoiceWidget(BaseSelectizeWidget, forms.SelectMultiple):
+    """Widget for selecting multiple model objects."""
+
+    selectize_options = {
+        "delimiter": ",",
+        "persist": False,
+        "maxItems": None,
+        "sortField": "text",
+    }
+
+    def get_context(self, *args, **kwargs):
+        """Return context for template."""
+        context = super().get_context(*args, **kwargs)
+        context["widget"]["selectize_options"] = mark_safe(
+            json.dumps(self.selectize_options)
+        )
+        return context
+
+
 class VATPriceWidget(forms.MultiWidget):
     """Widget for VATPrice field."""
 

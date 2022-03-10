@@ -372,4 +372,4 @@ def create_CCAPI_session():
         print("Skipping Cloud Commerce session for testing.", file=sys.stderr)
 
 
-create_CCAPI_session()
+# create_CCAPI_session()

@@ -22,13 +22,35 @@ class Continue(InventoryUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return the context for the template."""
         context = super().get_context_data(*args, **kwargs)
-        context["user_edits"] = models.ProductEdit.objects.filter(
-            user=self.request.user
+        context["user_product_ranges"] = models.ProductRange.creating.filter(
+            managed_by=self.request.user
         )
-        context["others_edits"] = models.ProductEdit.objects.exclude(
-            user=self.request.user
+        others_ranges = models.ProductRange.creating.exclude(
+            managed_by=self.request.user
         )
+        context["others_product_ranges"] = {
+            product_range.managed_by: product_range for product_range in others_ranges
+        }
         return context
+
+
+class ResumeEditingProduct(InventoryUserMixin, RedirectView):
+    """View for redirecting to the correct page to continue creating a product."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Return the URL to redirect to."""
+        product_range = get_object_or_404(
+            models.ProductRange, pk=self.kwargs.get("range_pk")
+        )
+        product_count = product_range.products.count()
+        if product_count == 0:
+            redirect_name = "inventory:create_initial_variation"
+
+        elif product_count == 1:
+            redirect_name = "inventory:setup_variations"
+        else:
+            redirect_name = "inventory:edit_all_variations"
+        return reverse_lazy(redirect_name, kwargs={"range_pk": product_range.pk})
 
 
 class StartNewProduct(InventoryUserMixin, CreateView):
@@ -96,7 +118,7 @@ class SetupVariations(InventoryUserMixin, FormView):
 
     def form_valid(self, form):
         """Create variation products."""
-        base_product = self.product_range.product_set.all()[0]
+        base_product = self.product_range.products.all()[0]
         variations = [
             _["options"]
             for _ in json.loads(form.cleaned_data["variations"])
@@ -115,7 +137,7 @@ class SetupVariations(InventoryUserMixin, FormView):
 
     def duplicate_product(self, to_copy):
         """Create a duplicate product with a new SKU."""
-        product = models.Product.objects.get(id=to_copy.id)
+        product = models.Product.creating.get(id=to_copy.id)
         product.id = None
         product.sku = models.new_product_sku()
         product.save()
@@ -144,11 +166,20 @@ class EditAllVariations(InventoryUserMixin, FormView):
         kwargs.update(
             {
                 "form_kwargs": [
-                    {"instance": product} for product in self.product_range.products()
+                    {"instance": product}
+                    for product in self.product_range.products.all()
                 ]
             }
         )
         return kwargs
+
+    def get_context_data(self, *args, **kwargs):
+        """Get template context data."""
+        context = super().get_context_data(*args, **kwargs)
+        context["product_range"] = self.product_range
+        context["formset"] = context["form"]
+        context["variations"] = self.product_range.variation_option_values()
+        return context
 
     def is_valid(self, formset):
         """Process POST HTTP request."""
@@ -159,54 +190,27 @@ class EditAllVariations(InventoryUserMixin, FormView):
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
         return reverse_lazy(
-            "inventory:edit_product", kwargs={"range_pk": self.product_range.pk}
+            "inventory:edit_new_product", kwargs={"range_pk": self.product_range.pk}
         )
+
+
+class BaseProductRangeEditView(InventoryUserMixin, TemplateView):
+    """Base view for product range edits."""
 
     def get_context_data(self, *args, **kwargs):
         """Get template context data."""
-        context = super().get_context_data(*args, **kwargs)
-        context["product_range"] = self.product_range
-        context["formset"] = context["form"]
-        context["variations"] = self.product_range.variation_values()
-        return context
-
-
-class EditProduct(InventoryUserMixin, TemplateView):
-    """Main view for in progress product edits."""
-
-    template_name = "inventory/product_editor/edit_product.html"
-
-    def dispatch(self, *args, **kwargs):
-        """If the product range is missing product option values redirect."""
         self.product_range = get_object_or_404(
             models.ProductRange, pk=self.kwargs.get("range_pk")
         )
-        # if self.product_range.has_missing_product_option_values():
-        #     messages.add_message(
-        #         self.request, messages.ERROR, "Variations are missing product options."
-        #     )
-        #     return redirect(
-        #         reverse_lazy(
-        #             "inventory:set_product_option_values",
-        #             kwargs={"range_pk": self.product_range.pk},
-        #         )
-        #     )
-        return super().dispatch(*args, **kwargs)
-
-    def get_context_data(self, *args, **kwargs):
-        """Return the context for the template."""
         context = super().get_context_data(*args, **kwargs)
         context["product_range"] = self.product_range
         context["variations"] = self.get_variation_matrix(self.product_range)
-        # context["ready_to_save"] = self.product_range.valid_variations() and all(
-        #     (p.is_complete() for p in self.product_range.products())
-        # )
         return context
 
     def get_variation_matrix(self, product_range):
         """Return a dict of all possible variations for the range."""
         variations = {}
-        products = product_range.products()
+        products = product_range.products.all()
         option_values = self.product_range.variation_option_values().values()
         for options in itertools.product(*option_values):
             for product in products:
@@ -216,6 +220,30 @@ class EditProduct(InventoryUserMixin, TemplateView):
             else:
                 variations[options] = None
         return variations
+
+
+class EditNewProduct(BaseProductRangeEditView):
+    """View for finalising new products."""
+
+    template_name = "inventory/product_editor/edit_new_product.html"
+
+
+class EditProduct(BaseProductRangeEditView):
+    """Main view for in progress product edits."""
+
+    template_name = "inventory/product_editor/edit_product.html"
+
+
+class CompleteNewProduct(InventoryUserMixin, RedirectView):
+    """Complete a new product."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Complete new product and redirect."""
+        product_range = get_object_or_404(
+            models.ProductRange, pk=self.kwargs.get("range_pk")
+        )
+        product_range.complete_new_range()
+        return product_range.get_absolute_url()
 
 
 class EditVariations(InventoryUserMixin, TemplateView):
@@ -317,7 +345,7 @@ class SetProductOptionValues(InventoryUserMixin, TemplateView):
         """Return the initial values for the formset."""
         return [
             {"edit": self.edit, "product_range": self.product_range, "product": p}
-            for p in self.product_range.products()
+            for p in self.product_range.products.all()
         ]
 
     def post(self, *args, **kwargs):
@@ -357,7 +385,9 @@ class RemoveDropdown(InventoryUserMixin, RedirectView):
             pre_existing=False,
         )
         products = [
-            _ for _ in edit.partial_product_range.products() if _.pre_existing is False
+            _
+            for _ in edit.partial_product_range.products.all()
+            if _.pre_existing is False
         ]
         for product in products:
             product.delete()
@@ -435,7 +465,7 @@ class EditVariation(InventoryUserMixin, FormView):
     """Edit individual variations in the product editor."""
 
     template_name = "inventory/product_editor/edit_variation.html"
-    form_class = forms.ProductForm
+    form_class = forms.EditProductForm
 
     def get_form_kwargs(self, *args, **kwargs):
         """Return kwargs for form."""
@@ -504,7 +534,7 @@ class DeleteVariation(InventoryUserMixin, RedirectView):
         return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": edit.pk})
 
 
-class DiscardChanges(InventoryUserMixin, RedirectView):
+class DiscardNewRange(InventoryUserMixin, RedirectView):
     """Discard changes in product editor."""
 
     def get_redirect_url(self, *args, **kwargs):
@@ -518,19 +548,3 @@ class DiscardChanges(InventoryUserMixin, RedirectView):
             )
         else:
             return reverse_lazy("inventory:product_search")
-
-
-class SaveChanges(InventoryUserMixin, RedirectView):
-    """Save changes made in the product editor."""
-
-    def get_redirect_url(self, *args, **kwargs):
-        """Save changes and redirect."""
-        edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
-        # SaveEdit(edit, self.request.user).save_edit_threaded()
-        if edit.product_range is not None:
-            range_ID = edit.partial_product_range.range_ID
-            return reverse_lazy(
-                "inventory:product_range", kwargs={"range_id": range_ID}
-            )
-        else:
-            return reverse_lazy("inventory:continue")

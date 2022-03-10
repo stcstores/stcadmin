@@ -34,7 +34,7 @@ class ProductSale(models.Model):
         unique_together = ("order", "product_ID")
 
     def update_details(self):
-        """Set the product's department, VAT rate and purchase price."""
+        """Set the product's VAT rate and purchase price."""
         exception = None
         for attempt in range(10):
             try:

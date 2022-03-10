@@ -18,7 +18,7 @@
 <input type="text" name="bay_filter" id="bay_filter"><button id="clear_filter">Clear</button>
 <ul class="bay_list">
 {% for bay in bays %}
-    <li class="bay"><a href="{% url 'stock_check:bay' bay.id %}">{{ bay.name }}</a> ({{ bay.product_set.all.count }} Products)</li>
+    <li class="bay"><a href="{% url 'stock_check:bay' bay.id %}">{{ bay.name }}</a> ({{ bay.products.all.count }} Products)</li>
 {% endfor %}
 </ul>
 {% endblock %}

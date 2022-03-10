@@ -80,12 +80,10 @@
   {% endfor %}
 </table>
 
-<a href="{% url 'inventory:save_changes' product_range.pk %}">
-  <button{% if not ready_to_save %} disabled{% endif %}>
-    {% if product_range.product_range %}Save Changes{% else %}Complete Product{% endif %}
-    </button>
+<a href="{% url 'inventory:complete_new_product' product_range.pk %}">
+  <button>Complete Product</button>
 </a>
-<a id="discard_changes" href="{% url 'inventory:discard_changes' product_range.id %}">
+<a id="discard_changes" href="{% url 'inventory:discard_new_range' product_range.id %}">
   <button>Discard Product</button>
 </a>
 
@@ -100,7 +98,7 @@
       }
     });
     $("#discard_changes").click(function (e) {
-      if (!confirm('Are you sure you want to discard all changes?')) {
+      if (!confirm('Are you sure you want to discard this product range?')) {
         e.preventDefault();
       }
     });

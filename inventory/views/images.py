@@ -26,7 +26,7 @@ class ImageFormView(InventoryUserMixin, FormView):
         self.product_range = get_object_or_404(
             models.ProductRange, range_ID=self.range_id
         )
-        self.products = self.product_range.product_set.all()
+        self.products = self.product_range.products.all()
 
     def get_options(self):
         """Return variation data for the products."""
@@ -57,7 +57,7 @@ class ImageFormView(InventoryUserMixin, FormView):
     def form_valid(self, form):
         """Process form request and return HttpResponse."""
         product_IDs = json.loads(form.cleaned_data["product_ids"])
-        products = models.Product.objects.filter(product_ID__in=product_IDs)
+        products = models.Product.products.filter(product_ID__in=product_IDs)
         cc_files = self.request.FILES.getlist("cloud_commerce_images")
         for image_file in cc_files:
             CCAPI.upload_image(product_ids=product_IDs, image_file=image_file)

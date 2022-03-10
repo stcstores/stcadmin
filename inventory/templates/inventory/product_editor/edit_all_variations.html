@@ -7,9 +7,9 @@
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
 <script>
-  {
-    % include 'inventory/widgets/product_widgets.js' %
-  }
+  /* beautify preserve:start */
+  {% include 'inventory/widgets/product_widgets.js' %}
+  /* beautify preserve:end */
 </script>
 <link rel="stylesheet" href="{% static 'css/range_page.css' %}">
 {% endblock %}
@@ -29,8 +29,8 @@
     </tr>
     {% for option, values in variations.items %}
     <tr>
-      <th>{{ option.name }}</th>
-      <td>{% for value in values %}<button class="select_option">{{ value.value }}</button>&nbsp;{% endfor %}</td>
+      <th>{{ option }}</th>
+      <td>{% for value in values %}<button class="select_option">{{ value }}</button>&nbsp;{% endfor %}</td>
     </tr>
     {% endfor %}
   </table>
@@ -43,11 +43,12 @@
   {{ formset.management_form }}
   <table class="variation_table">
     <tr>
+      <th>SKU</th>
       {% for variation_field in variations %}
       <th>{{ variation_field }}</th>
       {% endfor %}
-      {% for listing_option in formset.0.product.listing_options.keys %}
-      {{ listing_option }}
+      {% for variation_option in variation_options %}
+      <th>{{ variation_option }}</th>
       {% endfor %}
       <th>Supplier SKU</th>
       {% for field in formset.0.visible_fields %}
@@ -56,10 +57,11 @@
       {% endfor %}
     </tr>
     <tr class="copyrow">
+      <th></th>
       {% for name in variations %}
       <th></th>
       {% endfor %}
-      {% for listing_option in formset.0.product.listing_options %}
+      {% for listing_option in formset.0.product.variable_options %}
       <th></th>
       {% endfor %}
       <th></th>
@@ -80,13 +82,14 @@
 
     {% for form in formset %}
     <tr class="product">
-      {% for name, value in form.product.variation.items %}
-      <th class="option">{{ value.value }}</th>
+      <th>{{ form.instance.sku }}</th>
+      {% for value in form.instance.variation_values %}
+      <th class="option">{{ value }}</th>
       {% endfor %}
-      {% for listing_option in form.product.listing_options.values %}
+      {% for listing_option in form.instance.variation_values %}
       {{ listing_option }}
       {% endfor %}
-      <td class="sku">{{ form.product.supplier_SKU }}</td>
+      <td class="sku">{{ form.instance.supplier_sku }}</td>
       {% for field in form.visible_fields %}
       <td class="field_cell {{ field.name }}">{{ field }}</td>
       {% endfor %}

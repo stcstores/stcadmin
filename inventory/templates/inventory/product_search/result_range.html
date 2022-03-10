@@ -12,8 +12,8 @@
       <ul>
         <li><a title="Descriptions" href="{% url 'inventory:descriptions' range.pk %}"
             target="_blank"><button>D</button></a></li>
-        <li><a title="Edit" href="{% url 'inventory:edit_product' range.pk %}"
-            target="_blank"><button>E</button></a></li>
+        <li><a title="Edit" href="{% url 'inventory:edit_product' range.pk %}" target="_blank"><button>E</button></a>
+        </li>
         <li><a title="Images" href="{% url 'inventory:images' range.pk %}" target="_blank"><button>I</button></a>
         </li>
         <li><a title="Locations" href="{% url 'inventory:locations' range.pk %}" target="_blank"><button>L</button></a>
@@ -30,7 +30,7 @@
 
   <div class="product_details">
     <div class="product">
-      {% if range.product_set.count > 1 %}
+      {% if range.has_variations %}
       {% include "inventory/product_search/result_variation.html" %}
       {% else %}
       {% include "inventory/product_search/result_single_product.html" %}

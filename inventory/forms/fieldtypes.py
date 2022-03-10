@@ -254,6 +254,19 @@ class SelectizeModelChoiceField(forms.ModelChoiceField, SingleSelectize):
         forms.ModelChoiceField.__init__(self, queryset=self._queryset, **kwargs)
 
 
+class SelectizeModelMultipleChoiceField(forms.ModelMultipleChoiceField, SelectizeField):
+    """Field for selecting multiple model objects."""
+
+    widget = widgets.SelectizeModelMultipleChoiceWidget
+
+    def __init__(self, *args, **kwargs):
+        """Create a ModelChoiceField with a Selectize widget."""
+        forms.ModelMultipleChoiceField.__init__(
+            self, queryset=self.get_queryset(), *args, **kwargs
+        )
+        # SelectizeField.__init__(self, *args, **kwargs)
+
+
 class NumberField(FormField, forms.IntegerField):
     """Base class for fields that only accept numeric values."""
 
