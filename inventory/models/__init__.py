@@ -5,6 +5,7 @@ from .location import Bay, ProductBayHistory, ProductBayLink
 from .product import (
     Brand,
     CombinationProduct,
+    CombinationProductLink,
     Gender,
     ListingAttribute,
     ListingAttributeValue,
@@ -36,6 +37,7 @@ __all__ = [
     "ProductImage",
     "Brand",
     "CombinationProduct",
+    "CombinationProductLink",
     "Manufacturer",
     "MultipackProduct",
     "Gender",

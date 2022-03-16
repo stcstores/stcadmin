@@ -474,7 +474,7 @@ class VariationOptionValue(models.Model):
     """Model for product variation option values."""
 
     product = models.ForeignKey(
-        Product,
+        BaseProduct,
         on_delete=models.CASCADE,
         related_name="variation_option_values",
     )
@@ -504,7 +504,7 @@ class ListingAttributeValue(models.Model):
     """Model for product listing attribute values."""
 
     product = models.ForeignKey(
-        Product,
+        BaseProduct,
         on_delete=models.CASCADE,
         related_name="listing_attribute_values",
     )
@@ -525,8 +525,8 @@ class ListingAttributeValue(models.Model):
 
     def __str__(self):
         return (
-            f"VariationOptionValue: {self.product.sku} - "
-            f"{self.variation_option.name}"
+            f"ListingAttributeValue: {self.product.sku} - "
+            f"{self.listing_attribute.name}"
         )
 
 
