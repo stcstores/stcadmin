@@ -5,7 +5,7 @@ import django.utils.timezone
 from django.conf import settings
 from django.db import migrations, models
 
-import inventory.models.product_exports
+import inventory.models.product_export
 
 
 class Migration(migrations.Migration):
@@ -119,7 +119,7 @@ class Migration(migrations.Migration):
                 (
                     "export_file",
                     models.FileField(
-                        upload_to=inventory.models.product_exports.export_file_path
+                        upload_to=inventory.models.product_export.export_file_path
                     ),
                 ),
             ],
