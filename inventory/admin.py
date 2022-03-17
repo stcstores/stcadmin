@@ -10,7 +10,7 @@ from inventory import models
 class BarcodeAdmin(admin.ModelAdmin):
     """ModelAdmin for the Barcode model."""
 
-    fields = ("barcode", "added_on", "used_on", "used_by", "used_for")
+    exclude_fields = ()
     list_display = (
         "barcode",
         "available",
@@ -27,8 +27,10 @@ class BarcodeAdmin(admin.ModelAdmin):
 class BayAdmin(admin.ModelAdmin):
     """ModelAdmin for the Bay model."""
 
-    fields = ("name",)
-    list_display = ("__str__", "name")
+    exclude_fields = ()
+    list_display = ("name", "active")
+    list_filter = ("active",)
+    list_editable = ("active",)
     search_fields = ("name",)
 
 
@@ -36,13 +38,7 @@ class BayAdmin(admin.ModelAdmin):
 class StockChangeAdmin(admin.ModelAdmin):
     """Model admin for the Stock Change model."""
 
-    fields = (
-        "user",
-        "timestamp",
-        "product_sku",
-        "stock_before",
-        "stock_after",
-    )
+    exclude_fields = ()
     list_display = (
         "__str__",
         "get_user_name",
@@ -66,7 +62,7 @@ class StockChangeAdmin(admin.ModelAdmin):
 class ProductExportAdmin(admin.ModelAdmin):
     """Model admin for the Product Export model."""
 
-    fields = ("name", "timestamp", "export_file")
+    exclude_fields = ()
     list_display = ("__str__", "name", "timestamp", "export_file")
     date_hierarchy = "timestamp"
 
@@ -75,87 +71,65 @@ class ProductExportAdmin(admin.ModelAdmin):
 class SupplierAdmin(admin.ModelAdmin):
     """Model admin for the Supplier model."""
 
-    fields = ("name", "active")
-    list_display = (
-        "__str__",
-        "name",
-        "active",
-    )
-    list_editable = ("name", "active")
+    exclude_fields = ()
+    list_display = ("name", "active")
+    list_editable = ("active",)
     search_fields = ("name",)
+    list_filter = ("active",)
 
 
 @admin.register(models.SupplierContact)
 class SupplierContactAdmin(admin.ModelAdmin):
     """Model admin for the SupplierContact model."""
 
-    fields = ("supplier", "name", "phone", "email", "notes")
+    exclude_fields = ()
     list_display = ("__str__", "supplier", "name", "phone", "email", "notes")
     list_editable = ("supplier", "name", "phone", "email", "notes")
-    search_fields = ("name", "phone", "email")
-    list_filter = ("supplier",)
+    search_fields = ("supplier__name", "name", "phone", "email")
+    list_filter = ("supplier__active",)
+    autocomplete_fields = ("supplier",)
 
 
 @admin.register(models.PackageType)
 class PackageTypeAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the PackageType model."""
 
-    fields = (
-        "name",
-        "large_letter_compatible",
-    )
-    list_display = (
-        "name",
-        "large_letter_compatible",
-    )
-    list_editable = ("large_letter_compatible",)
+    exclude_fields = ()
+    list_display = ("name", "large_letter_compatible", "ordering", "active")
+    list_editable = ("large_letter_compatible", "active")
+    list_filter = ("active",)
+    search_fields = ("name",)
 
 
 @admin.register(models.Brand)
 class BrandAdmin(admin.ModelAdmin):
     """Model admin for the Brand model."""
 
-    fields = ("name",)
-    list_display = ("name",)
+    exclude_fields = ()
+    list_display = ("name", "active")
+    list_editable = ("active",)
+    list_filter = ("active",)
+    search_fields = ("name",)
 
 
 @admin.register(models.Manufacturer)
 class ManufacturerAdmin(admin.ModelAdmin):
     """Model admin for the Manufacturer model."""
 
-    fields = ("name",)
-    list_display = ("name",)
+    exclude_fields = ()
+    list_display = ("name", "active")
+    list_editable = ("active",)
+    list_filter = ("active",)
+    search_fields = ("name",)
 
 
 @admin.register(models.ProductRange)
 class ProductRangeAdmin(admin.ModelAdmin):
     """Model admin for the Product Range model."""
 
-    fields = (
-        "sku",
-        "name",
-        "description",
-        "amazon_bullet_points",
-        "amazon_search_terms",
-        "end_of_line",
-        "hidden",
-        "status",
-    )
-    list_display = (
-        "__str__",
-        "sku",
-        "name",
-        "end_of_line",
-        "hidden",
-        "status",
-    )
-    list_editable = (
-        "sku",
-        "name",
-        "end_of_line",
-        "hidden",
-        "status",
-    )
+    exclude_fields = ("products", "images")
+    list_display = ("__str__", "sku", "name", "end_of_line", "hidden", "status")
+    list_editable = ("sku", "name", "end_of_line", "hidden", "status")
     search_fields = ("sku", "name")
     list_filter = ("end_of_line", "hidden", "status")
 
@@ -164,7 +138,7 @@ class ProductRangeAdmin(admin.ModelAdmin):
 class VariationOptionAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the Product Option model."""
 
-    fields = ("name", "active")
+    exclude_fields = ()
     list_display = ("__str__", "name", "active")
     list_editable = ("name", "active")
     search_fields = ("name",)
@@ -175,7 +149,7 @@ class VariationOptionAdmin(SortableAdminMixin, admin.ModelAdmin):
 class ListingAttributeAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the ListingAttribute model."""
 
-    fields = ("name", "active")
+    exclude_fields = ()
     list_display = ("__str__", "name", "active")
     list_editable = ("name", "active")
     search_fields = ("name",)
@@ -186,36 +160,27 @@ class ListingAttributeAdmin(SortableAdminMixin, admin.ModelAdmin):
 class VATRateAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the VATRate model."""
 
-    fields = ("name", "percentage")
+    exclude_fields = ()
     list_display = ("__str__", "name", "percentage")
     list_editable = ("name", "percentage")
+    search_fields = ("name",)
+
+
+@admin.register(models.BaseProduct)
+class BaseProductAdmin(admin.ModelAdmin):
+    """Model admin for the BaseProduct model."""
+
+    exclude_fields = ()
+    list_display = ("sku", "product_range")
+    list_filter = ("product_range__status", "product_range__end_of_line")
+    search_fields = ("sku", "product_range__sku", "product_range__name")
 
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     """Model admin for the Product model."""
 
-    fields = (
-        "product_range",
-        "sku",
-        "supplier",
-        "supplier_sku",
-        "barcode",
-        "purchase_price",
-        "vat_rate",
-        "retail_price",
-        "brand",
-        "manufacturer",
-        "package_type",
-        "bays",
-        "weight_grams",
-        "length_mm",
-        "height_mm",
-        "width_mm",
-        "gender",
-        "end_of_line",
-        "range_order",
-    )
+    exclude_fields = ()
     list_display = (
         "sku",
         "full_name",
@@ -233,28 +198,31 @@ class ProductAdmin(admin.ModelAdmin):
         "product_range__sku",
     )
     list_editable = ("range_order",)
+    autocomplete_fields = (
+        "product_range",
+        "supplier",
+        "vat_rate",
+        "brand",
+        "manufacturer",
+        "package_type",
+        "gender",
+    )
 
 
 @admin.register(models.Gender)
 class GenderAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the PackageType model."""
 
-    fields = ("name",)
+    exclude_fields = ()
     list_display = ("name",)
+    search_fields = ("name",)
 
 
 @admin.register(models.ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):
     """Model admin for the ProductImage model."""
 
-    fields = (
-        "product_id",
-        "range_sku",
-        "sku",
-        "cloud_commerce_name",
-        "postition",
-        "image_file",
-    )
+    exclude_fields = ()
     list_display = (
         "product_id",
         "range_sku",
@@ -264,3 +232,32 @@ class ProductImageAdmin(admin.ModelAdmin):
         "image_file",
     )
     search_fields = ("product_id", "range_sku", "sku", "cloud_commerce_name")
+
+
+@admin.register(models.ProductImageLink)
+class ProductImageLinkAdmin(admin.ModelAdmin):
+    """Model admin for the ProductImageLink model."""
+
+    exclude_fields = ()
+    list_display = ("__str__", "product", "image", "ordering", "active")
+    list_editable = ("ordering", "active")
+    search_fields = (
+        "product__sku",
+        "product__product_range__sku",
+        "product__product_range__name",
+    )
+    list_select_related = ("product", "product__product_range", "image")
+
+
+@admin.register(models.ProductRangeImageLink)
+class ProductRangeImageLinkAdmin(admin.ModelAdmin):
+    """Model admin for the ProductRangeImageLink model."""
+
+    exclude_fields = ()
+    list_display = ("product_range", "image", "ordering", "active")
+    list_editable = ("ordering", "active")
+    search_fields = (
+        "product_range__sku",
+        "product_range__name",
+    )
+    list_select_related = ("product_range", "image")

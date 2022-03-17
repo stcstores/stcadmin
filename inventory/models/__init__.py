@@ -3,6 +3,7 @@
 from .barcodes import Barcode
 from .location import Bay, ProductBayHistory, ProductBayLink
 from .product import (
+    BaseProduct,
     Brand,
     CombinationProduct,
     CombinationProductLink,
@@ -23,7 +24,7 @@ from .product import (
     new_range_sku,
 )
 from .product_exports import ProductExport
-from .product_image import ProductImage
+from .product_image import ProductImage, ProductImageLink, ProductRangeImageLink
 from .stock_change import StockChange
 from .suppliers import Supplier, SupplierContact
 
@@ -35,6 +36,9 @@ __all__ = [
     "ProductBayLink",
     "ProductExport",
     "ProductImage",
+    "ProductImageLink",
+    "ProductRangeImageLink",
+    "BaseProduct",
     "Brand",
     "CombinationProduct",
     "CombinationProductLink",

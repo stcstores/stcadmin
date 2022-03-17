@@ -297,6 +297,72 @@ class BaseProduct(PolymorphicModel):
     products = ProductManager()
     creating = CreatingProductManager()
 
+    class Meta:
+        """Meta class for the BaseProduct model."""
+
+        verbose_name = "Base Product"
+        verbose_name_plural = "Base Products"
+
+    def __str__(self):
+        return f"{self.sku}: {self.full_name}"
+
+    def get_absolute_url(self):
+        """Return the absolute url of the object."""
+        return reverse("inventory:product", kwargs={"pk": self.pk})
+
+    @property
+    def full_name(self):
+        """Return the product name with any extensions."""
+        return " - ".join([self.product_range.name] + self.name_extensions())
+
+    @property
+    def range_sku(self):
+        """Return the product's Range SKU."""
+        return self.product_range.sku
+
+    def name_extensions(self):
+        """Return additions to the product name."""
+        extensions = list(self.variation_values())
+        return extensions
+
+    def name(self):
+        """Return the product's name."""
+        return self.product_range.name
+
+    def variation(self):
+        """Return the product's variation product options as a dict."""
+        options = VariationOptionValue.objects.filter(product=self)
+        return {option.variation_option.name: option.value for option in options}
+
+    # def listing_options(self):
+    #     """Return the product's listing product options as a dict."""
+    #     return {
+    #         option.product_option: option for option in self.selected_listing_options()
+    #     }
+
+    def variable_options(self):
+        """Return list of Product Options which are variable for the range."""
+        return (
+            VariationOptionValue.objects.filter(product=self)
+            .values_list("name", "value")
+            .order_by("variation_option", "value")
+        )
+
+    def variation_values(self):
+        """Return a list of the product's variation option values."""
+        return (
+            VariationOptionValue.objects.filter(product=self)
+            .values_list("value", flat=True)
+            .order_by("variation_option", "value")
+        )
+
+    # def selected_listing_options(self):
+    #     """Return list of Product Options which are listing options for the range."""
+    #     options = self.product_range.listing_options()
+    #     return self.product_options.filter(product_option__in=options).order_by(
+    #         "product_option"
+    #     )
+
 
 class Product(BaseProduct):
     """Model for inventory products."""
@@ -344,68 +410,13 @@ class Product(BaseProduct):
         verbose_name = "Product"
         verbose_name_plural = "Products"
 
-    def __str__(self):
-        return f"{self.sku}: {self.full_name}"
-
-    def get_absolute_url(self):
-        """Return the absolute url of the object."""
-        return reverse("inventory:product", kwargs={"pk": self.pk})
-
-    @property
-    def full_name(self):
-        """Return the product name with any extensions."""
-        return " - ".join([self.product_range.name] + self.name_extensions())
-
-    @property
-    def range_sku(self):
-        """Return the product's Range SKU."""
-        return self.product_range.sku
-
-    def name(self):
-        """Return the product's name."""
-        return self.product_range.name
-
-    def variation(self):
-        """Return the product's variation product options as a dict."""
-        options = VariationOptionValue.objects.filter(product=self)
-        return {option.variation_option.name: option.value for option in options}
-
-    # def listing_options(self):
-    #     """Return the product's listing product options as a dict."""
-    #     return {
-    #         option.product_option: option for option in self.selected_listing_options()
-    #     }
-
-    def variable_options(self):
-        """Return list of Product Options which are variable for the range."""
-        return (
-            VariationOptionValue.objects.filter(product=self)
-            .values_list("name", "value")
-            .order_by("variation_option", "value")
-        )
-
-    def variation_values(self):
-        """Return a list of the product's variation option values."""
-        return (
-            VariationOptionValue.objects.filter(product=self)
-            .values_list("value", flat=True)
-            .order_by("variation_option", "value")
-        )
-
-    # def selected_listing_options(self):
-    #     """Return list of Product Options which are listing options for the range."""
-    #     options = self.product_range.listing_options()
-    #     return self.product_options.filter(product_option__in=options).order_by(
-    #         "product_option"
-    #     )
-
     def stock_level(self):
         """Return the products current stock level in Cloud Commerce."""
         raise NotImplementedError()
 
     def name_extensions(self):
         """Return additions to the product name."""
-        extensions = list(self.variation_values())
+        extensions = super().name_extensions()
         if self.supplier_sku:
             extensions.append(self.supplier_sku)
         return extensions
