@@ -8,7 +8,6 @@ from .product import (
     CombinationProductLink,
     MultipackProduct,
     Product,
-    ProductRange,
     SingleProduct,
     VariationProduct,
     new_product_sku,
@@ -27,6 +26,7 @@ from .product_attribute import (
 )
 from .product_export import ProductExport
 from .product_image import ProductImage, ProductImageLink, ProductRangeImageLink
+from .product_range import ProductRange
 from .stock_change import StockChange
 from .supplier import Supplier, SupplierContact
 
@@ -47,7 +47,6 @@ __all__ = [
     "ProductBayHistory",
     "ProductBayLink",
     "ProductExport",
-    "ProductImage",
     "ProductImage",
     "ProductImageLink",
     "ProductRange",

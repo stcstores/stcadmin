@@ -3,6 +3,7 @@
 
 from django.contrib.auth import get_user_model
 from django.db import models, transaction
+from django.utils import timezone
 
 from .product import Product
 
@@ -12,6 +13,8 @@ class Bay(models.Model):
 
     name = models.CharField(max_length=255, unique=True)
     active = models.BooleanField(default=True)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     objects = models.Manager()
 
@@ -35,6 +38,8 @@ class ProductBayLink(models.Model):
     bay = models.ForeignKey(
         Bay, on_delete=models.CASCADE, related_name="product_bay_links"
     )
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """Meta class for the ProductBayLink model."""
@@ -103,8 +108,8 @@ class ProductBayHistory(models.Model):
     class Meta:
         """Meta class for ProductBayChange."""
 
-        verbose_name = "Product Bay Change"
-        verbose_name_plural = "Product Bay Changes"
+        verbose_name = "Product Bay History"
+        verbose_name_plural = "Product Bay History"
 
     def __str__(self):
         return f"{self.product} {self.change} {self.bay}"

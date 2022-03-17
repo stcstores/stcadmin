@@ -234,9 +234,18 @@ class CombinationProductLink(models.Model):
     )
     quantity = models.PositiveIntegerField()
 
+    def __str__(self):
+        return f"{self.combination_product.sku} contains {self.quantity} {self.product.sku}"
+
 
 class CombinationProduct(BaseProduct):
     """Model for combination items."""
+
+    class Meta:
+        """Meta class for the CombinationProductLink model."""
+
+        verbose_name = "Combination Product"
+        verbose_name_plural = "Combination Products"
 
     products = models.ManyToManyField(
         Product,

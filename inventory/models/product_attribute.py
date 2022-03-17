@@ -2,6 +2,7 @@
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils import timezone
 
 
 class VariationOption(models.Model):
@@ -17,6 +18,8 @@ class VariationOption(models.Model):
     name = models.CharField(max_length=50, unique=True)
     ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
     active = models.BooleanField(default=True)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -35,6 +38,8 @@ class ListingAttribute(models.Model):
     name = models.CharField(max_length=50, unique=True)
     ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
     active = models.BooleanField(default=True)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -54,6 +59,8 @@ class VariationOptionValue(models.Model):
         related_name="variation_option_values",
     )
     value = models.CharField(max_length=255)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """Meta class for VariationOptionValue."""
@@ -84,6 +91,8 @@ class ListingAttributeValue(models.Model):
         related_name="listing_attribute_values",
     )
     value = models.CharField(max_length=255)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """Meta class for ListingAttributeValue."""
@@ -107,6 +116,8 @@ class PackageType(models.Model):
     large_letter_compatible = models.BooleanField(default=False)
     ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
     active = models.BooleanField(default=True)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """Meta class for PackageType."""
@@ -124,6 +135,8 @@ class Brand(models.Model):
 
     name = models.CharField(max_length=50, unique=True)
     active = models.BooleanField(default=True)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """Meta class for Brand."""
@@ -141,6 +154,8 @@ class Manufacturer(models.Model):
 
     name = models.CharField(max_length=50, unique=True)
     active = models.BooleanField(default=True)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """Meta class for Manufacturer."""
@@ -159,6 +174,8 @@ class Gender(models.Model):
     name = models.CharField(max_length=50)
     ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
     active = models.BooleanField(default=True)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """Meta class for Gender."""
@@ -179,6 +196,8 @@ class VATRate(models.Model):
         validators=[MinValueValidator(0.0), MaxValueValidator(1)]
     )
     ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """Meta class for VAT Rate."""

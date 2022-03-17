@@ -3,6 +3,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 
 class Supplier(models.Model):
@@ -10,6 +11,8 @@ class Supplier(models.Model):
 
     name = models.CharField(max_length=50)
     active = models.BooleanField(default=True)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """Meta class for Supplier."""
@@ -43,6 +46,8 @@ class SupplierContact(models.Model):
     email = models.EmailField(max_length=200, null=True, blank=True)
     phone = models.CharField(max_length=200, null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         string = self.supplier.name

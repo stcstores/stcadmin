@@ -1,6 +1,7 @@
 """Models for storing product images."""
 
 from django.db import models
+from django.utils import timezone
 
 from stcadmin import settings
 
@@ -24,6 +25,8 @@ class ProductImage(models.Model):
     cloud_commerce_name = models.CharField(max_length=50)
     position = models.PositiveIntegerField()
     image_file = models.ImageField(storage=get_storage())
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """Meta class for the ProductImage mode."""
@@ -51,6 +54,8 @@ class ProductImageLink(models.Model):
     )
     ordering = models.PositiveIntegerField(default=0)
     active = models.BooleanField(default=True)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """Meta class for the ProductImageLink model."""
@@ -75,6 +80,8 @@ class ProductRangeImageLink(models.Model):
     )
     ordering = models.PositiveIntegerField(default=0)
     active = models.BooleanField(default=True)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         """Meta class for the ProductRangeImageLink model."""
