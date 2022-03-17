@@ -128,10 +128,20 @@ class ProductRangeAdmin(admin.ModelAdmin):
     """Model admin for the Product Range model."""
 
     exclude_fields = ("products", "images")
-    list_display = ("__str__", "sku", "name", "end_of_line", "hidden", "status")
-    list_editable = ("sku", "name", "end_of_line", "hidden", "status")
+    list_display = (
+        "__str__",
+        "sku",
+        "name",
+        "is_end_of_line",
+        "hidden",
+        "status",
+        "created_at",
+        "modified_at",
+    )
+    list_editable = ("sku", "name", "is_end_of_line", "hidden", "status")
     search_fields = ("sku", "name")
-    list_filter = ("end_of_line", "hidden", "status")
+    list_filter = ("is_end_of_line", "hidden", "status")
+    date_hierarchy = "created_at"
 
 
 @admin.register(models.VariationOption)
@@ -172,8 +182,13 @@ class BaseProductAdmin(admin.ModelAdmin):
 
     exclude_fields = ()
     list_display = ("sku", "product_range")
-    list_filter = ("product_range__status", "product_range__end_of_line")
+    list_filter = ("product_range__status", "product_range__is_end_of_line")
     search_fields = ("sku", "product_range__sku", "product_range__name")
+    autocomplete_fields = (
+        "product_range",
+        "package_type",
+    )
+    date_hierarchy = "created_at"
 
 
 @admin.register(models.Product)
@@ -184,13 +199,12 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = (
         "sku",
         "full_name",
-        "date_created",
-        "last_modified",
-        "end_of_line",
+        "created_at",
+        "modified_at",
+        "is_end_of_line",
         "range_order",
     )
-    list_display_links = ("sku",)
-    list_filter = ("end_of_line",)
+    list_filter = ("is_end_of_line",)
     search_fields = (
         "sku",
         "product_range__name",
@@ -207,6 +221,7 @@ class ProductAdmin(admin.ModelAdmin):
         "package_type",
         "gender",
     )
+    date_hierarchy = "created_at"
 
 
 @admin.register(models.Gender)

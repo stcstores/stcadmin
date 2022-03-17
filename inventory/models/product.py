@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from polymorphic.models import PolymorphicManager, PolymorphicModel
 
 from .suppliers import Supplier
@@ -179,11 +180,13 @@ class ProductRange(models.Model):
     description = models.TextField(blank=True, default="")
     amazon_search_terms = models.TextField(blank=True, default="")
     amazon_bullet_points = models.TextField(blank=True, default="")
-    end_of_line = models.BooleanField(default=False)
+    is_end_of_line = models.BooleanField(default=False)
     hidden = models.BooleanField(default=False)
     managed_by = models.ForeignKey(
         get_user_model(), on_delete=models.PROTECT, related_name="product_ranges"
     )
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     objects = models.Manager()
     ranges = ProductRangeManager()
@@ -196,7 +199,7 @@ class ProductRange(models.Model):
         verbose_name_plural = "Product Ranges"
 
     def __str__(self):
-        return f"{self.sku} - {self.name}"
+        return f"{self.sku}: {self.name}"
 
     def get_absolute_url(self):
         """Return the absolute url for the product range."""
@@ -292,6 +295,18 @@ class BaseProduct(PolymorphicModel):
     sku = models.CharField(
         max_length=255, unique=True, db_index=True, blank=False, null=False
     )
+    retail_price = models.DecimalField(
+        decimal_places=2, max_digits=8, null=True, blank=True
+    )
+    package_type = models.ForeignKey(
+        PackageType, on_delete=models.PROTECT, related_name="products"
+    )
+    length_mm = models.PositiveSmallIntegerField(blank=True, null=True)
+    height_mm = models.PositiveSmallIntegerField(blank=True, null=True)
+    width_mm = models.PositiveSmallIntegerField(blank=True, null=True)
+    is_end_of_line = models.BooleanField(default=False)
+    created_at = models.DateField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
 
     objects = PolymorphicManager()
     products = ProductManager()
@@ -377,23 +392,12 @@ class Product(BaseProduct):
     vat_rate = models.ForeignKey(
         VATRate, on_delete=models.PROTECT, related_name="products"
     )
-    retail_price = models.DecimalField(
-        decimal_places=2, max_digits=8, null=True, blank=True
-    )
     brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name="products")
     manufacturer = models.ForeignKey(
         Manufacturer, on_delete=models.PROTECT, related_name="products"
     )
-    package_type = models.ForeignKey(
-        PackageType, on_delete=models.PROTECT, related_name="products"
-    )
     weight_grams = models.PositiveSmallIntegerField()
-    length_mm = models.PositiveSmallIntegerField(blank=True, null=True)
-    height_mm = models.PositiveSmallIntegerField(blank=True, null=True)
-    width_mm = models.PositiveSmallIntegerField(blank=True, null=True)
-    end_of_line = models.BooleanField(default=False)
-    date_created = models.DateField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+
     hs_code = models.CharField(max_length=50)
     gender = models.ForeignKey(
         Gender,
