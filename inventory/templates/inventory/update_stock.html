@@ -2,32 +2,30 @@
 
 <div class="product_stock_level">
   <div class="InputAddOn">
-    <input id="stock_{{ product.product_ID }}" class="InputAddOn-field stock_level_field" type="text" size="4" vaue="">
+    <input id="stock_{{ product.pk }}" class="InputAddOn-field stock_level_field" type="text" size="4" vaue="">
     <div class="InputAddOn-item">
-      <button id="update_{{ product.product_ID }}" class="stock_update_button" disabled>
+      <button id="update_{{ product.pk }}" class="stock_update_button" disabled>
         Update
       </button>
     </div>
     <div class="InputAddOn-item status_container">
-      <img id="status_{{ product.product_ID }}" class="update_status" src="{% static 'images/loading.gif' %}">
+      <img id="status_{{ product.pk }}" class="update_status" src="{% static 'images/loading.gif' %}">
     </div>
   </div>
 </div>
 
 <script>
-
-  get_stock_url = "{% url 'inventory:get_stock_level' %}";
-  update_stock_url = "{% url 'inventory:update_stock_level' %}";
+  get_stock_url = "{% url 'linnworks:get_stock_levels' %}";
+  update_stock_url = "{% url 'linnworks:update_stock_levels' %}";
 
   loading_image = "{% static 'images/loading.gif' %}";
   complete_image = "{% static 'images/complete.png' %}";
   error_image = "{% static 'images/error.png' %}";
 
-  stock_levels_to_get.push({{ product.product_ID }});
-
-  $(document).ready(function() {
-    $('#update_' + {{ product.product_ID }}).click(
-      click_update_button({{ product.product_ID }})
+  $(document).ready(function () {
+    get_stock_level("{{ product.pk }}");
+    $('#update_' + "{{ product.pk }}").click(
+      click_update_button("{{ product.pk }}")
     );
   });
 </script>

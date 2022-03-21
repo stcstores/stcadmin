@@ -8,6 +8,7 @@ from ccapi import CCAPI
 from django.contrib.staticfiles.storage import ManifestStaticFilesStorage
 from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
 from django.db import models
+from linnapi import LinnworksAPISession
 from shopify_api_py import ShopifyAPISession
 from storages.backends.s3boto3 import S3Boto3Storage
 
@@ -86,6 +87,10 @@ SHOPIFY_SHOP_URL = get_config("SHOPIFY_SHOP_URL")
 SHOPIFY_API_VERSION = get_config("SHOPIFY_API_VERSION")
 SHOPIFY_API_PASSWORD = get_config("SHOPIFY_API_PASSWORD")
 
+LINNAPI_APPLICATION_ID = get_config("LINNAPI_APPLICATION_ID")
+LINNAPI_APPLICATION_SECRET = get_config("LINNAPI_APPLICATION_SECRET")
+LINNAPI_APPLICATION_TOKEN = get_config("LINNAPI_APPLICATION_TOKEN")
+
 AWS_S3_ACCESS_KEY_ID = BUCKET_ACCESS_KEY
 AWS_S3_SECRET_ACCESS_KEY = BUCKET_SECRET_KEY
 AWS_S3_ENDPOINT_URL = f"https://{BUCKET_DOMAIN}"
@@ -94,6 +99,12 @@ ShopifyAPISession.set_login(
     shop_url=SHOPIFY_SHOP_URL,
     api_version=SHOPIFY_API_VERSION,
     api_password=SHOPIFY_API_PASSWORD,
+)
+
+LinnworksAPISession.set_login(
+    application_id=LINNAPI_APPLICATION_ID,
+    application_secret=LINNAPI_APPLICATION_SECRET,
+    application_token=LINNAPI_APPLICATION_TOKEN,
 )
 
 
@@ -136,6 +147,7 @@ INSTALLED_APPS = [
     "purchases",
     "tracking",
     "hardware",
+    "linnworks",
     "debug_toolbar",
 ]
 

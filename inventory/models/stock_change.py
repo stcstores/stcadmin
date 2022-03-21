@@ -9,14 +9,41 @@ from .product import BaseProduct
 class StockLevelHistoryManager(models.Manager):
     """Model manager for the StockLevelHistory model."""
 
-    @transaction.atomic
     def new_user_stock_level_update(self, product, user, stock_level):
         """Create a stock level change by a user."""
+        return self._update_stock_level(
+            product=product, source=self.model.USER, user=user, stock_level=stock_level
+        )
+
+    def new_import_stock_level_update(self, product, stock_level):
+        """Create a stock level change from a Linnworks import."""
+        return self._update_stock_level(
+            product=product,
+            source=self.model.IMPORT,
+            user=None,
+            stock_level=stock_level,
+        )
+
+    def new_api_stock_level_update(self, product, stock_level):
+        """Create a stock level change from a Linnworks import."""
+        return self._update_stock_level(
+            product=product, source=self.model.API, user=None, stock_level=stock_level
+        )
+
+    def latest_update(self, product):
+        """Return the most recent stock level change for a product or None if none exist."""
+        try:
+            return self.filter(product=product).last()
+        except self.model.DoesNotExist:
+            return None
+
+    @transaction.atomic
+    def _update_stock_level(self, product, stock_level, source, user):
         previous_change = self.latest_update(product)
         if previous_change is not None and stock_level == previous_change.stock_level:
             return None
         new_update = self.model(
-            source=self.model.USER,
+            source=source,
             user=user,
             product=product,
             stock_level=stock_level,
@@ -27,39 +54,16 @@ class StockLevelHistoryManager(models.Manager):
         product.save()
         return new_update
 
-    @transaction.atomic
-    def new_import_stock_level_update(self, product, stock_level):
-        """Create a stock level change from a Linnworks import."""
-        previous_change = self.latest_update(product)
-        if previous_change is not None and stock_level == previous_change.stock_level:
-            return None
-        new_update = self.model(
-            source=self.model.IMPORT,
-            product=product,
-            stock_level=stock_level,
-            previous_change=previous_change,
-        )
-        new_update.save()
-        product.latest_stock_change = new_update
-        product.save()
-        return new_update
-
-    def latest_update(self, product):
-        """Return the most recent stock level change for a product or None if none exist."""
-        try:
-            return self.filter(product=product).last()
-        except self.model.DoesNotExist:
-            return None
-
 
 class StockLevelHistory(models.Model):
     """Log stock level changes."""
 
     USER = "U"
     IMPORT = "I"
+    API = "A"
 
     source = models.CharField(
-        choices=((USER, "User"), (IMPORT, "Import")), max_length=1
+        choices=((USER, "User"), (IMPORT, "Import"), (API, "API")), max_length=1
     )
     user = models.ForeignKey(
         get_user_model(),
