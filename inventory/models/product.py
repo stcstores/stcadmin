@@ -66,7 +66,14 @@ class BaseProduct(PolymorphicModel):
     width_mm = models.PositiveSmallIntegerField(blank=True, null=True)
     is_end_of_line = models.BooleanField(default=False)
     created_at = models.DateField(default=timezone.now, editable=False)
-    modified_at = models.DateTimeField(auto_now=True)
+    modified_at = models.DateTimeField(auto_now=True, editable=False)
+    latest_stock_change = models.ForeignKey(
+        "StockLevelHistory",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        editable=False,
+    )
 
     objects = PolymorphicManager()
     products = ProductManager()

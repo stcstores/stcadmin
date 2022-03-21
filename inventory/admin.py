@@ -307,28 +307,31 @@ class ProductRangeAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
 
 
-@admin.register(models.StockChange)
-class StockChangeAdmin(admin.ModelAdmin):
-    """Model admin for the Stock Change model."""
+@admin.register(models.StockLevelHistory)
+class StockLevelHistoryAdmin(admin.ModelAdmin):
+    """Model admin for the StockLevelHistory model."""
 
     exclude_fields = ()
     list_display = (
         "__str__",
-        "get_user_name",
+        "product",
+        "source",
+        "user",
         "timestamp",
-        "product_sku",
-        "stock_before",
-        "stock_after",
+        "stock_level",
+        "previous_change",
     )
     search_fields = (
-        "product_sku",
-        "product_sku",
-        "user__first_name",
+        "product__sku",
+        "product_range__sku",
+        "product__range__name" "user__first_name",
         "user__last_name",
         "user__username",
     )
     list_filter = ("user",)
     date_hierarchy = "timestamp"
+    autocomplete_fields = ("product", "user", "previous_change")
+    list_select_related = ("product", "user", "previous_change")
 
 
 @admin.register(models.Supplier)

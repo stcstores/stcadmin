@@ -27,7 +27,7 @@ from .product_attribute import (
 from .product_export import ProductExport
 from .product_image import ProductImage, ProductImageLink, ProductRangeImageLink
 from .product_range import ProductRange
-from .stock_change import StockChange
+from .stock_change import StockLevelHistory
 from .supplier import Supplier, SupplierContact
 
 __all__ = [
@@ -52,7 +52,7 @@ __all__ = [
     "ProductRange",
     "ProductRangeImageLink",
     "SingleProduct",
-    "StockChange",
+    "StockLevelHistory",
     "Supplier",
     "SupplierContact",
     "VATRate",
