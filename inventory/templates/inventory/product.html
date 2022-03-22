@@ -8,7 +8,8 @@
 {% block additional_head %}{{ block.super }}
 <script>
   {
-    % include 'inventory/widgets/product_widgets.js' %
+    %
+    include 'inventory/widgets/product_widgets.js' %
   }
 </script>
 <link rel="stylesheet" href="{% static 'css/product_page.css' %}">
@@ -17,8 +18,7 @@
 {% block content %}{{ block.super }}
 <div class="product_header">
   <div class="details">
-    <p>SKU: <span class="sku">{{ product.SKU}}</span></p>
-    <p>ID: <span class="sku">{{ product.product_ID }}</span></p>
+    <p>SKU: <span class="sku">{{ product.sku}}</span></p>
   </div>
   <div class="identification">
     <p class="name">{{ product.product_range.name }}</p>
@@ -57,15 +57,15 @@
     </tr>
     {% for variation in product_range.products.all %}
     <tr class="{% if product == variation %}selected{% else %}not_selected{% endif %}"
-      data-href="{% url 'inventory:product' variation.product_ID %}">
-      <td class="sku">{{ variation.SKU }}</td>
+      data-href="{% url 'inventory:product' variation.pk %}">
+      <td class="sku">{{ variation.sku }}</td>
       {% for option, value in variation.variation.items %}
       <td class="option name">{{ value }}</td>
       {% endfor %}
       {% for option, value in variation.listing_options.items %}
       <td class="option listing_option name">{{ value }}</td>
       {% endfor %}
-      <td class="sku">{{ variation.supplier_SKU }}</td>
+      <td class="sku">{{ variation.supplier_sku }}</td>
     </tr>
     {% endfor %}
   </table>

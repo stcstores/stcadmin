@@ -10,19 +10,37 @@
     </div>
     <div class="range_links">
       <ul>
-        <li><a title="Descriptions" href="{% url 'inventory:descriptions' range.pk %}"
-            target="_blank"><button>D</button></a></li>
-        <li><a title="Edit" href="{% url 'inventory:edit_product' range.pk %}" target="_blank"><button>E</button></a>
+        <li>
+          <a title="Descriptions" href="{% url 'inventory:descriptions' range.pk %}" target="_blank">
+            <button>D</button>
+          </a>
         </li>
-        <li><a title="Images" href="{% url 'inventory:images' range.pk %}" target="_blank"><button>I</button></a>
+        {% comment %} <li>
+          <a title="Edit" href="{% url 'inventory:edit_product' range.pk %}" target="_blank">
+            <button>E</button>
+          </a>
+        </li> {% endcomment %}
+        {% comment %} <li>
+          <a title="Images" href="{% url 'inventory:images' range.pk %}" target="_blank">
+            <button>I</button>
+          </a>
+        </li> {% endcomment %}
+        <li>
+          <a title="Locations" href="{% url 'inventory:locations' range.pk %}" target="_blank">
+            <button>L</button>
+          </a>
         </li>
-        <li><a title="Locations" href="{% url 'inventory:locations' range.pk %}" target="_blank"><button>L</button></a>
+        {% comment %} <li>
+          <a title="Price Calulator" href="{% url 'price_calculator:range_price_calculator' range.pk %}"
+            target="_blank">
+            <button>P</button></a>
+        </li> {% endcomment %}
+        {% if not range.is_end_of_line %}
+        <li>
+          <button title="Mark the range as End of Line" class="EOL_range" id="EOL_{{ range.pk }}">
+            End of Line
+          </button>
         </li>
-        <li><a title="Price Calulator" href="{% url 'price_calculator:range_price_calculator' range.pk %}"
-            target="_blank"><button>P</button></a></li>
-        {% if not range.end_of_line %}
-        <li><button title="Mark the range as End of Line" class="EOL_range" id="EOL_{{ range.pk }}">End of
-            Line</button></li>
         {% endif %}
       </ul>
     </div>

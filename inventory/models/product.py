@@ -73,6 +73,7 @@ class BaseProduct(PolymorphicModel):
     is_end_of_line = models.BooleanField(default=False)
     created_at = models.DateField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True, editable=False)
+    range_order = models.PositiveSmallIntegerField(default=0)
     latest_stock_change = models.ForeignKey(
         "StockLevelHistory",
         on_delete=models.CASCADE,
@@ -96,6 +97,10 @@ class BaseProduct(PolymorphicModel):
             models.Index(fields=["barcode"]),
             models.Index(fields=["supplier_barcode"]),
         ]
+        ordering = (
+            "product_range",
+            "range_order",
+        )
 
     def __str__(self):
         return f"{self.sku}: {self.full_name}"
@@ -179,7 +184,6 @@ class Product(BaseProduct):
         on_delete=models.SET_NULL,
         related_name="products",
     )
-    range_order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
         """Meta class for Products."""

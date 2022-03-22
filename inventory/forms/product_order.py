@@ -29,7 +29,7 @@ class ProductOrderForm(forms.Form):
     def save(self):
         """Update the order of products."""
         data = self.cleaned_data
-        product = get_object_or_404(models.Product, product_id=data["product_id"])
+        product = get_object_or_404(models.Product, pk=data["product_id"])
         product.range_order = data["range_order"]
         product.save()
 

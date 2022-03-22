@@ -6,7 +6,11 @@
 <script src="{% static 'scripts/stock_manager.js' %}"></script>
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
-<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
+<script>
+  {
+    % include 'inventory/widgets/product_widgets.js' %
+  }
+</script>
 <link rel="stylesheet" href="{% static 'css/range_page.css' %}">
 {% endblock %}
 
@@ -27,24 +31,24 @@
       </tr>
     </thead>
     <tbody>
-    {% for form in formset %}
-    {% with form.product as product %}
+      {% for form in formset %}
+      {% with form.product as product %}
       <tr>
-        <td class="column SKU sku">{{ product.SKU }}</td>
+        <td class="column SKU sku">{{ product.sku }}</td>
         {% for option, value in product.variation.items %}
         <td class="column option name">{{ value }}</td>
         {% endfor %}
-        <td class="column supplier_SKU sku">{{ product.supplier_SKU }}</td>
+        <td class="column supplier_SKU sku">{{ product.supplier_sku }}</td>
         <td hidden>
-        {% for field in form %}
+          {% for field in form %}
           {{ field }}
           {{ field.errors }}
-        {% endfor %}
+          {% endfor %}
         </td>
         <td></td>
       </tr>
-    {% endwith %}
-    {% endfor %}
+      {% endwith %}
+      {% endfor %}
     </tbody>
     <tfoot>
       <tr>
@@ -60,7 +64,6 @@
 
 {% block script %}{{ block.super }}
 <script>
-
   function set_order_field() {
     var table = $(".variation_table tbody")[0];
     for (var i = 0, row; row = table.rows[i]; i++) {
@@ -68,22 +71,22 @@
     }
   }
 
-  var fixHelperModified = function(e, tr) {
-    var $originals = tr.children();
-    var $helper = tr.clone();
-    $helper.children().each(function(index) {
+  var fixHelperModified = function (e, tr) {
+      var $originals = tr.children();
+      var $helper = tr.clone();
+      $helper.children().each(function (index) {
         $(this).width($originals.eq(index).width())
-    });
-    return $helper;
-  },
-
-  updateIndex = function(e, ui) {
-      $('td.index', ui.item.parent()).each(function (i) {
-          $(this).html(i + 1);
       });
-  };
+      return $helper;
+    },
 
-  $(document).ready(function() {
+    updateIndex = function (e, ui) {
+      $('td.index', ui.item.parent()).each(function (i) {
+        $(this).html(i + 1);
+      });
+    };
+
+  $(document).ready(function () {
     $('tbody').sortable({
       helper: fixHelperModified,
       stop: updateIndex,
@@ -92,11 +95,13 @@
       revert: 50,
       tolerance: 'pointer',
       cursor: 'move',
-      sort: function(event, ui) {
+      sort: function (event, ui) {
         var $target = $(event.target);
         if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
-            var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
-            ui.helper.css({'top' : top + 'px'});
+          var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
+          ui.helper.css({
+            'top': top + 'px'
+          });
         }
       },
     }).disableSelection();
@@ -104,7 +109,7 @@
     var table_width = $('.variation_table').find("tr:first th").length;
     $('.save_row').attr('colspan', table_width);
 
-    $('.product_order_form').submit(function(e) {
+    $('.product_order_form').submit(function (e) {
       set_order_field();
     });
   });

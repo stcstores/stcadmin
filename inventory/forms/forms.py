@@ -20,11 +20,11 @@ class ProductRangeForm(forms.Form):
     )
 
 
-class CreateRangeForm(forms.ModelForm):
-    """Form for editing attributes that are the same across a range."""
+class BaseRangeForm(forms.ModelForm):
+    """Base form for editing product ranges."""
 
     class Meta:
-        """Meta for CreateRangeForm."""
+        """Meta for RangeForm."""
 
         model = models.ProductRange
         exclude = ["end_of_line", "hidden", "status"]
@@ -34,9 +34,6 @@ class CreateRangeForm(forms.ModelForm):
             "amazon_search_terms": inventory_fields.AmazonSearchTerms,
             "amazon_bullet_points": inventory_fields.AmazonBulletPoints,
         }
-        widgets = {"managed_by": forms.HiddenInput}
-
-    sku = forms.CharField(required=False, widget=forms.HiddenInput)
 
     def clean(self, *args, **kwargs):
         """Format amazon list strings."""
@@ -55,6 +52,33 @@ class CreateRangeForm(forms.ModelForm):
     def format_amazon_list(self, amazon_list_json):
         """Return a formatted amazon list string."""
         return "|".join(amazon_list_json)
+
+
+class CreateRangeForm(BaseRangeForm):
+    """Form for editing attributes that are the same across a range."""
+
+    class Meta(BaseRangeForm.Meta):
+        """Meta for CreateRangeForm."""
+
+        exclude = [
+            "end_of_line",
+            "hidden",
+            "status",
+        ]
+        widgets = {"managed_by": forms.HiddenInput}
+
+    sku = forms.CharField(required=False, widget=forms.HiddenInput)
+
+
+class EditRangeForm(BaseRangeForm):
+    """Form for editing attributes that are the same across a range."""
+
+    class Meta(BaseRangeForm.Meta):
+        """Meta for CreateRangeForm."""
+
+        exclude = ["hidden", "status", "sku"]
+
+    field_order = ("name", "description", "managed_by", "is_end_of_line")
 
 
 class BaseProductForm(forms.ModelForm):

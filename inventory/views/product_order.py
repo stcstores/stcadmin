@@ -41,7 +41,7 @@ class ProductOrderView(InventoryUserMixin, TemplateView):
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
         return reverse_lazy(
-            "inventory:product_order", kwargs={"range_id": self.product_range.pk}
+            "inventory:product_order", kwargs={"range_pk": self.product_range.pk}
         )
 
     def get_context_data(self, *args, **kwargs):

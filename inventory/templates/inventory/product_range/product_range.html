@@ -5,9 +5,9 @@
 {% block content %}{{ block.super }}
 
 <div class="buttons">
-  <a href="{% url 'inventory:edit_product' product_range.pk %}">
+  {% comment %} <a href="{% url 'inventory:edit_product' product_range.pk %}">
     <button>Product Editor</button>
-  </a>
+  </a> {% endcomment %}
   <a href="" class="button_link">
     <button>End-of-Line Range</button>
   </a>
