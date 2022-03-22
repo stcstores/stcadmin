@@ -1,4 +1,6 @@
-{% with range.products.all.0 as product %}
+{% for product in range.products.all %}
+{% if forloop.first %}
 <span class="sku">{{ product.sku }}</span>&nbsp;
 <a href="{% url 'inventory:product' product.pk %}"><button>View</button></a>
-{% endwith %}
+{% endif %}
+{% endfor %}

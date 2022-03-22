@@ -4,7 +4,6 @@ from django import forms
 from django.contrib.postgres.search import SearchVector
 
 from inventory import models
-from inventory.forms import fields as inventory_fields
 
 from .widgets import HorizontalRadio
 
@@ -40,7 +39,9 @@ class ProductSearchForm(forms.Form):
         label="End of Line",
         help_text="Hide End of Line Ranges",
     )
-    supplier = inventory_fields.Supplier(required=False)
+    supplier = forms.ModelChoiceField(
+        queryset=models.Supplier.objects.filter(active=True), required=False
+    )
     show_hidden = forms.BooleanField(required=False)
 
     def save(self):
@@ -51,17 +52,23 @@ class ProductSearchForm(forms.Form):
 
     def _query_products(self):
         if self.cleaned_data["search_term"]:
-            return models.Product.products.annotate(
+            qs = models.BaseProduct.products.annotate(
                 search=SearchVector(*self.SEARCH_FIELDS)
             ).filter(search=self.cleaned_data["search_term"])
         else:
-            return models.Product.products.all()
+            qs = models.Product.products.all()
+        qs.select_related("product_range", "supplier")
+        return qs
 
     def _query_ranges(self, products):
-        range_IDs = (
-            products.order_by().values_list("product_range", flat=True).distinct()
+        range_pks = (
+            products.values_list("product_range", flat=True).order_by().distinct()
         )
-        return models.ProductRange.ranges.filter(pk__in=range_IDs).order_by("name")
+        return (
+            models.ProductRange.ranges.filter(pk__in=range_pks)
+            .order_by("name")
+            .prefetch_related("products")
+        )
 
     def _filter_ranges(self, ranges):
         ranges = self._filter_end_of_line(ranges)
@@ -75,9 +82,9 @@ class ProductSearchForm(forms.Form):
     def _filter_end_of_line(self, ranges):
         eol = self.cleaned_data.get("end_of_line")
         if eol == self.EXCLUDE_EOL:
-            ranges = ranges.filter(end_of_line=False)
+            ranges = ranges.filter(is_end_of_line=False)
         elif eol == self.ONLY_EOL:
-            ranges = ranges.filter(end_of_line=True)
+            ranges = ranges.filter(is_end_of_line=True)
         return ranges
 
     def _filter_supplier(self, products):

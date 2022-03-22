@@ -1,6 +1,6 @@
 <div class="product_search_result_range {% if range.end_of_line or range.hidden %} end_of_line{% endif %}">
   <div class="range_details">
-    <div class="pkentification">
+    <div class="identification">
       <div class="sku">{{ range.SKU }}</div>
       <div class="name">
         <a title="View product range" href="{% url 'inventory:product_range' range.pk %}">
@@ -30,7 +30,7 @@
 
   <div class="product_details">
     <div class="product">
-      {% if range.has_variations %}
+      {% if range.products|length > 1 %}
       {% include "inventory/product_search/result_variation.html" %}
       {% else %}
       {% include "inventory/product_search/result_single_product.html" %}

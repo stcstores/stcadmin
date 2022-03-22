@@ -58,6 +58,12 @@ class BaseProduct(PolymorphicModel):
     retail_price = models.DecimalField(
         decimal_places=2, max_digits=8, null=True, blank=True
     )
+    supplier = models.ForeignKey(
+        Supplier, on_delete=models.PROTECT, related_name="products"
+    )
+    supplier_sku = models.CharField(max_length=255, null=True, blank=True)
+    barcode = models.CharField(max_length=20)
+    supplier_barcode = models.CharField(max_length=20, blank=True, null=True)
     package_type = models.ForeignKey(
         PackageType, on_delete=models.PROTECT, related_name="products"
     )
@@ -84,6 +90,12 @@ class BaseProduct(PolymorphicModel):
 
         verbose_name = "Base Product"
         verbose_name_plural = "Base Products"
+        indexes = [
+            models.Index(fields=["sku"]),
+            models.Index(fields=["supplier_sku"]),
+            models.Index(fields=["barcode"]),
+            models.Index(fields=["supplier_barcode"]),
+        ]
 
     def __str__(self):
         return f"{self.sku}: {self.full_name}"
@@ -149,12 +161,6 @@ class BaseProduct(PolymorphicModel):
 class Product(BaseProduct):
     """Model for inventory products."""
 
-    supplier = models.ForeignKey(
-        Supplier, on_delete=models.PROTECT, related_name="products"
-    )
-    supplier_sku = models.CharField(max_length=255, null=True, blank=True)
-    barcode = models.CharField(max_length=20)
-    supplier_barcode = models.CharField(max_length=20, blank=True, null=True)
     purchase_price = models.DecimalField(decimal_places=2, max_digits=8)
     vat_rate = models.ForeignKey(
         VATRate, on_delete=models.PROTECT, related_name="products"
