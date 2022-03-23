@@ -7,12 +7,6 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 
-from .product_attribute import (
-    ListingAttribute,
-    ListingAttributeValue,
-    VariationOptionValue,
-)
-
 
 class ProductRangeManager(models.Manager):
     """Manager for complete products."""
@@ -88,46 +82,60 @@ class ProductRange(models.Model):
     def variation_options(self):
         """Return the Range's variable product options."""
         return (
-            VariationOptionValue.objects.filter(product__product_range=self)
-            .values_list("variation_option__name", flat=True)
-            .distinct()
+            self.products.filter(
+                variation_option_values__variation_option__name__isnull=False
+            )
+            .values_list("variation_option_values__variation_option__name", flat=True)
             .order_by()
+            .distinct()
         )
 
     def listing_attributes(self):
         """Return the Range's listing product options."""
         return (
-            ListingAttributeValue.objects.filter(product__product_range=self)
-            .values_list("listing_attribute__name", flat=True)
-            .distinct()
+            self.products.filter(
+                listing_attribute_values__listing_attribute__name__isnull=False
+            )
+            .values_list("listing_attribute_values__listing_attribute__name", flat=True)
             .order_by()
+            .distinct()
         )
 
     def variation_option_values(self):
         """Return a dict of varition keys and values."""
-        variation_values = VariationOptionValue.objects.filter(
-            product__product_range=self
-        ).order_by("variation_option", "value")
+        qs = (
+            self.products.filter(
+                variation_option_values__variation_option__name__isnull=False
+            )
+            .values_list(
+                "variation_option_values__variation_option__name",
+                "variation_option_values__value",
+            )
+            .order_by(
+                "variation_option_values__variation_option",
+                "variation_option_values__value",
+            )
+            .distinct()
+        )
         variation_options = defaultdict(list)
-        for value in variation_values:
-            if value.value not in variation_options[value.variation_option]:
-                variation_options[value.variation_option].append(value.value)
+        for key, value in qs:
+            variation_options[key].append(value)
         return dict(variation_options)
 
     def variation_values(self):
         """Return a list of the product range's variation option values."""
         return (
-            VariationOptionValue.objects.filter(product__product_range=self)
-            .distinct()
+            self.products.filter(variation_option_values__value__isnull=False)
+            .values_list("variation_option_values__value", flat=True)
             .order_by()
-            .values_list("value", flat=True)
+            .distinct()
         )
 
     def listing_attribute_values(self):
         """Return a list of the product range's listing attribute values."""
         return (
-            ListingAttribute.objects.filter(product__product_range=self)
-            .values_list("value", flat=True)
-            .distinct()
+            self.products.filter(listing_attribute_values__isnulll=False)
+            .values_list("listing_attribute_values__value", flat=True)
             .order_by()
+            .distinct()
         )

@@ -40,6 +40,16 @@ class BaseProductManager(PolymorphicManager):
         """Return a queryset of active products."""
         return self.variations().filter(is_end_of_line=False)
 
+    def simple_products(self, *args, **kwargs):
+        """Return products that are not multipack, combination or incomplete."""
+        return (
+            super(PolymorphicManager, self)
+            .all(*args, **kwargs)
+            .not_instance_of(InitialVariation)
+            .not_instance_of(MultipackProduct)
+            .not_instance_of(CombinationProduct)
+        )
+
 
 class CreatingProductManager(BaseProductManager):
     """Manager for incomplete products."""
@@ -137,19 +147,24 @@ class BaseProduct(PolymorphicModel):
 
     def variation(self):
         """Return the product's variation product options as a dict."""
-        options = VariationOptionValue.objects.filter(product=self)
+        options = self.variation_option_values.all()
         return {option.variation_option.name: option.value for option in options}
 
-    # def listing_options(self):
-    #     """Return the product's listing product options as a dict."""
-    #     return {
-    #         option.product_option: option for option in self.selected_listing_options()
-    #     }
+    def listing_attributes(self):
+        """Return the product's listing product options as a dict."""
+        options = self.listing_attribute_values.all()
+        return {option.listing_attribute.name: option.value for option in options}
+
+    def attributes(self):
+        """Return a combined dict of variation options and listing attributes."""
+        variation_options = self.variation()
+        listing_attributes = self.listing_attributes()
+        return listing_attributes | variation_options
 
     def variable_options(self):
         """Return list of Product Options which are variable for the range."""
         return (
-            VariationOptionValue.objects.filter(product=self)
+            self.variation_option_values.all()
             .values_list("name", "value")
             .order_by("variation_option", "value")
         )
@@ -157,17 +172,10 @@ class BaseProduct(PolymorphicModel):
     def variation_values(self):
         """Return a list of the product's variation option values."""
         return (
-            VariationOptionValue.objects.filter(product=self)
+            self.variation_option_values.all()
             .values_list("value", flat=True)
             .order_by("variation_option", "value")
         )
-
-    # def selected_listing_options(self):
-    #     """Return list of Product Options which are listing options for the range."""
-    #     options = self.product_range.listing_options()
-    #     return self.product_options.filter(product_option__in=options).order_by(
-    #         "product_option"
-    #     )
 
 
 class Product(BaseProduct):
