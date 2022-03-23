@@ -1,0 +1,253 @@
+"""Models for creating Linnworks import files."""
+
+import csv
+import io
+
+
+class CSVFile:
+    """Provides methods for handling CSV files."""
+
+    def __init__(self, rows, header=None, dialect="excel"):
+        """
+        Create a CSVFile.
+
+        Kwargs:
+            rows (list[list[Any]]): The rows of the csv file as a list of rows, each
+                row being a list of values.
+            header (tuple[str] | None): The csv file header as a tuple of row headers
+                or None if the file has no header row.
+            dialect: The dialect kwarg passed to csv.writer when writing files.
+        """
+        self.header = header
+        self.rows = rows
+        self.dialect = dialect
+
+    def write(self, fileobj):
+        """Stream the CSV file to file-like object."""
+        writer = csv.writer(fileobj, dialect=self.dialect)
+        if self.header is not None:
+            writer.writerow(self.header)
+        writer.writerows(self.rows)
+
+    def to_string_io(self):
+        """Return the CSV file as io.StrinIO."""
+        f = io.StringIO()
+        self.write(f)
+        return f
+
+    def to_string(self):
+        """Return the CSV file as a string."""
+        return self.to_string_io.get_value()
+
+
+class BaseImportFile:
+    """Base class for Linnworks import files."""
+
+    header = tuple()
+
+    @classmethod
+    def get_row_data(cls, *args, **kwargs):
+        """
+        Override this method to return a list rows in the form [{header: value}].
+
+        Raises:
+            NotImplementedError: This method must be overriden by subclasses.
+        """
+        raise NotImplementedError()
+
+    @classmethod
+    def create_file(cls, *args, **kwargs):
+        """Return a list of lists of row values."""
+        row_data = cls.get_row_data(*args, **kwargs)
+        rows = [[row.get(h, "") for h in cls.header] for row in row_data]
+        return CSVFile(rows=rows, header=cls.header)
+
+
+class LinnworksProductImportFile(BaseImportFile):
+    """Create Linnworks product import files."""
+
+    SKU = "SKU"
+    TITLE = "Title"
+    SHORT_DESCRIPTION = "Short Description"
+    BARCODE_NUMBER = "Barcode number"
+    TAX_RATE = "Tax Rate"
+    WEIGHT = "Weight"
+    HEIGHT = "Height"
+    WIDTH = "Width"
+    DEPTH = "Depth"
+    PACKAGING_GROUP = "Packaging Group"
+    PURCHASE_PRICE = "Purchase Price"
+    RETAIL_PRICE = "Retail Price"
+    LOCATION = "Location"
+    STOCK_LEVEL = "Stock Level"
+    DEFAULT_SUPPLIER = "Default Supplier"
+    SUPPLIER_BARCODE = "Supplier Barcode"
+    SUPPLIER_CODE = "Supplier Code"
+    SUPPLIER_NAME = "Supplier Name"
+    SUPPLIER_PURCHASE_PRICE = "Supplier Purchase Price"
+    BATCH_TYPE = "Batch Type"
+    BIN_RACK = "Bin Rack"
+    ARCHIVED = "Archived"
+    IS_VARIATION_GROUP = "Is Variation Group"
+    VARIATION_SKU = "Variation SKU"
+    VARIATION_GROUP_NAME = "Variation Group Name"
+    HS_CODE = "HS Code"
+    MANUFACTURER = "Manufacturer"
+    BRAND = "Brand"
+    MATERIAL = "Material"
+    INTERNATIONAL_SHIPPING = "International Shipping"
+    DATE_CREATED = "Date Created"
+    AMAZON_BULLETS = "Amazon Bullets"
+    AMAZON_SEARCH_TERMS = "Amazon Search Terms"
+    CREATED_BY = "Created By"
+    COLOUR = "Colour"
+    SIZE = "Size"
+    DESIGN = "Design"
+    QUANTITY = "Quantity"
+    SHAPE = "Shape"
+    ITEM_WEIGHT = "Item Weight"
+    STRENGTH = "Strength"
+    SCENT = "Scent"
+    NAME = "Name"
+    EXTRAS = "Extras"
+    FINISH = "Finish"
+    WORD = "Word"
+    MODEL = "Model"
+    CALIBRE = "Calibre"
+
+    header = (
+        SKU,
+        TITLE,
+        SHORT_DESCRIPTION,
+        BARCODE_NUMBER,
+        TAX_RATE,
+        WEIGHT,
+        HEIGHT,
+        WIDTH,
+        DEPTH,
+        PACKAGING_GROUP,
+        PURCHASE_PRICE,
+        RETAIL_PRICE,
+        LOCATION,
+        STOCK_LEVEL,
+        DEFAULT_SUPPLIER,
+        SUPPLIER_BARCODE,
+        SUPPLIER_CODE,
+        SUPPLIER_NAME,
+        SUPPLIER_PURCHASE_PRICE,
+        BATCH_TYPE,
+        BIN_RACK,
+        ARCHIVED,
+        IS_VARIATION_GROUP,
+        VARIATION_SKU,
+        VARIATION_GROUP_NAME,
+        HS_CODE,
+        MANUFACTURER,
+        INTERNATIONAL_SHIPPING,
+        DATE_CREATED,
+        AMAZON_BULLETS,
+        AMAZON_SEARCH_TERMS,
+        CREATED_BY,
+        BRAND,
+        COLOUR,
+        SIZE,
+        DESIGN,
+        QUANTITY,
+        SHAPE,
+        ITEM_WEIGHT,
+        STRENGTH,
+        SCENT,
+        NAME,
+        EXTRAS,
+        FINISH,
+        WORD,
+        MODEL,
+        MATERIAL,
+        CALIBRE,
+    )
+
+    @classmethod
+    def _get_default_row(cls):
+        return {
+            cls.INTERNATIONAL_SHIPPING: "Standard",
+        }
+
+    @classmethod
+    def _get_product_range_row(cls, product_range):
+        row = cls._get_default_row()
+        row[cls.SKU] = product_range.sku
+        row[cls.TITLE] = product_range.name
+        row[cls.SHORT_DESCRIPTION] = product_range.description
+        row[cls.IS_VARIATION_GROUP] = "YES"
+        row[cls.VARIATION_SKU] = product_range.sku
+        row[cls.VARIATION_GROUP_NAME] = product_range.name
+        row[cls.ARCHIVED] = "YES" if product_range.is_end_of_line else "NO"
+        row[cls.AMAZON_BULLETS] = product_range.amazon_bullet_points
+        row[cls.AMAZON_SEARCH_TERMS] = product_range.amazon_search_terms
+        row[cls.DATE_CREATED] = product_range.created_at.isoformat()
+        return row
+
+    @classmethod
+    def _get_bin_rack(cls, product):
+        """Return the product's bays as a comma separated list."""
+        bay_links = product.product_bay_links.all()
+        bays = [link.bay.name for link in bay_links]
+        return ", ".join(bays)
+
+    @classmethod
+    def _get_product_row(cls, product):
+        row = cls._get_default_row()
+        row[cls.SKU] = product.sku
+        row[cls.TITLE] = product.product_range.name
+        row[cls.SHORT_DESCRIPTION] = product.product_range.description
+        row[cls.BARCODE_NUMBER] = product.barcode
+        row[cls.TAX_RATE] = int(product.vat_rate.percentage * 100)
+        row[cls.WEIGHT] = product.weight_grams
+        row[cls.HEIGHT] = product.height_mm
+        row[cls.WIDTH] = product.width_mm
+        row[cls.DEPTH] = product.length_mm
+        row[cls.PACKAGING_GROUP] = product.package_type.name
+        row[cls.RETAIL_PRICE] = product.retail_price
+        row[cls.DEFAULT_SUPPLIER] = "YES"
+        row[cls.SUPPLIER_BARCODE] = product.supplier_barcode
+        row[cls.SUPPLIER_CODE] = product.supplier_sku
+        row[cls.SUPPLIER_NAME] = product.supplier.name
+        row[cls.SUPPLIER_PURCHASE_PRICE] = product.purchase_price
+        row[cls.BIN_RACK] = cls._get_bin_rack(product)
+        row[cls.ARCHIVED] = "YES" if product.is_end_of_line else "NO"
+        row[cls.IS_VARIATION_GROUP] = "NO"
+        row[cls.VARIATION_SKU] = product.product_range.sku
+        row[cls.HS_CODE] = product.hs_code
+        row[cls.MANUFACTURER] = product.manufacturer.name
+        row[cls.BRAND] = product.brand.name
+        row[cls.DATE_CREATED] = product.created_at.isoformat()
+        row[cls.AMAZON_BULLETS] = product.product_range.amazon_bullet_points
+        row[cls.AMAZON_SEARCH_TERMS] = product.product_range.amazon_search_terms
+        product_attributes = product.attributes()
+        if missing_attributes := set(product_attributes.keys()) - set(cls.header):
+            raise ValueError(
+                f'Product attributes "{list(missing_attributes)}" not recognised.'
+            )
+        for attribute, value in product_attributes.items():
+            row[attribute] = value
+        return row
+
+    @classmethod
+    def get_row_data(cls, product_ranges):
+        """
+        Return a list of product row dicts.
+
+        Args:
+            product_ranges (dict[models.ProductRange, list[models.BaseProduct]]): A
+                dict with product ranges as the key and a list of it's products to
+                be exported as values.
+
+        Returns:
+            list[dict[str,Any]]: A list of dicts of column headers and values.
+        """
+        rows = []
+        for product_range, products in product_ranges.items():
+            rows.append(cls._get_product_range_row(product_range=product_range))
+            for product in products:
+                rows.append(cls._get_product_row(product))
+        return rows

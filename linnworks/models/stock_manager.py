@@ -1,4 +1,4 @@
-"""Models for the linnworks app."""
+"""Models managing Linnworks stock levels."""
 
 import linnapi
 
