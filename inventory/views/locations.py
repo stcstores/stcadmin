@@ -21,7 +21,7 @@ class LocationFormView(InventoryUserMixin, FormView):
         self.product_range = get_object_or_404(
             models.ProductRange, pk=self.kwargs.get("range_pk")
         )
-        self.products = self.product_range.products.all()
+        self.products = self.product_range.products.variations()
         initial = []
         for product in self.products:
             bays = [

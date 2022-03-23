@@ -55,7 +55,7 @@
       {% endfor %}
       <th>Supplier SKU</th>
     </tr>
-    {% for variation in product_range.products.all %}
+    {% for variation in product_range.products.variations %}
     <tr class="{% if product == variation %}selected{% else %}not_selected{% endif %}"
       data-href="{% url 'inventory:product' variation.pk %}">
       <td class="sku">{{ variation.sku }}</td>

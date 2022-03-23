@@ -2,7 +2,6 @@
 
 import itertools
 import json
-from itertools import chain
 
 from django.contrib import messages
 from django.db import transaction
@@ -77,7 +76,7 @@ class StartNewProduct(InventoryUserMixin, CreateView):
 class CreateInitialVariation(CreateView):
     """Create the first product in a new range."""
 
-    form_class = forms.InitialProductForm
+    form_class = forms.InitialVariationForm
     template_name = "inventory/product_editor/create_initial_variation.html"
 
     def get_initial(self, *args, **kwargs):
@@ -91,13 +90,14 @@ class CreateInitialVariation(CreateView):
 
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
-        if "create_single_product" in self.request.POST:
+        range_pk = self.object.product_range.pk
+        if self.object.polymorphic_ctype.model_class() == models.Product:
             return reverse_lazy(
-                "inventory:edit_new_product", kwargs={"range_pk": self.product_range.pk}
+                "inventory:edit_new_product", kwargs={"range_pk": range_pk}
             )
-        elif "create_variations" in self.request.POST:
+        else:
             return reverse_lazy(
-                "inventory:setup_variations", kwargs={"range_pk": self.product_range.pk}
+                "inventory:setup_variations", kwargs={"range_pk": range_pk}
             )
 
 
@@ -125,44 +125,18 @@ class SetupVariations(InventoryUserMixin, FormView):
 
     def form_valid(self, form):
         """Create variation products."""
-        base_product = self.product_range.products.all()[0]
+        initial_variation = models.InitialVariation.objects.get(
+            product_range=self.product_range
+        )
         variations = [
             _["options"]
             for _ in json.loads(form.cleaned_data["variations"])
             if _["included"] is True
         ]
         with transaction.atomic():
-            for variation in variations:
-                product = self.duplicate_product(base_product)
-                for option, value in variation.items():
-                    variation_option = models.VariationOption.objects.get(name=option)
-                    models.VariationOptionValue(
-                        product=product, variation_option=variation_option, value=value
-                    ).save()
-            base_product.delete()
+            initial_variation.create_variations(variations)
+            initial_variation.delete()
         return super().form_valid(form)
-
-    def duplicate_product(self, to_copy):
-        """Create a duplicate product with a new SKU."""
-        product = models.Product.creating.get(id=to_copy.id)
-        product_kwargs = self.model_to_dict(product)
-        product_kwargs.pop("id")
-        product_kwargs["sku"] = models.new_product_sku()
-        new_product = models.VariationProduct(**product_kwargs)
-        new_product.save()
-        return new_product
-
-    def model_to_dict(self, instance):
-        """Return a dict of model instance attributes."""
-        opts = instance._meta
-        data = {}
-        for f in chain(opts.concrete_fields, opts.private_fields, opts.many_to_many):
-            if f.name in ("baseproduct_ptr"):
-                continue
-            if not getattr(f, "editable", False):
-                continue
-            data[f.name] = getattr(instance, f.name)
-        return data
 
     def get_success_url(self, *args, **kwargs):
         """Redirect on successful validation of the form."""
@@ -275,7 +249,7 @@ class EditVariations(InventoryUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return the context for the template."""
         product_range = get_object_or_404(
-            models.ProductRange.objects, pk=self.kwargs["range_pk"]
+            models.ProductRange, pk=self.kwargs["range_pk"]
         )
         context = super().get_context_data(*args, **kwargs)
         context["product_range"] = product_range
@@ -366,7 +340,7 @@ class SetProductOptionValues(InventoryUserMixin, TemplateView):
         """Return the initial values for the formset."""
         return [
             {"edit": self.edit, "product_range": self.product_range, "product": p}
-            for p in self.product_range.products.all()
+            for p in self.product_range.products.variations()
         ]
 
     def post(self, *args, **kwargs):
@@ -407,7 +381,7 @@ class RemoveDropdown(InventoryUserMixin, RedirectView):
         )
         products = [
             _
-            for _ in edit.partial_product_range.products.all()
+            for _ in edit.partial_product_range.products.variations()
             if _.pre_existing is False
         ]
         for product in products:
@@ -560,12 +534,9 @@ class DiscardNewRange(InventoryUserMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         """Delete the variation and redirect."""
-        edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
-        edit.delete()
-        if edit.product_range is not None:
-            product_range_ID = edit.partial_product_range.range_ID
-            return reverse_lazy(
-                "inventory:product_range", kwargs={"range_id": product_range_ID}
-            )
-        else:
-            return reverse_lazy("inventory:product_search")
+        product_range = get_object_or_404(
+            models.ProductRange, pk=self.kwargs["range_pk"]
+        )
+        product_range.products.all().delete()
+        product_range.delete()
+        return reverse_lazy("inventory:product_search")

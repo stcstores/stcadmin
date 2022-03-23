@@ -26,7 +26,7 @@ class ImageFormView(InventoryUserMixin, FormView):
         self.product_range = get_object_or_404(
             models.ProductRange, range_ID=self.range_id
         )
-        self.products = self.product_range.products.all()
+        self.products = self.product_range.products.variations()
 
     def get_options(self):
         """Return variation data for the products."""

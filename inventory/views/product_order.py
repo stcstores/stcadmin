@@ -22,7 +22,9 @@ class ProductOrderView(InventoryUserMixin, TemplateView):
         )
         self.formset = ProductOrderFormSet(
             self.request.POST or None,
-            form_kwargs=[{"product": p} for p in self.product_range.products.all()],
+            form_kwargs=[
+                {"product": p} for p in self.product_range.products.variations()
+            ],
         )
         return super().dispatch(*args, **kwargs)
 

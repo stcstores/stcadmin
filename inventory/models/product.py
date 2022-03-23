@@ -2,8 +2,10 @@
 
 import random
 import string
+from itertools import chain
 
-from django.db import models
+from django.apps import apps
+from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
 from polymorphic.models import PolymorphicManager, PolymorphicModel
@@ -22,19 +24,24 @@ from .supplier import Supplier
 UNIQUE_SKU_ATTEMPTS = 100
 
 
-class ProductManager(PolymorphicManager):
-    """Manager for complete products."""
+class BaseProductManager(PolymorphicManager):
+    """Base product manager for products."""
 
-    def get_queryset(self, *args, **kwargs):
+    def variations(self, *args, **kwargs):
         """Return a queryset of complete products."""
         return (
-            super()
-            .get_queryset(*args, **kwargs)
+            super(PolymorphicManager, self)
+            .all(*args, **kwargs)
             .filter(product_range__status=ProductRange.COMPLETE)
+            .not_instance_of(InitialVariation)
         )
 
+    def active(self, *args, **kwargs):
+        """Return a queryset of active products."""
+        return self.variations().filter(is_end_of_line=False)
 
-class CreatingProductManager(PolymorphicManager):
+
+class CreatingProductManager(BaseProductManager):
     """Manager for incomplete products."""
 
     def get_queryset(self, *args, **kwargs):
@@ -82,8 +89,7 @@ class BaseProduct(PolymorphicModel):
         editable=False,
     )
 
-    objects = PolymorphicManager()
-    products = ProductManager()
+    objects = BaseProductManager()
     creating = CreatingProductManager()
 
     class Meta:
@@ -101,6 +107,7 @@ class BaseProduct(PolymorphicModel):
             "product_range",
             "range_order",
         )
+        base_manager_name = "objects"
 
     def __str__(self):
         return f"{self.sku}: {self.full_name}"
@@ -207,16 +214,45 @@ class Product(BaseProduct):
         raise NotImplementedError()
 
 
-class SingleProduct(Product):
-    """Model for single products."""
+class InitialVariation(Product):
+    """Model for initial product variation data."""
 
-    pass
+    ignore_fields = {"baseproduct_ptr", "product_ptr", "id", "sku"}
 
+    def _to_dict(self):
+        """Return a dict of attributes."""
+        opts = self._meta
+        data = {}
+        for f in chain(opts.concrete_fields, opts.private_fields, opts.many_to_many):
+            if f.name in self.ignore_fields:
+                continue
+            if not getattr(f, "editable", False):
+                continue
+            data[f.name] = getattr(self, f.name)
+        return data
 
-class VariationProduct(Product):
-    """Model for variation products."""
+    def _create_variation(self, variation):
+        product_kwargs = self._to_dict()
+        product_kwargs["sku"] = new_product_sku()
+        product = Product(**product_kwargs)
+        product.save()
+        for option, value in variation.items():
+            variation_option = apps.get_model(
+                "inventory", "VariationOption"
+            ).objects.get(name=option)
+            VariationOptionValue(
+                product=product, variation_option=variation_option, value=value
+            ).save()
+        return product
 
-    pass
+    @transaction.atomic
+    def create_variations(self, variations):
+        """Create variation products."""
+        created_variations = []
+        for variation in variations:
+            new_variation = self._create_variation(variation)
+            created_variations.append(new_variation)
+        return created_variations
 
 
 class MultipackProduct(BaseProduct):
@@ -301,7 +337,7 @@ def unique_sku(existing_skus, sku_function):
 
 def new_product_sku():
     """Return a new product SKU."""
-    existing_skus = set(Product.products.values_list("sku", flat=True).distinct())
+    existing_skus = set(Product.objects.values_list("sku", flat=True).distinct())
     return unique_sku(existing_skus=existing_skus, sku_function=generate_sku)
 
 

@@ -50,7 +50,7 @@ class ProductRangeView(InventoryUserMixin, TemplateView):
         """Get template context data."""
         context_data = super().get_context_data(*args, **kwargs)
         context_data["product_range"] = self.product_range
-        context_data["products"] = self.product_range.products.all()
+        context_data["products"] = self.product_range.products.variations()
         return context_data
 
     def range_error(self):

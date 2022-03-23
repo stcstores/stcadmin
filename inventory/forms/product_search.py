@@ -52,11 +52,13 @@ class ProductSearchForm(forms.Form):
 
     def _query_products(self):
         if self.cleaned_data["search_term"]:
-            qs = models.BaseProduct.products.annotate(
-                search=SearchVector(*self.SEARCH_FIELDS)
-            ).filter(search=self.cleaned_data["search_term"])
+            qs = (
+                models.BaseProduct.objects.variations()
+                .annotate(search=SearchVector(*self.SEARCH_FIELDS))
+                .filter(search=self.cleaned_data["search_term"])
+            )
         else:
-            qs = models.Product.products.all()
+            qs = models.Product.objects.variations()
         qs.select_related("product_range", "supplier")
         return qs
 

@@ -27,7 +27,7 @@ class BaseRangeForm(forms.ModelForm):
         """Meta for RangeForm."""
 
         model = models.ProductRange
-        exclude = ["end_of_line", "hidden", "status"]
+        exclude = ["hidden", "status"]
         field_classes = {
             "name": inventory_fields.Title,
             "description": inventory_fields.Description,
@@ -60,11 +60,7 @@ class CreateRangeForm(BaseRangeForm):
     class Meta(BaseRangeForm.Meta):
         """Meta for CreateRangeForm."""
 
-        exclude = [
-            "end_of_line",
-            "hidden",
-            "status",
-        ]
+        exclude = BaseRangeForm.Meta.exclude + ["is_end_of_line"]
         widgets = {"managed_by": forms.HiddenInput}
 
     sku = forms.CharField(required=False, widget=forms.HiddenInput)
@@ -76,7 +72,7 @@ class EditRangeForm(BaseRangeForm):
     class Meta(BaseRangeForm.Meta):
         """Meta for CreateRangeForm."""
 
-        exclude = ["hidden", "status", "sku"]
+        exclude = BaseRangeForm.Meta.exclude + ["sku"]
 
     field_order = ("name", "description", "managed_by", "is_end_of_line")
 
@@ -89,7 +85,7 @@ class BaseProductForm(forms.ModelForm):
 
         model = models.Product
         exclude = (
-            "end_of_line",
+            "is_end_of_line",
             "gender",
             "range_order",
             "length_mm",
@@ -125,13 +121,16 @@ class BaseProductForm(forms.ModelForm):
         )
 
 
-class InitialProductForm(BaseProductForm):
+class InitialVariationForm(BaseProductForm):
     """Form for setting initial product attributes."""
+
+    SINGLE = "single"
+    VARIATION = "variation"
 
     class Meta(BaseProductForm.Meta):
         """Meta for InitialProductForm."""
 
-        model = models.SingleProduct
+        model = models.InitialVariation
         field_classes = {
             # "barcode": inventory_fields.Barcode,
             # "purchase_price": inventory_fields.PurchasePrice,
@@ -152,6 +151,8 @@ class InitialProductForm(BaseProductForm):
         """Return cleaned form data."""
         cleaned_data = super().clean(*args, **kwargs)
         cleaned_data["sku"] = models.new_product_sku()
+        if self.data["product_type"] == self.SINGLE:
+            self.instance.__class__ = models.Product
         return cleaned_data
 
 

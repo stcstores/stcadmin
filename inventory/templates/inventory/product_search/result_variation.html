@@ -22,7 +22,7 @@
       {% endfor %}
       <th></th>
     </tr>
-    {% for product in range.products.all %}
+    {% for product in range.products.variations %}
     <tr>
       <td class="sku">{{ product.sku }}</td>
       <td class="sku">{{ product.supplier_sku }}</td>

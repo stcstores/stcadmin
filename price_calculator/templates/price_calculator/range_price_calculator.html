@@ -48,7 +48,7 @@
 </div>
 
 <div class="range">
-  {% for product in product_range.products.all %}
+  {% for product in product_range.products.variations %}
   <div class="product" id="product_{{ product.id }}">
     <div class="product_row title">
       <span class="sku">{{ product.SKU }}</span>&nbsp;-&nbsp;<span class="name">{{ product.name }}</span>
@@ -148,10 +148,11 @@
     if (vat_rates.length == 0) {
       {
         %
-        for product in product_range.products.all %
+        for product in product_range.products.variations %
       }
       calcs['{{ product.id }}'].set_vat_rate(0); {
-        % endfor %
+        %
+        endfor %
       }
     }
     $(vat_rates).each(function () {
@@ -170,7 +171,8 @@
         };
       }
       calcs['{{ product.id }}'].set_vat_rate(vat_rate); {
-        % endfor %
+        %
+        endfor %
       }
     });
   }
@@ -178,7 +180,7 @@
   $(document).ready(function () {
     calcs = {}; {
       %
-      for product in product_range.products.all %
+      for product in product_range.products.variations %
     }
     var ex_vat_price = {
       {
@@ -270,7 +272,8 @@
 
     $('#{{ product.id }}_sale_price').val(initial_price);
     $('#{{ product.id }}_sale_price').change(); {
-      % endfor %
+      %
+      endfor %
     }
     $('#country').change(function () {
       {
@@ -289,7 +292,8 @@
         },
         calcs['{{ product.id }}'].sale_price
       ); {
-        % endfor %
+        %
+        endfor %
       }
     });
     $('#channel').change(function () {
@@ -309,7 +313,8 @@
         },
         calcs['{{ product.id }}'].sale_price
       ); {
-        % endfor %
+        %
+        endfor %
       }
     }); {
       %
@@ -328,15 +333,17 @@
       $('#{{ product.id }}_sale_price').val(sale_price);
       $('#{{ product.id }}_sale_price').change();
     }); {
-      % endfor %
+      %
+      endfor %
     }
     $('#channel_fee_input').change(function () {
       {
         %
-        for product in product_range.products.all %
+        for product in product_range.products.variations %
       }
       calcs['{{ product.id }}'].set_channel_fee_percentage($(this).val()); {
-        % endfor %
+        %
+        endfor %
       }
     });
     $('#country').change();

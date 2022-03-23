@@ -19,9 +19,13 @@
   <div class="product_form">
     <form action="" method="POST" autocomplete="off">{% csrf_token %}
       {% include "inventory/input_add_on_form.html" %}
-      <button type="submit" class="save_button" name="create_single_product">Save Single Product</button>
+      <button type="submit" class="save_button" name="product_type" value="{{ form.SINGLE }}">
+        Save Single Product
+      </button>
       <br><br>
-      <button type="submit" class="save_button" name="create_variations">Create Variations</button>
+      <button type="submit" class="save_button" name="product_type" value="{{ form.VARIATION}}">
+        Create Variations
+      </button>
     </form>
   </div>
 
