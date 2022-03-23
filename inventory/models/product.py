@@ -8,7 +8,8 @@ from django.apps import apps
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
-from polymorphic.models import PolymorphicManager, PolymorphicModel
+from polymorphic.managers import PolymorphicQuerySet
+from polymorphic.models import PolymorphicModel
 
 from .product_attribute import (
     Brand,
@@ -24,43 +25,37 @@ from .supplier import Supplier
 UNIQUE_SKU_ATTEMPTS = 100
 
 
-class BaseProductManager(PolymorphicManager):
-    """Base product manager for products."""
+class ProductQueryset(PolymorphicQuerySet):
+    """Custom queryset for products."""
 
-    def variations(self, *args, **kwargs):
-        """Return a queryset of complete products."""
-        return (
-            super(PolymorphicManager, self)
-            .all(*args, **kwargs)
-            .filter(product_range__status=ProductRange.COMPLETE)
-            .not_instance_of(InitialVariation)
+    def complete(self):
+        """Return complete products."""
+        return self.filter(product_range__status=ProductRange.COMPLETE).select_related(
+            "product_range"
         )
 
-    def active(self, *args, **kwargs):
-        """Return a queryset of active products."""
-        return self.variations().filter(is_end_of_line=False)
+    def incomplete(self):
+        """Return incomplete products."""
+        return self.filter(product_range__status=ProductRange.CREATING).select_related(
+            "product_range"
+        )
 
-    def simple_products(self, *args, **kwargs):
-        """Return products that are not multipack, combination or incomplete."""
+    def simple(self):
+        """Return basic products (not initial variations, multipacks or combinations)."""
         return (
-            super(PolymorphicManager, self)
-            .all(*args, **kwargs)
+            self.filter()
             .not_instance_of(InitialVariation)
             .not_instance_of(MultipackProduct)
             .not_instance_of(CombinationProduct)
         )
 
+    def variations(self):
+        """Return a queryset of complete products."""
+        return self.filter().not_instance_of(InitialVariation)
 
-class CreatingProductManager(BaseProductManager):
-    """Manager for incomplete products."""
-
-    def get_queryset(self, *args, **kwargs):
-        """Return a queryset of incomplete products."""
-        return (
-            super()
-            .get_queryset(*args, **kwargs)
-            .filter(product_range__status=ProductRange.CREATING)
-        )
+    def active(self):
+        """Return a queryset of active products."""
+        return self.filter(is_end_of_line=False).select_related("latest_stock_change")
 
 
 class BaseProduct(PolymorphicModel):
@@ -99,8 +94,7 @@ class BaseProduct(PolymorphicModel):
         editable=False,
     )
 
-    objects = BaseProductManager()
-    creating = CreatingProductManager()
+    objects = ProductQueryset.as_manager()
 
     class Meta:
         """Meta class for the BaseProduct model."""
