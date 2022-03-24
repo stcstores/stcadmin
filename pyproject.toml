@@ -35,7 +35,7 @@ file-exchange = {git = "https://github.com/lukeshiner/django-file_exchange.git",
 scurri = {git = "https://github.com/stcstores/scurri.git", rev = "main"}
 flake8-docstrings = ">=1.6.0"
 django-storages = "^1.12.3"
-boto3 = "^1.21.13"
+boto3 = "^1.21.25"
 shopify_api_py = {git = "https://github.com/stcstores/shopify_api_py.git", rev = "main"}
 
 [tool.poetry.dev-dependencies]
