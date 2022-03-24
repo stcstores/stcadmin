@@ -3,6 +3,7 @@
 from collections import defaultdict
 
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -43,8 +44,12 @@ class ProductRange(models.Model):
     )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, default="")
-    amazon_search_terms = models.TextField(blank=True, default="")
-    amazon_bullet_points = models.TextField(blank=True, default="")
+    search_terms = ArrayField(
+        models.CharField(max_length=255), blank=True, null=True, size=5
+    )
+    bullet_points = ArrayField(
+        models.CharField(max_length=255), blank=True, null=True, size=5
+    )
     is_end_of_line = models.BooleanField(default=False)
     hidden = models.BooleanField(default=False)
     managed_by = models.ForeignKey(

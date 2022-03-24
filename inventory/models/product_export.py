@@ -198,7 +198,7 @@ class ProductExportData:
     DATE_CREATED = "date_created"
     AMAZON_BULLETS = "amazon_bullets"
     PACKAGE_TYPE = "package_type"
-    AMAZON_SEARCH_TERMS = "amazon_search_terms"
+    AMAZON_SEARCH_TERMS = "search_terms"
     GENDER = "gender"
     INCOMPLETE = "incomplete"
     RETAIL_PRICE = "retail_price"

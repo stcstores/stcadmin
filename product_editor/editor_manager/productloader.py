@@ -73,7 +73,7 @@ class ProductLoader(ProductEditorBase):
             self.DESCRIPTION: product_range.description,
             self.DEPARTMENT: product_range.department,
             self.AMAZON_BULLET_POINTS: product_range.products[0].amazon_bullets,
-            self.AMAZON_SEARCH_TERMS: product_range.products[0].amazon_search_terms,
+            self.AMAZON_SEARCH_TERMS: product_range.products[0].search_terms,
         }
         return data
 

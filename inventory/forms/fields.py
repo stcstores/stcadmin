@@ -453,8 +453,8 @@ class AmazonBulletPoints(ListOption):
     """Field for Amazon bullet point descriptions."""
 
     label = "Amazon Bullet Points"
-    name = "amazon_bullet_points"
-    html_class = "amazon_bullet_points"
+    name = "bullet_points"
+    html_class = "bullet_points"
     help_text = "Create up to five bullet points for Amazon listings."
     required = False
     minimum = 0
@@ -465,8 +465,8 @@ class AmazonSearchTerms(ListOption):
     """Field for Amazon search terms."""
 
     label = "Amazon Search Terms"
-    name = "amazon_search_terms"
-    html_class = "amazon_search_terms"
+    name = "search_terms"
+    html_class = "search_terms"
     help_text = "Create up to five search terms for Amazon listings."
     required = False
     minimum = 0

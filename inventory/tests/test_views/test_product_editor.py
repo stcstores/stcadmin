@@ -149,11 +149,11 @@ class TestStartNewProductView(
         self.assertEqual(self.department, edit.partial_product_range.department)
         self.assertEqual(self.description, edit.partial_product_range.description)
         self.assertEqual(
-            "|".join(self.search_terms), edit.partial_product_range.amazon_search_terms
+            "|".join(self.search_terms), edit.partial_product_range.search_terms
         )
         self.assertEqual(
             "|".join(self.amazon_bullets),
-            edit.partial_product_range.amazon_bullet_points,
+            edit.partial_product_range.bullet_points,
         )
 
     def test_post_without_title(self):
@@ -192,7 +192,7 @@ class TestStartNewProductView(
         self.assertEqual(302, response.status_code)
         edit_ID = self.get_ID_from_URL(response.url)
         product_range = models.ProductEdit.objects.get(id=edit_ID).partial_product_range
-        self.assertEqual(product_range.amazon_search_terms, "")
+        self.assertEqual(product_range.search_terms, "")
 
     def test_post_without_amazon_bullets(self):
         form_data = self.get_form_data()
@@ -201,7 +201,7 @@ class TestStartNewProductView(
         self.assertEqual(302, response.status_code)
         edit_ID = self.get_ID_from_URL(response.url)
         edit = models.ProductEdit.objects.get(id=edit_ID)
-        self.assertEqual(edit.partial_product_range.amazon_bullet_points, "")
+        self.assertEqual(edit.partial_product_range.bullet_points, "")
 
 
 class TestEditProductView(InventoryViewTest, fixtures.EditingProductFixture, ViewTests):
@@ -624,11 +624,9 @@ class TestEditRangeDetailsView(
         self.assertEqual(self.second_department, product_range.department)
         self.assertEqual(self.DESCRIPTION_VALUE, product_range.description)
         self.assertEqual(
-            "|".join(self.AMAZON_BULLETS_VALUE), product_range.amazon_bullet_points
+            "|".join(self.AMAZON_BULLETS_VALUE), product_range.bullet_points
         )
-        self.assertEqual(
-            "|".join(self.SEARCH_TERMS_VALUE), product_range.amazon_search_terms
-        )
+        self.assertEqual("|".join(self.SEARCH_TERMS_VALUE), product_range.search_terms)
 
     def test_get_invalid_edit_ID(self):
         URL = self.get_URL(edit_ID="99999")

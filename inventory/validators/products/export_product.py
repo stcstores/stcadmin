@@ -210,7 +210,7 @@ class ProductAmazonBulletPointsMatch(ExportProductValidationCheck):
             self.export_bullets = self.export_product.amazon_bullets
             if not self.export_bullets:
                 self.export_bullets = ""
-            self.db_bullets = self.db_product.product_range.amazon_bullet_points
+            self.db_bullets = self.db_product.product_range.bullet_points
             if not self.db_bullets:
                 self.db_bullets = ""
         return test_data
@@ -240,10 +240,10 @@ class ProductAmazonSearchTermsMatch(ExportProductValidationCheck):
         """Return a list of objects to validate."""
         test_data = super().get_test_data(*args, **kwargs)
         if self.db_product is not None:
-            self.export_search_terms = self.export_product.amazon_search_terms
+            self.export_search_terms = self.export_product.search_terms
             if not self.export_search_terms:
                 self.export_search_terms = ""
-            self.db_search_terms = self.db_product.product_range.amazon_search_terms
+            self.db_search_terms = self.db_product.product_range.search_terms
             if not self.db_search_terms:
                 self.db_search_terms = ""
         return test_data

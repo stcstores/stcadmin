@@ -61,8 +61,8 @@ class ProductEditorViewTest(STCAdminTest):
             "title": title,
             "description": description,
             "department": department.name,
-            "amazon_bullet_points": json.dumps(bullets),
-            "amazon_search_terms": json.dumps(search_terms),
+            "bullet_points": json.dumps(bullets),
+            "search_terms": json.dumps(search_terms),
         }
 
     def make_product_info(self):
@@ -170,26 +170,22 @@ class TestNewBasicInfo(ProductEditorViewTest, ViewTests):
             self.get_URL(),
             {
                 "department": self.department.name,
-                "amazon_bullet_points": json.dumps(self.bullets),
+                "bullet_points": json.dumps(self.bullets),
             },
         )
         product_data = self.client.session[self.session_key]
-        self.assertEqual(
-            self.bullets, product_data["basic_info"]["amazon_bullet_points"]
-        )
+        self.assertEqual(self.bullets, product_data["basic_info"]["bullet_points"])
 
     def test_search_terms_set(self):
         self.client.post(
             self.get_URL(),
             {
                 "department": self.department.name,
-                "amazon_search_terms": json.dumps(self.bullets),
+                "search_terms": json.dumps(self.bullets),
             },
         )
         product_data = self.client.session[self.session_key]
-        self.assertEqual(
-            self.bullets, product_data["basic_info"]["amazon_search_terms"]
-        )
+        self.assertEqual(self.bullets, product_data["basic_info"]["search_terms"])
 
     def test_error_for_no_department(self):
         response = self.client.post(self.get_URL(), {})
@@ -277,26 +273,22 @@ class TestEditBasicInfo(ProductEditorViewTest, ViewTests):
             self.get_URL(),
             {
                 "department": self.department.name,
-                "amazon_bullet_points": json.dumps(self.bullets),
+                "bullet_points": json.dumps(self.bullets),
             },
         )
         product_data = self.client.session[self.session_key]
-        self.assertEqual(
-            self.bullets, product_data["basic_info"]["amazon_bullet_points"]
-        )
+        self.assertEqual(self.bullets, product_data["basic_info"]["bullet_points"])
 
     def test_search_terms_set(self):
         self.client.post(
             self.get_URL(),
             {
                 "department": self.department.name,
-                "amazon_search_terms": json.dumps(self.bullets),
+                "search_terms": json.dumps(self.bullets),
             },
         )
         product_data = self.client.session[self.session_key]
-        self.assertEqual(
-            self.bullets, product_data["basic_info"]["amazon_search_terms"]
-        )
+        self.assertEqual(self.bullets, product_data["basic_info"]["search_terms"])
 
     def test_error_for_no_department(self):
         response = self.client.post(self.get_URL(), {})

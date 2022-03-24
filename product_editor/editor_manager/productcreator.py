@@ -164,7 +164,7 @@ class ProductSaver(ProductEditorBase):
         if kwargs[self.AMAZON_BULLET_POINTS]:
             product.amazon_bullets = kwargs[self.AMAZON_BULLET_POINTS]
         if kwargs[self.AMAZON_SEARCH_TERMS]:
-            product.amazon_search_terms = kwargs[self.AMAZON_SEARCH_TERMS]
+            product.search_terms = kwargs[self.AMAZON_SEARCH_TERMS]
         if kwargs[self.PACKAGE_TYPE] in (self.HEAVY_AND_LARGE, self.COURIER):
             product.international_shipping = self.EXPRESS
         else:

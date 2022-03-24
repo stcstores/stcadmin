@@ -1,6 +1,7 @@
 """Forms for inventory app."""
 
 from django import forms
+from django.contrib.postgres.forms import SplitArrayField
 from django.db import transaction
 
 from inventory import models
@@ -31,27 +32,14 @@ class BaseRangeForm(forms.ModelForm):
         field_classes = {
             "name": inventory_fields.Title,
             "description": inventory_fields.Description,
-            "amazon_search_terms": inventory_fields.AmazonSearchTerms,
-            "amazon_bullet_points": inventory_fields.AmazonBulletPoints,
         }
 
-    def clean(self, *args, **kwargs):
-        """Format amazon list strings."""
-        cleaned_data = super().clean(*args, **kwargs)
-        if "amazon_bullets" in cleaned_data:
-            cleaned_data["amazon_bullets"] = self.format_amazon_list(
-                cleaned_data["amazon_bullets"]
-            )
-        if "search_terms" in cleaned_data:
-            cleaned_data["search_terms"] = self.format_amazon_list(
-                cleaned_data["search_terms"]
-            )
-        cleaned_data["sku"] = models.new_range_sku()
-        return cleaned_data
-
-    def format_amazon_list(self, amazon_list_json):
-        """Return a formatted amazon list string."""
-        return "|".join(amazon_list_json)
+    search_terms = SplitArrayField(
+        forms.CharField(), size=5, required=False, remove_trailing_nulls=True
+    )
+    bullet_points = SplitArrayField(
+        forms.CharField(), size=5, required=False, remove_trailing_nulls=True
+    )
 
 
 class CreateRangeForm(BaseRangeForm):

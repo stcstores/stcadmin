@@ -191,7 +191,7 @@ class MockCCProductsProduct:
         department="Sports",
         options=None,
         amazon_bullets=None,
-        amazon_search_terms=None,
+        search_terms=None,
         gender="mens",
         hs_code="28490389",
     ):
@@ -228,7 +228,7 @@ class MockCCProductsProduct:
             "Heavy",
             "Good Clearence",
         ]
-        self.amazon_search_terms = amazon_search_terms or [
+        self.search_terms = search_terms or [
             "Red",
             "Square",
             "Light",
