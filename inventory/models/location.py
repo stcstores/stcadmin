@@ -13,7 +13,7 @@ class Bay(models.Model):
 
     name = models.CharField(max_length=255, unique=True)
     active = models.BooleanField(default=True)
-    created_at = models.DateField(default=timezone.now, editable=False)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
 
     objects = models.Manager()
@@ -38,7 +38,7 @@ class ProductBayLink(models.Model):
     bay = models.ForeignKey(
         Bay, on_delete=models.CASCADE, related_name="product_bay_links"
     )
-    created_at = models.DateField(default=timezone.now, editable=False)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:

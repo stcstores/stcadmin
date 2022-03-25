@@ -25,7 +25,7 @@ class ProductImage(models.Model):
     cloud_commerce_name = models.CharField(max_length=50)
     position = models.PositiveIntegerField()
     image_file = models.ImageField(storage=get_storage())
-    created_at = models.DateField(default=timezone.now, editable=False)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -54,7 +54,7 @@ class ProductImageLink(models.Model):
     )
     ordering = models.PositiveIntegerField(default=0)
     active = models.BooleanField(default=True)
-    created_at = models.DateField(default=timezone.now, editable=False)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -80,7 +80,7 @@ class ProductRangeImageLink(models.Model):
     )
     ordering = models.PositiveIntegerField(default=0)
     active = models.BooleanField(default=True)
-    created_at = models.DateField(default=timezone.now, editable=False)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:

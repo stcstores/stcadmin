@@ -55,7 +55,7 @@ class ProductRange(models.Model):
     managed_by = models.ForeignKey(
         get_user_model(), on_delete=models.PROTECT, related_name="product_ranges"
     )
-    created_at = models.DateField(default=timezone.now, editable=False)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
 
     objects = models.Manager()
