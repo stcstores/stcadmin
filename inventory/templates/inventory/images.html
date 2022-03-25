@@ -1,7 +1,7 @@
 {% extends "inventory/range_settings.html" %}
 {% load static %}
 
-{% load reference_extras %}
+
 
 {% block additional_head %}
 {{ block.super }}
@@ -12,7 +12,6 @@
 
 {% block content %}{{ block.super }}
 <h1 class="page_title">Images Page</h1>
-{% help_button 'inventory_help' 'inventory-images_page' %}
 <h2>{{ product_range.name }}</h2>
 <style>
     .image_table {

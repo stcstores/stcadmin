@@ -1,13 +1,9 @@
 """Shipping Models."""
-import json
+
 import math
-from pathlib import Path
 
 import requests
-from ccapi import CCAPI
-from django.conf import settings
 from django.db import models
-from django.utils import timezone
 
 
 class CurrencyManager(models.Manager):
@@ -343,57 +339,6 @@ class WeightBand(models.Model):
         return f"{self.shipping_price} {self.min_weight}g - {self.max_weight}g"
 
 
-class ShippingRuleManager(models.Manager):
-    """Model Manager for the ShippingRule model."""
-
-    def update_rules(self):
-        """Update shipping rules from Cloud Commerce."""
-        rules = CCAPI.get_courier_rules()
-        self._backup_rules(rules)
-        self._remove_defunct_rules(rules)
-        for rule in rules:
-            self._create_or_update_from_cc_rule(rule)
-
-    def _backup_path(self):
-        filename = f"shipping_rules_{timezone.now().strftime('%Y-%m-%d')}.json"
-        return Path(settings.MEDIA_ROOT) / "shipping_rules" / filename
-
-    def _backup_rules(self, rules):
-        path = self._backup_path()
-        directory = path.parent
-        directory.mkdir(parents=True, exist_ok=True)
-        with path.open("w") as f:
-            json.dump(rules.json, f, indent=4, sort_keys=True)
-
-    def _remove_defunct_rules(self, rules):
-        rule_ids = [rule.id for rule in rules]
-        self.exclude(rule_ID__in=rule_ids).update(inactive=True)
-
-    def _get_rule_kwargs(self, cc_rule):
-        courier, _ = Courier.objects.get_or_create(
-            courier_ID=str(cc_rule.courier_services_group_id)
-        )
-        courier_service, _ = CourierService.objects.get_or_create(
-            courier_service_ID=str(cc_rule.courier_services_rule_id),
-            defaults={"courier": courier},
-        )
-        return {
-            "rule_ID": cc_rule.id,
-            "name": cc_rule.name,
-            "courier_service": courier_service,
-            "priority": bool(cc_rule.is_priority),
-            "inactive": False,
-        }
-
-    def _create_or_update_from_cc_rule(self, cc_rule):
-        kwargs = self._get_rule_kwargs(cc_rule)
-        queryset = self.filter(rule_ID=cc_rule.id)
-        if queryset.exists():
-            queryset.update(**kwargs)
-        else:
-            self.create(**kwargs)
-
-
 class ShippingRule(models.Model):
     """Model for Shipping Rules."""
 
@@ -407,8 +352,6 @@ class ShippingRule(models.Model):
     )
     priority = models.BooleanField(default=False)
     inactive = models.BooleanField(default=False)
-
-    objects = ShippingRuleManager()
 
     class Meta:
         """Meta class for shipping.ShippingRule."""

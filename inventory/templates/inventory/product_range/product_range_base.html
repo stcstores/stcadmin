@@ -1,6 +1,6 @@
 {% extends "inventory/base.html" %}
 {% load static %}
-{% load reference_extras %}
+
 
 {% block additional_head %}
 {{ block.super }}
@@ -15,7 +15,6 @@
   <div class="range_details">
     <div>
       <span class="name">{{ product_range.name }}</span>&nbsp;&nbsp;&nbsp;
-      {% help_button 'inventory_help' 'inventory-range_page' %}
     </div>
     <div>Range SKU: <span class="sku">{{ product_range.sku}}</span></div>
     <div>Managed By: {{ product_range.managed_by.get_full_name }}</div>

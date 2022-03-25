@@ -1,7 +1,7 @@
 {% extends "inventory/base.html" %}
 {% load static %}
 {% load stcadmin_extras %}
-{% load reference_extras %}
+
 
 {% block additional_head %}
 {{ block.super }}
@@ -11,7 +11,6 @@
 {% block page_title %}Product Search{% endblock %}
 
 {% block content %}
-{% help_button 'inventory_help' 'inventory-product_search' %}
 
 <form method="POST" action="">{% csrf_token %}
   <div class="product_search_options">
@@ -35,50 +34,50 @@
 </form>
 
 {% if product_ranges %}
-  {% include "inventory/product_search/result_list.html" %}
+{% include "inventory/product_search/result_list.html" %}
 {% endif %}
 
 {% endblock %}
 
 {% block script %}
-  <script>
-
+<script>
   function end_of_line_range(range_id) {
     alert('End of Lined ' + range_id);
   }
 
-  $(document).ready(function() {
+  $(document).ready(function () {
 
-    $('.EOL_range').click(function() {
+    $('.EOL_range').click(function () {
       var range_id = this.id.replace('EOL_', '');
-      if (window.confirm("Are you sure?\n\nThis will mark the range as End of Line.\nIt will no longer appear by default in search results.")) {
+      if (window.confirm(
+          "Are you sure?\n\nThis will mark the range as End of Line.\nIt will no longer appear by default in search results."
+          )) {
         end_of_line_range(range_id);
       }
     });
 
-    $('.expand_variations').click(function() {
+    $('.expand_variations').click(function () {
       var range_id = this.id.replace('expand_', '');
       $('#collapsed_' + range_id).hide();
       $('#expanded_' + range_id).show();
     });
 
-    $('.collapse_variations').click(function() {
+    $('.collapse_variations').click(function () {
       var range_id = this.id.replace('collapse_', '');
       $('#expanded_' + range_id).hide();
       $('#collapsed_' + range_id).show();
     });
 
-    $('.hide_all').click(function() {
+    $('.hide_all').click(function () {
       $('.expanded').hide();
       $('.collapsed').show()
     });
 
-    $('.show_all').click(function() {
+    $('.show_all').click(function () {
       $('.expanded').show();
       $('.collapsed').hide()
     });
 
   });
-
-  </script>
+</script>
 {% endblock %}

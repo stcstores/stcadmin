@@ -4,8 +4,6 @@ import datetime
 import json
 from collections import defaultdict
 
-import cc_products
-from ccapi import CCAPI
 from django.contrib import messages
 from django.db import transaction
 from django.http import JsonResponse
@@ -17,6 +15,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView, TemplateView
 
 from home.views import UserInGroupMixin, UserLoginMixin
+from inventory.models import Product
+from linnworks.models import StockManager
 from purchases import forms, models
 from shipping.models import ShippingPrice
 
@@ -185,8 +185,8 @@ class PurchaseFromStock(StockPurchase):
             )
             stock_purchases.append(purchase)
             if product["update_stock"] is True:
-                cc_product = cc_products.get_product(product["product_id"])
-                cc_product.stock_level -= product["quantity"]
+                current_stock_level = StockManager.get_stock_level()
+                StockManager.set_stock_level(current_stock_level - product["quantity"])
         with transaction.atomic():
             for purchase in stock_purchases:
                 purchase.save()
@@ -246,17 +246,19 @@ class ProductSearch(PurchaserUserMixin, View):
 class SearchProductName(ProductSearch):
     """Return a list of products by name."""
 
-    def do_search(self, search_text, channel_id):
+    def do_search(self, search_text):
         """Return product search results."""
-        return CCAPI.search_product_name(search_text, channel_id=channel_id)
+        return Product.objects.active().filter(
+            product_range__name__icontains=search_text
+        )
 
 
 class SearchProductSKU(ProductSearch):
     """Return a list of products by SKU."""
 
-    def do_search(self, search_text, channel_id):
+    def do_search(self, search_text):
         """Return product search results."""
-        return CCAPI.search_product_SKU(search_text, channel_id=channel_id)
+        return Product.objects.active().filter(sku__icontains=search_text)
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -266,9 +268,8 @@ class ProductPurchasePrice(PurchaserUserMixin, View):
     def get(self, *args, **kwargs):
         """Process HTTP request."""
         product_id = self.request.GET.get("product_id")
-        product_options = CCAPI.get_options_for_product(product_id)
-        purchase_price = product_options["Purchase Price"].value.value
-        data = {"product_id": product_id, "purchase_price": purchase_price}
+        product = get_object_or_404(Product, pk=product_id)
+        data = {"product_id": product_id, "purchase_price": product.purchase_price}
         return JsonResponse(data, safe=False)
 
 

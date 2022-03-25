@@ -1,11 +1,9 @@
 """Models for the order app."""
 
-from ccapi import CCAPI
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 from inventory.models import Supplier
-from shipping.models import VATRate
 
 
 class ProductSale(models.Model):
@@ -52,18 +50,6 @@ class ProductSale(models.Model):
             self.save()
             raise exception
         self.details_success = True
-        self.save()
-
-    def _update_details(self):
-        product = CCAPI.get_product(self.product_ID)
-        self.vat_rate = VATRate.objects.get(cc_id=product.vat_rate_id).percentage
-        self.supplier = Supplier.objects.get(
-            product_option_value_ID=str(product.options["Supplier"].value.id)
-        )
-        self.purchase_price = int(
-            float(product.options["Purchase Price"].value.value) * 100
-        )
-        self.end_of_line = bool(product.end_of_line)
         self.save()
 
     def total_weight(self):

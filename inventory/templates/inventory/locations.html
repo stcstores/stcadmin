@@ -1,19 +1,22 @@
 {% extends "inventory/range_settings.html" %}
 {% load static %}
 {% load inventory_extras %}
-{% load reference_extras %}
+
 
 {% block additional_head %}
 {{ block.super }}
 <script src="{% static 'scripts/stock_manager.js' %}"></script>
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
-<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
+<script>
+    {
+        % include 'inventory/widgets/product_widgets.js' %
+    }
+</script>
 {% endblock %}
 
 {% block content %}{{ block.super }}
 <h1 class="page_title">Locations Page</h1>
-{% help_button 'inventory_help' 'inventory-location_page' %}
 <h2>{{ product_range.name }}</h2>
 
 <form action="" method="POST">{% csrf_token %}
@@ -25,7 +28,9 @@
             <th>Bays</th>
         </tr>
         {% for form in formset %}
-        <tr hidden><td>{{ form.product_id }}</td></tr>
+        <tr hidden>
+            <td>{{ form.product_id }}</td>
+        </tr>
         <tr>
             <td class="title_field">{{ form.product_name.value }}</td>
             <td class="stock_level_field">{{ form.stock_level.value }}</td>

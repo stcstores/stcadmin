@@ -110,7 +110,7 @@ class OrderListFilter(forms.Form):
             )
         return (
             qs.order_by("-recieved_at")
-            .prefetch_related("productsale_set", "productsale_set__department")
+            .prefetch_related("productsale_set")
             .select_related(
                 "shipping_rule",
                 "courier_service",

@@ -8,7 +8,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 
-from inventory.models import PackageType
+from inventory.models import PackageType, ProductRange
 from inventory.views.views import InventoryUserMixin
 from price_calculator import models
 from shipping.models import Country
@@ -191,9 +191,7 @@ class RangePriceCalculatorView(BasePriceCalculatorView):
     def get_context_data(self, *args, **kwargs):
         """Get context data for template."""
         context_data = super().get_context_data(*args, **kwargs)
-        product_range = get_object_or_404(
-            models.ProductRange, pk=self.kwargs.get("range_pk")
-        )
+        product_range = get_object_or_404(ProductRange, pk=self.kwargs.get("range_pk"))
         context_data["product_range"] = product_range
         return context_data
 

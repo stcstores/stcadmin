@@ -4,9 +4,7 @@ import calendar
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 
-from channels.models import Channel
 from purchases import models
 from shipping.models import Country, ShippingPrice, ShippingService
 
@@ -68,11 +66,6 @@ class PurchaseFromStock(forms.Form):
     profit_margin = 2.5
     discount = DiscountField()
     basket = forms.CharField(widget=forms.HiddenInput())
-
-    def __init__(self, *args, **kwargs):
-        """Add the selling channel to the form."""
-        super().__init__(*args, **kwargs)
-        self.channel = get_object_or_404(Channel, name="Telephone Channel")
 
 
 class PurchaseShipping(forms.Form):

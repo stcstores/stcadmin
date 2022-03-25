@@ -3,7 +3,6 @@
 import re
 
 from django import forms
-from list_input import ListInput
 
 from inventory import models
 
@@ -433,44 +432,6 @@ class Gender(fieldtypes.SelectizeModelChoiceField):
     def get_queryset(self):
         """Return a queryset of selectable options."""
         return models.Gender.objects.all()
-
-
-class ListOption(fieldtypes.FormField, ListInput):
-    """Base class for fields based on ListInput."""
-
-    separator = "|"
-    disallowed_characters = [separator]
-
-    def __init__(self, *args, **kwargs):
-        """Initialize field."""
-        fieldtypes.FormField.__init__(self, *args, **kwargs)
-        kwargs["minimum"] = self.__class__.minimum
-        kwargs["maximum"] = self.__class__.maximum
-        ListInput.__init__(self, *args, **kwargs)
-
-
-class AmazonBulletPoints(ListOption):
-    """Field for Amazon bullet point descriptions."""
-
-    label = "Amazon Bullet Points"
-    name = "bullet_points"
-    html_class = "bullet_points"
-    help_text = "Create up to five bullet points for Amazon listings."
-    required = False
-    minimum = 0
-    maximum = 5
-
-
-class AmazonSearchTerms(ListOption):
-    """Field for Amazon search terms."""
-
-    label = "Amazon Search Terms"
-    name = "search_terms"
-    html_class = "search_terms"
-    help_text = "Create up to five search terms for Amazon listings."
-    required = False
-    minimum = 0
-    maximum = 5
 
 
 class SelectProductOption(fieldtypes.SelectizeModelChoiceField):

@@ -352,17 +352,6 @@ th {
   padding: 1em;
 }
 
-.help_button {
-  background-color: #2980B9;
-  color: white;
-  display: inline-block;
-  padding: 0.25em 0.75em;
-}
-
-.help_button:hover {
-  background-color: #439bd6;
-}
-
 .page_title {
   display: inline-block;
   padding: 0.5em;
@@ -404,6 +393,7 @@ th {
   margin: 0;
   padding: 0;
 }
+
 .multi_input_addon {
   display: flex;
   flex-direction: column;

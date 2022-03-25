@@ -68,7 +68,12 @@ class StockManager:
         )[0]
 
     @classmethod
+    def stock_level_info(cls, sku):
+        """Return stock level information for a product SKU."""
+        return cls._get_stock_level__info_from_linnworks(sku)
+
+    @classmethod
     def current_stock_level(cls, sku):
         """Return the current stock level for a product SKU."""
-        stock_level_info = cls._get_stock_level__info_from_linnworks(sku)
+        stock_level_info = cls.stock_level_info(sku)
         return stock_level_info.stock_level

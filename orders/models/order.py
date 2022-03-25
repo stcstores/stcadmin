@@ -1,14 +1,12 @@
 """The Order model."""
 from datetime import datetime, timedelta
 
-from ccapi import CCAPI
 from django.db import models
 from django.utils import timezone
 
 from shipping.models import Country, CourierService, ShippingPrice, ShippingRule
 
 from .channel import Channel
-from .product_sale import ProductSale
 
 
 class CountryNotRecognisedError(ValueError):
@@ -68,53 +66,6 @@ class OrderQueryset(models.QuerySet):
 class OrderManager(models.Manager):
     """Model manager for orders.Order."""
 
-    def update_orders(self, number_of_days=None):
-        """Update orders from Cloud Commerce."""
-        orders_to_dispatch = self._get_orders_for_dispatch()
-        dispatched_orders = self._get_dispatched_orders(number_of_days=number_of_days)
-        orders = orders_to_dispatch + dispatched_orders
-        for order in orders:
-            order_obj = self._create_or_update_from_cc_order(order)
-            if order_obj is not None:
-                self._update_sales(order_obj, order)
-        self._update_cancelled_orders(orders_to_dispatch)
-
-    def _update_sales(self, order_obj, order):
-        """Add product sales to the ProductSale model."""
-        if float(order.total_gross_gbp) == 0 or float(order.total_gross) == 0:
-            exchange_rate = 1
-        else:
-            exchange_rate = float(order.total_gross_gbp) / float(order.total_gross)
-        for product in order.products:
-            price = round(float(product.price) * exchange_rate * 100)
-            weight = round(product.per_item_weight)
-            sale, _ = ProductSale.objects.get_or_create(
-                order=order_obj,
-                product_ID=product.product_id,
-                defaults={
-                    "quantity": product.quantity,
-                    "price": price,
-                    "sku": product.sku,
-                    "name": product.product_full_name,
-                    "weight": weight,
-                },
-            )
-            sale.sku = product.sku
-            sale.quantity = product.quantity
-            sale.price = price
-            sale.weight = weight
-            sale.name = product.product_full_name
-            sale.save()
-
-    def _update_cancelled_orders(self, orders_to_dispatch):
-        """Mark cancelled orders."""
-        undispatched_order_IDs = [order.order_id for order in orders_to_dispatch]
-        unaccounted_orders = self.filter(
-            cancelled=False, dispatched_at__isnull=True, ignored=False
-        ).exclude(order_ID__in=undispatched_order_IDs)
-        for order in unaccounted_orders:
-            order.check_cancelled()
-
     def update_postage_prices(self):
         """Add postage prices to orders."""
         for order in self.dispatched().filter(
@@ -128,88 +79,6 @@ class OrderManager(models.Manager):
                 raise Exception(
                     f"Error finding postage price for order {order.order_ID}: {e}"
                 )
-
-    def _get_orders_for_dispatch(self):
-        """Return undispatched Cloud Commerce orders."""
-        return CCAPI.get_orders_for_dispatch(order_type=0, number_of_days=0)
-
-    def _get_dispatched_orders(self, number_of_days=None):
-        """Return dispatched Cloud Commerce orders."""
-        if number_of_days is None:
-            number_of_days = 1
-        return CCAPI.get_orders_for_dispatch(
-            order_type=1, number_of_days=number_of_days
-        )
-
-    def _create_or_update_from_cc_order(self, order):
-        """Create or update an order from Cloud Commerce."""
-        try:
-            existing_order = self.get(order_ID=order.order_id)
-        except Order.DoesNotExist:
-            existing_order = None
-        if existing_order is not None and existing_order.dispatched_at is not None:
-            # The order exists and already shows as dispatched
-            return None
-        order_details = self._cc_order_details(order)
-        if existing_order is None:
-            # The order does not exist and will be created
-            new_order = Order(**order_details)
-            new_order.save()
-            return new_order
-        else:
-            # The order does exist but has not been dispatched
-            self.filter(order_ID=order.order_id).update(**order_details)
-            existing_order.refresh_from_db()
-            return existing_order
-
-    def _parse_dispatch_date(self, dispatch_date):
-        """Return dispatch date as tz aware if it is not the EPOCH, otherwise return None."""
-        if dispatch_date != Order.DISPATCH_EPOCH:
-            return timezone.make_aware(dispatch_date)
-        else:
-            return None
-
-    def _cc_order_details(self, order):
-        """Return a dict of Order kwargs from a Cloud Commerce order."""
-        channel, _ = Channel._default_manager.get_or_create(name=order.channel_name)
-        try:
-            country = Country._default_manager.get(
-                country_ID=order.delivery_country_code
-            )
-        except Country.DoesNotExist:
-            raise CountryNotRecognisedError(order.country_code, order.order_id)
-        shipping_rule = self._get_shipping_rule(order)
-        if shipping_rule is not None:
-            courier_service = shipping_rule.courier_service
-        else:
-            courier_service = None
-        dispatched_at = self._parse_dispatch_date(order.dispatch_date)
-        kwargs = {
-            "order_ID": order.order_id,
-            "customer_ID": order.customer_id,
-            "recieved_at": timezone.make_aware(order.date_recieved),
-            "dispatched_at": dispatched_at,
-            "cancelled": order.cancelled,
-            "channel": channel,
-            "channel_order_ID": order.external_transaction_id,
-            "country": country,
-            "shipping_rule": shipping_rule,
-            "courier_service": courier_service,
-            "tracking_number": order.tracking_code or None,
-            "priority": order.priority,
-            "total_paid": int(float(order.total_gross) * 100),
-            "total_paid_GBP": int(float(order.total_gross_gbp) * 100),
-            "ignored": not order.can_process_order,
-        }
-        return kwargs
-
-    def _get_shipping_rule(self, order):
-        """Return the shipping rule used on the order if possible."""
-        rule_name = order.default_cs_rule_name.split(" - ")[0]
-        try:
-            return ShippingRule.objects.get(name=rule_name)
-        except ShippingRule.DoesNotExist:
-            return None
 
 
 class Order(models.Model):
@@ -260,20 +129,6 @@ class Order(models.Model):
         """Return True if the order is dispatched, otherwise return False."""
         return self.dispatched_at is not None
 
-    def check_cancelled(self):
-        """Check if the order has been cancelled and update the cancelled attribute."""
-        if self.cancelled is True or self.customer_ID is None:
-            return
-        recent_orders = CCAPI.recent_orders_for_customer(customer_ID=self.customer_ID)
-        if self.order_ID in recent_orders:
-            order = recent_orders[self.order_ID]
-            if order.status == order.CANCELLED:
-                self.cancelled = True
-                self.save()
-            elif order.status == order.IGNORED:
-                self.ignored = True
-                self.save()
-
     def total_weight(self):
         """Return the combined weight of the order."""
         return sum((sale.total_weight() for sale in self.productsale_set.all()))
@@ -298,17 +153,6 @@ class Order(models.Model):
     def item_count(self):
         """Return the number of items included in the order."""
         return sum((sale.quantity for sale in self.productsale_set.all()))
-
-    def department(self):
-        """Return the name of the department to which the sale belongs or Mixed if more than one."""
-        departments = list(
-            set((sale.department for sale in self.productsale_set.all()))
-        )
-        if None in departments:
-            return None
-        if len(departments) == 1:
-            return departments[0].name
-        return "Mixed"
 
     def profit(self):
         """Return the profit made on the order."""

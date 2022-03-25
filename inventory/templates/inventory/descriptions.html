@@ -2,7 +2,7 @@
 {% load static %}
 
 {% load stcadmin_extras %}
-{% load reference_extras %}
+
 
 {% block additional_head %}{{ block.super }}
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
@@ -10,7 +10,8 @@
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
 <script>
     {
-        % include 'inventory/widgets/product_widgets.js' %
+        %
+        include 'inventory/widgets/product_widgets.js' %
     }
 </script>
 <script src="{% static 'scripts/new_product.js' %}"></script>
@@ -19,7 +20,6 @@
 
 {% block content %}{{ block.super }}
 <h1 class="page_title">Description Page</h1>
-{% help_button 'inventory_help' 'inventory-description_page' %}
 <h2>{{ product_range.name }}</h2>
 <form action="" method="POST">{% csrf_token %}
     <table class="new_product">

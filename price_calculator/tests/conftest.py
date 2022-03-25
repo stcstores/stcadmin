@@ -2,6 +2,7 @@ import factory
 import pytest_factoryboy
 
 from inventory.models import PackageType
+from inventory.tests.conftest import ProductRangeFactory
 from price_calculator import models
 from shipping.tests.conftest import (
     CountryFactory,
@@ -12,6 +13,7 @@ from shipping.tests.conftest import (
 pytest_factoryboy.register(CountryFactory)
 pytest_factoryboy.register(ShippingServiceFactory)
 pytest_factoryboy.register(ShippingPriceFactory)
+pytest_factoryboy.register(ProductRangeFactory)
 
 
 @pytest_factoryboy.register
@@ -76,4 +78,4 @@ class PackageTypeFactory(factory.django.DjangoModelFactory):
         model = PackageType
 
     name = factory.sequence(lambda n: f"Test Package Type {n}")
-    product_option_value_ID = factory.sequence(lambda n: 8567498 + n)
+    active = True

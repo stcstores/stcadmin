@@ -4,7 +4,6 @@ import os
 import sys
 
 import toml
-from ccapi import CCAPI
 from django.contrib.staticfiles.storage import ManifestStaticFilesStorage
 from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
 from django.db import models
@@ -130,16 +129,12 @@ INSTALLED_APPS = [
     "stcadmin",
     "home",
     "labelmaker",
-    "reference",
     "user",
     "inventory",
-    "list_input",
     "price_calculator",
     "django_markup",
     "stock_check",
     "jchart",
-    "profit_loss",
-    "epos",
     "orders",
     "shipping",
     "feedback",
@@ -267,14 +262,6 @@ LOGGING = {
             "filters": ["add_user_to_log_record"],
             "formatter": "default_formatter",
         },
-        "product_editor_file_handler": {
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(BASE_DIR, "logs", "product_editor.log"),
-            "maxBytes": 1_048_576,
-            "backupCount": 2,
-            "filters": ["add_user_to_log_record", "replace_newlines"],
-            "formatter": "default_formatter",
-        },
         "stdout": {"class": "logging.StreamHandler", "level": "INFO"},
     },
     "loggers": {
@@ -292,21 +279,6 @@ LOGGING = {
             "handlers": ["error_file_handler", "mail_admins"],
             "level": "ERROR",
             "propagate": False,
-        },
-        "ccapi.requests.ccapisession": {
-            "handlers": ["stdout", "ccapi_file_handler"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
-        "ccapi_errors": {
-            "handlers": ["mail_admins", "error_file_handler"],
-            "level": "ERROR",
-            "propagate": False,
-        },
-        "product_editor": {
-            "handlers": ["stdout", "product_editor_file_handler"],
-            "level": "DEBUG",
-            "propogate": False,
         },
         "order_profit": {
             "handlers": ["profit_loss_error_file_handler"],
@@ -374,15 +346,3 @@ TESTING = (
     and sys.argv[1] == "test"
     or os.path.basename(sys.argv[0]) in ("pytest", "py.test")
 )
-
-
-def create_CCAPI_session():
-    """Create the Cloud Commerce session."""
-    if not TESTING and not CI_ENVIRONMENT:
-        CCAPI.create_session(domain=CC_DOMAIN, username=CC_USERNAME, password=CC_PWD)
-        print("Created Cloud Commerce session.", file=sys.stderr)
-    else:
-        print("Skipping Cloud Commerce session for testing.", file=sys.stderr)
-
-
-# create_CCAPI_session()

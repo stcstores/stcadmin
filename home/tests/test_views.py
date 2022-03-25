@@ -63,11 +63,9 @@ class TestIndexView(STCAdminTest, ViewTests):
     def test_navbar(self):
         groups = [
             ("admin", "Admin"),
-            ("epos", "EPOS"),
             ("inventory", "Inventory"),
             ("labelmaker", "Labelmaker"),
             ("orders", "Orders"),
-            ("stock_check", "Stock Check"),
         ]
         for group_name, nav_item in groups:
             Group.objects.get_or_create(name=group_name)

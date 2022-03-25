@@ -1,13 +1,14 @@
 {% extends "inventory/range_settings.html" %}
 {% load static %}
 {% load inventory_extras %}
-{% load reference_extras %}
+
 
 {% block additional_head %}
 <style>
     #barcode_table tr:nth-child(even) {
         background: #CCC;
     }
+
     #barcode_table tr:nth-child(odd) {
         background: #FFF;
     }
@@ -16,7 +17,6 @@
 
 {% block content %}{{ block.super }}
 <h1 class="page_title">Barcode Labels</h1>
-{% help_button 'inventory_help' 'inventory-barcode_labels' %}
 
 <div>
     <input type="number" id="update_selected_quantity" min="0" step="1" value="0">
@@ -39,9 +39,11 @@
             <th>{{ product.sku }}</th>
             <td>{{ product.full_name }}</td>
             <td><input type="text" value="{{ product.barcode }}" class="barcode" id="{{ product.id }}_barcode"></td>
-            <td><input type="number" class="quantity" id="{{ product.id }}_quantity" min="0" step="1" value="{{ product.stock_level }}"></td>
+            <td><input type="number" class="quantity" id="{{ product.id }}_quantity" min="0" step="1"
+                    value="{{ product.stock_level }}"></td>
             <td><input type="checkbox" class="product_selected" id="{{ product.id }}_selected" selected></td>
-            <td hidden><input type="text" value="{{ product.option_text }}" class="option_text" id="{{ product.id }}_option_text"></td>
+            <td hidden><input type="text" value="{{ product.option_text }}" class="option_text"
+                    id="{{ product.id }}_option_text"></td>
             <td hidden><input type="text" value="{{ product.id }}" class="id" id="{{ product.id }}_id"></td>
         </tr>
         {% endfor %}
@@ -56,7 +58,7 @@
 <script>
     function get_data() {
         var data = [];
-        $('#barcode_table tbody tr').each(function() {
+        $('#barcode_table tbody tr').each(function () {
             var id = $(this).find('.id').val();
             var barcode = $(this).find('.barcode').val();
             var option_text = $(this).find('.option_text').val();
@@ -64,26 +66,27 @@
             var row_data = {
                 'barcode': barcode,
                 'option_text': option_text,
-                'quantity': quantity}
+                'quantity': quantity
+            }
             data.push(row_data);
         });
         return data
     }
-    $(document).ready(function() {
-        $('#toggle_selected').click(function() {
+    $(document).ready(function () {
+        $('#toggle_selected').click(function () {
             var checkboxes = $('#barcode_table :checkbox');
             checkboxes.prop('checked', !checkboxes.first().prop('checked'));
         });
 
-        $('#update_selected_button').click(function() {
-            $('#barcode_table tbody tr').each(function() {
+        $('#update_selected_button').click(function () {
+            $('#barcode_table tbody tr').each(function () {
                 if ($(this).find(':checkbox').prop('checked')) {
                     $(this).find('.quantity').val($('#update_selected_quantity').val());
                 }
             });
         });
 
-        $('#produce_barcodes').click(function() {
+        $('#produce_barcodes').click(function () {
             var barcode_data = JSON.stringify(get_data());
             $('#barcode_json_input').val(barcode_data);
             $('#barcode_form').submit();
