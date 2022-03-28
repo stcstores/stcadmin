@@ -48,7 +48,7 @@
 
   <div class="product_details">
     <div class="product">
-      {% if range.products.all|length > 1 %}
+      {% if range.products.all.variations|length > 1 %}
       {% include "inventory/product_search/result_variation.html" %}
       {% else %}
       {% include "inventory/product_search/result_single_product.html" %}

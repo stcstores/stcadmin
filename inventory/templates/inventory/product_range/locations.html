@@ -39,13 +39,14 @@
       {% for option, value in product.variation.items %}
       <td class="column option name">{{ value }}</td>
       {% endfor %}
-      <td class="column supplier_SKU sku">{{ product.supplier_SKU }}</td>
+      <td class="column supplier_SKU sku">{{ product.supplier_sku }}</td>
       {% for field in form %}
       <td class="location_field">
         {{ field }}
         {{ field.errors }}
       </td>
       {% endfor %}
+      <td class="column stock_level">{% include 'inventory/update_stock.html' %}</td>
       {% comment %} <td>{% include "inventory/update_stock.html" %}</td> {% endcomment %}
       <td>{{ form.non_field_errors }}</td>
     </tr>

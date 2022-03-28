@@ -58,7 +58,11 @@ class ProductSearchForm(forms.Form):
         return (
             models.ProductRange.ranges.filter(pk__in=range_pks)
             .order_by("name")
-            .prefetch_related("products")
+            .prefetch_related(
+                "products",
+                "products__variation_option_values",
+                "products__variation_option_values__variation_option",
+            )
         )
 
     def _filter_ranges(self, ranges):
