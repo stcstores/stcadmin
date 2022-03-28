@@ -1,6 +1,6 @@
 {% extends "inventory/range_settings.html" %}
 {% load static %}
-{% load inventory_extras %}
+
 
 
 {% block additional_head %}
@@ -8,11 +8,7 @@
 <script src="{% static 'scripts/stock_manager.js' %}"></script>
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
-<script>
-    {
-        % include 'inventory/widgets/product_widgets.js' %
-    }
-</script>
+
 {% endblock %}
 
 {% block content %}{{ block.super }}

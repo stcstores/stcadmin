@@ -1,6 +1,6 @@
 {% extends "inventory/base.html" %}
 {% load static %}
-{% load inventory_extras %}
+
 
 {% load stcadmin_extras %}
 
@@ -62,8 +62,6 @@
                     target="_blank"><button>L</button></a>
                 <a title="Price Calulator" href="{% url 'price_calculator:range_price_calculator' range.id %}"
                     target="_blank"><button>P</button></a>
-                <a title="View on Cloud Commerce" href="{% ccp_product_range_page range.id %}"
-                    target="_blank"><button>C</button></a>
             </td>
             <td class="products_box">
                 <table id="products_table_{{ range.id }}" class="products_table">
@@ -76,8 +74,6 @@
                         <td><button id="update_{{ product.id }}" class="stock_update_button">Update Stock Level</button>
                         </td>
                         <td><img id="status_{{ product.id }}" class="update_status" src=""></td>
-                        <td><a href="{% ccp_product_page range.id product.id %}" target="_blank"><button>C</button></a>
-                        </td>
                     </tr>
                     {% endfor %}
                 </table>
@@ -116,9 +112,11 @@
             'sku': '{{product.sku}}'
         },
         {
-            % endfor %
+            %
+            endfor %
         } {
-            % endfor %
+            %
+            endfor %
         }
     }
 

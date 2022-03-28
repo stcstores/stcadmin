@@ -1,6 +1,5 @@
 """Template tags for the Order app."""
 
-from ccapi import URLs
 from django import template
 from django.utils.safestring import mark_safe
 
@@ -32,9 +31,3 @@ def format_percentage(percentage):
     else:
         html_class = "success"
     return mark_safe(f'<span class="{html_class}">{percentage}%</span>')
-
-
-@register.simple_tag
-def ccp_order_page(order_id, customer_id):
-    """Return Cloud Commerce URL for a order."""
-    return URLs.order_url(SUBDOMAIN, order_id, customer_id)

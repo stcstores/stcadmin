@@ -1,4 +1,4 @@
-{% load inventory_extras %}
+
 
 function vat_price_widget(vat_input, ex_vat_input, with_vat_input) {
     vat_input.change(function() {

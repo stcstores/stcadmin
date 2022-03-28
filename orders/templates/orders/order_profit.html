@@ -1,13 +1,12 @@
 {% extends "orders/base.html" %}
 {% load static %}
 {% load orders_extras %}
-{% load inventory_extras %}
+
 
 {% block page_title %}Profit Loss Order {{ order.order_ID }}{% endblock %}
 
 {% block content %}
 <h1>Order: {{ order.order_ID }} - {{ order.tracking_number }}</h1>
-<a href="{% ccp_order_page order.order_ID order.customer_ID %}" target="_blank">View on Cloud Commerce</a>
 {% if order.error %}
 <h1 class="error">An error occured processing the details of this order</h1>
 {% endif %}
