@@ -1,9 +1,7 @@
 """Views for handeling Product Images."""
 
-import json
 from collections import defaultdict
 
-from ccapi import CCAPI
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
@@ -53,16 +51,3 @@ class ImageFormView(InventoryUserMixin, FormView):
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
         return reverse_lazy("inventory:images", kwargs={"range_id": self.range_id})
-
-    def form_valid(self, form):
-        """Process form request and return HttpResponse."""
-        product_IDs = json.loads(form.cleaned_data["product_ids"])
-        products = models.Product.products.filter(product_ID__in=product_IDs)
-        cc_files = self.request.FILES.getlist("cloud_commerce_images")
-        for image_file in cc_files:
-            CCAPI.upload_image(product_ids=product_IDs, image_file=image_file)
-        for product in products:
-            models.cloud_commerce_importer.import_product_images_from_cloud_commerce(
-                product
-            )
-        return super().form_valid(form)

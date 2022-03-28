@@ -1,7 +1,6 @@
 """Forms for product search page."""
 
 from django import forms
-from django.contrib.postgres.search import SearchVector
 
 from inventory import models
 
@@ -23,14 +22,6 @@ class ProductSearchForm(forms.Form):
         (ONLY_EOL, "Only EOL"),
     )
 
-    SEARCH_FIELDS = (
-        "product_range__name",
-        "product_range__sku",
-        "sku",
-        "supplier_sku",
-        "barcode",
-    )
-
     search_term = forms.CharField(required=False)
     end_of_line = forms.ChoiceField(
         widget=HorizontalRadio(),
@@ -42,7 +33,6 @@ class ProductSearchForm(forms.Form):
     supplier = forms.ModelChoiceField(
         queryset=models.Supplier.objects.filter(active=True), required=False
     )
-    show_hidden = forms.BooleanField(required=False)
 
     def save(self):
         """Search for product ranges matching the search parameters."""
@@ -51,15 +41,14 @@ class ProductSearchForm(forms.Form):
         self.ranges = product_ranges
 
     def _query_products(self):
-        if self.cleaned_data["search_term"]:
-            qs = (
-                models.BaseProduct.objects.variations()
-                .annotate(search=SearchVector(*self.SEARCH_FIELDS))
-                .filter(search=self.cleaned_data["search_term"])
-            )
+        end_of_line = self.cleaned_data.get("end_of_line")
+        if search_term := self.cleaned_data["search_term"]:
+            qs = models.BaseProduct.objects.text_search(
+                search_term, end_of_line=end_of_line
+            ).variations()
         else:
-            qs = models.Product.objects.variations()
-        qs.select_related("product_range", "supplier")
+            qs = models.Product.objects.all().variations()
+        qs.select_related("supplier")
         return qs
 
     def _query_ranges(self, products):
@@ -74,7 +63,6 @@ class ProductSearchForm(forms.Form):
 
     def _filter_ranges(self, ranges):
         ranges = self._filter_end_of_line(ranges)
-        ranges = self._filter_hidden(ranges)
         return ranges
 
     def _filter_products(self, products):
@@ -93,8 +81,3 @@ class ProductSearchForm(forms.Form):
         if self.cleaned_data.get("supplier"):
             products = products.filter(supplier=self.cleaned_data["supplier"])
         return products
-
-    def _filter_hidden(self, ranges):
-        if not self.cleaned_data.get("show_hidden"):
-            ranges = ranges.filter(hidden=False)
-        return ranges

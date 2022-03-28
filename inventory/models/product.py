@@ -5,10 +5,11 @@ import string
 from itertools import chain
 
 from django.apps import apps
+from django.contrib.postgres.search import SearchVector
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
-from polymorphic.managers import PolymorphicQuerySet
+from polymorphic.managers import PolymorphicManager, PolymorphicQuerySet
 from polymorphic.models import PolymorphicModel
 
 from .product_attribute import (
@@ -58,6 +59,46 @@ class ProductQueryset(PolymorphicQuerySet):
         return self.filter(is_end_of_line=False).select_related("latest_stock_change")
 
 
+class ProductManager(PolymorphicManager):
+    """Manager for Product models."""
+
+    queryset_class = ProductQueryset
+
+    SEARCH_FIELDS = (
+        "product_range__name",
+        "product_range__sku",
+        "sku",
+        "supplier_sku",
+        "barcode",
+    )
+
+    def text_search(self, search_term, end_of_line=None):
+        """
+        Text search for product models.
+
+        Matches on product.sku, product.supplier_sku, product.barcode,
+        product.product_range.name and product.product_range.sku.
+
+        Args:
+            search_term (str): The text to search for.
+
+        Kwargs:
+            end_of_line (bool|None) default None: If True only end of line products
+                will be returned, if False no end of line products will be returned,
+                otherwise no filtering will be done based on end of line status.
+        """
+        qs = (
+            self.annotate(search=SearchVector(*self.SEARCH_FIELDS))
+            .filter(search=search_term)
+            .select_related("product_range")
+        )
+        if end_of_line is True:
+            qs = qs.filter(is_end_of_line=True, product_range__is_end_of_line=True)
+        elif end_of_line is False:
+            qs = qs.exclude(is_end_of_line=True, product_range__is_end_of_line=True)
+        return qs
+
+
 class BaseProduct(PolymorphicModel):
     """Base model for products."""
 
@@ -94,7 +135,7 @@ class BaseProduct(PolymorphicModel):
         editable=False,
     )
 
-    objects = ProductQueryset.as_manager()
+    objects = ProductManager.from_queryset(ProductQueryset)()
 
     class Meta:
         """Meta class for the BaseProduct model."""
