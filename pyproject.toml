@@ -54,6 +54,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.black]
 exclude = '''
+
 (
   /(
     ...
