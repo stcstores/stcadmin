@@ -27,7 +27,7 @@ class StockManager:
         return current_stock_level
 
     @classmethod
-    def set_stock_level(cls, product, user, new_stock_level):
+    def set_stock_level(cls, product, user, new_stock_level, change_source=""):
         """
         Update the stock level for a product.
 
@@ -39,7 +39,7 @@ class StockManager:
         """
         current_stock_level = cls.current_stock_level(sku=product.sku)
         relative_stock_level_change = new_stock_level - current_stock_level
-        change_source = f"Updated through STCAdmin by {user}"
+        change_source = change_source or f"Updated through STCAdmin by {user}"
         updated_stock_level_info = cls._set_stock_level_in_linnworks(
             sku=product.sku,
             relative_stock_level_change=relative_stock_level_change,

@@ -12,7 +12,7 @@
             <button>Filter</button>
         </p>
         <div>
-        <p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
+            <p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
             {% include 'orders/pagination_navigation.html' %}
         </div>
     </form>
@@ -70,39 +70,39 @@
             <td>
                 <a href="{% url 'fba:repeat_order' order.pk %}"><button>Repeat</button></a>
             </td>
-            <td class="product_id" hidden>{{ order.product_ID }}</td>
+            <td class="product_sku" hidden>{{ order.product_SKU }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 <form action="" id="filter">
-{% include 'orders/pagination_navigation.html' %}
+    {% include 'orders/pagination_navigation.html' %}
 </form>
 {% endblock content %}
 
 {% block script %}
 
 <script>
-
-    function get_stock(n){
-        var row = $('.orders tbody tr:nth-child(' + n +')');
-        var product_id = row.find('.product_id').text();
-        $.get("{% url 'fba:product_stock' %}?product_id="+product_id, function(data){
-            row.find('.stock_level').html(data['stock_level']);
-            row.find('.pending_stock').html(data['pending_stock']);
-            row.find('.current_stock').html(data['current_stock']);
-            if (n < $('.orders tbody tr').length) {
-                get_stock(n+1);
-            }
-        });
-
+    function get_stock(n) {
+        $('.orders tbody tr').each(function () {
+            var row = $(this);
+            var sku = row.find('.product_sku').text();
+            $.get("{% url 'fba:product_stock' %}?sku=" + sku, function (data) {
+                row.find('.stock_level').html(data['stock_level']);
+                row.find('.pending_stock').html(data['pending_stock']);
+                row.find('.current_stock').html(data['current_stock']);
+                if (n < $('.orders tbody tr').length) {
+                    get_stock(n + 1);
+                }
+            });
+        })
     }
 
-    $(document).ready(function(){
-        $(".take_off_hold").click(function() {
+    $(document).ready(function () {
+        $(".take_off_hold").click(function () {
             var order_id = $(this).attr('name');
             var button = $(this);
-            $.get("{% url 'fba:take_off_hold' %}?order_id=" + order_id, function(response){
+            $.get("{% url 'fba:take_off_hold' %}?order_id=" + order_id, function (response) {
                 console.log("Take off" + order_id);
                 console.log(response);
                 if (response == "ok") {
@@ -115,9 +115,6 @@
         });
         get_stock(1);
     });
-
 </script>
 
 {% endblock script %}
-
-

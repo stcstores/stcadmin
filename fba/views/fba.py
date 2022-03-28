@@ -2,8 +2,6 @@
 
 import datetime
 
-import cc_products
-from ccapi import CCAPI
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
@@ -17,6 +15,15 @@ from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateVi
 
 from fba import forms, models
 from home.views import UserInGroupMixin
+from inventory.models import (
+    BaseProduct,
+    CombinationProduct,
+    MultipackProduct,
+    ProductBayLink,
+    ProductImageLink,
+)
+from linnworks.models.stock_manager import StockManager
+from stcadmin import settings
 
 
 class FBAUserMixin(UserInGroupMixin):
@@ -39,12 +46,12 @@ class SelectFBAOrderProduct(FBAUserMixin, FormView):
 
     def form_valid(self, form):
         """Find the product's ID."""
-        self.product_ID = form.cleaned_data["product_ID"]
+        self.product = form.cleaned_data["product"]
         return super().form_valid(form)
 
     def get_success_url(self):
         """Redirect to the FBA Order create page."""
-        return reverse("fba:create_order", args=[self.product_ID])
+        return reverse("fba:create_order", args=[self.product.pk])
 
 
 class FBAOrderCreate(FBAUserMixin, CreateView):
@@ -53,44 +60,42 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
     form_class = forms.CreateFBAOrderForm
     template_name = "fba/fbaorder_form.html"
 
-    def dispatch(self, *args, **kwargs):
-        """Get product details."""
-        self.get_product()
-        return super().dispatch(*args, **kwargs)
-
-    def get_product(self):
-        """Return the product included in the order."""
-        product_ID = self.kwargs["product_id"]
-        self.product = cc_products.get_product(product_ID)
-
     def get_initial(self, *args, **kwargs):
         """Return initial values for the form."""
         initial = super().get_initial(*args, **kwargs)
+        self.product = get_object_or_404(BaseProduct, pk=self.kwargs["product_id"])
         initial["product_SKU"] = self.product.sku
-        initial["product_ID"] = self.product.id
         initial["product_name"] = self.product.full_name
-        initial["product_weight"] = self.product.weight
+        initial["product_weight"] = self.product.weight_grams
         initial["product_hs_code"] = self.product.hs_code
         initial["product_image_url"] = self.get_image_url()
-        initial["product_supplier"] = self.product.supplier.factory_name
+        initial["product_supplier"] = self.product.supplier.name
         initial["product_purchase_price"] = self.product.purchase_price
-        initial["product_is_multipack"] = self.product.is_multipack
+        initial["product_is_multipack"] = isinstance(
+            self.product, MultipackProduct
+        ) or isinstance(self.product, CombinationProduct)
         return initial
 
     def get_image_url(self):
         """Return the URL of the product's image."""
-        image_data = CCAPI.get_product_images(
-            range_id=self.product.range_id, product_id=self.product.id
+        url = (
+            ProductImageLink.objects.filter(product=self.product)
+            .first()
+            .image.image_file.url
         )
-        try:
-            return image_data[0].url
-        except IndexError:
-            return ""
+        if settings.DEBUG or settings.TESTING:
+            url = f"http://{self.request.get_host()}{url}"
+        return url
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
         context = super().get_context_data(*args, **kwargs)
         context["product"] = self.product
+        try:
+            stock_level = StockManager.get_stock_level(self.product)
+        except Exception:
+            stock_level = 0
+        context["stock_level"] = stock_level
         context["image_url"] = context["form"].initial["product_image_url"]
         return context
 
@@ -131,9 +136,8 @@ class RepeatFBAOrder(FBAOrderCreate):
             aprox_quantity = self.to_repeat.aproximate_quantity
         self.repeated_order = models.FBAOrder(
             product_SKU=self.to_repeat.product_SKU,
-            product_ID=self.to_repeat.product_ID,
             product_name=self.to_repeat.product_name,
-            product_weight=self.product.weight,
+            product_weight=self.product.weight_grams,
             product_hs_code=self.product.hs_code,
             product_asin=self.to_repeat.product_asin,
             product_image_url=self.to_repeat.product_image_url,
@@ -152,11 +156,11 @@ class RepeatFBAOrder(FBAOrderCreate):
     def get_product(self):
         """Return the product included in the order."""
         self.to_repeat = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
-        self.product = cc_products.get_product(self.to_repeat.product_ID)
+        self.product = get_object_or_404(BaseProduct, sku=self.to_repeat.product_SKU)
 
-    def get_initial(self, *args, **kwargs):
+    def get_initial(self):
         """Return initial form values."""
-        initial = super().get_initial(*args, **kwargs)
+        initial = super().get_initial()
         initial["region"] = self.to_repeat.region
         initial["country"] = self.to_repeat.region.default_country
         initial["selling_price"] = self.to_repeat.selling_price
@@ -186,12 +190,16 @@ class FBAOrderUpdate(FBAUserMixin, UpdateView):
     model = models.FBAOrder
     template_name = "fba/fbaorder_form.html"
 
+    def get_initial(self):
+        """Return initial values for the form."""
+        initial = super().get_initial()
+        initial["country"] = self.object.region.default_country
+        return initial
+
     def get_context_data(self, **kwargs):
         """Return template context."""
         context = super().get_context_data(**kwargs)
-        context["product"] = cc_products.get_product(
-            context["form"].instance.product_ID
-        )
+        context["product"] = get_object_or_404(BaseProduct, sku=self.object.product_SKU)
         return context
 
     def get_success_url(self):
@@ -275,11 +283,11 @@ class ProductStock(View):
 
     def get(self, *args, **kwargs):
         """Return product stock information."""
-        product_id = self.request.GET.get("product_id")
-        product = CCAPI.get_product(product_id)
-        stock_level = product.stock_level
-        pending_stock = CCAPI.get_pending_stock(product_id)
-        current_stock = stock_level - pending_stock
+        sku = self.request.GET.get("sku")
+        stock_level_info = StockManager.stock_level_info(sku)
+        stock_level = stock_level_info.stock_level
+        pending_stock = stock_level_info.in_orders
+        current_stock = stock_level_info.available
         return JsonResponse(
             {
                 "stock_level": stock_level,
@@ -466,9 +474,15 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
         """Add the bay list to the context."""
         context = super().get_context_data(*args, **kwargs)
         order = context["form"].instance
-        product_ID = order.product_ID
-        bays = CCAPI.get_bays_for_product(product_ID)
-        context["bays"] = ", ".join([bay.name for bay in bays])
+        sku = order.product_SKU
+        bays = (
+            ProductBayLink.objects.filter(product__sku=sku)
+            .select_related("bay")
+            .order_by()
+            .distinct()
+            .values_list("bay__name", flat=True)
+        )
+        context["bays"] = ", ".join([bay for bay in bays])
         context["selling_price"] = "{:.2f}".format(
             order.selling_price / 100,
         )
@@ -516,7 +530,7 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
 
     def update_stock(self):
         """Complete and close the order."""
-        message_type, text = self.object.update_stock_level()
+        message_type, text = self.object.update_stock_level(user=self.request.user)
         messages.add_message(self.request, message_type, text)
 
 
@@ -529,9 +543,24 @@ class FBAOrderPrintout(FBAUserMixin, TemplateView):
         """Return context for the template."""
         context = super().get_context_data(**kwargs)
         order = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
+        product = get_object_or_404(BaseProduct, sku=order.product_SKU)
         context["order"] = order
-        context["product"] = CCAPI.get_product(order.product_ID)
-        context["pending_stock"] = CCAPI.get_pending_stock(order.product_ID)
+        context["product"] = product
+        try:
+            stock_level_info = StockManager.stock_level_info(product.sku)
+        except Exception:
+            context["stock_level"] = "ERROR"
+            context["pending_stock"] = "ERROR"
+        else:
+            context["stock_level"] = stock_level_info.stock_level
+            context["pending_stock"] = stock_level_info.in_orders
+        context["bays"] = (
+            ProductBayLink.objects.filter(product=product)
+            .select_related("bay")
+            .order_by()
+            .distinct()
+            .values_list("bay__name", flat=True)
+        )
         order.printed = True
         order.save()
         return context

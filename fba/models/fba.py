@@ -1,6 +1,5 @@
 """Models for managing FBA orders."""
 
-import cc_products
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -9,6 +8,8 @@ from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 
+from inventory.models import BaseProduct
+from linnworks.models import StockManager
 from shipping.models import Country, Currency
 
 
@@ -139,9 +140,8 @@ class FBAOrder(models.Model):
         User, on_delete=models.PROTECT, blank=True, null=True
     )
     closed_at = models.DateTimeField(blank=True, null=True)
-    region = models.ForeignKey(FBARegion, on_delete=models.CASCADE)
+    region = models.ForeignKey(FBARegion, on_delete=models.CASCADE, blank=True)
     product_SKU = models.CharField(max_length=20)
-    product_ID = models.CharField(max_length=50)
     product_name = models.CharField(max_length=255)
     product_weight = models.PositiveIntegerField()
     product_hs_code = models.CharField(max_length=255)
@@ -150,7 +150,7 @@ class FBAOrder(models.Model):
     product_supplier = models.CharField(max_length=255, blank=True)
     product_purchase_price = models.CharField(max_length=10)
     product_is_multipack = models.BooleanField(default=False)
-    selling_price = models.PositiveIntegerField(blank=True)
+    selling_price = models.PositiveIntegerField()
     FBA_fee = models.PositiveIntegerField()
     aproximate_quantity = models.PositiveIntegerField()
     quantity_sent = models.PositiveIntegerField(blank=True, null=True)
@@ -229,33 +229,39 @@ class FBAOrder(models.Model):
         self.priority = 1
         self.save()
 
-    def update_stock_level(self):
+    def update_stock_level(self, user):
         """Update the product's stock level in Cloud Commerce."""
         if settings.DEBUG is True:
             return messages.WARNING, "Stock update skipped: DEBUG mode"
-        if self.update_stock_level_when_complete is True:
-            try:
-                product = cc_products.get_product(self.product_ID)
-                stock_level = product.stock_level
-                product.stock_level -= self.quantity_sent
-                return messages.SUCCESS, (
-                    f"Changed stock level for {self.product_SKU} from {stock_level} "
-                    f"to {product.stock_level}"
-                )
-            except Exception:
-                return (
-                    messages.ERROR,
-                    (
-                        f"Stock Level failed to update for {self.product_SKU}, "
-                        "please check stock level."
-                    ),
-                )
-        else:
+        if self.update_stock_level_when_complete is False:
             return (
                 messages.WARNING,
                 (
                     f"Set to skip stock update, the stock level for {self.product_SKU}"
                     " is unchanged."
+                ),
+            )
+        try:
+            product = BaseProduct.objects.filter(sku=self.product_SKU).variations()
+            stock_level = StockManager.get_stock_level(product)
+            new_stock_level = stock_level - self.quantity_sent
+            change_source = f"Updated by FBA order pk={self.pk}"
+            StockManager.set_stock_level(
+                product=product,
+                user=user,
+                new_stock_level=new_stock_level,
+                change_source=change_source,
+            )
+            return messages.SUCCESS, (
+                f"Changed stock level for {self.product_SKU} from {stock_level} "
+                f"to {new_stock_level}"
+            )
+        except Exception:
+            return (
+                messages.ERROR,
+                (
+                    f"Stock Level failed to update for {self.product_SKU}, "
+                    "please check stock level."
                 ),
             )
 
