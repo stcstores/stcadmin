@@ -2,6 +2,9 @@
 
 import csv
 import io
+from collections import defaultdict
+
+from inventory.models import CombinationProductLink, MultipackProduct, Product
 
 
 class CSVFile:
@@ -37,7 +40,7 @@ class CSVFile:
 
     def to_string(self):
         """Return the CSV file as a string."""
-        return self.to_string_io.get_value()
+        return self.to_string_io().getvalue()
 
 
 class BaseImportFile:
@@ -167,6 +170,33 @@ class LinnworksProductImportFile(BaseImportFile):
     )
 
     @classmethod
+    def create(cls):
+        """Create a Linnworks Product Import file."""
+        return cls.create_file(product_ranges=cls.get_product_ranges())
+
+    @classmethod
+    def get_product_ranges(cls):
+        """Return a dict of productrange: list(products)."""
+        product_ranges = defaultdict(list)
+        products = (
+            Product.objects.variations()
+            .active()
+            .complete()
+            .select_related(
+                "product_range",
+                "supplier",
+                "brand",
+                "manufacturer",
+                "package_type",
+                "vat_rate",
+            )
+            .prefetch_related("product_bay_links", "product_bay_links__bay")
+        )
+        for product in products:
+            product_ranges[product.product_range].append(product)
+        return product_ranges
+
+    @classmethod
     def _get_default_row(cls):
         return {
             cls.INTERNATIONAL_SHIPPING: "Standard",
@@ -250,4 +280,64 @@ class LinnworksProductImportFile(BaseImportFile):
             rows.append(cls._get_product_range_row(product_range=product_range))
             for product in products:
                 rows.append(cls._get_product_row(product))
+        return rows
+
+
+class LinnworksCompostitionImportFile(BaseImportFile):
+    """Create Linnworks composition product import files."""
+
+    PARENT_SKU = "Parent SKU"
+    CHILD_SKU = "Child SKU"
+    QUANTITY = "Quantity"
+
+    header = (PARENT_SKU, CHILD_SKU, QUANTITY)
+
+    @classmethod
+    def create(cls):
+        """Create a Linnworks Composition Import File."""
+        combination_product_links = CombinationProductLink.objects.all().select_related(
+            "product", "combination_product"
+        )
+        multipack_products = (
+            MultipackProduct.objects.active().complete().select_related("base_product")
+        )
+        return cls.create_file(
+            combination_product_links=combination_product_links,
+            multipack_products=multipack_products,
+        )
+
+    @classmethod
+    def _get_combination_product_row(cls, combination_product_link):
+        return {
+            cls.PARENT_SKU: combination_product_link.combination_product.sku,
+            cls.CHILD_SKU: combination_product_link.product.sku,
+            cls.QUANTITY: combination_product_link.quantity,
+        }
+
+    @classmethod
+    def _get_multipack_product_row(cls, multipack_product):
+        return {
+            cls.PARENT_SKU: multipack_product.base_product.sku,
+            cls.CHILD_SKU: multipack_product.sku,
+            cls.QUANTITY: multipack_product.quantity,
+        }
+
+    @classmethod
+    def get_row_data(cls, combination_product_links, multipack_products):
+        """
+        Return a list of product row dicts.
+
+        Args:
+            product_ranges (dict[models.ProductRange, list[models.BaseProduct]]): A
+                dict with product ranges as the key and a list of it's products to
+                be exported as values.
+
+        Returns:
+            list[dict[str,Any]]: A list of dicts of column headers and values.
+        """
+        rows = []
+        for combination_product_link in combination_product_links:
+            rows.append(cls._get_combination_product_row(combination_product_link))
+        for multipack_product in multipack_products:
+            rows.append(cls._get_multipack_product_row(multipack_product))
         return rows
