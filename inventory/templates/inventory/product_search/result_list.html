@@ -1,11 +1,10 @@
-
 {% load stcadmin_extras %}
 
-<h3>Found {{ product_ranges.count }} product ranges.</h3>
+<h3>Found {{ product_ranges|length }} product ranges.</h3>
 <button class="show_all">Show All Variations</button>
 <button class="hide_all">Hide All Variations</button>
 
-{% for range in product_ranges %}
+{% for product_range, products in product_ranges.items %}
 <div class="product_search_results">
   {% include 'inventory/product_search/result_range.html' %}
 </div>

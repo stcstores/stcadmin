@@ -198,10 +198,8 @@ class BaseProduct(PolymorphicModel):
 
     def variable_options(self):
         """Return list of Product Options which are variable for the range."""
-        return (
-            self.variation_option_values.all()
-            .values_list("name", "value")
-            .order_by("variation_option", "value")
+        return self.variation_option_values.values_list(
+            "variation_option__name", flat=True
         )
 
     def variation_values(self):

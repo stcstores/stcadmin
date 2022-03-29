@@ -1,36 +1,30 @@
-
-
-<div class="collapsed" id="collapsed_{{ range.pk }}">
-  <button class="expand_variations" id="expand_{{ range.pk }}">
-    Show {{ range.product_set.count }} Variations &#9660;
+<div class="collapsed" id="collapsed_{{ product_range.pk }}">
+  <button class="expand_variations" id="expand_{{ product_range.pk }}">
+    Show {{ products|length }} Variations &#9660;
   </button>
 </div>
 
-<div class="expanded" id="expanded_{{ range.pk }}" hidden>
-  <button class="collapse_variations" id="collapse_{{ range.pk }}">
-    Hide {{ range.product_set.count }} Variations &#9650;
+<div class="expanded" id="expanded_{{ product_range.pk }}" hidden>
+  <button class="collapse_variations" id="collapse_{{ product_range.pk }}">
+    Hide {{ products|length }} Variations &#9650;
   </button>
   <table class="variation_table">
+    {% for product in products %}
+    {% if forloop.first %}
     <tr>
       <th>SKU</th>
       <th>Supplier SKU</th>
-      {% for option in range.variation_options %}
+      {% for option in product.variable_options %}
       <th>{{ option }}</th>
-      {% endfor %}
-      {% for option in range.listing_options %}
-      <th class="listing_option">{{ option }}</th>
       {% endfor %}
       <th></th>
     </tr>
-    {% for product in range.products.variations %}
+    {% endif %}
     <tr>
       <td class="sku">{{ product.sku }}</td>
       <td class="sku">{{ product.supplier_sku }}</td>
       {% for option, value in product.variation.items %}
       <td class="name">{{ value }}</td>
-      {% endfor %}
-      {% for option, value in product.listing_options.items %}
-      <td class="listing_option name">{{ value }}</td>
       {% endfor %}
       <td>
         <a href="{% url 'inventory:product' product.pk %}">

@@ -1,43 +1,43 @@
 <div class="product_search_result_range {% if range.end_of_line or range.hidden %} end_of_line{% endif %}">
   <div class="range_details">
     <div class="identification">
-      <div class="sku">{{ range.SKU }}</div>
+      <div class="sku">{{ product_range.sku }}</div>
       <div class="name">
-        <a title="View product range" href="{% url 'inventory:product_range' range.pk %}">
-          {{ range.name }}
+        <a title="View product range" href="{% url 'inventory:product_range' product_range.pk %}">
+          {{ product_range.name }}
         </a>
       </div>
     </div>
     <div class="range_links">
       <ul>
         <li>
-          <a title="Descriptions" href="{% url 'inventory:descriptions' range.pk %}" target="_blank">
+          <a title="Descriptions" href="{% url 'inventory:descriptions' product_range.pk %}" target="_blank">
             <button>D</button>
           </a>
         </li>
         {% comment %} <li>
-          <a title="Edit" href="{% url 'inventory:edit_product' range.pk %}" target="_blank">
+          <a title="Edit" href="{% url 'inventory:edit_product' product_range.pk %}" target="_blank">
             <button>E</button>
           </a>
         </li> {% endcomment %}
         {% comment %} <li>
-          <a title="Images" href="{% url 'inventory:images' range.pk %}" target="_blank">
+          <a title="Images" href="{% url 'inventory:images' product_range.pk %}" target="_blank">
             <button>I</button>
           </a>
         </li> {% endcomment %}
         <li>
-          <a title="Locations" href="{% url 'inventory:locations' range.pk %}" target="_blank">
+          <a title="Locations" href="{% url 'inventory:locations' product_range.pk %}" target="_blank">
             <button>L</button>
           </a>
         </li>
         {% comment %} <li>
-          <a title="Price Calulator" href="{% url 'price_calculator:range_price_calculator' range.pk %}"
+          <a title="Price Calulator" href="{% url 'price_calculator:range_price_calculator' product_range.pk %}"
             target="_blank">
             <button>P</button></a>
         </li> {% endcomment %}
-        {% if not range.is_end_of_line %}
+        {% if not product_range.is_end_of_line %}
         <li>
-          <button title="Mark the range as End of Line" class="EOL_range" id="EOL_{{ range.pk }}">
+          <button title="Mark the range as End of Line" class="EOL_range" id="EOL_{{ product_range.pk }}">
             End of Line
           </button>
         </li>
@@ -48,14 +48,14 @@
 
   <div class="product_details">
     <div class="product">
-      {% if range.products.all.variations|length > 1 %}
       {% include "inventory/product_search/result_variation.html" %}
+      {% comment %} {% if range.products.all|length > 1 %}
       {% else %}
       {% include "inventory/product_search/result_single_product.html" %}
-      {% endif %}
+      {% endif %} {% endcomment %}
     </div>
   </div>
   <div class="range_status">
-    {% if range.end_of_line %}<div class="error">End of Line</div>{% endif %}
+    {% if product_range.end_of_line %}<div class="error">End of Line</div>{% endif %}
   </div>
 </div>

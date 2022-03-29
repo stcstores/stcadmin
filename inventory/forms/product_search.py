@@ -1,5 +1,7 @@
 """Forms for product search page."""
 
+from collections import defaultdict
+
 from django import forms
 
 from inventory import models
@@ -37,33 +39,36 @@ class ProductSearchForm(forms.Form):
     def save(self):
         """Search for product ranges matching the search parameters."""
         products = self._filter_products(self._query_products())
-        product_ranges = self._filter_ranges(self._query_ranges(products))
-        self.ranges = product_ranges
+        # range_queryset = self._filter_ranges(self._query_ranges(products))
+        # self.ranges = range_queryset.order_by("name").prefetch_related(
+        #     Prefetch("products", queryset=products)
+        # )
+        ranges = defaultdict(list)
+        for product in products:
+            ranges[product.product_range].append(product)
+        self.ranges = dict(ranges)
 
     def _query_products(self):
-        end_of_line = self.cleaned_data.get("end_of_line")
+        end_of_line = self.get_eol()
         if search_term := self.cleaned_data["search_term"]:
             qs = models.BaseProduct.objects.text_search(
                 search_term, end_of_line=end_of_line
-            ).variations()
+            )
         else:
-            qs = models.Product.objects.all().variations()
-        qs.select_related("supplier")
+            qs = models.Product.objects.filter(is_end_of_line=end_of_line)
+        qs = qs.variations().select_related("product_range", "supplier")
+        if end_of_line is not None:
+            qs = qs.filter(product_range__is_end_of_line=end_of_line)
+        qs = qs.prefetch_related(
+            "variation_option_values", "variation_option_values__variation_option"
+        ).order_by("product_range__name")
         return qs
 
     def _query_ranges(self, products):
         range_pks = (
             products.values_list("product_range", flat=True).order_by().distinct()
         )
-        return (
-            models.ProductRange.ranges.filter(pk__in=range_pks)
-            .order_by("name")
-            .prefetch_related(
-                "products",
-                "products__variation_option_values",
-                "products__variation_option_values__variation_option",
-            )
-        )
+        return models.ProductRange.ranges.filter(pk__in=range_pks)
 
     def _filter_ranges(self, ranges):
         ranges = self._filter_end_of_line(ranges)
@@ -80,6 +85,16 @@ class ProductSearchForm(forms.Form):
         elif eol == self.ONLY_EOL:
             ranges = ranges.filter(is_end_of_line=True)
         return ranges
+
+    def get_eol(self):
+        """Return a filter value for the is_end_of_line attribute."""
+        eol = self.cleaned_data.get("end_of_line")
+        if eol == self.EXCLUDE_EOL:
+            return False
+        elif eol == self.ONLY_EOL:
+            return True
+        else:
+            return None
 
     def _filter_supplier(self, products):
         if self.cleaned_data.get("supplier"):
