@@ -89,15 +89,6 @@ class CombinationProductLinkAdmin(admin.ModelAdmin):
     list_select_related = ("product", "combination_product")
 
 
-@admin.register(models.Gender)
-class GenderAdmin(SortableAdminMixin, admin.ModelAdmin):
-    """Model admin for the PackageType model."""
-
-    exclude_fields = ()
-    list_display = ("name",)
-    search_fields = ("name",)
-
-
 @admin.register(models.ListingAttribute)
 class ListingAttributeAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the ListingAttribute model."""
@@ -196,7 +187,6 @@ class ProductAdmin(admin.ModelAdmin):
         "brand",
         "manufacturer",
         "package_type",
-        "gender",
     )
     autocomplete_fields = (
         "product_range",
@@ -205,7 +195,6 @@ class ProductAdmin(admin.ModelAdmin):
         "brand",
         "manufacturer",
         "package_type",
-        "gender",
     )
     date_hierarchy = "created_at"
 

@@ -168,26 +168,6 @@ class Manufacturer(models.Model):
         return self.name
 
 
-class Gender(models.Model):
-    """Model for Amazon genders."""
-
-    name = models.CharField(max_length=50)
-    ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
-    active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(default=timezone.now, editable=False)
-    modified_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        """Meta class for Gender."""
-
-        verbose_name = "Gender"
-        verbose_name_plural = "Genders"
-        ordering = ("ordering",)
-
-    def __str__(self):
-        return self.name
-
-
 class VATRate(models.Model):
     """Model for VAT rates."""
 

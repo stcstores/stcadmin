@@ -14,7 +14,6 @@ from .product import (
 )
 from .product_attribute import (
     Brand,
-    Gender,
     ListingAttribute,
     ListingAttributeValue,
     Manufacturer,
@@ -36,7 +35,6 @@ __all__ = [
     "Brand",
     "CombinationProduct",
     "CombinationProductLink",
-    "Gender",
     "ListingAttribute",
     "ListingAttributeValue",
     "Manufacturer",

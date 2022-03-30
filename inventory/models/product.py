@@ -14,7 +14,6 @@ from polymorphic.models import PolymorphicModel
 
 from .product_attribute import (
     Brand,
-    Gender,
     Manufacturer,
     PackageType,
     VariationOptionValue,
@@ -225,13 +224,6 @@ class Product(BaseProduct):
     weight_grams = models.PositiveSmallIntegerField()
 
     hs_code = models.CharField(max_length=50)
-    gender = models.ForeignKey(
-        Gender,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="products",
-    )
 
     class Meta:
         """Meta class for Products."""

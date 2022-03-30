@@ -420,20 +420,6 @@ class Manufacturer(fieldtypes.SelectizeModelChoiceField):
         return models.Manufacturer.objects.filter(active=True)
 
 
-class Gender(fieldtypes.SelectizeModelChoiceField):
-    """Field for the gender option of Amazon listings."""
-
-    label = "Gender"
-    name = "gender"
-    placeholder = "Gender"
-    variable = True
-    help_text = "Gender for which the product is intended."
-
-    def get_queryset(self):
-        """Return a queryset of selectable options."""
-        return models.Gender.objects.all()
-
-
 class SelectProductOption(fieldtypes.SelectizeModelChoiceField):
     """Field for selecting the package type of a product."""
 
