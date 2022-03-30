@@ -20,7 +20,7 @@ from inventory.models import (
     CombinationProduct,
     MultipackProduct,
     ProductBayLink,
-    ProductImageLink,
+    ProductImage,
 )
 from linnworks.models.stock_manager import StockManager
 from stcadmin import settings
@@ -79,7 +79,7 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
     def get_image_url(self):
         """Return the URL of the product's image."""
         url = (
-            ProductImageLink.objects.filter(product=self.product)
+            ProductImage.objects.filter(product=self.product)
             .first()
             .image.image_file.url
         )

@@ -71,15 +71,16 @@ class SetImageOrderView(InventoryUserMixin, View):
         """Process HTTP request."""
         try:
             data = json.loads(self.request.body)
-            product = get_object_or_404(models.Product, product_ID=data["product_ID"])
-            image_order = data["image_order"]
-            images = models.ProductImage.objects.filter(product=product)
-            if not set(images.values_list("image_ID", flat=True)) == set(image_order):
+            product = get_object_or_404(models.Product, pk=data["product_pk"])
+            image_order = [int(_) for _ in data["image_order"]]
+            images = product.images.active()
+            print(set(images.values_list("pk", flat=True)))
+            print(set(image_order))
+            if not set(images.values_list("pk", flat=True)) == set(image_order):
                 raise Exception("Did not get expected image IDs.")
             for image in images:
-                image.position = image_order.index(image.image_ID)
+                image.ordering = image_order.index(image.id)
                 image.save()
-            models.ProductImage.update_CC_image_order(product)
         except Exception:
             return HttpResponse(status=500)
         return HttpResponse("ok")
@@ -93,20 +94,9 @@ class DeleteImage(InventoryUserMixin, View):
         """Process HTTP request."""
         try:
             data = json.loads(self.request.body)
-            image = get_object_or_404(models.ProductImage, image_ID=data["image_id"])
-            image.delete()
+            image = get_object_or_404(models.ProductImage, pk=int(data["image_id"]))
+            image.active = False
+            image.save()
         except Exception:
             return HttpResponse(status=500)
         return HttpResponse("ok")
-
-
-def _product_search_result_to_dict(search_result):
-    return [
-        {
-            "product_id": result.variation_id,
-            "name": result.name,
-            "sku": result.sku,
-            "thumbnail": result.thumbnail,
-        }
-        for result in search_result
-    ]

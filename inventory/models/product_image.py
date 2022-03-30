@@ -5,34 +5,34 @@ from django.utils import timezone
 
 from stcadmin import settings
 
-from .product import BaseProduct, ProductRange
+from .managers import ActiveInactiveQueryset
 
 
 def get_storage():
     """Return the storage method for the ProductImage model."""
+    # return settings.ProductImageStorage
     if settings.DEBUG or settings.TESTING:
         return None
     else:
         return settings.ProductImageStorage
 
 
-class ProductImage(models.Model):
-    """Model for storing product images."""
+class BaseProductImage(models.Model):
+    """Base class for product image fields."""
 
-    product_id = models.CharField(max_length=20)
-    range_sku = models.CharField(max_length=20)
-    sku = models.CharField(max_length=20)
-    cloud_commerce_name = models.CharField(max_length=50)
-    position = models.PositiveIntegerField()
+    ordering = models.PositiveIntegerField()
     image_file = models.ImageField(storage=get_storage())
+    active = models.BooleanField(default=True)
+
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        """Meta class for the ProductImage mode."""
+    objects = models.Manager.from_queryset(ActiveInactiveQueryset)()
 
-        verbose_name = "Product Image"
-        verbose_name_plural = "Product Images"
+    class Meta:
+        """Meta class for BaseProductImage."""
+
+        abstract = True
 
     def __str__(self):
         return self.image_file.name
@@ -43,53 +43,39 @@ class ProductImage(models.Model):
         super().delete(*args, **kwargs)
 
 
-class ProductImageLink(models.Model):
-    """Model for storing links between products and product images."""
+class ProductImage(BaseProductImage):
+    """Model for storing product images."""
 
     product = models.ForeignKey(
-        BaseProduct, on_delete=models.CASCADE, related_name="images", editable=False
+        "BaseProduct",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="images",
     )
-    image = models.ForeignKey(
-        ProductImage, on_delete=models.CASCADE, related_name="products", editable=False
-    )
-    ordering = models.PositiveIntegerField(default=0)
-    active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(default=timezone.now, editable=False)
-    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        """Meta class for the ProductImageLink model."""
+        """Meta class for the ProductImage mode."""
 
-        verbose_name = "Product Image Link"
-        verbose_name_plural = "Product Image Links"
+        verbose_name = "Product Image"
+        verbose_name_plural = "Product Images"
         ordering = ("ordering",)
-        unique_together = ("product", "image")
-
-    def __str__(self):
-        return f"{self.product.sku} - {self.image}"
 
 
-class ProductRangeImageLink(models.Model):
-    """Model for storing links between product ranges and product images."""
+class ProductRangeImage(BaseProductImage):
+    """Model for storing product range images."""
 
     product_range = models.ForeignKey(
-        ProductRange, on_delete=models.CASCADE, related_name="images"
+        "ProductRange",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="images",
     )
-    image = models.ForeignKey(
-        ProductImage, on_delete=models.CASCADE, related_name="product_ranges"
-    )
-    ordering = models.PositiveIntegerField(default=0)
-    active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(default=timezone.now, editable=False)
-    modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        """Meta class for the ProductRangeImageLink model."""
+        """Meta class for the ProductImage mode."""
 
-        verbose_name = "Product Range Image Link"
-        verbose_name_plural = "Product Range Image Links"
+        verbose_name = "Product Range Image"
+        verbose_name_plural = "Product Range Images"
         ordering = ("ordering",)
-        unique_together = ("product_range", "image")
-
-    def __str__(self):
-        return f"{self.product_range.sku} - {self.image}"

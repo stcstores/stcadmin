@@ -1,5 +1,8 @@
 """Forms for inventory app."""
 
+
+import json
+
 from django import forms
 from django.contrib.postgres.forms import SplitArrayField
 from django.db import transaction
@@ -179,13 +182,22 @@ class ImagesForm(forms.Form):
     """Form for adding product images."""
 
     product_ids = forms.CharField(widget=forms.HiddenInput)
-    cloud_commerce_images = forms.ImageField(
+    images = forms.ImageField(
         required=False,
-        label="Cloud Commerce Images",
+        label="Images",
         widget=forms.ClearableFileInput(
             attrs={"multiple": True, "accept": ".jpg, .png"}
         ),
     )
+
+    def clean(self):
+        """Get products to add images to."""
+        cleaned_data = super().clean()
+        product_ids = json.loads(cleaned_data["product_ids"])
+        cleaned_data["products"] = models.BaseProduct.objects.filter(
+            pk__in=product_ids
+        ).prefetch_related("images")
+        return cleaned_data
 
 
 class AddProductOption(forms.Form):

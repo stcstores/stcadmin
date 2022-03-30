@@ -44,10 +44,10 @@
     <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Location</a>
     </div>
-    {% comment %} {% url 'inventory:images' product_range.pk as url %}
+    {% url 'inventory:images' product_range.pk as url %}
     <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Images</a>
-    </div> {% endcomment %}
+    </div>
     {% comment %} {% url 'price_calculator:range_price_calculator' product_range.pk as url %}
     <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Range Price Calculator</a>

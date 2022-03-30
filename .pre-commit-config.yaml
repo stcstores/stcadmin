@@ -3,7 +3,7 @@ repos:
     rev: 21.10b0
     hooks:
       - id: black
-        exclude: ^migrations/
+        exclude: ^.*\b(migrations)\b.*$
   - repo: https://github.com/pycqa/flake8
     rev: "4.0.1"
     hooks:

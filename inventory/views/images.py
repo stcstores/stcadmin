@@ -1,5 +1,6 @@
 """Views for handeling Product Images."""
 
+
 from collections import defaultdict
 
 from django.shortcuts import get_object_or_404
@@ -20,34 +21,68 @@ class ImageFormView(InventoryUserMixin, FormView):
 
     def get_products(self):
         """Retrive product details from Cloud Commerce."""
-        self.range_id = self.kwargs.get("range_id")
         self.product_range = get_object_or_404(
-            models.ProductRange, range_ID=self.range_id
+            models.ProductRange, pk=self.kwargs.get("range_pk")
         )
-        self.products = self.product_range.products.variations()
+        self.products = self.product_range.products.variations().prefetch_related(
+            "images",
+            "variation_option_values",
+            "variation_option_values__variation_option",
+        )
 
-    def get_options(self):
-        """Return variation data for the products."""
+    def get_variation_options(self):
+        """
+        Return product ids and association vairation options.
+
+        Returns:
+            {variation_option: {option_value: [product_ids]}}
+        """
         options = defaultdict(lambda: defaultdict(list))
         for product in self.products:
-            for option, value in product.variation().items():
-                options[option][value].append(product.product_ID)
-        options = dict(options)
-        for option, value in options.items():
-            options[option] = dict(value)
-        return options
+            variation = product.variation()
+            for key, value in variation.items():
+                options[key][value].append(product.pk)
+        return {key: dict(value) for key, value in options.items()}
 
     def get_context_data(self, *args, **kwargs):
         """Get template context data."""
         context = super().get_context_data(*args, **kwargs)
+        self.get_products()
         context["product_range"] = self.product_range
-        context["products"] = {
-            product: models.ProductImage.objects.filter(product=product)
-            for product in self.products
-        }
-        context["options"] = self.get_options()
+        context["products"] = self.products
+        context["options"] = self.get_variation_options()
         return context
+
+    def form_valid(self, form):
+        """Add submitted images."""
+        self.product_range = get_object_or_404(
+            models.ProductRange, pk=self.kwargs.get("range_pk")
+        )
+        if form.is_valid():
+            products = form.cleaned_data["products"]
+            print(products)
+            images = list(self.request.FILES.getlist("images"))
+            print(images)
+            for product in products:
+                first_ordering = self.get_first_ordering(product)
+                for ordering, image in enumerate(images, first_ordering):
+                    models.ProductImage(
+                        image_file=image, product=product, ordering=ordering
+                    ).save()
+        return super().form_valid(form)
+
+    def get_first_ordering(self, product):
+        """Return the position of the first new image."""
+        if (
+            last_image := product.images.active().order_by("-ordering").first()
+            is not None
+        ):
+            return last_image.ordering + 1
+        else:
+            return 0
 
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
-        return reverse_lazy("inventory:images", kwargs={"range_id": self.range_id})
+        return reverse_lazy(
+            "inventory:images", kwargs={"range_pk": self.product_range.pk}
+        )

@@ -217,23 +217,6 @@ class ProductBayHistoryAdmin(admin.ModelAdmin):
     date_hierarchy = "timestamp"
 
 
-@admin.register(models.ProductImageLink)
-class ProductImageLinkAdmin(admin.ModelAdmin):
-    """Model admin for the ProductImageLink model."""
-
-    exclude_fields = ()
-    list_display = ("__str__", "product", "image", "ordering", "active")
-    autocomplete_fields = ("product", "image")
-    list_select_related = ("product", "image")
-    list_filter = ("active", "ordering")
-    search_fields = (
-        "product__sku",
-        "product__product_range__sku",
-        "product__product_range__name",
-        "image__image_file",
-    )
-
-
 @admin.register(models.ProductExport)
 class ProductExportAdmin(admin.ModelAdmin):
     """Model admin for the Product Export model."""
@@ -248,31 +231,28 @@ class ProductImageAdmin(admin.ModelAdmin):
     """Model admin for the ProductImage model."""
 
     exclude_fields = ()
-    list_display = (
-        "product_id",
-        "range_sku",
-        "sku",
-        "cloud_commerce_name",
-        "position",
-        "image_file",
+    list_display = ("product", "image_file")
+    search_fields = (
+        "product__sku",
+        "product__product_range__sku",
+        "product__product_range__name",
     )
-    search_fields = ("product_id", "range_sku", "sku", "cloud_commerce_name")
+    autocomplete_fields = ("product",)
+    list_select_related = ("product", "product__product_range")
 
 
-@admin.register(models.ProductRangeImageLink)
-class ProductRangeImageLinkAdmin(admin.ModelAdmin):
-    """Model admin for the ProductRangeImageLink model."""
+@admin.register(models.ProductRangeImage)
+class ProductRangeImageAdmin(admin.ModelAdmin):
+    """Model admin for the ProductRangeImage model."""
 
     exclude_fields = ()
-    list_display = ("__str__", "product_range", "image", "ordering", "active")
-    autocomplete_fields = ("product_range", "image")
-    list_select_related = ("product_range", "image")
-    list_filter = ("active", "ordering")
+    list_display = ("product_range", "image_file")
     search_fields = (
         "product_range__sku",
         "product_range__name",
-        "image__image_file",
     )
+    autocomplete_fields = ("product_range",)
+    list_select_related = ("product_range",)
 
 
 @admin.register(models.ProductRange)

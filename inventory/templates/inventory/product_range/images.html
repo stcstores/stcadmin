@@ -5,21 +5,19 @@
 {% block page_title %}Product Images{% endblock %}
 
 {% block additional_head %}{{ block.super }}
-  <link rel="stylesheet" href="{% static "css/images.css" %}">
+<link rel="stylesheet" href="{% static "css/images.css" %}">
 {% endblock %}
 
 {% block content %}{{ block.super }}
 
 <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
-  <h3>
-    <label for="{{ form.cloud_commerce_images.name }}" class="add_images_label"></label>
-    <p>{{ form.cloud_commerce_images }}</p>
-  </h3>
+  <h3>{{ form }}</h3>
 </form>
 
 {% for option, values in options.items %}
 <p>{{ option }}: {% for value, product_ids in values.items %}
-  <button onclick="select_products([{% for p_id in product_ids %}{{ p_id }}, {% endfor %}])">{{ value }}</button>{% endfor %}
+  <button
+    onclick="select_products([{% for p_id in product_ids %}{{ p_id }}, {% endfor %}])">{{ value }}</button>{% endfor %}
 </p>
 {% endfor %}
 
@@ -28,16 +26,18 @@
     <th>Product</th>
     <th><button id="toggle_selected">Toggle</button></th>
   </tr>
-  {% for product, images in products.items %}
-  <tr id="row_{{ product.product_ID }}">
-    <td class="product_id" hidden>{{ product.product_ID }}</td>
-    <td class="sku">{{ product.SKU }}</td>
-    <td class="selected"><input type="checkbox" id="select_{{ product.product_ID }}"></td>
-    {% for image in images %}
+  {% for product in products %}
+  <tr id="row_{{ product.pk }}">
+    <td class="product_id" hidden>{{ product.pk }}</td>
+    <td class="sku">{{ product.sku }}</td>
+    <td class="name">{{ product.name_extensions|join:" - " }}</td>
+    <td class="selected"><input type="checkbox" id="select_{{ product.pk }}"></td>
+    {% for image in product.images.active %}
     <td class="product_image">
-      <img src="{{ image.URL }}" alt="{{ image.image_ID }}" height="100">
+      <img src="{{ image.image_file.url }}" alt="{{ image.image_file }}" height="100">
       <br>
-      <a class="image_id" href="{{ image.URL }}" target="_blank">{{ image.image_ID }}</a>
+      <a class="image_name" href="{{ image.image_file.url }}" target="_blank">{{ image.image_file }}</a>
+      <span class="image_id" hidden>{{ image.pk }}</span>
       <p>
         <button class="move_image_left">&lt;</button>
         <button class="delete_image">&times;</button>
@@ -56,7 +56,7 @@
   function get_image_order(product_id) {
     var row = $('#row_' + product_id);
     var image_order = [];
-    row.find('.product_image').each(function() {
+    row.find('.product_image').each(function () {
       image_order.push($(this).find('.image_id').text());
     });
     return image_order
@@ -75,16 +75,16 @@
     var url = '{% url "inventory:set_image_order" %}';
     var image_order = get_image_order(product_id);
     var data = {
-      'product_ID': product_id,
+      'product_pk': product_id,
       'image_order': image_order
     };
     $.post({
       url: url,
       data: JSON.stringify(data),
-      success: function() {
+      success: function () {
         console.log(image_order);
       },
-      error: function() {
+      error: function () {
         api_error();
       }
     });
@@ -99,18 +99,18 @@
     $.post({
       url: url,
       data: JSON.stringify(data),
-      success: function() {
+      success: function () {
         image.remove();
       },
-      error: function() {
+      error: function () {
         api_error();
       }
     });
   }
 
-  $(document).ready(function() {
+  $(document).ready(function () {
 
-    $('.move_image_left').click(function() {
+    $('.move_image_left').click(function () {
       var image = $(this).closest('td');
       var product_id = image.closest('tr').find('.product_id').text();
       if (image.index() > 3) {
@@ -119,7 +119,7 @@
       update_image_order(product_id);
     });
 
-    $('.move_image_right').click(function() {
+    $('.move_image_right').click(function () {
       var image = $(this).closest('td');
       var product_id = image.closest('tr').find('.product_id').text();
       if (!(image.is(':last-child'))) {
@@ -128,12 +128,12 @@
       update_image_order(product_id);
     });
 
-    $('.delete_image').click(function() {
+    $('.delete_image').click(function () {
       var image = $(this).closest('td');
       delete_image(image);
     });
 
-    $('#toggle_selected').click(function() {
+    $('#toggle_selected').click(function () {
       var checkboxes = $('.selected input:checkbox');
       var checked = $('.selected input:checked');
       if (checked.length === 0) {
@@ -144,29 +144,27 @@
       $('.selected input:checkbox').change();
     });
 
-    $('.selected input:checkbox').change(function() {
+    $('.selected input:checkbox').change(function () {
       var checked = $('.selected input:checked');
       var product_id_input = $('#{{ form.product_ids.auto_id }}');
       var product_ids = [];
-      checked.each(function() {
+      checked.each(function () {
         var product_id = this.id.split('_')[1];
         product_ids.push(product_id);
       });
+      var image_field = $('#{{ form.images.auto_id }}');
+      var image_field_label = $("label[for='{{ form.images.auto_id }}']")
       if (checked.length == 0) {
-        $('#{{ form.cloud_commerce_images.auto_id }}').attr('disabled', true);
-        $('.add_images_label').text('Select products to add images');
+        image_field.attr('disabled', true);
+        image_field_label.text('Select products to add images to');
       } else {
-        $('#{{ form.cloud_commerce_images.auto_id }}').attr('disabled', false);
-        $('.add_images_label').text('Add an image to the selected products');
+        image_field.attr('disabled', false);
+        image_field_label.text('Add an image to the selected products');
       }
       product_id_input.val(JSON.stringify(product_ids));
     });
 
-    $('#{{ form.cloud_commerce_images.auto_id }}').change(function() {
-      $(this).closest('form').submit();
-    });
-
-    $('#{{ form.stcadmin_images.auto_id }}').change(function() {
+    $('#{{ form.images.auto_id }}').change(function () {
       $(this).closest('form').submit();
     });
 

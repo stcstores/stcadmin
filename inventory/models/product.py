@@ -122,6 +122,7 @@ class BaseProduct(PolymorphicModel):
     length_mm = models.PositiveSmallIntegerField(blank=True, null=True)
     height_mm = models.PositiveSmallIntegerField(blank=True, null=True)
     width_mm = models.PositiveSmallIntegerField(blank=True, null=True)
+
     is_end_of_line = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True, editable=False)
