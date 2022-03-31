@@ -1,0 +1,48 @@
+{% extends "inventory/product_editor/base.html" %}
+{% load static %}
+
+{% block content %}{{ block.super }}
+<a href="{% url 'inventory:set_product_option_values' edit.pk %}">
+  <button>Match product options to products</button>
+</a>
+<div class="product_options">
+  <div class="product_option_list">
+    <h2>Drop down options</h2>
+    <p>
+      Drop down options are used to identify variations within a product range. They appear
+      in variation names and on pick lists. They are used as drop down boxes in listings,
+      allowing customers to select a variation.
+    </p>
+    {% include "inventory/product_editor/product_option.html" with variation=True options=variation_options %}
+  </div>
+  <div class="product_option_list">
+    <h2>Listing options</h2>
+    <p>
+      Listing options are used to add more information to a product. They appear in the
+      name of the variation, including on pick lists, as well as in listings.
+      A listing option can be the same for every variation in a range.
+    </p>
+    {% include "inventory/product_editor/product_option.html" with variation=False options=listing_options %}
+  </div>
+</div>
+<a href="{% url 'inventory:edit_product' edit.pk %}"><button>Finish</button></a>
+{% endblock %}
+
+{% block script %}{{ block.super }}
+  <script>
+    $(document).ready(function() {
+      $(".remove_dropdown").click(function(e) {
+        if (!confirm(
+          'Are you sure you want to remove this dropdown?\nThis will delete any new variations you have created.'
+        )) {
+          e.preventDefault();
+        }
+      });
+        $(".remove_listing_option").click(function(e) {
+          if (!confirm('Are you sure you want to remove this listing option?')) {
+            e.preventDefault();
+          }
+        });
+    });
+  </script>
+{% endblock %}

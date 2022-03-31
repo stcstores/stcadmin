@@ -36,3 +36,11 @@ def tooltip_help_text(field):
 def scayt_customer_id():
     """Return the SCAYT customer ID."""
     return settings.SCAYT_CUSTOMER_ID
+
+
+@register.filter
+def add_class(field, css_class):
+    """Add a CSS class to a form field."""
+    classes = field.field.widget.attrs.get("class", "")
+    field.field.widget.attrs["class"] = " ".join((classes, css_class)).strip()
+    return field

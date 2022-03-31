@@ -4,10 +4,10 @@ import os
 import sys
 
 import toml
-from ccapi import CCAPI
 from django.contrib.staticfiles.storage import ManifestStaticFilesStorage
 from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
 from django.db import models
+from linnapi import LinnworksAPISession
 from shopify_api_py import ShopifyAPISession
 from storages.backends.s3boto3 import S3Boto3Storage
 
@@ -51,13 +51,15 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "HOST": get_config("DATABASE_HOST"),
-        "NAME": get_config("DATABASE_NAME"),
+        "NAME": get_config("DATABASE_NAME") + "2",
         "USER": get_config("DATABASE_USER"),
         "PASSWORD": get_config("DATABASE_PASSWORD"),
         "PORT": get_config("DATABASE_PORT"),
         "TEST": {"NAME": get_config("TEST_DATABASE_NAME")},
     }
 }
+
+
 ALLOWED_HOSTS = get_config("ALLOWED_HOSTS")
 CSRF_TRUSTED_ORIGINS = get_config("CSRF_TRUSTED_ORIGINS")
 ADMINS = get_config("ADMINS")
@@ -68,9 +70,7 @@ EMAIL_PORT = get_config("EMAIL_PORT")
 EMAIL_USE_TLS = get_config("EMAIL_USE_TLS")
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-CC_DOMAIN = get_config("CC_DOMAIN_SECRET")
-CC_USERNAME = get_config("CC_USERNAME_SECRET")
-CC_PWD = get_config("CC_PASS")
+
 SCAYT_CUSTOMER_ID = get_config("SCAYT_CUSTOMER_ID_TOKEN")
 
 SCURRI_USERNAME = get_config("SCURRI_USERNAME")
@@ -84,6 +84,10 @@ SHOPIFY_SHOP_URL = get_config("SHOPIFY_SHOP_URL")
 SHOPIFY_API_VERSION = get_config("SHOPIFY_API_VERSION")
 SHOPIFY_API_PASSWORD = get_config("SHOPIFY_API_PASSWORD")
 
+LINNAPI_APPLICATION_ID = get_config("LINNAPI_APPLICATION_ID")
+LINNAPI_APPLICATION_SECRET = get_config("LINNAPI_APPLICATION_SECRET")
+LINNAPI_APPLICATION_TOKEN = get_config("LINNAPI_APPLICATION_TOKEN")
+
 AWS_S3_ACCESS_KEY_ID = BUCKET_ACCESS_KEY
 AWS_S3_SECRET_ACCESS_KEY = BUCKET_SECRET_KEY
 AWS_S3_ENDPOINT_URL = f"https://{BUCKET_DOMAIN}"
@@ -94,10 +98,17 @@ ShopifyAPISession.set_login(
     api_password=SHOPIFY_API_PASSWORD,
 )
 
+LinnworksAPISession.set_login(
+    application_id=LINNAPI_APPLICATION_ID,
+    application_secret=LINNAPI_APPLICATION_SECRET,
+    application_token=LINNAPI_APPLICATION_TOKEN,
+)
+
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 INSTALLED_APPS = [
+    "django.contrib.postgres",
     "django.contrib.admin",
     "django.contrib.auth",
     "polymorphic",
@@ -116,16 +127,12 @@ INSTALLED_APPS = [
     "stcadmin",
     "home",
     "labelmaker",
-    "reference",
     "user",
     "inventory",
-    "list_input",
     "price_calculator",
     "django_markup",
     "stock_check",
     "jchart",
-    "product_editor",
-    "epos",
     "orders",
     "shipping",
     "feedback",
@@ -134,6 +141,7 @@ INSTALLED_APPS = [
     "purchases",
     "tracking",
     "hardware",
+    "linnworks",
     "debug_toolbar",
 ]
 
@@ -218,14 +226,6 @@ LOGGING = {
             "formatter": "default_formatter",
             "include_html": False,
         },
-        "ccapi_file_handler": {
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(BASE_DIR, "logs", "ccapi.log"),
-            "maxBytes": 1_048_576,
-            "backupCount": 2,
-            "filters": ["add_user_to_log_record", "replace_newlines"],
-            "formatter": "default_formatter",
-        },
         "order_profit_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": os.path.join(BASE_DIR, "logs", "order_profit.log"),
@@ -252,14 +252,6 @@ LOGGING = {
             "filters": ["add_user_to_log_record"],
             "formatter": "default_formatter",
         },
-        "product_editor_file_handler": {
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(BASE_DIR, "logs", "product_editor.log"),
-            "maxBytes": 1_048_576,
-            "backupCount": 2,
-            "filters": ["add_user_to_log_record", "replace_newlines"],
-            "formatter": "default_formatter",
-        },
         "stdout": {"class": "logging.StreamHandler", "level": "INFO"},
     },
     "loggers": {
@@ -277,21 +269,6 @@ LOGGING = {
             "handlers": ["error_file_handler", "mail_admins"],
             "level": "ERROR",
             "propagate": False,
-        },
-        "ccapi.requests.ccapisession": {
-            "handlers": ["stdout", "ccapi_file_handler"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
-        "ccapi_errors": {
-            "handlers": ["mail_admins", "error_file_handler"],
-            "level": "ERROR",
-            "propagate": False,
-        },
-        "product_editor": {
-            "handlers": ["stdout", "product_editor_file_handler"],
-            "level": "DEBUG",
-            "propogate": False,
         },
         "order_profit": {
             "handlers": ["profit_loss_error_file_handler"],
@@ -359,15 +336,3 @@ TESTING = (
     and sys.argv[1] == "test"
     or os.path.basename(sys.argv[0]) in ("pytest", "py.test")
 )
-
-
-def create_CCAPI_session():
-    """Create the Cloud Commerce session."""
-    if not TESTING and not CI_ENVIRONMENT:
-        CCAPI.create_session(domain=CC_DOMAIN, username=CC_USERNAME, password=CC_PWD)
-        print("Created Cloud Commerce session.", file=sys.stderr)
-    else:
-        print("Skipping Cloud Commerce session for testing.", file=sys.stderr)
-
-
-create_CCAPI_session()

@@ -1,11 +1,9 @@
 """Inventory validators."""
 
-from .bays import BayValidationRunner
-from .suppliers import SupplierValidationRunner
-from .warehouses import WarehouseValidationRunner
+from .product_ranges import ProductRangeValidationRunner
+from .products import ProductValidationRunner
 
 __all__ = [
-    "BayValidationRunner",
-    "SupplierValidationRunner",
-    "WarehouseValidationRunner",
+    "ProductRangeValidationRunner",
+    "ProductValidationRunner",
 ]

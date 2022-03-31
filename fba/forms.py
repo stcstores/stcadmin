@@ -2,12 +2,12 @@
 
 from datetime import datetime
 
-from ccapi import CCAPI
 from django import forms
 from django.db.models import Q
 from django.utils.timezone import make_aware
 
 from fba import models
+from inventory.models import BaseProduct
 
 
 class SelectFBAOrderProduct(forms.Form):
@@ -19,14 +19,10 @@ class SelectFBAOrderProduct(forms.Form):
         """Add product ID to cleaned data."""
         cleaned_data = super().clean()
         try:
-            search_result = CCAPI.search_products(cleaned_data["product_SKU"])
-            if len(search_result) > 1:
-                self.add_error("product_SKU", "Too many products found")
-                return
-            else:
-                product = search_result[0]
-            cleaned_data["product_ID"] = product.variation_id
-        except Exception:
+            cleaned_data["product"] = BaseProduct.objects.get(
+                sku=cleaned_data["product_SKU"]
+            )
+        except BaseProduct.DoesNotExist:
             self.add_error("product_SKU", "Product not found")
 
 
@@ -47,87 +43,66 @@ class CurrencyWidget(forms.TextInput):
         return str(float(value) / 100).zfill(3)
 
 
+class CurrencyField(forms.FloatField):
+    """Form class for saving currency as an integer."""
+
+    widget_class = CurrencyWidget
+
+    def to_python(self, value):
+        """Convert input to an integer."""
+        return int(float(value) * 100)
+
+
 class CreateFBAOrderForm(forms.ModelForm):
     """Form for creating FBA orders."""
-
-    def __init__(self, *args, **kwargs):
-        """Disable non-editable fields."""
-        super().__init__(*args, **kwargs)
-        self.fields["product_SKU"].widget = forms.HiddenInput()
-        self.fields["product_ID"].widget = forms.HiddenInput()
-        self.fields["product_name"].widget = forms.HiddenInput()
-        self.fields["product_weight"].widget = forms.HiddenInput()
-        self.fields["product_hs_code"].widget = forms.HiddenInput()
-        self.fields["product_image_url"].widget = forms.HiddenInput()
-        self.fields["product_supplier"].widget = forms.HiddenInput()
-        self.fields["product_purchase_price"].widget = forms.HiddenInput()
-        self.fields["product_is_multipack"].widget = forms.HiddenInput()
-        self.fields["selling_price"].widget = CurrencyWidget()
-        self.fields["selling_price"].to_python = lambda x: int(float(x) * 100)
-        self.fields["FBA_fee"].widget = CurrencyWidget()
-        self.fields["FBA_fee"].to_python = lambda x: int(float(x) * 100)
-        self.fields["region"].widget = forms.HiddenInput()
-        self.fields["region"].required = False
-        self.fields["country"] = forms.ModelChoiceField(
-            queryset=models.FBACountry.objects.all()
-        )
-        field_order = [
-            "product_ID",
-            "product_SKU",
-            "product_name",
-            "product_weight",
-            "product_hs_code",
-            "product_image_url",
-            "product_supplier",
-            "product_purchase_price",
-            "product_is_multipack",
-            "region",
-            "country",
-            "product_asin",
-            "selling_price",
-            "FBA_fee",
-            "aproximate_quantity",
-            "small_and_light",
-            "tracking_number",
-            "is_combinable",
-            "on_hold",
-            "is_fragile",
-            "notes",
-        ] + self.__class__.Meta.fields
-        new_fields = {key: self.fields[key] for key in field_order}
-        self.fields = new_fields
-        if self.instance.id is not None:
-            self.initial["country"] = self.instance.region.default_country
-        else:
-            self.fields["tracking_number"].widget = forms.HiddenInput()
 
     class Meta:
         """Meta class for CreateFBAOrderForm."""
 
+        field_classes = {
+            "selling_price": CurrencyField,
+            "FBA_fee": CurrencyField,
+        }
         model = models.FBAOrder
-        fields = [
-            "product_ID",
-            "product_SKU",
-            "product_name",
-            "product_weight",
-            "product_hs_code",
-            "product_image_url",
-            "product_supplier",
-            "product_purchase_price",
-            "product_asin",
-            "product_is_multipack",
-            "region",
-            "selling_price",
-            "FBA_fee",
-            "aproximate_quantity",
-            "small_and_light",
-            "tracking_number",
-            "is_combinable",
-            "is_fragile",
-            "on_hold",
-            "notes",
+        exclude = [
+            "fulfilled_by",
+            "closed_at",
+            "box_weight",
+            "priority",
+            "printed",
+            "update_stock_level_when_complete",
+            "status",
+            "quantity_sent",
         ]
-        widgets = {"product_ID": forms.HiddenInput()}
+        widgets = {
+            "product_SKU": forms.HiddenInput(),
+            "product_name": forms.HiddenInput(),
+            "product_weight": forms.HiddenInput(),
+            "product_hs_code": forms.HiddenInput(),
+            "product_image_url": forms.HiddenInput(),
+            "product_supplier": forms.HiddenInput(),
+            "product_purchase_price": forms.HiddenInput(),
+            "region": forms.HiddenInput(),
+            "tracking_number": forms.HiddenInput(),
+            "product_is_multipack": forms.HiddenInput(),
+        }
+
+    country = forms.ModelChoiceField(models.FBACountry.objects.all())
+
+    field_order = [
+        "region",
+        "country",
+        "product_asin",
+        "selling_price",
+        "FBA_fee",
+        "aproximate_quantity",
+        "small_and_light",
+        "tracking_number",
+        "is_combinable",
+        "on_hold",
+        "is_fragile",
+        "notes",
+    ]
 
     def clean(self):
         """Add region to cleaned data."""

@@ -7,8 +7,8 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("inventory", "0002_auto_20190911_1026"),
         ("labelmaker", "0001_initial_squashed_0003_auto_20180514_0933"),
+        ("inventory", "0003_productimage"),
     ]
 
     operations = [

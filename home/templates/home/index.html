@@ -14,17 +14,14 @@
 <div class="site_index">
   <p>From here you can access:</p>
   <ul class='app'>
-    <li><a href="{% url 'reference:index' %}">Reference</a></li>
-    <p>Access reference material.</p>
-
     {% if "inventory" in groups %}
     <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
     <p>Tools for working with Cloud Commerce Inventory</p>
     <ul class="section">
       <li><a href="{% url 'inventory:product_search' %}">Product Search</a></li>
       <p>Find products in the Inventory</p>
-      <li><a href="{% url 'product_editor:basic_info' %}">New Product</a></li>
-      <p>Create a new <a href="{% url 'product_editor:basic_info' %}"> product</a>.</p>
+      <li><a href="{% url 'inventory:start_new_product' %}">New Product</a></li>
+      <p>Create a new <a href="{% url 'inventory:start_new_product' %}"> product</a>.</p>
       <li><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>
       <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
     </ul>
@@ -61,12 +58,12 @@
 
 {% block script %}{{ block.super }}
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
     $.get("{% url 'feedback:monitor' %}",
-        function(response) {
-            $('.feedback').html(response);
-            current = 'feedback'
-        }
+      function (response) {
+        $('.feedback').html(response);
+        current = 'feedback'
+      }
     );
   });
 </script>

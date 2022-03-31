@@ -1,9 +1,7 @@
 import json
-import tempfile
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
-from django.test import override_settings
 
 from shipping import models
 
@@ -78,12 +76,6 @@ def mock_cc_rules():
     return _mock_cc_rules
 
 
-@pytest.fixture
-def mock_get_courier_rules():
-    with patch("shipping.models.CCAPI.get_courier_rules") as mock_get_courier_rules:
-        yield mock_get_courier_rules
-
-
 @pytest.mark.django_db
 def test_rule_ID_is_set(rule_ID, new_shipping_rule):
     assert new_shipping_rule.rule_ID == rule_ID
@@ -130,84 +122,3 @@ def test_can_set_shipping_service(rule_ID, name, courier_service, shipping_servi
 def test_str_method(shipping_rule_factory):
     shipping_rule = shipping_rule_factory.create()
     assert str(shipping_rule) == shipping_rule.name
-
-
-@pytest.mark.django_db
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_update_marks_inactive(
-    mock_get_courier_rules, mock_cc_rules, shipping_rule_factory
-):
-    shipping_rule = shipping_rule_factory.create(inactive=False)
-    mock_get_courier_rules.return_value = mock_cc_rules([])
-    models.ShippingRule.objects.update_rules()
-    shipping_rule.refresh_from_db()
-    assert shipping_rule.inactive is True
-
-
-@pytest.mark.django_db
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_update_marks_active(
-    mock_get_courier_rules, mock_cc_rule, mock_cc_rules, shipping_rule_factory
-):
-    shipping_rule = shipping_rule_factory.create(inactive=True)
-    mock_rule = mock_cc_rule(rule_ID=shipping_rule.rule_ID)
-    mock_get_courier_rules.return_value = mock_cc_rules([mock_rule])
-    models.ShippingRule.objects.update_rules()
-    shipping_rule.refresh_from_db()
-    assert shipping_rule.inactive is False
-
-
-@pytest.mark.django_db
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_update_creates_rule(
-    rule_ID,
-    mock_get_courier_rules,
-    mock_cc_rule,
-    mock_cc_rules,
-    courier_service_factory,
-):
-    courier_service = courier_service_factory.create()
-    mock_rule = mock_cc_rule(
-        rule_ID=rule_ID,
-        courier_ID=courier_service.courier.courier_ID,
-        courier_service_ID=courier_service.courier_service_ID,
-    )
-    mock_get_courier_rules.return_value = mock_cc_rules([mock_rule])
-    models.ShippingRule.objects.update_rules()
-    shipping_rule = models.ShippingRule.objects.get(rule_ID=rule_ID)
-    assert shipping_rule.courier_service == courier_service
-    assert shipping_rule.name == mock_rule.name
-
-
-@pytest.mark.django_db
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_update_creates_a_shipping_rule_backup(
-    mock_get_courier_rules, mock_cc_rule, mock_cc_rules
-):
-    mock_rules = mock_cc_rules(mock_cc_rule())
-    mock_get_courier_rules.return_value = mock_rules
-    models.ShippingRule.objects.update_rules()
-    file_path = models.ShippingRule.objects._backup_path()
-    with open(file_path) as f:
-        saved_data = json.load(f)
-    assert mock_rules.json == saved_data
-
-
-@pytest.mark.django_db
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
-def test_update_creates_courier_service(
-    rule_ID, mock_get_courier_rules, mock_cc_rule, mock_cc_rules, courier_factory
-):
-    courier_service_ID = "94984"
-    courier = courier_factory.create()
-    mock_rule = mock_cc_rule(
-        courier_ID=courier.courier_ID, courier_service_ID=courier_service_ID
-    )
-    mock_get_courier_rules.return_value = mock_cc_rules([mock_rule])
-    models.ShippingRule.objects.update_rules()
-    courier_service = models.CourierService.objects.get(
-        courier_service_ID=courier_service_ID
-    )
-    assert courier_service.name is None
-    assert courier_service.courier == courier
-    assert courier_service.inactive is False

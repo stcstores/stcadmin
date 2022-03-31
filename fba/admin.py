@@ -59,7 +59,6 @@ class FBAOrderAdmin(admin.ModelAdmin):
     fields = [
         "region",
         "product_SKU",
-        "product_ID",
         "product_name",
         "product_weight",
         "product_hs_code",
@@ -90,7 +89,6 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "notes",
         "closed_at",
         "product_SKU",
-        "product_ID",
         "product_name",
         "product_weight",
         "product_hs_code",
@@ -111,7 +109,6 @@ class FBAOrderAdmin(admin.ModelAdmin):
 
     search_fields = [
         "product_SKU",
-        "product_ID",
         "product_name",
         "product_asin",
         "tracking_number",

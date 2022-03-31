@@ -1,0 +1,37 @@
+<div class="collapsed" id="collapsed_{{ product_range.pk }}">
+  <button class="expand_variations" id="expand_{{ product_range.pk }}">
+    Show {{ products|length }} Variations &#9660;
+  </button>
+</div>
+
+<div class="expanded" id="expanded_{{ product_range.pk }}" hidden>
+  <button class="collapse_variations" id="collapse_{{ product_range.pk }}">
+    Hide {{ products|length }} Variations &#9650;
+  </button>
+  <table class="variation_table">
+    {% for product in products %}
+    {% if forloop.first %}
+    <tr>
+      <th>SKU</th>
+      <th>Supplier SKU</th>
+      {% for option in product.variable_options %}
+      <th>{{ option }}</th>
+      {% endfor %}
+      <th></th>
+    </tr>
+    {% endif %}
+    <tr>
+      <td class="sku">{{ product.sku }}</td>
+      <td class="sku">{{ product.supplier_sku }}</td>
+      {% for option, value in product.variation.items %}
+      <td class="name">{{ value }}</td>
+      {% endfor %}
+      <td>
+        <a href="{% url 'inventory:product' product.pk %}">
+          <button>Edit</button>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>

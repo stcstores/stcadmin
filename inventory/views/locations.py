@@ -1,56 +1,52 @@
 """View for updating Product Warehouse Bays."""
 
-import cc_products
 from django.contrib import messages
-from django.shortcuts import redirect
-from django.urls import reverse_lazy
-from django.views.generic.base import TemplateView
+from django.shortcuts import get_object_or_404, redirect
+from django.views.generic.edit import FormView
 
+from inventory import models
 from inventory.forms import LocationsFormSet
-from product_editor.editor_manager import ProductEditorBase
 
 from .views import InventoryUserMixin
 
 
-class LocationFormView(InventoryUserMixin, TemplateView):
+class LocationFormView(InventoryUserMixin, FormView):
     """View for LocationsFormSet."""
 
-    template_name = "inventory/locations.html"
-    DEPARTMENT = ProductEditorBase.DEPARTMENT
-    WAREHOUSE = ProductEditorBase.WAREHOUSE
-    BAYS = ProductEditorBase.BAYS
+    template_name = "inventory/product_range/locations.html"
+    form_class = LocationsFormSet
 
-    def get(self, *args, **kwargs):
-        """Process GET HTTP request."""
-        self.range_id = self.kwargs.get("range_id")
-        self.product_range = cc_products.get_range(self.range_id)
-        self.formset = LocationsFormSet(
-            form_kwargs=[{"product": p} for p in self.product_range.products]
+    def get_initial(self):
+        """Return initial form values."""
+        self.product_range = get_object_or_404(
+            models.ProductRange, pk=self.kwargs.get("range_pk")
         )
-        return super().get(*args, **kwargs)
+        self.products = self.product_range.products.variations()
+        initial = []
+        for product in self.products:
+            bays = [
+                bay_link.bay.id
+                for bay_link in models.ProductBayLink.objects.filter(product=product)
+            ]
+            initial.append({"product_id": product.id, "bays": bays})
+        return initial
 
-    def post(self, *args, **kwargs):
-        """Process POST HTTP request."""
-        self.range_id = self.kwargs.get("range_id")
-        self.product_range = cc_products.get_range(self.range_id)
-        self.formset = LocationsFormSet(
-            self.request.POST,
-            form_kwargs=[{"product": p} for p in self.product_range.products],
-        )
-        if self.formset.is_valid():
-            for form in self.formset:
-                form.save()
-            messages.add_message(self.request, messages.SUCCESS, "Locations Updated")
-            return redirect(self.get_success_url())
-        return super().get(*args, **kwargs)
-
-    def get_success_url(self):
-        """Return URL to redirect to after successful form submission."""
-        return reverse_lazy("inventory:locations", kwargs={"range_id": self.range_id})
+    def form_valid(self, formset):
+        """Update product bays."""
+        for form in formset:
+            form.save(user=self.request.user)
+        messages.add_message(self.request, messages.SUCCESS, "Locations Updated")
+        return redirect(self.get_success_url())
 
     def get_context_data(self, *args, **kwargs):
         """Get template context data."""
         context = super().get_context_data(*args, **kwargs)
         context["product_range"] = self.product_range
-        context["formset"] = self.formset
+        context["formset"] = context["form"]
+        for i, form in enumerate(context["formset"]):
+            form.product = self.products[i]
         return context
+
+    def get_success_url(self):
+        """Return URL to redirect to after successful form submission."""
+        return self.product_range.get_absolute_url()

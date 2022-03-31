@@ -8,7 +8,7 @@ app_name = "price_calculator"
 
 urlpatterns = [
     path(
-        "price_calculator/<int:range_id>/",
+        "price_calculator/<int:range_pk>/",
         views.RangePriceCalculatorView.as_view(),
         name="range_price_calculator",
     ),

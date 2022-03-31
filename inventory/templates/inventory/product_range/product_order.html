@@ -1,0 +1,117 @@
+{% extends "inventory/product_range/product_range_base.html" %}
+{% load static %}
+
+{% block additional_head %}
+{{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+<link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
+<script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+<script>
+  {
+    % include 'inventory/widgets/product_widgets.js' %
+  }
+</script>
+<link rel="stylesheet" href="{% static 'css/range_page.css' %}">
+{% endblock %}
+
+{% block content %}{{ block.super }}
+<form class="product_order_form" action="" method="POST" autocomplete="off">{% csrf_token %}
+  {{ formset.management_form }}
+  {{ formset.non_form_errors }}
+  <p>Drag and drop variations to change the order in which they are displayed.</p>
+  <table class="variation_table">
+    <thead>
+      <tr>
+        <th class="column header SKU">SKU</th>
+        {% for option in product_range.variation_options %}
+        <th class="column header option">{{ option }}</th>
+        {% endfor %}
+        <th class="column header supplier_SKU">Supplier SKU</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for form in formset %}
+      {% with form.product as product %}
+      <tr>
+        <td class="column SKU sku">{{ product.sku }}</td>
+        {% for option, value in product.variation.items %}
+        <td class="column option name">{{ value }}</td>
+        {% endfor %}
+        <td class="column supplier_SKU sku">{{ product.supplier_sku }}</td>
+        <td hidden>
+          {% for field in form %}
+          {{ field }}
+          {{ field.errors }}
+          {% endfor %}
+        </td>
+        <td></td>
+      </tr>
+      {% endwith %}
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td class="save_row">
+          <button type="submit" class="save_button">Save</button>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</form>
+
+{% endblock %}
+
+{% block script %}{{ block.super }}
+<script>
+  function set_order_field() {
+    var table = $(".variation_table tbody")[0];
+    for (var i = 0, row; row = table.rows[i]; i++) {
+      $(row).find('input[type=number]').val(i);
+    }
+  }
+
+  var fixHelperModified = function (e, tr) {
+      var $originals = tr.children();
+      var $helper = tr.clone();
+      $helper.children().each(function (index) {
+        $(this).width($originals.eq(index).width())
+      });
+      return $helper;
+    },
+
+    updateIndex = function (e, ui) {
+      $('td.index', ui.item.parent()).each(function (i) {
+        $(this).html(i + 1);
+      });
+    };
+
+  $(document).ready(function () {
+    $('tbody').sortable({
+      helper: fixHelperModified,
+      stop: updateIndex,
+      axis: 'y',
+      containment: 'parent',
+      revert: 50,
+      tolerance: 'pointer',
+      cursor: 'move',
+      sort: function (event, ui) {
+        var $target = $(event.target);
+        if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
+          var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
+          ui.helper.css({
+            'top': top + 'px'
+          });
+        }
+      },
+    }).disableSelection();
+
+    var table_width = $('.variation_table').find("tr:first th").length;
+    $('.save_row').attr('colspan', table_width);
+
+    $('.product_order_form').submit(function (e) {
+      set_order_field();
+    });
+  });
+</script>
+{% endblock %}

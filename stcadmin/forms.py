@@ -18,15 +18,9 @@ class KwargFormSet(BaseFormSet):
         self.min_num = len(self.form_kwargs)
         self.max_num = self.min_num
         self.absolute_max = self.max_num
+        self.validate_max = False
+        self.validate_min = False
         super().__init__(*args, **kwargs)
-
-    def validate_max(self):
-        """Return True if number of forms is equal to min_num."""
-        return len(self.forms) == self.min_num
-
-    def validate_min(self):
-        """Return True if number of forms is equal to max_num."""
-        return len(self.forms) == self.min_num
 
     def get_form_kwargs(self, i):
         """Return kwargs for formset i."""

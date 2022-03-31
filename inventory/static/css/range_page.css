@@ -1,0 +1,59 @@
+.range_header {
+  align-items: baseline;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 1em;
+  font-family: 'Open Sans', sans-serif;
+}
+.range_details {
+  display: flex;
+  flex-direction: column;
+}
+
+.range_details .name {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.range_nav {
+  border-bottom: 2px #888 solid;
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+}
+
+.range_nav div {
+  background: #ddd;
+  border: #888 solid;
+  border-radius: 0.5em 0.5em 0 0;
+  border-width: 2px 2px 0 2px;
+  font-weight: bold;
+  margin: 0 0.25em;
+  padding: 0.5em 1em;
+}
+
+.range_nav div:hover {
+ background: #eee;
+}
+
+.range_nav .active {
+ background: white;
+ color: #222;
+ margin-bottom: -2px;
+}
+
+.range_nav .active:hover {
+ background: white;
+ color: #444;
+}
+
+.range_nav a {
+ color: #444;
+ text-decoration: none;
+}
+
+.variations {
+  margin-top: 3em;
+  font-family: 'Open Sans', sans-serif;
+}

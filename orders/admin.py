@@ -66,7 +66,6 @@ class ProductSaleAdmin(admin.ModelAdmin):
         "quantity",
         "price",
         "weight",
-        "department",
         "purchase_price",
         "vat_rate",
         "supplier",
@@ -81,7 +80,6 @@ class ProductSaleAdmin(admin.ModelAdmin):
         "quantity",
         "price",
         "weight",
-        "department",
         "purchase_price",
         "vat_rate",
         "supplier",
@@ -108,32 +106,3 @@ class PackingRecordAdmin(admin.ModelAdmin):
     readonly_fields = ("order",)
     list_display = ("order", "packed_by")
     list_editable = ("packed_by",)
-
-
-@admin.register(models.OrderUpdate)
-class OrderUpdateAdmin(admin.ModelAdmin):
-    """Admin for the OrderUpdate models."""
-
-    fields = ("started_at", "status", "completed_at")
-    readonly_fields = ("started_at",)
-    list_display = ("__str__", "status", "started_at", "completed_at")
-    list_editable = ("status",)
-    list_filter = ("status",)
-
-
-@admin.register(models.OrderDetailsUpdate)
-class OrderDetailsUpdateAdmin(admin.ModelAdmin):
-    """Admin for the OrderDetailsUpdate model."""
-
-    fields = ("started_at", "completed_at", "status")
-    readonly_fields = ("started_at",)
-    list_display = ("started_at", "completed_at", "status")
-    list_editable = ("status",)
-
-
-@admin.register(models.OrderDetailsUpdateError)
-class OrderDetailsUpdateErrorAdmin(admin.ModelAdmin):
-    """Admin for the OrderDetailsUpdateError model."""
-
-    fields = ("update", "product_sale", "text")
-    list_display = ("update", "product_sale", "text")

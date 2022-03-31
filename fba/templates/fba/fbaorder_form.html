@@ -35,13 +35,12 @@
 
         <p>
             <label for="stock_level">Stock Level</label>
-            <input type="number" step="1" name="stock_level" id="stock_level" value="{{ product.stock_level }}"
-                disabled>
+            <input type="number" step="1" name="stock_level" id="stock_level" value="{{ stock_level }}" disabled>
         </p>
 
         <p>
             <label for="weight">Weight</label>
-            <input type="number" step="1" name="weight" id="weight" value="{{ product.weight }}" disabled>
+            <input type="number" step="1" name="weight" id="weight" value="{{ product.weight_grams }}" disabled>
         </p>
 
         <p>
@@ -152,8 +151,8 @@
             "purchase_price": parseFloat("{{ product.purchase_price }}"),
             "quantity": $("#{{ form.aproximate_quantity.auto_id }}").val(),
             "fba_fee": $("#{{ form.FBA_fee.auto_id }}").val(),
-            "weight": parseFloat("{{ product.weight}}"),
-            "stock_level": parseInt("{{ product.stock_level }}")
+            "weight": parseFloat("{{ product.weight_grams }}"),
+            "stock_level": parseInt("{{ stock_level }}")
         }
         if ((data["selling_price"] === "") || (data["fba_fee"] === "") || (data["country"] === "")) {
             return
@@ -180,7 +179,7 @@
                     aprox_quantity.val(result["max_quantity"]);
                 }
                 var on_hold = $("#{{ form.on_hold.auto_id }}").parent();
-                if (aprox_quantity_val > parseInt("{{product.stock_level}}")) {
+                if (aprox_quantity_val > parseInt("{{ stock_level }}")) {
                     on_hold.addClass("error");
                 } else {
                     on_hold.removeClass("error");

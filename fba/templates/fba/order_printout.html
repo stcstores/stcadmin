@@ -2,13 +2,13 @@
     <title>FBA Order - {{ order.product_SKU }}</title>
     <style>
         @media print {
-            body{
+            body {
                 width: 21cm;
                 height: 29.7cm;
                 margin: 10mm 10mm 10mm 10mm;
                 vertical-align: middle;
                 text-align: center;
-            } 
+            }
         }
 
         img {
@@ -53,7 +53,9 @@
             justify-content: space-between;
         }
 
-        .fields, .warehouses, .stock {
+        .fields,
+        .warehouses,
+        .stock {
             border: black 3px solid;
             border-radius: 1em;
         }
@@ -88,7 +90,6 @@
             margin: 1em;
             padding: 1em;
         }
-
     </style>
 </head>
 
@@ -108,8 +109,9 @@
             </h2>
         </div>
         <div class="stock">
-            <h3>Stock Level: {{ product.stock_level }}</h3>
-            <h3>Pending Stock: {{ pending_stock }}</h3></h3>
+            <h3>Stock Level: {{ stock_level }}</h3>
+            <h3>Pending Stock: {{ pending_stock }}</h3>
+            </h3>
         </div>
     </div>
     <div id="fba_order_form">
@@ -118,8 +120,8 @@
                 <tr>
                     <th>Locations</th>
                     <td>
-                        {% for location in product.bays %}
-                            <div class="location">{{ location }}</div>
+                        {% for bay in bays %}
+                        <div class="location">{{ bay }}</div>
                         {% endfor %}
                     </td>
                 </tr>
@@ -140,7 +142,9 @@
                     <td>{{ order.region.currency.symbol }}{{ order.product_purchase_price }}</td>
                 </tr>
                 {% if order.small_and_light is True %}
-                <tr><td colspan="2">SMALL AND LIGHT</td></tr>
+                <tr>
+                    <td colspan="2">SMALL AND LIGHT</td>
+                </tr>
                 {% endif %}
             </table>
             <img src="{{ order.product_image_url }}" class="product_img" alt="" height="200">
@@ -150,7 +154,11 @@
         </div>
         <div class="inputs">
             <table class="fields">
-                <thead><tr><th colspan="5">Amazon Details</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th colspan="5">Amazon Details</th>
+                    </tr>
+                </thead>
                 <tr>
                     <th>Weight ({{ order.region.weight_unit }})</th>
                     <td class="write_space"></td>
@@ -170,7 +178,11 @@
             </table>
             {% if order.region.fulfillment_unit == order.region.IMPERIAL %}
             <table class="fields">
-                <thead><tr><th colspan="5">Delivery Details</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th colspan="5">Delivery Details</th>
+                    </tr>
+                </thead>
                 <tr>
                     <th>Weight (kg)</th>
                     <td class="write_space"></td>
@@ -187,7 +199,10 @@
         {% if order.region.warehouse_required %}
         <div class="warehouse">
             <table class="fields">
-            <tr><td>Warehouse</td><td class="write_space wide"></td></tr>
+                <tr>
+                    <td>Warehouse</td>
+                    <td class="write_space wide"></td>
+                </tr>
             </table>
         </div>
         {% endif %}

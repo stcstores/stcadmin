@@ -1,25 +1,59 @@
 """Models for the inventory app."""
 
-from .barcodes import Barcode
-from .images import ProductImage
-from .locations import Bay, Warehouse, check_location_integrity
-from .product_exports import ProductExport
-from .product_options import Department, InternationalShipping, PackageType
-from .stock_change import StockChange
-from .suppliers import Supplier, SupplierContact
+from .barcode import Barcode
+from .location import Bay, ProductBayHistory, ProductBayLink
+from .product import (
+    BaseProduct,
+    CombinationProduct,
+    CombinationProductLink,
+    InitialVariation,
+    MultipackProduct,
+    Product,
+    new_product_sku,
+    new_range_sku,
+)
+from .product_attribute import (
+    Brand,
+    ListingAttribute,
+    ListingAttributeValue,
+    Manufacturer,
+    PackageType,
+    VariationOption,
+    VariationOptionValue,
+    VATRate,
+)
+from .product_export import ProductExport
+from .product_image import ProductImage, ProductRangeImage
+from .product_range import ProductRange
+from .stock_change import StockLevelHistory
+from .supplier import Supplier, SupplierContact
 
 __all__ = [
     "Barcode",
-    "ProductImage",
+    "BaseProduct",
     "Bay",
-    "Warehouse",
-    "check_location_integrity",
-    "ProductExport",
-    "Department",
-    "InternationalShipping",
+    "Brand",
+    "CombinationProduct",
+    "CombinationProductLink",
+    "ListingAttribute",
+    "ListingAttributeValue",
+    "Manufacturer",
+    "InitialVariation",
+    "MultipackProduct",
     "PackageType",
-    "get_product_image_upload_to",
-    "StockChange",
+    "Product",
+    "ProductBayHistory",
+    "ProductBayLink",
+    "ProductExport",
+    "ProductImage",
+    "ProductRangeImage",
+    "ProductRange",
+    "StockLevelHistory",
     "Supplier",
     "SupplierContact",
+    "VATRate",
+    "VariationOption",
+    "VariationOptionValue",
+    "new_product_sku",
+    "new_range_sku",
 ]

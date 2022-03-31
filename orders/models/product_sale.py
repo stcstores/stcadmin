@@ -1,11 +1,9 @@
 """Models for the order app."""
 
-from ccapi import CCAPI
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
-from inventory.models import Department, Supplier
-from shipping.models import VATRate
+from inventory.models import Supplier
 
 
 class ProductSale(models.Model):
@@ -18,9 +16,6 @@ class ProductSale(models.Model):
     weight = models.PositiveIntegerField(null=True)
     quantity = models.PositiveSmallIntegerField()
     price = models.PositiveIntegerField()
-    department = models.ForeignKey(
-        Department, blank=True, null=True, on_delete=models.PROTECT
-    )
     supplier = models.ForeignKey(
         Supplier, blank=True, null=True, on_delete=models.PROTECT
     )
@@ -37,7 +32,7 @@ class ProductSale(models.Model):
         unique_together = ("order", "product_ID")
 
     def update_details(self):
-        """Set the product's department, VAT rate and purchase price."""
+        """Set the product's VAT rate and purchase price."""
         exception = None
         for attempt in range(10):
             try:
@@ -55,21 +50,6 @@ class ProductSale(models.Model):
             self.save()
             raise exception
         self.details_success = True
-        self.save()
-
-    def _update_details(self):
-        product = CCAPI.get_product(self.product_ID)
-        self.vat_rate = VATRate.objects.get(cc_id=product.vat_rate_id).percentage
-        self.department = Department.objects.get(
-            product_option_value_ID=str(product.options["Department"].value.id)
-        )
-        self.supplier = Supplier.objects.get(
-            product_option_value_ID=str(product.options["Supplier"].value.id)
-        )
-        self.purchase_price = int(
-            float(product.options["Purchase Price"].value.value) * 100
-        )
-        self.end_of_line = bool(product.end_of_line)
         self.save()
 
     def total_weight(self):

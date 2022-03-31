@@ -1,5 +1,3 @@
-from unittest.mock import Mock, patch
-
 import pytest
 
 from orders.templatetags import orders_extras
@@ -15,19 +13,6 @@ from orders.templatetags import orders_extras
 )
 def test_format_price(price, formatted):
     assert orders_extras.format_price(price) == formatted
-
-
-@patch("orders.templatetags.orders_extras.URLs.order_url")
-def test_ccp_order_page(mock_order_url):
-    response = Mock()
-    mock_order_url.return_value = response
-    order_id = "8930983"
-    customer_id = "3893094"
-    returned_value = orders_extras.ccp_order_page(order_id, customer_id)
-    assert returned_value == response
-    mock_order_url.assert_called_once_with(
-        orders_extras.SUBDOMAIN, order_id, customer_id
-    )
 
 
 @pytest.mark.parametrize(

@@ -1,95 +1,71 @@
+function get_stock_level(product_id) {
+  $.ajax({
+    type: "POST",
+    url: get_stock_url,
+    data: JSON.stringify({'product_ids': [product_id]}),
+    success: function (response) {
+      var stock_level=response[product_id];
+      set_stock_level_display(product_id, stock_level);
+    },
+    contentType: "application/json",
+    dataType: 'json'
+  });
+}
+
+function update_stock_level(product_id) {
+  var stock_input = $('#stock_' + product_id);
+  var stock_level = stock_input.val();
+  request_data = {"stock_updates": [{
+      'product_id': product_id,
+      'new_stock_level': stock_level,
+  }]};
+  $.ajax({
+    type: "POST",
+    url: update_stock_url, 
+    data: JSON.stringify(request_data),
+    success: function (response) {
+      var new_stock_level = response[product_id];
+      stock_level_update_success(product_id, new_stock_level);
+    },
+    failure: function() {
+      stock_level_update_failure(product_id);
+    },
+    contentType: "application/json",
+    dataType: 'json',
+  });
+}
+
+function set_stock_level_display(product_id, stock_level) {
+  $('#stock_' + product_id).val(stock_level);
+  $('#update_' + product_id).prop('disabled', false);
+  $('#status_' + product_id).hide();
+}
+
+
+
+function click_update_button(product_id) {
+  return function (event) {
+    $('#update_' + product_id).prop('disabled', true);
+    $('#status_' + product_id).attr('src', loading_image);
+    $('#status_' + product_id).show();
+    update_stock_level(product_id);
+  };
+}
+
+
+function stock_level_update_success(product_id, new_stock_level) {
+  $('#stock_' + product_id).val(new_stock_level);
+  $('#status_' + product_id).attr('src', complete_image);
+  $('#update_' + product_id).prop('disabled', false);
+}
+
+function stock_level_update_failure(product_id) {
+  $('#status_' + product_id).attr('src', error_image);
+  $('#update_' + product_id).prop('disabled', false);
+}
+
 $(document).ready(function() {
-
-    $('.stock_update_button').each(function () {
-        var button = $(this);
-        var product_id = $(this).attr('id').replace('update_', '');
-        button.click(update_stock_button(product_id));
-    });
-
-    $('.show_hide_products').click(function() {
-        var range_id = $(this).attr('id').replace('show_hide_products_', '');
-        var table = $('#products_table_' + range_id);
-        toggle_table(table);
-    });
-
-    $('#show_hide_all').click(function() {
-        var tables = $('.products_table');
-        if (tables.first().css('display') === 'none') {
-            tables.each(function() {
-                show_table($(this));
-            });
-        } else {
-            tables.each(function() {
-                hide_table($(this));
-            });
-        }
-    });
-
-    function toggle_table(table) {
-        if (table.css('display') === 'none') {
-            show_table(table);
-        } else if (table.css('display') === 'block') {
-            hide_table(table);
-        }
-    }
-
-    function show_table(table) {
-        var range_id = table.attr('id').replace('products_table_', '');
-        var show_hide = $('#show_hide_products_' + range_id);
-        table.css('display', 'block');
-        show_hide.text('[[ hide ]]');
-    }
-
-    function hide_table(table) {
-        var range_id = table.attr('id').replace('products_table_', '');
-        var show_hide = $('#show_hide_products_' + range_id);
-        table.css('display', 'none');
-        show_hide.text('[[ show ]]');
-    }
-
-    function change_stock_level(variation_id, stock_level) {
-        $('#stock_' + variation_id).val(stock_level);
-    }
-
-    function update_stock_button(product_id) {
-        return function (event) {
-          update_stock(product_id);
-        }
-    }
-
-    function update_stock(product_id) {
-        var stock_input = $('#stock_' + product_id);
-        var new_stock_level = stock_input.val();
-        var current_stock_level = product_details[product_id].stock_level
-        var sku = product_details[product_id].sku
-        console.log(product_details[product_id]);
-        if (new_stock_level == current_stock_level) {
-          return;
-        }
-        $('#update_' + product_id).prop('disabled', true);
-        var status = $('#status_' + product_id);
-        status.attr('src', loading_image);
-        $.ajax({
-            type: 'POST',
-            url: update_stock_url,
-            data: JSON.stringify({
-                'product_id': product_id,
-                'sku': sku,
-                'new_stock_level': stock_input.val(),
-                'old_stock_level': product_details[product_id].stock_level,
-            }),
-            success: function(response) {
-                product_details[product_id].stock_level = response;
-                $('#stock_' + product_id).val(response);
-                status.attr('src', complete_image);
-                $('#update_' + product_id).prop('disabled', false);
-            },
-            error: function() {
-                api_error();
-                status.attr('src', error_image);
-            },
-            contentType: "application/json",
-            dataType: 'json'
-        });
-    }
+  $('.stock_update_button').prop('disabled', true);
+  $('.stock_level_field').val('');
+  $('')
 });

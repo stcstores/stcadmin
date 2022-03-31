@@ -1,0 +1,33 @@
+{% extends "inventory/product_editor/base.html" %}
+{% load static %}
+
+{% block additional_head %}{{ block.super }}
+<script>
+  /* beautify preserve:start */
+  {% include 'inventory/widgets/product_widgets.js' %}
+  /* beautify preserve:end */
+</script>
+<link rel="stylesheet" href="{% static 'css/product_page.css' %}">
+<script src="{% static 'scripts/new_product.js' %}"></script>
+{% include 'home/froala_head.html' %}
+{% endblock %}
+
+{% block content %}{{ block.super }}
+
+<div class="page_center">
+
+  <div class="product_form">
+    <form action="" method="POST" autocomplete="off">{% csrf_token %}
+      {% include "inventory/input_add_on_form.html" %}
+      <button type="submit" class="save_button" name="product_type" value="{{ form.SINGLE }}">
+        Save Single Product
+      </button>
+      <br><br>
+      <button type="submit" class="save_button" name="product_type" value="{{ form.VARIATION}}">
+        Create Variations
+      </button>
+    </form>
+  </div>
+
+
+  {% endblock %}

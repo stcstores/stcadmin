@@ -1,19 +1,16 @@
 {% load stcadmin_extras %}
-{% load reference_extras %}
+
 
 {% block main_navigation %}
 <div class="main_navigation">
   <ul>
     <li><a href="{% url 'home:index' %}">Home</a></li>
-    <li><a href="{% url 'reference:index' %}">Reference</a></li>
-      <li><a href="{% url 'home:monitor' %}">Monitor</a></li>
     {% user_groups user as groups %}
     {% if "inventory" in groups %}
     <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
     {% endif %}
     {% if "orders" in groups %}
     <li><a href="{% url 'orders:index' %}">Orders</a></li>
-    <li><a href="{% url 'orders:refund_list' %}">Refunds</a></li>
     {% endif %}
     {% if 'channels' in groups %}
     <li><a href="{% url 'channels:index' %}">Channels</a></li>
@@ -24,12 +21,6 @@
     {% if 'feedback' in groups %}
     <li><a href="{% url 'feedback:user_feedback' %}">Feedback</a></li>
     {% endif %}
-    {% if 'stock_check' in groups %}
-    <li><a href="{% url 'stock_check:warehouses' %}">Stock Check</a></li>
-    {% endif %}
-    {% if 'epos' in groups %}
-    <li><a href="{% url 'epos:index' %}">EPOS</a></li>
-    {% endif %}
     {% if 'fba' in groups %}
     <li><a href="{% url 'fba:index' %}">FBA</a></li>
     {% endif %}
@@ -39,11 +30,9 @@
     {% if 'validation' in groups %}
     <li><a href="{% url 'validation:home' %}">Validation</a></li>
     {% endif %}
-    <li><a href="{% help_url %}">Help</a></li>
     {% if 'admin' in groups %}
     <li><a href="/admin/">Admin</a></li>
     {% endif %}
   </ul>
 </div>
 {% endblock %}
-

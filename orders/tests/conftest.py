@@ -5,7 +5,7 @@ import pytest_factoryboy
 from django.utils import timezone
 
 from home.models import CloudCommerceUser
-from inventory.models import Department, Supplier
+from inventory.models import Supplier
 from orders import models
 from shipping.tests.conftest import (
     CountryFactory,
@@ -27,25 +27,12 @@ pytest_factoryboy.register(ProviderFactory)
 
 
 @pytest_factoryboy.register
-class DepartmentFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Department
-
-    name = factory.Sequence(lambda n: f"Test Department {n}")
-    product_option_value_ID = factory.Sequence(lambda n: str(6465 + n))
-    abriviation = "TD"
-    inactive = False
-
-
-@pytest_factoryboy.register
 class SupplierFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Supplier
 
     name = factory.Sequence(lambda n: f"Test Supplier {n}")
-    product_option_value_ID = factory.Sequence(lambda n: str(6465 + n))
-    factory_ID = factory.Sequence(lambda n: str(n + 46546))
-    inactive = False
+    active = True
 
 
 @pytest_factoryboy.register
@@ -115,41 +102,10 @@ class ProductSaleFactory(factory.django.DjangoModelFactory):
     weight = 256
     quantity = 1
     price = 550
-    department = factory.SubFactory(DepartmentFactory)
     purchase_price = 250
     vat_rate = 20
     supplier = factory.SubFactory(SupplierFactory)
     details_success = True
-
-
-@pytest_factoryboy.register
-class OrderUpdateFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = models.OrderUpdate
-
-    started_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
-    completed_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
-    status = models.OrderUpdate.COMPLETE
-
-
-@pytest_factoryboy.register
-class OrderDetailsUpdateFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = models.OrderDetailsUpdate
-
-    started_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
-    completed_at = factory.Faker("date_time", tzinfo=timezone.get_current_timezone())
-    status = models.OrderDetailsUpdate.COMPLETE
-
-
-@pytest_factoryboy.register
-class OrderDetailsUpdateErrorFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = models.OrderDetailsUpdateError
-
-    update = factory.SubFactory(OrderDetailsUpdateFactory)
-    product_sale = factory.SubFactory(ProductSaleFactory)
-    text = "An exception string"
 
 
 @pytest_factoryboy.register

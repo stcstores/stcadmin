@@ -190,7 +190,6 @@ class ExportOrders(OrdersUserMixin, View):
         "shipping_rule",
         "courier_service",
         "total_paid",
-        "department",
         "weight",
         "postage_price",
         "vat",
@@ -255,7 +254,6 @@ class ExportOrders(OrdersUserMixin, View):
             order.shipping_rule,
             courier_service,
             self.format_currency(order.total_paid_GBP),
-            order.department(),
             weight,
             self.format_currency(order.postage_price),
             self.format_currency(vat),
@@ -308,7 +306,6 @@ class RefundList(OrdersUserMixin, ListView):
                 .prefetch_related(
                     "products",
                     "order__productsale_set",
-                    "order__productsale_set__department",
                     "order__packingrecord",
                 )
                 .select_related("order", "order__channel", "order")
