@@ -10,8 +10,7 @@ from .managers import ActiveInactiveQueryset
 
 def get_storage():
     """Return the storage method for the ProductImage model."""
-    # return settings.ProductImageStorage
-    if settings.DEBUG or settings.TESTING:
+    if settings.TESTING:
         return None
     else:
         return settings.ProductImageStorage
