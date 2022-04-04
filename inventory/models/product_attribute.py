@@ -114,6 +114,7 @@ class PackageType(models.Model):
 
     name = models.CharField(max_length=50, unique=True)
     large_letter_compatible = models.BooleanField(default=False)
+    description = models.TextField(blank=True)
     ordering = models.PositiveIntegerField(default=0, blank=False, null=False)
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now, editable=False)

@@ -153,8 +153,14 @@ class PackageTypeAdmin(SortableAdminMixin, admin.ModelAdmin):
     """Model admin for the PackageType model."""
 
     exclude_fields = ()
-    list_display = ("name", "large_letter_compatible", "ordering", "active")
-    list_editable = ("large_letter_compatible", "active")
+    list_display = (
+        "name",
+        "large_letter_compatible",
+        "description",
+        "ordering",
+        "active",
+    )
+    list_editable = ("large_letter_compatible", "description", "active")
     list_filter = ("active",)
     search_fields = ("name",)
 
