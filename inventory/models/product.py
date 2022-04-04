@@ -298,6 +298,36 @@ class MultipackProduct(BaseProduct):
     quantity = models.PositiveIntegerField()
     name = models.CharField(max_length=50)
 
+    @property
+    def weight_grams(self):
+        """Return the weight of the multipack product."""
+        return self.base_product.weight_grams * self.quantity
+
+    @property
+    def purchase_price(self):
+        """Return the purchase price of the multipack product."""
+        return self.base_product.purchase_price * self.quantity
+
+    @property
+    def brand(self):
+        """Return the mutlipack proudct's brand."""
+        return self.base_product.brand
+
+    @property
+    def manufacturer(self):
+        """Return the mutlipack proudct's manufacturer."""
+        return self.base_product.manufacturer
+
+    @property
+    def vat_rate(self):
+        """Return the mutlipack proudct's VAT rate."""
+        return self.base_product.vat_rate
+
+    @property
+    def hs_code(self):
+        """Return the mutlipack proudct's HS code."""
+        return self.base_product.hs_code
+
 
 class CombinationProductLink(models.Model):
     """Model for linking combination products."""
