@@ -228,7 +228,7 @@ class LinnworksProductImportFile(BaseImportFile):
     def _get_product_row(cls, product):
         row = cls._get_default_row()
         row[cls.SKU] = product.sku
-        row[cls.TITLE] = product.full_name()
+        row[cls.TITLE] = product.full_name
         row[cls.SHORT_DESCRIPTION] = product.product_range.description
         row[cls.BARCODE_NUMBER] = product.barcode
         row[cls.TAX_RATE] = int(product.vat_rate.percentage * 100)
