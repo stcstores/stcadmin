@@ -60,9 +60,7 @@ class ImageFormView(InventoryUserMixin, FormView):
         )
         if form.is_valid():
             products = form.cleaned_data["products"]
-            print(products)
             images = list(self.request.FILES.getlist("images"))
-            print(images)
             for product in products:
                 first_ordering = self.get_first_ordering(product)
                 for ordering, image in enumerate(images, first_ordering):

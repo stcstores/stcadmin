@@ -8,6 +8,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, TemplateView, View
 from django.views.generic.base import RedirectView
@@ -20,10 +21,8 @@ from inventory.models import (
     CombinationProduct,
     MultipackProduct,
     ProductBayLink,
-    ProductImage,
 )
 from linnworks.models.stock_manager import StockManager
-from stcadmin import settings
 
 
 class FBAUserMixin(UserInGroupMixin):
@@ -78,14 +77,8 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
 
     def get_image_url(self):
         """Return the URL of the product's image."""
-        url = (
-            ProductImage.objects.filter(product=self.product)
-            .first()
-            .image.image_file.url
-        )
-        if settings.DEBUG or settings.TESTING:
-            url = f"http://{self.request.get_host()}{url}"
-        return url
+        url = self.product.images.first().image_file.url
+        return mark_safe(url)
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
