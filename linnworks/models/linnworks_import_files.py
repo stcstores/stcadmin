@@ -27,7 +27,7 @@ class CSVFile:
 
     def write(self, fileobj):
         """Stream the CSV file to file-like object."""
-        writer = csv.writer(fileobj, dialect=self.dialect)
+        writer = csv.writer(fileobj, dialect=self.dialect, quoting=csv.QUOTE_NONNUMERIC)
         if self.header is not None:
             writer.writerow(self.header)
         writer.writerows(self.rows)
@@ -190,7 +190,14 @@ class LinnworksProductImportFile(BaseImportFile):
                 "package_type",
                 "vat_rate",
             )
-            .prefetch_related("product_bay_links", "product_bay_links__bay")
+            .prefetch_related(
+                "product_bay_links",
+                "product_bay_links__bay",
+                "variation_option_values",
+                "variation_option_values__variation_option",
+                "listing_attribute_values",
+                "listing_attribute_values__listing_attribute",
+            )
         )
         for product in products:
             product_ranges[product.product_range].append(product)
@@ -212,8 +219,8 @@ class LinnworksProductImportFile(BaseImportFile):
         row[cls.VARIATION_SKU] = product_range.sku
         row[cls.VARIATION_GROUP_NAME] = product_range.name
         row[cls.ARCHIVED] = "YES" if product_range.is_end_of_line else "NO"
-        row[cls.AMAZON_BULLETS] = product_range.bullet_points
-        row[cls.AMAZON_SEARCH_TERMS] = product_range.search_terms
+        row[cls.AMAZON_BULLETS] = "|".join(product_range.bullet_points)
+        row[cls.AMAZON_SEARCH_TERMS] = "|".join(product_range.search_terms)
         row[cls.DATE_CREATED] = product_range.created_at.isoformat()
         return row
 
@@ -251,8 +258,8 @@ class LinnworksProductImportFile(BaseImportFile):
         row[cls.MANUFACTURER] = product.manufacturer.name
         row[cls.BRAND] = product.brand.name
         row[cls.DATE_CREATED] = product.created_at.isoformat()
-        row[cls.AMAZON_BULLETS] = product.product_range.bullet_points
-        row[cls.AMAZON_SEARCH_TERMS] = product.product_range.search_terms
+        row[cls.AMAZON_BULLETS] = "|".join(product.product_range.bullet_points)
+        row[cls.AMAZON_SEARCH_TERMS] = "|".join(product.product_range.search_terms)
         product_attributes = product.attributes()
         if missing_attributes := set(product_attributes.keys()) - set(cls.header):
             raise ValueError(
