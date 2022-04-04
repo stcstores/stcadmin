@@ -27,7 +27,11 @@ class CSVFile:
 
     def write(self, fileobj):
         """Stream the CSV file to file-like object."""
-        writer = csv.writer(fileobj, dialect=self.dialect, quoting=csv.QUOTE_NONNUMERIC)
+        writer = csv.writer(
+            fileobj,
+            delimiter=",",
+            quoting=csv.QUOTE_NONNUMERIC,
+        )
         if self.header is not None:
             writer.writerow(self.header)
         writer.writerows(self.rows)
