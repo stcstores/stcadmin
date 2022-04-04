@@ -74,8 +74,6 @@ class SetImageOrderView(InventoryUserMixin, View):
             product = get_object_or_404(models.Product, pk=data["product_pk"])
             image_order = [int(_) for _ in data["image_order"]]
             images = product.images.active()
-            print(set(images.values_list("pk", flat=True)))
-            print(set(image_order))
             if not set(images.values_list("pk", flat=True)) == set(image_order):
                 raise Exception("Did not get expected image IDs.")
             for image in images:

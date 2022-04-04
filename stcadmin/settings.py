@@ -329,6 +329,7 @@ class ProductImageStorage(S3Boto3Storage):
     bucket_name = "product-images.stcstores"
     default_acl = "public-read"
     file_overwrite = True
+    querystring_auth = False
 
 
 TESTING = (
