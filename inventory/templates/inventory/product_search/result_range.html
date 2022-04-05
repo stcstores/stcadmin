@@ -35,13 +35,15 @@
             target="_blank">
             <button>P</button></a>
         </li> {% endcomment %}
-        {% if not product_range.is_end_of_line %}
         <li>
+          {% if product_range.is_end_of_line %}
+          <span class="error">END OF LINE</span>
+          {% else %}
           <button title="Mark the range as End of Line" class="EOL_range" id="EOL_{{ product_range.pk }}">
             End of Line
           </button>
+          {% endif %}
         </li>
-        {% endif %}
       </ul>
     </div>
   </div>
