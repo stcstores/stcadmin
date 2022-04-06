@@ -48,7 +48,7 @@
 </div>
 
 <div class="range">
-  {% for product in product_range.products.variations %}
+  {% for product in product_range.products.variations.variations %}
   <div class="product" id="product_{{ product.id }}">
     <div class="product_row title">
       <span class="sku">{{ product.SKU }}</span>&nbsp;-&nbsp;<span class="name">{{ product.name }}</span>
@@ -146,53 +146,37 @@
 
   function update_vat_rates(vat_rates, calculator) {
     if (vat_rates.length == 0) {
-      {
-        %
-        for product in product_range.products.variations %
-      }
-      calcs['{{ product.id }}'].set_vat_rate(0); {
-        %
-        endfor %
-      }
+      /* beautify preserve:start */
+      {% for product in product_range.products.variations.variations %}
+      calcs['{{ product.id }}'].set_vat_rate(0);
+      {% endfor %}
+      /* beautify preserve:end */
     }
     $(vat_rates).each(function () {
-      {
-        %
-        for product in product_range.products %
-      }
+      /* beautify preserve:start */
+      {% for product in product_range.products.variations %}
+      /* beautify preserve:end */
       var country_vat_rate = country_vat[$("#country").val()];
       if (country_vat_rate !== null) {
         var vat_rate = country_vat_rate;
       } else {
-        var vat_rate = {
-          {
-            product.vat_rate
-          }
-        };
+        var vat_rate = parseFloat("{{ product.vat_rate }}");
       }
-      calcs['{{ product.id }}'].set_vat_rate(vat_rate); {
-        %
-        endfor %
-      }
+      calcs['{{ product.id }}'].set_vat_rate(vat_rate);
+      /* beautify preserve:start */
+      {% endfor %}
+      /* beautify preserve:end */
     });
   }
 
   $(document).ready(function () {
-    calcs = {}; {
-      %
-      for product in product_range.products.variations %
-    }
-    var ex_vat_price = {
-      {
-        product.price
-      }
-    };
+    calcs = {};
+    /* beautify preserve:start */
+    {% for product in product_range.products.variations.variations %}
+    /* beautify preserve:end */
+    var ex_vat_price = parseFloat("{{ product.price }}");
     var vat_rate = 20;
-    var purchase_price = {
-      {
-        product.purchase_price
-      }
-    };
+    var purchase_price = parseFloat("{{ product.purchase_price }}");
     var package_type = "{{ product.package_type.name }}";
     var postage_price = 10;
     var channel_fee = $('#channel_fee_input').val();
@@ -271,55 +255,47 @@
     ).toFixed(2);
 
     $('#{{ product.id }}_sale_price').val(initial_price);
-    $('#{{ product.id }}_sale_price').change(); {
-      %
-      endfor %
-    }
+    $('#{{ product.id }}_sale_price').change();
+    /* beautify preserve:start */
+    {% endfor %}
+    /* beautify preserve:end */
     $('#country').change(function () {
-      {
-        %
-        for product in product_range.products %
-      }
+      /* beautify preserve:start */
+      {% for product in product_range.products.variations %}
+      /* beautify preserve:end */
       get_postage_price(
         calcs['{{ product.id}}'],
         $('#country').val(),
-        "{{ product.package_type }}".replace(' (Single)', ''),
+        "{{ product.package_type.name }}",
         $('#channel').val(),
-        "{{ product.international_shipping }}", {
-          {
-            product.weight
-          }
-        },
+        "{{ product.international_shipping }}",
+        parseInt("{{ product.weight_grams }}"),
         calcs['{{ product.id }}'].sale_price
-      ); {
-        %
-        endfor %
-      }
+      );
+      /* beautify preserve:start */
+      {% endfor %}
+      /* beautify preserve:end */
     });
     $('#channel').change(function () {
-      {
-        %
-        for product in product_range.products %
-      }
+      /* beautify preserve:start */
+      {% for product in product_range.products.variations %}
+      /* beautify preserve:end */
       get_postage_price(
         calcs['{{ product.id}}'],
         $('#country').val(),
-        "{{ product.package_type }}".replace(' (Single)', ''),
+        "{{ product.package_type.name }}",
         $('#channel').val(),
-        "{{ product.international_shipping }}", {
-          {
-            product.weight
-          }
-        },
+        "{{ product.international_shipping }}",
+        parseInt("{{ product.weight_grams }}"),
         calcs['{{ product.id }}'].sale_price
-      ); {
-        %
-        endfor %
-      }
-    }); {
-      %
-      for product in product_range.products %
-    }
+      );
+      /* beautify preserve:start */
+      {% endfor %}
+      /* beautify preserve:end */
+    });
+    /* beautify preserve:start */
+    {% for product in product_range.products.variations %}
+    /* beautify preserve:end */
     calcs['{{ product.id}}'].set_sale_price(
       $('#{{ product.id }}_sale_price').val());
     $('#{{ product.id }}_sale_price').change(function () {
@@ -332,19 +308,18 @@
       var sale_price = parseFloat(foreign_price * exchange_rate).toFixed(2);
       $('#{{ product.id }}_sale_price').val(sale_price);
       $('#{{ product.id }}_sale_price').change();
-    }); {
-      %
-      endfor %
-    }
+    });
+    /* beautify preserve:start */
+    {% endfor %}
+    /* beautify preserve:end */
     $('#channel_fee_input').change(function () {
-      {
-        %
-        for product in product_range.products.variations %
-      }
-      calcs['{{ product.id }}'].set_channel_fee_percentage($(this).val()); {
-        %
-        endfor %
-      }
+      /* beautify preserve:start */
+      {% for product in product_range.products.variations.variations %}
+      /* beautify preserve:end */
+      calcs['{{ product.id }}'].set_channel_fee_percentage($(this).val());
+      /* beautify preserve:start */
+      {% endfor %}
+      /* beautify preserve:end */
     });
     $('#country').change();
   });

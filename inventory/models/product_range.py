@@ -5,6 +5,7 @@ from collections import defaultdict
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from django.db.models.functions import Lower
 from django.urls import reverse
 from django.utils import timezone
 
@@ -70,6 +71,8 @@ class ProductRange(models.Model):
 
         verbose_name = "Product Range"
         verbose_name_plural = "Product Ranges"
+
+        constraints = [models.UniqueConstraint(Lower("name"), name="name_unique")]
 
     def __str__(self):
         return f"{self.sku}: {self.name}"
