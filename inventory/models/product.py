@@ -12,6 +12,8 @@ from django.utils import timezone
 from polymorphic.managers import PolymorphicManager, PolymorphicQuerySet
 from polymorphic.models import PolymorphicModel
 
+from inventory.models.location import ProductBayLink
+
 from .product_attribute import (
     Brand,
     Manufacturer,
@@ -328,6 +330,11 @@ class MultipackProduct(BaseProduct):
         """Return the mutlipack proudct's HS code."""
         return self.base_product.hs_code
 
+    @property
+    def product_bay_links(self):
+        """Return a querset of linked product bays."""
+        return self.base_product.product_bay_links
+
 
 class CombinationProductLink(models.Model):
     """Model for linking combination products."""
@@ -369,6 +376,49 @@ class CombinationProduct(BaseProduct):
         through=CombinationProductLink,
         related_name="combination_products",
     )
+
+    def _product_ids(self):
+        return self.products.values_list("pk", flat=True)
+
+    @property
+    def product_bay_links(self):
+        """Return a queryset of all linked product bays."""
+        return ProductBayLink.objects.filter(product__pk__in=self._product_ids())
+
+    @property
+    def vat_rate(self):
+        """Return the highest combined product VAT rate."""
+        return (
+            self.products.select_related("vat_rate")
+            .order_by("-vat_rate__percentage")
+            .first()
+            .vat_rate
+        )
+
+    @property
+    def brand(self):
+        """Return the product's brand."""
+        return self.products.first().brand
+
+    @property
+    def manufacturer(self):
+        """Return the product's manufacturer."""
+        return self.products.first().manufacturer
+
+    @property
+    def hs_code(self):
+        """Return the product's HS code."""
+        return self.products.first().hs_code
+
+    @property
+    def weight_grams(self):
+        """Return the combined product weight."""
+        return sum((self.products.all().values_list("weight_grams", flat=True)))
+
+    @property
+    def purchase_price(self):
+        """Return the combined product purchase_price."""
+        return sum((self.products.all().values_list("purchase_price", flat=True)))
 
 
 def generate_sku():

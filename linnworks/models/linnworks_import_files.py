@@ -5,6 +5,7 @@ import io
 from collections import defaultdict
 
 from inventory.models import CombinationProductLink, MultipackProduct, Product
+from inventory.models.product import CombinationProduct
 
 
 class CSVFile:
@@ -182,7 +183,7 @@ class LinnworksProductImportFile(BaseImportFile):
     def get_product_ranges(cls):
         """Return a dict of productrange: list(products)."""
         product_ranges = defaultdict(list)
-        products = (
+        products = list(
             Product.objects.variations()
             .active()
             .complete()
@@ -201,6 +202,42 @@ class LinnworksProductImportFile(BaseImportFile):
                 "variation_option_values__variation_option",
                 "listing_attribute_values",
                 "listing_attribute_values__listing_attribute",
+            )
+        )
+        products.extend(
+            MultipackProduct.objects.variations()
+            .active()
+            .select_related(
+                "product_range",
+                "supplier",
+                "package_type",
+                "base_product",
+                "base_product__brand",
+                "base_product__manufacturer",
+                "base_product__vat_rate",
+            )
+            .prefetch_related(
+                "variation_option_values",
+                "variation_option_values__variation_option",
+                "listing_attribute_values",
+                "listing_attribute_values__listing_attribute",
+            )
+        )
+        products.extend(
+            CombinationProduct.objects.variations()
+            .active()
+            .select_related(
+                "product_range",
+                "supplier",
+                "package_type",
+            )
+            .prefetch_related(
+                "variation_option_values",
+                "variation_option_values__variation_option",
+                "listing_attribute_values",
+                "listing_attribute_values__listing_attribute",
+                "combination_product_links",
+                "combination_product_links__product",
             )
         )
         for product in products:

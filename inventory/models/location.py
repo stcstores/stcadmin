@@ -5,8 +5,6 @@ from django.contrib.auth import get_user_model
 from django.db import models, transaction
 from django.utils import timezone
 
-from .product import Product
-
 
 class Bay(models.Model):
     """Model for Warehouse Bays."""
@@ -33,7 +31,7 @@ class ProductBayLink(models.Model):
     """Model for product bay links."""
 
     product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="product_bay_links"
+        "Product", on_delete=models.CASCADE, related_name="product_bay_links"
     )
     bay = models.ForeignKey(
         Bay, on_delete=models.CASCADE, related_name="product_bay_links"
@@ -94,7 +92,7 @@ class ProductBayHistory(models.Model):
     )
     timestamp = models.DateTimeField(auto_now=True)
     product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="product_bay_changes"
+        "Product", on_delete=models.CASCADE, related_name="product_bay_changes"
     )
     bay = models.ForeignKey(
         Bay, on_delete=models.PROTECT, related_name="product_bay_changes"
