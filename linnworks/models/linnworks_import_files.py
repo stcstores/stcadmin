@@ -365,8 +365,8 @@ class LinnworksCompostitionImportFile(BaseImportFile):
     @classmethod
     def _get_multipack_product_row(cls, multipack_product):
         return {
-            cls.PARENT_SKU: multipack_product.base_product.sku,
-            cls.CHILD_SKU: multipack_product.sku,
+            cls.CHILD_SKU: multipack_product.base_product.sku,
+            cls.PARENT_SKU: multipack_product.sku,
             cls.QUANTITY: multipack_product.quantity,
         }
 
