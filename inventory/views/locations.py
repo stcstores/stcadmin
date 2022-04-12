@@ -21,13 +21,10 @@ class LocationFormView(InventoryUserMixin, FormView):
         self.product_range = get_object_or_404(
             models.ProductRange, pk=self.kwargs.get("range_pk")
         )
-        self.products = self.product_range.products.variations()
+        self.products = self.product_range.products.active().simple()
         initial = []
         for product in self.products:
-            bays = [
-                bay_link.bay.id
-                for bay_link in models.ProductBayLink.objects.filter(product=product)
-            ]
+            bays = [bay_link.bay.id for bay_link in product.product_bay_links.all()]
             initial.append({"product_id": product.id, "bays": bays})
         return initial
 
