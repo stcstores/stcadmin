@@ -99,7 +99,7 @@ class LinnworksProductImportFile(BaseImportFile):
     IS_VARIATION_GROUP = "Is Variation Group"
     VARIATION_SKU = "Variation SKU"
     VARIATION_GROUP_NAME = "Variation Group Name"
-    HS_CODE = "HSTariffCode"
+    HS_CODE = "HS Code"
     COUNTRY_OF_ORIGIN = "CountryOfOrigin"
     MANUFACTURER = "Manufacturer"
     BRAND = "Brand"
