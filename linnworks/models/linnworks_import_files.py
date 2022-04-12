@@ -285,6 +285,7 @@ class LinnworksProductImportFile(BaseImportFile):
         row[cls.WIDTH] = product.width_mm
         row[cls.DEPTH] = product.length_mm
         row[cls.PACKAGING_GROUP] = product.package_type.name
+        row[cls.PURCHASE_PRICE] = product.purchase_price
         row[cls.RETAIL_PRICE] = product.retail_price
         row[cls.DEFAULT_SUPPLIER] = "YES"
         row[cls.SUPPLIER_BARCODE] = product.supplier_barcode
