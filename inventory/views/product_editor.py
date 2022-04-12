@@ -63,7 +63,7 @@ class StartNewProduct(InventoryUserMixin, CreateView):
     def get_initial(self, *args, **kwargs):
         """Return initial values for the form."""
         initial = super().get_initial()
-        initial.update({"managed_by": self.request.user})
+        initial.update({"managed_by": self.request.user, "sku": models.new_range_sku()})
         return initial
 
     def get_success_url(self):
