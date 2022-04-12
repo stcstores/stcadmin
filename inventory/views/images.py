@@ -71,10 +71,8 @@ class ImageFormView(InventoryUserMixin, FormView):
 
     def get_first_ordering(self, product):
         """Return the position of the first new image."""
-        if (
-            last_image := product.images.active().order_by("-ordering").first()
-            is not None
-        ):
+        last_image = product.images.active().order_by("-ordering").first()
+        if last_image is not None:
             return last_image.ordering + 1
         else:
             return 0
