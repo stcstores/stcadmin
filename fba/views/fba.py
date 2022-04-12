@@ -548,8 +548,7 @@ class FBAOrderPrintout(FBAUserMixin, TemplateView):
             context["stock_level"] = stock_level_info.stock_level
             context["pending_stock"] = stock_level_info.in_orders
         context["bays"] = (
-            ProductBayLink.objects.filter(product=product)
-            .select_related("bay")
+            product.product_bay_links.select_related("bay")
             .order_by()
             .distinct()
             .values_list("bay__name", flat=True)
