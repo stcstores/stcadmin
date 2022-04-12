@@ -99,7 +99,8 @@ class LinnworksProductImportFile(BaseImportFile):
     IS_VARIATION_GROUP = "Is Variation Group"
     VARIATION_SKU = "Variation SKU"
     VARIATION_GROUP_NAME = "Variation Group Name"
-    HS_CODE = "HS Code"
+    HS_CODE = "HSTariffCode"
+    COUNTRY_OF_ORIGIN = "CountryOfOrigin"
     MANUFACTURER = "Manufacturer"
     BRAND = "Brand"
     MATERIAL = "Material"
@@ -150,6 +151,7 @@ class LinnworksProductImportFile(BaseImportFile):
         VARIATION_SKU,
         VARIATION_GROUP_NAME,
         HS_CODE,
+        COUNTRY_OF_ORIGIN,
         MANUFACTURER,
         INTERNATIONAL_SHIPPING,
         DATE_CREATED,
@@ -246,9 +248,7 @@ class LinnworksProductImportFile(BaseImportFile):
 
     @classmethod
     def _get_default_row(cls):
-        return {
-            cls.INTERNATIONAL_SHIPPING: "Standard",
-        }
+        return {cls.INTERNATIONAL_SHIPPING: "Standard", cls.COUNTRY_OF_ORIGIN: "CHN"}
 
     @classmethod
     def _get_product_range_row(cls, product_range):
