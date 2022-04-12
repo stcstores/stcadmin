@@ -242,7 +242,7 @@ class FBAOrder(models.Model):
                 ),
             )
         try:
-            product = BaseProduct.objects.filter(sku=self.product_SKU).variations()
+            product = BaseProduct.objects.get(sku=self.product_SKU)
             stock_level = StockManager.get_stock_level(product)
             new_stock_level = stock_level - self.quantity_sent
             change_source = f"Updated by FBA order pk={self.pk}"
