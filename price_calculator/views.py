@@ -1,7 +1,7 @@
 """Views for price_calculator."""
 
 
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -65,8 +65,11 @@ class GetShippingPrice(InventoryUserMixin, View):
     def get_shipping_price_details(self):
         """Return details of shipping price as dict."""
         self.country = get_object_or_404(Country, name=self.request.POST["country"])
-        weight = int(self.request.POST["weight"])
-        price = int(self.request.POST["price"])
+        try:
+            weight = int(self.request.POST["weight"])
+            price = int(self.request.POST["price"])
+        except ValueError:
+            return HttpResponse(status=500)
         self.exchange_rate = float(self.country.currency.exchange_rate)
         (
             shipping_method,

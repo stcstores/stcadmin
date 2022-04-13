@@ -52,10 +52,10 @@
     <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Images</a>
     </div>
-    {% comment %} {% url 'price_calculator:range_price_calculator' product_range.pk as url %}
+    {% url 'price_calculator:range_price_calculator' product_range.pk as url %}
     <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Range Price Calculator</a>
-    </div> {% endcomment %}
+    </div>
     {% comment %} {% url 'inventory:print_barcodes' product_range.pk as url %}
     <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Barcode Labels</a>
