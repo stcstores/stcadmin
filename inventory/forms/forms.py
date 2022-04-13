@@ -153,7 +153,7 @@ class EditProductForm(BaseProductForm):
     class Meta(BaseProductForm.Meta):
         """Meta class for EditProductForm."""
 
-        exclude = BaseProductForm.Meta.exclude + ("product_range",)
+        exclude = BaseProductForm.Meta.exclude + ("product_range", "sku")
 
 
 class ProductFormset(KwargFormSet):

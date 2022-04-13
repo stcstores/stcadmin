@@ -7,10 +7,9 @@
 
 {% block additional_head %}{{ block.super }}
 <script>
-  {
-    %
-    include 'inventory/widgets/product_widgets.js' %
-  }
+  /* beautify preserve:start */
+  {% include 'inventory/widgets/product_widgets.js' %}
+  /* beautify preserve:end */
 </script>
 <link rel="stylesheet" href="{% static 'css/product_page.css' %}">
 {% endblock %}
@@ -76,7 +75,7 @@
 {% block script %}{{ block.super }}
 <script>
   var form_changed = false;
-  var price_selectors = ['#id_price', '#id_purchase_price', '#id_retail_price'];
+  var price_selectors = ['#id_purchase_price', '#id_retail_price'];
 
   function set_variation_hover_style() {
     $('.variation_table .not_selected').hover(
@@ -110,7 +109,7 @@
   }
 
   function set_form_changed() {
-    $('.product_form input, .product_form select').change(function () {
+    $('.product_form input, .product_form select').on('input', function () {
       form_changed = true;
       $('.save_button').prop('disabled', false);
     });
