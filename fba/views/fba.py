@@ -77,8 +77,11 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
 
     def get_image_url(self):
         """Return the URL of the product's image."""
-        url = self.product.images.first().image_file.url
-        return mark_safe(url)
+        image = self.product.images.first()
+        if image:
+            return mark_safe(image.image_file.url)
+        else:
+            return ""
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
