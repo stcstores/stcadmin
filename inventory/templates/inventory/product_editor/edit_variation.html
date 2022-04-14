@@ -2,7 +2,11 @@
 {% load static %}
 
 {% block additional_head %}{{ block.super }}
-<script>{% include 'inventory/widgets/product_widgets.js' %}</script>
+<script>
+  /* beautify preserve:start */
+  {% include 'inventory/widgets/product_widgets.js' %}
+  /* beautify preserve:end */
+</script>
 <link rel="stylesheet" href="{% static 'css/product_page.css' %}">
 {% endblock %}
 
@@ -11,108 +15,23 @@
 
   <div class="product_form">
     <form action="" method="POST" autocomplete="off">{% csrf_token %}
-        {% include "inventory/input_add_on_form.html" %}
+      {% include "inventory/input_add_on_form.html" %}
       <div>
-        <button type="submit" class="save_button" id="save_changes" disabled>
+        <button type="submit" class="save_button" id="save_changes">
           Save Changes
         </button>
-        <a href="{% url 'inventory:edit_variation' edit.pk product.pk %}">
-          <button type="button" class="save_button" id="clear_changes" disabled>
+        <a href="{% url 'inventory:edit_variation' product.pk %}">
+          <button type="button" class="save_button" id="clear_changes">
             Clear Changes
           </button>
         </a>
-        <a href="{% url 'inventory:edit_product' edit.pk %}">
-          <button type="button" class="save_button" id="finish">Finish</button>
+        <a href="{% url 'inventory:edit_new_product' product.product_range.pk %}">
+          <button type="button" class="save_button" id="clear_changes">
+            Cancel
+          </button>
         </a>
       </div>
     </form>
   </div>
-
-  <table class="variation_table">
-    <tr>
-      <th>SKU</th>
-      {% for option in product_range.variation_options %}
-      <th>{{ option }}</th>
-      {% endfor %}
-      {% for option in product_range.listing_options %}
-      <th class="listing_option">{{ option }}</th>
-      {% endfor %}
-      <th>Supplier SKU</th>
-    </tr>
-    {% for variation in product_range.products %}
-    <tr class="{% if product == variation %}selected{% else %}not_selected{% endif %}" data-href="{% url 'inventory:edit_variation' edit.pk variation.pk %}">
-      <td class="sku">{{ variation.SKU }}</td>
-      {% for option, value in variation.variation.items %}
-      <td class="option name">{{ value }}</td>
-      {% endfor %}
-      {% for option, value in variation.listing_options.items %}
-      <td class="option listing_option name">{{ value }}</td>
-      {% endfor %}
-      <td class="sku">{{ variation.supplier_SKU }}</td>
-    </tr>
-    {% endfor %}
-  </table>
-
 </div>
-{% endblock %}
-
-{% block script %}{{ block.super }}
-<script>
-
-  var form_changed = false;
-  var price_selectors = ['#id_price', '#id_purchase_price', '#id_retail_price'];
-
-  function set_variation_hover_style() {
-    $('.variation_table .not_selected').hover(
-      function() {
-        $(this).find('td').css('background', '#ccfff1');
-      },
-      function() {
-        $(this).find('td').css('background', '');
-      }
-    );
-  }
-
-  function variation_link_click() {
-    $('.variation_table .not_selected').click(function() {
-      if ((!form_changed) || (window.confirm("Changes not saved.\nDo you want to leave without saving your changes?"))) {
-        window.location = $(this).data('href');
-      }
-    });
-  }
-
-  function set_autoNumeric() {
-    $.each(price_selectors, function(index, value) {
-      $(value).attr({type:"text"});
-      new AutoNumeric($(value)[0]).british({'unformatOnSubmit': true});
-    });
-  }
-
-  function set_form_changed() {
-    $('.product_form input, .product_form select').change(function() {
-      form_changed = true;
-      $('#save_changes').prop('disabled', false);
-      $('#clear_changes').prop('disabled', false);
-      $('#finish').prop('disabled', true);
-    });
-  }
-
-  $(document).ready(function() {
-
-    set_variation_hover_style();
-    variation_link_click();
-    set_autoNumeric();
-
-    $(document).ready(function() {  // After selectize and autoNumeric
-      set_form_changed();
-      $('#clear_changes').click(function(e) {
-        if (!confirm('Are you sure you want clear the changes you have made?')) {
-          e.preventDefault();
-        }
-      });
-    });
-
-  });
-
-</script>
 {% endblock %}

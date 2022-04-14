@@ -73,6 +73,20 @@ class StartNewProduct(InventoryUserMixin, CreateView):
         )
 
 
+class EditRangeDetails(InventoryUserMixin, UpdateView):
+    """View for CreateRangeForm."""
+
+    form_class = forms.EditRangeForm
+    model = models.ProductRange
+    template_name = "inventory/product_editor/range_form.html"
+
+    def get_success_url(self):
+        """Return URL to redirect to after successful form submission."""
+        return reverse(
+            "inventory:edit_new_product", kwargs={"range_pk": self.object.pk}
+        )
+
+
 class CreateInitialVariation(CreateView):
     """Create the first product in a new range."""
 
@@ -239,37 +253,6 @@ class CompleteNewProduct(InventoryUserMixin, RedirectView):
         )
         product_range.complete_new_range()
         return product_range.get_absolute_url()
-
-
-class EditVariations(InventoryUserMixin, TemplateView):
-    """View for editing the variation options of a range."""
-
-    template_name = "inventory/product_editor/edit_variations.html"
-
-    def get_context_data(self, *args, **kwargs):
-        """Return the context for the template."""
-        product_range = get_object_or_404(
-            models.ProductRange, pk=self.kwargs["range_pk"]
-        )
-        context = super().get_context_data(*args, **kwargs)
-        context["product_range"] = product_range
-        context["variation_options"] = product_range.variation_options()
-        context["listing_options"] = product_range.listing_options()
-        context["values"] = product_range.product_option_values.all()
-        context["pre_existing_options"] = product_range.pre_existing_options()
-        context["used_values"] = product_range.product_option_values()
-        return context
-
-
-class EditRangeDetails(InventoryUserMixin, UpdateView):
-    """View for CreateRangeForm."""
-
-    form_class = forms.CreateRangeForm
-    template_name = "inventory/product_editor/range_form.html"
-
-    def get_success_url(self):
-        """Return URL to redirect to after successful form submission."""
-        return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": self.edit.pk})
 
 
 class AddProductOption(InventoryUserMixin, FormView):
@@ -456,45 +439,36 @@ class RemoveProductOptionValue(InventoryUserMixin, RedirectView):
         return reverse_lazy("inventory:edit_variations", kwargs={"edit_ID": edit.pk})
 
 
-class EditVariation(InventoryUserMixin, FormView):
+class EditVariation(InventoryUserMixin, UpdateView):
     """Edit individual variations in the product editor."""
 
     template_name = "inventory/product_editor/edit_variation.html"
+    model = models.Product
     form_class = forms.EditProductForm
-
-    def get_form_kwargs(self, *args, **kwargs):
-        """Return kwargs for form."""
-        self.edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
-        kwargs = super().get_form_kwargs()
-        self.product = get_object_or_404(
-            models.PartialProduct, pk=self.kwargs["product_ID"]
-        )
-        kwargs["product"] = self.product
-        kwargs["user"] = self.request.user
-        return kwargs
-
-    def get_context_data(self, *args, **kwargs):
-        """Get template context data."""
-        context = super().get_context_data(*args, **kwargs)
-        context["edit"] = self.edit
-        context["product"] = self.product
-        context["product_range"] = self.product.product_range
-        return context
 
     def form_valid(self, form):
         """Process form request and return HttpResponse."""
         form.save()
+        self.product = form.instance
         messages.add_message(
-            self.request, messages.SUCCESS, f"Product {self.product.SKU} Updated."
+            self.request, messages.SUCCESS, f"{self.product.full_name} Updated"
         )
         return super().form_valid(form)
 
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
         return reverse_lazy(
-            "inventory:edit_variation",
-            kwargs={"edit_ID": self.edit.pk, "product_ID": self.product.id},
+            "inventory:edit_new_product",
+            kwargs={"range_pk": self.product.product_range.pk},
         )
+
+    def get_context_data(self, *args, **kwargs):
+        """Get template context data."""
+        context_data = super().get_context_data(*args, **kwargs)
+        form = context_data["form"]
+        context_data["product"] = form.instance
+        context_data["product_range"] = form.instance.product_range
+        return context_data
 
 
 class CreateVariation(InventoryUserMixin, RedirectView):

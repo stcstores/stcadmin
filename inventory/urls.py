@@ -98,16 +98,11 @@ product_editor_patterns = [
     path(
         "edit_product/<int:range_pk>/", views.EditProduct.as_view(), name="edit_product"
     ),
-    path(
-        "edit_variations/<int:range_pk>/",
-        views.EditVariations.as_view(),
-        name="edit_variations",
-    ),
     path("continue/", views.Continue.as_view(), name="continue"),
     path(
-        "range_form/<int:edit_ID>/",
+        "edit_range_details/<int:pk>/",
         views.EditRangeDetails.as_view(),
-        name="range_form",
+        name="edit_range_details",
     ),
     path(
         "add_dropdown/<int:edit_ID>/", views.AddDropdown.as_view(), name="add_dropdown"
@@ -133,7 +128,7 @@ product_editor_patterns = [
         name="remove_product_option_value",
     ),
     path(
-        "edit_variation/<int:edit_ID>/<int:product_ID>/",
+        "edit_variation/<int:pk>/",
         views.EditVariation.as_view(),
         name="edit_variation",
     ),
