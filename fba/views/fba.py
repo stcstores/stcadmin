@@ -62,7 +62,7 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
     def get(self, *args, **kwargs):
         """Return kwargs for the form."""
         self.product = get_object_or_404(BaseProduct, pk=self.kwargs["product_id"])
-        return super(CreateView).get(*args, **kwargs)
+        return super(CreateView, self).get(*args, **kwargs)
 
     def get_initial(self, *args, **kwargs):
         """Return initial values for the form."""
