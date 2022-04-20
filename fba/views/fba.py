@@ -59,10 +59,14 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
     form_class = forms.CreateFBAOrderForm
     template_name = "fba/fbaorder_form.html"
 
+    def get(self, *args, **kwargs):
+        """Return kwargs for the form."""
+        self.product = get_object_or_404(BaseProduct, pk=self.kwargs["product_id"])
+        return super(CreateView).get(*args, **kwargs)
+
     def get_initial(self, *args, **kwargs):
         """Return initial values for the form."""
         initial = super().get_initial(*args, **kwargs)
-        self.product = get_object_or_404(BaseProduct, pk=self.kwargs["product_id"])
         initial["product_SKU"] = self.product.sku
         initial["product_name"] = self.product.full_name
         initial["product_weight"] = self.product.weight_grams
