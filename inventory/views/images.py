@@ -2,6 +2,7 @@
 
 
 from collections import defaultdict
+from uuid import uuid4
 
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -64,6 +65,7 @@ class ImageFormView(InventoryUserMixin, FormView):
             for product in products:
                 first_ordering = self.get_first_ordering(product)
                 for ordering, image in enumerate(images, first_ordering):
+                    image.name = str(uuid4())
                     models.ProductImage(
                         image_file=image, product=product, ordering=ordering
                     ).save()
