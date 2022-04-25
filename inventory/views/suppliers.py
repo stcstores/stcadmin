@@ -31,7 +31,7 @@ class Supplier(InventoryUserMixin, TemplateView):
         """Add supplier to the template context."""
         context = super().get_context_data(*args, **kwargs)
         context["supplier"] = get_object_or_404(models.Supplier, id=self.kwargs["pk"])
-        context["contacts"] = context["supplier"].suppliercontact_set.all()
+        context["contacts"] = context["supplier"].supplier_contacts.all()
         return context
 
 
