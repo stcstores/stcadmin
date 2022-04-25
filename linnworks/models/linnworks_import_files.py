@@ -38,7 +38,7 @@ class CSVFile:
         writer.writerows(self.rows)
 
     def to_string_io(self):
-        """Return the CSV file as io.StrinIO."""
+        """Return the CSV file as io.StringIO."""
         f = io.StringIO()
         self.write(f)
         return f
@@ -176,6 +176,8 @@ class LinnworksProductImportFile(BaseImportFile):
         CALIBRE,
     )
 
+    EMPTY_BAY_STRING = "NO BAY"
+
     @classmethod
     def create(cls):
         """Create a Linnworks Product Import file."""
@@ -270,7 +272,8 @@ class LinnworksProductImportFile(BaseImportFile):
         """Return the product's bays as a comma separated list."""
         bay_links = product.product_bay_links.all()
         bays = [link.bay.name for link in bay_links]
-        return ", ".join(bays)
+        bay_text = ", ".join(bays) or cls.EMPTY_BAY_STRING
+        return bay_text
 
     @classmethod
     def _get_product_row(cls, product):
