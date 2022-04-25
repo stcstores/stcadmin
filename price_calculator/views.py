@@ -38,7 +38,7 @@ class GetShippingPrice(InventoryUserMixin, View):
             response_data = self.get_shipping_price_details()
         except models.NoShippingService:
             response_data = self.no_shipping_price_response()
-        return JsonResponse(response_data)
+        return JsonResponse(response_data, safe=False)
 
     def product_type(self):
         """Return the package type."""
