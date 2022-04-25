@@ -427,7 +427,7 @@ def generate_sku():
     def get_character_block():
         return "".join(random.choices(string.ascii_uppercase + string.digits, k=3))
 
-    return "_".join((get_character_block() for _ in range(3)))
+    return "-".join((get_character_block() for _ in range(3)))
 
 
 def generate_range_sku():
