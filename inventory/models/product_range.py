@@ -9,6 +9,8 @@ from django.db.models.functions import Lower
 from django.urls import reverse
 from django.utils import timezone
 
+from .barcode import Barcode
+
 
 class ProductRangeManager(models.Manager):
     """Manager for complete products."""
@@ -81,8 +83,12 @@ class ProductRange(models.Model):
         """Return the absolute url for the product range."""
         return reverse("inventory:product_range", kwargs={"range_pk": self.pk})
 
-    def complete_new_range(self):
+    def complete_new_range(self, user):
         """Make product range complete and active."""
+        for product in self.products.all():
+            if not product.barcode:
+                product.barcode = Barcode.get_barcode(user=user, used_for=product.sku)
+                product.save()
         self.status = self.COMPLETE
         self.save()
 

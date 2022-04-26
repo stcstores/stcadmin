@@ -251,7 +251,7 @@ class CompleteNewProduct(InventoryUserMixin, RedirectView):
         product_range = get_object_or_404(
             models.ProductRange, pk=self.kwargs.get("range_pk")
         )
-        product_range.complete_new_range()
+        product_range.complete_new_range(self.request.user)
         return product_range.get_absolute_url()
 
 

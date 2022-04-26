@@ -116,7 +116,7 @@ class BaseProduct(PolymorphicModel):
         Supplier, on_delete=models.PROTECT, related_name="products"
     )
     supplier_sku = models.CharField(max_length=255, null=True, blank=True)
-    barcode = models.CharField(max_length=20)
+    barcode = models.CharField(max_length=20, blank=True, null=True)
     supplier_barcode = models.CharField(max_length=20, blank=True, null=True)
     package_type = models.ForeignKey(
         PackageType, on_delete=models.PROTECT, related_name="products"
