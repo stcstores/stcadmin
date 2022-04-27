@@ -11,3 +11,17 @@ class LinnworksConfigAdmin(SingletonModelAdmin):
     """Model admin for the LinnworksConfig model."""
 
     exclude_fields = ()
+
+
+@admin.register(models.LinnworksChannel)
+class LinnworksChannelAdmin(admin.ModelAdmin):
+    """Model admin for the LinnworksChannel model."""
+
+    exclude_fields = ()
+
+
+@admin.register(models.LinkingIgnoredSKU)
+class LinkingIgnoredSKUAdmin(admin.ModelAdmin):
+    """Model admin for the LinkingIgnoredSKU model."""
+
+    exclude_fields = ()

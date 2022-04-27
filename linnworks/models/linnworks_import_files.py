@@ -31,6 +31,7 @@ class CSVFile:
         writer = csv.writer(
             fileobj,
             delimiter=",",
+            lineterminator="\n",
             quoting=csv.QUOTE_NONNUMERIC,
         )
         if self.header is not None:
