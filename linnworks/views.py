@@ -22,7 +22,7 @@ def get_stock_levels(request):
             stock_level = StockManager.get_stock_level(product)
             output[product_id] = stock_level
     except linnapi.exceptions.InvalidResponseError:
-        return HttpResponseServerError
+        return HttpResponseServerError()
     else:
         return JsonResponse(output)
 
