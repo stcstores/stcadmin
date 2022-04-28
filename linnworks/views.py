@@ -3,7 +3,7 @@
 import json
 
 import linnapi
-from django.http import HttpResponseServerError, JsonResponse
+from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
@@ -22,7 +22,7 @@ def get_stock_levels(request):
             stock_level = StockManager.get_stock_level(product)
             output[product_id] = stock_level
     except linnapi.exceptions.InvalidResponseError:
-        return HttpResponseServerError()
+        return HttpResponseNotFound()
     else:
         return JsonResponse(output)
 
