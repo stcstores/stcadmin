@@ -345,14 +345,14 @@ celery = ">=5.2.3,<6.0"
 
 [[package]]
 name = "django-debug-toolbar"
-version = "3.2.4"
+version = "3.3.0"
 description = "A configurable set of panels that display various debug information about the current request/response."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
-Django = ">=2.2"
+Django = ">=3.2"
 sqlparse = ">=0.2.0"
 
 [[package]]
@@ -1625,8 +1625,8 @@ django-celery-results = [
     {file = "django_celery_results-2.3.1.tar.gz", hash = "sha256:bf24ecc29c42e49cc7eb30b9b3739471331e2a0ca517cc88ca53a0cf3a2031d1"},
 ]
 django-debug-toolbar = [
-    {file = "django-debug-toolbar-3.2.4.tar.gz", hash = "sha256:644bbd5c428d3283aa9115722471769cac1bec189edf3a0c855fd8ff870375a9"},
-    {file = "django_debug_toolbar-3.2.4-py3-none-any.whl", hash = "sha256:6b633b6cfee24f232d73569870f19aa86c819d750e7f3e833f2344a9eb4b4409"},
+    {file = "django-debug-toolbar-3.3.0.tar.gz", hash = "sha256:74151c292db9455fa5127d64a4414faee8ee3b1cddfb17f0e93cf3f13cd84bc1"},
+    {file = "django_debug_toolbar-3.3.0-py3-none-any.whl", hash = "sha256:85015fedbf937a6f3526617546fefaf21859eb1f9bbbc82a2fcba313d7c15917"},
 ]
 django-formtools = [
     {file = "django-formtools-2.3.tar.gz", hash = "sha256:9663b6eca64777b68d6d4142efad8597fe9a685924673b25aa8a1dcff4db00c3"},
