@@ -50,6 +50,7 @@ class ChannelFeeFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"Test Channel Fee {n}")
     fee_percentage = 13
+    country = factory.SubFactory(CountryFactory)
     ordering = 100
 
 

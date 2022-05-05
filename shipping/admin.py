@@ -1,4 +1,5 @@
 """Model Admin for the shipping app."""
+
 from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
 
@@ -12,6 +13,7 @@ class CurrencyAdmin(admin.ModelAdmin):
     fields = ("name", "code", "exchange_rate", "symbol")
     list_display = ("name", "code", "exchange_rate", "symbol")
     list_editable = ("code", "exchange_rate", "symbol")
+    search_fields = ("name", "symbol", "code")
 
 
 @admin.register(models.Region)
@@ -40,21 +42,14 @@ class RegionAdmin(admin.ModelAdmin):
         "default_vat_rate",
         "flag_if_not_delivered_by_days",
     )
+    search_fields = ("name",)
 
 
 @admin.register(models.Country)
 class CountryAdmin(admin.ModelAdmin):
     """Model Admin for shipping.Country."""
 
-    fields = (
-        "country_ID",
-        "name",
-        "region",
-        "currency",
-        "vat_required",
-        "flag",
-        "default_vat_rate",
-    )
+    exclude = ()
     list_display = (
         "__str__",
         "country_ID",
@@ -73,7 +68,11 @@ class CountryAdmin(admin.ModelAdmin):
         "vat_required",
         "default_vat_rate",
     )
-    list_filter = ("region",)
+    list_filter = ("region", "currency", "vat_required")
+    search_fields = ("name",)
+    search_fields = ("name",)
+    autocomplete_fields = ("region", "currency")
+    list_select_related = ("region", "currency")
 
 
 @admin.register(models.Provider)

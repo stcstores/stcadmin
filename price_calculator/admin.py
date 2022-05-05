@@ -19,10 +19,21 @@ class CountryChannelFeeAdmin(admin.ModelAdmin):
 class ChannelFeeAdmin(admin.ModelAdmin):
     """Model admin for the ChannelFee model."""
 
-    fields = ("name", "fee_percentage", "ordering")
-    list_display = ("__str__", "name", "fee_percentage", "ordering")
+    exclude = ()
+    list_display = ("__str__", "name", "fee_percentage", "country", "ordering")
     list_display_links = ("__str__",)
-    list_editable = ("name", "fee_percentage", "ordering")
+    list_editable = ("name", "fee_percentage", "country", "ordering")
+    search_fields = ("name",)
+    list_filter = ("country",)
+    list_select_related = ("country",)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        """Limit the country drop down to countries with shipping methods."""
+        if db_field.name == "country":
+            kwargs["queryset"] = models.Country.objects.filter(
+                id__in=models.ShippingMethod.objects.values_list("country", flat=True)
+            )
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(models.Channel)

@@ -41,7 +41,7 @@ def channel(channel_factory):
 @pytest.fixture
 def form_data(country, channel, weight, price, international_shipping, product_type):
     return {
-        "country": country.name,
+        "country": country.id,
         "weight": weight,
         "price": price,
         "international_shipping": international_shipping,

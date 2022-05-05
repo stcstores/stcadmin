@@ -64,7 +64,7 @@ class GetShippingPrice(InventoryUserMixin, View):
 
     def get_shipping_price_details(self):
         """Return details of shipping price as dict."""
-        self.country = get_object_or_404(Country, name=self.request.POST["country"])
+        self.country = get_object_or_404(Country, id=self.request.POST["country"])
         try:
             weight = int(self.request.POST["weight"])
             price = int(self.request.POST["price"])
@@ -178,11 +178,11 @@ class BasePriceCalculatorView(InventoryUserMixin, TemplateView):
         for country in countries:
             vat_required = country.vat_is_required()
             if vat_required == country.VAT_ALWAYS:
-                vat[country.name] = country.vat_rate()
+                vat[country.id] = country.vat_rate()
             elif vat_required == country.VAT_NEVER:
-                vat[country.name] = 0
+                vat[country.id] = 0
             else:
-                vat[country.name] = None
+                vat[country.id] = None
         return vat
 
 

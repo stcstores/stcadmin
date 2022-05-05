@@ -25,6 +25,9 @@ class ChannelFee(models.Model):
 
     name = models.CharField(max_length=50, unique=True)
     fee_percentage = models.FloatField()
+    country = models.ForeignKey(
+        Country, on_delete=models.PROTECT, related_name="channel_fees"
+    )
     ordering = models.PositiveSmallIntegerField(default=100)
 
     class Meta:

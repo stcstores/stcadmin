@@ -14,8 +14,15 @@ def fee_percentage():
 
 
 @pytest.fixture
-def new_channel_fee(name, fee_percentage):
-    channel_fee = models.ChannelFee(name=name, fee_percentage=fee_percentage)
+def country(country_factory):
+    return country_factory.create()
+
+
+@pytest.fixture
+def new_channel_fee(name, country, fee_percentage):
+    channel_fee = models.ChannelFee(
+        name=name, country=country, fee_percentage=fee_percentage
+    )
     channel_fee.save()
     return channel_fee
 
@@ -28,6 +35,11 @@ def test_sets_name(new_channel_fee, name):
 @pytest.mark.django_db
 def test_sets_fee_percentage(new_channel_fee, fee_percentage):
     assert new_channel_fee.fee_percentage == fee_percentage
+
+
+@pytest.mark.django_db
+def test_sets_country(new_channel_fee, country):
+    assert new_channel_fee.country == country
 
 
 @pytest.mark.django_db

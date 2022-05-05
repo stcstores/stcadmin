@@ -25,7 +25,7 @@
       <label for="country" class="InputAddOn-item">Country</label>
       <select name="country" id="country">
         {% for country in countries %}
-        <option value="{{ country }}">{{ country }}</option>
+        <option value="{{ country.id }}">{{ country }}</option>
         {% endfor %}
       </select>
     </div>
@@ -68,12 +68,13 @@
 
     <div class="InputAddOn">
       <label for="channel_fee" class="InputAddOn-item">Channel Fee</label>
-      <select name="channel_fee" id="channel_fee_input" size="{{ channel_fees|length }}">
-        {% for fee in channel_fees %}
-        <option value="{{ fee.fee_percentage }}" {% if forloop.first %} selected{% endif %}>{{ fee.name }}:
-          {{ fee.fee_percentage }}%</option>
-        {% endfor %}
+      {% for country in countries %}
+      <select name="channel_fee" id="channel_fee_input_{{ country.id }}" size="5" class="channel_fee_input" hidden>
+        {% for fee in channel_fees %}{% if fee.country == country %}
+        <option value="{{ fee.fee_percentage }}">{{ fee.name }}: {{ fee.fee_percentage }}</option>
+        {% endif %}{% endfor %}
       </select>
+      {% endfor %}
     </div>
 
     <div class="InputAddOn">
@@ -147,11 +148,17 @@
   get_postage_price_url = "{% url 'price_calculator:get_shipping_price' %}";
 
   $(document).ready(function () {
+    var country = $("#country").val();
+    var channel_fee_input = $('#channel_fee_input_' + country);
+    channel_fee_input.show();
+    $(".channel_fee_input").each(function () {
+      $(this).children().first().attr("selected", true);
+    });
     var ex_vat_price = 5;
     var vat_rate = $('#vat_rate').val();
     var purchase_price = $('#purchase_price').val();
     var postage_price = 5;
-    var channel_fee = $('#channel_fee_input').val();
+    var channel_fee = channel_fee_input.val();
     var data = {
       'sale_price': ex_vat_price,
       'postage_price': postage_price,
@@ -216,7 +223,7 @@
       calculator.set_postage_price($(this).val());
     });
 
-    $('#channel_fee_input').change(function () {
+    $('.channel_fee_input').change(function () {
       calculator.set_channel_fee_percentage($(this).val());
     });
 
@@ -231,7 +238,12 @@
     };
 
     $('#country').change(function () {
-      update_postage_price(calculator)
+      $(".channel_fee_input").hide();
+      var country = $("#country").val();
+      var channel_fee_input = $('#channel_fee_input_' + country);
+      channel_fee_input.show();
+      calculator.set_channel_fee_percentage(channel_fee_input.val());
+      update_postage_price(calculator);
     });
     $('#weight').change(function () {
       update_postage_price(calculator)
