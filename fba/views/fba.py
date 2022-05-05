@@ -120,11 +120,11 @@ class RepeatFBAOrder(FBAOrderCreate):
 
     def dispatch(self, *args, **kwargs):
         """Return kwargs for the form."""
+        self.get_product()
         return super(CreateView, self).dispatch(*args, **kwargs)
 
     def get(self, *args, **kwargs):
         """Duplicate the order if it is recent, otherwise use repeat order form."""
-        self.get_product()
         order_age = timezone.now() - self.to_repeat.created_at
         if order_age < self.MAX_DUPLICATE_AGE:
             self.duplicate_order()
