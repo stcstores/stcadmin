@@ -22,7 +22,7 @@ from inventory.models import (
     MultipackProduct,
     ProductBayLink,
 )
-from linnworks.models.stock_manager import StockManager
+from linnworks.models import StockManager
 
 
 class FBAUserMixin(UserInGroupMixin):
@@ -134,8 +134,9 @@ class RepeatFBAOrder(FBAOrderCreate):
 
     def duplicate_order(self):
         """Create a duplicate of an FBA order."""
+        stock_level = StockManager.get_stock_level(product=self.product)
         if (quantity_sent := self.to_repeat.quantity_sent) is not None:
-            aprox_quantity = min((quantity_sent, self.product.stock_level))
+            aprox_quantity = min((quantity_sent, stock_level))
         else:
             aprox_quantity = self.to_repeat.aproximate_quantity
         self.repeated_order = models.FBAOrder(
