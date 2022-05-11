@@ -1,0 +1,40 @@
+{% include "django/forms/widgets/select.html" %}
+<button type="button" onclick="new_instance_dialogue_{{ widget.attrs.id }}();">New</button>
+
+<script>
+    /* beautify preserve:start */
+    function success_creating_{{ widget.attrs.id }}(result, status, xhr) {
+    /* beautify preserve:end */
+        var instance_id = result['id'];
+        var instance_name = result['name'];
+        var input = $("#{{ widget.attrs.id }}");
+        var newOption = new Option(instance_name, instance_id, false, true);
+        input.append(newOption).trigger('change');
+    }
+
+    /* beautify preserve:start */
+    function error_creating_{{ widget.attrs.id }}(result, status, xhr) {
+    /* beautify preserve:end */
+        alert("New {{ widget.name}} was not created.")
+    }
+
+    /* beautify preserve:start */
+    function new_instance_dialogue_{{ widget.attrs.id }}() {
+    /* beautify preserve:end */
+        var new_name = prompt("Name of new {{ widget.name }}:", "");
+        if (new_name) {
+            $.ajax({
+                url: "{{ create_new_url }}",
+                method: "POST",
+                data: {
+                    'name': new_name
+                },
+                /* beautify preserve:start */
+                success: success_creating_{{ widget.attrs.id }},
+                error: error_creating_{{ widget.attrs.id }},
+                /* beautify preserve:end */
+            });
+        }
+
+    }
+</script>

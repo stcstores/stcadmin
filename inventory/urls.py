@@ -79,6 +79,9 @@ api_urlpatterns = [
     ),
     path("set_image_order/", views.SetImageOrderView.as_view(), name="set_image_order"),
     path("delete_image/", views.DeleteImage.as_view(), name="delete_image"),
+    path("new_brand", views.NewBrand.as_view(), name="new_brand"),
+    path("new_manufacturer", views.NewManufacturer.as_view(), name="new_manufacturer"),
+    path("new_supplier", views.NewSupplier.as_view(), name="new_supplier"),
 ]
 
 product_editor_patterns = [

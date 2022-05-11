@@ -109,10 +109,13 @@
   }
 
   function set_form_changed() {
-    $('.product_form input, .product_form select').on('input', function () {
-      form_changed = true;
-      $('.save_button').prop('disabled', false);
-    });
+    form_changed = true;
+    $('.save_button').prop('disabled', false);
+  }
+
+  function set_form_changed_event_triggers() {
+    $('.product_form input, .product_form select').on('input', set_form_changed);
+    $('select').on('change', set_form_changed);
   }
 
   $(document).ready(function () {
@@ -122,7 +125,7 @@
     set_autoNumeric();
 
     $(document).ready(function () { // After selectize and autoNumeric
-      set_form_changed();
+      set_form_changed_event_triggers();
     });
 
   });

@@ -84,16 +84,9 @@ class BaseProductForm(forms.ModelForm):
             "width_mm",
         )
         field_classes = {
-            # "barcode": inventory_fields.Barcode,
-            # "purchase_price": inventory_fields.PurchasePrice,
-            # "retail_price": inventory_fields.RetailPrice,
-            # "vat_rate": inventory_fields.VATRateField,
-            # "stock_level": inventory_fields.StockLevel,
-            # "bay": inventory_fields.BayField,
-            # "weight_grans": inventory_fields.Weight,
-            # "brand": inventory_fields.Brand,
-            # "manufacturer": inventory_fields.Manufacturer,
-            # "package_type": inventory_fields.PackageType,
+            "brand": inventory_fields.Brand,
+            "manufacturer": inventory_fields.Manufacturer,
+            "supplier": inventory_fields.Supplier,
         }
 
         field_order = (
@@ -122,18 +115,6 @@ class InitialVariationForm(BaseProductForm):
         """Meta for InitialProductForm."""
 
         model = models.InitialVariation
-        field_classes = {
-            # "barcode": inventory_fields.Barcode,
-            # "purchase_price": inventory_fields.PurchasePrice,
-            # "retail_price": inventory_fields.RetailPrice,
-            # "vat_rate": inventory_fields.VATRateField,
-            # "stock_level": inventory_fields.StockLevel,
-            # "bay": inventory_fields.BayField,
-            # "weight_grans": inventory_fields.Weight,
-            # "brand": inventory_fields.Brand,
-            # "manufacturer": inventory_fields.Manufacturer,
-            # "package_type": inventory_fields.PackageType,
-        }
         widgets = {"product_range": forms.HiddenInput, "sku": forms.HiddenInput}
 
     sku = forms.CharField(required=False, widget=forms.HiddenInput)

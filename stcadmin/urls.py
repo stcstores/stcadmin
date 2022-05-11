@@ -13,6 +13,7 @@ admin.site.site_header = "STC Stores Administration"
 app_name = "stcadmin"
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("select2/", include("django_select2.urls")),
     path("user/", include("user.urls", namespace="user")),
     path("labelmaker/", include("labelmaker.urls", namespace="labelmaker")),
     path("inventory/", include("inventory.urls", namespace="inventory")),

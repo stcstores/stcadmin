@@ -3,9 +3,53 @@
 import json
 
 from django import forms
+from django.urls import reverse_lazy
 from django.utils.safestring import mark_safe
+from django_select2.forms import ModelSelect2Widget
+
+from inventory import models
 
 from .base import ProductEditorBase
+
+
+class ModelSelect2CreateableWidget(ModelSelect2Widget):
+    """Widget for selecting model instances with select2 and a create button."""
+
+    template_name = "inventory/widgets/model_select_2_creatable_widget.html"
+    create_new_url = ""
+
+    def get_context(self, *args, **kwargs):
+        """Add the URL to use to create the new instance to the context."""
+        context = super(ModelSelect2Widget, self).get_context(*args, **kwargs)
+        context["create_new_url"] = self.create_new_url
+        return context
+
+
+class BrandWidget(ModelSelect2CreateableWidget):
+    """Widget for selecting or creating brands."""
+
+    name = "brand"
+    create_new_url = reverse_lazy("inventory:new_brand")
+    model = models.Brand
+    search_fields = ["name__icontains"]
+
+
+class ManufacturerWidget(ModelSelect2CreateableWidget):
+    """Widget for selecting or creating manufacturers."""
+
+    name = "manufacturer"
+    create_new_url = reverse_lazy("inventory:new_manufacturer")
+    model = models.Manufacturer
+    search_fields = ["name__icontains"]
+
+
+class SupplierWidget(ModelSelect2CreateableWidget):
+    """Widget for selecting or creating suppliers."""
+
+    name = "supplier"
+    create_new_url = reverse_lazy("inventory:new_supplier")
+    model = models.Supplier
+    search_fields = ["name__icontains"]
 
 
 class HorizontalRadio(forms.RadioSelect):

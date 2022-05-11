@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/inventory.css' %}">
 <link rel="stylesheet" href="{% static 'css/update_stock.css' %}">
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+{{ form.media.css }}
 {% endblock %}
 
 {% block page_title %}Inventory{% endblock %}
@@ -16,3 +17,7 @@
 {% endblock %}
 
 {% block content %}{% endblock %}
+
+{% block script %}
+{{ form.media.js }}
+{% endblock script %}

@@ -3,7 +3,7 @@
 import json
 
 from django.db import transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -98,3 +98,35 @@ class DeleteImage(InventoryUserMixin, View):
         except Exception:
             return HttpResponse(status=500)
         return HttpResponse("ok")
+
+
+class NewInstance(View):
+    """Create a new instance of a model with only a name field."""
+
+    def post(self, *args, **kwargs):
+        """Process HTTP request."""
+        name = self.request.POST["name"]
+        instance = self.model_class(name=name)
+        instance.save()
+        return JsonResponse({"name": instance.name, "id": instance.pk})
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class NewBrand(InventoryUserMixin, NewInstance):
+    """Create a new brand."""
+
+    model_class = models.Brand
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class NewManufacturer(InventoryUserMixin, NewInstance):
+    """Create a new manufacturer."""
+
+    model_class = models.Manufacturer
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class NewSupplier(InventoryUserMixin, NewInstance):
+    """Create a new supplier."""
+
+    model_class = models.Supplier

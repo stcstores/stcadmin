@@ -10,6 +10,40 @@ from . import fieldtypes, widgets
 from .fieldtypes import Validators
 
 
+class Brand(forms.ModelChoiceField):
+    """Field for product brand."""
+
+    required_message = "Please supply a brand"
+    help_text = "The <b>Brand</b> of the product.<br>This is required for listings."
+    widget = widgets.BrandWidget
+
+
+class Manufacturer(forms.ModelChoiceField):
+    """Field for product manufacturer."""
+
+    required_message = ("Please supply a manufacturer",)
+    help_text = (
+        "The <b>Manufacturer</b> of the product.<br>This is required for " "listings."
+    )
+    widget = widgets.ManufacturerWidget
+
+
+class Supplier(forms.ModelChoiceField):
+    """Field for product supplier."""
+
+    required_message = (
+        "A <b>Supplier</b> must be provided. If the supplier does appear in "
+        "the list it must be added to Cloud Commerce before the product can be"
+        " created."
+    )
+    help_text = (
+        "The <b>Supplier</b> from which the product is purchased."
+        "If the supplier does appear in the list it must be added to "
+        "Cloud Commerce before the product can be created."
+    )
+    widget = widgets.SupplierWidget
+
+
 class Title(fieldtypes.TextField):
     """Product Range Title field."""
 
@@ -179,28 +213,6 @@ class HSCode(fieldtypes.TextField):
     variable = True
     help_text = "The product's HS Code"
     widget = widgets.HSCodeWidget()
-
-
-class Supplier(fieldtypes.SingleSelectize):
-    """Field for selecting the supplier of a product."""
-
-    label = "Supplier"
-    name = "supplier"
-    html_class = "selectize"
-    required_message = (
-        "A <b>Supplier</b> must be provided. If the supplier does appear in "
-        "the list it must be added to Cloud Commerce before the product can be"
-        " created."
-    )
-    help_text = (
-        "The <b>Supplier</b> from which the product is purchased."
-        "If the supplier does appear in the list it must be added to "
-        "Cloud Commerce before the product can be created."
-    )
-
-    def get_queryset(self):
-        """Return field choices."""
-        return models.Supplier.objects.filter(active=True)
 
 
 class SupplierSKU(fieldtypes.TextField):
@@ -389,35 +401,6 @@ class ListingOption(ProductOptionValueField):
     """Field for options that provide information for listings."""
 
     pass
-
-
-class Brand(fieldtypes.SelectizeModelChoiceField):
-    """Field for product brand."""
-
-    label = "Brand"
-    name = "brand"
-    required_message = "Please supply a brand"
-    help_text = "The <b>Brand</b> of the product.<br>This is required for listings."
-
-    def get_queryset(self):
-        """Return a queryset of selectable options."""
-        return models.Brand.objects.filter(active=True)
-
-
-class Manufacturer(fieldtypes.SelectizeModelChoiceField):
-    """Field for the manufacturer of the product."""
-
-    label = "Manufacturer"
-    name = "manufacturer"
-    required_message = ("Please supply a manufacturer",)
-    placeholder = "Manufacturer"
-    help_text = (
-        "The <b>Manufacturer</b> of the product.<br>This is required for " "listings."
-    )
-
-    def get_queryset(self):
-        """Return a queryset of selectable options."""
-        return models.Manufacturer.objects.filter(active=True)
 
 
 class SelectProductOption(fieldtypes.SelectizeModelChoiceField):
