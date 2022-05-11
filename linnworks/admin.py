@@ -25,3 +25,13 @@ class LinkingIgnoredSKUAdmin(admin.ModelAdmin):
     """Model admin for the LinkingIgnoredSKU model."""
 
     exclude_fields = ()
+
+
+@admin.register(models.InitialStockLevel)
+class InitialStockLevelAdmin(admin.ModelAdmin):
+    """Model admin for the InitialStoclLevel model."""
+
+    exclude_fields = ()
+    list_display = ("sku", "stock_level")
+    list_editable = ("stock_level",)
+    search_fields = ("sku",)

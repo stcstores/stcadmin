@@ -6,6 +6,7 @@ from collections import defaultdict
 
 from inventory.models import CombinationProductLink, MultipackProduct, Product
 from inventory.models.product import CombinationProduct
+from linnworks.models.stock_manager import InitialStockLevel
 
 
 class CSVFile:
@@ -65,11 +66,18 @@ class BaseImportFile:
         raise NotImplementedError()
 
     @classmethod
+    def post_creation(cls, *args, **kwargs):
+        """Override this method to add operations after file creation."""
+        pass
+
+    @classmethod
     def create_file(cls, *args, **kwargs):
         """Return a list of lists of row values."""
         row_data = cls.get_row_data(*args, **kwargs)
         rows = [[row.get(h, "") for h in cls.header] for row in row_data]
-        return CSVFile(rows=rows, header=cls.header)
+        csv_file = CSVFile(rows=rows, header=cls.header)
+        cls.post_creation(*args, **kwargs)
+        return csv_file
 
 
 class LinnworksProductImportFile(BaseImportFile):
@@ -185,6 +193,15 @@ class LinnworksProductImportFile(BaseImportFile):
         return cls.create_file(product_ranges=cls.get_product_ranges())
 
     @classmethod
+    def post_creation(cls, product_ranges):
+        """Clear updated SKUs from the initial stock level table."""
+        skus = []
+        for range_products in product_ranges.values():
+            for product in range_products:
+                skus.append(product.sku)
+        InitialStockLevel.objects.filter(sku__in=set(skus)).delete()
+
+    @classmethod
     def get_product_ranges(cls):
         """Return a dict of productrange: list(products)."""
         product_ranges = defaultdict(list)
@@ -286,6 +303,12 @@ class LinnworksProductImportFile(BaseImportFile):
     @classmethod
     def _get_product_row(cls, product):
         row = cls._get_default_row()
+        try:
+            initial_stock_level = InitialStockLevel.objects.get(
+                sku=product.sku
+            ).stock_level
+        except InitialStockLevel.DoesNotExist:
+            initial_stock_level = None
         row[cls.SKU] = product.sku
         row[cls.TITLE] = product.full_name
         row[cls.SHORT_DESCRIPTION] = product.product_range.description
@@ -320,6 +343,8 @@ class LinnworksProductImportFile(BaseImportFile):
             )
         for attribute, value in product_attributes.items():
             row[attribute] = value
+        if initial_stock_level is not None and initial_stock_level != 0:
+            row[cls.STOCK_LEVEL] = initial_stock_level
         return row
 
     @classmethod

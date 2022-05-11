@@ -1,6 +1,7 @@
 {% extends "inventory/product_editor/base.html" %}
 {% load static %}
 
+
 {% block content %}{{ block.super }}
 <a href="{% url 'inventory:edit_range_details' product_range.pk %}">
   <button>Edit Range details</button>
@@ -41,6 +42,11 @@
           <button>Edit</button>
         </a>
       </div>
+    </th>
+    <th>
+      {% if product_range.status == product_range.CREATING %}
+      {% include 'inventory/product_editor/set_initial_stock.html' %}
+      {% endif %}
     </th>
     {% if product.pre_existing %}
     <td>Existing</td>
