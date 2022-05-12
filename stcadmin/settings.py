@@ -59,6 +59,21 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+        "LOCATION": "localhost",
+    },
+    "select2": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://localhost/",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    },
+}
+
+SELECT2_CACHE_BACKEND = "select2"
 
 ALLOWED_HOSTS = get_config("ALLOWED_HOSTS")
 CSRF_TRUSTED_ORIGINS = get_config("CSRF_TRUSTED_ORIGINS")

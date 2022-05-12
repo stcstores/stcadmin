@@ -36,6 +36,8 @@ boto3 = "^1.22.10"
 shopify_api_py = {git = "https://github.com/stcstores/shopify_api_py.git", rev = "main"}
 linnapi = {git = "https://github.com/stcstores/linnapi.git", rev = "main"}
 django-select2 = "^7.10.0"
+pymemcache = "^3.5.2"
+django-redis = "^5.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=6.2.4"
