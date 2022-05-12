@@ -40,7 +40,7 @@ function update_stock_level(product_id) {
 
 function set_stock_level_display(product_id, stock_level) {
   $('#stock_' + product_id).val(stock_level);
-  $('#update_' + product_id).prop('disabled', false);
+  $('#update_' + product_id).prop('disabled', true);
   $('#status_' + product_id).hide();
 }
 
@@ -73,5 +73,11 @@ function get_stock_level_error_display(product_id) {
 $(document).ready(function() {
   $('.stock_update_button').prop('disabled', true);
   $('.stock_level_field').val('');
-  $('')
+  $(".stock_level_field").on("input", function() {
+    var product_id = $(this).attr('id').replace("stock_", "");
+    $("#update_" + product_id).prop('disabled', false);
+  });
+  $(".stock_level_field").focus(function() {
+    $(this).select();
+ });
 });
