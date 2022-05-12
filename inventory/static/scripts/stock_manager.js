@@ -7,6 +7,9 @@ function get_stock_level(product_id) {
       var stock_level=response[product_id];
       set_stock_level_display(product_id, stock_level);
     },
+    error: function (response) {
+      get_stock_level_error_display(product_id);
+    },
     contentType: "application/json",
     dataType: 'json'
   });
@@ -27,7 +30,7 @@ function update_stock_level(product_id) {
       var new_stock_level = response[product_id];
       stock_level_update_success(product_id, new_stock_level);
     },
-    failure: function() {
+    error: function() {
       stock_level_update_failure(product_id);
     },
     contentType: "application/json",
@@ -41,8 +44,6 @@ function set_stock_level_display(product_id, stock_level) {
   $('#status_' + product_id).hide();
 }
 
-
-
 function click_update_button(product_id) {
   return function (event) {
     $('#update_' + product_id).prop('disabled', true);
@@ -51,7 +52,6 @@ function click_update_button(product_id) {
     update_stock_level(product_id);
   };
 }
-
 
 function stock_level_update_success(product_id, new_stock_level) {
   $('#stock_' + product_id).val(new_stock_level);
@@ -62,6 +62,12 @@ function stock_level_update_success(product_id, new_stock_level) {
 function stock_level_update_failure(product_id) {
   $('#status_' + product_id).attr('src', error_image);
   $('#update_' + product_id).prop('disabled', false);
+}
+
+function get_stock_level_error_display(product_id) {
+  $('#stock_' + product_id).val("");
+  $('#status_' + product_id).attr('src', error_image);
+  $('#update_' + product_id).prop('disabled', true);
 }
 
 $(document).ready(function() {
