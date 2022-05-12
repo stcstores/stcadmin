@@ -72,7 +72,7 @@ class BaseProductForm(forms.ModelForm):
     """Form for editing indivdual Products."""
 
     class Meta:
-        """Meta for InitialProductForm."""
+        """Meta for BaseProductForm."""
 
         model = models.Product
         exclude = (
@@ -89,20 +89,21 @@ class BaseProductForm(forms.ModelForm):
             "supplier": inventory_fields.Supplier,
         }
 
-        field_order = (
-            "barcode",
-            "purchase_prce",
-            "retail_price",
-            "vat_rate",
-            "stock_level",
-            "bay",
-            "weight_grams",
-            "dimensions",
-            "package_type",
-            "hs_code",
-            "brand",
-            "manufacturer",
-        )
+    field_order = (
+        "supplier_barcode",
+        "barcode",
+        "purchase_price",
+        "vat_rate",
+        "supplier",
+        "supplier_sku",
+        "brand",
+        "manufacturer",
+        "dimensions",
+        "package_type",
+        "hs_code",
+        "weight_grams",
+        "retail_price",
+    )
 
 
 class InitialVariationForm(BaseProductForm):
