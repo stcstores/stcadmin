@@ -6,10 +6,12 @@ Stock level is not available for EOL products
 
 <div class="product_stock_level">
   <div class="InputAddOn">
-    <input id="stock_{{ product.pk }}" class="InputAddOn-field stock_level_field" type="text" size="4" vaue="">
+    <input id="stock_{{ product.pk }}" class="InputAddOn-field stock_level_field" type="text" size="4" value="">
+    {% if updatable is not False %}
     <div class="InputAddOn-item">
       <button id="update_{{ product.pk }}" class="stock_update_button" disabled>Update</button>
     </div>
+    {% endif %}
     <div class="InputAddOn-item status_container">
       <img id="status_{{ product.pk }}" class="update_status" src="{% static 'images/loading.gif' %}">
     </div>

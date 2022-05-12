@@ -26,8 +26,8 @@
       {% endfor %}
       <th class="column header supplier_sku">Supplier SKU</th>
       <th></th>
-      <th></th>
-      <th></th>
+      <th>Locations</th>
+      <th>Stock Level</th>
     </tr>
     {% for form in formset %}
     {% with form.product as product %}
@@ -46,8 +46,7 @@
         {{ field.errors }}
       </td>
       {% endfor %}
-      <td class="column stock_level">{% include 'inventory/update_stock.html' %}</td>
-      {% comment %} <td>{% include "inventory/update_stock.html" %}</td> {% endcomment %}
+      <td class="column stock_level">{% include 'inventory/update_stock.html' with updatable=False %}</td>
       <td>{{ form.non_field_errors }}</td>
     </tr>
     {% endwith %}
