@@ -2,6 +2,7 @@
 
 import itertools
 import json
+from collections import defaultdict
 
 from django.contrib import messages
 from django.db import transaction
@@ -29,9 +30,10 @@ class Continue(InventoryUserMixin, TemplateView):
         others_ranges = models.ProductRange.creating.exclude(
             managed_by=self.request.user
         )
-        context["others_product_ranges"] = {
-            product_range.managed_by: product_range for product_range in others_ranges
-        }
+        others_product_ranges = defaultdict(list)
+        for product_range in others_ranges:
+            others_product_ranges[product_range.managed_by].append(product_range)
+        context["others_product_ranges"] = dict(others_product_ranges)
         return context
 
 
