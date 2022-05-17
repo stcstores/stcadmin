@@ -32,6 +32,8 @@ class LinnworksChannelMappingImportFile(BaseImportFile):
     LINKED_SKU_CUSTOM_LABEL = "Linked SKU Custom Label"  # Channel SKU
     SKU = "SKU"  # Linnworks SKU
 
+    prime_identifers = ["_PRIME", "_PRIME2"]
+
     header = (SOURCE, SUBSOURCE, LINKED_SKU_CUSTOM_LABEL, SKU)
 
     @classmethod
@@ -39,9 +41,14 @@ class LinnworksChannelMappingImportFile(BaseImportFile):
         """Create a Linnworks Product Import file."""
         channels = LinnworksChannel.objects.all().order_by("source", "sub_source")
         product_skus = cls.product_skus()
-        linked_skus = cls.linked_skus()
+        channel_items_file = ChannelItemsExport()
+        linked_skus = cls.linked_skus(channel_items_file)
+        prime_rows = cls.prime_rows(channel_items_file)
         return cls.create_file(
-            channels=channels, product_skus=product_skus, linked_skus=linked_skus
+            channels=channels,
+            product_skus=product_skus,
+            linked_skus=linked_skus,
+            prime_rows=prime_rows,
         )
 
     @classmethod
@@ -51,9 +58,8 @@ class LinnworksChannelMappingImportFile(BaseImportFile):
         return set(skus)
 
     @classmethod
-    def linked_skus(cls):
+    def linked_skus(cls, channel_items_file):
         """Return a dict of linnworks.models.LinnworksChannel to a list of linked SKUs."""
-        channel_items_file = ChannelItemsExport()
         channels = LinnworksChannel.objects.all()
         linked_skus = {channel: [] for channel in channels}
         for row in channel_items_file.rows:
@@ -66,9 +72,43 @@ class LinnworksChannelMappingImportFile(BaseImportFile):
         return linked_skus
 
     @classmethod
-    def get_row_data(cls, channels, product_skus, linked_skus):
+    def prime_rows(cls, channel_items_file):
+        """Return a list of prime SKUs to link."""
+        prime_channels = LinnworksChannel.objects.filter(link_prime=True)
+        prime_rows = []
+        for channel in prime_channels:
+            linked_skus = []
+            unlinked_skus = {}
+            for row in channel_items_file.rows:
+                if (
+                    row[channel_items_file.SOURCE] != channel.source
+                    or row[channel_items_file.SUBSOURCE] != channel.sub_source
+                ):
+                    continue
+                channel_sku = row[channel_items_file.LINKED_SKU_CUSTOM_LABEL]
+                if cls.prime_identifers[0] in channel_sku:
+                    linked_skus.append(channel_sku)
+                else:
+                    unlinked_skus[channel_sku] = row[channel_items_file.SKU]
+            linked_skus = set(linked_skus)
+            for channel_sku, linnworks_sku in unlinked_skus.items():
+                for identifer in cls.prime_identifers:
+                    link_sku = f"{channel_sku}{identifer}"
+                    if link_sku not in linked_skus:
+                        prime_rows.append(
+                            {
+                                cls.SOURCE: channel.source,
+                                cls.SUBSOURCE: channel.sub_source,
+                                cls.LINKED_SKU_CUSTOM_LABEL: link_sku,
+                                cls.SKU: linnworks_sku,
+                            }
+                        )
+        return prime_rows
+
+    @classmethod
+    def get_row_data(cls, channels, product_skus, linked_skus, prime_rows):
         """Return a list of channel item dicts."""
-        rows = []
+        rows = list(prime_rows)
         for channel in channels:
             channel_linked_skus = set(linked_skus[channel])
             ignored_skus = set(

@@ -18,6 +18,7 @@ class LinnworksChannelAdmin(admin.ModelAdmin):
     """Model admin for the LinnworksChannel model."""
 
     exclude_fields = ()
+    list_display = ("sub_source", "source", "link_prime")
 
 
 @admin.register(models.LinkingIgnoredSKU)

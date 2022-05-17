@@ -34,6 +34,7 @@ class LinnworksChannel(models.Model):
 
     source = models.CharField(max_length=255)
     sub_source = models.CharField(max_length=255)
+    link_prime = models.BooleanField(default=False)
 
     class Meta:
         """Meta class for the LinnworksChannel model."""
