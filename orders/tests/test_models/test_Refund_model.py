@@ -204,7 +204,7 @@ def test_courier_refund_from_order(order_factory, product_sale_factory):
         ).exists()
     assert models.Refund.objects.filter(
         order=order,
-        CourierRefund___courier=order.shipping_rule.courier_service.courier.courier_type.provider,
+        CourierRefund___courier=order.shipping_service.provider,
     ).exists()
 
 

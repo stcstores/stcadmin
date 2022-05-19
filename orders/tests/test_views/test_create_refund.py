@@ -29,7 +29,7 @@ def order(order_factory, product_sale_factory):
 
 @pytest.fixture
 def form_data(order):
-    return {"order_ID": order.order_ID, "refund_type": forms.CreateRefund.BROKEN}
+    return {"order_id": order.order_id, "refund_type": forms.CreateRefund.BROKEN}
 
 
 def test_logged_in_get(url, logged_in_client):
@@ -143,7 +143,7 @@ def test_redirects_if_order_has_multiple_of_a_product(
 
 
 @pytest.mark.django_db
-def test_invalid_order_ID(order, group_logged_in_client, url, form_data):
-    form_data["order_ID"] = "9999999999"
+def test_invalid_order_id(order, group_logged_in_client, url, form_data):
+    form_data["order_id"] = "9999999999"
     response = group_logged_in_client.post(url, form_data)
     assert "Order not found" in response.content.decode("utf8")

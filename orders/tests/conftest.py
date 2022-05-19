@@ -7,22 +7,18 @@ from django.utils import timezone
 from home.models import CloudCommerceUser
 from inventory.models import Supplier
 from orders import models
-from shipping.tests.conftest import (
+from shipping.factories import (
     CountryFactory,
-    CourierServiceFactory,
     ProviderFactory,
     ShippingPriceFactory,
-    ShippingRuleFactory,
-    VatRateFactory,
+    ShippingServiceFactory,
     WeightBandFactory,
 )
 
 pytest_factoryboy.register(CountryFactory)
-pytest_factoryboy.register(ShippingRuleFactory)
+pytest_factoryboy.register(ShippingServiceFactory)
 pytest_factoryboy.register(ShippingPriceFactory)
-pytest_factoryboy.register(CourierServiceFactory)
 pytest_factoryboy.register(WeightBandFactory)
-pytest_factoryboy.register(VatRateFactory)
 pytest_factoryboy.register(ProviderFactory)
 
 
@@ -62,17 +58,15 @@ class OrderFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Order
 
-    order_ID = factory.Sequence(lambda n: str(748373 + n))
-    customer_ID = factory.Sequence(lambda n: str(16844161 + n))
+    order_id = factory.Sequence(lambda n: str(748373 + n))
     recieved_at = timezone.make_aware(datetime(2020, 2, 11, 10, 24))
     dispatched_at = timezone.make_aware(datetime(2020, 2, 10, 12, 36))
     cancelled = False
     ignored = False
     channel = factory.SubFactory(ChannelFactory)
-    channel_order_ID = factory.Sequence(lambda n: str(6413545 + n))
+    external_reference = factory.Sequence(lambda n: str(6413545 + n))
     country = factory.SubFactory(CountryFactory)
-    shipping_rule = factory.SubFactory(ShippingRuleFactory)
-    courier_service = factory.SubFactory(CourierServiceFactory)
+    shipping_service = factory.SubFactory(ShippingServiceFactory)
     tracking_number = factory.Sequence(lambda n: f"TK8493833{n}")
     total_paid = 4457
     total_paid_GBP = 5691
@@ -96,16 +90,15 @@ class ProductSaleFactory(factory.django.DjangoModelFactory):
         model = models.ProductSale
 
     order = factory.SubFactory(OrderFactory)
-    product_ID = factory.Sequence(lambda n: str(6546486 + n))
     sku = factory.Sequence(lambda n: f"ABC-123-TG{n}")
+    channel_sku = factory.Sequence(lambda n: f"AMZ_{n}")
     name = factory.Sequence(lambda n: f"Test Product {n}")
     weight = 256
     quantity = 1
     price = 550
     purchase_price = 250
-    vat_rate = 20
+    vat = 12
     supplier = factory.SubFactory(SupplierFactory)
-    details_success = True
 
 
 @pytest_factoryboy.register

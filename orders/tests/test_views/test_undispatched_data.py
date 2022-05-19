@@ -46,7 +46,7 @@ def urgent_orders(mock_urgent_since, order_factory):
 def priority_orders(mock_now, order_factory):
     return [
         order_factory.create(
-            shipping_rule__priority=True,
+            shipping_service__priority=True,
             recieved_at=mock_now - timedelta(days=1),
             dispatched_at=None,
         )
@@ -58,7 +58,7 @@ def priority_orders(mock_now, order_factory):
 def non_priority_orders(mock_now, order_factory):
     return [
         order_factory.create(
-            shipping_rule__priority=False,
+            shipping_service__priority=False,
             recieved_at=mock_now - timedelta(days=1),
             dispatched_at=None,
         )
@@ -117,13 +117,13 @@ def test_uses_template(valid_get_response):
 
 @pytest.mark.django_db
 def test_context_contains_urgent_orders(orders, urgent_orders, valid_get_response):
-    order_ids = [order.order_ID for order in urgent_orders]
+    order_ids = [order.order_id for order in urgent_orders]
     assert valid_get_response.context["urgent"] == order_ids
 
 
 @pytest.mark.django_db
 def test_context_contains_priority_orders(orders, priority_orders, valid_get_response):
-    order_ids = [order.order_ID for order in priority_orders]
+    order_ids = [order.order_id for order in priority_orders]
     assert valid_get_response.context["priority"] == order_ids
 
 
@@ -131,7 +131,7 @@ def test_context_contains_priority_orders(orders, priority_orders, valid_get_res
 def test_context_contains_non_priority_orders(
     orders, non_priority_orders, valid_get_response
 ):
-    order_ids = [order.order_ID for order in non_priority_orders]
+    order_ids = [order.order_id for order in non_priority_orders]
     assert valid_get_response.context["non_priority"] == order_ids
 
 
@@ -143,4 +143,4 @@ def test_context_contains_total(orders, valid_get_response):
 @pytest.mark.django_db
 def test_order_ids_in_content(orders, valid_get_response_content):
     for order in orders:
-        assert order.order_ID in valid_get_response_content
+        assert order.order_id in valid_get_response_content

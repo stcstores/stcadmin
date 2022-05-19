@@ -71,7 +71,7 @@ class ShippingMethodeAdmin(admin.ModelAdmin):
         "min_price",
         "max_price",
         "vat_rates",
-        "inactive",
+        "active",
     )
     list_display = (
         "id",
@@ -82,7 +82,7 @@ class ShippingMethodeAdmin(admin.ModelAdmin):
         "max_weight",
         "min_price",
         "max_price",
-        "inactive",
+        "active",
     )
     list_editable = (
         "name",
@@ -92,14 +92,14 @@ class ShippingMethodeAdmin(admin.ModelAdmin):
         "max_weight",
         "min_price",
         "max_price",
-        "inactive",
+        "active",
     )
     list_filter = (
         ("product_type", admin.RelatedOnlyFieldListFilter),
         ("country", admin.RelatedOnlyFieldListFilter),
         ("shipping_service", admin.RelatedOnlyFieldListFilter),
         ("vat_rates", admin.RelatedOnlyFieldListFilter),
-        "inactive",
+        "active",
     )
     search_fields = ("name",)
 

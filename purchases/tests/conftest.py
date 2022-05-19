@@ -1,7 +1,7 @@
 import pytest_factoryboy
 
 from purchases import factories
-from shipping.tests.conftest import ShippingPriceFactory
+from shipping.factories import ShippingPriceFactory
 
 pytest_factoryboy.register(ShippingPriceFactory)
 pytest_factoryboy.register(factories.UserFactory)

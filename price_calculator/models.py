@@ -156,7 +156,7 @@ class ShippingMethodManager(models.Manager):
             channel=channel,
             min_weight__lte=weight,
             min_price__lte=price,
-            inactive=False,
+            active=True,
         ).filter(
             Q(
                 Q(Q(max_price__isnull=True) | Q(max_price__gte=price))
@@ -178,7 +178,7 @@ class ShippingMethod(models.Model):
     min_price = models.PositiveIntegerField(default=0)
     max_price = models.PositiveIntegerField(null=True, blank=True)
     vat_rates = models.ManyToManyField(VATRate, blank=True)
-    inactive = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
 
     objects = ShippingMethodManager()
 
@@ -205,7 +205,7 @@ class ShippingMethod(models.Model):
             shipping_price = ShippingPrice.objects.get(
                 country=self.country,
                 shipping_service=self.shipping_service,
-                inactive=False,
+                active=True,
             )
         except ShippingPrice.DoesNotExist:
             raise NoShippingService(

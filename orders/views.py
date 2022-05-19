@@ -99,7 +99,7 @@ class UndispatchedOrdersData(TemplateView):
     def urgent_orders(self):
         """Return a list of order IDs for urgent undispatched orders."""
         return sorted(
-            list(models.Order.objects.urgent().values_list("order_ID", flat=True))
+            list(models.Order.objects.urgent().values_list("order_id", flat=True))
         )
 
     def priority_orders(self, urgent_orders):
@@ -107,7 +107,7 @@ class UndispatchedOrdersData(TemplateView):
         priority_orders = (
             models.Order.objects.undispatched()
             .priority()
-            .values_list("order_ID", flat=True)
+            .values_list("order_id", flat=True)
         )
         return sorted(list(set(priority_orders) - set(urgent_orders)))
 
@@ -116,7 +116,7 @@ class UndispatchedOrdersData(TemplateView):
         undispatched_orders = (
             models.Order.objects.undispatched()
             .filter(recieved_at__gte=timezone.now() - timedelta(days=7))
-            .values_list("order_ID", flat=True)
+            .values_list("order_id", flat=True)
         )
         return sorted(
             list(set(undispatched_orders) - set(urgent_orders) - set(priority_orders))
@@ -181,22 +181,17 @@ class ExportOrders(OrdersUserMixin, View):
 
     form_class = forms.OrderListFilter
     header = [
-        "order_ID",
+        "order_id",
         "date_recieved",
         "date_dispatched",
         "country",
         "channel",
         "tracking_number",
-        "shipping_rule",
-        "courier_service",
+        "shipping_service",
         "total_paid",
         "weight",
-        "postage_price",
-        "vat",
         "channel_fee",
         "purchase_price",
-        "profit",
-        "profit_percentage",
     ]
 
     def get(self, *args, **kwargs):
@@ -226,41 +221,25 @@ class ExportOrders(OrdersUserMixin, View):
             dispatched_at = order.dispatched_at.strftime("%Y-%m-%d")
         else:
             dispatched_at = "UNDISPATCHED"
-        if order.profit_calculable():
-            weight = order.total_weight()
-            profit = order.profit()
-            profit_percentage = order.profit_percentage()
-            vat = order.vat_paid()
-            channel_fee = order.channel_fee_paid()
-            purchase_price = order.purchase_price()
+        weight = order.total_weight()
+        channel_fee = order.channel_fee_paid()
+        purchase_price = order.purchase_price()
+        if order.shipping_service is None:
+            shipping_service = None
         else:
-            weight = None
-            profit = None
-            profit_percentage = None
-            vat = None
-            channel_fee = None
-            purchase_price = None
-        if order.courier_service is None:
-            courier_service = None
-        else:
-            courier_service = order.courier_service.name
+            shipping_service = order.shipping_service.name
         return [
-            order.order_ID,
+            order.order_id,
             order.recieved_at.strftime("%Y-%m-%d"),
             dispatched_at,
             order.country.name,
             order.channel.name,
             order.tracking_number,
-            order.shipping_rule,
-            courier_service,
+            shipping_service,
             self.format_currency(order.total_paid_GBP),
             weight,
-            self.format_currency(order.postage_price),
-            self.format_currency(vat),
             self.format_currency(channel_fee),
             self.format_currency(purchase_price),
-            self.format_currency(profit),
-            profit_percentage,
         ]
 
     def format_currency(self, price):
@@ -376,7 +355,7 @@ class Refund(OrdersUserMixin, TemplateView):
             try:
                 context["feedback"] = UserFeedback.objects.get(
                     feedback_type__name="Packing Mistake",
-                    order_id=refund.order.order_ID,
+                    order_id=refund.order.order_id,
                 )
             except UserFeedback.DoesNotExist:
                 context["feedback"] = None
@@ -455,7 +434,7 @@ class SelectRefundProducts(OrdersUserMixin, FormView):
         """Return the URL to redirect to after a succesfull form submission."""
         if len(self.refunds) == 1:
             return self.refunds[0].get_absolute_url()
-        return reverse("orders:refund_list") + f"?order_ID={self.order.order_ID}"
+        return reverse("orders:refund_list") + f"?order_id={self.order.order_id}"
 
 
 class AddRefundImages(OrdersUserMixin, RedirectView):
@@ -507,7 +486,7 @@ class ExportRefunds(OrdersUserMixin, View):
 
     form_class = forms.RefundListFilter
     header = [
-        "order_ID",
+        "order_id",
         "refund_reason",
         "date_recieved",
         "date_dispatched",
@@ -545,7 +524,7 @@ class ExportRefunds(OrdersUserMixin, View):
     def make_row(self, refund):
         """Return a row of order data."""
         return [
-            refund.order.order_ID,
+            refund.order.order_id,
             refund.reason(),
             refund.order.recieved_at.strftime("%Y-%m-%d"),
             refund.order.dispatched_at.strftime("%Y-%m-%d"),
@@ -579,7 +558,7 @@ class AddPackingMistakeForRefund(OrdersUserMixin, RedirectView):
         feedback = UserFeedback(
             user=packing_record.packed_by,
             feedback_type=feedback_type,
-            order_id=refund.order.order_ID,
+            order_id=refund.order.order_id,
         )
         feedback.save()
         return refund.get_absolute_url()

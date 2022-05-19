@@ -3,6 +3,8 @@
 from django.db import models
 from solo.models import SingletonModel
 
+from orders.models.channel import Channel
+
 
 class LinnworksConfig(SingletonModel):
     """Model for configuring the Linnworks app."""
@@ -12,6 +14,9 @@ class LinnworksConfig(SingletonModel):
         max_length=250, blank=True, null=True
     )
     channel_items_import_file_path = models.CharField(
+        max_length=250, blank=True, null=True
+    )
+    processed_orders_import_path = models.CharField(
         max_length=250, blank=True, null=True
     )
     inventory_export_file_path = models.CharField(max_length=250, blank=True, null=True)
@@ -35,6 +40,13 @@ class LinnworksChannel(models.Model):
     source = models.CharField(max_length=255)
     sub_source = models.CharField(max_length=255)
     link_prime = models.BooleanField(default=False)
+    channel = models.ForeignKey(
+        Channel,
+        on_delete=models.PROTECT,
+        related_name="linnworks_channel",
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         """Meta class for the LinnworksChannel model."""

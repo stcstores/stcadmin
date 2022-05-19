@@ -74,8 +74,8 @@ def test_uses_template(valid_get_response):
 
 
 @pytest.mark.django_db
-def test_shows_order_ID(refund, valid_get_response_content):
-    assert refund.order.order_ID in valid_get_response_content
+def test_shows_order_id(refund, valid_get_response_content):
+    assert refund.order.order_id in valid_get_response_content
 
 
 @pytest.mark.django_db
@@ -143,7 +143,7 @@ def test_dispatch_date_filter(
         },
     )
     content = response.content.decode("utf8")
-    assert (refund.order.order_ID in content) is shown
+    assert (refund.order.order_id in content) is shown
 
 
 @pytest.mark.django_db
@@ -172,17 +172,17 @@ def test_created_date_filter(
         },
     )
     content = response.content.decode("utf8")
-    assert (refund.order.order_ID in content) is shown
+    assert (refund.order.order_id in content) is shown
 
 
 @pytest.mark.django_db
-def test_order_ID_filter(country_factory, refund_factory, url, group_logged_in_client):
+def test_order_id_filter(refund_factory, url, group_logged_in_client):
     refund = refund_factory.create()
     other_refund = refund_factory.create()
-    response = group_logged_in_client.get(url, {"order_ID": refund.order.order_ID})
+    response = group_logged_in_client.get(url, {"order_id": refund.order.order_id})
     content = response.content.decode("utf8")
-    assert refund.order.order_ID in content
-    assert other_refund.order.order_ID not in content
+    assert refund.order.order_id in content
+    assert other_refund.order.order_id not in content
 
 
 @pytest.mark.django_db
@@ -194,7 +194,7 @@ def test_filter_contacted_any(breakage_refund_factory, url, group_logged_in_clie
     response = group_logged_in_client.get(url, {"contacted": "any"})
     content = response.content.decode("utf8")
     for refund in refunds:
-        assert refund.order.order_ID in content
+        assert refund.order.order_id in content
 
 
 @pytest.mark.django_db
@@ -205,8 +205,8 @@ def test_filter_contacted_yes(breakage_refund_factory, url, group_logged_in_clie
     ]
     response = group_logged_in_client.get(url, {"contacted": "yes"})
     content = response.content.decode("utf8")
-    assert refunds[0].order.order_ID in content
-    assert refunds[1].order.order_ID not in content
+    assert refunds[0].order.order_id in content
+    assert refunds[1].order.order_id not in content
 
 
 @pytest.mark.django_db
@@ -217,8 +217,8 @@ def test_filter_contacted_no(breakage_refund_factory, url, group_logged_in_clien
     ]
     response = group_logged_in_client.get(url, {"contacted": "no"})
     content = response.content.decode("utf8")
-    assert refunds[0].order.order_ID not in content
-    assert refunds[1].order.order_ID in content
+    assert refunds[0].order.order_id not in content
+    assert refunds[1].order.order_id in content
 
 
 @pytest.mark.django_db
@@ -231,7 +231,7 @@ def test_filter_accepted_any(breakage_refund_factory, url, group_logged_in_clien
     response = group_logged_in_client.get(url, {"accepted": "any"})
     content = response.content.decode("utf8")
     for refund in refunds:
-        assert refund.order.order_ID in content
+        assert refund.order.order_id in content
 
 
 @pytest.mark.django_db
@@ -243,9 +243,9 @@ def test_filter_accepted_yes(breakage_refund_factory, url, group_logged_in_clien
     ]
     response = group_logged_in_client.get(url, {"accepted": "yes"})
     content = response.content.decode("utf8")
-    assert refunds[0].order.order_ID in content
-    assert refunds[1].order.order_ID not in content
-    assert refunds[2].order.order_ID not in content
+    assert refunds[0].order.order_id in content
+    assert refunds[1].order.order_id not in content
+    assert refunds[2].order.order_id not in content
 
 
 @pytest.mark.django_db
@@ -257,9 +257,9 @@ def test_filter_accepted_no(breakage_refund_factory, url, group_logged_in_client
     ]
     response = group_logged_in_client.get(url, {"accepted": "no"})
     content = response.content.decode("utf8")
-    assert refunds[0].order.order_ID not in content
-    assert refunds[1].order.order_ID in content
-    assert refunds[2].order.order_ID not in content
+    assert refunds[0].order.order_id not in content
+    assert refunds[1].order.order_id in content
+    assert refunds[2].order.order_id not in content
 
 
 @pytest.mark.django_db
@@ -268,7 +268,7 @@ def test_filter_closed_any(refund_factory, url, group_logged_in_client):
     response = group_logged_in_client.get(url, {"closed": "any"})
     content = response.content.decode("utf8")
     for refund in refunds:
-        assert refund.order.order_ID in content
+        assert refund.order.order_id in content
 
 
 @pytest.mark.django_db
@@ -276,8 +276,8 @@ def test_filter_closed_yes(refund_factory, url, group_logged_in_client):
     refunds = [refund_factory.create(closed=True), refund_factory.create(closed=False)]
     response = group_logged_in_client.get(url, {"closed": "yes"})
     content = response.content.decode("utf8")
-    assert refunds[0].order.order_ID in content
-    assert refunds[1].order.order_ID not in content
+    assert refunds[0].order.order_id in content
+    assert refunds[1].order.order_id not in content
 
 
 @pytest.mark.django_db
@@ -285,8 +285,8 @@ def test_filter_closed_no(refund_factory, url, group_logged_in_client):
     refunds = [refund_factory.create(closed=True), refund_factory.create(closed=False)]
     response = group_logged_in_client.get(url, {"closed": "no"})
     content = response.content.decode("utf8")
-    assert refunds[0].order.order_ID not in content
-    assert refunds[1].order.order_ID in content
+    assert refunds[0].order.order_id not in content
+    assert refunds[1].order.order_id in content
 
 
 @pytest.mark.django_db
@@ -297,8 +297,8 @@ def test_filter_refund_type(
     demic = demic_refund_factory.create()
     response = group_logged_in_client.get(url, {"refund_type": "breakage"})
     content = response.content.decode("utf8")
-    assert breakage.order.order_ID in content
-    assert demic.order.order_ID not in content
+    assert breakage.order.order_id in content
+    assert demic.order.order_id not in content
 
 
 def test_invalid_form(group_logged_in_client, url):

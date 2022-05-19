@@ -7,6 +7,7 @@ from .linnworks_import_files import (
     LinnworksCompostitionImportFile,
     LinnworksProductImportFile,
 )
+from .orders import ProcessedOrdersExport
 from .stock_manager import InitialStockLevel, StockManager
 
 __all__ = [
@@ -15,6 +16,7 @@ __all__ = [
     "LinkingIgnoredSKU",
     "LinnworksChannelMappingImportFile",
     "ChannelItemsExport",
+    "ProcessedOrdersExport",
     "InitialStockLevel",
     "StockManager",
     "LinnworksCompostitionImportFile",

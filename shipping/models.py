@@ -88,7 +88,6 @@ class Country(models.Model):
         (VAT_FROM_REGION, VAT_FROM_REGION),
     )
 
-    country_ID = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=255)
     ISO_code = models.CharField(max_length=2, blank=True, null=True)
     region = models.ForeignKey(Region, on_delete=models.PROTECT)
@@ -108,7 +107,7 @@ class Country(models.Model):
 
         verbose_name = "Country"
         verbose_name_plural = "Countries"
-        ordering = ("country_ID",)
+        ordering = ("name",)
 
     def __str__(self):
         return self.name
@@ -126,112 +125,44 @@ class Country(models.Model):
         return self.region.default_vat_rate
 
 
-class VATRate(models.Model):
-    """Model for VAT rates."""
-
-    name = models.CharField(max_length=50)
-    cc_id = models.PositiveSmallIntegerField()
-    percentage = models.PositiveSmallIntegerField()
-    ordering = models.PositiveSmallIntegerField(default=100)
-
-    class Meta:
-        """Meta class for VATRate."""
-
-        verbose_name = "VAT Rate"
-        verbose_name_plural = "VAT Rates"
-        ordering = ("ordering",)
-
-    def __str__(self):
-        return self.name
-
-
 class Provider(models.Model):
     """Model for shipping providers."""
 
     name = models.CharField(max_length=255, unique=True)
-    inactive = models.BooleanField(default=False)
+    active = models.BooleanField(default=False)
 
     class Meta:
         """Meta class for shipping.Provider."""
 
         verbose_name = "Provider"
         verbose_name_plural = "Providers"
+        ordering = ("-active", "name")
 
     def __str__(self):
         return self.name
-
-
-class CourierType(models.Model):
-    """Model for Cloud Commerce courier types."""
-
-    courier_type_ID = models.CharField(max_length=12, unique=True, db_index=True)
-    name = models.CharField(max_length=255, unique=True)
-    provider = models.ForeignKey(
-        Provider, null=True, blank=True, on_delete=models.PROTECT
-    )
-    inactive = models.BooleanField(default=False)
-
-    class Meta:
-        """Meta class for shipping.CourierType."""
-
-        verbose_name = "Courier Type"
-        verbose_name_plural = "Courier Types"
-
-    def __str__(self):
-        return self.name
-
-
-class Courier(models.Model):
-    """Model for Cloud Commerce courier types."""
-
-    courier_ID = models.CharField(max_length=12, unique=True, db_index=True)
-    name = models.CharField(max_length=255, null=True, blank=True)
-    courier_type = models.ForeignKey(
-        CourierType, on_delete=models.PROTECT, null=True, blank=True
-    )
-    inactive = models.BooleanField(default=False)
-
-    class Meta:
-        """Meta class for shipping.CourierType."""
-
-        verbose_name = "Courier"
-        verbose_name_plural = "Couriers"
-
-    def __str__(self):
-        return f"{self.courier_ID}: {self.name}"
-
-
-class CourierService(models.Model):
-    """Model for Cloud Commerce courier types."""
-
-    courier_service_ID = models.CharField(max_length=12, unique=True, db_index=True)
-    name = models.CharField(max_length=255, null=True, blank=True)
-    courier = models.ForeignKey(
-        Courier, on_delete=models.PROTECT, null=True, blank=True
-    )
-    inactive = models.BooleanField(default=False)
-
-    class Meta:
-        """Meta class for shipping.CourierType."""
-
-        verbose_name = "Courier Service"
-        verbose_name_plural = "Couriers Services"
-
-    def __str__(self):
-        return f"{self.courier_service_ID}: {self.name}"
 
 
 class ShippingService(models.Model):
     """Model for shipping services."""
 
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255, unique=True, db_index=True)
+    full_name = models.CharField(max_length=255)
+    provider = models.ForeignKey(
+        Provider,
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        limit_choices_to={"active": True},
+    )
+    priority = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
 
     class Meta:
         """Meta class for shipping.ShippingService."""
 
         verbose_name = "Shipping Service"
         verbose_name_plural = "Shipping Services"
-        ordering = ("name",)
+        ordering = ("-active", "name")
 
     def __str__(self):
         return self.name
@@ -251,7 +182,9 @@ class ShippingPriceManager(models.Manager):
 class ShippingPrice(models.Model):
     """Model for shipping prices."""
 
-    shipping_service = models.ForeignKey(ShippingService, on_delete=models.CASCADE)
+    shipping_service = models.ForeignKey(
+        ShippingService, on_delete=models.CASCADE, limit_choices_to={"active": True}
+    )
     country = models.ForeignKey(
         Country, on_delete=models.CASCADE, blank=True, null=True
     )
@@ -263,7 +196,7 @@ class ShippingPrice(models.Model):
     fuel_surcharge = models.PositiveIntegerField(default=0)
     covid_surcharge = models.PositiveIntegerField(default=0)
 
-    inactive = models.BooleanField(default=False)
+    active = models.BooleanField(default=False)
 
     objects = ShippingPriceManager()
 
@@ -272,6 +205,7 @@ class ShippingPrice(models.Model):
 
         verbose_name = "Shipping Price"
         verbose_name_plural = "Shipping Prices"
+        ordering = ("-active", "shipping_service__name")
 
         unique_together = [
             ["shipping_service", "country"],
@@ -337,28 +271,3 @@ class WeightBand(models.Model):
 
     def __str__(self):
         return f"{self.shipping_price} {self.min_weight}g - {self.max_weight}g"
-
-
-class ShippingRule(models.Model):
-    """Model for Shipping Rules."""
-
-    rule_ID = models.CharField(max_length=10, unique=True, db_index=True)
-    name = models.CharField(max_length=255, unique=True)
-    courier_service = models.ForeignKey(
-        CourierService, blank=True, null=True, on_delete=models.PROTECT
-    )
-    shipping_service = models.ForeignKey(
-        ShippingService, blank=True, null=True, on_delete=models.PROTECT
-    )
-    priority = models.BooleanField(default=False)
-    inactive = models.BooleanField(default=False)
-
-    class Meta:
-        """Meta class for shipping.ShippingRule."""
-
-        verbose_name = "Shipping Rule"
-        verbose_name_plural = "Shipping Rules"
-        ordering = ("inactive", "name")
-
-    def __str__(self):
-        return self.name

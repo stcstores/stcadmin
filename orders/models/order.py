@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from django.db import models
 from django.utils import timezone
 
-from shipping.models import Country, CourierService, ShippingPrice, ShippingRule
+from shipping.models import Country, ShippingPrice, ShippingService
 
 from .channel import Channel
 
@@ -12,10 +12,10 @@ from .channel import Channel
 class CountryNotRecognisedError(ValueError):
     """Exception raised when a country cannot be found by country ID."""
 
-    def __init__(self, country_code, order_ID):
+    def __init__(self, country_code, order_id):
         """Raise exception."""
         exception_string = (
-            f"Country code {country_code} from order {order_ID} does not exist."
+            f"Country code {country_code} from order {order_id} does not exist."
         )
         super().__init__(exception_string)
 
@@ -43,24 +43,15 @@ class OrderQueryset(models.QuerySet):
 
     def priority(self):
         """Return a queryset of priority orders."""
-        return self.filter(shipping_rule__priority=True, cancelled=False)
+        return self.filter(shipping_service__priority=True, cancelled=False)
 
     def non_priority(self):
         """Return a queryset of non-priority orders."""
-        return self.filter(shipping_rule__priority=False, cancelled=False)
+        return self.filter(shipping_service__priority=False, cancelled=False)
 
     def urgent(self):
         """Return a queryset of urgent orders."""
         return self.undispatched().filter(recieved_at__lte=urgent_since())
-
-    def profit_calculable(self):
-        """Return a queryset of products with all required information for profit calculations."""
-        return (
-            self.dispatched()
-            .filter(postage_price_success=True)
-            .exclude(productsale__details_success__isnull=True)
-            .exclude(productsale__details_success=False)
-        )
 
 
 class OrderManager(models.Manager):
@@ -71,13 +62,13 @@ class OrderManager(models.Manager):
         for order in self.dispatched().filter(
             postage_price__isnull=True,
             postage_price_success__isnull=True,
-            shipping_rule__isnull=False,
+            shipping_service__isnull=False,
         ):
             try:
                 order._set_postage_price()
             except Exception as e:
                 raise Exception(
-                    f"Error finding postage price for order {order.order_ID}: {e}"
+                    f"Error finding postage price for order {order.order_id}: {e}"
                 )
 
 
@@ -86,24 +77,28 @@ class Order(models.Model):
 
     DISPATCH_EPOCH = datetime(2000, 1, 1, 0, 0)
 
-    order_ID = models.CharField(max_length=12, unique=True, db_index=True)
-    customer_ID = models.CharField(max_length=12, blank=True, null=True)
+    order_id = models.CharField(max_length=12, unique=True, db_index=True)
     recieved_at = models.DateTimeField()
     dispatched_at = models.DateTimeField(blank=True, null=True)
     cancelled = models.BooleanField(default=False)
     ignored = models.BooleanField(default=False)
     channel = models.ForeignKey(
-        Channel, blank=True, null=True, on_delete=models.PROTECT
+        Channel,
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        limit_choices_to={"active": True},
     )
-    channel_order_ID = models.CharField(max_length=255, blank=True, null=True)
+    external_reference = models.CharField(max_length=255, blank=True, null=True)
     country = models.ForeignKey(
         Country, blank=True, null=True, on_delete=models.PROTECT
     )
-    shipping_rule = models.ForeignKey(
-        ShippingRule, blank=True, null=True, on_delete=models.PROTECT
-    )
-    courier_service = models.ForeignKey(
-        CourierService, blank=True, null=True, on_delete=models.PROTECT
+    shipping_service = models.ForeignKey(
+        ShippingService,
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        limit_choices_to={"active": True},
     )
     tracking_number = models.CharField(max_length=255, blank=True, null=True)
     total_paid = models.PositiveIntegerField(blank=True, null=True)
@@ -123,7 +118,7 @@ class Order(models.Model):
         verbose_name_plural = "Orders"
 
     def __str__(self):
-        return f"Order: {self.order_ID}"
+        return f"Order: {self.order_id}"
 
     def is_dispatched(self):
         """Return True if the order is dispatched, otherwise return False."""
@@ -171,9 +166,8 @@ class Order(models.Model):
         return int((self.profit() / self.total_paid_GBP) * 100)
 
     def _get_postage_price(self):
-        shipping_service = self.shipping_rule.shipping_service
         price = ShippingPrice.objects.find_shipping_price(
-            country=self.country, shipping_service=shipping_service
+            country=self.country, shipping_service=self.shipping_service
         )
         return price.price(self.total_weight())
 
@@ -192,18 +186,6 @@ class Order(models.Model):
     def up_to_date_details(self):
         """Return True if all data requests have been attempted, otherwise False."""
         if self.postage_price_success is None:
-            return False
-        if any((sale.details_success is None for sale in self.productsale_set.all())):
-            return False
-        return True
-
-    def profit_calculable(self):
-        """Return True if all data requests have been retrieved, otherwise False."""
-        if self.postage_price_success is not True:
-            return False
-        if any(
-            (sale.details_success is not True for sale in self.productsale_set.all())
-        ):
             return False
         return True
 

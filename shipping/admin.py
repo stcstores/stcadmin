@@ -1,9 +1,9 @@
 """Model Admin for the shipping app."""
 
-from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
 
 from shipping import models
+from stcadmin.admin import actions
 
 
 @admin.register(models.Currency)
@@ -51,8 +51,6 @@ class CountryAdmin(admin.ModelAdmin):
 
     exclude = ()
     list_display = (
-        "__str__",
-        "country_ID",
         "name",
         "region",
         "currency",
@@ -60,16 +58,7 @@ class CountryAdmin(admin.ModelAdmin):
         "flag",
         "default_vat_rate",
     )
-    list_editable = (
-        "country_ID",
-        "name",
-        "region",
-        "currency",
-        "vat_required",
-        "default_vat_rate",
-    )
     list_filter = ("region", "currency", "vat_required")
-    search_fields = ("name",)
     search_fields = ("name",)
     autocomplete_fields = ("region", "currency")
     list_select_related = ("region", "currency")
@@ -79,67 +68,47 @@ class CountryAdmin(admin.ModelAdmin):
 class ProviderAdmin(admin.ModelAdmin):
     """Model Admin for shipping.Provider."""
 
-    fields = ("name",)
-    list_display = ("__str__", "name")
-    list_editable = ("name",)
+    exclude = ()
+    list_display = ("__str__", "name", "active")
+    list_editable = ("name", "active")
+    search_fields = ("name",)
+    list_filter = ("active",)
+    actions = (actions.set_active, actions.set_inactive)
 
 
-@admin.register(models.CourierType)
-class CourierTypeAdmin(admin.ModelAdmin):
-    """Model Admin for shipping.CourierType."""
-
-    fields = ("courier_type_ID", "name", "provider", "inactive")
-    list_display = ("__str__", "courier_type_ID", "name", "provider", "inactive")
-    list_editable = ("name", "courier_type_ID", "provider", "inactive")
+@admin.action(description="Set Priority")
+def set_priority(modeladmin, request, queryset):
+    """Set inactive action."""
+    queryset.update(priority=True)
 
 
-@admin.register(models.Courier)
-class CourierAdmin(admin.ModelAdmin):
-    """Model Admin for shipping.Courier."""
-
-    fields = ("courier_ID", "name", "courier_type", "inactive")
-    list_display = ("__str__", "courier_ID", "name", "courier_type", "inactive")
-    list_editable = ("courier_ID", "name", "courier_type", "inactive")
-    list_filter = ("courier_type",)
-
-
-@admin.register(models.CourierService)
-class CourierServiceAdmin(admin.ModelAdmin):
-    """Model Admin for shipping.CourierService."""
-
-    fields = ("courier_service_ID", "name", "courier", "inactive")
-    list_display = ("__str__", "courier_service_ID", "name", "courier", "inactive")
-    list_editable = ("courier_service_ID", "name", "courier", "inactive")
-    list_filter = ("courier",)
+@admin.action(description="Unset priority")
+def unset_priority(modeladmin, request, queryset):
+    """Set active action."""
+    queryset.update(priority=False)
 
 
 @admin.register(models.ShippingService)
 class ShippingServiceAdmin(admin.ModelAdmin):
     """Model admin for shipping.ShippingService."""
 
-    fields = ("name",)
-    list_display = ("id", "name")
-    list_editable = ("name",)
+    exclude = ()
+    list_display = ("name", "provider", "full_name", "priority", "active")
+    list_editable = ("active",)
+    search_fields = ("name", " full_name", "provider__name")
+    list_filter = ("active", "provider")
+    list_select_related = ("provider",)
+    autocomplete_fields = ("provider",)
+    actions = (actions.set_active, actions.set_inactive, set_priority, unset_priority)
 
 
 @admin.register(models.ShippingPrice)
 class ShippingPriceAdmin(admin.ModelAdmin):
     """Model admin for shipping.ShippingPrice."""
 
-    fields = (
-        "shipping_service",
-        "country",
-        "region",
-        "item_price",
-        "price_per_kg",
-        "price_per_g",
-        "item_surcharge",
-        "fuel_surcharge",
-        "covid_surcharge",
-        "inactive",
-    )
+    exclude = ()
     list_display = (
-        "id",
+        "__str__",
         "shipping_service",
         "country",
         "region",
@@ -149,7 +118,7 @@ class ShippingPriceAdmin(admin.ModelAdmin):
         "item_surcharge",
         "fuel_surcharge",
         "covid_surcharge",
-        "inactive",
+        "active",
     )
     list_editable = (
         "item_price",
@@ -158,12 +127,20 @@ class ShippingPriceAdmin(admin.ModelAdmin):
         "item_surcharge",
         "fuel_surcharge",
         "covid_surcharge",
-        "inactive",
+        "active",
     )
     list_filter = (
+        "active",
         ("shipping_service", admin.RelatedOnlyFieldListFilter),
         ("country", admin.RelatedOnlyFieldListFilter),
     )
+    search_fields = (
+        "shipping_service__name",
+        "shipping_service__full_name",
+        "country__name",
+    )
+    list_select_related = ("shipping_service", "country", "region")
+    autocomplete_fields = ("shipping_service", "country", "region")
 
 
 @admin.register(models.WeightBand)
@@ -177,36 +154,10 @@ class WeightBandAdmin(admin.ModelAdmin):
         ("shipping_price__shipping_service", admin.RelatedOnlyFieldListFilter),
         ("shipping_price__country", admin.RelatedOnlyFieldListFilter),
     )
-
-
-@admin.register(models.ShippingRule)
-class ShippingRuleAdmin(admin.ModelAdmin):
-    """Model Admmin for shipping.ShippingRule."""
-
-    fields = ("rule_ID", "name", "courier_service", "shipping_service", "inactive")
-    list_display = (
-        "__str__",
-        "rule_ID",
-        "name",
-        "courier_service",
-        "shipping_service",
-        "inactive",
+    search_fields = (
+        "shipping_price__name",
+        "country__name",
+        "shipping_price__shipping_service__name",
+        "shipping_price__shipping_service__full_name",
     )
-    list_editable = (
-        "rule_ID",
-        "name",
-        "courier_service",
-        "shipping_service",
-        "inactive",
-    )
-
-
-@admin.register(models.VATRate)
-class VATRateAdmin(SortableAdminMixin, admin.ModelAdmin):
-    """Model admin for the VATRate model."""
-
-    fields = ("name", "cc_id", "percentage")
-    list_display = ("__str__", "name", "cc_id", "percentage")
-    list_display_links = ("__str__",)
-    list_editable = ("name", "cc_id", "percentage")
-    search_fields = ("name",)
+    list_select_related = ("shipping_price",)

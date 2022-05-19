@@ -2,96 +2,69 @@
 from django.contrib import admin
 
 from orders import models
+from stcadmin.admin import actions
 
 
 @admin.register(models.Channel)
 class ChannelAdmin(admin.ModelAdmin):
     """Admin for the Channel model."""
 
-    fields = ("name", "channel_fee", "include_vat")
-    list_display = ("__str__", "name", "channel_fee", "include_vat")
-    list_editable = ("name", "channel_fee", "include_vat")
+    exclude = ()
+    list_display = ("name", "channel_fee", "include_vat", "active")
+    list_editable = ("channel_fee", "include_vat", "active")
+    search_fields = ("name",)
+    actions = (actions.set_active, actions.set_inactive)
 
 
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
     """Admin for the Order model."""
 
-    fields = (
-        "order_ID",
-        "customer_ID",
-        "recieved_at",
-        "dispatched_at",
-        "cancelled",
-        "ignored",
-        "channel",
-        "channel_order_ID",
-        "country",
-        "shipping_rule",
-        "courier_service",
-        "tracking_number",
-        "total_paid",
-        "total_paid_GBP",
-        "postage_price",
-        "postage_price_success",
-    )
+    exclude = ()
     list_display = (
-        "__str__",
-        "order_ID",
+        "order_id",
+        "external_reference",
         "recieved_at",
         "dispatched_at",
         "cancelled",
         "ignored",
         "country",
-        "shipping_rule",
-        "courier_service",
-        "total_paid",
-        "total_paid_GBP",
-        "postage_price",
-        "postage_price_success",
+        "shipping_service",
     )
-    search_fields = ("order_ID", "customer_ID")
+    search_fields = ("order_id", "external_reference")
     list_editable = ("cancelled", "ignored")
+    list_filter = (
+        ("shipping_service", admin.RelatedOnlyFieldListFilter),
+        ("country", admin.RelatedOnlyFieldListFilter),
+    )
+    date_hierarchy = "recieved_at"
+    list_select_related = ("country", "shipping_service")
+    autocomplete_fields = ("country", "shipping_service")
 
 
 @admin.register(models.ProductSale)
 class ProductSaleAdmin(admin.ModelAdmin):
     """Admin for the ProductSale model."""
 
-    fields = (
-        "order",
-        "product_ID",
-        "sku",
-        "name",
-        "quantity",
-        "price",
-        "weight",
-        "purchase_price",
-        "vat_rate",
-        "supplier",
-        "details_success",
-    )
-    readonly_fields = ("order",)
+    exclude = ()
     list_display = (
-        "order",
-        "product_ID",
         "sku",
         "name",
+        "order",
         "quantity",
         "price",
         "weight",
         "purchase_price",
-        "vat_rate",
+        "vat",
         "supplier",
-        "details_success",
     )
     search_fields = (
-        "order__order_ID",
-        "order__customer_ID",
+        "order__order_id",
         "sku",
         "name",
-        "product_ID",
     )
+    list_select_related = ("order", "supplier")
+    autocomplete_fields = ("order", "supplier")
 
 
 @admin.register(models.PackingRecord)
@@ -106,3 +79,6 @@ class PackingRecordAdmin(admin.ModelAdmin):
     readonly_fields = ("order",)
     list_display = ("order", "packed_by")
     list_editable = ("packed_by",)
+    list_filter = (("packed_by", admin.RelatedOnlyFieldListFilter),)
+    list_select_related = ("packed_by",)
+    autocomplete_fields = ("packed_by",)

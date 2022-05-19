@@ -71,8 +71,8 @@ def test_uses_template(valid_get_response):
 
 
 @pytest.mark.django_db
-def test_shows_order_ID(order, valid_get_response_content):
-    assert order.order_ID in valid_get_response_content
+def test_shows_order_id(order, valid_get_response_content):
+    assert order.order_id in valid_get_response_content
 
 
 @pytest.mark.django_db
@@ -81,8 +81,8 @@ def test_shows_tracking_number(order, valid_get_response_content):
 
 
 @pytest.mark.django_db
-def test_shows_shipping_rule(order, valid_get_response_content):
-    assert order.shipping_rule.name in valid_get_response_content
+def test_shows_shipping_service(order, valid_get_response_content):
+    assert order.shipping_service.name in valid_get_response_content
 
 
 @pytest.mark.django_db
@@ -97,8 +97,8 @@ def test_country_filter(country_factory, order_factory, url, group_logged_in_cli
     other_order = order_factory.create()
     response = group_logged_in_client.get(url, {"country": country.id})
     content = response.content.decode("utf8")
-    assert order.order_ID in content
-    assert other_order.order_ID not in content
+    assert order.order_id in content
+    assert other_order.order_id not in content
 
 
 @pytest.mark.django_db
@@ -108,8 +108,8 @@ def test_channel_filter(order_factory, channel_factory, url, group_logged_in_cli
     other_order = order_factory.create()
     response = group_logged_in_client.get(url, {"channel": channel.id})
     content = response.content.decode("utf8")
-    assert order.order_ID in content
-    assert other_order.order_ID not in content
+    assert order.order_id in content
+    assert other_order.order_id not in content
 
 
 @pytest.mark.django_db
@@ -134,17 +134,17 @@ def test_date_filter(recieved_at, shown, order_factory, url, group_logged_in_cli
         },
     )
     content = response.content.decode("utf8")
-    assert (order.order_ID in content) is shown
+    assert (order.order_id in content) is shown
 
 
 @pytest.mark.django_db
-def test_order_ID_filter(country_factory, order_factory, url, group_logged_in_client):
+def test_order_id_filter(country_factory, order_factory, url, group_logged_in_client):
     order = order_factory.create()
     other_order = order_factory.create()
-    response = group_logged_in_client.get(url, {"order_ID": order.order_ID})
+    response = group_logged_in_client.get(url, {"order_id": order.order_id})
     content = response.content.decode("utf8")
-    assert order.order_ID in content
-    assert other_order.order_ID not in content
+    assert order.order_id in content
+    assert other_order.order_id not in content
 
 
 @pytest.mark.django_db
@@ -158,7 +158,7 @@ def test_filter_status_any(order_factory, url, group_logged_in_client):
     response = group_logged_in_client.get(url, {"status": "any"})
     content = response.content.decode("utf8")
     for order in orders:
-        assert order.order_ID in content
+        assert order.order_id in content
 
 
 @pytest.mark.django_db
@@ -171,8 +171,8 @@ def test_filter_status_dispatched(order_factory, url, group_logged_in_client):
     ]
     response = group_logged_in_client.get(url, {"status": "dispatched"})
     content = response.content.decode("utf8")
-    assert orders[0].order_ID in content
-    assert orders[1].order_ID not in content
+    assert orders[0].order_id in content
+    assert orders[1].order_id not in content
 
 
 @pytest.mark.django_db
@@ -185,72 +185,8 @@ def test_filter_status_undispatched(order_factory, url, group_logged_in_client):
     ]
     response = group_logged_in_client.get(url, {"status": "undispatched"})
     content = response.content.decode("utf8")
-    assert orders[1].order_ID in content
-    assert orders[0].order_ID not in content
-
-
-@pytest.mark.django_db
-def test_filter_profit_calculable_only_true(
-    order_factory, product_sale_factory, url, group_logged_in_client
-):
-    order = order_factory.create(postage_price_success=True)
-    product_sale_factory.create(order=order, details_success=True)
-    other_order = order_factory.create(postage_price_success=None)
-    response = group_logged_in_client.get(url, {"profit_calculable_only": True})
-    content = response.content.decode("utf8")
-    assert order.order_ID in content
-    assert other_order.order_ID not in content
-
-
-@pytest.mark.django_db
-def test_filter_profit_calculable_only_False(
-    order_factory, url, group_logged_in_client
-):
-    order = order_factory.create(postage_price_success=None)
-    other_order = order_factory.create(postage_price_success=True)
-    response = group_logged_in_client.get(url, {"profit_calculable_only": False})
-    content = response.content.decode("utf8")
-    assert order.order_ID in content
-    assert other_order.order_ID in content
-
-
-@pytest.mark.django_db
-def test_filter_contains_EOL_items_show(
-    order_factory, product_sale_factory, url, group_logged_in_client
-):
-    order = order_factory.create()
-    product_sale_factory.create(order=order, end_of_line=True)
-    product_sale_factory.create(order=order, end_of_line=False)
-    not_eol_order = order_factory.create()
-    product_sale_factory.create(order=not_eol_order, end_of_line=False)
-    unknown_eol_order = order_factory.create()
-    product_sale_factory.create(order=unknown_eol_order, end_of_line=None)
-    response = group_logged_in_client.get(url, {"contains_EOL_items": "show"})
-    content = response.content.decode("utf8")
-    assert order.order_ID in content
-    assert not_eol_order.order_ID not in content
-    assert unknown_eol_order.order_ID not in content
-
-
-@pytest.mark.django_db
-def test_filter_contains_EOL_items_hide(
-    order_factory, product_sale_factory, url, group_logged_in_client
-):
-    order = order_factory.create()
-    product_sale_factory.create(order=order, end_of_line=False)
-    mixed_order = order_factory.create()
-    product_sale_factory.create(order=mixed_order, end_of_line=True)
-    product_sale_factory.create(order=mixed_order, end_of_line=False)
-    eol_order = order_factory.create()
-    product_sale_factory.create(order=eol_order, end_of_line=True)
-    unknown_eol_order = order_factory.create()
-    product_sale_factory.create(order=unknown_eol_order, end_of_line=None)
-    response = group_logged_in_client.get(url, {"contains_EOL_items": "hide"})
-    content = response.content.decode("utf8")
-    assert order.order_ID in content
-    assert mixed_order.order_ID not in content
-    assert eol_order.order_ID not in content
-    assert unknown_eol_order.order_ID not in content
+    assert orders[1].order_id in content
+    assert orders[0].order_id not in content
 
 
 def test_invalid_form(group_logged_in_client, url):

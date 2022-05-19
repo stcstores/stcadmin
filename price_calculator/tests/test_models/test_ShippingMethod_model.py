@@ -93,8 +93,8 @@ def test_sets_max_price(new_shipping_method):
 
 
 @pytest.mark.django_db
-def test_sets_inactive(new_shipping_method):
-    assert new_shipping_method.inactive is False
+def test_sets_active(new_shipping_method):
+    assert new_shipping_method.active is True
 
 
 @pytest.mark.django_db
