@@ -72,12 +72,16 @@ class PurchaseShipping(forms.Form):
     """Form for purchasing shipping."""
 
     country = forms.ModelChoiceField(queryset=Country.objects.all())
-    shipping_service = forms.ModelChoiceField(
-        queryset=ShippingService.objects.filter(
-            shippingprice__inactive=False
-        ).distinct()
-    )
     weight = forms.IntegerField(label="Weight (g)")
+
+    def __init__(self, *args, **kwargs):
+        """Add shipping service field."""
+        super().__init__(*args, **kwargs)
+        self.fields["shipping_service"] = forms.ModelChoiceField(
+            queryset=ShippingService.objects.filter(
+                shippingprice__inactive=False
+            ).distinct()
+        )
 
     def clean(self):
         """Add the shipping price to the form data."""
