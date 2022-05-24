@@ -4,20 +4,9 @@ from datetime import datetime, timedelta
 from django.db import models
 from django.utils import timezone
 
-from shipping.models import Country, ShippingPrice, ShippingService
+from shipping.models import Country, Currency, ShippingPrice, ShippingService
 
 from .channel import Channel
-
-
-class CountryNotRecognisedError(ValueError):
-    """Exception raised when a country cannot be found by country ID."""
-
-    def __init__(self, country_code, order_id):
-        """Raise exception."""
-        exception_string = (
-            f"Country code {country_code} from order {order_id} does not exist."
-        )
-        super().__init__(exception_string)
 
 
 def urgent_since():
@@ -54,24 +43,6 @@ class OrderQueryset(models.QuerySet):
         return self.undispatched().filter(recieved_at__lte=urgent_since())
 
 
-class OrderManager(models.Manager):
-    """Model manager for orders.Order."""
-
-    def update_postage_prices(self):
-        """Add postage prices to orders."""
-        for order in self.dispatched().filter(
-            postage_price__isnull=True,
-            postage_price_success__isnull=True,
-            shipping_service__isnull=False,
-        ):
-            try:
-                order._set_postage_price()
-            except Exception as e:
-                raise Exception(
-                    f"Error finding postage price for order {order.order_id}: {e}"
-                )
-
-
 class Order(models.Model):
     """Model for Cloud Commerce Orders."""
 
@@ -101,15 +72,24 @@ class Order(models.Model):
         limit_choices_to={"active": True},
     )
     tracking_number = models.CharField(max_length=255, blank=True, null=True)
+    priority = models.BooleanField(default=False)
+
+    displayed_shipping_price = models.PositiveIntegerField(blank=True, null=True)
+    calculated_shipping_price = models.PositiveIntegerField(blank=True, null=True)
+
+    tax = models.PositiveIntegerField(blank=True, null=True)
+
+    currency = models.ForeignKey(
+        Currency,
+        on_delete=models.PROTECT,
+        related_name="order_currencies",
+        blank=True,
+        null=True,
+    )
     total_paid = models.PositiveIntegerField(blank=True, null=True)
     total_paid_GBP = models.PositiveIntegerField(blank=True, null=True)
-    priority = models.BooleanField(default=False)
-    postage_price = models.PositiveIntegerField(blank=True, null=True)
-    postage_price_success = models.BooleanField(blank=True, null=True)
 
-    CountryNotRecognisedError = CountryNotRecognisedError
-
-    objects = OrderManager.from_queryset(OrderQueryset)()
+    objects = models.Manager.from_queryset(OrderQueryset)()
 
     class Meta:
         """Meta class for the Order model."""
@@ -127,13 +107,6 @@ class Order(models.Model):
     def total_weight(self):
         """Return the combined weight of the order."""
         return sum((sale.total_weight() for sale in self.productsale_set.all()))
-
-    def vat_paid(self):
-        """Return the VAT paid on the order."""
-        if self.country.vat_is_required() == self.country.VAT_NEVER:
-            return 0
-        else:
-            return sum((sale._vat_paid() for sale in self.productsale_set.all()))
 
     def channel_fee_paid(self):
         """Return the channel fee for the order."""
@@ -153,10 +126,10 @@ class Order(models.Model):
         """Return the profit made on the order."""
         expenses = sum(
             (
-                self.vat_paid(),
+                self.tax,
                 self.channel_fee_paid(),
                 self.purchase_price(),
-                self.postage_price,
+                self.calculated_shipping_price,
             )
         )
         return self.total_paid_GBP - expenses
@@ -165,29 +138,17 @@ class Order(models.Model):
         """Return the percentage of the amount paid for the order that is profit."""
         return int((self.profit() / self.total_paid_GBP) * 100)
 
-    def _get_postage_price(self):
-        price = ShippingPrice.objects.find_shipping_price(
+    def calculate_shipping_price(self):
+        """Return the shipping price for this order based on current shipping prices."""
+        shipping_price = ShippingPrice.objects.find_shipping_price(
             country=self.country, shipping_service=self.shipping_service
         )
-        return price.price(self.total_weight())
+        return shipping_price.price(self.total_weight())
 
-    def _set_postage_price(self):
-        try:
-            self.postage_price = self._get_postage_price()
-        except Exception:
-            self.postage_price = None
-            self.postage_price_success = False
-        else:
-            self.postage_price_success = True
-        if self.total_paid == 0 or self.total_paid_GBP == 0:
-            self.postage_price_success = False
+    def _set_calculated_shipping_price(self):
+        """Update calculated shipping_price with current price calculatrion."""
+        self.calculated_shipping_price = self.calculate_shipping_price()
         self.save()
-
-    def up_to_date_details(self):
-        """Return True if all data requests have been attempted, otherwise False."""
-        if self.postage_price_success is None:
-            return False
-        return True
 
     def packed_by(self):
         """Return the packer who packed this order."""

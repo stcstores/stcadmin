@@ -53,13 +53,14 @@ class CountryAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "region",
+        "ISO_code",
         "currency",
         "vat_required",
         "flag",
         "default_vat_rate",
     )
     list_filter = ("region", "currency", "vat_required")
-    search_fields = ("name",)
+    search_fields = ("name", "ISO_code")
     autocomplete_fields = ("region", "currency")
     list_select_related = ("region", "currency")
 

@@ -2,14 +2,16 @@
 
 import datetime as dt
 from collections import defaultdict
+from decimal import Decimal
 
+from django.db import transaction
 from django.utils.timezone import make_aware
 
 from inventory.models import BaseProduct
-from orders.models import Channel, Order, ProductSale
-from shipping.models import ShippingService
+from orders.models import Order, ProductSale
+from shipping.models import Country, Currency, ShippingService
 
-from .config import LinnworksConfig
+from .config import LinnworksChannel, LinnworksConfig
 from .linnworks_export_files import BaseExportFile
 
 
@@ -84,6 +86,8 @@ class ProcessedOrdersExport(BaseExportFile):
     def _load_orders(self):
         orders = defaultdict(list)
         for row in self.rows:
+            if row[self.REFERENCE_NUMBER] == "MERGED":
+                continue
             orders[row[self.ORDER_ID]].append(row)
         return dict(orders)
 
@@ -91,6 +95,23 @@ class ProcessedOrdersExport(BaseExportFile):
 class OrderUpdater:
     """Model for updating the orders model from a Linnworks export."""
 
+    def __init__(self):
+        """Retrieve reusable values from the database."""
+        self.currencies = {
+            currency.code: currency for currency in Currency.objects.all()
+        }
+        self.channels = {
+            channel.sub_source: channel.channel
+            for channel in LinnworksChannel.objects.all()
+        }
+        self.countries = {
+            country.ISO_code: country for country in Country.objects.all()
+        }
+        self.shipping_services = {
+            service.full_name: service for service in ShippingService.objects.all()
+        }
+
+    @transaction.atomic()
     def update_orders(self):
         """Update the orders model from a Linnworks export."""
         existing_order_ids = set(Order.objects.values_list("order_id", flat=True))
@@ -99,64 +120,97 @@ class OrderUpdater:
             if order_id in existing_order_ids:
                 continue
             row = order_rows[0]
-            order = Order(
-                order_id=order_id,
-                recieved_at=self.parse_date_time(
-                    row[ProcessedOrdersExport.RECEIVED_DATE]
-                ),
-                dispatched_at=self.parse_date_time(
-                    row[ProcessedOrdersExport.PROCESSED_DATE]
-                ),
-                cancelled=False,
-                ignored=False,
-                channel=self.get_channel(row),
-                external_reference=row[ProcessedOrdersExport.EXTERNAL_REFERENCE],
-                shipping_service=self.get_shipping_service(row),
-                tracking_number=row[ProcessedOrdersExport.TRACKING_NUMBER],
-            )
+            order = self.create_order(order_id, row)
             order.save()
-            for order_row in order_rows:
-                sku = order_row[ProcessedOrdersExport.SKU]
-                product = BaseProduct.objects.get(sku=sku)
-                product_sale = ProductSale(
-                    order=order,
-                    sku=order_row[ProcessedOrdersExport.SKU],
-                    name=order_row[ProcessedOrdersExport.ITEM_TITLE],
-                    weight=product.weight,
-                    quantity=order_row[ProcessedOrdersExport.QUANTITY],
-                    price=int(order_row[ProcessedOrdersExport.LINE_TOTAL] * 100),
-                    supplier=product.supplier,
-                    purchase_price=int(product.purchase_price * 100),
-                    vat=int(order_row[ProcessedOrdersExport.LINE_TAX] * 100),
-                )
+            for product_row in order_rows:
+                product_sale = self.create_product_sale(order, product_row)
                 product_sale.save()
+            try:
+                order._set_calculated_shipping_price()
+            except Exception:
+                print(order.order_id, order.country, order.shipping_service)
+        raise Exception("Actually worked")
 
-        @staticmethod
-        def parse_date_time(date_time_string):
-            date, time = date_time_string.split(" ")
-            year, month, day = (int(_) for _ in date.split("-"))
-            hour, minute, second = (int(_) for _ in time.split(":"))
-            return make_aware(
-                dt.datetime(
-                    year=year,
-                    month=month,
-                    day=day,
-                    hour=hour,
-                    minute=minute,
-                    second=second,
-                )
+    def create_order(self, order_id, row):
+        """Return an orders.Order instance."""
+        cols = ProcessedOrdersExport
+        currency = self.currencies[row[cols.CURRENCY]]
+        shipping_service = self.get_shipping_service(row)
+        order = Order(
+            order_id=order_id,
+            recieved_at=self.parse_date_time(row[cols.RECEIVED_DATE]),
+            dispatched_at=self.parse_date_time(row[cols.PROCESSED_DATE]),
+            channel=self.get_channel(row[cols.SOURCE], row[cols.SUBSOURCE]),
+            external_reference=row[cols.EXTERNAL_REFERENCE],
+            country=self.countries[row[cols.SHIPPING_COUNTRY_CODE]],
+            shipping_service=shipping_service,
+            tracking_number=row[cols.TRACKING_NUMBER],
+            priority=shipping_service.priority,
+            displayed_shipping_price=self.convert_integer_price(
+                row[cols.SHIPPING_COST]
+            ),
+            tax=self.convert_integer_price(row[cols.ORDER_TAX]),
+            currency=currency,
+            total_paid=self.convert_integer_price(row[cols.ORDER_TOTAL]),
+            total_paid_GBP=self.convert_integer_price(
+                Decimal(row[cols.ORDER_TOTAL]) * currency.exchange_rate
+            ),
+        )
+        return order
+
+    def create_product_sale(self, order, product_row):
+        """Return an orders.ProductSale instance."""
+        cols = ProcessedOrdersExport
+        sku = product_row[cols.SKU]
+        product = BaseProduct.objects.get(sku=sku)
+        product_sale = ProductSale(
+            order=order,
+            sku=product_row[cols.SKU],
+            name=product_row[cols.ITEM_TITLE],
+            weight=product.weight_grams,
+            quantity=product_row[cols.QUANTITY],
+            supplier=product.supplier,
+            purchase_price=self.convert_integer_price(product.purchase_price),
+            tax=self.convert_integer_price(product_row[cols.LINE_TAX]),
+            unit_price=self.convert_integer_price(product_row[cols.UNIT_COST]),
+            line_price=self.convert_integer_price(product_row[cols.LINE_TOTAL]),
+            item_total_before_tax=self.convert_integer_price(
+                product_row[cols.LINE_TOTAL_EXCLUDING_TAX]
+            ),
+        )
+        return product_sale
+
+    @staticmethod
+    def convert_integer_price(decimal_price):
+        """Return a price in pence."""
+        return int(float(decimal_price) * 100)
+
+    @staticmethod
+    def parse_date_time(date_time_string):
+        """Return a date time string as datetime.datetime."""
+        date, time = date_time_string.split(" ")
+        year, month, day = (int(_) for _ in date.split("-"))
+        hour, minute, second = (int(_) for _ in time.split(":"))
+        return make_aware(
+            dt.datetime(
+                year=year,
+                month=month,
+                day=day,
+                hour=hour,
+                minute=minute,
+                second=second,
             )
+        )
 
-        @staticmethod
-        def get_channel(order_row):
-            source = order_row[ProcessedOrdersExport.SOURCE]
-            sub_source = order_row[ProcessedOrdersExport.SUBSOURCE]
-            return Channel.objects.get(
-                linnworks_channel__source=source,
-                linnworks_channel__subsource=sub_source,
-            )
+    def get_channel(self, source, subsource):
+        """Return the channel an order was recieved from."""
+        if source == "DIRECT":
+            return None
+        return self.channels[subsource]
 
-        @staticmethod
-        def get_shipping_service(order_row):
-            service_name = order_row[ProcessedOrdersExport.SHIPPING_SERVICE_NAME]
-            return ShippingService.objects.get(name=service_name)
+    def get_shipping_service(self, order_row):
+        """Return a shipping.Shiping service instance."""
+        service_name = order_row[ProcessedOrdersExport.SHIPPING_SERVICE_NAME]
+        if service_name == "Default":
+            return None
+        return self.shipping_services[service_name]

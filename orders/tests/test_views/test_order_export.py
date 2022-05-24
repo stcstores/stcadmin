@@ -30,9 +30,7 @@ def order(order_factory, product_sale_factory):
 
 @pytest.fixture
 def undispatched_order(order_factory, product_sale_factory):
-    order = order_factory.create(
-        dispatched_at=None, postage_price=None, postage_price_success=None
-    )
+    order = order_factory.create(dispatched_at=None)
     product_sale_factory.create(order=order)
     return order
 
@@ -88,6 +86,8 @@ def test_export_contains_order(order, valid_get_response, export_rows):
         order.channel.name,
         order.tracking_number,
         order.shipping_service.name,
+        order.currency.code,
+        f"{order.total_paid/100:.2f}",
         f"{order.total_paid_GBP/100:.2f}",
         str(order.total_weight()),
         f"{order.channel_fee_paid()/100:.2f}",
@@ -106,6 +106,8 @@ def test_export_undispatched_order(undispatched_order, valid_get_response, expor
         undispatched_order.channel.name,
         undispatched_order.tracking_number,
         undispatched_order.shipping_service.name,
+        undispatched_order.currency.code,
+        f"{undispatched_order.total_paid/100:.2f}",
         f"{undispatched_order.total_paid_GBP/100:.2f}",
         str(undispatched_order.total_weight()),
         f"{undispatched_order.channel_fee_paid()/100:.2f}",

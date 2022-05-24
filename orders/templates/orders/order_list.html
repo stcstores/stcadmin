@@ -20,7 +20,6 @@
             <th>Order ID</th>
             <th>Recieved At</th>
             <th>Dispatched At</th>
-            <th>Department</th>
             <th>Country</th>
             <th>Channel</th>
             <th>Tracking Number</th>
@@ -37,16 +36,13 @@
                 UNDISPATCHED
                 {% endif %}
             </td>
-            <td>{{ order.department}}</td>
             <td>{{ order.country }}</td>
             <td>{{ order.channel }}</td>
             <td>{{ order.tracking_number }}</td>
             <td>{{ order.shipping_service.name }}</td>
             <td>
-                {% if order.up_to_date_details is False %}
+                {% if order.calculated_shipping_price is None %}
                 Not yet calculated
-                {% elif order.profit_calculable is False %}
-                ERROR
                 {% else %}
                 <a href="{% url 'orders:order_profit' order.id %}">
                     {% format_price order.profit %}&nbsp;

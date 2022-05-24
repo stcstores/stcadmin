@@ -9,6 +9,7 @@ from inventory.models import Supplier
 from orders import models
 from shipping.factories import (
     CountryFactory,
+    CurrencyFactory,
     ProviderFactory,
     ShippingPriceFactory,
     ShippingServiceFactory,
@@ -68,20 +69,14 @@ class OrderFactory(factory.django.DjangoModelFactory):
     country = factory.SubFactory(CountryFactory)
     shipping_service = factory.SubFactory(ShippingServiceFactory)
     tracking_number = factory.Sequence(lambda n: f"TK8493833{n}")
+    priority = False
+    priority = False
+    displayed_shipping_price = 832
+    calculated_shipping_price = 846
+    tax = 2560
+    currency = factory.SubFactory(CurrencyFactory)
     total_paid = 4457
     total_paid_GBP = 5691
-    priority = False
-    postage_price = 832
-    postage_price_success = True
-
-
-@pytest_factoryboy.register
-class PackingRecordFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = models.PackingRecord
-
-    order = factory.SubFactory(OrderFactory)
-    packed_by = factory.SubFactory(CloudCommerceUserFactory)
 
 
 @pytest_factoryboy.register
@@ -95,10 +90,21 @@ class ProductSaleFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Test Product {n}")
     weight = 256
     quantity = 1
-    price = 550
-    purchase_price = 250
-    vat = 12
     supplier = factory.SubFactory(SupplierFactory)
+    purchase_price = 250
+    tax = 12
+    unit_price = 518
+    item_price = 518
+    item_total_before_tax = 489
+
+
+@pytest_factoryboy.register
+class PackingRecordFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.PackingRecord
+
+    order = factory.SubFactory(OrderFactory)
+    packed_by = factory.SubFactory(CloudCommerceUserFactory)
 
 
 @pytest_factoryboy.register

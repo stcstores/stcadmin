@@ -1,5 +1,5 @@
 from datetime import datetime
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytest
 from django.utils import timezone
@@ -370,17 +370,16 @@ def shipping_price(country, shipping_price_factory):
 def order_without_shipping_price(country, order_factory):
     return order_factory.create(
         country=country,
-        postage_price=None,
-        postage_price_success=None,
+        calculated_shipping_price=None,
     )
 
 
 @pytest.mark.django_db
 def test_channel_fee_paid(order_factory, product_sale_factory):
-    order = order_factory.create()
-    product_sale_factory.create(order=order, price=550, quantity=1)
-    product_sale_factory.create(order=order, price=550, quantity=2)
-    assert order.channel_fee_paid() == 255
+    order = order_factory.create(channel__channel_fee=25)
+    product_sale_factory.create(order=order, item_price=1000, quantity=1)
+    product_sale_factory.create(order=order, item_price=1000, quantity=2)
+    assert order.channel_fee_paid() == 500
 
 
 @pytest.mark.django_db
@@ -400,152 +399,44 @@ def test_item_count(order_factory, product_sale_factory):
 
 
 @pytest.fixture
-def mock_set_postage_price():
+def mock_set_calculated_shipping_price():
     with patch(
-        "orders.models.order.Order._set_postage_price"
-    ) as mock_set_posrage_price:
-        yield mock_set_posrage_price
+        "orders.models.order.Order._set_calculated_shipping_price"
+    ) as mock_set_calculated_shipping_price:
+        yield mock_set_calculated_shipping_price
 
 
 @pytest.mark.django_db
-def test_set_postage_price_error(mock_set_postage_price, order_without_shipping_price):
-    mock_set_postage_price.side_effect = Exception("exception message")
-    order_id = order_without_shipping_price.order_id
-    with pytest.raises(Exception) as excinfo:
-        models.Order.objects.update_postage_prices()
-    assert (
-        f"Error finding postage price for order {order_id}: exception message"
-        in str(excinfo)
+def test_calculate_shipping_price(order_factory, shipping_price_factory):
+    order = order_factory.create()
+    shipping_price = shipping_price_factory.create(
+        country=order.country, shipping_service=order.shipping_service
     )
+    shipping_price.price = Mock()
+    with patch("orders.models.order.ShippingPrice") as mock_shipping_price:
+        mock_shipping_price.objects.find_shipping_price.return_value = shipping_price
+        returned_value = order.calculate_shipping_price()
+    shipping_price.price.assert_called_once_with(order.total_weight())
+    mock_shipping_price.objects.find_shipping_price.assert_called_once_with(
+        country=order.country, shipping_service=order.shipping_service
+    )
+    assert returned_value == shipping_price.price.return_value
 
 
-# @pytest.mark.django_db
-# def test_get_postage_price(country, shipping_price, order_factory):
-#     order = order_factory.create(
-#         country=country,
-#     )
-#     assert order._get_postage_price() == shipping_price.price(order.total_weight())
-
-
-# @pytest.mark.django_db
-# def test_set_postage_price_sets_postage_price(country, shipping_price, order_factory):
-#     order = order_factory.create(
-#         country=country,
-#         postage_price=None,
-#         postage_price_success=None,
-#     )
-#     order._set_postage_price()
-#     order.refresh_from_db()
-#     assert order.postage_price == shipping_price.price(order.total_weight())
-
-
-# @pytest.mark.django_db
-# def test_set_postage_price_does_not_stop_for_missing_weight_band(
-#     country,
-#     shipping_price,
-#     order_factory,
-#     weight_band_factory,
-#     product_sale_factory,
-# ):
-#     weight_band_factory.create(
-#         min_weight=0, max_weight=20, shipping_price=shipping_price
-#     )
-#     order = order_factory.create(
-#         country=country,
-#         postage_price=None,
-#         postage_price_success=None,
-#     )
-#     product_sale_factory.create(order=order, weight=500)
-#     order._set_postage_price()
-#     assert order.postage_price is None
-#     assert order.postage_price_success is False
-
-
-# @pytest.mark.django_db
-# def test_set_postage_price_sets_postage_price_success(
-#     country, shipping_price, order_without_shipping_price
-# ):
-#     order_without_shipping_price._set_postage_price()
-#     order_without_shipping_price.refresh_from_db()
-#     assert order_without_shipping_price.postage_price_success is True
-
-
-# @pytest.mark.django_db
-# def test_set_postage_price_without_valid_price_sets_postage_price_null(
-#     country, order_without_shipping_price
-# ):
-#     order_without_shipping_price._set_postage_price()
-#     order_without_shipping_price.refresh_from_db()
-#     assert order_without_shipping_price.postage_price is None
-
-
-# @pytest.mark.django_db
-# def test_set_postage_price_without_valid_price_sets_postage_succces_false(
-#     country, order_without_shipping_price
-# ):
-#     order_without_shipping_price._set_postage_price()
-#     order_without_shipping_price.refresh_from_db()
-#     assert order_without_shipping_price.postage_price_success is False
-
-
-# @pytest.mark.django_db
-# def test_update_postage_prices(country, shipping_price, order_without_shipping_price):
-#     models.Order.objects.update_postage_prices()
-#     order_without_shipping_price.refresh_from_db()
-#     assert order_without_shipping_price.postage_price_success is True
-
-
-# @pytest.mark.django_db
-# def test_vat_paid(order_factory, product_sale_factory):
-#     order = order_factory.create(country__vat_required=Country.VAT_VARIABLE)
-#     product_sale_factory.create(order=order, price=550, quantity=1, vat=20)
-#     product_sale_factory.create(order=order, price=550, quantity=2, vat=20)
-#     product_sale_factory.create(order=order, price=550, quantity=1, vat=0)
-#     assert order.vat_paid() == 274
-
-
-# @pytest.mark.django_db
-# def test_postage_price_success_is_false_if_total_paid_is_zero(
-#     country, shipping_price, order_factory
-# ):
-#     order = order_factory.create(
-#         total_paid=0,
-#         country=country,
-#         postage_price=None,
-#         postage_price_success=None,
-#     )
-#     models.Order.objects.update_postage_prices()
-#     order.refresh_from_db()
-#     assert order.postage_price_success is False
-
-
-# @pytest.mark.django_db
-# def test_postage_price_success_is_false_if_total_paid_GBP_is_zero(
-#     country, shipping_price, order_factory
-# ):
-#     order = order_factory.create(
-#         total_paid_GBP=0,
-#         country=country,
-#         postage_price=None,
-#         postage_price_success=None,
-#     )
-#     models.Order.objects.update_postage_prices()
-#     order.refresh_from_db()
-#     assert order.postage_price_success is False
-
-
-# @pytest.mark.django_db
-# def test_vat_paid_returns_zero_if_vat_not_required(order_factory, product_sale_factory):
-#     order = order_factory.create(country__vat_required=Country.VAT_NEVER)
-#     product_sale_factory.create(order=order, price=550, quantity=1, vat=20)
-#     product_sale_factory.create(order=order, price=550, quantity=2, vat=20)
-#     product_sale_factory.create(order=order, price=550, quantity=1, vat=0)
-#     assert order.vat_paid() == 0
+@pytest.mark.django_db
+def test_set_calculated_shipping_price(order_factory):
+    order = order_factory.create()
+    shipping_price = 5560
+    order.calculate_shipping_price = Mock(return_value=shipping_price)
+    order._set_calculated_shipping_price()
+    order.refresh_from_db()
+    order.calculate_shipping_price.assert_called_once()
+    assert order.calculated_shipping_price == shipping_price
 
 
 # @pytest.mark.django_db
 # def test_profit(order_factory, product_sale_factory):
-#     order = order_factory.create(total_paid_GBP=3500, postage_price=500)
+#     order = order_factory.create(total_paid_GBP=3500, calculated_shipping_price=500)
 #     product_sale_factory.create(
 #         order=order, purchase_price=550, price=550, quantity=1, vat=20
 #     )
@@ -560,7 +451,7 @@ def test_set_postage_price_error(mock_set_postage_price, order_without_shipping_
 
 # @pytest.mark.django_db
 # def test_profit_percentage(order_factory, product_sale_factory):
-#     order = order_factory.create(total_paid_GBP=3500, postage_price=500)
+#     order = order_factory.create(total_paid_GBP=3500, calculated_shipping_price=500)
 #     product_sale_factory.create(
 #         order=order, purchase_price=550, price=550, quantity=1, vat=20
 #     )

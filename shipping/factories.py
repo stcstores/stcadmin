@@ -16,7 +16,7 @@ class CurrencyFactory(factory.django.DjangoModelFactory):
         model = models.Currency
 
     name = factory.Sequence(lambda n: f"Test Currency {n}")
-    code = factory.Sequence(lambda n: f"SD{n}")
+    code = factory.Sequence(lambda n: f"{n}")
     exchange_rate = Decimal(1.45)
     symbol = "$"
 

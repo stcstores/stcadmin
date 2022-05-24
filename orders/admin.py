@@ -48,15 +48,18 @@ class ProductSaleAdmin(admin.ModelAdmin):
 
     exclude = ()
     list_display = (
-        "sku",
-        "name",
         "order",
-        "quantity",
-        "price",
+        "sku",
+        "channel_sku",
+        "name",
         "weight",
-        "purchase_price",
-        "vat",
+        "quantity",
         "supplier",
+        "purchase_price",
+        "tax",
+        "unit_price",
+        "item_price",
+        "item_total_before_tax",
     )
     search_fields = (
         "order__order_id",
