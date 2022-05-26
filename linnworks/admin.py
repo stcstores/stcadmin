@@ -40,3 +40,35 @@ class InitialStockLevelAdmin(admin.ModelAdmin):
     list_display = ("sku", "stock_level")
     list_editable = ("stock_level",)
     search_fields = ("sku",)
+
+
+@admin.register(models.StockLevelExportUpdate)
+class StockLevelExportUpdateAdmin(admin.ModelAdmin):
+    """Model admin for the StockLevelExportUpdate model."""
+
+    exclude_fields = ()
+    list_display = ("export_time", "stock_count", "stock_value")
+    date_hierarchy = "export_time"
+    search_fields = ("export_time",)
+
+
+@admin.register(models.StockLevelExportRecord)
+class StockLevelExportRecordAdmin(admin.ModelAdmin):
+    """Model admin for the StockLevelExportRecord model."""
+
+    exclude_fields = ()
+    list_display = (
+        "stock_level_update",
+        "product",
+        "stock_level",
+        "purchase_price",
+        "stock_value",
+        "in_order_book",
+    )
+    date_hierarchy = "stock_level_update__export_time"
+    search_fields = (
+        "product__sku",
+        "product__name",
+    )
+    list_select_related = ("stock_level_update", "product")
+    autocomplete_fields = ("stock_level_update", "product")
