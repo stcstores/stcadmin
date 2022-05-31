@@ -1,9 +1,11 @@
 """Models managing Linnworks stock levels."""
 
 import linnapi
-from django.db import models
+from django.db import models, transaction
 
-from inventory.models import StockLevelHistory
+from inventory.models import BaseProduct, StockLevelHistory
+
+from .linnworks_export_files import StockLevelExport
 
 
 class InitialStockLevel(models.Model):
@@ -123,3 +125,100 @@ class StockManager:
         """Return the current stock level for a product SKU."""
         stock_level_info = cls.stock_level_info(sku)
         return stock_level_info.stock_level
+
+
+class StockLevelExportManager(models.Manager):
+    """Model manager for the StockLevelUpdate model."""
+
+    @transaction.atomic()
+    def create_update(self):
+        """Update stock level records from most recent Linnworks export."""
+        export = StockLevelExport()
+        if self.filter(export_time__date=export.export_date.date()).exists():
+            return None
+        update = self.model(export_time=export.export_date)
+        update.save()
+        for row in export.rows:
+            if (
+                row[export.IS_COMPOSITE_PARENT] == export.TRUE
+                or int(row[export.QUANTITY]) < 1
+            ):
+                continue
+            try:
+                product = BaseProduct.objects.get(sku=row[export.SKU])
+            except BaseProduct.DoesNotExist:
+                raise ValueError(f"Could not find product {row[export.SKU]}.")
+            record = StockLevelExportRecord(
+                stock_level_update=update,
+                product=product,
+                in_order_book=int(row[export.IN_ORDER_BOOK]),
+                stock_level=int(row[export.QUANTITY]),
+                purchase_price=product.purchase_price,
+            )
+            record.save()
+        return update
+
+
+class StockLevelExportUpdate(models.Model):
+    """Model for recording stock level updates from exports."""
+
+    export_time = models.DateTimeField(unique=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    objects = StockLevelExportManager()
+
+    class Meta:
+        """Meta class for StockLevelExportUpdate."""
+
+        verbose_name = "Stock Level Export Update"
+        verbose_name_plural = "Stock Level Export Updates"
+        ordering = ["-export_time"]
+        get_latest_by = "export_time"
+
+    def __str__(self):
+        date = self.export_time.strftime("%c")
+        return f"Stock Level Update {date}"
+
+    def stock_count(self):
+        """Return the total number of items in stock."""
+        return self.stock_level_records.aggregate(models.Sum("stock_level"))[
+            "stock_level__sum"
+        ]
+
+    def stock_value(self):
+        """Return the total number of items in stock."""
+        return self.stock_level_records.aggregate(models.Sum("stock_value"))[
+            "stock_value__sum"
+        ]
+
+
+class StockLevelExportRecord(models.Model):
+    """Model for storing stock levels from Linnworks exports."""
+
+    stock_level_update = models.ForeignKey(
+        StockLevelExportUpdate,
+        related_name="stock_level_records",
+        on_delete=models.CASCADE,
+    )
+    product = models.ForeignKey(
+        BaseProduct, related_name="stock_level_records", on_delete=models.CASCADE
+    )
+    in_order_book = models.PositiveIntegerField()
+    stock_level = models.PositiveIntegerField()
+    purchase_price = models.DecimalField(max_digits=7, decimal_places=2)
+    stock_value = models.DecimalField(max_digits=7, decimal_places=2)
+
+    def save(self, *args, **kwargs):
+        """Set the stock value attribute."""
+        self.stock_value = self.purchase_price * self.stock_level
+        super().save(*args, **kwargs)
+
+    class Meta:
+        """Meta class for DailyStockLevel."""
+
+        verbose_name = "Stock Level Export Record"
+        verbose_name_plural = "Stock Levels Export Records"
+
+        unique_together = ("stock_level_update", "product")
+
+        order_with_respect_to = "stock_level_update"

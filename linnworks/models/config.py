@@ -27,6 +27,9 @@ class LinnworksConfig(SingletonModel):
         max_length=250, blank=True, null=True
     )
     image_export_file_path = models.CharField(max_length=250, blank=True, null=True)
+    stock_level_export_file_path = models.CharField(
+        max_length=250, blank=True, null=True
+    )
 
     class Meta:
         """Meta class for the LinnworksConfig model."""
