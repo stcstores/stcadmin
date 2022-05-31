@@ -14,9 +14,9 @@ class BaseExportFile:
 
     filename_date = False
 
-    def __init__(self):
+    def __init__(self, file_path=None):
         """Open a .csv file and load headers and rows."""
-        self.file_path = self.get_file_path()
+        self.file_path = file_path or self.get_file_path()
         if self.filename_date:
             self.export_date = self.parse_filename_date(self.file_path)
         self.header, self.rows = self.read_file(self.file_path)

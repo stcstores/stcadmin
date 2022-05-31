@@ -131,9 +131,9 @@ class StockLevelExportManager(models.Manager):
     """Model manager for the StockLevelUpdate model."""
 
     @transaction.atomic()
-    def create_update(self):
+    def create_update(self, export=None):
         """Update stock level records from most recent Linnworks export."""
-        export = StockLevelExport()
+        export = export or StockLevelExport()
         if self.filter(export_time__date=export.export_date.date()).exists():
             return None
         update = self.model(export_time=export.export_date)

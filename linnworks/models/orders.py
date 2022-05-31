@@ -77,7 +77,6 @@ class ProcessedOrdersExport(BaseExportFile):
         config = LinnworksConfig.get_solo()
         order_export_file_dir = config.processed_orders_import_path
         exports = sorted(list(Path(order_export_file_dir).iterdir()))
-        print(exports[-1])
         return exports[-1]
 
     @property
@@ -116,10 +115,11 @@ class OrderUpdater:
         }
 
     @transaction.atomic()
-    def update_orders(self):
+    def update_orders(self, processed_orders_export=None):
         """Update the orders model from a Linnworks export."""
         existing_order_ids = set(Order.objects.values_list("order_id", flat=True))
-        processed_orders = ProcessedOrdersExport().orders
+        processed_orders_export = processed_orders_export or ProcessedOrdersExport()
+        processed_orders = processed_orders_export.orders
         for order_id, order_rows in processed_orders.items():
             if order_id in existing_order_ids:
                 continue
