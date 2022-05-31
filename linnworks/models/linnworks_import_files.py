@@ -298,7 +298,10 @@ class LinnworksProductImportFile(BaseImportFile):
         """Convert dimensions in mm to cm."""
         if distance_mm is None:
             return 1
-        return int(distance_mm / 10)
+        cm = int(distance_mm / 10)
+        if cm < 1:
+            return 1
+        return cm
 
     @classmethod
     def _get_product_row(cls, product):

@@ -2,10 +2,8 @@
 
 
 from collections import defaultdict
-from copy import deepcopy
 from uuid import uuid4
 
-from django.core.files.uploadedfile import UploadedFile
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
@@ -66,11 +64,8 @@ class ImageFormView(InventoryUserMixin, FormView):
             images = list(self.request.FILES.getlist("images"))
             for product in products:
                 first_ordering = self.get_first_ordering(product)
-                for ordering, uploaded_image in enumerate(images, first_ordering):
-                    image = UploadedFile(
-                        file=deepcopy(uploaded_image.file), name=str(uuid4())
-                    )
-                    image.file.seek(0)
+                for ordering, image in enumerate(images, first_ordering):
+                    image.name = str(uuid4())
                     models.ProductImage(
                         image_file=image, product=product, ordering=ordering
                     ).save()

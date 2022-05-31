@@ -14,17 +14,17 @@
   <h3>{{ form }}</h3>
 </form>
 
-{% for option, values in options.items %}
+{% comment %} {% for option, values in options.items %}
 <p>{{ option }}: {% for value, product_ids in values.items %}
   <button
     onclick="select_products([{% for p_id in product_ids %}{{ p_id }}, {% endfor %}])">{{ value }}</button>{% endfor %}
 </p>
-{% endfor %}
+{% endfor %} {% endcomment %}
 
 <table class="image_table">
   <tr>
     <th>Product</th>
-    <th><button id="toggle_selected">Toggle</button></th>
+    {% comment %} <th><button id="toggle_selected">Toggle</button></th> {% endcomment %}
   </tr>
   {% for product in products %}
   <tr id="row_{{ product.pk }}">
@@ -145,6 +145,7 @@
     });
 
     $('.selected input:checkbox').change(function () {
+      $('.selected input:checkbox').not(this).prop('checked', false);
       var checked = $('.selected input:checked');
       var product_id_input = $('#{{ form.product_ids.auto_id }}');
       var product_ids = [];
