@@ -3,6 +3,7 @@
 import datetime as dt
 from collections import defaultdict
 from decimal import Decimal
+from pathlib import Path
 
 from django.db import transaction
 from django.utils.timezone import make_aware
@@ -72,9 +73,12 @@ class ProcessedOrdersExport(BaseExportFile):
         super().__init__(*args, **kwargs)
 
     def get_file_path(self):
-        """Return the file path of the processed orders file."""
+        """Return the path to the latest inventory export."""
         config = LinnworksConfig.get_solo()
-        return config.processed_orders_import_path
+        order_export_file_dir = config.processed_orders_import_path
+        exports = sorted(list(Path(order_export_file_dir).iterdir()))
+        print(exports[-1])
+        return exports[-1]
 
     @property
     def orders(self):
@@ -128,8 +132,7 @@ class OrderUpdater:
             try:
                 order._set_calculated_shipping_price()
             except Exception:
-                print(order.order_id, order.country, order.shipping_service)
-        raise Exception("Actually worked")
+                pass
 
     def create_order(self, order_id, row):
         """Return an orders.Order instance."""
@@ -145,7 +148,7 @@ class OrderUpdater:
             country=self.countries[row[cols.SHIPPING_COUNTRY_CODE]],
             shipping_service=shipping_service,
             tracking_number=row[cols.TRACKING_NUMBER],
-            priority=shipping_service.priority,
+            priority=shipping_service.priority if shipping_service else False,
             displayed_shipping_price=self.convert_integer_price(
                 row[cols.SHIPPING_COST]
             ),
@@ -173,7 +176,7 @@ class OrderUpdater:
             purchase_price=self.convert_integer_price(product.purchase_price),
             tax=self.convert_integer_price(product_row[cols.LINE_TAX]),
             unit_price=self.convert_integer_price(product_row[cols.UNIT_COST]),
-            line_price=self.convert_integer_price(product_row[cols.LINE_TOTAL]),
+            item_price=self.convert_integer_price(product_row[cols.LINE_TOTAL]),
             item_total_before_tax=self.convert_integer_price(
                 product_row[cols.LINE_TOTAL_EXCLUDING_TAX]
             ),

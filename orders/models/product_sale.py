@@ -13,16 +13,16 @@ class ProductSale(models.Model):
     channel_sku = models.CharField(max_length=25, blank=True, null=True)
     name = models.TextField(blank=True, null=True)
     weight = models.PositiveIntegerField(blank=True, null=True)
-    quantity = models.PositiveSmallIntegerField()
+    quantity = models.PositiveIntegerField()
     supplier = models.ForeignKey(
         Supplier, blank=True, null=True, on_delete=models.PROTECT
     )
 
-    purchase_price = models.PositiveSmallIntegerField(blank=True, null=True)
-    tax = models.PositiveSmallIntegerField(blank=True, null=True)
-    unit_price = models.PositiveSmallIntegerField(blank=True, null=True)
-    item_price = models.PositiveSmallIntegerField(blank=True, null=True)
-    item_total_before_tax = models.PositiveSmallIntegerField(blank=True, null=True)
+    purchase_price = models.PositiveIntegerField(blank=True, null=True)
+    tax = models.PositiveIntegerField(blank=True, null=True)
+    unit_price = models.PositiveIntegerField(blank=True, null=True)
+    item_price = models.PositiveIntegerField(blank=True, null=True)
+    item_total_before_tax = models.PositiveIntegerField(blank=True, null=True)
 
     class Meta:
         """Meta class for the ProductSale model."""
