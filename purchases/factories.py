@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from factory.django import DjangoModelFactory
 
 from purchases import models
-from shipping.tests.conftest import ShippingPriceFactory
+from shipping.factories import ShippingPriceFactory
 
 
 class UserFactory(DjangoModelFactory):

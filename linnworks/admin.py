@@ -18,7 +18,11 @@ class LinnworksChannelAdmin(admin.ModelAdmin):
     """Model admin for the LinnworksChannel model."""
 
     exclude_fields = ()
-    list_display = ("sub_source", "source", "link_prime")
+    list_display = ("sub_source", "source", "link_prime", "channel")
+    list_editable = ("channel",)
+    search_fields = ("sub_source", "source")
+    list_select_related = ("channel",)
+    autocomplete_fields = ("channel",)
 
 
 @admin.register(models.LinkingIgnoredSKU)

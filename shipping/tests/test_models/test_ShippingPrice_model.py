@@ -74,8 +74,8 @@ def test_sets_covid_surcharge(new_shipping_price):
 
 
 @pytest.mark.django_db
-def test_sets_inactive(new_shipping_price):
-    assert new_shipping_price.inactive is False
+def test_sets_active(new_shipping_price):
+    assert new_shipping_price.active is False
 
 
 @pytest.mark.django_db

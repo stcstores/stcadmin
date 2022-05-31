@@ -70,7 +70,7 @@ def test_logged_in_group_post(group_logged_in_client, url):
 def test_export_contains_refund(refund, valid_get_response, export_rows):
     contents = export_rows(valid_get_response)
     assert contents[1] == [
-        refund.order.order_ID,
+        refund.order.order_id,
         refund.reason(),
         refund.order.recieved_at.strftime("%Y-%m-%d"),
         refund.order.dispatched_at.strftime("%Y-%m-%d"),
@@ -98,7 +98,7 @@ def test_export_contains_courier_refund(
     response = group_logged_in_client.get(url)
     contents = export_rows(response)
     assert contents[1] == [
-        refund.order.order_ID,
+        refund.order.order_id,
         refund.reason(),
         refund.order.recieved_at.strftime("%Y-%m-%d"),
         refund.order.dispatched_at.strftime("%Y-%m-%d"),
@@ -126,7 +126,7 @@ def test_export_contains_supplier_refund(
     response = group_logged_in_client.get(url)
     contents = export_rows(response)
     assert contents[1] == [
-        refund.order.order_ID,
+        refund.order.order_id,
         refund.reason(),
         refund.order.recieved_at.strftime("%Y-%m-%d"),
         refund.order.dispatched_at.strftime("%Y-%m-%d"),

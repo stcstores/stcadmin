@@ -125,7 +125,7 @@ class CourierRefund(ContactRefund):
 
         """
         with transaction.atomic():
-            courier = order.shipping_rule.courier_service.courier.courier_type.provider
+            courier = order.shipping_service.provider
             refund = cls(order=order, courier=courier)
             refund.save()
             for product_sale, quantity in products:

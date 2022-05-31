@@ -4,7 +4,7 @@ import pytest_factoryboy
 from inventory.models import PackageType
 from inventory.tests.conftest import ProductRangeFactory
 from price_calculator import models
-from shipping.tests.conftest import (
+from shipping.factories import (
     CountryFactory,
     ShippingPriceFactory,
     ShippingServiceFactory,
@@ -71,6 +71,7 @@ class ShippingMethodFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Test Shipping Price {n}")
     country = factory.SubFactory(CountryFactory)
     shipping_service = factory.SubFactory(ShippingServiceFactory)
+    active = True
 
 
 @pytest_factoryboy.register

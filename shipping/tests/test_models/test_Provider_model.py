@@ -21,8 +21,8 @@ def test_name_is_set(name, new_provider):
 
 
 @pytest.mark.django_db
-def test_inactive_is_set(new_provider):
-    assert new_provider.inactive is False
+def test_active_is_set(new_provider):
+    assert new_provider.active is False
 
 
 @pytest.mark.django_db

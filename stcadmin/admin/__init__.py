@@ -1,0 +1,1 @@
+"""STCAdmin admin extensions."""

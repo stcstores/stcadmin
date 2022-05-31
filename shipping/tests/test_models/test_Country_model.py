@@ -4,11 +4,6 @@ from shipping import models
 
 
 @pytest.fixture
-def country_ID():
-    return "839"
-
-
-@pytest.fixture
 def name():
     return "Test Country"
 
@@ -34,17 +29,10 @@ def default_vat_rate():
 
 
 @pytest.fixture
-def new_country(country_ID, name, region, currency):
-    country = models.Country(
-        country_ID=country_ID, name=name, region=region, currency=currency
-    )
+def new_country(name, region, currency):
+    country = models.Country(name=name, region=region, currency=currency)
     country.save()
     return country
-
-
-@pytest.mark.django_db
-def test_country_ID_is_set(country_ID, new_country):
-    assert new_country.country_ID == country_ID
 
 
 @pytest.mark.django_db
@@ -73,9 +61,8 @@ def test_default_vat_rate_defaults_to_null(new_country):
 
 
 @pytest.mark.django_db
-def test_can_set_vat_required(country_ID, name, region, currency, vat_required):
+def test_can_set_vat_required(name, region, currency, vat_required):
     country = models.Country(
-        country_ID=country_ID,
         name=name,
         region=region,
         currency=currency,
@@ -87,9 +74,8 @@ def test_can_set_vat_required(country_ID, name, region, currency, vat_required):
 
 
 @pytest.mark.django_db
-def test_can_set_default_vat_rate(country_ID, name, region, currency, default_vat_rate):
+def test_can_set_default_vat_rate(name, region, currency, default_vat_rate):
     country = models.Country(
-        country_ID=country_ID,
         name=name,
         region=region,
         currency=currency,

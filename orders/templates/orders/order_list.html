@@ -20,17 +20,15 @@
             <th>Order ID</th>
             <th>Recieved At</th>
             <th>Dispatched At</th>
-            <th>Department</th>
             <th>Country</th>
             <th>Channel</th>
             <th>Tracking Number</th>
-            <th>Shipping Rule</th>
-            <th>Courier Service</th>
+            <th>Shipping Service</th>
             <th>Profit</th>
         </tr>
-    {% for order in object_list %}
+        {% for order in object_list %}
         <tr class="order">
-            <th>{{ order.order_ID }} </th>
+            <th>{{ order.order_id }} </th>
             <td>{{ order.recieved_at|date:"Y-m-d H:i" }}</td>
             <td>{% if order.dispatched_at %}
                 {{ order.dispatched_at|date:"Y-m-d H:i" }}
@@ -38,26 +36,22 @@
                 UNDISPATCHED
                 {% endif %}
             </td>
-            <td>{{ order.department}}</td>
             <td>{{ order.country }}</td>
             <td>{{ order.channel }}</td>
             <td>{{ order.tracking_number }}</td>
-            <td>{{ order.shipping_rule.name }}</td>
-            <td>{{ order.courier_service }}</td>
+            <td>{{ order.shipping_service.name }}</td>
             <td>
-                {% if order.up_to_date_details is False %}
-                    Not yet calculated
-                {% elif order.profit_calculable is False %}
-                    ERROR
+                {% if order.calculated_shipping_price is None %}
+                Not yet calculated
                 {% else %}
-                    <a href="{% url 'orders:order_profit' order.id %}">
-                        {% format_price order.profit %}&nbsp;
-                        {% format_percentage order.profit_percentage %}
-                    </a>
+                <a href="{% url 'orders:order_profit' order.id %}">
+                    {% format_price order.profit %}&nbsp;
+                    {% format_percentage order.profit_percentage %}
+                </a>
                 {% endif %}
             </td>
         </tr>
-    {% endfor %}
+        {% endfor %}
     </table>
     {% include 'orders/pagination_navigation.html' %}
 </form>

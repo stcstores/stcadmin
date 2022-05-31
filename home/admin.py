@@ -20,6 +20,7 @@ class CloudCommerceUserAdmin(admin.ModelAdmin):
     list_display_links = ("full_name",)
     list_editable = ("user_id", "hidden")
     readonly_fields = ("full_name",)
+    search_fields = ("full_name", "user_id", "first_name", "second_name")
 
 
 @admin.register(models.ExternalLink)

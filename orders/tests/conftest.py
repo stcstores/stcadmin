@@ -7,22 +7,19 @@ from django.utils import timezone
 from home.models import CloudCommerceUser
 from inventory.models import Supplier
 from orders import models
-from shipping.tests.conftest import (
+from shipping.factories import (
     CountryFactory,
-    CourierServiceFactory,
+    CurrencyFactory,
     ProviderFactory,
     ShippingPriceFactory,
-    ShippingRuleFactory,
-    VatRateFactory,
+    ShippingServiceFactory,
     WeightBandFactory,
 )
 
 pytest_factoryboy.register(CountryFactory)
-pytest_factoryboy.register(ShippingRuleFactory)
+pytest_factoryboy.register(ShippingServiceFactory)
 pytest_factoryboy.register(ShippingPriceFactory)
-pytest_factoryboy.register(CourierServiceFactory)
 pytest_factoryboy.register(WeightBandFactory)
-pytest_factoryboy.register(VatRateFactory)
 pytest_factoryboy.register(ProviderFactory)
 
 
@@ -62,23 +59,43 @@ class OrderFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Order
 
-    order_ID = factory.Sequence(lambda n: str(748373 + n))
-    customer_ID = factory.Sequence(lambda n: str(16844161 + n))
+    order_id = factory.Sequence(lambda n: str(748373 + n))
     recieved_at = timezone.make_aware(datetime(2020, 2, 11, 10, 24))
     dispatched_at = timezone.make_aware(datetime(2020, 2, 10, 12, 36))
     cancelled = False
     ignored = False
     channel = factory.SubFactory(ChannelFactory)
-    channel_order_ID = factory.Sequence(lambda n: str(6413545 + n))
+    external_reference = factory.Sequence(lambda n: str(6413545 + n))
     country = factory.SubFactory(CountryFactory)
-    shipping_rule = factory.SubFactory(ShippingRuleFactory)
-    courier_service = factory.SubFactory(CourierServiceFactory)
+    shipping_service = factory.SubFactory(ShippingServiceFactory)
     tracking_number = factory.Sequence(lambda n: f"TK8493833{n}")
+    priority = False
+    priority = False
+    displayed_shipping_price = 832
+    calculated_shipping_price = 846
+    tax = 2560
+    currency = factory.SubFactory(CurrencyFactory)
     total_paid = 4457
     total_paid_GBP = 5691
-    priority = False
-    postage_price = 832
-    postage_price_success = True
+
+
+@pytest_factoryboy.register
+class ProductSaleFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.ProductSale
+
+    order = factory.SubFactory(OrderFactory)
+    sku = factory.Sequence(lambda n: f"ABC-123-TG{n}")
+    channel_sku = factory.Sequence(lambda n: f"AMZ_{n}")
+    name = factory.Sequence(lambda n: f"Test Product {n}")
+    weight = 256
+    quantity = 1
+    supplier = factory.SubFactory(SupplierFactory)
+    purchase_price = 250
+    tax = 12
+    unit_price = 518
+    item_price = 518
+    item_total_before_tax = 489
 
 
 @pytest_factoryboy.register
@@ -88,24 +105,6 @@ class PackingRecordFactory(factory.django.DjangoModelFactory):
 
     order = factory.SubFactory(OrderFactory)
     packed_by = factory.SubFactory(CloudCommerceUserFactory)
-
-
-@pytest_factoryboy.register
-class ProductSaleFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = models.ProductSale
-
-    order = factory.SubFactory(OrderFactory)
-    product_ID = factory.Sequence(lambda n: str(6546486 + n))
-    sku = factory.Sequence(lambda n: f"ABC-123-TG{n}")
-    name = factory.Sequence(lambda n: f"Test Product {n}")
-    weight = 256
-    quantity = 1
-    price = 550
-    purchase_price = 250
-    vat_rate = 20
-    supplier = factory.SubFactory(SupplierFactory)
-    details_success = True
 
 
 @pytest_factoryboy.register

@@ -123,7 +123,7 @@ def test_packing_record_in_context(refund, packing_record, valid_get_response):
 
 
 def test_order_id_in_response(refund, valid_get_response_content):
-    assert refund.order.order_ID in valid_get_response_content
+    assert refund.order.order_id in valid_get_response_content
 
 
 def test_notes_in_response(refund, valid_get_response_content):
@@ -227,7 +227,7 @@ def test_links_to_feedback_page_when_feedback_exists(
             ),
         ),
         user=packing_record.packed_by,
-        order_id=refund.order.order_ID,
+        order_id=refund.order.order_id,
     )
     response = group_logged_in_client.get(url(refund))
     content = response.content.decode("utf8")

@@ -49,11 +49,11 @@
     </tr>
     <tr>
         <th>Postage Price</th>
-        <td>{% format_price order.postage_price %}</td>
+        <td>{% format_price order.calculated_shipping_price %}</td>
     </tr>
     <tr>
         <th>VAT</th>
-        <td>{% format_price order.vat_paid %}</td>
+        <td>{% format_price order.tax %}</td>
     </tr>
     <tr>
         <th>Channel Fee</th>

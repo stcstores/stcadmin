@@ -116,7 +116,7 @@ def test_refund_products_created(
 @pytest.mark.django_db
 def test_redirects(group_logged_in_client, url, order, form_data):
     response = group_logged_in_client.post(url("broken", order), form_data)
-    assert response.url == reverse("orders:refund_list") + f"?order_ID={order.order_ID}"
+    assert response.url == reverse("orders:refund_list") + f"?order_id={order.order_id}"
 
 
 @pytest.mark.django_db

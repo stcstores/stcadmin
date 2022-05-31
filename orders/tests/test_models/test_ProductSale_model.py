@@ -1,10 +1,7 @@
-from unittest.mock import Mock
-
 import pytest
 from django.db import IntegrityError
 
 from orders import models
-from shipping.models import Country
 
 
 @pytest.fixture
@@ -13,13 +10,13 @@ def order(order_factory):
 
 
 @pytest.fixture
-def product_ID():
-    return "484894684"
+def sku():
+    return "ABC-213-JKE"
 
 
 @pytest.fixture
-def sku():
-    return '"ABC-213-JKE'
+def channel_sku():
+    return "AMZ_0009562"
 
 
 @pytest.fixture
@@ -38,8 +35,23 @@ def quantity():
 
 
 @pytest.fixture
-def price():
+def tax():
+    return 125
+
+
+@pytest.fixture
+def unit_price():
     return 550
+
+
+@pytest.fixture
+def item_price(quantity, unit_price):
+    return unit_price * quantity
+
+
+@pytest.fixture
+def item_total_before_tax(tax, item_price):
+    return item_price - tax
 
 
 @pytest.fixture
@@ -48,58 +60,38 @@ def supplier(supplier_factory):
 
 
 @pytest.fixture
-def vat_rate():
-    return 20
-
-
-@pytest.fixture
 def purchase_price():
-    return 680
-
-
-@pytest.fixture
-def mock_product():
-    def _mock_product(vat_rate_id, supplier_id, purchase_price, end_of_line=False):
-
-        supplier = Mock(value=Mock(id=int(supplier_id)))
-        purchase_price = Mock(value=Mock(value=float(purchase_price)))
-        return Mock(
-            vat_rate_id=vat_rate_id,
-            options={
-                "Purchase Price": purchase_price,
-                "Supplier": supplier,
-            },
-            end_of_line=end_of_line,
-        )
-
-    return _mock_product
+    return 280
 
 
 @pytest.fixture
 def new_product_sale(
     order,
-    product_ID,
     sku,
     name,
+    channel_sku,
     weight,
     quantity,
-    price,
     supplier,
-    vat_rate,
     purchase_price,
+    tax,
+    unit_price,
+    item_price,
+    item_total_before_tax,
 ):
     sale = models.ProductSale(
         order=order,
-        product_ID=product_ID,
         sku=sku,
+        channel_sku=channel_sku,
         name=name,
         weight=weight,
         quantity=quantity,
-        price=price,
         supplier=supplier,
-        vat_rate=vat_rate,
+        tax=tax,
         purchase_price=purchase_price,
-        end_of_line=True,
+        unit_price=unit_price,
+        item_price=item_price,
+        item_total_before_tax=item_total_before_tax,
     )
     sale.save()
     return sale
@@ -111,35 +103,25 @@ def test_sets_order(new_product_sale, order):
 
 
 @pytest.mark.django_db
-def test_sets_product_ID(new_product_sale, product_ID):
-    assert new_product_sale.product_ID == product_ID
-
-
-@pytest.mark.django_db
 def test_sets_sku(new_product_sale, sku):
     assert new_product_sale.sku == sku
 
 
 @pytest.mark.django_db
+def test_sets_channel_sku(new_product_sale, channel_sku):
+    assert new_product_sale.channel_sku == channel_sku
+
+
+@pytest.mark.django_db
 def test_sku_defaults_null(
     order,
-    product_ID,
-    name,
     weight,
     quantity,
-    price,
-    vat_rate,
-    purchase_price,
 ):
     sale = models.ProductSale(
         order=order,
-        product_ID=product_ID,
-        name=name,
         weight=weight,
         quantity=quantity,
-        price=price,
-        purchase_price=purchase_price,
-        vat_rate=vat_rate,
     )
     sale.save()
     sale.refresh_from_db()
@@ -152,14 +134,12 @@ def test_sets_name(new_product_sale, name):
 
 
 @pytest.mark.django_db
-def test_name_defaults_null(order, product_ID, sku, weight, quantity, price):
+def test_name_defaults_null(order, sku, weight, quantity):
     sale = models.ProductSale(
         order=order,
-        product_ID=product_ID,
         sku=sku,
         weight=weight,
         quantity=quantity,
-        price=price,
     )
     sale.save()
     sale.refresh_from_db()
@@ -167,14 +147,12 @@ def test_name_defaults_null(order, product_ID, sku, weight, quantity, price):
 
 
 @pytest.mark.django_db
-def test_weight_defaults_null(order, product_ID, sku, name, quantity, price):
+def test_weight_defaults_null(order, sku, name, quantity):
     sale = models.ProductSale(
         order=order,
-        product_ID=product_ID,
         sku=sku,
         name=name,
         quantity=quantity,
-        price=price,
     )
     sale.save()
     sale.refresh_from_db()
@@ -192,8 +170,18 @@ def test_sets_quantity(new_product_sale, quantity):
 
 
 @pytest.mark.django_db
-def test_sets_price(new_product_sale, price):
-    assert new_product_sale.price == price
+def test_sets_unit_price(new_product_sale, unit_price):
+    assert new_product_sale.unit_price == unit_price
+
+
+@pytest.mark.django_db
+def test_sets_item_price(new_product_sale, item_price):
+    assert new_product_sale.item_price == item_price
+
+
+@pytest.mark.django_db
+def test_sets_item_total_before_tax(new_product_sale, item_total_before_tax):
+    assert new_product_sale.item_total_before_tax == item_total_before_tax
 
 
 @pytest.mark.django_db
@@ -202,28 +190,24 @@ def test_sets_purchase_price(new_product_sale, purchase_price):
 
 
 @pytest.mark.django_db
-def test_purchase_price_defaults_to_null(order, product_ID, sku, name, quantity, price):
-    sale = models.ProductSale(
-        order=order, product_ID=product_ID, sku=sku, quantity=quantity, price=price
-    )
+def test_purchase_price_defaults_to_null(order, sku, quantity):
+    sale = models.ProductSale(order=order, sku=sku, quantity=quantity)
     sale.save()
     sale.refresh_from_db()
     assert sale.purchase_price is None
 
 
 @pytest.mark.django_db
-def test_sets_vat_rate(new_product_sale, vat_rate):
-    assert new_product_sale.vat_rate == vat_rate
+def test_sets_tax(new_product_sale, tax):
+    assert new_product_sale.tax == tax
 
 
 @pytest.mark.django_db
-def test_vat_rate_defaults_to_null(order, product_ID, sku, name, quantity, price):
-    sale = models.ProductSale(
-        order=order, product_ID=product_ID, sku=sku, quantity=quantity, price=price
-    )
+def test_tax_defaults_to_null(order, sku, quantity):
+    sale = models.ProductSale(order=order, sku=sku, quantity=quantity)
     sale.save()
     sale.refresh_from_db()
-    assert sale.vat_rate is None
+    assert sale.tax is None
 
 
 @pytest.mark.django_db
@@ -232,150 +216,31 @@ def test_sets_supplier(new_product_sale, supplier):
 
 
 @pytest.mark.django_db
-def test_supplier_defaults_null(
-    order,
-    product_ID,
-    name,
-    weight,
-    quantity,
-    price,
-    vat_rate,
-    purchase_price,
-):
-    sale = models.ProductSale(
-        order=order,
-        product_ID=product_ID,
-        name=name,
-        weight=weight,
-        quantity=quantity,
-        price=price,
-        purchase_price=purchase_price,
-        vat_rate=vat_rate,
-    )
+def test_supplier_defaults_null(order, quantity):
+    sale = models.ProductSale(order=order, quantity=quantity)
     sale.save()
     sale.refresh_from_db()
     assert sale.supplier is None
 
 
 @pytest.mark.django_db
-def test_sets_end_of_line(new_product_sale):
-    assert new_product_sale.end_of_line is True
-
-
-@pytest.mark.django_db
-def test_end_of_line_defaults_to_null(order, product_ID, sku, name, quantity, price):
-    sale = models.ProductSale(
-        order=order, product_ID=product_ID, sku=sku, quantity=quantity, price=price
-    )
-    sale.save()
-    sale.refresh_from_db()
-    assert sale.end_of_line is None
-
-
-@pytest.mark.django_db
-def test_sets_details_success(new_product_sale):
-    assert new_product_sale.details_success is None
-
-
-@pytest.mark.django_db
-def test_order_and_product_ID_are_unique_together(
-    order, product_ID, product_sale_factory
-):
-    product_sale_factory.create(order=order, product_ID=product_ID)
+def test_order_and_sku_are_unique_together(order, sku, product_sale_factory):
+    product_sale_factory.create(order=order, sku=sku)
     with pytest.raises(IntegrityError):
-        product_sale_factory.create(order=order, product_ID=product_ID)
+        product_sale_factory.create(order=order, sku=sku)
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    "weight,quantity,expected", [(500, 1, 500), (500, 2, 1000), (300, 3, 900)]
-)
-def test_total_weight(weight, quantity, expected, product_sale_factory):
+@pytest.mark.parametrize("weight,quantity", [(500, 1), (500, 2), (300, 3)])
+def test_total_weight(weight, quantity, product_sale_factory):
     sale = product_sale_factory.create(weight=weight, quantity=quantity)
-    assert sale.total_weight() == expected
+    assert sale.total_weight() == weight * quantity
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    "price,quantity,expected", [(550, 1, 550), (550, 2, 1100), (720, 3, 2160)]
-)
-def test_price_paid(price, quantity, expected, product_sale_factory):
-    sale = product_sale_factory.create(price=price, quantity=quantity)
-    assert sale._price_paid() == expected
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "price,quantity,vat_rate,channel_include_vat, country_vat_required, expected",
-    [
-        (550, 1, 0, True, Country.VAT_VARIABLE, 0),
-        (550, 2, 0, True, Country.VAT_VARIABLE, 0),
-        (720, 3, 0, True, Country.VAT_VARIABLE, 0),
-        (550, 1, 20, True, Country.VAT_VARIABLE, 91),
-        (550, 2, 20, True, Country.VAT_VARIABLE, 183),
-        (720, 3, 20, True, Country.VAT_VARIABLE, 360),
-        (550, 1, 0, False, Country.VAT_VARIABLE, 0),
-        (550, 2, 0, False, Country.VAT_VARIABLE, 0),
-        (720, 3, 0, False, Country.VAT_VARIABLE, 0),
-        (550, 1, 20, False, Country.VAT_VARIABLE, 0),
-        (550, 2, 20, False, Country.VAT_VARIABLE, 0),
-        (720, 3, 20, False, Country.VAT_VARIABLE, 0),
-        (550, 1, 0, True, Country.VAT_NEVER, 0),
-        (550, 2, 0, True, Country.VAT_NEVER, 0),
-        (720, 3, 0, True, Country.VAT_NEVER, 0),
-        (550, 1, 20, True, Country.VAT_NEVER, 0),
-        (550, 2, 20, True, Country.VAT_NEVER, 0),
-        (720, 3, 20, True, Country.VAT_NEVER, 0),
-        (550, 1, 0, False, Country.VAT_NEVER, 0),
-        (550, 2, 0, False, Country.VAT_NEVER, 0),
-        (720, 3, 0, False, Country.VAT_NEVER, 0),
-        (550, 1, 20, False, Country.VAT_NEVER, 0),
-        (550, 2, 20, False, Country.VAT_NEVER, 0),
-        (720, 3, 20, False, Country.VAT_NEVER, 0),
-        (550, 1, 0, True, Country.VAT_ALWAYS, 183),
-        (550, 2, 0, True, Country.VAT_ALWAYS, 366),
-        (720, 3, 0, True, Country.VAT_ALWAYS, 720),
-        (550, 1, 20, True, Country.VAT_ALWAYS, 183),
-        (550, 2, 20, True, Country.VAT_ALWAYS, 366),
-        (720, 3, 20, True, Country.VAT_ALWAYS, 720),
-        (550, 1, 0, False, Country.VAT_ALWAYS, 0),
-        (550, 2, 0, False, Country.VAT_ALWAYS, 0),
-        (720, 3, 0, False, Country.VAT_ALWAYS, 0),
-        (550, 1, 20, False, Country.VAT_ALWAYS, 0),
-        (550, 2, 20, False, Country.VAT_ALWAYS, 0),
-        (720, 3, 20, False, Country.VAT_ALWAYS, 0),
-    ],
-)
-def test__vat_paid(
-    price,
-    quantity,
-    vat_rate,
-    channel_include_vat,
-    country_vat_required,
-    expected,
-    product_sale_factory,
-):
-    sale = product_sale_factory.create(
-        price=price,
-        quantity=quantity,
-        vat_rate=vat_rate,
-        order__channel__include_vat=channel_include_vat,
-        order__country__vat_required=country_vat_required,
-        order__country__default_vat_rate=50,
-    )
-    assert sale._vat_paid() == expected
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "price,quantity,channel_fee, expected",
-    [(550, 1, 15.5, 85), (550, 2, 15.5, 170), (720, 3, 15.5, 334), (720, 3, 0, 0)],
-)
-def test_channel_fee_paid(price, quantity, expected, channel_fee, product_sale_factory):
-    sale = product_sale_factory.create(
-        price=price, quantity=quantity, order__channel__channel_fee=channel_fee
-    )
-    assert sale._channel_fee_paid() == expected
+def test_channel_fee_paid(product_sale_factory):
+    sale = product_sale_factory.create(item_price=200, order__channel__channel_fee=25)
+    assert sale._channel_fee_paid() == 50
 
 
 @pytest.mark.django_db

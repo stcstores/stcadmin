@@ -69,7 +69,7 @@ def test_redirects(valid_get_response, refund):
 
 def test_creates_feedback(valid_get_response, refund, packing_record):
     assert UserFeedback.objects.filter(
-        order_id=refund.order.order_ID,
+        order_id=refund.order.order_id,
         feedback_type__name="Packing Mistake",
         user=packing_record.packed_by,
     )

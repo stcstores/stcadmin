@@ -47,7 +47,7 @@ def test_match_shipping_methods_does_not_return_inactive_methods(
         max_weight=500,
         min_price=1000,
         max_price=8000,
-        inactive=True,
+        active=False,
     )
     shipping_method.product_type.set([product_type])
     shipping_method.channel.set([channel])
@@ -109,7 +109,7 @@ def test_get_shipping_price_does_not_return_inactive_prices(
     shipping_price_factory.create(
         country=country,
         shipping_service=shipping_method.shipping_service,
-        inactive=True,
+        active=False,
     )
     shipping_method.product_type.set([product_type])
     shipping_method.channel.set([channel])

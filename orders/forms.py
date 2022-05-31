@@ -30,7 +30,7 @@ class OrderListFilter(forms.Form):
     SHOW = "show"
     HIDE = "hide"
 
-    order_ID = forms.CharField(required=False)
+    order_id = forms.CharField(required=False)
     country = forms.ModelChoiceField(
         Country.objects.all().order_by("name"), required=False
     )
@@ -51,12 +51,6 @@ class OrderListFilter(forms.Form):
         ),
         required=False,
     )
-    contains_EOL_items = forms.ChoiceField(
-        choices=((ANY, "Any"), (SHOW, "Show"), (HIDE, "Hide")),
-        required=False,
-        label="Contains EOL Items",
-    )
-    profit_calculable_only = forms.BooleanField(initial=False, required=False)
 
     def clean_recieved_from(self):
         """Return a timezone aware datetime object from the submitted date."""
@@ -70,15 +64,6 @@ class OrderListFilter(forms.Form):
         if date is not None:
             return make_aware(datetime.combine(date, datetime.max.time()))
 
-    def clean_contains_EOL_items(self):
-        """Return bool or None."""
-        value = self.cleaned_data["contains_EOL_items"]
-        if value == self.SHOW:
-            return True
-        if value == self.HIDE:
-            return False
-        return None
-
     def query_kwargs(self, data):
         """Return a dict of filter kwargs."""
         kwargs = {
@@ -86,7 +71,7 @@ class OrderListFilter(forms.Form):
             "channel": data.get("channel"),
             "recieved_at__gte": data.get("recieved_from"),
             "recieved_at__lte": data.get("recieved_to"),
-            "order_ID": data.get("order_ID") or None,
+            "order_id": data.get("order_id") or None,
         }
         return {key: value for key, value in kwargs.items() if value is not None}
 
@@ -98,22 +83,11 @@ class OrderListFilter(forms.Form):
             qs = qs.dispatched()
         elif self.cleaned_data.get("status") == self.UNDISPATCHED:
             qs = qs.undispatched()
-        if self.cleaned_data["profit_calculable_only"] is True:
-            qs = qs.profit_calculable()
-        if self.cleaned_data["contains_EOL_items"] is True:
-            qs = qs.filter(productsale__end_of_line=True).exclude(
-                productsale__end_of_line__isnull=True
-            )
-        elif self.cleaned_data["contains_EOL_items"] is False:
-            qs = qs.exclude(productsale__end_of_line=True).exclude(
-                productsale__end_of_line__isnull=True
-            )
         return (
             qs.order_by("-recieved_at")
             .prefetch_related("productsale_set")
             .select_related(
-                "shipping_rule",
-                "courier_service",
+                "shipping_service",
                 "channel",
                 "country",
                 "country__region",
@@ -153,7 +127,7 @@ class RefundListFilter(forms.Form):
         DEMIC: models.DemicRefund,
     }
     search = forms.CharField(required=False)
-    order_ID = forms.CharField(required=False)
+    order_id = forms.CharField(required=False)
     product_SKU = forms.CharField(required=False)
     supplier = forms.ModelChoiceField(queryset=Supplier.objects.all(), required=False)
     dispatched_from = forms.DateField(
@@ -231,7 +205,7 @@ class RefundListFilter(forms.Form):
             "order__dispatched_at__lte": data.get("dispatched_to"),
             "created_at__gte": data.get("created_from"),
             "created_at__lte": data.get("created_to"),
-            "order__order_ID": data.get("order_ID") or None,
+            "order__order_id": data.get("order_id") or None,
             "products__product__sku": data.get("product_SKU") or None,
             "products__product__supplier": data.get("supplier") or None,
             "closed": data.get("closed"),
@@ -280,7 +254,7 @@ class CreateRefund(forms.Form):
         DEMIC: models.DemicRefund,
     }
 
-    order_ID = forms.CharField()
+    order_id = forms.CharField()
     refund_type = forms.ChoiceField(
         choices=(
             (BROKEN, "Broken - An order was damaged in transit"),
@@ -306,7 +280,7 @@ class CreateRefund(forms.Form):
         cleaned_data = super().clean()
         try:
             cleaned_data["order"] = models.Order.objects.get(
-                order_ID=cleaned_data["order_ID"]
+                order_id=cleaned_data["order_id"]
             )
         except models.Order.DoesNotExist:
             raise ValidationError("Order not found")
@@ -344,7 +318,7 @@ class TrackingWarningFilter(forms.Form):
     """Form for filtering tracking warnings."""
 
     region = forms.ModelChoiceField(Region.objects.all(), required=False)
-    order_ID = forms.CharField(required=False)
+    order_id = forms.CharField(required=False)
     tracking_number = forms.CharField(required=False)
     carrier = forms.ModelChoiceField(TrackingCarrier.objects.all(), required=False)
     dispatched_after = forms.DateField(
@@ -371,7 +345,7 @@ class TrackingWarningFilter(forms.Form):
         cleaned_data = super().clean()
         self.filter_kwargs = {
             "order__country__region": cleaned_data["region"],
-            "order__order_ID": cleaned_data["order_ID"],
+            "order__order_id": cleaned_data["order_id"],
             "order__tracking_number": cleaned_data["tracking_number"],
             "carrier": cleaned_data["carrier"],
             "order__dispatched_at__gte": cleaned_data["dispatched_after"],
