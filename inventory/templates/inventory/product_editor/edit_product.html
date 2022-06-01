@@ -40,7 +40,7 @@
     {% if product %}
     <th>
       <div class="buttons">
-        <a href="{% url 'inventory:edit_variation' product_range.pk product.pk %}">
+        <a href="{% url 'inventory:edit_new_variation' product_range.pk product.pk %}">
           <button>Edit</button>
         </a>
         {% if product.pre_existing is False %}

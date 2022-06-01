@@ -131,9 +131,9 @@ product_editor_patterns = [
         name="remove_product_option_value",
     ),
     path(
-        "edit_variation/<int:pk>/",
-        views.EditVariation.as_view(),
-        name="edit_variation",
+        "edit_new_variation/<int:pk>/",
+        views.EditNewVariation.as_view(),
+        name="edit_new_variation",
     ),
     path(
         "create_initial_variation/<int:range_pk>/",
@@ -144,16 +144,6 @@ product_editor_patterns = [
         "edit_all_variations/<int:range_pk>/",
         views.EditAllVariations.as_view(),
         name="edit_all_variations",
-    ),
-    path(
-        "create_variation/<int:edit_ID>/",
-        views.CreateVariation.as_view(),
-        name="create_variation",
-    ),
-    path(
-        "delete_variation/<int:edit_ID>/<int:product_ID>/",
-        views.DeleteVariation.as_view(),
-        name="delete_variation",
     ),
     path(
         "discard_new_range/<int:range_pk>/",

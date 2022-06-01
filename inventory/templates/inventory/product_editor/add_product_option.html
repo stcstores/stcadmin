@@ -5,10 +5,10 @@
 <div id="add_dropdown" class="product_form">
   <form action="" method="POST" autocomplete="off">{% csrf_token %}
     {% include "inventory/input_add_on_form.html" %}
-    <a href="{% url 'inventory:edit_variations' edit.pk %}">
+    <a href="{% url 'inventory:edit_new_variations' edit.pk %}">
       <button type="button">Cancel</button>
     </a>
-    <button type="submit" >Add {{ name }}</button>
+    <button type="submit">Add {{ name }}</button>
   </form>
 </div>
 {% endblock %}
@@ -16,13 +16,22 @@
 {% block script %}{{ block.super }}
 <script>
   function hide_fields() {
-    {% for field in form %}{% if 'value' in field.name %}
-    $("#{{ field.auto_id }}").parent().hide();
-    {% endif %}{% endfor %}
+    {
+      %
+      for field in form %
+    } {
+      %
+      if 'value' in field.name %
+    }
+    $("#{{ field.auto_id }}").parent().hide(); {
+      % endif %
+    } {
+      % endfor %
+    }
   }
 
-  $(document).ready(function() {
-    $('#{{ form.option.auto_id }}').change(function() {
+  $(document).ready(function () {
+    $('#{{ form.option.auto_id }}').change(function () {
       hide_fields();
       var selectedID = $(this).val();
       $('#id_values_' + selectedID).parent().show();

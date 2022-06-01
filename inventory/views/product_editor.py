@@ -441,10 +441,10 @@ class RemoveProductOptionValue(InventoryUserMixin, RedirectView):
         return reverse_lazy("inventory:edit_variations", kwargs={"edit_ID": edit.pk})
 
 
-class EditVariation(InventoryUserMixin, UpdateView):
+class EditNewVariation(InventoryUserMixin, UpdateView):
     """Edit individual variations in the product editor."""
 
-    template_name = "inventory/product_editor/edit_variation.html"
+    template_name = "inventory/product_editor/edit_new_variation.html"
     model = models.Product
     form_class = forms.EditProductForm
 
@@ -471,38 +471,6 @@ class EditVariation(InventoryUserMixin, UpdateView):
         context_data["product"] = form.instance
         context_data["product_range"] = form.instance.product_range
         return context_data
-
-
-class CreateVariation(InventoryUserMixin, RedirectView):
-    """View for creating new variations."""
-
-    def get_redirect_url(self, *args, **kwargs):
-        """Create new variation and redirect."""
-        edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
-        options = self.get_product_options()
-        edit.create_product(options)
-        return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": edit.pk})
-
-    def get_product_options(self):
-        """Return a list of the new products variation product options."""
-        options = [
-            get_object_or_404(models.ProductOptionValue, id=option_id)
-            for key, option_id in self.request.POST.items()
-            if key.isdigit()
-        ]
-        return options
-
-
-class DeleteVariation(InventoryUserMixin, RedirectView):
-    """Delete a partial product."""
-
-    def get_redirect_url(self, *args, **kwargs):
-        """Delete the variation and redirect."""
-        edit = get_object_or_404(models.ProductEdit, pk=self.kwargs["edit_ID"])
-        product = get_object_or_404(models.PartialProduct, pk=self.kwargs["product_ID"])
-        if not product.pre_existing:
-            product.delete()
-        return reverse_lazy("inventory:edit_product", kwargs={"edit_ID": edit.pk})
 
 
 class DiscardNewRange(InventoryUserMixin, RedirectView):
