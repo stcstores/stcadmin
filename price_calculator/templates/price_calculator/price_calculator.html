@@ -305,6 +305,7 @@
         vat_rate_select.val(vat_rates[i]['percentage']);
       }
     }
+    vat_rate_select.val(vat_rate_select.find("option:first").val());
     vat_rate_select.change();
   }
 </script>
