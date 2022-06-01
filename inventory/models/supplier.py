@@ -9,7 +9,7 @@ from django.utils import timezone
 class Supplier(models.Model):
     """Model for suppliers."""
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True, db_index=True)
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
