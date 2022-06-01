@@ -192,11 +192,11 @@ class EditAllVariations(InventoryUserMixin, FormView):
         context["variations"] = self.product_range.variation_option_values()
         return context
 
-    def is_valid(self, formset):
+    def form_valid(self, formset):
         """Process POST HTTP request."""
-        for form in self.formset:
+        for form in formset:
             form.save()
-        return super().is_valid(formset)
+        return super().form_valid(formset)
 
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
