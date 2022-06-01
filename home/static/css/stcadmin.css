@@ -66,6 +66,17 @@ body {
   width: 15%;
 }
 
+.button-link {
+  color: #444;
+  font-size: 2em;
+  font-family: sans-serif;
+}
+
+.button-link:hover {
+  color: black;
+  font-size: 2em;
+}
+
 .user_details {
   display: inline-block;
   font-size: 0.75em;

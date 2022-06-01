@@ -15,22 +15,14 @@
 {% endblock %}
 
 {% block content %}{{ block.super }}
+
+<a href="{% url 'inventory:product_range' product_range.pk %}" class="button-link">
+  <i class="fa-solid fa-arrow-left"></i> Back to Product Range
+</a>
+
 <div class="product_header">
   <div class="details">
-    <p>SKU: <span class="sku">{{ product.sku}}</span></p>
-  </div>
-  <div class="identification">
-    <p class="name">{{ product.product_range.name }}</p>
-    <p>
-      {% for key, value in product.variation.items %}
-      <span class="option">{{ key }}</span>: <span class="name">{{ value }}</span>
-      {% endfor %}
-    </p>
-    <p>
-      {% for key, value in product.listing_options.items %}
-      <span class="option">{{ key }}</span>: <span class="name">{{ value }}</span>
-      {% endfor %}
-    </p>
+    <p><span class="sku">{{ product.sku}}</span>: <span class="name">{{ product.full_name }}</span></p>
   </div>
 </div>
 
@@ -43,31 +35,33 @@
     </form>
   </div>
 
-  <table class="variation_table">
-    <tr>
-      <th>SKU</th>
-      {% for option in product_range.variation_options %}
-      <th>{{ option }}</th>
+  <div>
+    <table class="variation_table">
+      <tr>
+        <th class="variation-selection">SKU</th>
+        {% for option in product_range.variation_options %}
+        <th>{{ option }}</th>
+        {% endfor %}
+        {% for option in product_range.listing_options %}
+        <th class="listing_option">{{ option }}</th>
+        {% endfor %}
+        <th>Supplier SKU</th>
+      </tr>
+      {% for variation in product_range.products.variations %}
+      <tr class="variation-selection {% if product == variation %}selected{% else %}not_selected{% endif %}"
+        data-href="{% url 'inventory:product' variation.pk %}">
+        <td class="sku">{{ variation.sku }}</td>
+        {% for option, value in variation.variation.items %}
+        <td class="option name">{{ value }}</td>
+        {% endfor %}
+        {% for option, value in variation.listing_options.items %}
+        <td class="option listing_option name">{{ value }}</td>
+        {% endfor %}
+        <td class="sku">{{ variation.supplier_sku }}</td>
+      </tr>
       {% endfor %}
-      {% for option in product_range.listing_options %}
-      <th class="listing_option">{{ option }}</th>
-      {% endfor %}
-      <th>Supplier SKU</th>
-    </tr>
-    {% for variation in product_range.products.variations %}
-    <tr class="{% if product == variation %}selected{% else %}not_selected{% endif %}"
-      data-href="{% url 'inventory:product' variation.pk %}">
-      <td class="sku">{{ variation.sku }}</td>
-      {% for option, value in variation.variation.items %}
-      <td class="option name">{{ value }}</td>
-      {% endfor %}
-      {% for option, value in variation.listing_options.items %}
-      <td class="option listing_option name">{{ value }}</td>
-      {% endfor %}
-      <td class="sku">{{ variation.supplier_sku }}</td>
-    </tr>
-    {% endfor %}
-  </table>
+    </table>
+  </div>
 
 </div>
 {% endblock %}
