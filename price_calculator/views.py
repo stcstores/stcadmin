@@ -159,7 +159,9 @@ class BasePriceCalculatorView(InventoryUserMixin, TemplateView):
         """Get context data for template."""
         context_data = super().get_context_data(*args, **kwargs)
         country_ids = models.ShippingMethod.objects.values_list("country", flat=True)
-        context_data["countries"] = Country.objects.filter(id__in=country_ids)
+        context_data["countries"] = Country.objects.filter(id__in=country_ids).order_by(
+            "pk"
+        )
         context_data["channel_fees"] = models.ChannelFee.objects.all()
         context_data["channels"] = models.Channel.objects.all()
         context_data["country_vat"] = self._get_country_vat(context_data["countries"])
