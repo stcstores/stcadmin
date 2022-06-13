@@ -19,4 +19,10 @@ urlpatterns = [
         views.update_initial_stock_levels,
         name="update_initial_stock_levels",
     ),
+    path("stock_record/", views.get_stock_records, name="stock_record"),
+    path(
+        "stock_level_hisotry/<int:product_pk>/",
+        views.StockLevelHistory.as_view(),
+        name="stock_level_hisotry",
+    ),
 ]

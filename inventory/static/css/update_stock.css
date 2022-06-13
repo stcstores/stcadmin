@@ -1,8 +1,77 @@
-.product_stock_level .InputAddOn {
-  margin: 0;
+.product_stock_level {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ddd;
+  border-radius: 1em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
 }
 
-.status_container {
-  min-height: 30px;
-  min-width: 30px;
+.product_stock_level div {
+  margin-left: 0.25em;
+}
+
+.product_stock_level .stock_level_update_widget {
+  display: flex;
+  flex-direction: row;
+}
+
+.product_stock_level .stock_level_header {
+  font-size: 0.7em;
+  padding: 0.25em;
+}
+
+.product_stock_level .stock_level_type_container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.product_stock_level .total_stock_container {
+  color: #555;
+}
+
+.product_stock_level .in_orders_container {
+  color: red;
+}
+
+.stock_level_status_container {
+  text-align: center;
+  min-width: 2em;
+  color: #bbb;
+}
+
+.available_container {
+  color: green;
+}
+
+.product_stock_level .stock_level_field {
+  text-align: center;
+  color: green;
+  font-weight: bold;
+  font-size: 1.15em;
+  border: 1px solid #ddd;
+  border-radius: 0.25em;
+}
+
+.refresh_button.available {
+  cursor: pointer;
+  color: #555;
+}
+
+.refresh_button.in_progress {
+  cursor: progress;
+  color: orange;
+}
+
+.refresh_button.locked {
+  cursor: not-allowed;
+  color: #888;
+}
+
+.stock_history_container {
+  padding-left: 0.5em;
+  color: blue;
 }

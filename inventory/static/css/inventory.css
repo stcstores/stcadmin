@@ -299,3 +299,12 @@ button:disabled {
 button.selected {
   box-shadow: none;
 }
+
+.stock_record .stock_level {
+  font-size: 1em;
+}
+
+.stock_record .timestamp {
+  color: red;
+  font-size: 0.75em;
+}

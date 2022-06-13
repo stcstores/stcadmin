@@ -18,6 +18,7 @@
       <th>{{ option }}</th>
       {% endfor %}
       <th></th>
+      <th>Stock Level</th>
     </tr>
     {% endif %}
     <tr>
@@ -30,6 +31,11 @@
         <a href="{% url 'inventory:product' product.pk %}">
           <button>Edit</button>
         </a>
+      </td>
+      <td
+        class="search_result_stock_level {% if product.is_end_of_line is False and product.product_range.is_end_of_line is False %} load_stock {% endif %}"
+        id="search_result_stock_level_{{ product.pk }}">
+        <i class="fa-solid fa-spinner fa-spin"></i>
       </td>
     </tr>
     {% endfor %}

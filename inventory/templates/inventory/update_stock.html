@@ -1,20 +1,41 @@
-{% load static %}
-
 {% if product.is_end_of_line or product.product_range.is_end_of_line %}
-Stock level is not available for EOL products
+Stock level is not total_stock for EOL products
 {% else %}
 
 <div class="product_stock_level">
-  <div class="InputAddOn">
-    <input id="stock_{{ product.pk }}" class="InputAddOn-field stock_level_field" type="text" size="4" value="">
-    {% if updatable is not False %}
-    <div class="InputAddOn-item">
-      <button id="update_{{ product.pk }}" class="stock_update_button" disabled>Update</button>
+  <div class="stock_level_type_container available_container">
+    <span class="stock_level_header">Available</span>
+    <div class="stock_level_update_widget">
+      <input id="available_stock_{{ product.pk }}" class="stock_level_field" type="text" size="1" value="0"
+        autocomplete="off" disabled>
+      {% if updatable is not False %}
+      <button id="stock_level_update_button_{{ product.pk }}" class="stock_level_update_button" disabled
+        autocomplete="off">
+        <i class="fa-solid fa-floppy-disk" title="Overwrite stock level"></i>
+      </button>
+      {% endif %}
+      <div class="stock_level_status_container">
+        <i class="fa-solid fa-spinner fa-spin-pulse fa-l" id="stock_level_status_{{ product.pk }}"></i>
+      </div>
     </div>
-    {% endif %}
-    <div class="InputAddOn-item status_container">
-      <img id="status_{{ product.pk }}" class="update_status" src="{% static 'images/loading.gif' %}">
-    </div>
+  </div>
+  <div class="stock_level_type_container total_stock_container">
+    <i class="fa-solid fa-plus fa-xl"></i>
+  </div>
+  <div class="stock_level_type_container in_orders_container">
+    <span class="stock_level_header">In Orders</span>
+    <span id="in_orders_{{ product.pk }}" class="stock_in_orders">
+      <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
+    </span>
+  </div>
+  <div class="refresh_container">
+    <i class="fa-solid fa-arrows-rotate refresh_button locked" id="refresh_button_{{ product.pk }}"
+      title="Refresh stock levels from Linnworks"></i>
+  </div>
+  <div class="stock_history_container">
+    <a href="{% url 'linnworks:stock_level_hisotry' product.id %}" title="Stock change history" target="_blank">
+      <i class="fa-solid fa-rectangle-list"></i>
+    </a>
   </div>
 </div>
 
@@ -22,15 +43,7 @@ Stock level is not available for EOL products
   get_stock_url = "{% url 'linnworks:get_stock_levels' %}";
   update_stock_url = "{% url 'linnworks:update_stock_levels' %}";
 
-  loading_image = "{% static 'images/loading.gif' %}";
-  complete_image = "{% static 'images/complete.png' %}";
-  error_image = "{% static 'images/error.png' %}";
-
-  $(document).ready(function () {
-    get_stock_level("{{ product.pk }}");
-    $('#update_' + "{{ product.pk }}").click(
-      click_update_button("{{ product.pk }}")
-    );
-  });
+  var widget = new StockLevelWidget("{{ product.pk }}");
+  stock_level_widget_manager.add_widget(widget);
 </script>
 {% endif %}

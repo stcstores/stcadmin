@@ -1,0 +1,87 @@
+{% extends 'inventory/base.html' %}
+
+{% block additional_head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@1.26.0" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/1.2.1/chartjs-plugin-zoom.min.js" integrity="sha512-klQv6lz2YR+MecyFYMFRuU2eAl8IPRo6zHnsc9n142TJuJHS8CG0ix4Oq9na9ceeg1u5EkBfZsFcV3U7J51iew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+    canvas {
+        max-width: 80%;
+    }
+</style>
+{% endblock additional_head %}
+
+{% block content %}
+<h1>Stock History</h1>
+<h2><span class="sku">{{ product.sku }}</span> - <span class="name">{{ product.full_name }}</span></h2>
+
+<canvas id="stock_level_chart" width="400" height="100"></canvas>
+
+<table class="stock_level_history variation_table">
+    <tr>
+        <th>Time</th>
+        <th>Change</th>
+        <th>New Stock Level</th>
+        <th>Changed By</th>
+    </tr>
+{% for record in stock_history %}
+    <tr>
+        <td>{{ record.timestamp }}</td>
+        <td>{{ record.text }}</td>
+        <td>{{ record.stock_level }}</td>
+        <td>{{ record.relative_change }}</td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock content %}
+
+{% block script %}
+<script>
+
+
+const canvas = document.getElementById('stock_level_chart').getContext('2d');
+const stock_level_chart = new Chart(canvas, {
+    type: 'line',
+    data: {
+        datasets: [{
+            label: 'Stock Level',
+            data: [
+            {% for record in stock_history reversed %}
+            {x: "{{ record.timestamp.isoformat }}", y: {{ record.stock_level }}},
+            {% endfor %}
+            ],
+            backgroundColor: "rgb(81, 154, 237)",
+            borderColor: "rgb(81, 154, 237)",
+            spanGaps: true,
+        }],
+    },
+    options: {
+        scales: {
+            x: {type: 'time'}
+        },
+        legend: {display: false},
+        plugins: {
+            zoom: {
+                zoom: {
+                    wheel: {
+                        enabled: true,
+                    },
+                    pinch: {
+                        enabled: true
+                    },
+                    mode: 'xy',
+                },
+                pan: {
+                    enabled: true,
+                    mode: 'xy',
+                    threshold: 1,
+                },
+            }
+        }
+    }
+});
+
+
+</script>
+{% endblock script %}

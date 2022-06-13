@@ -1,0 +1,12 @@
+{% load humanize %}
+
+{% if stock_record %}
+<span class="stock_record">
+    <span class="stock_level">{{ stock_record.available_stock_level }}</span>
+    <span class="timestamp" title="Stock level from daily update">
+        {{ stock_record.timestamp | naturaltime }}
+    </span>
+</span>
+{% else %}
+-
+{% endif %}

@@ -36,11 +36,30 @@ class StockManager:
                 level for.
 
         """
-        current_stock_level = cls.current_stock_level(product.sku)
+        available_stock_level = cls.available_stock_level(product.sku)
         StockLevelHistory.objects.new_import_stock_level_update(
-            product=product, stock_level=current_stock_level
+            product=product, stock_level=available_stock_level
         )
-        return current_stock_level
+        return available_stock_level
+
+    @classmethod
+    def get_stock_levels(cls, products):
+        """
+        Get the current stock level for multiple products.
+
+        Args:
+            products (queryset): Queryset of inventory.models.BaseProduct.
+
+        """
+        skus = products.values_list("sku", flat=True)
+        stock_level_records = cls._get_multiple_stock_level_info_from_linnworks(*skus)
+        with transaction.atomic():
+            for product in products:
+                StockLevelHistory.objects.new_import_stock_level_update(
+                    product=product,
+                    stock_level=stock_level_records[product.sku].stock_level,
+                )
+        return stock_level_records
 
     @classmethod
     def get_initial_stock_level(cls, product):
@@ -70,8 +89,8 @@ class StockManager:
             user (django.contrib.auth.User): The user performing the update.
             new_stock_level (int): The new stock level of the product.
         """
-        current_stock_level = cls.current_stock_level(sku=product.sku)
-        relative_stock_level_change = new_stock_level - current_stock_level
+        available_stock_level = cls.available_stock_level(sku=product.sku)
+        relative_stock_level_change = new_stock_level - available_stock_level
         change_source = change_source or f"Updated through STCAdmin by {user}"
         updated_stock_level_info = cls._set_stock_level_in_linnworks(
             sku=product.sku,
@@ -81,7 +100,7 @@ class StockManager:
         StockLevelHistory.objects.new_user_stock_level_update(
             product=product, user=user, stock_level=updated_stock_level_info.stock_level
         )
-        return updated_stock_level_info.stock_level
+        return updated_stock_level_info.available
 
     @classmethod
     def set_initial_stock_level(cls, product, user, new_stock_level, change_source=""):
@@ -99,10 +118,65 @@ class StockManager:
         return instance.stock_level
 
     @classmethod
+    def get_stock_level_history(cls, sku):
+        """Return a history of stock level changes for a SKU."""
+        records = cls._get_stock_level_history(sku)
+        return [
+            {
+                "timestamp": record.timestamp,
+                "stock_level": record.stock_level,
+                "text": record.text,
+                "relative_change": record.relative_change,
+            }
+            for record in records
+        ]
+
+    @classmethod
+    def stock_level_info(cls, sku):
+        """Return stock level information for a product SKU."""
+        return cls._get_stock_level__info_from_linnworks(sku)
+
+    @classmethod
+    def available_stock_level(cls, sku):
+        """Return the current stock level for a product SKU."""
+        stock_level_info = cls.stock_level_info(sku)
+        return stock_level_info.available
+
+    @classmethod
+    def recorded_stock_level(cls, *skus):
+        """Return the latest stock level from stock level records."""
+        update = StockLevelExportUpdate.objects.latest()
+        records = StockLevelExportRecord.objects.filter(
+            product__sku__in=skus, stock_level_update=update
+        )
+        output = {
+            record.product.sku: {
+                "total_stock_level": record.stock_level,
+                "available_stock_level": record.available,
+                "timestamp": update.export_time,
+            }
+            for record in records
+        }
+        for sku in skus:
+            if sku not in output:
+                output[sku] = {
+                    "total_stock_level": 0,
+                    "available_stock_level": 0,
+                    "timestamp": update.export_time,
+                }
+        return output
+
+    @classmethod
     @linnapi.linnworks_api_session
     def _get_stock_level__info_from_linnworks(cls, sku):
         """Return stock level information for a product SKU."""
         return linnapi.inventory.get_stock_level_by_sku(sku=sku)
+
+    @classmethod
+    @linnapi.linnworks_api_session
+    def _get_multiple_stock_level_info_from_linnworks(cls, *skus):
+        """Return stock level information for multiple product SKUs."""
+        return linnapi.inventory.get_stock_levels_by_skus(*skus)
 
     @classmethod
     @linnapi.linnworks_api_session
@@ -116,15 +190,11 @@ class StockManager:
         )[0]
 
     @classmethod
-    def stock_level_info(cls, sku):
-        """Return stock level information for a product SKU."""
-        return cls._get_stock_level__info_from_linnworks(sku)
-
-    @classmethod
-    def current_stock_level(cls, sku):
-        """Return the current stock level for a product SKU."""
-        stock_level_info = cls.stock_level_info(sku)
-        return stock_level_info.stock_level
+    @linnapi.linnworks_api_session
+    def _get_stock_level_history(cls, sku):
+        return linnapi.inventory.get_stock_level_history_by_sku(
+            sku=sku, location_id=cls.LOCATION_ID
+        )
 
 
 class StockLevelExportManager(models.Manager):
@@ -208,6 +278,11 @@ class StockLevelExportRecord(models.Model):
     purchase_price = models.DecimalField(max_digits=7, decimal_places=2)
     stock_value = models.DecimalField(max_digits=7, decimal_places=2)
 
+    @property
+    def available(self):
+        """Return the available stock level."""
+        return self.stock_level - self.in_order_book
+
     def save(self, *args, **kwargs):
         """Set the stock value attribute."""
         self.stock_value = self.purchase_price * self.stock_level
@@ -222,3 +297,4 @@ class StockLevelExportRecord(models.Model):
         unique_together = ("stock_level_update", "product")
 
         order_with_respect_to = "stock_level_update"
+        get_latest_by = "stock_level_update__export_time"

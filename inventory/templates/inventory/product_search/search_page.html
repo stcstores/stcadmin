@@ -47,36 +47,82 @@
 
   $(document).ready(function () {
 
+    var range_ids = [];
+    $(".expanded").each(function () {
+      range_ids.push(this.id.replace('expanded_', ''));
+    });
+
+    console.log(range_ids);
+
     $('.EOL_range').click(function () {
       var range_id = this.id.replace('EOL_', '');
       if (window.confirm(
           "Are you sure?\n\nThis will mark the range as End of Line.\nIt will no longer appear by default in search results."
-          )) {
+        )) {
         end_of_line_range(range_id);
       }
     });
 
-    $('.expand_variations').click(function () {
-      var range_id = this.id.replace('expand_', '');
+    function expand_variations(range_id) {
       $('#collapsed_' + range_id).hide();
       $('#expanded_' + range_id).show();
+      get_stock_levels($('#expanded_' + range_id));
+    }
+
+    function collapse_variations(range_id) {
+      $('#expanded_' + range_id).hide();
+      $('#collapsed_' + range_id).show();
+    }
+
+    $('.expand_variations').click(function () {
+      var range_id = this.id.replace('expand_', '');
+      expand_variations(range_id);
     });
 
     $('.collapse_variations').click(function () {
       var range_id = this.id.replace('collapse_', '');
-      $('#expanded_' + range_id).hide();
-      $('#collapsed_' + range_id).show();
+      collapse_variations(range_id);
     });
 
     $('.hide_all').click(function () {
-      $('.expanded').hide();
-      $('.collapsed').show()
+      $.each(range_ids, function(i, range_id) {
+        collapse_variations(range_id);
+      });
     });
 
     $('.show_all').click(function () {
-      $('.expanded').show();
-      $('.collapsed').hide()
+      $.each(range_ids, function(i, range_id) {
+        expand_variations(range_id);
+      });
     });
+
+    function get_stock_levels(element) {
+      var product_ids = [];
+      var stock_fields = element.find(".search_result_stock_level.load_stock");
+      stock_fields.removeClass("load_stock");
+      stock_fields.each(function () {
+        product_ids.push($(this).attr("id").split("_").pop());
+      });
+      if (product_ids.length > 0) {
+        $.ajax({
+          type: "POST",
+          url: "{% url 'linnworks:stock_record' %}",
+          data: JSON.stringify({'product_ids': product_ids}),
+          success: function (response) {
+            $.each(response, function (product_id, html) {
+              $("#search_result_stock_level_"+product_id).html(html);
+            });
+          },
+          error: function (response) {
+            product_ids.each(function (product_id) {
+              $("#search_result_stock_level_" + product_id).html('<i class="fa-duotone fa-exclamation error"></i>');
+            });
+          }
+        });
+      }
+    }
+
+    
 
   });
 </script>
