@@ -213,7 +213,7 @@ let stock_level_widget_manager = {
 };
 
 $(document).ready(function () {
-  if (stock_level_widget_manager.widgets.length > 0) {
+  if (!$.isEmptyObject(stock_level_widget_manager.widgets)) {
     stock_level_widget_manager.get_stock_levels();
   }
 });
