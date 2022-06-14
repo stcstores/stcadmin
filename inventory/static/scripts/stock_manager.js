@@ -213,5 +213,7 @@ let stock_level_widget_manager = {
 };
 
 $(document).ready(function () {
-  stock_level_widget_manager.get_stock_levels();
+  if (stock_level_widget_manager.widgets.length > 0) {
+    stock_level_widget_manager.get_stock_levels();
+  }
 });

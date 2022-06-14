@@ -40,9 +40,6 @@ Stock level is not total_stock for EOL products
 </div>
 
 <script>
-  get_stock_url = "{% url 'linnworks:get_stock_levels' %}";
-  update_stock_url = "{% url 'linnworks:update_stock_levels' %}";
-
   var widget = new StockLevelWidget("{{ product.pk }}");
   stock_level_widget_manager.add_widget(widget);
 </script>

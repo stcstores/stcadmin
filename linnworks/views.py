@@ -59,15 +59,11 @@ def get_initial_stock_levels(request):
     """Return the stock level for a product."""
     output = {}
     request_data = json.loads(request.body)
-    try:
-        for product_id in request_data["product_ids"]:
-            product = get_object_or_404(BaseProduct, pk=product_id)
-            stock_level = StockManager.get_initial_stock_level(product)
-            output[product_id] = stock_level
-    except linnapi.exceptions.InvalidResponseError:
-        return HttpResponseNotFound()
-    else:
-        return JsonResponse(output)
+    for product_id in request_data["product_ids"]:
+        product = get_object_or_404(BaseProduct, pk=product_id)
+        stock_level = StockManager.get_initial_stock_level(product) or 0
+        output[product_id] = stock_level
+    return JsonResponse(output)
 
 
 @csrf_exempt

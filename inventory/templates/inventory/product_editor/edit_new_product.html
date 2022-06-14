@@ -89,6 +89,58 @@
 
 {% block script %}{{ block.super }}
 <script>
+  
+  let get_initial_stock_url = "{% url 'linnworks:get_initial_stock_levels' %}";
+  let update_initial_stock_url = "{% url 'linnworks:update_initial_stock_levels' %}";
+
+  function get_stock_levels() {
+    var product_ids = [{% for product in variations.values %}"{{ product.pk }}",{% endfor %}];
+    $.ajax({
+      type: "POST",
+      url: get_initial_stock_url,
+      data: JSON.stringify({ product_ids: product_ids }),
+      contentType: "application/json",
+      dataType: "json",
+      success: function (response) {
+        $.each(response, function (product_id, stock_level) {
+          $("#initial_stock_" + product_id).val(stock_level);
+          $("#stock_level_status_" + product_id).attr("class", get_stock_level_success_icon_class);
+          $("#initial_stock_" + product_id).attr("disabled", false);
+        });
+      },
+      error: function (response) {
+        $(".update_status").attr("class", get_stock_level_error_icon_class);
+      },
+    });
+  }
+
+  function update_stock_level(product_id) {
+    var new_stock_level = $("#initial_stock_" + product_id).val();
+    $("#stock_level_status_" + product_id).attr("class", setting_stock_level_icon_class);
+    $("#initial_stock_" + product_id).attr("disabled", false);
+    $("#stock_level_update_button_" + product_id).attr("disabled", true);
+    $.ajax({
+      type: "POST",
+      url: update_initial_stock_url,
+      data: JSON.stringify({stock_updates: [{
+        product_id: product_id, new_stock_level: new_stock_level},
+      ]}),
+      contentType: "application/json",
+      dataType: "json",
+      success: function (response) {
+        $.each(response, function (product_id, stock_level) {
+          $("#initial_stock_" + product_id).val(stock_level);
+          $("#stock_level_status_" + product_id).attr("class", set_stock_level_success_icon_class);
+          $("#initial_stock_" + product_id).attr("disabled", false);
+          $("#stock_level_update_button_" + product_id).attr("disabled", true);
+        });
+      },
+      error: function (response) {
+        $("#stock_level_status_" + product_id).attr("class", set_stock_level_error_icon_class);
+      },
+    });
+  }
+  
   $(document).ready(function () {
     $(".delete_variation").click(function (e) {
       if (!confirm('Are you sure you want to delete this variation?')) {
@@ -99,6 +151,21 @@
       if (!confirm('Are you sure you want to discard this product range?')) {
         e.preventDefault();
       }
+    });
+
+    $(".stock_level_field").focus(function () {
+      $(this).select();
+    });
+
+    $(".stock_level_field").on("input", function () {
+      var product_id = $(this).attr("id").replace("initial_stock_", "");
+      $("#stock_level_update_button_" + product_id).attr("disabled", false);
+    });
+
+    get_stock_levels();
+    $(".stock_level_update_button").click(function() {
+      var product_id = $(this).attr("id").replace("stock_level_update_button_", "");
+      update_stock_level(product_id);
     });
   });
 </script>

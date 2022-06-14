@@ -6,6 +6,10 @@
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
 <link rel="stylesheet" href="{% static 'css/inventory.css' %}">
 <link rel="stylesheet" href="{% static 'css/update_stock.css' %}">
+<script>
+    let get_stock_url = "{% url 'linnworks:get_stock_levels' %}";
+    let update_stock_url = "{% url 'linnworks:update_stock_levels' %}";
+</script>
 <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
 {{ form.media.css }}
 {% endblock %}

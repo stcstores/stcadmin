@@ -113,8 +113,12 @@ class StockManager:
             user (django.contrib.auth.User): The user performing the update.
             new_stock_level (int): The new stock level of the product.
         """
-        instance = InitialStockLevel(sku=product.sku, stock_level=new_stock_level)
-        instance.save()
+        instance, created = InitialStockLevel.objects.get_or_create(
+            sku=product.sku, defaults={"stock_level": new_stock_level}
+        )
+        if not created:
+            instance.stock_level = new_stock_level
+            instance.save()
         return instance.stock_level
 
     @classmethod
