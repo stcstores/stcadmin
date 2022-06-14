@@ -21,7 +21,7 @@
 <table class="orders">
     <thead>
         <tr>
-            <th colspan="5"></th>
+            <th colspan="6"></th>
             <th colspan="4">Quantity</th>
             <th colspan="4"></th>
         </tr>
@@ -33,8 +33,8 @@
             <th>ASIN</th>
             <th>Created</th>
             <th>Aprox</th>
-            <th>Stock</th>
-            <th>Pending</th>
+            <th>Total Stock</th>
+            <th>In Orders</th>
             <th>Available</th>
             <th colspan="4"></th>
         </tr>
@@ -55,9 +55,15 @@
             <td>{{ order.product_asin }}</td>
             <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
             <td>{{ order.aproximate_quantity }}</td>
-            <td class="stock_level">{{ order.stock_level }}</td>
-            <td class="pending_stock">{{ order.pending_stock }}</td>
-            <td class="current_stock">{{ order.current_stock }}</td>
+            <td class="total_stock" id="total_stock_{{ order.pk }}">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
+            </td>
+            <td class="in_order_stock" id="in_order_stock_{{ order.pk }}">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
+            </td>
+            <td class="available_stock" id="available_stock_{{ order.pk }}">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
+            </td>
             <td>
                 <button class="take_off_hold" name="{{ order.id }}">Take off Hold</button>
             </td>
@@ -83,19 +89,25 @@
 {% block script %}
 
 <script>
-    function get_stock(n) {
-        $('.orders tbody tr').each(function () {
-            var row = $(this);
-            var sku = row.find('.product_sku').text();
-            $.get("{% url 'fba:product_stock' %}?sku=" + sku, function (data) {
-                row.find('.stock_level').html(data['stock_level']);
-                row.find('.pending_stock').html(data['pending_stock']);
-                row.find('.current_stock').html(data['current_stock']);
-                if (n < $('.orders tbody tr').length) {
-                    get_stock(n + 1);
-                }
-            });
-        })
+    function get_stock_levels() {
+        order_ids = [{% for order in object_list  %}{{ order.id }}, {% endfor %}]
+        $.ajax({
+            type: "POST",
+            url: "{% url 'fba:get_stock_levels' %}",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify({ order_ids: order_ids }),
+            success: function (response) {
+              $.each(response, function (order_id, stock_level_info) {
+                $('#total_stock_' + order_id).html(stock_level_info.total);
+                $('#available_stock_' + order_id).html(stock_level_info.available);
+                $('#in_order_stock_' + order_id).html(stock_level_info.in_orders);
+              });
+            },
+            error: function (response) {
+              alert("Error getting stock level.")
+            },
+          });
     }
 
     $(document).ready(function () {
@@ -113,7 +125,7 @@
                 }
             });
         });
-        get_stock(1);
+        get_stock_levels();
     });
 </script>
 

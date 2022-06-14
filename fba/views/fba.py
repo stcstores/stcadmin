@@ -1,6 +1,7 @@
 """Views for managing FBA orders."""
 
 import datetime
+import json
 
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
@@ -281,25 +282,6 @@ class OnHold(FBAUserMixin, ListView):
             return list(range(1, paginator.num_pages + 1))
         else:
             return list(range(1, 11)) + [paginator.num_pages]
-
-
-class ProductStock(View):
-    """View for getting current stock information for a product."""
-
-    def get(self, *args, **kwargs):
-        """Return product stock information."""
-        sku = self.request.GET.get("sku")
-        stock_level_info = StockManager.stock_level_info(sku)
-        stock_level = stock_level_info.stock_level
-        pending_stock = stock_level_info.in_orders
-        current_stock = stock_level_info.available
-        return JsonResponse(
-            {
-                "stock_level": stock_level,
-                "pending_stock": pending_stock,
-                "current_stock": current_stock,
-            }
-        )
 
 
 class TakeOffHold(View):
@@ -659,3 +641,25 @@ class PrioritiseOrder(FBAUserMixin, View):
         order = get_object_or_404(models.FBAOrder, pk=int(request.GET["order_id"]))
         order.prioritise()
         return HttpResponse("ok")
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class GetStockLevels(FBAUserMixin, View):
+    """View for getting stock levels for FBA Orders by AJAX."""
+
+    def post(self, *args, **kwargs):
+        """Get stock levels for FBA orders."""
+        order_ids = json.loads(self.request.body)["order_ids"]
+        orders = models.FBAOrder.objects.filter(pk__in=order_ids)
+        product_skus = orders.values_list("product_SKU", flat=True)
+        products = BaseProduct.objects.filter(sku__in=product_skus)
+        stock_levels = StockManager.get_stock_levels(products)
+        output = {}
+        for order in orders:
+            stock_level = stock_levels[order.product_SKU]
+            output[order.pk] = {
+                "available": stock_level.available,
+                "in_orders": stock_level.in_orders,
+                "total": stock_level.stock_level,
+            }
+        return JsonResponse(output)

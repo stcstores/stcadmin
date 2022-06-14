@@ -56,7 +56,6 @@ urlpatterns = [
         views.SetTrackingNumber.as_view(),
         name="set_tracking_number",
     ),
-    path("product_stock", views.ProductStock.as_view(), name="product_stock"),
     path("take_off_hold", views.TakeOffHold.as_view(), name="take_off_hold"),
     path("prioritise", views.PrioritiseOrder.as_view(), name="priortise_fba_order"),
     path("shipments", views.Shipments.as_view(), name="shipments"),
@@ -159,5 +158,8 @@ urlpatterns = [
         "shipments/add_order_packages_to_shipment/<int:fba_order_pk>/<int:shipment_pk>/",
         views.AddFBAOrderPackages.as_view(),
         name="add_order_packages_to_shipment",
+    ),
+    path(
+        "get_stock_levels/", views.fba.GetStockLevels.as_view(), name="get_stock_levels"
     ),
 ]
