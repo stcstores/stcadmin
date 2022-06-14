@@ -36,6 +36,8 @@ class ProductSale(models.Model):
         return self.weight * self.quantity
 
     def _channel_fee_paid(self):
+        if self.order.channel is None:
+            return 0
         channel_fee = self.order.channel.channel_fee
         return int(float(self.item_price / 100) * channel_fee)
 

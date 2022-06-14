@@ -156,7 +156,6 @@ INSTALLED_APPS = [
     "fba",
     "channels",
     "purchases",
-    "tracking",
     "hardware",
     "linnworks",
     "debug_toolbar",

@@ -97,7 +97,4 @@ urlpatterns = [
         views.MarkRefundPartial.as_view(),
         name="mark_refund_parital",
     ),
-    path(
-        "tracking_warnings", views.TrackingWarnings.as_view(), name="tracking_warnings"
-    ),
 ]

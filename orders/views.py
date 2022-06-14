@@ -612,15 +612,3 @@ class MarkRefundPartial(OrdersUserMixin, RedirectView):
         refund.is_partial = True
         refund.save()
         return refund.get_absolute_url()
-
-
-class TrackingWarnings(OrdersUserMixin, TemplateView):
-    """View for tracking warnings."""
-
-    template_name = "orders/tracking_warnings.html"
-
-    def get_context_data(self, *args, **kwargs):
-        """Return context for the template."""
-        context = super().get_context_data(*args, **kwargs)
-        context["form"] = forms.TrackingWarningFilter()
-        return context

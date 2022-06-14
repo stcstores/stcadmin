@@ -85,32 +85,4 @@
     {% endfor %}
 </table>
 
-<h3>Tracking History</h3>
-<button id="refresh_tracking_history">Refresh</button>
-<div id="tracking_history"></div>
-
 {% endblock %}
-
-{% block script %}
-
-<script>
-    function get_tracking() {
-        var update_tracking_url = "{% url 'tracking:update_tracking' order.tracking_number %}";
-        var tracking_history_url = "{% url 'tracking:tracking_history' order.tracking_number %}";
-
-        $.get(update_tracking_url, function (data) {
-            $.get(tracking_history_url, function (data) {
-                $('#tracking_history').html(data);
-            });
-        });
-    }
-
-    $(document).ready(function () {
-        get_tracking();
-        $('#refresh_tracking_history').click(function () {
-            get_tracking();
-        });
-    });
-</script>
-
-{% endblock script %}

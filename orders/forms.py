@@ -8,9 +8,8 @@ from django.utils.timezone import make_aware
 
 from inventory.models import Supplier
 from orders import models
-from shipping.models import Country, Region
+from shipping.models import Country
 from stcadmin.forms import KwargFormSet
-from tracking.models import TrackingCarrier
 
 
 class ChartSettingsForm(forms.Form):
@@ -312,46 +311,3 @@ class RefundProductFormset(KwargFormSet):
     """Form set for adding products to refunds."""
 
     form = RefundProductSelectForm
-
-
-class TrackingWarningFilter(forms.Form):
-    """Form for filtering tracking warnings."""
-
-    region = forms.ModelChoiceField(Region.objects.all(), required=False)
-    order_id = forms.CharField(required=False)
-    tracking_number = forms.CharField(required=False)
-    carrier = forms.ModelChoiceField(TrackingCarrier.objects.all(), required=False)
-    dispatched_after = forms.DateField(
-        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
-    )
-    dispatched_before = forms.DateField(
-        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
-    )
-
-    def clean_dispatched_after(self):
-        """Return a timezone aware datetime object from the submitted date."""
-        date = self.cleaned_data["dispatched_after"]
-        if date is not None:
-            return make_aware(datetime.combine(date, datetime.min.time()))
-
-    def clean_dispatched_before(self):
-        """Return a timezone aware datetime object from the submitted date."""
-        date = self.cleaned_data["dispatched_before"]
-        if date is not None:
-            return make_aware(datetime.combine(date, datetime.max.time()))
-
-    def clean(self):
-        """Add filter kwargs."""
-        cleaned_data = super().clean()
-        self.filter_kwargs = {
-            "order__country__region": cleaned_data["region"],
-            "order__order_id": cleaned_data["order_id"],
-            "order__tracking_number": cleaned_data["tracking_number"],
-            "carrier": cleaned_data["carrier"],
-            "order__dispatched_at__gte": cleaned_data["dispatched_after"],
-            "order__dispatched_at__lte": cleaned_data["dispatched_before"],
-        }
-        self.filter_kwargs = {
-            key: value for key, value in self.filter_kwargs.items() if value
-        }
-        return cleaned_data
