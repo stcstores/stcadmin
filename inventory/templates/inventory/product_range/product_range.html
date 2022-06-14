@@ -4,14 +4,29 @@
 
 {% block content %}{{ block.super }}
 
-<div class="buttons">
-  {% comment %} <a href="{% url 'inventory:edit_product' product_range.pk %}">
-    <button>Product Editor</button>
-  </a> {% endcomment %}
-  <a href="" class="button_link">
-    <button>End-of-Line Range</button>
-  </a>
+{% if products_exist %}
+<div class="product_status success">
+  All products exist in Linnworks.
 </div>
+{% elif products_exist is None %}
+  {% if product_range.is_end_of_line is False %}
+    <div class="product_status error">
+      <span class="heading">Error checking for product in Linnworks.</span>
+      This is likely due to a network error.
+    </div>
+    {% endif %}
+{% else %}
+<div class="product_status warning">
+  <span class="heading">This product cannot be found in Linnworks.</span>
+  If it has recently been created or changed it is likely these changes have not yet been processed.
+</div>
+{% endif %}
+
+{% if product.is_end_of_line is False %}
+<div class="buttons">
+  <a href="" class="button_link"><button>End-of-Line Range</button></a>
+</div>
+{% endif %}
 
 <div class="variations">
   <h3>{% if product_range.has_variations %}Variations{% else %}Single Product{% endif %}</h3>
@@ -45,7 +60,15 @@
       {% endfor %}
       <td class="column supplier_SKU sku">{{ product.supplier_sku }}</td>
       <td class="column SKU sku">{{ product.barcode }}</td>
-      <td class="column stock_level">{% include 'inventory/update_stock.html' %}</td>
+      <td class="column stock_level">
+        {% if product_range.is_end_of_line or product.is_end_of_line %}
+          <span class="error">Stock levels are not available for EOL products</span>
+        {% elif products_exist is not True %}
+          <span class="error">Stock level is not available</span>
+        {% else %}
+          {% include 'inventory/update_stock.html' %}
+        {% endif %}
+      </td>
     </tr>
     {% endfor %}
   </table>

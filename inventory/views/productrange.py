@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
 
 from inventory import forms, models
+from linnworks.models.stock_manager import StockManager
 
 from .views import InventoryUserMixin
 
@@ -50,7 +51,20 @@ class ProductRangeView(InventoryUserMixin, TemplateView):
         """Get template context data."""
         context_data = super().get_context_data(*args, **kwargs)
         context_data["product_range"] = self.product_range
-        context_data["products"] = self.product_range.products.variations()
+        products = self.product_range.products.variations()
+        context_data["products"] = products
+        if not self.product_range.is_end_of_line:
+            product_skus = products.filter(is_end_of_line=False).values_list(
+                "sku", flat=True
+            )
+            try:
+                context_data["products_exist"] = StockManager.products_exist(
+                    *product_skus
+                )
+            except Exception:
+                context_data["products_exist"] = None
+        else:
+            context_data["products_exist"] = None
         return context_data
 
     def range_error(self):

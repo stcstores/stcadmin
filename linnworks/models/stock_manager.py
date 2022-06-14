@@ -171,6 +171,23 @@ class StockManager:
         return output
 
     @classmethod
+    def products_exist(cls, *skus):
+        """Return True if all SKUs exist in Linnworks, otherwise False."""
+        try:
+            stock_level_ids = cls._get_stock_item_ids(*skus)
+        except linnapi.exceptions.InvalidResponseError:
+            return False
+        if not set(skus).issubset(set(stock_level_ids.keys())):
+            return False
+        return True
+
+    @classmethod
+    @linnapi.linnworks_api_session
+    def _get_stock_item_ids(cls, *skus):
+        """Return stock item IDs for one or more SKUs."""
+        return linnapi.inventory.get_stock_item_ids_by_sku(*skus)
+
+    @classmethod
     @linnapi.linnworks_api_session
     def _get_stock_level__info_from_linnworks(cls, sku):
         """Return stock level information for a product SKU."""

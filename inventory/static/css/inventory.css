@@ -308,3 +308,19 @@ button.selected {
   color: red;
   font-size: 0.75em;
 }
+
+.product_status {
+  margin: 0 auto;
+  margin-bottom: 1em;
+  width: 80%;
+  background-color: #ddd;
+  border-radius: 1em;
+  text-align: center;
+  padding: 0.5em;
+}
+
+.product_status .heading {
+  font-weight: bold;
+  font-size: 1.25em;
+  margin-right: 1em;
+}
