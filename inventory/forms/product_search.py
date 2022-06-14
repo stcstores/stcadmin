@@ -1,8 +1,7 @@
 """Forms for product search page."""
 
-from collections import defaultdict
-
 from django import forms
+from django.db.models import Count
 
 from inventory import models
 
@@ -39,14 +38,10 @@ class ProductSearchForm(forms.Form):
     def save(self):
         """Search for product ranges matching the search parameters."""
         products = self._filter_products(self._query_products())
-        # range_queryset = self._filter_ranges(self._query_ranges(products))
-        # self.ranges = range_queryset.order_by("name").prefetch_related(
-        #     Prefetch("products", queryset=products)
-        # )
-        ranges = defaultdict(list)
-        for product in products:
-            ranges[product.product_range].append(product)
-        self.ranges = dict(ranges)
+        range_queryset = self._filter_ranges(self._query_ranges(products))
+        self.ranges = range_queryset.order_by("name").annotate(
+            variation_count=Count("products")
+        )
 
     def _query_products(self):
         end_of_line = self.get_eol()
@@ -68,7 +63,9 @@ class ProductSearchForm(forms.Form):
         range_pks = (
             products.values_list("product_range", flat=True).order_by().distinct()
         )
-        return models.ProductRange.ranges.filter(pk__in=range_pks)
+        return models.ProductRange.ranges.filter(
+            pk__in=range_pks, status=models.ProductRange.COMPLETE
+        )
 
     def _filter_ranges(self, ranges):
         ranges = self._filter_end_of_line(ranges)

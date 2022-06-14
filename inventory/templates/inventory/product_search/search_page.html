@@ -51,9 +51,7 @@
     $(".expanded").each(function () {
       range_ids.push(this.id.replace('expanded_', ''));
     });
-
-    console.log(range_ids);
-
+    
     $('.EOL_range').click(function () {
       var range_id = this.id.replace('EOL_', '');
       if (window.confirm(
@@ -64,9 +62,12 @@
     });
 
     function expand_variations(range_id) {
+      if ($("#expanded_" + range_id + " .variation_info").is(":empty")) {
+        var url = $("#expanded_" + range_id).data("link");
+        get_variation_info(range_id, url);
+      }
       $('#collapsed_' + range_id).hide();
       $('#expanded_' + range_id).show();
-      get_stock_levels($('#expanded_' + range_id));
     }
 
     function collapse_variations(range_id) {
@@ -95,6 +96,20 @@
         expand_variations(range_id);
       });
     });
+
+    function get_variation_info(range_id, url) {
+      $.ajax({
+        type: "GET",
+        url: url,
+        success: function (response) {
+          $("#expanded_" + range_id + " .variation_info").html(response);
+          get_stock_levels($('#expanded_' + range_id));
+        },
+        error: function (response) {
+          alert("Error getting variations.")
+        }
+      });
+    }
 
     function get_stock_levels(element) {
       var product_ids = [];

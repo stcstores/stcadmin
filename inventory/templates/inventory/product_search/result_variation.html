@@ -1,43 +1,12 @@
 <div class="collapsed" id="collapsed_{{ product_range.pk }}">
   <button class="expand_variations" id="expand_{{ product_range.pk }}">
-    Show {{ products|length }} Variations &#9660;
+    Show {{ product_range.variation_count }} Variations &#9660;
   </button>
 </div>
 
-<div class="expanded" id="expanded_{{ product_range.pk }}" hidden>
+<div class="expanded" id="expanded_{{ product_range.pk }}" data-link="{% url 'inventory:variation_list' product_range.id %}" hidden>
   <button class="collapse_variations" id="collapse_{{ product_range.pk }}">
-    Hide {{ products|length }} Variations &#9650;
+    Hide {{ product_range.variation_count }} Variations &#9650;
   </button>
-  <table class="variation_table">
-    {% for product in products %}
-    {% if forloop.first %}
-    <tr>
-      <th>SKU</th>
-      <th>Supplier SKU</th>
-      {% for option in product.variable_options %}
-      <th>{{ option }}</th>
-      {% endfor %}
-      <th></th>
-      <th>Stock Level</th>
-    </tr>
-    {% endif %}
-    <tr>
-      <td class="sku">{{ product.sku }}</td>
-      <td class="sku">{{ product.supplier_sku }}</td>
-      {% for option, value in product.variation.items %}
-      <td class="name">{{ value }}</td>
-      {% endfor %}
-      <td>
-        <a href="{% url 'inventory:product' product.pk %}">
-          <button>Edit</button>
-        </a>
-      </td>
-      <td
-        class="search_result_stock_level {% if product.is_end_of_line is False and product.product_range.is_end_of_line is False %} load_stock {% endif %}"
-        id="search_result_stock_level_{{ product.pk }}">
-        <i class="fa-solid fa-spinner fa-spin"></i>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
+  <div class="variation_info"></div>
 </div>

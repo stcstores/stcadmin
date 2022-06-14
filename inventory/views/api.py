@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import TemplateView
 
 from inventory import models
 
@@ -130,3 +131,19 @@ class NewSupplier(InventoryUserMixin, NewInstance):
     """Create a new supplier."""
 
     model_class = models.Supplier
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class VariationList(InventoryUserMixin, TemplateView):
+    """Return the contents of the variation table for a range."""
+
+    template_name = "inventory/product_search/variation_list.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        product_range_id = self.kwargs["product_range_pk"]
+        context["products"] = models.BaseProduct.objects.filter(
+            product_range__id=product_range_id
+        ).variations()
+        return context

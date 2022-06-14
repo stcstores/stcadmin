@@ -82,6 +82,11 @@ api_urlpatterns = [
     path("new_brand", views.NewBrand.as_view(), name="new_brand"),
     path("new_manufacturer", views.NewManufacturer.as_view(), name="new_manufacturer"),
     path("new_supplier", views.NewSupplier.as_view(), name="new_supplier"),
+    path(
+        "variation_list/<int:product_range_pk>/",
+        views.api.VariationList.as_view(),
+        name="variation_list",
+    ),
 ]
 
 product_editor_patterns = [
