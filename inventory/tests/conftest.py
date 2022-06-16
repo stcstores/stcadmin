@@ -151,7 +151,7 @@ class CombinationProductFactory(BaseProductFactory):
 
 
 @pytest_factoryboy.register
-class CombinationProductLink(DjangoModelFactory):
+class CombinationProductLinkFactory(DjangoModelFactory):
     class Meta:
         model = models.CombinationProductLink
 
