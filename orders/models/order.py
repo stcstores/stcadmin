@@ -1,6 +1,7 @@
 """The Order model."""
 from datetime import datetime, timedelta
 
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
@@ -89,6 +90,14 @@ class Order(models.Model):
     total_paid = models.PositiveIntegerField(blank=True, null=True)
     total_paid_GBP = models.PositiveIntegerField(blank=True, null=True)
 
+    packed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="packed_orders",
+        blank=True,
+        null=True,
+    )
+
     objects = models.Manager.from_queryset(OrderQueryset)()
 
     class Meta:
@@ -149,10 +158,3 @@ class Order(models.Model):
         """Update calculated shipping_price with current price calculatrion."""
         self.calculated_shipping_price = self.calculate_shipping_price()
         self.save()
-
-    def packed_by(self):
-        """Return the packer who packed this order."""
-        try:
-            return self.packingrecord.packed_by
-        except Exception:
-            return None
