@@ -281,6 +281,11 @@ LOGGING = {
             "level": "ERROR",
             "propagate": False,
         },
+        "linnworks_import_export": {
+            "handlers": ["error_file_handler", "mail_admins"],
+            "level": "ERROR",
+            "propagate": False,
+        },
         "product_creation": {
             "handlers": ["error_file_handler", "mail_admins"],
             "level": "ERROR",

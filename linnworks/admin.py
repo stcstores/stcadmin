@@ -72,3 +72,15 @@ class StockLevelExportRecordAdmin(admin.ModelAdmin):
     )
     list_select_related = ("stock_level_update", "product")
     autocomplete_fields = ("stock_level_update", "product")
+
+
+@admin.register(models.LinnworksOrder)
+class LinnworksOrderAdmin(admin.ModelAdmin):
+    """Model admin for the LinnworksOrder model."""
+
+    exclude_fields = ()
+    readonly_fields = ("order",)
+    list_display = ("order", "order_guid")
+    search_fields = ("order__order_id", "order_guid")
+    list_select_related = ("order",)
+    date_hierarchy = "order__dispatched_at"

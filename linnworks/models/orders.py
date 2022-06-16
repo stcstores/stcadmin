@@ -1,12 +1,15 @@
 """Models for handling Linnworks orders."""
 
 import datetime as dt
+import logging
+import time
 from collections import defaultdict
 from decimal import Decimal
 from pathlib import Path
 
-from django.db import transaction
-from django.utils.timezone import make_aware
+import linnapi
+from django.db import models, transaction
+from django.utils import timezone
 
 from inventory.models import BaseProduct
 from orders.models import Order, ProductSale
@@ -14,6 +17,45 @@ from shipping.models import Country, Currency, ShippingService
 
 from .config import LinnworksChannel, LinnworksConfig
 from .linnworks_export_files import BaseExportFile
+
+logger = logging.getLogger("management_commands")
+
+
+class LinnworksOrderManager(models.Manager):
+    """Model manager for the LinnworksOrder model."""
+
+    def get_recent_orders(self, orders_since):
+        """Return orders dispatched after a datetime."""
+        if orders_since is None:
+            orders_since = timezone.now() - dt.timedelta(days=30)
+        return Order.objects.filter(dispatched_at__gte=orders_since)
+
+    def update_order_guids(self, orders_since=None):
+        """Add Linnworks order GUIDs to recent orders."""
+        orders = self.get_recent_orders(orders_since).filter(
+            linnworks_order__isnull=True
+        )
+        wait_time = 60
+        for i, order in enumerate(orders):
+            try:
+                guid = get_order_guid(order.order_id)
+                LinnworksOrder(order=order, order_guid=guid).save()
+            except Exception as e:
+                logger.exception(e)
+                continue
+            if i > 0 and i % 149 == 0:
+                time.sleep(wait_time)
+
+
+class LinnworksOrder(models.Model):
+    """Model for storing order properties related to Linnworks."""
+
+    order = models.OneToOneField(
+        Order, on_delete=models.CASCADE, related_name="linnworks_order"
+    )
+    order_guid = models.CharField(max_length=36)
+
+    objects = LinnworksOrderManager()
 
 
 class ProcessedOrdersExport(BaseExportFile):
@@ -194,7 +236,7 @@ class OrderUpdater:
         date, time = date_time_string.split(" ")
         year, month, day = (int(_) for _ in date.split("-"))
         hour, minute, second = (int(_) for _ in time.split(":"))
-        return make_aware(
+        return timezone.make_aware(
             dt.datetime(
                 year=year,
                 month=month,
@@ -217,3 +259,9 @@ class OrderUpdater:
         if service_name == "Default":
             return None
         return self.shipping_services[service_name]
+
+
+@linnapi.linnworks_api_session
+def get_order_guid(order_id):
+    """Return the Linnworks order GUID for an order."""
+    return linnapi.orders.get_order_guid_by_order_id(order_id)

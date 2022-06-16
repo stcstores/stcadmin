@@ -746,7 +746,7 @@ resolved_reference = "a14a02b404a71a948a554d6b7c3ec9e698245b81"
 
 [[package]]
 name = "linnapi"
-version = "0.0.3"
+version = "0.0.4"
 description = "Linnworks API integration"
 category = "main"
 optional = false
@@ -761,7 +761,7 @@ toml = "^0.10.2"
 type = "git"
 url = "https://github.com/stcstores/linnapi.git"
 reference = "main"
-resolved_reference = "01da091e931b627cf70ffc1bfb403efa9fa12425"
+resolved_reference = "6c0e6888ed7bafdd9d159a84b825e7f1053baf5b"
 
 [[package]]
 name = "lml"
