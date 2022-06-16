@@ -2,9 +2,7 @@ import pytest
 
 
 @pytest.fixture
-def refund(
-    refund_factory, product_sale_factory, packing_record_factory, product_refund_factory
-):
+def refund(refund_factory, product_sale_factory, product_refund_factory):
     refund = refund_factory.create()
     product = product_sale_factory.create(order=refund.order)
     product_refund_factory.create(refund=refund, product=product)

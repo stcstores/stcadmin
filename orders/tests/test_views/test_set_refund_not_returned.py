@@ -5,7 +5,6 @@ import pytest
 def refund(
     lost_in_post_refund_factory,
     product_sale_factory,
-    packing_record_factory,
     product_refund_factory,
 ):
     refund = lost_in_post_refund_factory.create(returned=True)

@@ -1,10 +1,10 @@
 """The Order model."""
 from datetime import datetime, timedelta
 
-from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+from home.models import CloudCommerceUser
 from shipping.models import Country, Currency, ShippingPrice, ShippingService
 
 from .channel import Channel
@@ -91,7 +91,7 @@ class Order(models.Model):
     total_paid_GBP = models.PositiveIntegerField(blank=True, null=True)
 
     packed_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        CloudCommerceUser,
         on_delete=models.PROTECT,
         related_name="packed_orders",
         blank=True,

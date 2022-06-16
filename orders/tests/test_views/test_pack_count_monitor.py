@@ -74,29 +74,23 @@ def users(cloud_commerce_user_factory):
 
 
 @pytest.fixture
-def packing_records(users, mock_now, packing_record_factory):
-    [
-        packing_record_factory.create(order__dispatched_at=mock_now, packed_by=users[0])
-        for _ in range(2)
-    ]
-    [
-        packing_record_factory.create(order__dispatched_at=mock_now, packed_by=users[1])
-        for _ in range(3)
-    ]
+def orders(users, mock_now, order_factory):
+    [order_factory.create(dispatched_at=mock_now, packed_by=users[0]) for _ in range(2)]
+    [order_factory.create(dispatched_at=mock_now, packed_by=users[1]) for _ in range(3)]
 
 
 @pytest.fixture
-def packing_record_yesterday(mock_now, packing_record_factory):
-    packing_record_factory.create(order__dispatched_at=mock_now - timedelta(days=1))
+def order_yesterday(mock_now, order_factory):
+    order_factory.create(dispatched_at=mock_now - timedelta(days=1))
 
 
 @pytest.fixture
-def packing_record_tomorrow(mock_now, packing_record_factory):
-    packing_record_factory.create(order__dispatched_at=mock_now + timedelta(days=1))
+def order_tomorrow(mock_now, order_factory):
+    order_factory.create(dispatched_at=mock_now + timedelta(days=1))
 
 
 @pytest.mark.django_db
-def test_content(mock_now, users, packing_records, valid_get_response_content):
+def test_content(mock_now, users, orders, valid_get_response_content):
     assert valid_get_response_content == (
         "\n<tr>\n"
         f'    <th class="packer_name">{users[1].full_name()}</th>\n'
@@ -111,13 +105,13 @@ def test_content(mock_now, users, packing_records, valid_get_response_content):
 
 @pytest.mark.django_db
 def test_past_orders_are_not_displaid(
-    mock_now, packing_record_yesterday, valid_get_response_content
+    mock_now, order_yesterday, valid_get_response_content
 ):
     assert valid_get_response_content == ""
 
 
 @pytest.mark.django_db
 def test_future_orders_are_not_displaid(
-    mock_now, packing_record_tomorrow, valid_get_response_content
+    mock_now, order_tomorrow, valid_get_response_content
 ):
     assert valid_get_response_content == ""

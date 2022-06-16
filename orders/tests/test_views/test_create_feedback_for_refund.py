@@ -14,17 +14,12 @@ def refund(
 
 
 @pytest.fixture
-def packing_record(packing_record_factory, refund):
-    return packing_record_factory.create(order=refund.order)
-
-
-@pytest.fixture
 def feedback_type():
     Feedback.objects.create(name="Packing Mistake")
 
 
 @pytest.fixture
-def url(db, refund, packing_record, feedback_type):
+def url(db, refund, feedback_type):
     return f"/orders/refund/{refund.id}/create_feedback/"
 
 
@@ -67,9 +62,9 @@ def test_redirects(valid_get_response, refund):
     assert valid_get_response.url == refund.get_absolute_url()
 
 
-def test_creates_feedback(valid_get_response, refund, packing_record):
+def test_creates_feedback(valid_get_response, refund):
     assert UserFeedback.objects.filter(
         order_id=refund.order.order_id,
         feedback_type__name="Packing Mistake",
-        user=packing_record.packed_by,
+        user=refund.order.packed_by,
     )

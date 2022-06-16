@@ -5,9 +5,7 @@ from orders import models
 
 
 @pytest.fixture
-def refund(
-    refund_factory, product_sale_factory, packing_record_factory, product_refund_factory
-):
+def refund(refund_factory):
     return refund_factory.create()
 
 

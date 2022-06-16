@@ -2,10 +2,10 @@
 
 {% block content %}{{ block.super }}
 
-<h2>Order: {{ order.order_ID }}</h2>
+<h2>Order: {{ order.order_id }}</h2>
 <p>Tracking Number: {{ order.tracking_number }}</p>
 <p>Dispatched at: {{ order.dispatched_at|date:"Y-m-d" }}</p>
-<p>Packed By: {{ packing_record.packed_by }}</p>
+<p>Packed By: {{ order.packed_by }}</p>
 
 <table id="product_list">
 {% for product in products %}

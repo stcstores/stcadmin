@@ -14,7 +14,7 @@
         {% endif %}
         <p>Tracking Number: {{ order.tracking_number }}</p>
         <p>Dispatched at: {{ order.dispatched_at|date:"Y-m-d" }}</p>
-        <p>Packed By: {{ packing_record.packed_by }}</p>
+        <p>Packed By: {{ order.packed_by }}</p>
         {% if refund.reason == "Packing Mistake" %}
         {% if feedback %}
         <a href="{{ feedback.get_absolute_url }}" target="_blank">
@@ -22,7 +22,7 @@
         </a>
         {% else %}
         <a href="{% url 'orders:add_packing_mistake_feedback' refund.id %}">
-            <button>Add Packing Mistake for {{ packing_record.packed_by }}</button>
+            <button>Add Packing Mistake for {{ order.packed_by }}</button>
         </a>
         {% endif %}
         {% endif %}

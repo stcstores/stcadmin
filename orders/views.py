@@ -47,11 +47,11 @@ class PackCountMonitor(TemplateView):
         qs = (
             CloudCommerceUser.unhidden.annotate(
                 pack_count=Count(
-                    "packingrecord",
+                    "packed_orders",
                     filter=Q(
-                        packingrecord__order__dispatched_at__year=date.year,
-                        packingrecord__order__dispatched_at__month=date.month,
-                        packingrecord__order__dispatched_at__day=date.day,
+                        packed_orders__dispatched_at__year=date.year,
+                        packed_orders__dispatched_at__month=date.month,
+                        packed_orders__dispatched_at__day=date.day,
                     ),
                 )
             )
@@ -289,7 +289,6 @@ class RefundList(OrdersUserMixin, ListView):
                 .prefetch_related(
                     "products",
                     "order__productsale_set",
-                    "order__packingrecord",
                 )
                 .select_related("order", "order__channel", "order")
                 .order_by("-order__dispatched_at")
@@ -348,9 +347,6 @@ class Refund(OrdersUserMixin, TemplateView):
         context["products"] = refund_products
         context["other_products"] = refund.order.productsale_set.exclude(
             id__in=[refund_product.product.id for refund_product in refund_products]
-        )
-        context["packing_record"] = get_object_or_404(
-            models.PackingRecord, order=refund.order
         )
         context["refund_images"] = models.RefundImage.objects.filter(
             refund=refund, product_refund__isnull=True
@@ -557,10 +553,9 @@ class AddPackingMistakeForRefund(OrdersUserMixin, RedirectView):
         if self.request.method == "POST":
             raise Http404
         refund = get_object_or_404(models.PackingMistakeRefund, pk=refund_pk)
-        packing_record = get_object_or_404(models.PackingRecord, order=refund.order)
         feedback_type = Feedback.objects.get(name="Packing Mistake")
         feedback = UserFeedback(
-            user=packing_record.packed_by,
+            user=refund.order.packed_by,
             feedback_type=feedback_type,
             order_id=refund.order.order_id,
         )

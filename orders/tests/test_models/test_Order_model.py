@@ -106,6 +106,11 @@ def test_cancelled_defaults_to_False(new_order):
 
 
 @pytest.mark.django_db
+def test_packed_by_defaults_to_none(new_order):
+    assert new_order.packed_by is None
+
+
+@pytest.mark.django_db
 def test_ignored_defautls_to_False(new_order):
     assert new_order.ignored is False
 

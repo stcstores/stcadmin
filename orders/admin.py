@@ -30,6 +30,7 @@ class OrderAdmin(admin.ModelAdmin):
         "ignored",
         "country",
         "shipping_service",
+        "packed_by",
     )
     search_fields = ("order_id", "external_reference")
     list_editable = ("cancelled", "ignored")
@@ -68,20 +69,3 @@ class ProductSaleAdmin(admin.ModelAdmin):
     )
     list_select_related = ("order", "supplier")
     autocomplete_fields = ("order", "supplier")
-
-
-@admin.register(models.PackingRecord)
-class PackingRecordAdmin(admin.ModelAdmin):
-    """Admin for the PackingRecord model."""
-
-    fields = (
-        "__str__",
-        "order",
-        "packed_by",
-    )
-    readonly_fields = ("order",)
-    list_display = ("order", "packed_by")
-    list_editable = ("packed_by",)
-    list_filter = (("packed_by", admin.RelatedOnlyFieldListFilter),)
-    list_select_related = ("packed_by",)
-    autocomplete_fields = ("packed_by",)

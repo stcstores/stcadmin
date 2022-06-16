@@ -7,7 +7,6 @@ from django.test import override_settings
 from pytest_django.asserts import assertTemplateUsed
 
 from feedback.models import Feedback, UserFeedback
-from orders import models
 
 
 @pytest.fixture
@@ -15,12 +14,10 @@ def refund(
     db,
     refund_factory,
     product_sale_factory,
-    packing_record_factory,
     product_refund_factory,
 ):
     refund = refund_factory.create()
     product = product_sale_factory.create(order=refund.order)
-    packing_record_factory.create(order=refund.order)
     product_refund_factory.create(refund=refund, product=product)
     return refund
 
@@ -35,11 +32,6 @@ def product_image(refund, refund_image_factory):
     return refund_image_factory.create(
         refund=refund, product_refund=refund.products.first()
     )
-
-
-@pytest.fixture
-def packing_record(refund):
-    return models.PackingRecord.objects.get(order=refund.order)
 
 
 @pytest.fixture
@@ -118,10 +110,6 @@ def test_other_products_in_context(refund, other_product, valid_get_response):
     assert list(valid_get_response.context["other_products"]) == [other_product]
 
 
-def test_packing_record_in_context(refund, packing_record, valid_get_response):
-    assert valid_get_response.context["packing_record"] == packing_record
-
-
 def test_order_id_in_response(refund, valid_get_response_content):
     assert refund.order.order_id in valid_get_response_content
 
@@ -194,12 +182,10 @@ def test_links_to_create_feedback_for_packing_mistake(
     url,
     packing_mistake_refund_factory,
     product_sale_factory,
-    packing_record_factory,
     product_refund_factory,
 ):
     refund = packing_mistake_refund_factory.create()
     product = product_sale_factory.create(order=refund.order)
-    packing_record_factory.create(order=refund.order)
     product_refund_factory.create(refund=refund, product=product)
     response = group_logged_in_client.get(url(refund))
     content = response.content.decode("utf8")
@@ -212,12 +198,10 @@ def test_links_to_feedback_page_when_feedback_exists(
     url,
     packing_mistake_refund_factory,
     product_sale_factory,
-    packing_record_factory,
     product_refund_factory,
 ):
     refund = packing_mistake_refund_factory.create()
     product = product_sale_factory.create(order=refund.order)
-    packing_record = packing_record_factory.create(order=refund.order)
     product_refund_factory.create(refund=refund, product=product)
     feedback = UserFeedback.objects.create(
         feedback_type=Feedback.objects.create(
@@ -226,7 +210,7 @@ def test_links_to_feedback_page_when_feedback_exists(
                 name="test_image.jpg", content=b"", content_type="image/jpeg"
             ),
         ),
-        user=packing_record.packed_by,
+        user=refund.order.packed_by,
         order_id=refund.order.order_id,
     )
     response = group_logged_in_client.get(url(refund))

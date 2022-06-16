@@ -2,6 +2,7 @@ from datetime import datetime
 
 import factory
 import pytest_factoryboy
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from home.models import CloudCommerceUser
@@ -45,6 +46,16 @@ class CloudCommerceUserFactory(factory.django.DjangoModelFactory):
 
 
 @pytest_factoryboy.register
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = get_user_model()
+
+    username = factory.Sequence(lambda n: f"Test User {n}")
+    password = hash("Password")
+    cloud_commerce_user = factory.RelatedFactory(CloudCommerceUserFactory)
+
+
+@pytest_factoryboy.register
 class ChannelFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Channel
@@ -77,6 +88,7 @@ class OrderFactory(factory.django.DjangoModelFactory):
     currency = factory.SubFactory(CurrencyFactory)
     total_paid = 4457
     total_paid_GBP = 5691
+    packed_by = factory.SubFactory(CloudCommerceUserFactory)
 
 
 @pytest_factoryboy.register
@@ -96,15 +108,6 @@ class ProductSaleFactory(factory.django.DjangoModelFactory):
     unit_price = 518
     item_price = 518
     item_total_before_tax = 489
-
-
-@pytest_factoryboy.register
-class PackingRecordFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = models.PackingRecord
-
-    order = factory.SubFactory(OrderFactory)
-    packed_by = factory.SubFactory(CloudCommerceUserFactory)
 
 
 @pytest_factoryboy.register

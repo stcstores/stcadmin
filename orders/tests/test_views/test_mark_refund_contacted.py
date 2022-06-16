@@ -5,7 +5,6 @@ import pytest
 def refund(
     breakage_refund_factory,
     product_sale_factory,
-    packing_record_factory,
     product_refund_factory,
 ):
     refund = breakage_refund_factory.create(contact_contacted=False)
