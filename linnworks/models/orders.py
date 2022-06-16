@@ -24,7 +24,7 @@ logger = logging.getLogger("management_commands")
 class LinnworksOrderManager(models.Manager):
     """Model manager for the LinnworksOrder model."""
 
-    def get_recent_orders(self, orders_since):
+    def get_recent_orders(self, orders_since=None):
         """Return orders dispatched after a datetime."""
         if orders_since is None:
             orders_since = timezone.now() - dt.timedelta(days=30)
@@ -56,6 +56,12 @@ class LinnworksOrder(models.Model):
     order_guid = models.CharField(max_length=36)
 
     objects = LinnworksOrderManager()
+
+    class Meta:
+        """Meta class for the linnworks.LinnworksOrder model."""
+
+        verbose_name = "Linnworks Order"
+        verbose_name_plural = "Linnworks Orders"
 
 
 class ProcessedOrdersExport(BaseExportFile):
