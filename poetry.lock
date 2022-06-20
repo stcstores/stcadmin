@@ -337,7 +337,7 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 name = "django-admin-sortable2"
-version = "2.0.4"
+version = "2.0.5"
 description = "Generic drag-and-drop sorting for the List, the Stacked- and the Tabular-Inlines Views in the Django Admin"
 category = "main"
 optional = false
@@ -1605,6 +1605,7 @@ click-repl = [
 ]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
+    {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
 ]
 coverage = [
     {file = "coverage-6.4.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:f1d5aa2703e1dab4ae6cf416eb0095304f49d004c39e9db1d86f57924f43006b"},
@@ -1666,8 +1667,8 @@ django = [
     {file = "Django-4.0.5.tar.gz", hash = "sha256:f7431a5de7277966f3785557c3928433347d998c1e6459324501378a291e5aab"},
 ]
 django-admin-sortable2 = [
-    {file = "django-admin-sortable2-2.0.4.tar.gz", hash = "sha256:01172fb486e4c65ec97f6f69c4f60cd751570ee38783b291ac70be6747d58d13"},
-    {file = "django_admin_sortable2-2.0.4-py3-none-any.whl", hash = "sha256:65e9cef37d2925637cde1614515da81440ad2720c340b2702ffd3f0f4a61b928"},
+    {file = "django-admin-sortable2-2.0.5.tar.gz", hash = "sha256:e9bc064e25ea3e2747b5d35fe56b7d3a8283e1181bf651496b09f960a7480a82"},
+    {file = "django_admin_sortable2-2.0.5-py3-none-any.whl", hash = "sha256:cc74dc9cdef2271119a2e20991a47aa2fc68b5e6a7063177758edcc1a7ee6409"},
 ]
 django-appconf = [
     {file = "django-appconf-1.0.5.tar.gz", hash = "sha256:be3db0be6c81fa84742000b89a81c016d70ae66a7ccb620cdef592b1f1a6aaa4"},
