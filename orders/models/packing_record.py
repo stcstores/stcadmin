@@ -2,7 +2,7 @@
 
 from django.db import models
 
-from home.models import CloudCommerceUser
+from home.models import Staff
 
 from .order import Order
 
@@ -11,7 +11,7 @@ class PackingRecord(models.Model):
     """Model for order packing."""
 
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
-    packed_by = models.ForeignKey(CloudCommerceUser, on_delete=models.PROTECT)
+    packed_by = models.ForeignKey(Staff, on_delete=models.PROTECT)
 
     class Meta:
         """Meta class for the Packing model."""

@@ -69,8 +69,8 @@ def mock_now():
 
 
 @pytest.fixture
-def users(cloud_commerce_user_factory):
-    return [cloud_commerce_user_factory.create() for _ in range(2)]
+def users(staff_factory):
+    return [staff_factory.create() for _ in range(2)]
 
 
 @pytest.fixture

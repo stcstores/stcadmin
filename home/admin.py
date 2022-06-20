@@ -4,29 +4,31 @@ from django.contrib import admin
 from home import models
 
 
-@admin.register(models.CloudCommerceUser)
-class CloudCommerceUserAdmin(admin.ModelAdmin):
-    """Model admin for CloudCommerceUser model."""
+@admin.register(models.Staff)
+class StaffAdmin(admin.ModelAdmin):
+    """Model admin for Staff model."""
 
-    fields = [
+    exclude = ()
+    list_display = (
         "full_name",
-        "user_id",
-        "stcadmin_user",
         "first_name",
         "second_name",
+        "stcadmin_user",
+        "email_address",
         "hidden",
-    ]
-    list_display = ("full_name", "user_id", "first_name", "second_name", "hidden")
+    )
     list_display_links = ("full_name",)
-    list_editable = ("user_id", "hidden")
-    readonly_fields = ("full_name",)
-    search_fields = ("full_name", "user_id", "first_name", "second_name")
+    list_editable = ("stcadmin_user", "email_address", "hidden")
+    search_fields = ("full_name", "first_name", "second_name", "email_address")
+    list_select_related = ("stcadmin_user",)
+    list_filter = ("hidden",)
+    autocomplete_fields = ("stcadmin_user",)
 
 
 @admin.register(models.ExternalLink)
 class ExternalLinkAdmin(admin.ModelAdmin):
     """Model admin for the ExternalLink model."""
 
-    fields = ("name", "url", "ordering")
+    exclude = ()
     list_display = ("__str__", "name", "url", "ordering")
     list_editable = ("name", "url", "ordering")

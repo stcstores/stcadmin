@@ -1,38 +1,34 @@
 [{
-    "model": "home.cloudcommerceuser",
+    "model": "home.staff",
     "pk": 1,
     "fields": {
-        "user_id": "74646486",
         "stcadmin_user": null,
         "first_name": "Test",
         "second_name": "User",
         "hidden": false
     }
 }, {
-    "model": "home.cloudcommerceuser",
+    "model": "home.staff",
     "pk": 2,
     "fields": {
-        "user_id": "646165468",
         "stcadmin_user": null,
         "first_name": "",
         "second_name": "",
         "hidden": false
     }
 }, {
-    "model": "home.cloudcommerceuser",
+    "model": "home.staff",
     "pk": 3,
     "fields": {
-        "user_id": "86116485",
         "stcadmin_user": null,
         "first_name": "",
         "second_name": "",
         "hidden": false
     }
 }, {
-    "model": "home.cloudcommerceuser",
+    "model": "home.staff",
     "pk": 4,
     "fields": {
-        "user_id": "79116486",
         "stcadmin_user": null,
         "first_name": "Hidden",
         "second_name": "User",

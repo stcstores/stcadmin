@@ -1,7 +1,7 @@
 from django.shortcuts import reverse
 
 from feedback.models import Feedback
-from home.models import CloudCommerceUser
+from home.models import Staff
 from stcadmin.tests.stcadmin_test import STCAdminTest, ViewTests
 
 
@@ -25,7 +25,7 @@ class TestUserView(UserViewTest, ViewTests):
     template = "user/user.html"
 
     fixtures = (
-        "home/cloud_commerce_user",
+        "home/staff_member",
         "feedback/feedback",
         "feedback/user_feedback",
     )
@@ -42,7 +42,7 @@ class TestUserView(UserViewTest, ViewTests):
         self.assertIn("feedback_count", response.context)
         self.assertIsInstance(response.context["feedback_count"], dict)
 
-    def test_feedback_count_without_cloud_commerce_user(self):
+    def test_feedback_count_without_staff_member(self):
         response = self.make_get_request()
         self.assertTrue(hasattr(response, "context"))
         self.assertIsNotNone(response.context)
@@ -50,8 +50,8 @@ class TestUserView(UserViewTest, ViewTests):
         self.assertIsInstance(response.context["feedback_count"], dict)
         self.assertEqual({}, response.context["feedback_count"])
 
-    def test_feedback_count_witho_cloud_commerce_user(self):
-        cc_user = CloudCommerceUser.objects.get(id=1)
+    def test_feedback_count_witho_staff_member(self):
+        cc_user = Staff.objects.get(id=1)
         cc_user.stcadmin_user = self.user
         cc_user.save()
         response = self.make_get_request()

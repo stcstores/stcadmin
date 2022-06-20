@@ -2,10 +2,9 @@ from datetime import datetime
 
 import factory
 import pytest_factoryboy
-from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from home.models import CloudCommerceUser
+from home.factories import StaffFactory
 from inventory.models import Supplier
 from orders import models
 from shipping.factories import (
@@ -22,6 +21,7 @@ pytest_factoryboy.register(ShippingServiceFactory)
 pytest_factoryboy.register(ShippingPriceFactory)
 pytest_factoryboy.register(WeightBandFactory)
 pytest_factoryboy.register(ProviderFactory)
+pytest_factoryboy.register(StaffFactory)
 
 
 @pytest_factoryboy.register
@@ -31,28 +31,6 @@ class SupplierFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"Test Supplier {n}")
     active = True
-
-
-@pytest_factoryboy.register
-class CloudCommerceUserFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = CloudCommerceUser
-
-    user_id = factory.Sequence(lambda n: str(5641616 + n))
-    stcadmin_user = None
-    first_name = factory.Faker("first_name")
-    second_name = factory.Faker("last_name")
-    hidden = False
-
-
-@pytest_factoryboy.register
-class UserFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = get_user_model()
-
-    username = factory.Sequence(lambda n: f"Test User {n}")
-    password = hash("Password")
-    cloud_commerce_user = factory.RelatedFactory(CloudCommerceUserFactory)
 
 
 @pytest_factoryboy.register
@@ -88,7 +66,7 @@ class OrderFactory(factory.django.DjangoModelFactory):
     currency = factory.SubFactory(CurrencyFactory)
     total_paid = 4457
     total_paid_GBP = 5691
-    packed_by = factory.SubFactory(CloudCommerceUserFactory)
+    packed_by = factory.SubFactory(StaffFactory)
 
 
 @pytest_factoryboy.register

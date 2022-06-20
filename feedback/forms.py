@@ -8,7 +8,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from feedback import models
-from home.models import CloudCommerceUser
+from home.models import Staff
 
 
 class FeedbackSearchForm(forms.Form):
@@ -23,7 +23,7 @@ class FeedbackSearchForm(forms.Form):
     user = forms.ModelChoiceField(
         label="User",
         required=False,
-        queryset=CloudCommerceUser.objects.all(),
+        queryset=Staff.objects.all(),
         widget=forms.RadioSelect(),
     )
 

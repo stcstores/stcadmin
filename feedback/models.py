@@ -4,7 +4,7 @@ from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
 
-from home.models import CloudCommerceUser
+from home.models import Staff
 
 
 class Feedback(models.Model):
@@ -44,9 +44,9 @@ class UserFeedbackMonthlyManager(models.Manager):
 
 
 class UserFeedback(models.Model):
-    """Model to link CloudCommerceUser with Feedback."""
+    """Model to link Staff with Feedback."""
 
-    user = models.ForeignKey(CloudCommerceUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(Staff, on_delete=models.CASCADE)
     feedback_type = models.ForeignKey(Feedback, on_delete=models.CASCADE)
     timestamp = models.DateField(default=timezone.now)
     order_id = models.CharField(max_length=10, blank=True, null=True)

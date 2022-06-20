@@ -6,7 +6,7 @@ from django.shortcuts import reverse
 from django.views.generic.base import RedirectView, TemplateView
 
 from feedback import models
-from home.models import CloudCommerceUser
+from home.models import Staff
 from home.views import UserLoginMixin
 
 
@@ -24,8 +24,8 @@ class User(UserLoginMixin, TemplateView):
     def get_feedback_count(self):
         """Return dict of feedback counts by feedback type for current user."""
         try:
-            user = CloudCommerceUser.objects.get(stcadmin_user=self.request.user)
-        except CloudCommerceUser.DoesNotExist:
+            user = Staff.objects.get(stcadmin_user=self.request.user)
+        except Staff.DoesNotExist:
             return {}
         else:
             feedback_types = models.Feedback.objects.all()

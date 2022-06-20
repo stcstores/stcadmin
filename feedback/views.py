@@ -12,7 +12,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 from feedback import forms, models
-from home.models import CloudCommerceUser
+from home.models import Staff
 from home.views import UserInGroupMixin, UserLoginMixin
 
 
@@ -64,7 +64,7 @@ class UserFeedback(FeedbackUserMixin, TemplateView):
     def get_users(self, date_from, date_to):
         """Return a list of users annotated with pack counts."""
         return (
-            CloudCommerceUser.unhidden.order_by("first_name", "second_name")
+            Staff.unhidden.order_by("first_name", "second_name")
             .annotate(
                 pack_count=Count(
                     "packingrecord",
@@ -124,7 +124,7 @@ class CreateUserFeedback(FeedbackUserMixin, CreateView):
         """Return initial values for form."""
         initial = super().get_initial()
         user_id = self.kwargs["user_id"]
-        initial["user"] = get_object_or_404(CloudCommerceUser, id=user_id)
+        initial["user"] = get_object_or_404(Staff, id=user_id)
         return initial
 
     def get_form(self, *args, **kwargs):
@@ -198,7 +198,7 @@ class FeedbackList(FeedbackUserMixin, ListView):
         """Process GET request."""
         user_id = self.request.GET.get("user_id") or None
         if user_id is not None:
-            self.user = get_object_or_404(CloudCommerceUser, pk=user_id)
+            self.user = get_object_or_404(Staff, pk=user_id)
         feedback_id = self.request.GET.get("feedback_id") or None
         if feedback_id is not None:
             self.feedback_type = get_object_or_404(models.Feedback, pk=feedback_id)
@@ -278,7 +278,7 @@ class Monitor(TemplateView):
         """Return a list of users with feedback data."""
         feedback_types = {_.id: _ for _ in models.Feedback.objects.all()}
         feedback = self.get_feedback()
-        users = list(CloudCommerceUser.unhidden.all())
+        users = list(Staff.unhidden.all())
         for user in users:
             user.score = 0
             user.feedback = []

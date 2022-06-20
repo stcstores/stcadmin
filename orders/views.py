@@ -18,7 +18,7 @@ from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
 
 from feedback.models import Feedback, UserFeedback
-from home.models import CloudCommerceUser
+from home.models import Staff
 from home.views import UserInGroupMixin
 from orders import forms, models
 
@@ -45,7 +45,7 @@ class PackCountMonitor(TemplateView):
         context = super().get_context_data(*args, **kwargs)
         date = timezone.now()
         qs = (
-            CloudCommerceUser.unhidden.annotate(
+            Staff.unhidden.annotate(
                 pack_count=Count(
                     "packed_orders",
                     filter=Q(
