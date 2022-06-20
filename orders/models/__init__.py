@@ -2,7 +2,6 @@
 from . import charts
 from .channel import Channel
 from .order import Order
-from .packing_record import PackingRecord
 from .product_sale import ProductSale
 from .refund import (
     BreakageRefund,
