@@ -21,7 +21,6 @@ __all__ = [
     "Channel",
     "charts",
     "Order",
-    "PackingRecord",
     "ProductSale",
     "BreakageRefund",
     "ContactRefund",

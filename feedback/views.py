@@ -67,10 +67,10 @@ class UserFeedback(FeedbackUserMixin, TemplateView):
             Staff.unhidden.order_by("first_name", "second_name")
             .annotate(
                 pack_count=Count(
-                    "packingrecord",
+                    "packed_orders",
                     filter=Q(
-                        packingrecord__order__dispatched_at__gte=date_from,
-                        packingrecord__order__dispatched_at__lte=date_to
+                        packed_orders__dispatched_at__gte=date_from,
+                        packed_orders__dispatched_at__lte=date_to
                         + datetime.timedelta(days=1),
                     ),
                 )
