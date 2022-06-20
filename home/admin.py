@@ -19,7 +19,11 @@ class StaffAdmin(admin.ModelAdmin):
     )
     list_display_links = ("full_name",)
     list_editable = ("stcadmin_user", "email_address", "hidden")
-    search_fields = ("full_name", "first_name", "second_name", "email_address")
+    search_fields = (
+        "stcadmin_user__username" "first_name",
+        "second_name",
+        "email_address",
+    )
     list_select_related = ("stcadmin_user",)
     list_filter = ("hidden",)
     autocomplete_fields = ("stcadmin_user",)
