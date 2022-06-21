@@ -746,7 +746,7 @@ resolved_reference = "a14a02b404a71a948a554d6b7c3ec9e698245b81"
 
 [[package]]
 name = "linnapi"
-version = "0.0.4"
+version = "0.0.5"
 description = "Linnworks API integration"
 category = "main"
 optional = false
@@ -761,7 +761,7 @@ toml = "^0.10.2"
 type = "git"
 url = "https://github.com/stcstores/linnapi.git"
 reference = "main"
-resolved_reference = "6c0e6888ed7bafdd9d159a84b825e7f1053baf5b"
+resolved_reference = "2f1770db9450dab4dc864fe89d13e4ddb552e3fd"
 
 [[package]]
 name = "lml"
@@ -1751,7 +1751,6 @@ flake8-docstrings = [
     {file = "flake8_docstrings-1.6.0-py2.py3-none-any.whl", hash = "sha256:99cac583d6c7e32dd28bbfbef120a7c0d1b6dde4adb5a9fd441c4227a6534bde"},
 ]
 gunicorn = [
-    {file = "gunicorn-20.1.0-py3-none-any.whl", hash = "sha256:9dcc4547dbb1cb284accfb15ab5667a0e5d1881cc443e0677b4882a4067a807e"},
     {file = "gunicorn-20.1.0.tar.gz", hash = "sha256:e0a968b5ba15f8a328fdfd7ab1fcb5af4470c28aaf7e55df02a99bc13138e6e8"},
 ]
 idna = [

@@ -11,6 +11,7 @@ import linnapi
 from django.db import models, transaction
 from django.utils import timezone
 
+from home.models import Staff
 from inventory.models import BaseProduct
 from orders.models import Order, ProductSale
 from shipping.models import Country, Currency, ShippingService
@@ -45,6 +46,33 @@ class LinnworksOrderManager(models.Manager):
                 continue
             if i > 0 and i % 149 == 0:
                 time.sleep(wait_time)
+
+    def update_packing_records(self, orders_since=None):
+        """Add Linnworks order GUIDs to recent orders."""
+        staff = {
+            _.email_address: _
+            for _ in Staff.objects.filter(email_address__isnull=False)
+        }
+        orders = (
+            self.get_recent_orders(orders_since)
+            .filter(linnworks_order__order_guid__isnull=False, packed_by__isnull=True)
+            .select_related("linnworks_order")
+        )
+        wait_time = 60
+        for i, order in enumerate(orders):
+            try:
+                audits = get_order_audit_trail(order.linnworks_order.order_guid)
+                for audit in audits:
+                    if audit.audit_type == "ORDER_PROCESSED":
+                        order.packed_by = staff[audit.updated_by]
+                        order.save()
+                        break
+            except Exception as e:
+                logger.exception(e)
+                continue
+            finally:
+                if i > 0 and i % 149 == 0:
+                    time.sleep(wait_time)
 
 
 class LinnworksOrder(models.Model):
@@ -271,3 +299,9 @@ class OrderUpdater:
 def get_order_guid(order_id):
     """Return the Linnworks order GUID for an order."""
     return linnapi.orders.get_order_guid_by_order_id(order_id)
+
+
+@linnapi.linnworks_api_session
+def get_order_audit_trail(order_guid):
+    """Return the audit trail for an order."""
+    return linnapi.orders.get_processed_order_audit_trail(order_guid)
