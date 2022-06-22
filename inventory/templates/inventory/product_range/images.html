@@ -32,7 +32,7 @@
     <td class="sku">{{ product.sku }}</td>
     <td class="name">{{ product.name_extensions|join:" - " }}</td>
     <td class="selected"><input type="checkbox" id="select_{{ product.pk }}"></td>
-    {% for image in product.images.active %}
+    {% for image in product.images.all %}
     <td class="product_image">
       <img src="{{ image.image_file.url }}" alt="{{ image.image_file }}" height="100">
       <br>

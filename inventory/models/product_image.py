@@ -5,8 +5,6 @@ from django.utils import timezone
 
 from stcadmin import settings
 
-from .managers import ActiveInactiveQueryset
-
 
 def get_storage():
     """Return the storage method for the ProductImage model."""
@@ -17,22 +15,19 @@ def get_storage():
         return settings.ProductImageStorage
 
 
-class BaseProductImage(models.Model):
-    """Base class for product image fields."""
+class ProductImage(models.Model):
+    """Model for storing product images."""
 
-    ordering = models.PositiveIntegerField()
     image_file = models.ImageField(storage=get_storage())
-    active = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
 
-    objects = models.Manager.from_queryset(ActiveInactiveQueryset)()
-
     class Meta:
-        """Meta class for BaseProductImage."""
+        """Meta class for the ProductImage mode."""
 
-        abstract = True
+        verbose_name = "Product Image"
+        verbose_name_plural = "Product Images"
 
     def __str__(self):
         return self.image_file.name
@@ -41,24 +36,6 @@ class BaseProductImage(models.Model):
         """Delete image file from storage when deleting the object."""
         self.image_file.delete()
         super().delete(*args, **kwargs)
-
-
-class ProductImage(BaseProductImage):
-    """Model for storing product images."""
-
-    product = models.ForeignKey(
-        "BaseProduct",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="old_images",
-    )
-
-    class Meta:
-        """Meta class for the ProductImage mode."""
-
-        verbose_name = "Product Image"
-        verbose_name_plural = "Product Images"
 
 
 class ProductImageLink(models.Model):
