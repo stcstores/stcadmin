@@ -247,20 +247,6 @@ class ProductImageAdmin(admin.ModelAdmin):
     list_select_related = ("product", "product__product_range")
 
 
-@admin.register(models.ProductRangeImage)
-class ProductRangeImageAdmin(admin.ModelAdmin):
-    """Model admin for the ProductRangeImage model."""
-
-    exclude_fields = ()
-    list_display = ("product_range", "image_file")
-    search_fields = (
-        "product_range__sku",
-        "product_range__name",
-    )
-    autocomplete_fields = ("product_range",)
-    list_select_related = ("product_range",)
-
-
 @admin.register(models.ProductRange)
 class ProductRangeAdmin(admin.ModelAdmin):
     """Model admin for the Product Range model."""

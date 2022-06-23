@@ -23,7 +23,7 @@ from .product_attribute import (
     VATRate,
 )
 from .product_export import ProductExport
-from .product_image import ProductImage, ProductRangeImage
+from .product_image import ProductImage, ProductImageLink
 from .product_range import ProductRange
 from .stock_change import StockLevelHistory
 from .supplier import Supplier, SupplierContact
@@ -46,7 +46,7 @@ __all__ = [
     "ProductBayLink",
     "ProductExport",
     "ProductImage",
-    "ProductRangeImage",
+    "ProductImageLink",
     "ProductRange",
     "StockLevelHistory",
     "Supplier",

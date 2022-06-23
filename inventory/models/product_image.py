@@ -51,7 +51,7 @@ class ProductImage(BaseProductImage):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        related_name="images",
+        related_name="old_images",
     )
 
     class Meta:
@@ -59,23 +59,23 @@ class ProductImage(BaseProductImage):
 
         verbose_name = "Product Image"
         verbose_name_plural = "Product Images"
-        ordering = ("ordering",)
 
 
-class ProductRangeImage(BaseProductImage):
-    """Model for storing product range images."""
+class ProductImageLink(models.Model):
+    """Model for managing links between products and images."""
 
-    product_range = models.ForeignKey(
-        "ProductRange",
-        on_delete=models.SET_NULL,
+    product = models.ForeignKey(
+        "BaseProduct",
+        on_delete=models.CASCADE,
         blank=True,
         null=True,
-        related_name="images",
+        related_name="product_image_links",
     )
-
-    class Meta:
-        """Meta class for the ProductImage mode."""
-
-        verbose_name = "Product Range Image"
-        verbose_name_plural = "Product Range Images"
-        ordering = ("ordering",)
+    image = models.ForeignKey(
+        ProductImage,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="product_image_links",
+    )
+    position = models.PositiveIntegerField(default=0)

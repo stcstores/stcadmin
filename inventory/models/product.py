@@ -21,6 +21,7 @@ from .product_attribute import (
     VariationOptionValue,
     VATRate,
 )
+from .product_image import ProductImage, ProductImageLink
 from .product_range import ProductRange
 from .supplier import Supplier
 
@@ -135,6 +136,10 @@ class BaseProduct(PolymorphicModel):
         blank=True,
         null=True,
         editable=False,
+    )
+
+    images = models.ManyToManyField(
+        ProductImage, through=ProductImageLink, related_name="image_products"
     )
 
     objects = ProductManager.from_queryset(ProductQueryset)()
