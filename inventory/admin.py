@@ -237,14 +237,8 @@ class ProductImageAdmin(admin.ModelAdmin):
     """Model admin for the ProductImage model."""
 
     exclude_fields = ()
-    list_display = ("product", "image_file")
-    search_fields = (
-        "product__sku",
-        "product__product_range__sku",
-        "product__product_range__name",
-    )
-    autocomplete_fields = ("product",)
-    list_select_related = ("product", "product__product_range")
+    list_display = ("id", "image_file")
+    search_fields = ("image_file",)
 
 
 @admin.register(models.ProductRange)

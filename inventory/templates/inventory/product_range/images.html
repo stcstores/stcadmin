@@ -26,21 +26,23 @@
     <th>Product</th>
     {% comment %} <th><button id="toggle_selected">Toggle</button></th> {% endcomment %}
   </tr>
-  {% for product in products %}
+  {% for product, images in products.items %}
   <tr id="row_{{ product.pk }}">
     <td class="product_id" hidden>{{ product.pk }}</td>
     <td class="sku">{{ product.sku }}</td>
     <td class="name">{{ product.name_extensions|join:" - " }}</td>
     <td class="selected"><input type="checkbox" id="select_{{ product.pk }}"></td>
-    {% for image in product.images.active %}
-    <td class="product_image">
+    {% for image in images %}
+    <td class="product_image" id="product_image_{{ image.id }}">
       <img src="{{ image.image_file.url }}" alt="{{ image.image_file }}" height="100">
       <br>
       <a class="image_name" href="{{ image.image_file.url }}" target="_blank">{{ image.image_file }}</a>
       <span class="image_id" hidden>{{ image.pk }}</span>
       <p>
         <button class="move_image_left">&lt;</button>
-        <button class="delete_image">&times;</button>
+        <button class="delete_image" data-image-id="{{ image.pk }}" data-product-id="{{ product.id }}">
+          &times;
+        </button>
         <button class="move_image_right">&gt;</button>
       </p>
     </td>
@@ -90,17 +92,17 @@
     });
   }
 
-  function delete_image(image) {
+  function delete_image(image_id, product_id) {
     var url = '{% url "inventory:delete_image" %}';
-    var image_id = image.find('.image_id').text();
     var data = {
-      'image_id': image_id
+      'image_id': image_id,
+      'product_id': product_id,
     };
     $.post({
       url: url,
       data: JSON.stringify(data),
       success: function () {
-        image.remove();
+        $("#product_image_" + image_id).remove();
       },
       error: function () {
         api_error();
@@ -129,8 +131,9 @@
     });
 
     $('.delete_image').click(function () {
-      var image = $(this).closest('td');
-      delete_image(image);
+      var image_id = $(this).data('image-id');
+      var product_id = $(this).data('product-id');
+      delete_image(image_id, product_id);
     });
 
     $('#toggle_selected').click(function () {

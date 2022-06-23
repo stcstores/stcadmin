@@ -2,8 +2,8 @@
 
 
 from collections import defaultdict
-from uuid import uuid4
 
+from django.db.models import Max
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
@@ -50,7 +50,10 @@ class ImageFormView(InventoryUserMixin, FormView):
         context = super().get_context_data(*args, **kwargs)
         self.get_products()
         context["product_range"] = self.product_range
-        context["products"] = self.products
+        context["products"] = {
+            product: product.images.order_by("product_image_links")
+            for product in self.products
+        }
         context["options"] = self.get_variation_options()
         return context
 
@@ -62,22 +65,20 @@ class ImageFormView(InventoryUserMixin, FormView):
         if form.is_valid():
             products = form.cleaned_data["products"]
             images = list(self.request.FILES.getlist("images"))
-            for product in products:
-                first_ordering = self.get_first_ordering(product)
-                for ordering, image in enumerate(images, first_ordering):
-                    image.name = str(uuid4())
-                    models.ProductImage(
-                        image_file=image, product=product, ordering=ordering
+            for image in images:
+                db_image = models.ProductImage.objects.get_or_add_image(image)
+                for i, product in enumerate(products, 1):
+                    highest_position = self.get_highest_position(product)
+                    models.ProductImageLink(
+                        product=product, image=db_image, position=highest_position + i
                     ).save()
         return super().form_valid(form)
 
-    def get_first_ordering(self, product):
+    def get_highest_position(self, product):
         """Return the position of the first new image."""
-        last_image = product.images.active().order_by("-ordering").first()
-        if last_image is not None:
-            return last_image.ordering + 1
-        else:
-            return 0
+        return models.ProductImageLink.objects.filter(product=product).aggregate(
+            Max("position")
+        )["position__max"]
 
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""

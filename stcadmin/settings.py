@@ -2,11 +2,14 @@
 
 import os
 import sys
+from pathlib import Path
+from tempfile import SpooledTemporaryFile
 
 import toml
 from django.contrib.staticfiles.storage import ManifestStaticFilesStorage
 from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
 from django.db import models
+from imagekit.cachefiles.backends import AbstractCacheFileBackend
 from linnapi import LinnworksAPISession
 from shopify_api_py import ShopifyAPISession
 from storages.backends.s3boto3 import S3Boto3Storage
@@ -136,6 +139,7 @@ INSTALLED_APPS = [
     "storages",
     "adminsortable2",
     "easy_thumbnails",
+    "imagekit",
     "file_exchange",
     "mathfilters",
     "solo",
@@ -352,9 +356,48 @@ class ProductImageStorage(S3Boto3Storage):
     file_overwrite = True
     querystring_auth = False
 
+    def _save(self, name, content):
+        content.seek(0, os.SEEK_SET)
+        with SpooledTemporaryFile() as content_autoclose:
+            content_autoclose.write(content.read())
+            return super(ProductImageStorage, self)._save(name, content_autoclose)
+
+
+def imagekit_processor_namer(generator):
+    """Return the filename for an image produced by django-imagekit."""
+    source_filename = getattr(generator.source, "name", None)
+    processor_name = "_".join(
+        [processor.__class__.__name__.lower() for processor in generator.processors]
+    )
+    path = Path(source_filename)
+    return f"{path.stem}_{processor_name}{path.suffix}"
+
+
+class ImagekitDumbFileBackend(AbstractCacheFileBackend):
+    """Cache backend for Imagekit that assumes images exist."""
+
+    def generate(self, file, force=False):
+        """Create an imagekit image."""
+        self.generate_now(file, force=force)
+
+    def generate_now(self, file, force=False):
+        """Create an imagekit image."""
+        file._generate()
+        file.close()
+
+    def exists(self, file):
+        """Assume files exist."""
+        return True
+
 
 TESTING = (
     len(sys.argv) > 1
     and sys.argv[1] == "test"
     or os.path.basename(sys.argv[0]) in ("pytest", "py.test")
 )
+
+IMAGEKIT_DEFAULT_FILE_STORAGE = "stcadmin.settings.ProductImageStorage"
+IMAGEKIT_DEFAULT_CACHEFILE_BACKEND = "stcadmin.settings.ImagekitDumbFileBackend"
+IMAGEKIT_DEFAULT_CACHEFILE_STRATEGY = "imagekit.cachefiles.strategies.Optimistic"
+IMAGEKIT_CACHEFILE_DIR = ""
+IMAGEKIT_SPEC_CACHEFILE_NAMER = "stcadmin.settings.imagekit_processor_namer"
