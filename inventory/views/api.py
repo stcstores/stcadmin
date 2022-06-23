@@ -72,14 +72,17 @@ class SetImageOrderView(InventoryUserMixin, View):
         """Process HTTP request."""
         try:
             data = json.loads(self.request.body)
-            product = get_object_or_404(models.Product, pk=data["product_pk"])
+            image_links = models.ProductImageLink.objects.filter(
+                product__pk=data["product_pk"]
+            ).select_related("image")
             image_order = [int(_) for _ in data["image_order"]]
-            images = product.images.active()
-            if not set(images.values_list("pk", flat=True)) == set(image_order):
+            if not set(image_links.values_list("image__pk", flat=True)) == set(
+                image_order
+            ):
                 raise Exception("Did not get expected image IDs.")
-            for image in images:
-                image.ordering = image_order.index(image.id)
-                image.save()
+            for link in image_links:
+                link.position = image_order.index(link.image.pk)
+                link.save()
         except Exception:
             return HttpResponse(status=500)
         return HttpResponse("ok")
@@ -93,9 +96,12 @@ class DeleteImage(InventoryUserMixin, View):
         """Process HTTP request."""
         try:
             data = json.loads(self.request.body)
-            image = get_object_or_404(models.ProductImage, pk=int(data["image_id"]))
-            image.active = False
-            image.save()
+            image_link = get_object_or_404(
+                models.ProductImageLink,
+                image__pk=int(data["image_id"]),
+                product__pk=int(data["product_id"]),
+            )
+            image_link.delete()
         except Exception:
             return HttpResponse(status=500)
         return HttpResponse("ok")

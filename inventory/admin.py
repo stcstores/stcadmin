@@ -237,7 +237,7 @@ class ProductImageAdmin(admin.ModelAdmin):
     """Model admin for the ProductImage model."""
 
     exclude_fields = ()
-    list_display = ("image_file",)
+    list_display = ("id", "image_file")
     search_fields = ("image_file",)
 
 

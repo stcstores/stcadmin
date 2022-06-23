@@ -37,6 +37,7 @@ linnapi = {git = "https://github.com/stcstores/linnapi.git", rev = "main"}
 django-select2 = "^7.10.0"
 pymemcache = "^3.5.2"
 django-redis = "^5.2.0"
+django-imagekit = "^4.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=6.2.4"
