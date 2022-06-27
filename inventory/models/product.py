@@ -275,6 +275,7 @@ class InitialVariation(Product):
     def _create_variation(self, variation):
         product_kwargs = self._to_dict()
         product_kwargs["sku"] = new_product_sku()
+        del product_kwargs["images"]
         product = Product(**product_kwargs)
         product.save()
         for option, value in variation.items():
