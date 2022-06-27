@@ -76,9 +76,12 @@ class ImageFormView(InventoryUserMixin, FormView):
 
     def get_highest_position(self, product):
         """Return the position of the first new image."""
-        return models.ProductImageLink.objects.filter(product=product).aggregate(
-            Max("position")
-        )["position__max"]
+        highest_position = models.ProductImageLink.objects.filter(
+            product=product
+        ).aggregate(Max("position"))["position__max"]
+        if highest_position is None:
+            highest_position = -1
+        return highest_position
 
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
