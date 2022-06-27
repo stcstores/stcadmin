@@ -83,7 +83,9 @@
     $.post({
       url: url,
       data: JSON.stringify(data),
-      success: function () {
+      contentType: "application/json",
+      dataType: "json",
+      success: function (image_order) {
         console.log(image_order);
       },
       error: function () {
@@ -101,7 +103,10 @@
     $.post({
       url: url,
       data: JSON.stringify(data),
-      success: function () {
+      contentType: "application/json",
+      dataType: "json",
+      success: function (response) {
+        console.log(response);
         $("#product_image_" + image_id).remove();
       },
       error: function () {
