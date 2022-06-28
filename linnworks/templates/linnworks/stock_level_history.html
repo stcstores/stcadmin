@@ -1,10 +1,11 @@
 {% extends 'inventory/base.html' %}
 
 {% block additional_head %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/luxon@1.26.0" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/1.2.1/chartjs-plugin-zoom.min.js" integrity="sha512-klQv6lz2YR+MecyFYMFRuU2eAl8IPRo6zHnsc9n142TJuJHS8CG0ix4Oq9na9ceeg1u5EkBfZsFcV3U7J51iew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js" crossorigin="anonymous"></script>
 <style>
     canvas {
         max-width: 80%;
@@ -41,6 +42,36 @@
 
 
 const canvas = document.getElementById('stock_level_chart').getContext('2d');
+
+var chart_options = {
+    scales: {
+        x: {type: 'time'}
+    },
+    legend: {display: false},
+    plugins: {
+        zoom: {
+            zoom: {
+                wheel: {
+                    enabled: true,
+                },
+                pinch: {
+                    enabled: true
+                },
+                mode: 'xy',
+            },
+            limits: {
+                y: { min: "original", max: "original" },
+                x: { min: "original", max: "original" },
+            },
+            pan: {
+                enabled: true,
+                mode: 'xy',
+                threshold: 1,
+            },
+        }
+    }
+};
+
 const stock_level_chart = new Chart(canvas, {
     type: 'line',
     data: {
@@ -56,30 +87,7 @@ const stock_level_chart = new Chart(canvas, {
             spanGaps: true,
         }],
     },
-    options: {
-        scales: {
-            x: {type: 'time'}
-        },
-        legend: {display: false},
-        plugins: {
-            zoom: {
-                zoom: {
-                    wheel: {
-                        enabled: true,
-                    },
-                    pinch: {
-                        enabled: true
-                    },
-                    mode: 'xy',
-                },
-                pan: {
-                    enabled: true,
-                    mode: 'xy',
-                    threshold: 1,
-                },
-            }
-        }
-    }
+    options: chart_options,
 });
 
 
