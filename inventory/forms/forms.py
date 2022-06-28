@@ -82,6 +82,7 @@ class BaseProductForm(forms.ModelForm):
             "length_mm",
             "height_mm",
             "width_mm",
+            "images",
         )
         field_classes = {
             "brand": inventory_fields.Brand,

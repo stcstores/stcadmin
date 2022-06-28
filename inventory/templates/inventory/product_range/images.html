@@ -14,37 +14,56 @@
   <h3>{{ form }}</h3>
 </form>
 
-{% comment %} {% for option, values in options.items %}
-<p>{{ option }}: {% for value, product_ids in values.items %}
-  <button
-    onclick="select_products([{% for p_id in product_ids %}{{ p_id }}, {% endfor %}])">{{ value }}</button>{% endfor %}
-</p>
-{% endfor %} {% endcomment %}
+<table class="image_selection">
+  <tr>
+    <th colspan="2">Select</th>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <button id="select_all">All</button>
+      <button id="select_none">None</button>
+    </td>
+  </tr>
+  {% for option, variation_values in options.items %}
+  <tr>
+
+    <td>{{ option }}:</td>
+    <td>
+      {% for variation_value, product_ids in variation_values.items %}
+      <button onclick="select_products([{% for p_id in product_ids %}{{ p_id }}, {% endfor %}])">
+        {{ variation_value }}
+      </button>
+      {% endfor %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
 
 <table class="image_table">
-  <tr>
-    <th>Product</th>
-    {% comment %} <th><button id="toggle_selected">Toggle</button></th> {% endcomment %}
-  </tr>
   {% for product, images in products.items %}
   <tr id="row_{{ product.pk }}">
-    <td class="product_id" hidden>{{ product.pk }}</td>
-    <td class="sku">{{ product.sku }}</td>
-    <td class="name">{{ product.name_extensions|join:" - " }}</td>
+    <td>
+      <p class="sku">{{ product.sku }}</p>
+      <p class="name">{{ product.name_extensions|join:" - " }}</p>
+    </td>
     <td class="selected"><input type="checkbox" id="select_{{ product.pk }}"></td>
     {% for image in images %}
-    <td class="product_image" id="product_image_{{ image.id }}">
-      <img src="{{ image.image_file.url }}" alt="{{ image.image_file }}" height="100">
-      <br>
-      <a class="image_name" href="{{ image.image_file.url }}" target="_blank">{{ image.image_file }}</a>
+    <td class="product_image" id="product_image_{{ image.id }}" data-image-id="{{ image.pk }}" data-product-id="{{ product.id }}">
+      <a class="image_name" href="{{ image.image_file.url }}" target="_blank">
+        <img src="{{ image.thumbnail.url }}" alt="{{ image.image_file }}" height="100">
+      </a>
       <span class="image_id" hidden>{{ image.pk }}</span>
-      <p>
-        <button class="move_image_left">&lt;</button>
-        <button class="delete_image" data-image-id="{{ image.pk }}" data-product-id="{{ product.id }}">
-          &times;
-        </button>
-        <button class="move_image_right">&gt;</button>
-      </p>
+      <div class="image_buttons">
+        <div class="image_button move_image move_image_left" data-image-id="{{ image.pk }}" data-product-id="{{ product.id }}">
+          <i class="fa-solid fa-angle-left"></i>
+        </div>
+        <div class="image_button delete_image" data-image-id="{{ image.pk }}" data-product-id="{{ product.id }}">
+          <i class="fa-solid fa-trash"></i>
+        </div>
+        <div class="image_button move_image move_image_right" data-image-id="{{ image.pk }}" data-product-id="{{ product.id }}">
+          <i class="fa-solid fa-angle-right"></i>
+        </div>
+      </div>
     </td>
     {% endfor %}
   </tr>
@@ -59,7 +78,7 @@
     var row = $('#row_' + product_id);
     var image_order = [];
     row.find('.product_image').each(function () {
-      image_order.push($(this).find('.image_id').text());
+      image_order.push($(this).data('image-id'));
     });
     return image_order
   }
@@ -119,7 +138,7 @@
 
     $('.move_image_left').click(function () {
       var image = $(this).closest('td');
-      var product_id = image.closest('tr').find('.product_id').text();
+      var product_id = $(this).data('product-id');
       if (image.index() > 3) {
         image.insertBefore(image.prev());
       }
@@ -128,7 +147,7 @@
 
     $('.move_image_right').click(function () {
       var image = $(this).closest('td');
-      var product_id = image.closest('tr').find('.product_id').text();
+      var product_id = $(this).data('product-id');
       if (!(image.is(':last-child'))) {
         image.insertAfter(image.next());
       }
@@ -138,22 +157,23 @@
     $('.delete_image').click(function () {
       var image_id = $(this).data('image-id');
       var product_id = $(this).data('product-id');
+      console.log(image_id);
       delete_image(image_id, product_id);
     });
 
-    $('#toggle_selected').click(function () {
+    $('#select_all').click(function () {
       var checkboxes = $('.selected input:checkbox');
-      var checked = $('.selected input:checked');
-      if (checked.length === 0) {
-        checkboxes.prop('checked', true);
-      } else {
-        checkboxes.prop('checked', false);
-      }
+      checkboxes.prop('checked', true);
+      $('.selected input:checkbox').change();
+    });
+
+    $('#select_none').click(function () {
+      var checkboxes = $('.selected input:checkbox');
+      checkboxes.prop('checked', false);
       $('.selected input:checkbox').change();
     });
 
     $('.selected input:checkbox').change(function () {
-      $('.selected input:checkbox').not(this).prop('checked', false);
       var checked = $('.selected input:checked');
       var product_id_input = $('#{{ form.product_ids.auto_id }}');
       var product_ids = [];
@@ -175,6 +195,15 @@
 
     $('#{{ form.images.auto_id }}').change(function () {
       $(this).closest('form').submit();
+    });
+
+    $('input:checkbox').change(function () {
+      var row = $(this).closest("tr");
+      if ($(this).is(":checked")) {
+        row.addClass("selected");
+      } else {
+        row.removeClass("selected");
+      }
     });
 
     $('.selected input:checkbox').change();
