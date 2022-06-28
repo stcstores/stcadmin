@@ -25,4 +25,5 @@ urlpatterns = [
         views.StockLevelHistory.as_view(),
         name="stock_level_hisotry",
     ),
+    path("stock_value", views.StockValue.as_view(), name="stock_value"),
 ]

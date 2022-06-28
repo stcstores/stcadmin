@@ -1,0 +1,132 @@
+{% extends 'inventory/base.html' %}
+
+{% block additional_head %}
+<script src="https://cdn.jsdelivr.net/npm/luxon@1.26.0" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/1.2.1/chartjs-plugin-zoom.min.js" integrity="sha512-klQv6lz2YR+MecyFYMFRuU2eAl8IPRo6zHnsc9n142TJuJHS8CG0ix4Oq9na9ceeg1u5EkBfZsFcV3U7J51iew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js" crossorigin="anonymous"></script>
+<style>
+    canvas {
+        max-width: 80%;
+    }
+
+    .chart {
+        width: 100%;
+    }
+
+    .stock_value {
+        display: flex;
+        flex-direction: row;
+        width: 80%;
+    }
+
+    .stock_values {
+        white-space: nowrap;
+    }
+</style>
+{% endblock additional_head %}
+
+{% block content %}
+
+<h1>Stock Values</h1>
+
+<div class="stock_value">
+    <div class="stock_values">
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Stock Count</th>
+                <th>Stock Value</th>
+            </tr>
+            {% for export in stock_level_exports %}
+            <tr>
+                <td>{{ export.export_time.date }}</td>
+                <td>{{ export.stock_count }}</td>
+                <td>£{{ export.stock_value }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="chart">
+        <canvas id="stock_value_chart" width="400" height="100"></canvas>
+        <canvas id="stock_count_chart" width="400" height="100"></canvas>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+
+<script>
+    const stock_value_canvas = document.getElementById('stock_value_chart').getContext('2d');
+    const stock_count_canvas = document.getElementById('stock_count_chart').getContext('2d');
+
+    var chart_options = {
+        scales: {
+            x: {type: 'time'}
+        },
+        legend: {display: false},
+        plugins: {
+            zoom: {
+                zoom: {
+                    wheel: {
+                        enabled: true,
+                    },
+                    pinch: {
+                        enabled: true
+                    },
+                    mode: 'xy',
+                },
+                limits: {
+                    y: { min: "original", max: "original" },
+                    x: { min: "original", max: "original" },
+                },
+                pan: {
+                    enabled: true,
+                    mode: 'xy',
+                    threshold: 1,
+                },
+            }
+        }
+    };
+    
+    const stock_value_chart = new Chart(stock_value_canvas, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Stock Value',
+                data: [
+                {% for export in stock_level_exports %}
+                {x: "{{ export.export_time.date.isoformat }}", y: {{ export.stock_value }}},
+                {% endfor %}
+                ],
+                backgroundColor: "rgb(81, 154, 237)",
+                borderColor: "rgb(81, 154, 237)",
+                spanGaps: true,
+            }],
+        },
+        options: JSON.parse(JSON.stringify(chart_options))
+    });
+
+    const stock_count_chart = new Chart(stock_count_canvas, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Stock Count',
+                data: [
+                {% for export in stock_level_exports %}
+                {x: "{{ export.export_time.date.isoformat }}", y: {{ export.stock_count }}},
+                {% endfor %}
+                ],
+                backgroundColor: "rgb(81, 154, 237)",
+                borderColor: "rgb(81, 154, 237)",
+                spanGaps: true,
+            }],
+        },
+        options: JSON.parse(JSON.stringify(chart_options))
+    });
+</script>
+
+{% endblock script %}

@@ -11,6 +11,7 @@ from django.views.generic import TemplateView
 
 from inventory.models import BaseProduct
 from inventory.views import InventoryUserMixin
+from linnworks import models
 from linnworks.models import StockManager
 
 
@@ -113,4 +114,16 @@ class StockLevelHistory(InventoryUserMixin, TemplateView):
         product = get_object_or_404(BaseProduct, pk=self.kwargs["product_pk"])
         context["product"] = product
         context["stock_history"] = StockManager.get_stock_level_history(product.sku)
+        return context
+
+
+class StockValue(InventoryUserMixin, TemplateView):
+    """Show current and past stock values."""
+
+    template_name = "linnworks/stock_value.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the view."""
+        context = super().get_context_data(*args, **kwargs)
+        context["stock_level_exports"] = models.StockLevelExportUpdate.objects.all()
         return context
