@@ -145,7 +145,10 @@ class Order(models.Model):
 
     def profit_percentage(self):
         """Return the percentage of the amount paid for the order that is profit."""
-        return int((self.profit() / self.total_paid_GBP) * 100)
+        try:
+            return int((self.profit() / self.total_paid_GBP) * 100)
+        except ZeroDivisionError:
+            return 0
 
     def calculate_shipping_price(self):
         """Return the shipping price for this order based on current shipping prices."""
