@@ -81,3 +81,24 @@ class RangeError(TemplateView):
         """Return rendered response with 404 error code."""
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context, status=404)
+
+
+class ChannelLinks(InventoryUserMixin, TemplateView):
+    """View for showing listing linked to products."""
+
+    template_name = "inventory/product_range/channel_links.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        product_range = get_object_or_404(
+            models.ProductRange, pk=self.kwargs["range_pk"]
+        )
+        products = product_range.products.variations()
+        skus = [product.sku for product in products]
+        channel_links = StockManager.channel_links(*skus)
+        for product in products:
+            product.channel_links = channel_links[product.sku]
+        context["product_range"] = product_range
+        context["products"] = products
+        return context

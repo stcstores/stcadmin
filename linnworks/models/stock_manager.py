@@ -1,10 +1,13 @@
 """Models managing Linnworks stock levels."""
 
+from collections import defaultdict
+
 import linnapi
 from django.db import models, transaction
 
 from inventory.models import BaseProduct, StockLevelHistory
 
+from .config import LinnworksChannel
 from .linnworks_export_files import StockLevelExport
 
 
@@ -182,6 +185,25 @@ class StockManager:
         return True
 
     @classmethod
+    def channel_links(cls, *skus):
+        """Return channel linked items for SKUs."""
+        links = cls._get_channel_linked_items(*skus)
+        output = defaultdict(lambda: defaultdict(list))
+        for sku, sku_links in links.items():
+            for channel in LinnworksChannel.objects.all():
+                for link in sku_links:
+                    if (
+                        link.source == channel.source
+                        and link.sub_source == channel.sub_source
+                    ):
+                        link.url = channel.item_link(link.channel_reference_id)
+                        output[sku][channel].append(link)
+        return {
+            sku: {channel: links for channel, links in output[sku].items()}
+            for sku in output
+        }
+
+    @classmethod
     @linnapi.linnworks_api_session
     def _get_stock_item_ids(cls, *skus):
         """Return stock item IDs for one or more SKUs."""
@@ -216,6 +238,11 @@ class StockManager:
         return linnapi.inventory.get_stock_level_history_by_sku(
             sku=sku, location_id=cls.LOCATION_ID
         )
+
+    @classmethod
+    @linnapi.linnworks_api_session
+    def _get_channel_linked_items(cls, *skus):
+        return linnapi.inventory.get_channel_skus_by_skus(*skus)
 
 
 class StockLevelExportManager(models.Manager):

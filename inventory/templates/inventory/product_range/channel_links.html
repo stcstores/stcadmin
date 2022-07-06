@@ -1,0 +1,96 @@
+{% extends "inventory/product_range/product_range_base.html" %}
+
+
+{% block page_title %}Channel Links{% endblock %}
+
+{% block content %}{{ block.super }}
+
+<style>
+    .range_channel_links {
+        display: flex;
+        flex-direction: column;
+        white-space: nowrap;
+        padding: 1em;
+        margin: 1em;
+    }
+
+    .product_link {
+        display: flex;
+        flex-direction:row;
+        border: 1px black solid;
+        border-radius: 1em;
+        padding: 1em;
+        margin: 1em;
+    }
+
+    .product_ident {
+        height: 100%;
+    }
+
+    .linked_channels {
+        display: flex;
+        flex-direction:row;
+        flex-wrap: wrap;
+    }
+
+    .linked_channel {
+        border: 1px black solid;
+        border-radius: 1em;
+        padding: 0.5em;
+        margin: 0.25em;
+    }
+
+    .channel_links {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+    }
+
+    .channel_link {
+        border: 1px black solid;
+        border-radius: 1em;
+        padding: 0.5em;
+        margin: 0.25em;
+    }
+
+    .channel_link.linked {
+        background-color: #6F6;
+    }
+
+    .channel_link.linked:hover {
+        background-color: #AFA;
+        cursor: pointer;
+    }
+
+</style>
+
+
+<div class="range_channel_links">
+    {% for product in products %}
+    <div class="product_link">
+        <div class="product_ident">
+            <span class="sku">{{ product.sku }}</span><br>
+            <span class="sku">{{ product.supplier_sku }}</span><br>
+            <span>{{ product.name_extensions|join:" - " }}</span>
+        </div>
+        <div class="linked_channels">
+            {% for channel, links in product.channel_links.items %}
+            <div class="linked_channel">
+                <span>{{ channel.name }}</span>
+                <div class="channel_links">
+                    {% for link in links %}
+                    {% if link.url %}<a href="{{ link.url }}" target="_blank">{% endif %}
+                        <div class="channel_link{% if link.url %} linked{% endif %}">
+                            {{ link.sku }}<br>{{ link.channel_reference_id}}
+                        </div>
+                    {% if link.url %}</a>{% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -62,6 +62,11 @@ inventory_urlpatterns = [
         views.ToggleSupplierActive.as_view(),
         name="toggle_supplier_active",
     ),
+    path(
+        "channel_links/<int:range_pk>/",
+        views.productrange.ChannelLinks.as_view(),
+        name="channel_links",
+    ),
 ]
 
 api_urlpatterns = [

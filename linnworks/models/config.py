@@ -42,6 +42,8 @@ class LinnworksChannel(models.Model):
 
     source = models.CharField(max_length=255)
     sub_source = models.CharField(max_length=255)
+    readable_name = models.CharField(max_length=255, blank=True)
+    item_link_format = models.CharField(max_length=255, blank=True)
     link_prime = models.BooleanField(default=False)
     channel = models.ForeignKey(
         Channel,
@@ -61,3 +63,16 @@ class LinnworksChannel(models.Model):
 
     def __str__(self):
         return f"{self.source} - {self.sub_source}"
+
+    def name(self):
+        """Return the name of the channel."""
+        if self.readable_name:
+            return self.readable_name
+        else:
+            return self.sub_source
+
+    def item_link(self, item_channel_id):
+        """Return a link to an item on the channel."""
+        if item_channel_id and self.item_link_format:
+            return self.item_link_format.format(item_channel_id)
+        return None
