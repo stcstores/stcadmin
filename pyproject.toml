@@ -31,7 +31,7 @@ easy-thumbnails = ">=2.8"
 file-exchange = {git = "https://github.com/lukeshiner/django-file_exchange.git", rev = "main"}
 flake8-docstrings = ">=1.6.0"
 django-storages = "^1.12.3"
-boto3 = "^1.24.20"
+boto3 = "^1.24.23"
 shopify_api_py = {git = "https://github.com/stcstores/shopify_api_py.git", rev = "main"}
 linnapi = {git = "https://github.com/stcstores/linnapi.git", rev = "main"}
 django-select2 = "^7.10.0"
