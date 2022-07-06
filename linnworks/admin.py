@@ -18,8 +18,16 @@ class LinnworksChannelAdmin(admin.ModelAdmin):
     """Model admin for the LinnworksChannel model."""
 
     exclude_fields = ()
-    list_display = ("sub_source", "source", "link_prime", "channel")
-    list_editable = ("channel",)
+    list_display = (
+        "name",
+        "sub_source",
+        "source",
+        "readable_name",
+        "item_link_format",
+        "link_prime",
+        "channel",
+    )
+    list_editable = ("channel", "readable_name", "item_link_format")
     search_fields = ("sub_source", "source")
     list_select_related = ("channel",)
     autocomplete_fields = ("channel",)

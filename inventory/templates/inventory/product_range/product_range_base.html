@@ -56,6 +56,10 @@
     <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Range Price Calculator</a>
     </div>
+    {% url 'inventory:channel_links' product_range.pk as url %}
+    <div {% if current_url == url %} class="active" {% endif %}>
+      <a href="{{ url }}">Channel Links</a>
+    </div>
     {% comment %} {% url 'inventory:print_barcodes' product_range.pk as url %}
     <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Barcode Labels</a>
