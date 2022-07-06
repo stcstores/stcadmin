@@ -102,7 +102,9 @@ class ProductImage(models.Model):
         format="JPEG",
         options={"quality": 60},
     )
-    hash = models.CharField(max_length=32, blank=True, null=True)
+    hash = models.CharField(
+        max_length=32, blank=True, null=True, unique=True, db_index=True
+    )
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
 
@@ -158,6 +160,8 @@ class ProductImageLink(models.Model):
         null=True,
         related_name="product_image_links",
     )
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
     position = models.PositiveIntegerField(default=0)
 
     class Meta:
@@ -166,4 +170,4 @@ class ProductImageLink(models.Model):
         verbose_name = "Product Image Link"
         verbose_name_plural = "Product Image Links"
         ordering = ("position",)
-        unique_together = [["product", "image"]]
+        unique_together = [["product", "image"], ["product", "position"]]
