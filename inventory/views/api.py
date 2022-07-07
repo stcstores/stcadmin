@@ -79,6 +79,8 @@ class SetImageOrderView(InventoryUserMixin, View):
             raise Exception("Did not get expected image IDs.")
         for link in image_links:
             link.position = image_order.index(link.image.pk)
+        # Loop twice to avoid temporary duplication of positions.
+        for link in image_links:
             link.save()
         return JsonResponse(image_order, safe=False)
 
