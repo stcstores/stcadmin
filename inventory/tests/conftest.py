@@ -104,9 +104,9 @@ class BaseProductFactory(DjangoModelFactory):
     barcode = "951467812546"
     supplier_barcode = ""
     package_type = factory.SubFactory(PackageTypeFactory)
-    length_mm = 500
-    height_mm = 500
-    width_mm = 500
+    width = 500
+    height = 500
+    depth = 500
     is_end_of_line = False
     range_order = 0
     latest_stock_change = factory.post_generation(

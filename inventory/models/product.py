@@ -105,28 +105,53 @@ class BaseProduct(PolymorphicModel):
     """Base model for products."""
 
     product_range = models.ForeignKey(
-        ProductRange, on_delete=models.PROTECT, related_name="products"
+        ProductRange,
+        on_delete=models.PROTECT,
+        related_name="products",
+        verbose_name="Product Range",
     )
     sku = models.CharField(
-        max_length=255, unique=True, db_index=True, blank=False, null=False
+        max_length=255,
+        unique=True,
+        db_index=True,
+        blank=False,
+        null=False,
+        verbose_name="SKU",
     )
     retail_price = models.DecimalField(
-        decimal_places=2, max_digits=8, null=True, blank=True
+        decimal_places=2,
+        max_digits=8,
+        null=True,
+        blank=True,
+        verbose_name="Retail Price",
     )
     supplier = models.ForeignKey(
-        Supplier, on_delete=models.PROTECT, related_name="products"
+        Supplier,
+        on_delete=models.PROTECT,
+        related_name="products",
+        verbose_name="Supplier",
     )
-    supplier_sku = models.CharField(max_length=255, null=True, blank=True)
-    barcode = models.CharField(max_length=20, blank=True, null=True)
-    supplier_barcode = models.CharField(max_length=20, blank=True, null=True)
+    supplier_sku = models.CharField(
+        max_length=255, null=True, blank=True, verbose_name="Supplier SKU"
+    )
+    barcode = models.CharField(
+        max_length=20, blank=True, null=True, verbose_name="Barcode"
+    )
+    supplier_barcode = models.CharField(
+        max_length=20, blank=True, null=True, verbose_name="Supplier Barcode"
+    )
     package_type = models.ForeignKey(
-        PackageType, on_delete=models.PROTECT, related_name="products"
+        PackageType,
+        on_delete=models.PROTECT,
+        related_name="products",
+        verbose_name="Package Type",
     )
-    length_mm = models.PositiveSmallIntegerField(blank=True, null=True)
-    height_mm = models.PositiveSmallIntegerField(blank=True, null=True)
-    width_mm = models.PositiveSmallIntegerField(blank=True, null=True)
 
-    is_end_of_line = models.BooleanField(default=False)
+    width = models.PositiveSmallIntegerField(default=0, verbose_name="Width (cm)")
+    height = models.PositiveSmallIntegerField(default=0, verbose_name="Height (cm)")
+    depth = models.PositiveSmallIntegerField(default=0, verbose_name="Depth (cm)")
+
+    is_end_of_line = models.BooleanField(default=False, verbose_name="Is EOL")
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True, editable=False)
     range_order = models.PositiveSmallIntegerField(default=0)
@@ -221,17 +246,27 @@ class BaseProduct(PolymorphicModel):
 class Product(BaseProduct):
     """Model for inventory products."""
 
-    purchase_price = models.DecimalField(decimal_places=2, max_digits=8)
+    purchase_price = models.DecimalField(
+        decimal_places=2, max_digits=8, verbose_name="Purchase Price"
+    )
     vat_rate = models.ForeignKey(
-        VATRate, on_delete=models.PROTECT, related_name="products"
+        VATRate,
+        on_delete=models.PROTECT,
+        related_name="products",
+        verbose_name="VAT Rate",
     )
-    brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name="products")
+    brand = models.ForeignKey(
+        Brand, on_delete=models.PROTECT, related_name="products", verbose_name="Brand"
+    )
     manufacturer = models.ForeignKey(
-        Manufacturer, on_delete=models.PROTECT, related_name="products"
+        Manufacturer,
+        on_delete=models.PROTECT,
+        related_name="products",
+        verbose_name="Manufacturer",
     )
-    weight_grams = models.PositiveSmallIntegerField()
+    weight_grams = models.PositiveSmallIntegerField(verbose_name="Weight (g)")
 
-    hs_code = models.CharField(max_length=50)
+    hs_code = models.CharField(max_length=50, verbose_name="HS Code")
 
     class Meta:
         """Meta class for Products."""

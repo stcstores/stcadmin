@@ -79,9 +79,6 @@ class BaseProductForm(forms.ModelForm):
             "is_end_of_line",
             "gender",
             "range_order",
-            "length_mm",
-            "height_mm",
-            "width_mm",
             "images",
         )
         field_classes = {
@@ -103,6 +100,9 @@ class BaseProductForm(forms.ModelForm):
         "package_type",
         "hs_code",
         "weight_grams",
+        "width",
+        "height",
+        "depth",
         "retail_price",
     )
 

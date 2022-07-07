@@ -300,14 +300,19 @@ class LinnworksProductImportFile(BaseImportFile):
         return bay_text
 
     @classmethod
-    def convert_dimension(self, distance_mm):
-        """Convert dimensions in mm to cm."""
-        if distance_mm is None:
+    def convert_dimension(self, distance):
+        """Ensure every dimension is at least 1.
+
+        Args:
+            distance (int): The distance to convert.
+
+        Returns:
+            int: A dimension of at least 1.
+        """
+        if distance == 0:
             return 1
-        cm = int(distance_mm / 10)
-        if cm < 1:
-            return 1
-        return cm
+        else:
+            return distance
 
     @classmethod
     def _get_product_row(cls, product):
@@ -324,9 +329,9 @@ class LinnworksProductImportFile(BaseImportFile):
         row[cls.BARCODE_NUMBER] = product.barcode
         row[cls.TAX_RATE] = int(product.vat_rate.percentage * 100)
         row[cls.WEIGHT] = product.weight_grams
-        row[cls.HEIGHT] = cls.convert_dimension(product.height_mm)
-        row[cls.WIDTH] = cls.convert_dimension(product.width_mm)
-        row[cls.DEPTH] = cls.convert_dimension(product.length_mm)
+        row[cls.WIDTH] = cls.convert_dimension(product.width)
+        row[cls.HEIGHT] = cls.convert_dimension(product.height)
+        row[cls.DEPTH] = cls.convert_dimension(product.depth)
         row[cls.PACKAGING_GROUP] = product.package_type.name
         row[cls.PURCHASE_PRICE] = product.purchase_price
         row[cls.RETAIL_PRICE] = product.retail_price
