@@ -6,6 +6,7 @@ from django.views.generic.edit import FormView
 
 from inventory import models
 from inventory.forms import LocationsFormSet
+from linnworks.models import StockManager
 
 from .views import InventoryUserMixin
 
@@ -40,8 +41,19 @@ class LocationFormView(InventoryUserMixin, FormView):
         context = super().get_context_data(*args, **kwargs)
         context["product_range"] = self.product_range
         context["formset"] = context["form"]
+        products = self.product_range.products.variations()
         for i, form in enumerate(context["formset"]):
             form.product = self.products[i]
+        if not self.product_range.is_end_of_line:
+            product_skus = products.filter(is_end_of_line=False).values_list(
+                "sku", flat=True
+            )
+            try:
+                context["products_exist"] = StockManager.products_exist(*product_skus)
+            except Exception:
+                context["products_exist"] = None
+        else:
+            context["products_exist"] = None
         return context
 
     def get_success_url(self):

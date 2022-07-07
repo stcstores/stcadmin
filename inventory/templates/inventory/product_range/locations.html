@@ -46,7 +46,14 @@
         {{ field.errors }}
       </td>
       {% endfor %}
-      <td class="column stock_level">{% include 'inventory/update_stock.html' with updatable=False %}</td>
+      <td class="column stock_level">
+        {% if product_range.is_end_of_line or product.is_end_of_line %}
+          <span class="error">Stock levels are not available for EOL products</span>
+        {% elif products_exist is not True %}
+          <span class="error">Stock level is not available</span>
+        {% else %}
+          {% include 'inventory/update_stock.html' %}
+        {% endif %}</td>
       <td>{{ form.non_field_errors }}</td>
     </tr>
     {% endwith %}
