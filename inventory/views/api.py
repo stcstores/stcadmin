@@ -78,10 +78,11 @@ class SetImageOrderView(InventoryUserMixin, View):
         if not set(image_links.values_list("image__pk", flat=True)) == set(image_order):
             raise Exception("Did not get expected image IDs.")
         for link in image_links:
-            link.position = image_order.index(link.image.pk)
-        # Loop twice to avoid temporary duplication of positions.
+            link.position = 999 + image_order.index(link.image.pk)
+        models.ProductImageLink.objects.bulk_update(image_links, ("position",))
         for link in image_links:
-            link.save()
+            link.position = image_order.index(link.image.pk)
+        models.ProductImageLink.objects.bulk_update(image_links, ("position",))
         return JsonResponse(image_order, safe=False)
 
 
