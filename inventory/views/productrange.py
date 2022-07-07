@@ -98,7 +98,7 @@ class ChannelLinks(InventoryUserMixin, TemplateView):
         skus = [product.sku for product in products]
         channel_links = StockManager.channel_links(*skus)
         for product in products:
-            product.channel_links = channel_links[product.sku]
+            product.channel_links = channel_links.get(product.sku, [])
         context["product_range"] = product_range
         context["products"] = products
         return context
