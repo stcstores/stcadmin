@@ -4,8 +4,14 @@ import csv
 import io
 from collections import defaultdict
 
-from inventory.models import CombinationProductLink, MultipackProduct, Product
+from inventory.models import (
+    CombinationProductLink,
+    MultipackProduct,
+    Product,
+    ProductImageLink,
+)
 from inventory.models.product import CombinationProduct
+from linnworks.models.config import LinnworksConfig
 from linnworks.models.stock_manager import InitialStockLevel
 
 
@@ -428,4 +434,41 @@ class LinnworksCompostitionImportFile(BaseImportFile):
             rows.append(cls._get_combination_product_row(combination_product_link))
         for multipack_product in multipack_products:
             rows.append(cls._get_multipack_product_row(multipack_product))
+        return rows
+
+
+class ImageUpdateFile(BaseImportFile):
+    """Create a file to update Linnworks images."""
+
+    SKU = "SKU"
+    PRIMARY_IMAGE = "Primary Image"
+
+    header = (SKU, PRIMARY_IMAGE)
+
+    @classmethod
+    def _get_modified_image_links(cls):
+        last_update_time = LinnworksConfig.get_solo().last_image_update
+        image_links = ProductImageLink.objects.filter(
+            position=0,
+            modified_at__gte=last_update_time,
+            product__is_end_of_line=False,
+            product__product_range__is_end_of_line=False,
+        ).select_related("product", "product__product_range", "image")
+        return image_links
+
+    @classmethod
+    def create(cls):
+        """Create a Linnworks Product Import file."""
+        return cls.create_file(image_links=cls._get_modified_image_links())
+
+    @classmethod
+    def get_row_data(cls, image_links):
+        """Return a list of image update dicts."""
+        rows = []
+        for link in image_links:
+            row = {
+                cls.SKU: link.product.sku,
+                cls.PRIMARY_IMAGE: link.image.image_file.url,
+            }
+            rows.append(row)
         return rows
