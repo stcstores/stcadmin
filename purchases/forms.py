@@ -79,7 +79,7 @@ class PurchaseShipping(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields["shipping_service"] = forms.ModelChoiceField(
             queryset=ShippingService.objects.filter(
-                shippingprice__inactive=False
+                shippingprice__active=True
             ).distinct()
         )
 
@@ -89,7 +89,7 @@ class PurchaseShipping(forms.Form):
         shipping_price = ShippingPrice.objects.get(
             country=cleaned_data["country"],
             shipping_service=cleaned_data["shipping_service"],
-            inactive=False,
+            active=True,
         )
         cleaned_data["shipping_price"] = shipping_price
         cleaned_data["price"] = shipping_price.price(cleaned_data["weight"])
