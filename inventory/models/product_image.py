@@ -123,7 +123,7 @@ class ProductImage(models.Model):
         """Delete image file from storage when deleting the object."""
         self.delete_square_image(silent=True)
         self.delete_thumbnail(silent=True)
-        self.image_file.delete(silent=True)
+        self.image_file.delete()
         super().delete(*args, **kwargs)
 
     def delete_thumbnail(self, silent=False):
@@ -170,4 +170,4 @@ class ProductImageLink(models.Model):
         verbose_name = "Product Image Link"
         verbose_name_plural = "Product Image Links"
         ordering = ("position",)
-        unique_together = [["product", "image"], ["product", "position"]]
+        unique_together = [["product", "image"]]

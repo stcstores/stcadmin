@@ -453,12 +453,19 @@ class ImageUpdateFile(BaseImportFile):
     @classmethod
     def _get_modified_image_links(cls):
         last_update_time = LinnworksConfig.get_solo().last_image_update
-        image_links = ProductImageLink.objects.filter(
-            position=0,
+        product_ids = ProductImageLink.objects.filter(
             modified_at__gte=last_update_time,
             product__is_end_of_line=False,
             product__product_range__is_end_of_line=False,
-        ).select_related("product", "product__product_range", "image")
+        ).values_list("product", flat=True)
+        image_links = []
+        for product_id in set(product_ids):
+            image_link = (
+                ProductImageLink.objects.filter(product__pk=product_id)
+                .order_by("position")
+                .first()
+            )
+            image_links.append(image_link)
         return image_links
 
     @classmethod
