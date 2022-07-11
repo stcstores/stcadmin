@@ -124,7 +124,7 @@ class ProductImage(models.Model):
         self.delete_square_image(silent=True)
         self.delete_thumbnail(silent=True)
         self.image_file.delete()
-        super().delete(*args, **kwargs)
+        return super().delete(*args, **kwargs)
 
     def delete_thumbnail(self, silent=False):
         """Delete the thumbnail image from storage."""
