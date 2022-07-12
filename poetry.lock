@@ -100,14 +100,14 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "boto3"
-version = "1.24.26"
+version = "1.24.27"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.27.26,<1.28.0"
+botocore = ">=1.27.27,<1.28.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -116,7 +116,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.27.26"
+version = "1.27.27"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -1533,7 +1533,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.10,<4.0"
-content-hash = "4b332c1d085070bd81432674ac9c077f3a82230893e656f50c586c1d63618f6d"
+content-hash = "a32ddc14666830f63301022271645f7fa987b2294df894d7d01241c64aa6e31e"
 
 [metadata.files]
 alabaster = []
