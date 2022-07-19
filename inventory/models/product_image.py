@@ -143,26 +143,32 @@ class ProductImage(models.Model):
                 raise
 
 
-class ProductImageLink(models.Model):
+class BaseImageLink(models.Model):
+    """Base model for links between products and images."""
+
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(auto_now=True)
+    position = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        """Meta class for BaseImageLink."""
+
+        abstract = True
+
+
+class ProductImageLink(BaseImageLink):
     """Model for managing links between products and images."""
 
     product = models.ForeignKey(
         "BaseProduct",
         on_delete=models.CASCADE,
-        blank=True,
-        null=True,
         related_name="product_image_links",
     )
     image = models.ForeignKey(
         ProductImage,
         on_delete=models.CASCADE,
-        blank=True,
-        null=True,
         related_name="product_image_links",
     )
-    created_at = models.DateTimeField(default=timezone.now, editable=False)
-    modified_at = models.DateTimeField(auto_now=True)
-    position = models.PositiveIntegerField(default=0)
 
     class Meta:
         """Meta class for ProductImageLink."""
@@ -171,3 +177,26 @@ class ProductImageLink(models.Model):
         verbose_name_plural = "Product Image Links"
         ordering = ("position",)
         unique_together = [["product", "image"]]
+
+
+class ProductRangeImageLink(BaseImageLink):
+    """Model for managing links between product ranges and images."""
+
+    product_range = models.ForeignKey(
+        "ProductRange",
+        on_delete=models.CASCADE,
+        related_name="product_range_image_links",
+    )
+    image = models.ForeignKey(
+        ProductImage,
+        on_delete=models.CASCADE,
+        related_name="product_range_image_links",
+    )
+
+    class Meta:
+        """Meta class for ProductRangeImageLink."""
+
+        verbose_name = "Product Range Image Link"
+        verbose_name_plural = "Product Range Image Links"
+        ordering = ("position",)
+        unique_together = [["product_range", "image"]]
