@@ -73,6 +73,9 @@ inventory_urlpatterns = [
         name="set_image_order",
     ),
     path("delete_image/", views.images.DeleteImage.as_view(), name="delete_image"),
+    path(
+        "product_images/", views.images.ProductImages.as_view(), name="product_images"
+    ),
 ]
 
 api_urlpatterns = [

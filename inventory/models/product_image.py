@@ -5,6 +5,7 @@ from uuid import uuid4
 
 from django.db import models
 from django.utils import timezone
+from imagekit.cachefiles.strategies import Optimistic
 from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import Anchor, ResizeCanvas, Thumbnail
 
@@ -95,12 +96,14 @@ class ProductImage(models.Model):
         processors=[SquareCrop()],
         format="JPEG",
         options={"quality": 80},
+        cachefile_strategy=Optimistic,
     )
     thumbnail = ImageSpecField(
         source="image_file",
         processors=[SquareThumbnail()],
         format="JPEG",
         options={"quality": 60},
+        cachefile_strategy=Optimistic,
     )
     hash = models.CharField(
         max_length=32, blank=True, null=True, unique=True, db_index=True

@@ -47,25 +47,9 @@
       <p class="name">{{ product.name_extensions|join:" - " }}</p>
     </td>
     <td class="selected"><input type="checkbox" id="select_{{ product.pk }}"></td>
-    {% for image in images %}
-    <td class="product_image" id="product_image_{{ image.id }}" data-image-id="{{ image.pk }}" data-product-id="{{ product.id }}">
-      <a class="image_name" href="{{ image.image_file.url }}" target="_blank">
-        <img src="{{ image.thumbnail.url }}" alt="{{ image.image_file }}" height="100">
-      </a>
-      <span class="image_id" hidden>{{ image.pk }}</span>
-      <div class="image_buttons">
-        <div class="image_button move_image move_image_left" data-image-id="{{ image.pk }}" data-product-id="{{ product.id }}">
-          <i class="fa-solid fa-angle-left"></i>
-        </div>
-        <div class="image_button delete_image" data-image-id="{{ image.pk }}" data-product-id="{{ product.id }}">
-          <i class="fa-solid fa-trash"></i>
-        </div>
-        <div class="image_button move_image move_image_right" data-image-id="{{ image.pk }}" data-product-id="{{ product.id }}">
-          <i class="fa-solid fa-angle-right"></i>
-        </div>
-      </div>
+    <td class="product_images" id="product_images_{{ product.id }}" data-product-id="{{ product.id }}">
+      <i class="fa-solid fa-spinner fa-spin-pulse fa-xl"></i>
     </td>
-    {% endfor %}
   </tr>
   {% endfor %}
 </table>
@@ -74,6 +58,15 @@
 
 {% block script %}{{ block.super }}
 <script>
+
+  var loading = '<i class="fa-solid fa-spinner fa-spin-pulse fa-xl"></i>';
+
+  function arraymove(arr, fromIndex, toIndex) {
+    var element = arr[fromIndex];
+    arr.splice(fromIndex, 1);
+    arr.splice(toIndex, 0, element);
+  }
+
   function get_image_order(product_id) {
     var row = $('#row_' + product_id);
     var image_order = [];
@@ -92,13 +85,13 @@
     $('.selected input:checkbox').change();
   }
 
-  function update_image_order(product_id) {
+  function update_image_order(product_id, image_order) {
     var url = '{% url "inventory:set_image_order" %}';
-    var image_order = get_image_order(product_id);
     var data = {
       'product_pk': product_id,
       'image_order': image_order
     };
+    $("#product_images_" + product_id).html(loading);
     $.post({
       url: url,
       data: JSON.stringify(data),
@@ -106,6 +99,7 @@
       dataType: "json",
       success: function (image_order) {
         console.log(image_order);
+        load_images(product_id);
       },
       error: function () {
         api_error();
@@ -119,6 +113,7 @@
       'image_id': image_id,
       'product_id': product_id,
     };
+    $("#product_images_" + product_id).html(loading);
     $.post({
       url: url,
       data: JSON.stringify(data),
@@ -126,7 +121,7 @@
       dataType: "json",
       success: function (response) {
         console.log(response);
-        $("#product_image_" + image_id).remove();
+        load_images(product_id);
       },
       error: function () {
         api_error();
@@ -134,31 +129,52 @@
     });
   }
 
-  $(document).ready(function () {
-
-    $('.move_image_left').click(function () {
-      var image = $(this).closest('td');
-      var product_id = $(this).data('product-id');
-      if (image.index() > 3) {
-        image.insertBefore(image.prev());
+  function load_images(product_id) {
+    $.post({
+      url: "{% url 'inventory:product_images' %}",
+      data: {'product_id': product_id},
+      success: function (response) {
+        $('#product_images_' + product_id).html(response);
+        set_image_buttons();
+      },
+      error: function () {
+        api_error();
       }
-      update_image_order(product_id);
+    });
+  }
+
+  function set_image_buttons() {
+    $('.move_image_left').unbind('click').click(function () {
+      var image_id = $(this).data('image-id');
+      var product_id = $(this).data('product-id');
+      var image_order = get_image_order(product_id);
+      var current_index = image_order.indexOf(image_id);
+      arraymove(image_order, current_index, current_index - 1);
+      update_image_order(product_id, image_order);
     });
 
-    $('.move_image_right').click(function () {
-      var image = $(this).closest('td');
+    $('.move_image_right').unbind('click').click(function () {
+      var image_id = $(this).data('image-id');
       var product_id = $(this).data('product-id');
-      if (!(image.is(':last-child'))) {
-        image.insertAfter(image.next());
-      }
-      update_image_order(product_id);
+      var image_order = get_image_order(product_id);
+      var current_index = image_order.indexOf(image_id);
+      arraymove(image_order, current_index, current_index + 1);
+      update_image_order(product_id, image_order);
     });
 
-    $('.delete_image').click(function () {
+    $('.delete_image').unbind('click').click(function () {
       var image_id = $(this).data('image-id');
       var product_id = $(this).data('product-id');
       console.log(image_id);
       delete_image(image_id, product_id);
+    });
+  }
+
+  $(document).ready(function () {
+
+    $('.product_images').each(function() {
+      var product_id = $(this).data('product-id');
+      load_images(product_id);
     });
 
     $('#select_all').click(function () {

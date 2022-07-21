@@ -12,6 +12,7 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 
 from inventory import models
@@ -23,7 +24,7 @@ from .views import InventoryUserMixin
 class ImageFormView(InventoryUserMixin, FormView):
     """View for ImagesForm."""
 
-    template_name = "inventory/product_range/images.html"
+    template_name = "inventory/product_range/images/image_page.html"
     form_class = ImagesForm
 
     def get_products(self):
@@ -56,6 +57,9 @@ class ImageFormView(InventoryUserMixin, FormView):
         context = super().get_context_data(*args, **kwargs)
         self.get_products()
         context["product_range"] = self.product_range
+        context["product_range_images"] = self.product_range.images.order_by(
+            "product_range_image_links"
+        )
         context["products"] = {
             product: product.images.order_by("product_image_links")
             for product in self.products
@@ -132,3 +136,25 @@ class DeleteImage(InventoryUserMixin, View):
         )
         image_link.delete()
         return JsonResponse({"Deleted": {"image": image_id, "product": product_id}})
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class ProductImages(InventoryUserMixin, TemplateView):
+    """Remove image from a product."""
+
+    template_name = "inventory/product_range/images/image_row.html"
+
+    def post(self, *args, **kwargs):
+        """Respond to POST requests."""
+        return super().get(*args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        """Return a row of images for a product."""
+        context = super().get_context_data(*args, **kwargs)
+        product_id = self.request.POST["product_id"]
+        image_links = models.ProductImageLink.objects.filter(
+            product__id=product_id
+        ).prefetch_related("image")
+        context["product_id"] = product_id
+        context["images"] = [link.image for link in image_links]
+        return context
