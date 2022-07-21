@@ -68,13 +68,37 @@ inventory_urlpatterns = [
         name="channel_links",
     ),
     path(
-        "set_image_order/",
-        views.images.SetImageOrderView.as_view(),
-        name="set_image_order",
+        "set_product_image_order/",
+        views.images.SetProductImageOrder.as_view(),
+        name="set_product_image_order",
     ),
-    path("delete_image/", views.images.DeleteImage.as_view(), name="delete_image"),
+    path(
+        "set_range_image_order/",
+        views.images.SetRangeImageOrder.as_view(),
+        name="set_range_image_order",
+    ),
+    path(
+        "delete_product_image/",
+        views.images.DeleteProductImage.as_view(),
+        name="delete_product_image",
+    ),
+    path(
+        "delete_range_image/",
+        views.images.DeleteProductRangeImage.as_view(),
+        name="delete_range_image",
+    ),
     path(
         "product_images/", views.images.ProductImages.as_view(), name="product_images"
+    ),
+    path(
+        "product_range_images",
+        views.images.ProductRangeImages.as_view(),
+        name="product_range_images",
+    ),
+    path(
+        "add_range_image/<int:range_pk>/",
+        views.images.AddRangeImage.as_view(),
+        name="add_range_image",
     ),
 ]
 

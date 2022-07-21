@@ -61,7 +61,7 @@
   color: #444;
 }
 
-.product_images {
+.product_images, #product_range_images {
   display: flex;
   flex-direction: row;
 }

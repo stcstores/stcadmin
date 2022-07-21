@@ -10,6 +10,24 @@
 
 {% block content %}{{ block.super }}
 
+<table class="image_table">
+  <tr>
+    <td>
+      <p class="sku">{{ product_range.sku }}</p>
+      <p class="name">{{ product_range.name }}</p>
+    </td>
+    <td>
+      <form action="{% url 'inventory:add_range_image' product_range.id %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+        <input type="file" name="images" multiple="" accept=".jpg, .png" id="range_images">
+        <button>Submit</button>
+      </form>
+    </td>
+    <td class="product_range_images" id="product_range_images" data-product-id="{{ product_range.pk }}">
+      <i class="fa-solid fa-spinner fa-spin-pulse fa-xl"></i>
+    </td>
+  </tr>
+</table>
+
 <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
   <h3>{{ form }}</h3>
 </form>
@@ -67,8 +85,17 @@
     arr.splice(toIndex, 0, element);
   }
 
-  function get_image_order(product_id) {
+  function get_product_image_order(product_id) {
     var row = $('#row_' + product_id);
+    var image_order = [];
+    row.find('.product_image').each(function () {
+      image_order.push($(this).data('image-id'));
+    });
+    return image_order
+  }
+
+  function get_range_image_order(product_id) {
+    var row = $('.product_range_images');
     var image_order = [];
     row.find('.product_image').each(function () {
       image_order.push($(this).data('image-id'));
@@ -85,8 +112,8 @@
     $('.selected input:checkbox').change();
   }
 
-  function update_image_order(product_id, image_order) {
-    var url = '{% url "inventory:set_image_order" %}';
+  function update_product_image_order(product_id, image_order) {
+    var url = '{% url "inventory:set_product_image_order" %}';
     var data = {
       'product_pk': product_id,
       'image_order': image_order
@@ -99,7 +126,7 @@
       dataType: "json",
       success: function (image_order) {
         console.log(image_order);
-        load_images(product_id);
+        load_product_images(product_id);
       },
       error: function () {
         api_error();
@@ -107,8 +134,30 @@
     });
   }
 
-  function delete_image(image_id, product_id) {
-    var url = '{% url "inventory:delete_image" %}';
+  function update_range_image_order(image_order) {
+    var url = '{% url "inventory:set_range_image_order" %}';
+    var data = {
+      'product_pk': "{{ product_range.pk }}",
+      'image_order': image_order
+    };
+    $("#product_rage_images").html(loading);
+    $.post({
+      url: url,
+      data: JSON.stringify(data),
+      contentType: "application/json",
+      dataType: "json",
+      success: function (image_order) {
+        console.log(image_order);
+        load_product_range_images();
+      },
+      error: function () {
+        api_error();
+      }
+    });
+  }
+
+  function delete_product_image(image_id, product_id) {
+    var url = '{% url "inventory:delete_product_image" %}';
     var data = {
       'image_id': image_id,
       'product_id': product_id,
@@ -121,7 +170,7 @@
       dataType: "json",
       success: function (response) {
         console.log(response);
-        load_images(product_id);
+        load_product_images(product_id);
       },
       error: function () {
         api_error();
@@ -129,13 +178,35 @@
     });
   }
 
-  function load_images(product_id) {
+  function delete_range_image(image_id, product_id) {
+    var url = '{% url "inventory:delete_range_image" %}';
+    var data = {
+      'image_id': image_id,
+      'product_id': product_id,
+    };
+    $("#product_rage_images").html(loading);
+    $.post({
+      url: url,
+      data: JSON.stringify(data),
+      contentType: "application/json",
+      dataType: "json",
+      success: function (response) {
+        console.log(response);
+        load_product_range_images();
+      },
+      error: function () {
+        api_error();
+      }
+    });
+  }
+
+  function load_product_images(product_id) {
     $.post({
       url: "{% url 'inventory:product_images' %}",
       data: {'product_id': product_id},
       success: function (response) {
         $('#product_images_' + product_id).html(response);
-        set_image_buttons();
+        set_product_image_buttons();
       },
       error: function () {
         api_error();
@@ -143,38 +214,79 @@
     });
   }
 
-  function set_image_buttons() {
-    $('.move_image_left').unbind('click').click(function () {
+  function load_product_range_images() {
+    $.post({
+      url: "{% url 'inventory:product_range_images' %}",
+      data: {'product_range_id': {{ product_range.id }}},
+      success: function (response) {
+        $('.product_range_images').html(response);
+        set_range_image_buttons();
+      },
+      error: function () {
+        api_error();
+      }
+    });
+  }
+
+  function set_product_image_buttons() {
+    $('.product_images .move_image_left').unbind('click').click(function () {
       var image_id = $(this).data('image-id');
       var product_id = $(this).data('product-id');
-      var image_order = get_image_order(product_id);
+      var image_order = get_product_image_order(product_id);
       var current_index = image_order.indexOf(image_id);
       arraymove(image_order, current_index, current_index - 1);
-      update_image_order(product_id, image_order);
+      update_product_image_order(product_id, image_order);
     });
 
-    $('.move_image_right').unbind('click').click(function () {
+    $('.product_images .move_image_right').unbind('click').click(function () {
       var image_id = $(this).data('image-id');
       var product_id = $(this).data('product-id');
-      var image_order = get_image_order(product_id);
+      var image_order = get_product_image_order(product_id);
       var current_index = image_order.indexOf(image_id);
       arraymove(image_order, current_index, current_index + 1);
-      update_image_order(product_id, image_order);
+      update_product_image_order(product_id, image_order);
     });
 
-    $('.delete_image').unbind('click').click(function () {
+    $('.product_images .delete_image').unbind('click').click(function () {
       var image_id = $(this).data('image-id');
       var product_id = $(this).data('product-id');
       console.log(image_id);
-      delete_image(image_id, product_id);
+      delete_product_image(image_id, product_id);
+    });
+  }
+
+  function set_range_image_buttons() {
+    $('.product_range_images .move_image_left').unbind('click').click(function () {
+      var image_id = $(this).data('image-id');
+      var image_order = get_range_image_order();
+      var current_index = image_order.indexOf(image_id);
+      arraymove(image_order, current_index, current_index - 1);
+      update_range_image_order(image_order);
+    });
+
+    $('.product_range_images .move_image_right').unbind('click').click(function () {
+      var image_id = $(this).data('image-id');
+      var image_order = get_range_image_order();
+      var current_index = image_order.indexOf(image_id);
+      arraymove(image_order, current_index, current_index + 1);
+      update_range_image_order(image_order);
+    });
+
+    $('.product_range_images .delete_image').unbind('click').click(function () {
+      var image_id = $(this).data('image-id');
+      var product_id = $(this).data('product-id');
+      console.log(image_id);
+      delete_range_image(image_id, product_id);
     });
   }
 
   $(document).ready(function () {
 
+    load_product_range_images();
+
     $('.product_images').each(function() {
       var product_id = $(this).data('product-id');
-      load_images(product_id);
+      load_product_images(product_id);
     });
 
     $('#select_all').click(function () {
