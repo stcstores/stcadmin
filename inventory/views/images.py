@@ -199,7 +199,7 @@ class AddRangeImage(View):
         product_range = get_object_or_404(
             models.ProductRange, pk=self.kwargs["range_pk"]
         )
-        images = list(self.request.FILES.getlist("images"))
+        images = list(self.request.FILES.getlist("range_images"))
         models.ProductRangeImageLink.objects.add_images(
             product_range=product_range, uploaded_images=images
         )

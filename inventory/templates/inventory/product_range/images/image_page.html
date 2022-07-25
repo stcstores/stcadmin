@@ -18,8 +18,8 @@
     </td>
     <td>
       <form action="{% url 'inventory:add_range_image' product_range.id %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
-        <input type="file" name="images" multiple="" accept=".jpg, .png" id="range_images">
-        <button>Submit</button>
+        <label for="range_images" class="add_images_button">Add Images to Range</label>
+        <input type="file" name="range_images" multiple="" accept=".jpg, .png" id="range_images" hidden>
       </form>
     </td>
     <td class="product_range_images" id="product_range_images" data-product-id="{{ product_range.pk }}">
@@ -29,7 +29,9 @@
 </table>
 
 <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
-  <h3>{{ form }}</h3>
+  <label for="{{ form.images.auto_id }}" id="image_form_label" class="add_images_button">No Products Selected</label>
+  <span hidden>{{ form.images }}</span>
+  {{ form.product_ids }}
 </form>
 
 <table class="image_selection">
@@ -313,10 +315,10 @@
       var image_field_label = $("label[for='{{ form.images.auto_id }}']")
       if (checked.length == 0) {
         image_field.attr('disabled', true);
-        image_field_label.text('Select products to add images to');
+        image_field_label.text('No Products Selected');
       } else {
         image_field.attr('disabled', false);
-        image_field_label.text('Add an image to the selected products');
+        image_field_label.text('Add images to selected produccts');
       }
       product_id_input.val(JSON.stringify(product_ids));
     });
@@ -324,6 +326,10 @@
     $('#{{ form.images.auto_id }}').change(function () {
       $(this).closest('form').submit();
     });
+
+    $('#range_images').change(function() {
+      $(this).closest('form').submit();
+    })
 
     $('input:checkbox').change(function () {
       var row = $(this).closest("tr");
