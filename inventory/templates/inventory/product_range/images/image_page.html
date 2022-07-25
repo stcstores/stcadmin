@@ -34,13 +34,13 @@
   {{ form.product_ids }}
 </form>
 
+{% if products|length > 1 %}
 <table class="image_selection">
   <tr>
     <th colspan="2">Select</th>
   </tr>
   <tr>
     <td colspan="2">
-      <button id="select_all">All</button>
       <button id="select_none">None</button>
     </td>
   </tr>
@@ -73,6 +73,7 @@
   </tr>
   {% endfor %}
 </table>
+{% endif %}
 
 {% endblock %}
 
@@ -289,12 +290,6 @@
     $('.product_images').each(function() {
       var product_id = $(this).data('product-id');
       load_product_images(product_id);
-    });
-
-    $('#select_all').click(function () {
-      var checkboxes = $('.selected input:checkbox');
-      checkboxes.prop('checked', true);
-      $('.selected input:checkbox').change();
     });
 
     $('#select_none').click(function () {

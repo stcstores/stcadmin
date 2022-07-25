@@ -5,10 +5,12 @@ import io
 from collections import defaultdict
 
 from inventory.models import (
+    BaseProduct,
     CombinationProductLink,
     MultipackProduct,
     Product,
     ProductImageLink,
+    ProductRangeImageLink,
 )
 from inventory.models.product import CombinationProduct
 from linnworks.models.config import LinnworksConfig
@@ -453,19 +455,17 @@ class ImageUpdateFile(BaseImportFile):
     @classmethod
     def _get_modified_image_links(cls):
         last_update_time = LinnworksConfig.get_solo().last_image_update
-        product_ids = ProductImageLink.objects.filter(
-            modified_at__gte=last_update_time,
-            product__is_end_of_line=False,
-            product__product_range__is_end_of_line=False,
-        ).values_list("product", flat=True)
-        image_links = []
-        for product_id in set(product_ids):
-            image_link = (
-                ProductImageLink.objects.filter(product__pk=product_id)
-                .order_by("position")
-                .first()
-            )
-            image_links.append(image_link)
+        image_links = {}
+        for product in BaseProduct.objects.variations().active():
+            image_link = ProductImageLink.objects.filter(product=product).first()
+            if image_link is None:
+                image_link = ProductRangeImageLink.objects.filter(
+                    product_range=product.product_range
+                ).first()
+            if image_link is None:
+                continue
+            if image_link.modified_at > last_update_time:
+                image_links[product.sku] = image_link.image
         return image_links
 
     @classmethod
@@ -477,10 +477,10 @@ class ImageUpdateFile(BaseImportFile):
     def get_row_data(cls, image_links):
         """Return a list of image update dicts."""
         rows = []
-        for link in image_links:
+        for sku, image in image_links.items():
             row = {
-                cls.SKU: link.product.sku,
-                cls.PRIMARY_IMAGE: link.image.image_file.url,
+                cls.SKU: sku,
+                cls.PRIMARY_IMAGE: image.image_file.url,
             }
             rows.append(row)
         return rows

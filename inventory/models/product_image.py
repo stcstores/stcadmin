@@ -182,6 +182,15 @@ class BaseImageLinkManager(models.Manager):
             link.position = image_order.index(link.image.pk)
             link.save()
 
+    @transaction.atomic
+    def normalize_image_positions(self, product_pk):
+        """Make image positions continuous from zero."""
+        links = self._get_image_links(product_pk).order_by("position")
+        for i, link in enumerate(links):
+            if link.position != i:
+                link.position = i
+                link.save()
+
     def _get_image_links(self, product_pk):
         return self.filter(**{self.product_field + "__pk": product_pk})
 
@@ -209,6 +218,7 @@ class ProductImageLinkManager(BaseImageLinkManager):
                 self.model(
                     product=product, image=db_image, position=highest_position + i
                 ).save()
+            self.normalize_image_positions(product.pk)
 
 
 class ProductRangeImageLinkManager(BaseImageLinkManager):
