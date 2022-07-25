@@ -5,7 +5,6 @@ import json
 from collections import defaultdict
 
 from django.db import transaction
-from django.db.models import Max
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -74,24 +73,11 @@ class ImageFormView(InventoryUserMixin, FormView):
         )
         if form.is_valid():
             products = form.cleaned_data["products"]
-            images = list(self.request.FILES.getlist("images"))
-            for image in images:
-                db_image = models.ProductImage.objects.get_or_add_image(image)
-                for i, product in enumerate(products, 1):
-                    highest_position = self.get_highest_position(product)
-                    models.ProductImageLink(
-                        product=product, image=db_image, position=highest_position + i
-                    ).save()
+            uploaded_images = list(self.request.FILES.getlist("images"))
+            models.ProductImageLink.objects.add_images(
+                products=products, uploaded_images=uploaded_images
+            )
         return super().form_valid(form)
-
-    def get_highest_position(self, product):
-        """Return the position of the first new image."""
-        highest_position = models.ProductImageLink.objects.filter(
-            product=product
-        ).aggregate(Max("position"))["position__max"]
-        if highest_position is None:
-            highest_position = -1
-        return highest_position
 
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
@@ -108,35 +94,24 @@ class SetImageOrder(InventoryUserMixin, View):
     def post(self, *args, **kwargs):
         """Process HTTP request."""
         data = json.loads(self.request.body)
-        product_id = data["product_pk"]
-        image_links = self.get_image_links(product_id)
+        product_pk = data["product_pk"]
         image_order = [int(_) for _ in data["image_order"]]
-        if not set(image_links.values_list("image__pk", flat=True)) == set(image_order):
-            raise Exception("Did not get expected image IDs.")
-        for link in image_links:
-            link.position = image_order.index(link.image.pk)
-            link.save()
+        self.image_link_model.objects.set_image_order(
+            product_pk=product_pk, image_order=image_order
+        )
         return JsonResponse(image_order, safe=False)
 
 
 class SetProductImageOrder(SetImageOrder):
     """Change the image order for a product."""
 
-    def get_image_links(self, product_id):
-        """Return product image links."""
-        return models.ProductImageLink.objects.filter(
-            product__pk=product_id
-        ).select_related("image")
+    image_link_model = models.ProductImageLink
 
 
 class SetRangeImageOrder(SetImageOrder):
     """Change the image order for a product range."""
 
-    def get_image_links(self, product_id):
-        """Return product range image links."""
-        return models.ProductRangeImageLink.objects.filter(
-            product_range__pk=product_id
-        ).select_related("image")
+    image_link_model = models.ProductRangeImageLink
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -225,23 +200,9 @@ class AddRangeImage(View):
             models.ProductRange, pk=self.kwargs["range_pk"]
         )
         images = list(self.request.FILES.getlist("images"))
-        for image in images:
-            db_image = models.ProductImage.objects.get_or_add_image(image)
-            highest_position = self.get_highest_position(product_range)
-            models.ProductRangeImageLink(
-                product_range=product_range,
-                image=db_image,
-                position=highest_position + 1,
-            ).save()
+        models.ProductRangeImageLink.objects.add_images(
+            product_range=product_range, uploaded_images=images
+        )
         return HttpResponseRedirect(
             reverse_lazy("inventory:images", kwargs={"range_pk": product_range.pk})
         )
-
-    def get_highest_position(self, product_range):
-        """Return the position of the first new image."""
-        highest_position = models.ProductRangeImageLink.objects.filter(
-            product_range=product_range
-        ).aggregate(Max("position"))["position__max"]
-        if highest_position is None:
-            highest_position = -1
-        return highest_position
