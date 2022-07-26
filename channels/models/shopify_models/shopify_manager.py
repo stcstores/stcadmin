@@ -4,10 +4,8 @@ import time
 
 import shopify_api_py
 
-from inventory.models import ProductExport
 
-
-class ShopifyInventoryUpdater:
+class ShopifyManager:
     """Methods for updating Shopify inventory information."""
 
     REQUEST_PAUSE = 0.51
@@ -34,24 +32,6 @@ class ShopifyInventoryUpdater:
         """Return all Shopify products."""
         locations = shopify_api_py.locations.get_inventory_locations()
         return locations[0].id
-
-    @classmethod
-    def _get_stock_levels(cls):
-        inventory_information = ProductExport.objects.latest("timestamp").as_table()
-        stock_levels = {
-            row["VAR_SKU"]: int(row["VAR_Stock"]) for row in inventory_information
-        }
-        return stock_levels
-
-    @classmethod
-    @shopify_api_py.shopify_api_session
-    def _update_stock_levels(cls, products, location_id, stock_levels):
-        for product in products:
-            for variant in product.variants:
-                cls._update_variant_stock(
-                    variant=variant, location_id=location_id, stock_levels=stock_levels
-                )
-            cls._update_product_status(product)
 
     @classmethod
     def _update_variant_stock(cls, variant, location_id, stock_levels):
