@@ -3,15 +3,8 @@
 import time
 
 import shopify_api_py
-from django.db import models
 
 from inventory.models import ProductExport
-
-
-class ShopifyImport(models.Model):
-    """Model for Shopify order imports."""
-
-    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class ShopifyInventoryUpdater:
