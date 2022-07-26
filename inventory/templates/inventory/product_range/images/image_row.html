@@ -1,0 +1,27 @@
+{% for image in images %}
+<div class="product_image" id="product_image_{{ image.id }}" data-image-id="{{ image.pk }}" data-product-id="{{ product_id }}">
+    <a class="image_name" href="{{ image.image_file.url }}" target="_blank">
+      <img src="{{ image.thumbnail.url }}" alt="{{ image.image_file }}" height="100">
+    </a>
+    <span class="image_id" hidden>{{ image.pk }}</span>
+    <div class="image_buttons">
+      {% if forloop.first %}
+      <div class="image_button disabled"></div>
+      {% else %}
+      <div class="image_button move_image move_image_left" data-image-id="{{ image.pk }}" data-product-id="{{ product_id }}">
+        <i class="fa-solid fa-angle-left"></i>
+      </div>
+      {% endif %}
+      <div class="image_button delete_image" data-image-id="{{ image.pk }}" data-product-id="{{ product_id }}">
+        <i class="fa-solid fa-trash"></i>
+      </div>
+      {% if forloop.last %}
+      <div class="image_button disabled"></div>
+      {% else %}
+      <div class="image_button move_image move_image_right" data-image-id="{{ image.pk }}" data-product-id="{{ product_id }}">
+        <i class="fa-solid fa-angle-right"></i>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}

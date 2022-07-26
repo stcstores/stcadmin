@@ -1,14 +1,12 @@
 """Views for inventory app."""
 
 from .api import (
-    DeleteImage,
     GetNewRangeSKUView,
     GetNewSKUView,
     GetStockLevelView,
     NewBrand,
     NewManufacturer,
     NewSupplier,
-    SetImageOrderView,
     UpdateStockLevelView,
 )
 from .descriptions import DescriptionsView

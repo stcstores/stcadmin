@@ -21,7 +21,7 @@ from .product_attribute import (
     VariationOptionValue,
     VATRate,
 )
-from .product_image import ProductImage, ProductImageLink
+from .product_image import ProductImage, ProductImageLink, ProductRangeImageLink
 from .product_range import ProductRange
 from .supplier import Supplier
 
@@ -241,6 +241,17 @@ class BaseProduct(PolymorphicModel):
             .values_list("value", flat=True)
             .order_by("variation_option", "value")
         )
+
+    def get_primary_image(self):
+        """Return the primary image for the product or None if no image is available."""
+        image_link = ProductImageLink.objects.filter(product=self).first()
+        if image_link is None:
+            image_link = ProductRangeImageLink.objects.filter(
+                product_range=self.product_range
+            ).first()
+        if image_link is not None:
+            return image_link.image
+        return None
 
 
 class Product(BaseProduct):

@@ -2,7 +2,6 @@
 
 import json
 
-from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -61,44 +60,6 @@ class GetStockLevelView(InventoryUserMixin, View):
         product = get_object_or_404(models.Product, product_ID=product_ID)
         response_data = {"product_ID": product_ID, "stock_level": product.stock_level()}
         return HttpResponse(json.dumps(response_data))
-
-
-@method_decorator(csrf_exempt, name="dispatch")
-class SetImageOrderView(InventoryUserMixin, View):
-    """Change order of images for a product."""
-
-    @transaction.atomic
-    def post(self, *args, **kwargs):
-        """Process HTTP request."""
-        data = json.loads(self.request.body)
-        image_links = models.ProductImageLink.objects.filter(
-            product__pk=data["product_pk"]
-        ).select_related("image")
-        image_order = [int(_) for _ in data["image_order"]]
-        if not set(image_links.values_list("image__pk", flat=True)) == set(image_order):
-            raise Exception("Did not get expected image IDs.")
-        for link in image_links:
-            link.position = image_order.index(link.image.pk)
-            link.save()
-        return JsonResponse(image_order, safe=False)
-
-
-@method_decorator(csrf_exempt, name="dispatch")
-class DeleteImage(InventoryUserMixin, View):
-    """Remove image from a product."""
-
-    def post(self, *args, **kwargs):
-        """Process HTTP request."""
-        data = json.loads(self.request.body)
-        image_id = str(data["image_id"])
-        product_id = str(data["product_id"])
-        image_link = get_object_or_404(
-            models.ProductImageLink,
-            image__pk=image_id,
-            product__pk=product_id,
-        )
-        image_link.delete()
-        return JsonResponse({"Deleted": {"image": image_id, "product": product_id}})
 
 
 class NewInstance(View):

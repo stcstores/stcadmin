@@ -51,3 +51,30 @@
   border-color: #888;
   color: #000;
 }
+
+.image_button.disabled {
+  cursor:auto;
+}
+
+.image_button.disabled:hover {
+  background-color: #fff;
+  color: #444;
+}
+
+.product_images, #product_range_images {
+  display: flex;
+  flex-direction: row;
+}
+
+.add_images_button {
+  border: 2px solid #bbb;
+  border-radius: 0.5em;
+  background-color: #fff;
+  color: #222;
+  padding: 0.25em;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  margin: 0.25em;
+  width: 1.5em;
+}
