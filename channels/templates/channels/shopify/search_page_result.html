@@ -1,0 +1,11 @@
+{{ product_range }}
+{% if product_range.shopify_listing %}
+<button onclick="location.href='{% url 'channels:update_shopify_listing' product_range.shopify_listing.pk %}'">
+    Edit
+</button>
+{% else %}
+<button onclick="location.href='{% url 'channels:create_shopify_listing' product_range.pk %}'">
+    Create
+</button>
+{% endif %}
+<br>

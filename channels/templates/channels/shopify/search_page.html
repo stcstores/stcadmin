@@ -1,0 +1,32 @@
+{% extends 'channels/base.html' %}
+
+{% block additional_head %}
+<style>
+    .pagination {
+        margin: 1em;
+    }
+
+    .pagination button {
+        margin-left: 1em;
+    }
+</style>
+{% endblock additional_head %}
+
+{% block content %}
+
+<form action="" method="GET">
+    {{ form.as_p }}
+    <button>Search</button>
+</form>
+
+{% if object_list %}
+{% include 'channels/shopify/search_page_pagination.html' %}
+{% for product_range in object_list %}
+{% include 'channels/shopify/search_page_result.html' %}
+{% endfor %}
+{% include 'channels/shopify/search_page_pagination.html' %}
+{% endif %}
+
+
+
+{% endblock content %}
