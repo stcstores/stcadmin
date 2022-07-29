@@ -100,14 +100,14 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "boto3"
-version = "1.24.36"
+version = "1.24.40"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.27.36,<1.28.0"
+botocore = ">=1.27.40,<1.28.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -116,7 +116,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.27.36"
+version = "1.27.40"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -1533,7 +1533,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.10,<4.0"
-content-hash = "7d2ebe3d10332f9efb5d61d835e7b85712166db92491346cfbbe79a7dd81c4cb"
+content-hash = "920884439370d390d85a12b5a69e027238239b72e1a2ec165b7317a0f47696bc"
 
 [metadata.files]
 alabaster = [
@@ -1594,12 +1594,12 @@ black = [
     {file = "black-22.6.0.tar.gz", hash = "sha256:6c6d39e28aed379aec40da1c65434c77d75e65bb59a1e1c283de545fb4e7c6c9"},
 ]
 boto3 = [
-    {file = "boto3-1.24.36-py3-none-any.whl", hash = "sha256:8844bbcb69ac0afc68225b58abe105852231cf1b562e6c8c9eb6b2b97fd4757a"},
-    {file = "boto3-1.24.36.tar.gz", hash = "sha256:b1855ede59e725b968d6336908ffc864b65985ca441d730625b09c43ccd6413b"},
+    {file = "boto3-1.24.40-py3-none-any.whl", hash = "sha256:904294a46816b2b134f5f3d83e07f0496155a4815e90e0d717949f1e8c2846d6"},
+    {file = "boto3-1.24.40.tar.gz", hash = "sha256:e05495e4da96d1811cc9cd960de2d044468f50cd192315747d61be9c1b879fdb"},
 ]
 botocore = [
-    {file = "botocore-1.27.36-py3-none-any.whl", hash = "sha256:3119ce186053b9bf6bd0bd0ad19a8cedeb626b205ce6ad26ea0894634f702cd5"},
-    {file = "botocore-1.27.36.tar.gz", hash = "sha256:8109526f55742539d2311d742b40c89e65781ad18966e577dda360cd55c9d047"},
+    {file = "botocore-1.27.40-py3-none-any.whl", hash = "sha256:5482d44e4964dcaca673a7f115d889ac4b68e4f1b372ff0a294d4ee43a7b2a03"},
+    {file = "botocore-1.27.40.tar.gz", hash = "sha256:cb44d4af0119f34ca3354c2ed26a77abc76549d070c72288b9d76fc772f38518"},
 ]
 celery = [
     {file = "celery-5.2.7-py3-none-any.whl", hash = "sha256:138420c020cd58d6707e6257b6beda91fd39af7afde5d36c6334d175302c0e14"},
