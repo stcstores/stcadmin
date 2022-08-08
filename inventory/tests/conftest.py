@@ -3,6 +3,7 @@ import datetime as dt
 import factory
 import pytest_factoryboy
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from factory.django import DjangoModelFactory
 
 from inventory import models
@@ -89,7 +90,7 @@ class ProductRangeFactory(DjangoModelFactory):
     is_end_of_line = False
     hidden = False
     managed_by = factory.SubFactory(UserFactory)
-    created_at = dt.datetime(2022, 3, 25, 13, 45, 54, 775)
+    created_at = timezone.make_aware(dt.datetime(2022, 3, 25, 13, 45, 54, 775))
 
 
 @pytest_factoryboy.register
