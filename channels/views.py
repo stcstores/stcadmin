@@ -130,7 +130,7 @@ class UpdateShopifyListing(UpdateView):
         return context
 
 
-class ProductSearchView(ChannelsUserMixin, ListView):
+class ShopifyProducts(ChannelsUserMixin, ListView):
     """View for product search page."""
 
     template_name = "channels/shopify/search_page.html"

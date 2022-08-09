@@ -8,9 +8,9 @@ app_name = "channels"
 urlpatterns = [
     path("", views.Index.as_view(), name="index"),
     path(
-        "shopify_product_search",
-        views.ProductSearchView.as_view(),
-        name="shopify_product_search",
+        "shopify_products",
+        views.ShopifyProducts.as_view(),
+        name="shopify_products",
     ),
     path(
         "create_shopify_listing/<int:product_range_pk>/",
