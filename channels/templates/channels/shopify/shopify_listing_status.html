@@ -1,0 +1,38 @@
+{% load humanize %}
+
+{% if active %}
+    <div id="active_status" class="active">Listing active on Shopify</div>
+{% else %}
+    {% if uploaded %}
+        <div id="active_status" class="missing">Listing missing on Shopify</div>
+    {% else %}
+    <div id="active_status" class="not_uploaded">Listing not uploaded to Shopify</div>
+    {% endif %}
+{% endif %}
+
+{% if update %}
+    {% if ongoing %}
+    <div id="operation_status" class="ongoing">
+        {{ update.operation_type }} started {{ update.created_at|naturaltime }}
+    </div>
+    {% else %}
+        {% if update.error %}
+        <div id="operation_status" class="error">
+            {{ update.operation_type }} errored {{ update.created_at|naturaltime }}
+        </div>
+        {% else %}
+        <div id="operation_status" class="complete">
+            {{ update.operation_type }} completed {{ update.created_at|naturaltime }}
+        </div>
+        {% endif %}
+    {% endif %}
+{% else %}
+<div id="operation_status">No listing operations found</div>
+{% endif %}
+<div id="status_icon">
+    {% if ongoing %}
+        <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+    {% else %}
+        <i class="fa-solid fa-arrows-rotate"></i>
+    {% endif %}
+</div>

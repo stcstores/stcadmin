@@ -3,12 +3,30 @@
 import time
 
 import shopify_api_py
+from shopify_api_py.exceptions import ProductNotFoundError
 
 
 class ShopifyManager:
     """Methods for updating Shopify inventory information."""
 
     REQUEST_PAUSE = 0.51
+
+    @classmethod
+    def product_exists(cls, product_id):
+        """Return True if product_id is an existant product ID on Shopify, otherwise False.
+
+        Args:
+            product_id (int): The product ID to check.
+
+        Returns:
+            bool: True if the product ID is found, otherwise False.
+        """
+        try:
+            cls._get_product(product_id)
+        except ProductNotFoundError:
+            return False
+        else:
+            return True
 
     @classmethod
     def update_stock(cls):
@@ -22,14 +40,29 @@ class ShopifyManager:
 
     @classmethod
     @shopify_api_py.shopify_api_session
+    def _get_product(cls, product_id):
+        return shopify_api_py.products.get_product_by_id(product_id=product_id)
+
+    @classmethod
+    @shopify_api_py.shopify_api_session
+    def _get_variant(cls, variant_id):
+        return shopify_api_py.products.get_variant_by_id(variant_id=variant_id)
+
+    @classmethod
+    @shopify_api_py.shopify_api_session
+    def _get_inventory_item(cls, inventory_item_id):
+        return shopify_api_py.products.get_inventory_item_by_id(
+            inventory_item_id=inventory_item_id
+        )
+
+    @classmethod
+    @shopify_api_py.shopify_api_session
     def _get_products(cls):
-        """Return all Shopify products."""
         return shopify_api_py.products.get_all_products()
 
     @classmethod
     @shopify_api_py.shopify_api_session
     def _get_location_id(cls):
-        """Return all Shopify products."""
         locations = shopify_api_py.locations.get_inventory_locations()
         return locations[0].id
 

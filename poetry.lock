@@ -1229,7 +1229,7 @@ crt = ["botocore[crt] (>=1.20.29,<2.0a.0)"]
 
 [[package]]
 name = "shopify-api-py"
-version = "0.0.2"
+version = "0.0.3"
 description = ""
 category = "main"
 optional = false
@@ -1244,7 +1244,7 @@ toml = ">=0.10.2"
 type = "git"
 url = "https://github.com/stcstores/shopify_api_py.git"
 reference = "main"
-resolved_reference = "546813bcbbe37e46aec411dfc7303eed0258e57e"
+resolved_reference = "4c3196d777f1dc170f639f97f41542e0135f1961"
 
 [[package]]
 name = "shopifyapi"

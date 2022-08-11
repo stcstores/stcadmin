@@ -38,3 +38,11 @@ class ShopifyVariationAdmin(admin.ModelAdmin):
     list_display = ("__str__", "price")
     autocomplete_fields = ("listing", "product")
     list_select_related = ("listing", "product")
+
+
+@admin.register(models.shopify_models.ShopifyUpdate)
+class ShopifyUpdateManager(admin.ModelAdmin):
+    """Model admin for the ShopifyUpdate model."""
+
+    exclude_fields = ()
+    list_display = ("listing", "operation_type", "created_at", "completed_at", "error")

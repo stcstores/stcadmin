@@ -2,7 +2,11 @@
 
 
 from django.forms.models import inlineformset_factory
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
@@ -24,12 +28,27 @@ class Index(ChannelsUserMixin, TemplateView):
     template_name = "channels/index.html"
 
 
-class CreateShopifyListing(CreateView):
+class ShopifyListing(ChannelsUserMixin, TemplateView):
+    """View for Shopify listings."""
+
+    template_name = "channels/shopify/shopify_listing.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["listing"] = get_object_or_404(
+            models.shopify_models.ShopifyListing, pk=self.kwargs.get("listing_pk")
+        )
+        context["product_range"] = context["listing"].product_range
+        return context
+
+
+class CreateShopifyListing(ChannelsUserMixin, CreateView):
     """Create a new Shopify listing."""
 
     model = models.shopify_models.ShopifyListing
     form_class = forms.ShopifyListingForm
-    template_name = "channels/shopify/shopify_listing.html"
+    template_name = "channels/shopify/shopify_listing_form.html"
 
     def post(self, request, *args, **kwargs):
         """Process a form submission."""
@@ -81,13 +100,17 @@ class CreateShopifyListing(CreateView):
         )
         return context
 
+    def get_success_url(self):
+        """Redirect to the edit listing page for the listing."""
+        return self.object.get_absolute_url()
 
-class UpdateShopifyListing(UpdateView):
+
+class UpdateShopifyListing(ChannelsUserMixin, UpdateView):
     """Update a Shopify listing."""
 
     model = models.shopify_models.ShopifyListing
     form_class = forms.ShopifyListingForm
-    template_name = "channels/shopify/shopify_listing.html"
+    template_name = "channels/shopify/shopify_listing_form.html"
 
     def post(self, *args, **kwargs):
         """Process a form submission."""
@@ -106,7 +129,7 @@ class UpdateShopifyListing(UpdateView):
         self.object = form.save()
         formset.instance = self.object
         formset.save()
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form, formset):
         """Return a rendered template with form errors."""
@@ -129,6 +152,10 @@ class UpdateShopifyListing(UpdateView):
         )
         return context
 
+    def get_success_url(self):
+        """Redirect to the listing's listing page."""
+        return self.object.get_absolute_url()
+
 
 class ShopifyProducts(ChannelsUserMixin, ListView):
     """View for product search page."""
@@ -149,4 +176,48 @@ class ShopifyProducts(ChannelsUserMixin, ListView):
         """Return context for the template."""
         context = super().get_context_data(**kwargs)
         context["form"] = self.form_class(self.request.GET)
+        return context
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class UploadShopifyListing(ChannelsUserMixin, View):
+    """View to trigger updating or creating a Shopify listing."""
+
+    def post(self, *args, **kwargs):
+        """Trigger the creation or update of a Shopify listing."""
+        listing_pk = self.request.POST["listing_pk"]
+        listing = get_object_or_404(models.shopify_models.ShopifyListing, pk=listing_pk)
+        listing.upload()
+        return HttpResponse("ok")
+
+
+class ShopifyListingStatus(ChannelsUserMixin, TemplateView):
+    """View for displaying the current status of a Shopify listing."""
+
+    template_name = "channels/shopify/shopify_listing_status.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        listing = get_object_or_404(
+            models.shopify_models.ShopifyListing, pk=self.kwargs["listing_pk"]
+        )
+        try:
+            update = listing.get_last_update()
+        except models.shopify_models.ShopifyUpdate.DoesNotExist:
+            context["ongoing"] = False
+            context["uploaded"] = False
+            context["active"] = False
+            return context
+        context["update"] = update
+        if update.completed_at is None:
+            context["ongoing"] = True
+        else:
+            context["ongoing"] = False
+        if listing.product_id is None:
+            context["uploaded"] = False
+            context["active"] = False
+        else:
+            context["uploaded"] = True
+            context["active"] = listing.listing_is_active()
         return context

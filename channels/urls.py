@@ -13,6 +13,11 @@ urlpatterns = [
         name="shopify_products",
     ),
     path(
+        "shopify/listing/<int:listing_pk>/",
+        views.ShopifyListing.as_view(),
+        name="shopify_listing",
+    ),
+    path(
         "create_shopify_listing/<int:product_range_pk>/",
         views.CreateShopifyListing.as_view(),
         name="create_shopify_listing",
@@ -21,5 +26,15 @@ urlpatterns = [
         "update_shopify_listing/<int:pk>/",
         views.UpdateShopifyListing.as_view(),
         name="update_shopify_listing",
+    ),
+    path(
+        "upload_shopify_listing/",
+        views.UploadShopifyListing.as_view(),
+        name="upload_shopify_listing",
+    ),
+    path(
+        "shopify_listing_status/<int:listing_pk>/",
+        views.ShopifyListingStatus.as_view(),
+        name="shopify_listing_status",
     ),
 ]

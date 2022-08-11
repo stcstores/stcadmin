@@ -3,8 +3,11 @@
 from collections import defaultdict
 
 from django.db import models, transaction
+from django.urls import reverse_lazy
+from django.utils import timezone
 from shopify_api_py import products, session
 
+from channels import tasks
 from inventory.models import (
     BaseProduct,
     ProductImageLink,
@@ -12,11 +15,19 @@ from inventory.models import (
     ProductRangeImageLink,
 )
 
+from .shopify_manager import ShopifyManager
+
 
 class ShopifyTag(models.Model):
     """Model for Shopify product tags."""
 
     name = models.CharField(max_length=255)
+
+    class Meta:
+        """Meta class for the ShopifyTag model."""
+
+        verbose_name = "Shopify Tag"
+        verbose_name_plural = "Shopify Tags"
 
     def __str__(self):
         return self.name
@@ -36,8 +47,40 @@ class ShopifyListing(models.Model):
     tags = models.ManyToManyField(ShopifyTag, blank=True)
     product_id = models.PositiveBigIntegerField(blank=True, null=True)
 
+    class Meta:
+        """Meta class for the ShopifyListing model."""
+
+        verbose_name = "Shopify Listing"
+        verbose_name_plural = "Shopify Listings"
+
     def __str__(self):
         return self.product_range.sku
+
+    def get_absolute_url(self):
+        """Return the URL of the edit page for this object."""
+        return reverse_lazy("channels:shopify_listing", kwargs={"listing_pk": self.pk})
+
+    def listing_is_active(self):
+        """Return True if an active listing for this product can be found, otherwise False."""
+        if self.product_id is None:
+            return False
+        else:
+            return ShopifyManager.product_exists(self.product_id)
+
+    def get_last_update(self):
+        """Return the latest update instance for this listing."""
+        return ShopifyUpdate.objects.filter(listing=self).latest("created_at")
+
+    def upload(self):
+        """Create or update the a Shopify listing for this instance."""
+        if self.product_id is not None:
+            raise NotImplementedError()
+        update = ShopifyUpdate.objects.start_upload_listing(self)
+        try:
+            tasks.create_shopify_product.delay(listing_pk=self.pk, update_pk=update.pk)
+        except Exception:
+            update.set_error()
+            raise
 
 
 class ShopifyVariation(models.Model):
@@ -59,6 +102,72 @@ class ShopifyVariation(models.Model):
     def __str__(self):
         return self.product.sku
 
+    class Meta:
+        """Meta class for the ShopifyVariation model."""
+
+        verbose_name = "Shopify Variation"
+        verbose_name_plural = "Shopify Variations"
+
+
+class ShopifyUpdateManager(models.Manager):
+    """Manager for the ShopifyUpdate model."""
+
+    def start_upload_listing(self, listing):
+        """Record the start of a create or update operation."""
+        if self.filter(listing=listing, completed_at__isnull=True).exists():
+            raise Exception(
+                "Cannot start operation on Shopify listing while another is ongoing."
+            )
+        if listing.product_id:
+            operation_type = ShopifyUpdate.UPDATE_PRODUCT
+        else:
+            operation_type = ShopifyUpdate.CREATE_PRODUCT
+        update = self.model(listing=listing, operation_type=operation_type)
+        update.save()
+        return update
+
+
+class ShopifyUpdate(models.Model):
+    """Model for Shopify update records."""
+
+    CREATE_PRODUCT = "Create Product"
+    UPDATE_PRODUCT = "Update Product"
+    RETRIEVE_PRODUCT = "Retrieve Product"
+
+    listing = models.ForeignKey(
+        ShopifyListing, on_delete=models.CASCADE, related_name="update_records"
+    )
+    operation_type = models.CharField(
+        max_length=20,
+        choices=(
+            (CREATE_PRODUCT, CREATE_PRODUCT),
+            (UPDATE_PRODUCT, UPDATE_PRODUCT),
+            (RETRIEVE_PRODUCT, RETRIEVE_PRODUCT),
+        ),
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(blank=True, null=True)
+    error = models.BooleanField(default=False)
+
+    objects = ShopifyUpdateManager()
+
+    class Meta:
+        """Meta class for the ShopifyUpdate model."""
+
+        verbose_name = "Shopify Update"
+        verbose_name_plural = "Shopify Updates"
+
+    def set_complete(self):
+        """Set the update as completed succesfully."""
+        self.completed_at = timezone.now()
+        self.save()
+
+    def set_error(self):
+        """Set the update as completed with an error."""
+        self.completed_at = timezone.now()
+        self.error = True
+        self.save()
+
 
 class ShopifyListingManager:
     """Provides methods for managing Shopify listings."""
@@ -75,7 +184,7 @@ class ShopifyListingManager:
         product_range = shopify_listing_object.product_range
         if shopify_listing_object.product_range.has_variations():
             options = cls._get_options(shopify_listing_object)
-            variants = cls._get_variants(shopify_listing_object, options)
+            variants = cls._get_variants(shopify_listing_object, options=options)
         else:
             options = None
             variants = None
@@ -90,6 +199,11 @@ class ShopifyListingManager:
         with transaction.atomic():
             shopify_listing_object.product_id = shopify_product.id
             shopify_listing_object.save()
+            if len(shopify_product.variants) == 1:
+                variant = shopify_product.variants[0]
+                sku = shopify_listing_object.variations.first().product.sku
+                variant.sku = sku
+                variant.save()
             for variant in shopify_product.variants:
                 shopify_variation_object = ShopifyVariation.objects.get(
                     product__sku=variant.sku

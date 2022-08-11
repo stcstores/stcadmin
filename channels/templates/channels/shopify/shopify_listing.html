@@ -2,59 +2,129 @@
 
 {% load static %}
 
-{% block additional_head %}{{ block.super }}
-<script>
-  /* beautify preserve:start */
-  {% include 'inventory/widgets/product_widgets.js' %}
-  /* beautify preserve:end */
-</script>
-<link rel="stylesheet" href="{% static 'css/inventory.css' %}">
-<link rel="stylesheet" href="{% static 'css/product_page.css' %}">
-<script src="{% static 'scripts/new_product.js' %}"></script>
-{% include 'home/froala_head.html' %}
+{% block additional_head %}
 <style>
-  .variations {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
+    #listing_status {
+        margin: 1em;
+        padding: 0.5em;
+        border-radius: 1em;
+        background: #ddd;
+        border: 2px solid #888;
+    }
+    #active_status {
+        margin: 1em;
+        padding: 0.5em;
+        border-radius: 1em;
+        border-style: solid;
+        border-width:2px;
+        background: #eee;
+    }
+    #active_status.active {
+        color: green;
+        border-color: green;
+    }
+    #active_status.missing {
+        color: red;
+        border-color: red;
+    }
 
-  .variation {
-    padding: 0.75em;
-    margin: 0.25em;
-    border: 2px solid #888;
-    border-radius: 1em;
-    background: #fefefe;
-  }
+    #operation_status {
+        margin: 1em;
+        padding: 0.5em;
+        border-radius: 1em;
+        border-style: solid;
+        border-width:2px;
+        background: #eee;
+        color: black;
+    }
+
+    #operation_status.ongoing {
+        border-color: blue;
+    }
+
+    #operation_status.error {
+        border-color: red;
+    }
+
+    #operation_status.complete {
+        border-color: green;
+    }
+
+    #status_icon {
+        text-align: right;
+    }
 </style>
-{% endblock %}
+{% endblock additional_head %}
 
 {% block content %}
+<h1>{{ listing.title }}</h1>
+<h3><span class="sku">{{ product_range.sku}}</span> - <span class="sku">{{ product_range.name }}</span></h3>
 
-{% if form.instance.product_range %}
-<h1>Update Shopify Listing</h1>
-<h2>{{ form.instance.product_range.sku }} - {{ form.instance.product_range.name }}</h2>
-{% else %}
-<h1>New Shopify Listing</h1>
-<h2>{{ form.initial.product_range.sku }} - {{ form.initial.product_range.name }}</h2>
-{% endif %}
-<div class="product_form">
-  <form action="" method="POST" autocomplete="off">{% csrf_token %}
-    {% include "inventory/input_add_on_form.html" %}
-    {{ formset.management_form }}
-    <button type="submit" class="save_button">Save</button>
-      <div class="variations">
-        {% for variation_form in formset %}
-          {% if variation_form.instance.product %}
-          {% include 'channels/shopify/shopify_listing_variation_form.html' with product=variation_form.instance.product %}
-          {% else %}
-          {% include 'channels/shopify/shopify_listing_variation_form.html' with product=variation_form.initial.product %}
-          {% endif %}
-        {% endfor %}
-      </div>
-      <button type="submit" class="save_button">Save</button>
-    </form>
-  </div>
+<div id="listing_status" class="listing_status">
+    <div id="active_status"></div>
+    <div id="operation_status"><i class="fa-solid fa-spinner fa-spin-pulse"></i></div>
+    <div class="status_icon"></div>
+</div>
 
+<button><a href="{% url 'channels:update_shopify_listing' listing.pk %}">Edit Listing</a></button>
+<button id="upload_listing_button" data-listing_pk="{{ listing.pk }}" disabled>
+    {% if listing.product_id %}Update Listing{% else %}Upload Listing{% endif %}
+</button>
 {% endblock content %}
 
+{% block script %}
+
+<script>
+
+    function disableInputs() {
+        $("#upload_listing_button").attr("disabled", true);
+    }
+
+    function enableInputs() {
+        $("#upload_listing_button").attr("disabled", false);
+    }
+
+    function getListingStatus() {
+        disableInputs();
+        $("#active_status").html('<i class="fa-solid fa-spinner fa-spin-pulse"></i>');
+        $("#operation_status").html('<i class="fa-solid fa-spinner fa-spin-pulse"></i>');
+        $("#status_icon").html('<i class="fa-solid fa-spinner fa-spin-pulse"></i>');
+        $.ajax({
+            url: "{% url 'channels:shopify_listing_status' listing.pk %}",
+            type: "GET",
+            success: function(response) {
+                updateListingStatus(response);
+            }
+        });
+    }
+
+    function updateListingStatus(status) {
+        $("#listing_status").html(status);
+        var refresh_icon = $("#status_icon i.fa-arrows-rotate");
+        if (refresh_icon.length) {
+            refresh_icon.click(function() {
+                getListingStatus();
+            });
+            enableInputs();
+        } else {
+            disableInputs();
+            window.setTimeout(getListingStatus, 5000);
+        }
+
+    }
+
+    $(document).ready(function() {
+        getListingStatus();
+        $("#upload_listing_button").click(function() {
+            disableInputs();
+            $.ajax({
+                url: "{% url 'channels:upload_shopify_listing' %}",
+                type: "POST",
+                data: {'listing_pk': {{ listing.pk }}},
+                success: getListingStatus,
+                error:getListingStatus
+            });
+        });
+    });
+</script>
+{% endblock script %}
