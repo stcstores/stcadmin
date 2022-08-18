@@ -18,7 +18,7 @@
     flex-direction: row;
     flex-wrap: wrap;
   }
-
+  
   .variation {
     padding: 0.75em;
     margin: 0.25em;
@@ -26,7 +26,13 @@
     border-radius: 1em;
     background: #fefefe;
   }
+
+  select {
+    overflow-y: hidden;
+}
+
 </style>
+{{ form.media.css }}
 {% endblock %}
 
 {% block content %}
@@ -58,3 +64,11 @@
 
 {% endblock content %}
 
+{% block script %}
+<script>
+  $(document).ready(function() {
+    var select = document.getElementById('{{ form.tags.auto_id }}');
+    select.size = select.length;
+  });
+</script>
+{% endblock script %}

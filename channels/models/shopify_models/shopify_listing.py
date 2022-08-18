@@ -28,6 +28,7 @@ class ShopifyTag(models.Model):
 
         verbose_name = "Shopify Tag"
         verbose_name_plural = "Shopify Tags"
+        ordering = ("name",)
 
     def __str__(self):
         return self.name
@@ -193,7 +194,7 @@ class ShopifyListingManager:
             body_html=shopify_listing_object.description,
             variants=variants,
             options=options,
-            tags=[tag.name for tag in shopify_listing_object.tags.all()],
+            tags=",".join([tag.name for tag in shopify_listing_object.tags.all()]),
             vendor=product_range.products.variations().first().brand.name,
         )
         with transaction.atomic():

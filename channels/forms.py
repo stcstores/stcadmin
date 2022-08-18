@@ -18,7 +18,9 @@ class ShopifyListingForm(forms.ModelForm):
         model = models.shopify_models.ShopifyListing
         exclude = ("product_id",)
         field_classes = {"description": Description}
-        widgets = {"product_range": forms.HiddenInput()}
+        widgets = {
+            "product_range": forms.HiddenInput(),
+        }
 
 
 class ShopifyVariationForm(forms.ModelForm):
