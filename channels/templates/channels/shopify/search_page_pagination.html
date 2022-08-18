@@ -1,0 +1,25 @@
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <button onclick="location.href='?page=1'">
+                <i class="fa-solid fa-angles-left"></i></i>
+            </button>
+            <button onclick="location.href='?page={{ page_obj.previous_page_number }}'">
+                <i class="fa-solid fa-angle-left"></i>
+            </button>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <button onclick="location.href='?page={{ page_obj.next_page_number }}'">
+                <i class="fa-solid fa-angle-right"></i>
+            </button>
+            <button onclick="location.href='?page={{ page_obj.paginator.num_pages }}'">
+                <i class="fa-solid fa-angles-right"></i>
+            </button>
+        {% endif %}
+    </span>
+</div>

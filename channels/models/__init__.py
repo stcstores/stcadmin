@@ -1,6 +1,5 @@
 """Models for the channels app."""
 
+from . import shopify_models
 
-from .shopify_models import ShopifyInventoryUpdater
-
-__all__ = ["ShopifyInventoryUpdater"]
+__all__ = ["shopify_models"]

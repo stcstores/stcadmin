@@ -3,14 +3,30 @@
 import time
 
 import shopify_api_py
+from shopify_api_py.exceptions import ProductNotFoundError
 
-from inventory.models import ProductExport
 
-
-class ShopifyInventoryUpdater:
+class ShopifyManager:
     """Methods for updating Shopify inventory information."""
 
     REQUEST_PAUSE = 0.51
+
+    @classmethod
+    def product_exists(cls, product_id):
+        """Return True if product_id is an existant product ID on Shopify, otherwise False.
+
+        Args:
+            product_id (int): The product ID to check.
+
+        Returns:
+            bool: True if the product ID is found, otherwise False.
+        """
+        try:
+            cls._get_product(product_id)
+        except ProductNotFoundError:
+            return False
+        else:
+            return True
 
     @classmethod
     def update_stock(cls):
@@ -24,34 +40,31 @@ class ShopifyInventoryUpdater:
 
     @classmethod
     @shopify_api_py.shopify_api_session
+    def _get_product(cls, product_id):
+        return shopify_api_py.products.get_product_by_id(product_id=product_id)
+
+    @classmethod
+    @shopify_api_py.shopify_api_session
+    def _get_variant(cls, variant_id):
+        return shopify_api_py.products.get_variant_by_id(variant_id=variant_id)
+
+    @classmethod
+    @shopify_api_py.shopify_api_session
+    def _get_inventory_item(cls, inventory_item_id):
+        return shopify_api_py.products.get_inventory_item_by_id(
+            inventory_item_id=inventory_item_id
+        )
+
+    @classmethod
+    @shopify_api_py.shopify_api_session
     def _get_products(cls):
-        """Return all Shopify products."""
         return shopify_api_py.products.get_all_products()
 
     @classmethod
     @shopify_api_py.shopify_api_session
     def _get_location_id(cls):
-        """Return all Shopify products."""
         locations = shopify_api_py.locations.get_inventory_locations()
         return locations[0].id
-
-    @classmethod
-    def _get_stock_levels(cls):
-        inventory_information = ProductExport.objects.latest("timestamp").as_table()
-        stock_levels = {
-            row["VAR_SKU"]: int(row["VAR_Stock"]) for row in inventory_information
-        }
-        return stock_levels
-
-    @classmethod
-    @shopify_api_py.shopify_api_session
-    def _update_stock_levels(cls, products, location_id, stock_levels):
-        for product in products:
-            for variant in product.variants:
-                cls._update_variant_stock(
-                    variant=variant, location_id=location_id, stock_levels=stock_levels
-                )
-            cls._update_product_status(product)
 
     @classmethod
     def _update_variant_stock(cls, variant, location_id, stock_levels):

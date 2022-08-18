@@ -1,0 +1,29 @@
+<tr>
+    <th class="sku">{{ product_range.sku }}</th>
+    <td class="sku">{{ product_range.name }}</td>
+    {% if product_range.shopify_listing %}
+    <td>
+        <button onclick="location.href='{% url 'channels:shopify_listing' product_range.shopify_listing.pk %}'">
+            View Listing
+        </button>
+    </td>
+    <td
+        class="listing_status {% if product_range.shopify_listing.product_id %}uploaded{% else %}not_uploaded{% endif %}"
+        data-listing_id="{{ product_range.shopify_listing.id }}" id="listing_status_{{ product_range.shopify_listing.id }}">
+        {% if product_range.shopify_listing.product_id %}
+        <span>Listing Uploaded</span>
+        {% else %}
+        <span class="warning">Listing not uploaded</span>
+        {% endif %}
+    </td>
+    {% else %}
+    <td>
+        <button onclick="location.href='{% url 'channels:create_shopify_listing' product_range.pk %}'">
+            Create Listing
+        </button>
+    </td>
+    <td class="listing_status not_created" id="listing_status_{{ listing.id }}">
+        <span>Listing information not created</span>
+    </td>
+    {% endif %}
+</tr>
