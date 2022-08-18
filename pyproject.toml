@@ -22,22 +22,22 @@ toml = ">=0.10.2"
 xlsxwriter = ">=3.0.1"
 openpyxl = ">=3.0.7"
 isoweek = ">=1.3.3"
-labeler = {git = "https://github.com/lukeshiner/labeler.git"}
 django-solo = ">=2.0.0"
 celery = {extras = ["pytest"], version = ">=5.2.3"}
 django-polymorphic = ">=3.1.0"
 django-mathfilters = ">=1.0.0"
 easy-thumbnails = ">=2.8"
-file-exchange = {git = "https://github.com/lukeshiner/django-file_exchange.git", rev = "main"}
 flake8-docstrings = ">=1.6.0"
-django-storages = "^1.12.3"
-boto3 = "^1.24.36"
-shopify_api_py = {git = "https://github.com/stcstores/shopify_api_py.git", rev = "main"}
+django-storages = ">=1.13.1"
+boto3 = ">=1.24.53"
+django-select2 = ">=7.10.0"
+pymemcache = ">=3.5.2"
+django-redis = ">=5.2.0"
+django-imagekit = ">=4.1.0"
+labeler = {git = "https://github.com/lukeshiner/labeler.git", rev = "main"}
+file-exchange = {git = "https://github.com/lukeshiner/django-file_exchange.git", rev = "main"}
 linnapi = {git = "https://github.com/stcstores/linnapi.git", rev = "main"}
-django-select2 = "^7.10.0"
-pymemcache = "^3.5.2"
-django-redis = "^5.2.0"
-django-imagekit = "^4.1.0"
+shopify_api_py = {git = "https://github.com/stcstores/shopify_api_py.git", rev = "main"}
 
 [tool.poetry.dev-dependencies]
 pytest = ">=6.2.4"
