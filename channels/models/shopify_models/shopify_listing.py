@@ -21,7 +21,7 @@ from .shopify_manager import ShopifyManager
 class ShopifyTag(models.Model):
     """Model for Shopify product tags."""
 
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True, db_index=True)
 
     class Meta:
         """Meta class for the ShopifyTag model."""
