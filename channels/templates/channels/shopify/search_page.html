@@ -9,6 +9,14 @@
     .pagination button {
         margin-left: 1em;
     }
+
+    #shopify_listings tr {
+        background: #eee;
+    }
+
+    #shopify_listings tr:nth-child(odd){
+        background: #ddd;
+    }
 </style>
 {% endblock additional_head %}
 
@@ -21,7 +29,7 @@
 
 {% if object_list %}
 {% include 'channels/shopify/search_page_pagination.html' %}
-<table>
+<table id="shopify_listings">
 {% for product_range in object_list %}
 {% include 'channels/shopify/search_page_result.html' %}
 {% endfor %}
@@ -30,3 +38,44 @@
 {% endif %}
 
 {% endblock content %}
+
+{% block script %}
+<script>
+    function getListingActiveStatus(listingID) {
+        $.ajax({
+            url: "{% url 'channels:shopify_listing_active_status' %}",
+            data: {'listing_id': listingID},
+            type: "POST",
+            success: handleListingActiveStatus,
+            error: function(response) {
+                console.log("Error getting listing status");
+            }
+        });
+    }
+
+    function handleListingActiveStatus(response) {
+        if (response.active === true) {
+            displayListingStatusActive(response.listing_id);
+        } else if (response.active === false) {
+            displayListingStatusInactive(response.listing_id);
+        }
+    }
+
+    function displayListingStatusActive(listingID) {
+        var td = $("#listing_status_" + listingID);
+        td.html('<span class="success">Listing Active</span>')
+    }
+
+    function displayListingStatusInactive(listingID) {
+        var td = $("#listing_status_" + listingID);
+        td.html('<span class="error">Listing uploaded but not found</span>')
+    }
+
+    $(document).ready(function() {
+        $(".listing_status.uploaded").each(function() {
+            var listingID = $(this).data('listing_id');
+            getListingActiveStatus(listingID);
+        });
+    });
+</script>
+{% endblock script %}

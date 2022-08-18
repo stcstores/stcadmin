@@ -21,4 +21,4 @@ def create_shopify_product(listing_pk, update_pk):
         update.set_error()
         raise
     else:
-        update.set_complete
+        update.set_complete()

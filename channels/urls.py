@@ -37,4 +37,9 @@ urlpatterns = [
         views.ShopifyListingStatus.as_view(),
         name="shopify_listing_status",
     ),
+    path(
+        "shopify_listing_active_status",
+        views.ShopifyListingActiveStatus.as_view(),
+        name="shopify_listing_active_status",
+    ),
 ]

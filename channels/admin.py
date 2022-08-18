@@ -25,6 +25,8 @@ class ShopifyListingAdmin(admin.ModelAdmin):
     """Model admin for the ShopifyListing model."""
 
     exclude_fields = ()
+    list_display = ("product_range", "product_id")
+    list_editable = ("product_id",)
     search_fields = ("product_range__name", "product_range__sku")
     autocomplete_fields = ("product_range",)
     list_select_related = ("product_range",)

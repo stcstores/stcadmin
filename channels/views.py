@@ -2,7 +2,7 @@
 
 
 from django.forms.models import inlineformset_factory
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -206,14 +206,12 @@ class ShopifyListingStatus(ChannelsUserMixin, TemplateView):
             update = listing.get_last_update()
         except models.shopify_models.ShopifyUpdate.DoesNotExist:
             context["ongoing"] = False
-            context["uploaded"] = False
-            context["active"] = False
-            return context
-        context["update"] = update
-        if update.completed_at is None:
-            context["ongoing"] = True
         else:
-            context["ongoing"] = False
+            context["update"] = update
+            if update.completed_at is None:
+                context["ongoing"] = True
+            else:
+                context["ongoing"] = False
         if listing.product_id is None:
             context["uploaded"] = False
             context["active"] = False
@@ -221,3 +219,15 @@ class ShopifyListingStatus(ChannelsUserMixin, TemplateView):
             context["uploaded"] = True
             context["active"] = listing.listing_is_active()
         return context
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class ShopifyListingActiveStatus(ChannelsUserMixin, View):
+    """View for getting the active status of a Shopify listing."""
+
+    def post(self, *args, **kwargs):
+        """Return the status of a listing as JSON."""
+        listing_id = self.request.POST["listing_id"]
+        listing = get_object_or_404(models.shopify_models.ShopifyListing, id=listing_id)
+        active_status = listing.listing_is_active()
+        return JsonResponse({"listing_id": listing.id, "active": active_status})
