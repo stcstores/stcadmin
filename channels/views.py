@@ -1,9 +1,11 @@
 """Views for the channels app."""
 
 
+from django.contrib import messages
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -231,3 +233,19 @@ class ShopifyListingActiveStatus(ChannelsUserMixin, View):
         listing = get_object_or_404(models.shopify_models.ShopifyListing, id=listing_id)
         active_status = listing.listing_is_active()
         return JsonResponse({"listing_id": listing.id, "active": active_status})
+
+
+class CreateShopifyTag(ChannelsUserMixin, CreateView):
+    """View for creating new Shopify tags."""
+
+    model = models.shopify_models.ShopifyTag
+    template_name = "channels/shopify/create_shopify_tag.html"
+    fields = ("name",)
+    success_url = reverse_lazy("channels:create_shopify_tag")
+
+    def get_success_url(self):
+        """Add message and return success URL."""
+        messages.add_message(
+            self.request, messages.SUCCESS, f'Created Shopify tag: "{self.object.name}"'
+        )
+        return super().get_success_url()
