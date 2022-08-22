@@ -46,8 +46,13 @@
 {% endif %}
 <div class="product_form">
   <form action="" method="POST" autocomplete="off">{% csrf_token %}
+    <a href="{% url 'channels:shopify_tag_list' %}" target="_blank">View list of Shopify tags</a>
     {% include "inventory/input_add_on_form.html" %}
     {{ formset.management_form }}
+    <p>
+      Add all <a href="{% url 'channels:shopify_tag_list' %}" target="_blank">tags<a></a> that make sense for the product.
+      Use comma to complete a tag. Use arrow keys and Enter to select a tag from the autocomplete list.
+    </p>
     <button type="submit" class="save_button">Save</button>
       <div class="variations">
         {% for variation_form in formset %}
@@ -59,6 +64,7 @@
         {% endfor %}
       </div>
       <button type="submit" class="save_button">Save</button>
+      {{ form.media.js }}
     </form>
   </div>
 

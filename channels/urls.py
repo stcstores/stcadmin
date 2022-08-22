@@ -42,9 +42,5 @@ urlpatterns = [
         views.ShopifyListingActiveStatus.as_view(),
         name="shopify_listing_active_status",
     ),
-    path(
-        "create_shopify_tag",
-        views.CreateShopifyTag.as_view(),
-        name="create_shopify_tag",
-    ),
+    path("shopify_tag_list", views.ShopifyTagList.as_view(), name="shopify_tag_list"),
 ]
