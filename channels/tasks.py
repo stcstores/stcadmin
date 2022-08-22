@@ -22,3 +22,22 @@ def create_shopify_product(listing_pk, update_pk):
         raise
     else:
         update.set_complete()
+
+
+@shared_task
+def update_shopify_product(listing_pk, update_pk):
+    """Update an existing listing on Shopify from a ShopifyListing instance.
+
+    Args:
+        listing_pk (int): ID of the listing instance.
+        update_pk (int): ID of the ShopifyUpdate record for this action.
+    """
+    listing = models.shopify_models.ShopifyListing.objects.get(pk=listing_pk)
+    update = models.shopify_models.ShopifyUpdate.objects.get(pk=update_pk)
+    try:
+        models.shopify_models.ShopifyListingManager.update_listing(listing)
+    except Exception:
+        update.set_error()
+        raise
+    else:
+        update.set_complete()
