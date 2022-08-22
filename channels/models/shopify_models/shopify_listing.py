@@ -183,18 +183,14 @@ class ShopifyListingManager:
                 ShopifyListing object to base the listing on.
         """
         product_range = shopify_listing_object.product_range
-        if shopify_listing_object.product_range.has_variations():
-            options = cls._get_options(shopify_listing_object)
-            variants = cls._get_variants(shopify_listing_object, options=options)
-        else:
-            options = None
-            variants = None
+        options = cls._get_options(shopify_listing_object)
+        variants = cls._get_variants(shopify_listing_object, options=options)
         shopify_product = products.create_product(
             title=shopify_listing_object.title,
             body_html=shopify_listing_object.description,
             variants=variants,
             options=options,
-            tags=",".join([tag.name for tag in shopify_listing_object.tags.all()]),
+            tags=[tag.name for tag in shopify_listing_object.tags.all()],
             vendor=product_range.products.variations().first().brand.name,
         )
         with transaction.atomic():
@@ -202,8 +198,8 @@ class ShopifyListingManager:
             shopify_listing_object.save()
             if len(shopify_product.variants) == 1:
                 variant = shopify_product.variants[0]
-                sku = shopify_listing_object.variations.first().product.sku
-                variant.sku = sku
+                variation = shopify_listing_object.variations.first()
+                cls._set_variant_details(variant=variant, variation=variation)
                 variant.save()
             for variant in shopify_product.variants:
                 shopify_variation_object = ShopifyVariation.objects.get(
@@ -217,13 +213,16 @@ class ShopifyListingManager:
 
     @staticmethod
     def _get_options(shopify_listing_object):
-        variation_matrix = (
-            shopify_listing_object.product_range.variation_option_values()
-        )
-        return products.create_options(variation_matrix)
+        if shopify_listing_object.variations.count == 1:
+            return None
+        else:
+            variation_matrix = (
+                shopify_listing_object.product_range.variation_option_values()
+            )
+            return products.create_options(variation_matrix)
 
     @staticmethod
-    def _get_variants(shopify_listing_object, options):
+    def _get_variants(shopify_listing_object, options=None):
         variants = []
         for variation_object in shopify_listing_object.variations.all():
             product = variation_object.product
@@ -242,6 +241,15 @@ class ShopifyListingManager:
                 )
             )
         return variants
+
+    @staticmethod
+    def _set_variant_details(variant, variation):
+        variant.sku = variation.product.sku
+        variant.barcode = variation.product.barcode
+        variant.grams = variation.product.weight_grams
+        variant.price = float(variation.price)
+        variant.weight_unit = "g"
+        variant.tracked = True
 
     @staticmethod
     def _set_customs_information(shopify_product):
