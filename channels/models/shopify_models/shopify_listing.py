@@ -74,11 +74,16 @@ class ShopifyListing(models.Model):
 
     def upload(self):
         """Create or update the a Shopify listing for this instance."""
-        if self.product_id is not None:
-            raise NotImplementedError()
         update = ShopifyUpdate.objects.start_upload_listing(self)
         try:
-            tasks.create_shopify_product.delay(listing_pk=self.pk, update_pk=update.pk)
+            if self.product_id is None:
+                tasks.create_shopify_product.delay(
+                    listing_pk=self.pk, update_pk=update.pk
+                )
+            else:
+                tasks.update_shopify_product.delay(
+                    listing_pk=self.pk, update_pk=update.pk
+                )
         except Exception:
             update.set_error()
             raise
@@ -209,7 +214,35 @@ class ShopifyListingManager:
                 shopify_variation_object.inventory_item_id = variant.inventory_item_id
                 shopify_variation_object.save()
         cls._set_customs_information(shopify_product)
-        cls._add_images_to_product(shopify_product, product_range)
+        cls._set_listing_images(shopify_product, product_range)
+
+    @classmethod
+    @session.shopify_api_session
+    def update_listing(cls, shopify_listing_object):
+        """Update a Shopify product listing.
+
+        Args:
+            shopify_listing_object (channels.models.shopify_models.ShopifyListing): The
+                ShopifyListing object representing the product to update.
+        """
+        shopify_product = cls._get_shopify_product(shopify_listing_object.product_id)
+        cls._set_product_details(
+            product=shopify_product, listing=shopify_listing_object
+        )
+        shopify_product.images = []
+        shopify_product.save()
+        for variant in shopify_product.variants:
+            variation = shopify_listing_object.variations.get(product__sku=variant.sku)
+            cls._set_variant_details(variant=variant, variation=variation)
+            variant.save()
+        cls._set_listing_images(
+            shopify_product=shopify_product,
+            product_range=shopify_listing_object.product_range,
+        )
+
+    @staticmethod
+    def _get_shopify_product(product_id):
+        return products.get_product_by_id(product_id=product_id)
 
     @staticmethod
     def _get_options(shopify_listing_object):
@@ -252,6 +285,13 @@ class ShopifyListingManager:
         variant.tracked = True
 
     @staticmethod
+    def _set_product_details(product, listing):
+        product.title = listing.title
+        product.body_html = listing.description
+        product.vendor = listing.product_range.products.variations().first().brand.name
+        product.tags = ",".join(listing.tags.values_list("name", flat=True))
+
+    @staticmethod
     def _set_customs_information(shopify_product):
         for variant in shopify_product.variants:
             product = BaseProduct.objects.get(sku=variant.sku)
@@ -262,7 +302,7 @@ class ShopifyListingManager:
             )
 
     @staticmethod
-    def _add_images_to_product(shopify_product, product_range):
+    def _set_listing_images(shopify_product, product_range):
         images = [
             image_link.image
             for image_link in ProductRangeImageLink.objects.filter(
