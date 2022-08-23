@@ -202,9 +202,21 @@ class OrderUpdater:
             row = order_rows[0]
             order = self.create_order(order_id, row)
             order.save()
+            order_skus = []
             for product_row in order_rows:
-                product_sale = self.create_product_sale(order, product_row)
-                product_sale.save()
+                if product_row[ProcessedOrdersExport.SKU] in order_skus:
+                    product_sale = ProductSale.objects.get(
+                        sku=product_row[ProcessedOrdersExport.SKU],
+                        order__order_id=order_id,
+                    )
+                    product_sale.quantity += int(
+                        product_row[ProcessedOrdersExport.QUANTITY]
+                    )
+                    product_sale.save()
+                else:
+                    product_sale = self.create_product_sale(order, product_row)
+                    product_sale.save()
+                    order_skus.append(product_sale.sku)
             try:
                 order._set_calculated_shipping_price()
             except Exception:
