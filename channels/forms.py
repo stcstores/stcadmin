@@ -26,14 +26,21 @@ class TagWidget(ModelSelect2TagWidget):
         default_attrs.update(base_attrs)
         return super().build_attrs(default_attrs, extra_attrs=extra_attrs)
 
+    def label_from_instance(self, obj):
+        """Return the string representation of the object."""
+        return obj.name
+
     def value_from_datadict(self, data, files, name):
         """Create missing values."""
         values = super().value_from_datadict(data, files, name)
         tags = []
         for value in values:
-            tag, _ = models.shopify_models.ShopifyTag.objects.get_or_create(
-                name=value.lower()
-            )
+            if value.isnumeric():
+                tag = models.shopify_models.ShopifyTag.objects.get(id=int(value))
+            else:
+                tag, _ = models.shopify_models.ShopifyTag.objects.get_or_create(
+                    name=value.lower()
+                )
             tags.append(tag)
         return tags
 
