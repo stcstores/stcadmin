@@ -59,6 +59,9 @@
 {% block content %}
 <h1>{{ listing.title }}</h1>
 <h3><span class="sku">{{ product_range.sku}}</span> - <span class="sku">{{ product_range.name }}</span></h3>
+<a href="{% url 'inventory:product_range' product_range.pk %}" target="_blank">
+    Go to product range
+</a>
 
 <div id="listing_status" class="listing_status">
     <div id="active_status"></div>
