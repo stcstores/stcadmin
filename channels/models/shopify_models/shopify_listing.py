@@ -322,12 +322,12 @@ class ShopifyListingManager:
         )
         for image in images:
             products.add_product_image(
-                product_id=shopify_product.id, image_url=image.image_file.url
+                product_id=shopify_product.id, image_url=image.square_image.url
             )
         for variant_image, variant_ids in variant_images.items():
             products.add_product_image(
                 product_id=shopify_product.id,
-                image_url=variant_image.image_file.url,
+                image_url=variant_image.square_image.url,
                 variant_ids=variant_ids,
             )
 
