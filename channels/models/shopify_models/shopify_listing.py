@@ -301,8 +301,8 @@ class ShopifyListingManager:
                 hs_code=product.hs_code,
             )
 
-    @staticmethod
-    def _set_listing_images(shopify_product, product_range):
+    @classmethod
+    def _set_listing_images(cls, shopify_product, product_range):
         images = [
             image_link.image
             for image_link in ProductRangeImageLink.objects.filter(
@@ -317,10 +317,9 @@ class ShopifyListingManager:
                 for image_link in ProductImageLink.objects.filter(product=product)
             ]
             images.extend(product_images)
-            primary_image = product.get_primary_image()
-            if primary_image is not None:
-                variant_images[primary_image].append(variant.id)
-        images = set([image for image in images if image not in variant_images.keys()])
+        images = cls.de_duplicate_images(
+            [image for image in images if image not in variant_images.keys()]
+        )
         for image in images:
             products.add_product_image(
                 product_id=shopify_product.id, image_url=image.square_image.url
@@ -331,3 +330,15 @@ class ShopifyListingManager:
                 image_url=variant_image.square_image.url,
                 variant_ids=variant_ids,
             )
+
+    @staticmethod
+    def de_duplicate_images(image_list):
+        """Return a list of images with duplicates removed."""
+        image_ids = []
+        de_duplicated_images = []
+        for image in image_list:
+            if image.id in image_ids:
+                continue
+            de_duplicated_images.append(image)
+            image_ids.append(image.id)
+        return de_duplicated_images
