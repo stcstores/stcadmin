@@ -3,46 +3,10 @@
 from django import forms
 from django.db.models import Count
 from django.forms.models import inlineformset_factory
-from django_select2.forms import ModelSelect2TagWidget
 
 from channels import models
 from inventory.forms.fields import Description
 from inventory.models import BaseProduct, ProductRange
-
-
-class TagWidget(ModelSelect2TagWidget):
-    """Widget for selecting tags for Shopify products."""
-
-    queryset = models.shopify_models.ShopifyTag.objects.all()
-    search_fields = ("name__icontains",)
-
-    def build_attrs(self, base_attrs, extra_attrs=None):
-        """Add select2's tag attributes."""
-        default_attrs = {
-            "data-minimum-input-length": 1,
-            "data-tags": "true",
-            "data-token-separators": '[","]',
-        }
-        default_attrs.update(base_attrs)
-        return super().build_attrs(default_attrs, extra_attrs=extra_attrs)
-
-    def label_from_instance(self, obj):
-        """Return the string representation of the object."""
-        return obj.name
-
-    def value_from_datadict(self, data, files, name):
-        """Create missing values."""
-        values = super().value_from_datadict(data, files, name)
-        tags = []
-        for value in values:
-            if value.isnumeric():
-                tag = models.shopify_models.ShopifyTag.objects.get(id=int(value))
-            else:
-                tag, _ = models.shopify_models.ShopifyTag.objects.get_or_create(
-                    name=value.lower()
-                )
-            tags.append(tag)
-        return tags
 
 
 class ShopifyListingForm(forms.ModelForm):
@@ -52,12 +16,21 @@ class ShopifyListingForm(forms.ModelForm):
         """Metaclass for ShopifyListingForm."""
 
         model = models.shopify_models.ShopifyListing
-        exclude = ("product_id",)
+        exclude = ("product_id", "tags")
         field_classes = {"description": Description}
         widgets = {
             "product_range": forms.HiddenInput(),
-            "tags": TagWidget(),
         }
+
+
+class ShopifyTagsForm(forms.ModelForm):
+    """Form for Shopify listing tags."""
+
+    class Meta:
+        """Metaclass for ShopifyTagsForm."""
+
+        model = models.shopify_models.ShopifyListing
+        fields = ("tags",)
 
 
 class ShopifyVariationForm(forms.ModelForm):

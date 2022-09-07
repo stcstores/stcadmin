@@ -4,6 +4,7 @@
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -102,7 +103,9 @@ class CreateShopifyListing(ChannelsUserMixin, CreateView):
 
     def get_success_url(self):
         """Redirect to the edit listing page for the listing."""
-        return self.object.get_absolute_url()
+        return reverse_lazy(
+            "channels:update_shopify_tags", kwargs={"pk": self.object.pk}
+        )
 
 
 class UpdateShopifyListing(ChannelsUserMixin, UpdateView):
@@ -151,6 +154,20 @@ class UpdateShopifyListing(ChannelsUserMixin, UpdateView):
             )(instance=self.object),
         )
         return context
+
+    def get_success_url(self):
+        """Redirect to the listing's listing page."""
+        return reverse_lazy(
+            "channels:update_shopify_tags", kwargs={"pk": self.object.pk}
+        )
+
+
+class UpdateShopifyTags(ChannelsUserMixin, UpdateView):
+    """View for setting Shopify tags."""
+
+    model = models.shopify_models.ShopifyListing
+    form_class = forms.ShopifyTagsForm
+    template_name = "channels/shopify/shopify_tags_form.html"
 
     def get_success_url(self):
         """Redirect to the listing's listing page."""

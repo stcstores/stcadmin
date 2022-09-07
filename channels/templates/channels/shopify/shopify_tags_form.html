@@ -11,25 +11,12 @@
 <link rel="stylesheet" href="{% static 'css/inventory.css' %}">
 <link rel="stylesheet" href="{% static 'css/product_page.css' %}">
 <script src="{% static 'scripts/new_product.js' %}"></script>
-{% include 'home/froala_head.html' %}
-<style>
-  .variations {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  
-  .variation {
-    padding: 0.75em;
-    margin: 0.25em;
-    border: 2px solid #888;
-    border-radius: 1em;
-    background: #fefefe;
-  }
 
-  select {
-    overflow-y: hidden;
-}
+<style>
+    
+    select {
+        overflow-y: hidden;
+    }
 
 </style>
 {{ form.media.css }}
@@ -37,29 +24,13 @@
 
 {% block content %}
 
-{% if form.instance.product_range %}
 <h1>Update Shopify Listing</h1>
 <h2>{{ form.instance.product_range.sku }} - {{ form.instance.product_range.name }}</h2>
-{% else %}
-<h1>New Shopify Listing</h1>
-<h2>{{ form.initial.product_range.sku }} - {{ form.initial.product_range.name }}</h2>
-{% endif %}
+
 <div class="product_form">
   <form action="" method="POST" autocomplete="off">{% csrf_token %}
     {% include "inventory/input_add_on_form.html" %}
-    {{ formset.management_form }}
-    <button type="submit" class="save_button">Save</button>
-      <div class="variations">
-        {% for variation_form in formset %}
-          {% if variation_form.instance.product %}
-          {% include 'channels/shopify/shopify_listing_variation_form.html' with product=variation_form.instance.product %}
-          {% else %}
-          {% include 'channels/shopify/shopify_listing_variation_form.html' with product=variation_form.initial.product %}
-          {% endif %}
-        {% endfor %}
-      </div>
       <button type="submit" class="save_button">Save</button>
-      {{ form.media.js }}
     </form>
   </div>
 
