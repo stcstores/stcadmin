@@ -316,7 +316,9 @@ class ShopifyListingManager:
                 image_link.image
                 for image_link in ProductImageLink.objects.filter(product=product)
             ]
-            images.extend(product_images)
+            if len(product_images) > 0:
+                variant_images[product_images[0]].append(variant.id)
+            images.extend(product_images[1:])
         images = cls.de_duplicate_images(
             [image for image in images if image not in variant_images.keys()]
         )
