@@ -74,7 +74,7 @@
     $(document).ready(function() {
         $(".listing_status.uploaded").each(function() {
             var listingID = $(this).data('listing_id');
-            getListingActiveStatus(listingID);
+            {% comment %} getListingActiveStatus(listingID); {% endcomment %}
         });
     });
 </script>

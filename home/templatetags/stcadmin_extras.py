@@ -44,3 +44,16 @@ def add_class(field, css_class):
     classes = field.field.widget.attrs.get("class", "")
     field.field.widget.attrs["class"] = " ".join((classes, css_class)).strip()
     return field
+
+
+@register.simple_tag(takes_context=True)
+def query_transform(context, **kwargs):
+    """
+    Update request parameters.
+
+    Used to preserve other GET parameters when creating a pagination link.
+    """
+    query = context["request"].GET.copy()
+    for key, value in kwargs.items():
+        query[key] = value
+    return query.urlencode()
