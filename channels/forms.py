@@ -118,3 +118,13 @@ class ProductSearchForm(forms.Form):
         elif listed == self.NOT_CREATED:
             ranges = ranges.filter(shopify_listing__isnull=True)
         return ranges
+
+
+class ShopifyTagForm(forms.ModelForm):
+    """Form for Shopify tags."""
+
+    class Meta:
+        """Metaclass for ShopifyTagForm."""
+
+        model = models.shopify_models.ShopifyTag
+        fields = ("name",)

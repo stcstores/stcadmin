@@ -35,6 +35,14 @@
         font-size: 1.25em;
         font-weight: bold;
     }
+
+    #create_new_tag {
+        width: 25%;
+        padding: 0.25em;
+        font-weight: bold;
+        margin: 2em;
+    }
+
 </style>
 {% endblock %}
 
@@ -42,6 +50,7 @@
 
 <h1>Update Shopify Listing Tags</h1>
 <h2>{{ listing.product_range.sku }} - {{ listing.product_range.name }}</h2>
+<button id="create_new_tag">Create New Tag</button>
 <div class="tag_list">
     {% for tag_letter, tags in tag_groups.items %}
     <span class="tag_letter_header">{{ tag_letter|upper }}</span>
@@ -55,7 +64,7 @@
     {% endfor %}
 </div>
 <button id="save_button">Save</button>
-<form action="" method="POST" hidden>{% csrf_token %}
+<form action="" method="POST" id="form" hidden>{% csrf_token %}
 {{ form }}
 </form>
 
@@ -82,7 +91,12 @@
         set_options();
         $(".tag").click(toggle_tag);
         $("#save_button").click(function() {
-            $("form").submit()
+            $("#form").submit();
+        });
+        $("#create_new_tag").click(function() {
+            var input = $("<input>").val("create_tag").prop("name", "create_tag");
+            $("#form").append($(input));
+            $("#form").submit();
         });
     });
 </script>

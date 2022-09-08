@@ -1,0 +1,32 @@
+{% extends 'channels/base.html' %}
+
+{% load static %}
+
+{% block additional_head %}{{ block.super }}
+<script>
+  /* beautify preserve:start */
+  {% include 'inventory/widgets/product_widgets.js' %}
+  /* beautify preserve:end */
+</script>
+<link rel="stylesheet" href="{% static 'css/inventory.css' %}">
+<link rel="stylesheet" href="{% static 'css/product_page.css' %}">
+<script src="{% static 'scripts/new_product.js' %}"></script>
+{% include 'home/froala_head.html' %}
+<style>
+    #form {
+        width: 50%;
+    }
+</style>
+{{ form.media.css }}
+{% endblock %}
+
+{% block content %}
+
+<h1>Create a Shopify Tag</h1>
+
+<form action="" method="POST" id="form">{% csrf_token %}
+    {% include "inventory/input_add_on_form.html" %}
+    <button type="submit" class="save_button">Save</button>
+</form>
+
+{% endblock content %}
