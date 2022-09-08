@@ -1,10 +1,12 @@
+{% load stcadmin_extras %}
+
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <button onclick="location.href='?page=1'">
+            <button onclick="location.href='?{% query_transform page=1 %}'">
                 <i class="fa-solid fa-angles-left"></i></i>
             </button>
-            <button onclick="location.href='?page={{ page_obj.previous_page_number }}'">
+            <button onclick="location.href='?{% query_transform page=page_obj.previous_page_number %}'">
                 <i class="fa-solid fa-angle-left"></i>
             </button>
         {% endif %}
@@ -14,10 +16,10 @@
         </span>
 
         {% if page_obj.has_next %}
-            <button onclick="location.href='?page={{ page_obj.next_page_number }}'">
+            <button onclick="location.href='?{% query_transform page=page_obj.next_page_number %}'">
                 <i class="fa-solid fa-angle-right"></i>
             </button>
-            <button onclick="location.href='?page={{ page_obj.paginator.num_pages }}'">
+            <button onclick="location.href='?{% query_transform page=page_obj.paginator.num_pages %}'">
                 <i class="fa-solid fa-angles-right"></i>
             </button>
         {% endif %}

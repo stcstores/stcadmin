@@ -1,9 +1,11 @@
 """Views for the channels app."""
 
+from collections import defaultdict
 
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -102,7 +104,9 @@ class CreateShopifyListing(ChannelsUserMixin, CreateView):
 
     def get_success_url(self):
         """Redirect to the edit listing page for the listing."""
-        return self.object.get_absolute_url()
+        return reverse_lazy(
+            "channels:update_shopify_tags", kwargs={"pk": self.object.pk}
+        )
 
 
 class UpdateShopifyListing(ChannelsUserMixin, UpdateView):
@@ -154,6 +158,36 @@ class UpdateShopifyListing(ChannelsUserMixin, UpdateView):
 
     def get_success_url(self):
         """Redirect to the listing's listing page."""
+        return reverse_lazy(
+            "channels:update_shopify_tags", kwargs={"pk": self.object.pk}
+        )
+
+
+class UpdateShopifyTags(ChannelsUserMixin, UpdateView):
+    """View for setting Shopify tags."""
+
+    model = models.shopify_models.ShopifyListing
+    form_class = forms.ShopifyTagsForm
+    template_name = "channels/shopify/shopify_tags_form.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["listing"] = self.object
+        context["listing_tags"] = context["listing"].tags.all()
+        all_tags = models.shopify_models.ShopifyTag.objects.all()
+        tag_groups = defaultdict(list)
+        for tag in all_tags:
+            tag_groups[tag.name[0]].append(tag)
+        context["tag_groups"] = dict(tag_groups)
+        return context
+
+    def get_success_url(self):
+        """Redirect to the listing's listing page."""
+        if "create_tag" in self.request.POST:
+            return reverse_lazy(
+                "channels:create_shopify_tag", kwargs={"listing_pk": self.object.id}
+            )
         return self.object.get_absolute_url()
 
 
@@ -243,3 +277,25 @@ class ShopifyTagList(ChannelsUserMixin, TemplateView):
         context = super().get_context_data(*args, **kwargs)
         context["tags"] = models.shopify_models.ShopifyTag.objects.all()
         return context
+
+
+class CreateShopifyTag(CreateView):
+    """View for creating new Shopify tags."""
+
+    model = models.shopify_models.ShopifyTag
+    form_class = forms.ShopifyTagForm
+    template_name = "channels/shopify/create_shopify_tag.html"
+
+    def get_success_url(self):
+        """Redirect back to the update tag page if applicable."""
+        listing_pk = self.kwargs.get("listing_pk")
+        if listing_pk is None:
+            return reverse_lazy("channels:create_shopify_tag")
+        else:
+            listing = get_object_or_404(
+                models.shopify_models.ShopifyListing, pk=listing_pk
+            )
+            listing.tags.add(self.object)
+            return reverse_lazy(
+                "channels:update_shopify_tags", kwargs={"pk": listing.pk}
+            )

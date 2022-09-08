@@ -1,0 +1,103 @@
+{% extends 'channels/base.html' %}
+
+{% load static %}
+
+{% block additional_head %}{{ block.super }}
+<style>
+    
+    .tag_letter {
+        margin-bottom: 1em;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .tag_letter_header {
+        font-weight: bold;
+        font-size: 1.5em;
+    }
+
+    .tag {
+        margin: 0.25em;
+        padding: 0.25em;
+        border: 1px solid black;
+        border-radius: 0.25em;
+        cursor: pointer;
+    }
+
+    .tag.selected {
+        background: #9af569;
+    }
+
+    #save_button {
+        width: 80%;
+        padding: 1em;
+        font-size: 1.25em;
+        font-weight: bold;
+    }
+
+    #create_new_tag {
+        width: 25%;
+        padding: 0.25em;
+        font-weight: bold;
+        margin: 2em;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<h1>Update Shopify Listing Tags</h1>
+<h2>{{ listing.product_range.sku }} - {{ listing.product_range.name }}</h2>
+<button id="create_new_tag">Create New Tag</button>
+<div class="tag_list">
+    {% for tag_letter, tags in tag_groups.items %}
+    <span class="tag_letter_header">{{ tag_letter|upper }}</span>
+    <div class="tag_letter">
+        {% for tag in tags %}
+        <div class="tag{% if tag in listing_tags %} selected{% endif %}" data-tag-id={{ tag.id }}>
+            {{ tag }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+<button id="save_button">Save</button>
+<form action="" method="POST" id="form" hidden>{% csrf_token %}
+{{ form }}
+</form>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    function set_options() {
+        $(".tag").each(function() {
+            var tag_id = $(this).data('tag-id');
+            var option = $("#{{ form.tags.auto_id }}").find('option[value="'+ tag_id +'"]');
+            option.prop("selected", $(this).hasClass("selected"));
+        });
+    }
+
+    function toggle_tag() {
+        $(this).toggleClass("selected");
+        var tag_id = $(this).data('tag-id');
+        var option = $("#{{ form.tags.auto_id }}").find('option[value="'+ tag_id +'"]');
+        option.prop("selected", $(this).hasClass("selected"));
+    }
+
+    $(document).ready(function() {
+        set_options();
+        $(".tag").click(toggle_tag);
+        $("#save_button").click(function() {
+            $("#form").submit();
+        });
+        $("#create_new_tag").click(function() {
+            var input = $("<input>").val("create_tag").prop("name", "create_tag");
+            $("#form").append($(input));
+            $("#form").submit();
+        });
+    });
+</script>
+{% endblock script %}
