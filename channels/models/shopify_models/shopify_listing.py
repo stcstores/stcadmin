@@ -30,6 +30,23 @@ class ShopifyTag(models.Model):
         verbose_name_plural = "Shopify Tags"
         ordering = ("name",)
 
+    @transaction.atomic
+    def replace(self, *tag_names):
+        """
+        Replace this tag with one or more other tags on all products.
+
+        This tag will be deleted.
+
+        Args:
+            tag_names (iterable[str]): The names of the tags to replace this tag with.
+                New tags will be created if necessary.
+        """
+        for name in tag_names:
+            tag, _ = ShopifyTag.objects.get_or_create(name=name)
+            for listing in ShopifyListing.objects.filter(tags=self):
+                listing.tags.add(tag)
+        self.delete()
+
     def __str__(self):
         return self.name
 
