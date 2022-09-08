@@ -1,5 +1,6 @@
 """Views for the channels app."""
 
+from collections import defaultdict
 
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -168,6 +169,18 @@ class UpdateShopifyTags(ChannelsUserMixin, UpdateView):
     model = models.shopify_models.ShopifyListing
     form_class = forms.ShopifyTagsForm
     template_name = "channels/shopify/shopify_tags_form.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["listing"] = self.object
+        context["listing_tags"] = context["listing"].tags.all()
+        all_tags = models.shopify_models.ShopifyTag.objects.all()
+        tag_groups = defaultdict(list)
+        for tag in all_tags:
+            tag_groups[tag.name[0]].append(tag)
+        context["tag_groups"] = dict(tag_groups)
+        return context
 
     def get_success_url(self):
         """Redirect to the listing's listing page."""

@@ -3,44 +3,87 @@
 {% load static %}
 
 {% block additional_head %}{{ block.super }}
-<script>
-  /* beautify preserve:start */
-  {% include 'inventory/widgets/product_widgets.js' %}
-  /* beautify preserve:end */
-</script>
-<link rel="stylesheet" href="{% static 'css/inventory.css' %}">
-<link rel="stylesheet" href="{% static 'css/product_page.css' %}">
-<script src="{% static 'scripts/new_product.js' %}"></script>
-
 <style>
     
-    select {
-        overflow-y: hidden;
+    .tag_letter {
+        margin-bottom: 1em;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
     }
 
+    .tag_letter_header {
+        font-weight: bold;
+        font-size: 1.5em;
+    }
+
+    .tag {
+        margin: 0.25em;
+        padding: 0.25em;
+        border: 1px solid black;
+        border-radius: 0.25em;
+        cursor: pointer;
+    }
+
+    .tag.selected {
+        background: #9af569;
+    }
+
+    #save_button {
+        width: 80%;
+        padding: 1em;
+        font-size: 1.25em;
+        font-weight: bold;
+    }
 </style>
-{{ form.media.css }}
 {% endblock %}
 
 {% block content %}
 
-<h1>Update Shopify Listing</h1>
-<h2>{{ form.instance.product_range.sku }} - {{ form.instance.product_range.name }}</h2>
-
-<div class="product_form">
-  <form action="" method="POST" autocomplete="off">{% csrf_token %}
-    {% include "inventory/input_add_on_form.html" %}
-      <button type="submit" class="save_button">Save</button>
-    </form>
-  </div>
+<h1>Update Shopify Listing Tags</h1>
+<h2>{{ listing.product_range.sku }} - {{ listing.product_range.name }}</h2>
+<div class="tag_list">
+    {% for tag_letter, tags in tag_groups.items %}
+    <span class="tag_letter_header">{{ tag_letter|upper }}</span>
+    <div class="tag_letter">
+        {% for tag in tags %}
+        <div class="tag{% if tag in listing_tags %} selected{% endif %}" data-tag-id={{ tag.id }}>
+            {{ tag }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+<button id="save_button">Save</button>
+<form action="" method="POST" hidden>{% csrf_token %}
+{{ form }}
+</form>
 
 {% endblock content %}
 
 {% block script %}
 <script>
-  $(document).ready(function() {
-    var select = document.getElementById('{{ form.tags.auto_id }}');
-    select.size = select.length;
-  });
+    function set_options() {
+        $(".tag").each(function() {
+            var tag_id = $(this).data('tag-id');
+            var option = $("#{{ form.tags.auto_id }}").find('option[value="'+ tag_id +'"]');
+            option.prop("selected", $(this).hasClass("selected"));
+        });
+    }
+
+    function toggle_tag() {
+        $(this).toggleClass("selected");
+        var tag_id = $(this).data('tag-id');
+        var option = $("#{{ form.tags.auto_id }}").find('option[value="'+ tag_id +'"]');
+        option.prop("selected", $(this).hasClass("selected"));
+    }
+
+    $(document).ready(function() {
+        set_options();
+        $(".tag").click(toggle_tag);
+        $("#save_button").click(function() {
+            $("form").submit()
+        });
+    });
 </script>
 {% endblock script %}
