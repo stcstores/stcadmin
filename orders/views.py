@@ -224,8 +224,14 @@ class ExportOrders(OrdersUserMixin, View):
         else:
             dispatched_at = "UNDISPATCHED"
         weight = order.total_weight()
-        channel_fee = order.channel_fee_paid()
-        purchase_price = order.purchase_price()
+        try:
+            channel_fee = self.format_currency(order.channel_fee_paid())
+        except Exception:
+            channel_fee = ""
+        try:
+            purchase_price = self.format_currency(order.purchase_price())
+        except Exception:
+            purchase_price = ""
         if order.shipping_service is None:
             shipping_service = None
         else:
@@ -235,15 +241,15 @@ class ExportOrders(OrdersUserMixin, View):
             order.recieved_at.strftime("%Y-%m-%d"),
             dispatched_at,
             order.country.name,
-            order.channel.name,
+            order.channel.name if order.channel else "",
             order.tracking_number,
             shipping_service,
-            order.currency.code,
+            order.currency.code if order.currency else "",
             self.format_currency(order.total_paid),
             self.format_currency(order.total_paid_GBP),
             weight,
-            self.format_currency(channel_fee),
-            self.format_currency(purchase_price),
+            channel_fee,
+            purchase_price,
         ]
 
     def format_currency(self, price):
