@@ -1481,7 +1481,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.10,<4.0"
-content-hash = "6b0174b0dbd0ba76fbfa797ae273429ba7ae085c1b16f845abfadc16b943ad3d"
+content-hash = "c7f91f6c2810a1ad0eb7d18db054cc5cd6ceef27f9de1af5bc60b3bbc701ae44"
 
 [metadata.files]
 alabaster = [
