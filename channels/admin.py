@@ -48,3 +48,11 @@ class ShopifyUpdateManager(admin.ModelAdmin):
 
     exclude_fields = ()
     list_display = ("listing", "operation_type", "created_at", "completed_at", "error")
+
+
+@admin.register(models.shopify_models.ShopifyCollection)
+class ShopifyCollectionAdmin(admin.ModelAdmin):
+    """Model admin for the ShopifyCollection model."""
+
+    exclude_fields = ()
+    list_display = ("name", "collection_id")

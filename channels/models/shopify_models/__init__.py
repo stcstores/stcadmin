@@ -2,6 +2,7 @@
 
 from .shopify_config import ShopifyConfig
 from .shopify_listing import (
+    ShopifyCollection,
     ShopifyListing,
     ShopifyListingManager,
     ShopifyTag,
@@ -12,6 +13,7 @@ from .shopify_manager import ShopifyManager
 
 __all__ = [
     "ShopifyConfig",
+    "ShopifyCollection",
     "ShopifyListing",
     "ShopifyListingManager",
     "ShopifyTag",

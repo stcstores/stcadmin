@@ -1214,7 +1214,7 @@ testing-integration = ["build[virtualenv]", "filelock (>=3.4.0)", "jaraco.envs (
 
 [[package]]
 name = "shopify-api-py"
-version = "0.0.4"
+version = "0.0.5"
 description = ""
 category = "main"
 optional = false
@@ -1229,7 +1229,7 @@ toml = ">=0.10.2"
 type = "git"
 url = "https://github.com/stcstores/shopify_api_py.git"
 reference = "main"
-resolved_reference = "30735687ba2522091cca3cb0d56ea81a0cd3299a"
+resolved_reference = "d2a46c017d7a84af94c4b6089fc847fe29f3aaad"
 
 [[package]]
 name = "ShopifyAPI"

@@ -51,6 +51,37 @@ class ShopifyTag(models.Model):
         return self.name
 
 
+class ShopifyCollectionManager(models.Manager):
+    """Manager for the ShopifyCollection model."""
+
+    def update_collections(self):
+        """Update the ShopifyCollection model objects to match Shopify."""
+        collections = ShopifyManager.get_collections()
+        for collection in collections:
+            self.update_or_create(collection_id=collection.id, name=collection.title)
+        collection_ids = (collection.id for collection in collections)
+        self.exclude(collection_id__in=collection_ids).delete()
+
+
+class ShopifyCollection(models.Model):
+    """Model for Shopify collections."""
+
+    name = models.CharField(max_length=255)
+    collection_id = models.PositiveBigIntegerField()
+
+    objects = ShopifyCollectionManager()
+
+    class Meta:
+        """Meta class for ShopifyCollection."""
+
+        verbose_name = "Shopify Collection"
+        verbose_name_plural = "Shopify Collections"
+        ordering = ("name",)
+
+    def __str__(self):
+        return self.name
+
+
 class ShopifyListing(models.Model):
     """Model for Shopify product listings."""
 
@@ -62,7 +93,12 @@ class ShopifyListing(models.Model):
     )
     title = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
-    tags = models.ManyToManyField(ShopifyTag, blank=True)
+    tags = models.ManyToManyField(
+        ShopifyTag, blank=True, related_name="shopify_listings"
+    )
+    collections = models.ManyToManyField(
+        ShopifyCollection, blank=True, related_name="shopify_listings"
+    )
     product_id = models.PositiveBigIntegerField(blank=True, null=True)
 
     class Meta:
@@ -232,6 +268,7 @@ class ShopifyListingManager:
                 shopify_variation_object.save()
         cls._set_customs_information(shopify_product)
         cls._set_listing_images(shopify_product, product_range)
+        cls._set_collections(shopify_product, shopify_listing_object)
 
     @classmethod
     @session.shopify_api_session
@@ -256,6 +293,7 @@ class ShopifyListingManager:
             shopify_product=shopify_product,
             product_range=shopify_listing_object.product_range,
         )
+        cls._update_collections(shopify_product, shopify_listing_object)
 
     @staticmethod
     def _get_shopify_product(product_id):
@@ -361,3 +399,20 @@ class ShopifyListingManager:
             de_duplicated_images.append(image)
             image_ids.append(image.id)
         return de_duplicated_images
+
+    @staticmethod
+    def _set_collections(shopify_product, shopify_listing_object):
+        for collection in shopify_listing_object.collections.all():
+            ShopifyManager.add_product_to_collection(
+                product_id=shopify_product.id, collection_id=collection.collection_id
+            )
+
+    @classmethod
+    def _update_collections(cls, shopify_product, shopify_listing_object):
+        ShopifyManager.remove_product_from_all_collections(
+            product_id=shopify_product.id
+        )
+        cls._set_collections(
+            shopify_product=shopify_product,
+            shopify_listing_object=shopify_listing_object,
+        )
