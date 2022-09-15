@@ -40,6 +40,51 @@ class ShopifyManager:
 
     @classmethod
     @shopify_api_py.shopify_api_session
+    def get_collections(cls):
+        """Return a list of all Shopify custom collections."""
+        return shopify_api_py.products.get_all_custom_collections()
+
+    @classmethod
+    @shopify_api_py.shopify_api_session
+    def add_product_to_collection(cls, product_id, collection_id):
+        """Add a Shopify product to a collection.
+
+        Args:
+            product_id (int): The ID of the product.
+            collection_id (int): The ID of the collection.
+        """
+        shopify_api_py.products.add_product_to_collection(
+            product_id=product_id, collection_id=collection_id
+        )
+
+    @classmethod
+    @shopify_api_py.shopify_api_session
+    def remove_product_from_collection(cls, product_id, collection_id):
+        """Remove a Shopify product from a collection.
+
+        Args:
+            product_id (int): The ID of the product.
+            collection_id (int): The ID of the collection.
+        """
+        shopify_api_py.products.remove_product_from_collection(
+            product_id=product_id, collection_id=collection_id
+        )
+
+    @classmethod
+    @shopify_api_py.shopify_api_session
+    def remove_product_from_all_collections(cls, product_id):
+        """Remove a Shopify product from all collections.
+
+        Args:
+            product_id (int): The ID of the product.
+            collection_id (int): The ID of the collection.
+        """
+        collects = shopify_api_py.products.shopify.Collect.find(product_id=product_id)
+        for collect in collects:
+            collect.destroy()
+
+    @classmethod
+    @shopify_api_py.shopify_api_session
     def _get_product(cls, product_id):
         return shopify_api_py.products.get_product_by_id(product_id=product_id)
 

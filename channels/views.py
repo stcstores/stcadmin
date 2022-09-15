@@ -157,9 +157,9 @@ class UpdateShopifyListing(ChannelsUserMixin, UpdateView):
         return context
 
     def get_success_url(self):
-        """Redirect to the listing's listing page."""
+        """Return redirect URL."""
         return reverse_lazy(
-            "channels:update_shopify_tags", kwargs={"pk": self.object.pk}
+            "channels:update_shopify_collections", kwargs={"pk": self.object.pk}
         )
 
 
@@ -183,12 +183,36 @@ class UpdateShopifyTags(ChannelsUserMixin, UpdateView):
         return context
 
     def get_success_url(self):
-        """Redirect to the listing's listing page."""
+        """Return redirect URL."""
         if "create_tag" in self.request.POST:
             return reverse_lazy(
                 "channels:create_shopify_tag", kwargs={"listing_pk": self.object.id}
             )
         return self.object.get_absolute_url()
+
+
+class UpdateShopifyCollections(ChannelsUserMixin, UpdateView):
+    """View for setting Shopify collections."""
+
+    model = models.shopify_models.ShopifyListing
+    form_class = forms.ShopifyCollectionsForm
+    template_name = "channels/shopify/shopify_collections_form.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["listing"] = self.object
+        context["listing_collections"] = context["listing"].collections.all()
+        context[
+            "all_collections"
+        ] = models.shopify_models.ShopifyCollection.objects.all()
+        return context
+
+    def get_success_url(self):
+        """Redirect to the listing's listing page."""
+        return reverse_lazy(
+            "channels:update_shopify_tags", kwargs={"pk": self.object.id}
+        )
 
 
 class ShopifyProducts(ChannelsUserMixin, ListView):

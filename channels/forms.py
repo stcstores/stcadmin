@@ -16,7 +16,7 @@ class ShopifyListingForm(forms.ModelForm):
         """Metaclass for ShopifyListingForm."""
 
         model = models.shopify_models.ShopifyListing
-        exclude = ("product_id", "tags")
+        exclude = ("product_id", "collections", "tags")
         field_classes = {"description": Description}
         widgets = {
             "product_range": forms.HiddenInput(),
@@ -31,6 +31,16 @@ class ShopifyTagsForm(forms.ModelForm):
 
         model = models.shopify_models.ShopifyListing
         fields = ("tags",)
+
+
+class ShopifyCollectionsForm(forms.ModelForm):
+    """Form for Shopify listing collections."""
+
+    class Meta:
+        """Metaclass for ShopifyCollectionsForm."""
+
+        model = models.shopify_models.ShopifyListing
+        fields = ("collections",)
 
 
 class ShopifyVariationForm(forms.ModelForm):

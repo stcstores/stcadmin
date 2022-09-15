@@ -28,6 +28,11 @@ urlpatterns = [
         name="update_shopify_listing",
     ),
     path(
+        "update_shopify_collections/<int:pk>/",
+        views.UpdateShopifyCollections.as_view(),
+        name="update_shopify_collections",
+    ),
+    path(
         "update_shopify_tags/<int:pk>/",
         views.UpdateShopifyTags.as_view(),
         name="update_shopify_tags",

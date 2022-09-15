@@ -1,0 +1,73 @@
+{% extends 'channels/base.html' %}
+
+{% load static %}
+
+{% block additional_head %}{{ block.super }}
+<style>
+    .collection {
+        margin: 0.25em;
+        padding: 0.25em;
+        border: 1px solid black;
+        border-radius: 0.25em;
+        cursor: pointer;
+    }
+
+    .collection.selected {
+        background: #9af569;
+    }
+
+    #save_button {
+        width: 80%;
+        padding: 1em;
+        font-size: 1.25em;
+        font-weight: bold;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<h1>Update Shopify Listing Collections</h1>
+<h2>{{ listing.product_range.sku }} - {{ listing.product_range.name }}</h2>
+
+<div class="collection_list">
+    {% for collection in all_collections %}
+    <div class="collection{% if collection in listing_collections %} selected{% endif %}" data-collection-id={{ collection.id }}>
+        {{ collection }}
+    </div>
+    {% endfor %}
+</div>
+<button id="save_button">Save</button>
+<form action="" method="POST" id="form" hidden>{% csrf_token %}
+{{ form }}
+</form>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    function set_options() {
+        $(".collection").each(function() {
+            var collection_id = $(this).data('collection-id');
+            var option = $("#{{ form.collections.auto_id }}").find('option[value="'+ collection_id +'"]');
+            option.prop("selected", $(this).hasClass("selected"));
+        });
+    }
+
+    function toggle_collection() {
+        $(this).toggleClass("selected");
+        var collection_id = $(this).data('collection-id');
+        var option = $("#{{ form.collections.auto_id }}").find('option[value="'+ collection_id +'"]');
+        option.prop("selected", $(this).hasClass("selected"));
+    }
+
+    $(document).ready(function() {
+        set_options();
+        $(".collection").click(toggle_collection);
+        $("#save_button").click(function() {
+            $("#form").submit();
+        });
+    });
+</script>
+{% endblock script %}
