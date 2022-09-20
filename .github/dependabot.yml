@@ -9,3 +9,6 @@ updates:
     assignees:
       - lukeshiner
     versioning-strategy: auto
+    ignore:
+      - dependency-name: boto3
+        update-types: ["version-update:semver-patch"]
