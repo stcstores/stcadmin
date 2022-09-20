@@ -92,6 +92,8 @@ def test_export_contains_order(order, valid_get_response, export_rows):
         str(order.total_weight()),
         f"{order.channel_fee_paid()/100:.2f}",
         f"{order.purchase_price()/100:.2f}",
+        f"{order.profit()/100:.2f}",
+        str(order.profit_percentage()),
     ]
 
 
@@ -112,6 +114,8 @@ def test_export_undispatched_order(undispatched_order, valid_get_response, expor
         str(undispatched_order.total_weight()),
         f"{undispatched_order.channel_fee_paid()/100:.2f}",
         f"{undispatched_order.purchase_price()/100:.2f}",
+        f"{undispatched_order.profit()/100:.2f}",
+        str(undispatched_order.profit_percentage()),
     ]
 
 
