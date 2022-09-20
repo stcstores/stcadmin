@@ -1,4 +1,6 @@
 """The Order model."""
+import csv
+import io
 from datetime import datetime, timedelta
 
 from django.db import models
@@ -161,3 +163,117 @@ class Order(models.Model):
         """Update calculated shipping_price with current price calculatrion."""
         self.calculated_shipping_price = self.calculate_shipping_price()
         self.save()
+
+
+class OrderExporter:
+    """Export order details."""
+
+    ORDER_ID = "order_id"
+    DATE_RECIEVED = "date_recieved"
+    DATE_DISPATCHED = "date_dispatched"
+    COUNTRY = "country"
+    CHANNEL = "channel"
+    TRACKING_NUMBER = "tracking_number"
+    SHIPPING_SERVICE = "shipping_service"
+    CURRENCY = "currency"
+    TOTAL_PAID = "total_paid"
+    TOTAL_PAID_GBP = "total_paid_GBP"
+    WEIGHT = "weight"
+    CHANNEL_FEE = "channel_fee"
+    PURCHASE_PRICE = "purchase_price"
+    PROFIT = "profit"
+    PROFIT_PERCENTAGE = "Profit Percentage"
+
+    header = [
+        ORDER_ID,
+        DATE_RECIEVED,
+        DATE_DISPATCHED,
+        COUNTRY,
+        CHANNEL,
+        TRACKING_NUMBER,
+        SHIPPING_SERVICE,
+        CURRENCY,
+        TOTAL_PAID,
+        TOTAL_PAID_GBP,
+        WEIGHT,
+        CHANNEL_FEE,
+        PURCHASE_PRICE,
+        PROFIT,
+        PROFIT_PERCENTAGE,
+    ]
+
+    def make_row(self, order):
+        """Return a row of order data."""
+        return {
+            self.ORDER_ID: order.order_id,
+            self.DATE_RECIEVED: self.format_date(order.recieved_at),
+            self.DATE_DISPATCHED: self._order_dispatched_value(order),
+            self.COUNTRY: order.country.name,
+            self.CHANNEL: order.channel.name if order.channel else None,
+            self.TRACKING_NUMBER: order.tracking_number,
+            self.SHIPPING_SERVICE: self._shipping_service_value(order),
+            self.CURRENCY: order.currency.code if order.currency else None,
+            self.TOTAL_PAID: self.format_currency(order.total_paid),
+            self.TOTAL_PAID_GBP: self.format_currency(order.total_paid_GBP),
+            self.WEIGHT: order.total_weight(),
+            self.CHANNEL_FEE: self._channel_fee_value(order),
+            self.PURCHASE_PRICE: self._purchase_price_value(order),
+            self.PROFIT: self._profit_value(order),
+            self.PROFIT_PERCENTAGE: self._profit_percentage_value(order),
+        }
+
+    def _order_dispatched_value(self, order):
+        if order.is_dispatched():
+            return order.dispatched_at.strftime("%Y-%m-%d")
+        else:
+            return "UNDISPATCHED"
+
+    def _channel_fee_value(self, order):
+        try:
+            return self.format_currency(order.channel_fee_paid())
+        except Exception:
+            return ""
+
+    def _purchase_price_value(self, order):
+        try:
+            return self.format_currency(order.purchase_price())
+        except Exception:
+            return ""
+
+    def _shipping_service_value(self, order):
+        if order.shipping_service is None:
+            return None
+        else:
+            return order.shipping_service.name
+
+    def _profit_value(self, order):
+        if order.calculated_shipping_price is None:
+            return None
+        return self.format_currency(order.profit())
+
+    def _profit_percentage_value(self, order):
+        if order.calculated_shipping_price is None:
+            return None
+        return order.profit_percentage()
+
+    @staticmethod
+    def format_date(date):
+        """Return a date formatted as a string."""
+        return date.strftime("%Y-%m-%d")
+
+    def format_currency(self, price):
+        """Return a price as a formatted string."""
+        if price is None:
+            return None
+        return f"{price / 100:.2f}"
+
+    def make_csv(self, orders):
+        """Return the export as a CSV string."""
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(self.header)
+        for order in orders:
+            row_data = self.make_row(order)
+            row = [row_data.get(col, "") for col in self.header]
+            writer.writerow(row)
+        return output.getvalue()

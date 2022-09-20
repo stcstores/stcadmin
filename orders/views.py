@@ -180,83 +180,17 @@ class ExportOrders(OrdersUserMixin, View):
     """Create a .csv export of order data."""
 
     form_class = forms.OrderListFilter
-    header = [
-        "order_id",
-        "date_recieved",
-        "date_dispatched",
-        "country",
-        "channel",
-        "tracking_number",
-        "shipping_service",
-        "currency",
-        "total_paid",
-        "total_paid_GBP",
-        "weight",
-        "channel_fee",
-        "purchase_price",
-    ]
 
     def get(self, *args, **kwargs):
         """Return an HttpResponse contaning the export or a 404 status."""
         form = self.form_class(self.request.GET)
         if form.is_valid():
-            contents = self.make_csv(form.get_queryset())
+            contents = models.order.OrderExporter().make_csv(form.get_queryset())
             response = HttpResponse(contents, content_type="text/csv")
             filename = f"order_export_{timezone.now().strftime('%Y-%m-%d')}.csv"
             response["Content-Disposition"] = f"attachment; filename={filename}"
             return response
         return HttpResponseNotFound()
-
-    def make_csv(self, orders):
-        """Return the export as a CSV string."""
-        output = io.StringIO()
-        writer = csv.writer(output)
-        writer.writerow(self.header)
-        for order in orders:
-            row = self.make_row(order)
-            writer.writerow(row)
-        return output.getvalue()
-
-    def make_row(self, order):
-        """Return a row of order data."""
-        if order.is_dispatched():
-            dispatched_at = order.dispatched_at.strftime("%Y-%m-%d")
-        else:
-            dispatched_at = "UNDISPATCHED"
-        weight = order.total_weight()
-        try:
-            channel_fee = self.format_currency(order.channel_fee_paid())
-        except Exception:
-            channel_fee = ""
-        try:
-            purchase_price = self.format_currency(order.purchase_price())
-        except Exception:
-            purchase_price = ""
-        if order.shipping_service is None:
-            shipping_service = None
-        else:
-            shipping_service = order.shipping_service.name
-        return [
-            order.order_id,
-            order.recieved_at.strftime("%Y-%m-%d"),
-            dispatched_at,
-            order.country.name,
-            order.channel.name if order.channel else "",
-            order.tracking_number,
-            shipping_service,
-            order.currency.code if order.currency else "",
-            self.format_currency(order.total_paid),
-            self.format_currency(order.total_paid_GBP),
-            weight,
-            channel_fee,
-            purchase_price,
-        ]
-
-    def format_currency(self, price):
-        """Return a price as a formatted string."""
-        if price is None:
-            return None
-        return f"{price / 100:.2f}"
 
 
 class OrderProfit(OrdersUserMixin, TemplateView):
