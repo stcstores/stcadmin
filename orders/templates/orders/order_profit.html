@@ -3,86 +3,97 @@
 {% load orders_extras %}
 
 
-{% block page_title %}Profit Loss Order {{ order.order_ID }}{% endblock %}
+{% block page_title %}Profit Loss Order {{ order.order_id }}{% endblock %}
+
+{% block additional_head %}
+<style>
+    .all_details{
+        display: flex;
+        flex-direction: row;
+        margin: 2em;
+    }
+</style>
+{% endblock additional_head %}
 
 {% block content %}
-<h1>Order: {{ order.order_ID }} - {{ order.tracking_number }}</h1>
+<h1>Order: {{ order.order_id }} - {{ order.tracking_number }}</h1>
 {% if order.error %}
 <h1 class="error">An error occured processing the details of this order</h1>
 {% endif %}
-<table>
-    <tr>
-        <th>Department</th>
-        <td>{{ order.department }}</td>
-    </tr>
-    <tr>
-        <th>Destination</th>
-        <td>{{ order.country.name }}</td>
-    </tr>
-    <tr>
-        <th>Recieved At</th>
-        <td class="date">{{ order.recieved_at|date:'D jS N h:iA' }}</td>
-    </tr>
-    <tr>
-        <th>Dispatched At</th>
-        <td class="date">{{ order.dispatched_at|date:'D jS N h:iA' }}</td>
-    </tr>
-    <tr>
-        <th>Number of Items</th>
-        <td>{{ order.item_count }}</td>
-    </tr>
-    <tr>
-        <th>Weight (g)</th>
-        <td>{{ order.total_weight }}</td>
-    </tr>
-    <tr>
-        <th>Shipping Service</th>
-        <td>{{ order.shipping_rule.shipping_service }}</td>
-    </tr>
-    <tr>
-        <th>Price</th>
-        <td>{% format_price order.total_paid_GBP %}</td>
-    </tr>
-    <tr>
-        <th>Purchase Price</th>
-        <td>{% format_price order.purchase_price %}</td>
-    </tr>
-    <tr>
-        <th>Postage Price</th>
-        <td>{% format_price order.calculated_shipping_price %}</td>
-    </tr>
-    <tr>
-        <th>VAT</th>
-        <td>{% format_price order.tax %}</td>
-    </tr>
-    <tr>
-        <th>Channel Fee</th>
-        <td>{% format_price order.channel_fee_paid %}</td>
-    </tr>
-    <tr>
-        <th>Profit</th>
-        <td>{% format_price order.profit %}</td>
-    </tr>
-    <tr>
-        <th>Profit Percentage</th>
-        <td>{% if order.profit_percentage %}{{ order.profit_percentage }}%{% endif %}</td>
-    </tr>
-</table>
 
-<h3>Products</h3>
-<table>
-    <tr>
-        <th>SKU</th>
-        <th>Name</th>
-        <th>Quantity</th>
-    </tr>
-    {% for product in products %}
-    <tr>
-        <td>{{ product.sku }}</td>
-        <td>{{ product.name }}</td>
-        <td>{{ product.quantity }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="all_details">
+    <div class="order_details">
+        <table>
+            <tr>
+                <th>Destination</th>
+                <td>{{ order.country.name }}</td>
+            </tr>
+            <tr>
+                <th>Recieved At</th>
+                <td class="date">{{ order.recieved_at|date:'D jS N h:iA' }}</td>
+            </tr>
+            <tr>
+                <th>Dispatched At</th>
+                <td class="date">{{ order.dispatched_at|date:'D jS N h:iA' }}</td>
+            </tr>
+            <tr>
+                <th>Number of Items</th>
+                <td>{{ order.item_count }}</td>
+            </tr>
+            <tr>
+                <th>Weight (g)</th>
+                <td>{{ order.total_weight }}</td>
+            </tr>
+            <tr>
+                <th>Shipping Service</th>
+                <td>{{ order.shipping_service }}</td>
+            </tr>
+            <tr>
+                <th>Price</th>
+                <td>{% format_price order.total_paid_GBP %}</td>
+            </tr>
+            <tr>
+                <th>Purchase Price</th>
+                <td>{% format_price order.purchase_price %}</td>
+            </tr>
+            <tr>
+                <th>Postage Price</th>
+                <td>{% format_price order.calculated_shipping_price %}</td>
+            </tr>
+            <tr>
+                <th>Tax</th>
+                <td>{% format_price order.tax %}</td>
+            </tr>
+            <tr>
+                <th>Channel Fee</th>
+                <td>{% format_price order.channel_fee_paid %}</td>
+            </tr>
+            <tr>
+                <th>Profit</th>
+                <td>{% format_price order.profit %}</td>
+            </tr>
+            <tr>
+                <th>Profit Percentage</th>
+                <td>{% if order.profit_percentage %}{{ order.profit_percentage }}%{% endif %}</td>
+            </tr>
+        </table>
+    </div>
 
+    <div class="product_details">
+        <table>
+            <tr>
+                <th>SKU</th>
+                <th>Name</th>
+                <th>Quantity</th>
+            </tr>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.sku }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.quantity }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
 {% endblock %}
