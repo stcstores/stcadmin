@@ -204,6 +204,8 @@ class OrderUpdater:
             order.save()
             order_skus = []
             for product_row in order_rows:
+                if product_row[ProcessedOrdersExport.COMPOSITE_PARENT_SKU]:
+                    continue
                 if product_row[ProcessedOrdersExport.SKU] in order_skus:
                     product_sale = ProductSale.objects.get(
                         sku=product_row[ProcessedOrdersExport.SKU],
