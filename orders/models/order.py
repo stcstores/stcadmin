@@ -121,10 +121,9 @@ class Order(models.Model):
 
     def channel_fee_paid(self):
         """Return the channel fee for the order."""
-        channel_fees = [sale._channel_fee_paid() for sale in self.productsale_set.all()]
-        if None in channel_fees:
+        if self.channel is None:
             return None
-        return sum(channel_fees)
+        return int(float(self.total_paid_GBP / 100) * self.channel.channel_fee)
 
     def purchase_price(self):
         """Return the combined purchase price of the order."""

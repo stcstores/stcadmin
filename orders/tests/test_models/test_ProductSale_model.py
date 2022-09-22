@@ -238,12 +238,6 @@ def test_total_weight(weight, quantity, product_sale_factory):
 
 
 @pytest.mark.django_db
-def test_channel_fee_paid(product_sale_factory):
-    sale = product_sale_factory.create(item_price=200, order__channel__channel_fee=25)
-    assert sale._channel_fee_paid() == 50
-
-
-@pytest.mark.django_db
 @pytest.mark.parametrize(
     "purchase_price,quantity,expected", [(550, 1, 550), (550, 2, 1100), (720, 3, 2160)]
 )
