@@ -24,6 +24,8 @@ def format_price(price):
 @register.simple_tag
 def format_percentage(percentage):
     """Return a coloured percentage value."""
+    if percentage is None:
+        return ""
     if percentage <= 0:
         html_class = "error"
     elif percentage <= 10:

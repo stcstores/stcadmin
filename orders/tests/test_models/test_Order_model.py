@@ -380,10 +380,8 @@ def order_without_shipping_price(country, order_factory):
 
 
 @pytest.mark.django_db
-def test_channel_fee_paid(order_factory, product_sale_factory):
-    order = order_factory.create(channel__channel_fee=25)
-    product_sale_factory.create(order=order, item_price=1000, quantity=1)
-    product_sale_factory.create(order=order, item_price=1000, quantity=2)
+def test_channel_fee_paid(order_factory):
+    order = order_factory.create(channel__channel_fee=25, total_paid_GBP=2000)
     assert order.channel_fee_paid() == 500
 
 

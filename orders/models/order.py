@@ -121,7 +121,9 @@ class Order(models.Model):
 
     def channel_fee_paid(self):
         """Return the channel fee for the order."""
-        return sum((sale._channel_fee_paid() for sale in self.productsale_set.all()))
+        if self.channel is None:
+            return None
+        return int(float(self.total_paid_GBP / 100) * self.channel.channel_fee)
 
     def purchase_price(self):
         """Return the combined purchase price of the order."""
@@ -135,22 +137,26 @@ class Order(models.Model):
 
     def profit(self):
         """Return the profit made on the order."""
-        expenses = sum(
-            (
-                self.tax,
-                self.channel_fee_paid(),
-                self.purchase_price(),
-                self.calculated_shipping_price,
-            )
-        )
-        return self.total_paid_GBP - expenses
+        expenses = [
+            self.tax,
+            self.channel_fee_paid(),
+            self.purchase_price(),
+            self.calculated_shipping_price,
+        ]
+        if None in expenses:
+            return None
+        total_expenses = sum(expenses)
+        return self.total_paid_GBP - total_expenses
 
     def profit_percentage(self):
         """Return the percentage of the amount paid for the order that is profit."""
         try:
-            return int((self.profit() / self.total_paid_GBP) * 100)
+            order_profit = self.profit()
+            if order_profit is None or self.total_paid_GBP is None:
+                return None
+            return int((order_profit / self.total_paid_GBP) * 100)
         except ZeroDivisionError:
-            return 0
+            return None
 
     def calculate_shipping_price(self):
         """Return the shipping price for this order based on current shipping prices."""
