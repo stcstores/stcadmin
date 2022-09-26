@@ -12,8 +12,21 @@ class CurrencyAdmin(admin.ModelAdmin):
 
     fields = ("name", "code", "exchange_rate", "symbol")
     list_display = ("name", "code", "exchange_rate", "symbol")
-    list_editable = ("code", "exchange_rate", "symbol")
+    list_editable = ("code", "symbol")
     search_fields = ("name", "symbol", "code")
+
+
+@admin.register(models.ExchangeRate)
+class ExchangeRateAdmin(admin.ModelAdmin):
+    """Model admin for the ExchagneRate model."""
+
+    exclude = ()
+    list_display = ("date", "currency", "rate")
+    list_filter = ("currency",)
+    search_fields = ("currency__name", "currency__code")
+    autocomplete_fields = ("currency",)
+    list_select_related = ("currency",)
+    date_hierarchy = "date"
 
 
 @admin.register(models.Region)
