@@ -1,3 +1,4 @@
+import datetime as dt
 from decimal import Decimal
 from unittest.mock import MagicMock, patch
 
@@ -22,16 +23,20 @@ def exchange_rate():
 
 
 @pytest.fixture
-def new_currency(name, code, exchange_rate):
-    currency = models.Currency(name=name, code=code, exchange_rate=exchange_rate)
+def new_currency(name, code):
+    currency = models.Currency(name=name, code=code)
     currency.save()
     return currency
 
 
 @pytest.fixture
-def mock_rates(currency_factory):
-    currencies = [currency_factory.create(exchange_rate=3.45) for _ in range(5)]
-    return {currency.code: 1.965 for currency in currencies}
+def mock_rates(currency_factory, exchange_rate_factory):
+    rates = {}
+    for _ in range(5):
+        currency = currency_factory.create()
+        exchange_rate_factory.create(currency=currency, rate=3.45)
+        rates[currency.code] = 1.959
+    return rates
 
 
 @pytest.fixture
@@ -59,11 +64,6 @@ def test_currency_code_is_set(code, new_currency):
 
 
 @pytest.mark.django_db
-def test_currency_exchange_rate_is_set(exchange_rate, new_currency):
-    assert new_currency.exchange_rate == Decimal(exchange_rate)
-
-
-@pytest.mark.django_db
 def test_update_requests_exchange_rates(mock_exchange_rate_request):
     models.Currency.objects.update_rates()
     mock_exchange_rate_request.assert_called_once_with(
@@ -83,11 +83,40 @@ def test_exchange_rate_update_request_raises_for_status(
 def test_update(mock_exchange_rate_request, mock_rates):
     models.Currency.objects.update_rates()
     for currency in models.Currency.objects.all():
+        rate = models.ExchangeRate.objects.get(
+            currency=currency, date=dt.date.today()
+        ).rate
         expected = str(round(1 / mock_rates[currency.code], 3))
-        assert currency.exchange_rate == Decimal(expected)
+        assert rate == Decimal(expected)
 
 
 @pytest.mark.django_db
 def test_str_method(currency_factory):
     currency = currency_factory.create()
     assert str(currency) == currency.name
+
+
+@pytest.mark.django_db
+def test_exchange_rate_method(currency_factory, exchange_rate_factory):
+    date = dt.date(2022, 3, 6)
+    currency = currency_factory.create()
+    rates = [
+        exchange_rate_factory.create(currency=currency, date=date),
+        exchange_rate_factory.create(
+            currency=currency, date=date + dt.timedelta(days=1)
+        ),
+    ]
+    assert currency.exchange_rate() == rates[1].rate
+
+
+@pytest.mark.django_db
+def test_exchange_rate_method_with_date(currency_factory, exchange_rate_factory):
+    date = dt.date(2022, 3, 6)
+    currency = currency_factory.create()
+    rates = [
+        exchange_rate_factory.create(currency=currency, date=date),
+        exchange_rate_factory.create(
+            currency=currency, date=date + dt.timedelta(days=1)
+        ),
+    ]
+    assert currency.exchange_rate(date=date) == rates[0].rate

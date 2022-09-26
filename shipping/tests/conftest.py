@@ -3,6 +3,7 @@ import pytest_factoryboy
 from shipping import factories
 
 pytest_factoryboy.register(factories.CurrencyFactory)
+pytest_factoryboy.register(factories.ExchangeRateFactory)
 pytest_factoryboy.register(factories.RegionFactory)
 pytest_factoryboy.register(factories.CountryFactory)
 pytest_factoryboy.register(factories.ProviderFactory)

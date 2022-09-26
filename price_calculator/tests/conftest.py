@@ -6,11 +6,13 @@ from inventory.tests.conftest import ProductRangeFactory
 from price_calculator import models
 from shipping.factories import (
     CountryFactory,
+    ExchangeRateFactory,
     ShippingPriceFactory,
     ShippingServiceFactory,
 )
 
 pytest_factoryboy.register(CountryFactory)
+pytest_factoryboy.register(ExchangeRateFactory)
 pytest_factoryboy.register(ShippingServiceFactory)
 pytest_factoryboy.register(ShippingPriceFactory)
 pytest_factoryboy.register(ProductRangeFactory)
