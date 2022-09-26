@@ -70,7 +70,7 @@ class GetShippingPrice(InventoryUserMixin, View):
             price = int(self.request.POST["price"])
         except ValueError:
             return HttpResponse(status=500)
-        self.exchange_rate = float(self.country.currency.exchange_rate)
+        self.exchange_rate = float(self.country.currency.exchange_rate())
         (
             shipping_method,
             shipping_price,

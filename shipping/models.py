@@ -1,5 +1,6 @@
 """Shipping Models."""
 
+import datetime as dt
 import math
 
 import requests
@@ -14,9 +15,10 @@ class CurrencyManager(models.Manager):
         response = requests.get(Currency.EXCHANGE_RATE_URL)
         response.raise_for_status()
         rates = response.json()["rates"]
+        date = dt.date.today()
         for currency in self.all():
-            currency.exchange_rate = 1 / rates[currency.code]
-            currency.save()
+            rate = 1 / rates[currency.code]
+            ExchangeRate(currency=currency, date=date, rate=rate).save()
 
 
 class Currency(models.Model):
@@ -26,7 +28,6 @@ class Currency(models.Model):
 
     name = models.CharField(max_length=255, unique=True)
     code = models.CharField(max_length=5, unique=True)
-    exchange_rate = models.DecimalField(max_digits=6, decimal_places=3)
     symbol = models.CharField(max_length=5, default="$")
 
     objects = CurrencyManager()
@@ -39,6 +40,41 @@ class Currency(models.Model):
 
     def __str__(self):
         return self.name
+
+    def exchange_rate(self, date=None):
+        """Return the exchange rate for this currency.
+
+        Args:
+            date (datetime.date, optional): The date to return the exchange rate for.
+                If None it will return the latest exchange rate. Defaults to None.
+
+        Returns:
+            Decimal: The exchange rate between this currency and GBP.
+        """
+        if date is None:
+            exchange_rate = self.exchange_rates.latest()
+        else:
+            exchange_rate = self.exchange_rates.get(date=date)
+        return exchange_rate.rate
+
+
+class ExchangeRate(models.Model):
+    """Model for currency exchange rates."""
+
+    currency = models.ForeignKey(
+        Currency, on_delete=models.PROTECT, related_name="exchange_rates"
+    )
+    date = models.DateField()
+    rate = models.DecimalField(max_digits=6, decimal_places=3)
+
+    class Meta:
+        """Meta class for ExchageRate."""
+
+        verbose_name = "Exchange Rate"
+        verbose_name_plural = "Exchange Rates"
+        ordering = ("-date",)
+        get_latest_by = "date"
+        unique_together = ("currency", "date")
 
 
 class Region(models.Model):

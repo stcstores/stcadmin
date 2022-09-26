@@ -1,7 +1,5 @@
 """Model factories for the shipping app."""
 
-from decimal import Decimal
-
 import factory
 
 from shipping import models
@@ -17,8 +15,20 @@ class CurrencyFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"Test Currency {n}")
     code = factory.Sequence(lambda n: f"{n}")
-    exchange_rate = Decimal(1.45)
     symbol = "$"
+
+
+class ExchangeRateFactory(factory.django.DjangoModelFactory):
+    """Factory for the shipping.ExchangeRate model."""
+
+    class Meta:
+        """Metaclass for shipping.factories.ExchangeRateFactory."""
+
+        model = models.ExchangeRate
+
+    currency = factory.SubFactory(CurrencyFactory)
+    date = factory.Faker("date")
+    rate = factory.Faker("pydecimal", left_digits=1, right_digits=3)
 
 
 class RegionFactory(factory.django.DjangoModelFactory):

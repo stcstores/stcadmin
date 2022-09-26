@@ -9,13 +9,17 @@ def url():
 
 
 @pytest.fixture
-def country(country_factory):
-    return country_factory.create()
+def country(country_factory, exchange_rate_factory):
+    country = country_factory.create()
+    exchange_rate_factory.create(currency=country.currency)
+    return country
 
 
 @pytest.fixture
-def country_uk(country_factory):
-    return country_factory.create(name="United Kindom", region__name="UK")
+def country_uk(country_factory, exchange_rate_factory):
+    country = country_factory.create(name="United Kindom", region__name="UK")
+    exchange_rate_factory.create(currency=country.currency)
+    return country
 
 
 @pytest.fixture
@@ -174,7 +178,7 @@ def test_response_with_valid_method(
         "price": shipping_method.shipping_price(weight),
         "price_name": shipping_method.name,
         "vat_rates": list(shipping_method.vat_rates.values()),
-        "exchange_rate": shipping_method.country.currency.exchange_rate,
+        "exchange_rate": float(shipping_method.country.currency.exchange_rate()),
         "currency_code": shipping_method.country.currency.code,
         "currency_symbol": shipping_method.country.currency.symbol,
         "min_channel_fee": 0,
@@ -186,7 +190,7 @@ def test_country_channel_fee(
     country, country_channel_fee, shipping_method, valid_post_response_content
 ):
     assert valid_post_response_content["min_channel_fee"] == int(
-        country_channel_fee * country.currency.exchange_rate
+        country_channel_fee * country.currency.exchange_rate()
     )
 
 
@@ -245,7 +249,7 @@ def test_empty_channel(
         "price": shipping_method.shipping_price(weight),
         "price_name": shipping_method.name,
         "vat_rates": list(shipping_method.vat_rates.values()),
-        "exchange_rate": shipping_method.country.currency.exchange_rate,
+        "exchange_rate": float(shipping_method.country.currency.exchange_rate()),
         "currency_code": shipping_method.country.currency.code,
         "currency_symbol": shipping_method.country.currency.symbol,
         "min_channel_fee": 0,
