@@ -366,7 +366,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
         self.fba_fee = float(post_data.get("fba_fee"))
         country_id = int(post_data.get("country"))
         self.country = models.FBACountry.objects.get(id=country_id)
-        self.exchange_rate = float(self.country.country.currency.exchange_rate)
+        self.exchange_rate = float(self.country.country.currency.exchange_rate())
         self.product_weight = int(post_data.get("weight"))
         self.stock_level = int(post_data.get("stock_level"))
         self.zero_rated = post_data.get("zero_rated") == "true"
