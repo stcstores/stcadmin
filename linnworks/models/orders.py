@@ -228,10 +228,12 @@ class OrderUpdater:
         """Return an orders.Order instance."""
         cols = ProcessedOrdersExport
         currency = self.currencies[row[cols.CURRENCY]]
+        recieved_at = self.parse_date_time(row[cols.RECEIVED_DATE])
+        exchange_rate = currency.exchange_rate(date=recieved_at.date())
         shipping_service = self.get_shipping_service(row)
         order = Order(
             order_id=order_id,
-            recieved_at=self.parse_date_time(row[cols.RECEIVED_DATE]),
+            recieved_at=recieved_at,
             dispatched_at=self.parse_date_time(row[cols.PROCESSED_DATE]),
             channel=self.get_channel(row[cols.SOURCE], row[cols.SUBSOURCE]),
             external_reference=row[cols.EXTERNAL_REFERENCE],
@@ -242,11 +244,15 @@ class OrderUpdater:
             displayed_shipping_price=self.convert_integer_price(
                 row[cols.SHIPPING_COST]
             ),
-            tax=self.convert_integer_price(row[cols.ORDER_TAX]),
             currency=currency,
+            exchange_rate=exchange_rate,
+            tax=self.convert_integer_price(row[cols.ORDER_TAX]),
+            tax_GBP=self.convert_integer_price(
+                Decimal(row[cols.ORDER_TAX]) * exchange_rate
+            ),
             total_paid=self.convert_integer_price(row[cols.ORDER_TOTAL]),
             total_paid_GBP=self.convert_integer_price(
-                Decimal(row[cols.ORDER_TOTAL]) * currency.exchange_rate
+                Decimal(row[cols.ORDER_TOTAL]) * exchange_rate
             ),
         )
         return order

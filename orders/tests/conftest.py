@@ -64,6 +64,8 @@ class OrderFactory(factory.django.DjangoModelFactory):
     calculated_shipping_price = 846
     tax = 2560
     currency = factory.SubFactory(CurrencyFactory)
+    exchange_rate = factory.Faker("pydecimal", left_digits=1, right_digits=3)
+    tax_GBP = 1530
     total_paid = 4457
     total_paid_GBP = 5691
     packed_by = factory.SubFactory(StaffFactory)

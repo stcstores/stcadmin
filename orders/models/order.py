@@ -67,6 +67,9 @@ class Order(models.Model):
     country = models.ForeignKey(
         Country, blank=True, null=True, on_delete=models.PROTECT
     )
+    exchange_rate = models.DecimalField(
+        max_digits=6, decimal_places=3, blank=True, null=True
+    )
     shipping_service = models.ForeignKey(
         ShippingService,
         blank=True,
@@ -81,6 +84,7 @@ class Order(models.Model):
     calculated_shipping_price = models.PositiveIntegerField(blank=True, null=True)
 
     tax = models.PositiveIntegerField(blank=True, null=True)
+    tax_GBP = models.PositiveIntegerField(blank=True, null=True)
 
     currency = models.ForeignKey(
         Currency,
@@ -138,14 +142,14 @@ class Order(models.Model):
     def profit(self):
         """Return the profit made on the order."""
         expenses = [
-            self.tax,
+            self.tax_GBP,
             self.channel_fee_paid(),
             self.purchase_price(),
             self.calculated_shipping_price,
         ]
         if None in expenses:
             return None
-        total_expenses = sum(expenses)
+        total_expenses = int(sum(expenses))
         return self.total_paid_GBP - total_expenses
 
     def profit_percentage(self):
@@ -186,6 +190,7 @@ class OrderExporter:
     TOTAL_PAID_GBP = "Total Paid (GBP)"
     WEIGHT = "Weight"
     CHANNEL_FEE = "Channel Fee"
+    TAX = "Tax"
     PURCHASE_PRICE = "Purchase Price"
     PROFIT = "Profit"
     PROFIT_PERCENTAGE = "Profit Percentage"
@@ -204,6 +209,7 @@ class OrderExporter:
         WEIGHT,
         CHANNEL_FEE,
         PURCHASE_PRICE,
+        TAX,
         PROFIT,
         PROFIT_PERCENTAGE,
     ]
@@ -224,6 +230,7 @@ class OrderExporter:
             self.WEIGHT: order.total_weight(),
             self.CHANNEL_FEE: self._channel_fee_value(order),
             self.PURCHASE_PRICE: self._purchase_price_value(order),
+            self.TAX: self.format_currency(order.tax_GBP),
             self.PROFIT: self._profit_value(order),
             self.PROFIT_PERCENTAGE: self._profit_percentage_value(order),
         }
