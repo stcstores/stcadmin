@@ -136,3 +136,46 @@ class ShopifyManager:
         product.status = status
         product.save()
         time.sleep(cls.REQUEST_PAUSE)
+
+    @classmethod
+    @shopify_api_py.shopify_api_session
+    def _hide_product(cls, product):
+        product.status = "draft"
+        product.save()
+
+    @classmethod
+    @shopify_api_py.shopify_api_session
+    def _unhide_product(cls, product):
+        product.status = "active"
+        product.save()
+
+
+class ShopifyStockManager:
+    """Provides methods for managing Shopify stock."""
+
+    @classmethod
+    def update_out_of_stock(cls):
+        """Hide out of stock items and unhide in stock items."""
+        for product in cls._get_products():
+            cls._update_product_status(product)
+
+    @classmethod
+    def _update_product_status(cls, product):
+        stock_level = cls._get_stock_level(product)
+        hidden = cls._product_is_hidden(product)
+        if stock_level == 0 and hidden is False:
+            ShopifyManager._hide_product(product)
+        elif stock_level != 0 and hidden is True:
+            ShopifyManager._unhide_product(product)
+
+    @staticmethod
+    def _get_products():
+        return ShopifyManager._get_products()
+
+    @staticmethod
+    def _get_stock_level(product):
+        return sum((variant.inventory_quantity for variant in product.variants))
+
+    @staticmethod
+    def _product_is_hidden(product):
+        return product.status == "draft"
