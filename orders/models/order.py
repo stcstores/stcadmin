@@ -185,6 +185,7 @@ class OrderExporter:
     CHANNEL = "Channel"
     TRACKING_NUMBER = "Tracking Number"
     SHIPPING_SERVICE = "Shipping Service"
+    SHIPPING_PRICE = "Shipping Price"
     CURRENCY = "Currency"
     TOTAL_PAID = "Total Paid"
     TOTAL_PAID_GBP = "Total Paid (GBP)"
@@ -203,6 +204,7 @@ class OrderExporter:
         CHANNEL,
         TRACKING_NUMBER,
         SHIPPING_SERVICE,
+        SHIPPING_PRICE,
         CURRENCY,
         TOTAL_PAID,
         TOTAL_PAID_GBP,
@@ -224,6 +226,7 @@ class OrderExporter:
             self.CHANNEL: order.channel.name if order.channel else None,
             self.TRACKING_NUMBER: order.tracking_number,
             self.SHIPPING_SERVICE: self._shipping_service_value(order),
+            self.SHIPPING_PRICE: self.format_currency(order.calculated_shipping_price),
             self.CURRENCY: order.currency.code if order.currency else None,
             self.TOTAL_PAID: self.format_currency(order.total_paid),
             self.TOTAL_PAID_GBP: self.format_currency(order.total_paid_GBP),
