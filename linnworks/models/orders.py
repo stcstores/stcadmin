@@ -189,6 +189,9 @@ class OrderUpdater:
         self.shipping_services = {
             service.full_name: service for service in ShippingService.objects.all()
         }
+        self.shipping_services["Walmart MP7"] = self.shipping_services[
+            "MP7: International Business Parcels Tracked Country Priced"
+        ]
 
     @transaction.atomic()
     def update_orders(self, processed_orders_export=None):

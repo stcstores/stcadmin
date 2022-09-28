@@ -9,7 +9,7 @@ from .shopify_listing import (
     ShopifyUpdate,
     ShopifyVariation,
 )
-from .shopify_manager import ShopifyManager
+from .shopify_manager import ShopifyManager, ShopifyStockManager
 
 __all__ = [
     "ShopifyConfig",
@@ -20,4 +20,5 @@ __all__ = [
     "ShopifyUpdate",
     "ShopifyVariation",
     "ShopifyManager",
+    "ShopifyStockManager",
 ]

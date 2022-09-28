@@ -4,7 +4,7 @@ import logging
 
 from django.core.management.base import BaseCommand
 
-from channels.models import ShopifyInventoryUpdater
+from channels.models.shopify_models import ShopifyStockManager
 
 logger = logging.getLogger("management_commands")
 
@@ -12,12 +12,12 @@ logger = logging.getLogger("management_commands")
 class Command(BaseCommand):
     """Update Shopify Stock command."""
 
-    help = "Update stock levels on Shopify and hide out of stock products."
+    help = "Hide out of stock products on Shopify."
 
     def handle(self, *args, **options):
-        """Update stock levels on Shopify and hide out of stock products."""
+        """Hide out of stock products on Shopify."""
         try:
-            ShopifyInventoryUpdater.update_stock()
+            ShopifyStockManager.update_out_of_stock()
         except Exception as e:
             logger.exception("Error updating shopify stock.")
             raise e
