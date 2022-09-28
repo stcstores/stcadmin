@@ -1,32 +1,27 @@
-<div class="pagination_navigation">
-    <div>
-        <button {% if page_obj.has_previous %}name="page" value="1"{% else %}disabled{% endif %}>
-            First
-        </button>
-        <button {% if page_obj.has_previous %}name="page" value="{{ page_obj.previous_page_number }}"{% else %}disabled{% endif %}>
-            Previous
-        </button>
-    </div>
-    <div>
-        <div>
-            {% for page_number in page_range %}
-                {% if page_number > 10 %}...{% endif %}
-                <button name="page" value="{{page_number}}"{% if page_number == page_obj.number %} disabled{% endif %} >
-                    {{page_number}}
-                </button>
-            {% endfor %}
-        </div>
-        <div>
+{% load stcadmin_extras %}
+
+<div class="pagination_navigation.html">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <button onclick="location.href='?{% query_transform page=1 %}'">
+                <i class="fa-solid fa-angles-left"></i></i>
+            </button>
+            <button onclick="location.href='?{% query_transform page=page_obj.previous_page_number %}'">
+                <i class="fa-solid fa-angle-left"></i>
+            </button>
+        {% endif %}
+
+        <span class="current">
             Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-        </div>
-    </div>
-    <div>
-        
-        <button {% if page_obj.has_next %}name="page" value="{{ page_obj.next_page_number }}"{% else %}disabled{% endif %}>
-            Next
-        </button>
-        <button {% if page_obj.has_next %} name="page" value="{{ page_obj.paginator.num_pages }}"{% else %}disabled{% endif %}>
-            Last
-        </button>
-    </div>
+        </span>
+
+        {% if page_obj.has_next %}
+            <button onclick="location.href='?{% query_transform page=page_obj.next_page_number %}'">
+                <i class="fa-solid fa-angle-right"></i>
+            </button>
+            <button onclick="location.href='?{% query_transform page=page_obj.paginator.num_pages %}'">
+                <i class="fa-solid fa-angles-right"></i>
+            </button>
+        {% endif %}
+    </span>
 </div>

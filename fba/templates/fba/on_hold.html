@@ -11,11 +11,11 @@
         <p>
             <button>Filter</button>
         </p>
+    </form>
         <div>
             <p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
             {% include 'orders/pagination_navigation.html' %}
         </div>
-    </form>
 </div>
 
 <table class="orders">
@@ -81,9 +81,9 @@
         {% endfor %}
     </tbody>
 </table>
-<form action="" id="filter">
-    {% include 'orders/pagination_navigation.html' %}
-</form>
+
+{% include 'orders/pagination_navigation.html' %}
+
 {% endblock content %}
 
 {% block script %}

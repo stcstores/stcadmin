@@ -13,6 +13,7 @@
             <button formaction="{% url 'orders:export_orders' %}">Export</button>
         </p>
     </div>
+</form>
     <p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
     {% include 'orders/pagination_navigation.html' %}
     <table class="orders">
@@ -54,5 +55,4 @@
         {% endfor %}
     </table>
     {% include 'orders/pagination_navigation.html' %}
-</form>
 {% endblock content %}
