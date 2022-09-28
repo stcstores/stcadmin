@@ -147,6 +147,7 @@ class ShopifyManager:
     @shopify_api_py.shopify_api_session
     def _unhide_product(cls, product):
         product.status = "active"
+        product.published_at = product.updated_at
         product.save()
 
 
