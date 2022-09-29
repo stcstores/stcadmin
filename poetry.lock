@@ -347,7 +347,7 @@ sqlparse = ">=0.2.0"
 
 [[package]]
 name = "django-formtools"
-version = "2.3"
+version = "2.4"
 description = "A set of high-level abstractions for Django forms"
 category = "main"
 optional = false
@@ -565,7 +565,7 @@ Django = ">=4.0"
 type = "git"
 url = "https://github.com/lukeshiner/django-file_exchange.git"
 reference = "main"
-resolved_reference = "78f286bd9f2fd31953f5277c7fa57f7b01d714e7"
+resolved_reference = "5434e5be1186b6e88f3fc0f6be7d582713ff3657"
 
 [[package]]
 name = "flake8"
@@ -730,7 +730,7 @@ reportlab = ">=3.6.8"
 type = "git"
 url = "https://github.com/lukeshiner/labeler.git"
 reference = "main"
-resolved_reference = "1b956cc77bc8603850d64b5528423613e449b9af"
+resolved_reference = "94ba4632764fcb9272b18db9e671b2fb47e19001"
 
 [[package]]
 name = "linnapi"
@@ -1229,7 +1229,7 @@ toml = ">=0.10.2"
 type = "git"
 url = "https://github.com/stcstores/shopify_api_py.git"
 reference = "main"
-resolved_reference = "3929371e6acbc8e76c9e0bdfc32edd3895420baf"
+resolved_reference = "97f2de46374ebd4c9a14ca2e08ab9a6638b80b70"
 
 [[package]]
 name = "ShopifyAPI"
@@ -1654,8 +1654,8 @@ django-debug-toolbar = [
     {file = "django_debug_toolbar-3.7.0-py3-none-any.whl", hash = "sha256:80de23066b624d3970fd296cf02d61988e5d56c31aa0dc4a428970b46e2883a8"},
 ]
 django-formtools = [
-    {file = "django-formtools-2.3.tar.gz", hash = "sha256:9663b6eca64777b68d6d4142efad8597fe9a685924673b25aa8a1dcff4db00c3"},
-    {file = "django_formtools-2.3-py3-none-any.whl", hash = "sha256:4699937e19ee041d803943714fe0c1c7ad4cab802600eb64bbf4cdd0a1bfe7d9"},
+    {file = "django-formtools-2.4.tar.gz", hash = "sha256:deb932be55b1d9419e37dc4d65dfbfeb8d307b71c8c11fd52f159aba5fc0deed"},
+    {file = "django_formtools-2.4-py3-none-any.whl", hash = "sha256:f5f32f62ec8192cd1bc55bd929ca7dff5a5f2addf9027db95a5906ecfaa64836"},
 ]
 django-imagekit = [
     {file = "django-imagekit-4.1.0.tar.gz", hash = "sha256:e559aeaae43a33b34f87631a9fa5696455e4451ffa738a42635fde442fedac5c"},
