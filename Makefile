@@ -12,7 +12,7 @@ re-init:
 
 production-init:
 	poetry run pip install --upgrade pip
-	poetry install --no-dev
+	poetry install --without dev
 	poetry run pip install setuptools
 
 deploy:
