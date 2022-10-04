@@ -12,6 +12,8 @@ from django.http import (
 )
 from django.shortcuts import get_object_or_404, reverse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
 from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import DeleteView
@@ -176,21 +178,43 @@ class OrderList(OrdersUserMixin, ListView):
             return list(range(1, 11)) + [paginator.num_pages]
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class ExportOrders(OrdersUserMixin, View):
     """Create a .csv export of order data."""
 
     form_class = forms.OrderListFilter
 
-    def get(self, *args, **kwargs):
+    def post(self, *args, **kwargs):
         """Return an HttpResponse contaning the export or a 404 status."""
-        form = self.form_class(self.request.GET)
+        form = self.form_class(self.request.POST)
         if form.is_valid():
-            contents = models.order.OrderExporter().make_csv(form.get_queryset())
-            response = HttpResponse(contents, content_type="text/csv")
-            filename = f"order_export_{timezone.now().strftime('%Y-%m-%d')}.csv"
-            response["Content-Disposition"] = f"attachment; filename={filename}"
-            return response
+            orders = form.get_queryset()
+            order_ids = list(orders.values_list("id", flat=True))
+            models.OrderExportDownload.objects.create_download(
+                user_id=self.request.user.id, order_ids=order_ids
+            )
+            return HttpResponse("ok")
         return HttpResponseNotFound()
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class OrderExportStatus(OrdersUserMixin, TemplateView):
+    """Get the status of the most recent order export."""
+
+    template_name = "orders/order_export_status.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        try:
+            context["export_record"] = models.OrderExportDownload.objects.filter(
+                user=self.request.user
+            ).latest()
+        except models.OrderExportDownload.DoesNotExist:
+            context["export_record"] = None
+        else:
+            context["order_count"] = len(context["export_record"].order_ids)
+        return context
 
 
 class OrderProfit(OrdersUserMixin, TemplateView):

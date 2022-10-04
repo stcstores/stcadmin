@@ -26,6 +26,11 @@ urlpatterns = [
     path("order_list/", views.OrderList.as_view(), name="order_list"),
     path("export_orders/", views.ExportOrders.as_view(), name="export_orders"),
     path(
+        "order_export_status",
+        views.OrderExportStatus.as_view(),
+        name="order_export_status",
+    ),
+    path(
         "order_profit/<int:order_id>/", views.OrderProfit.as_view(), name="order_profit"
     ),
     path("refund_list/", views.RefundList.as_view(), name="refund_list"),

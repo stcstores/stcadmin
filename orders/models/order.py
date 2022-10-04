@@ -3,8 +3,12 @@ import csv
 import io
 from datetime import datetime, timedelta
 
+from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import ArrayField
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import models
 from django.utils import timezone
+from file_exchange.models import FileDownload
 
 from home.models import Staff
 from shipping.models import Country, Currency, ShippingPrice, ShippingService
@@ -293,3 +297,27 @@ class OrderExporter:
             row = [row_data.get(col, "") for col in self.header]
             writer.writerow(row)
         return output.getvalue()
+
+
+class OrderExportDownload(FileDownload):
+    """Model for managing order exports."""
+
+    order_ids = ArrayField(models.PositiveBigIntegerField())
+    download_file = models.FileField(blank=True, null=True)
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="order_downloads"
+    )
+
+    class Meta:
+        """Meta class for OrderExportDownload."""
+
+        verbose_name = "Order Export Download"
+        verbose_name_plural = "Order Export Downlaods"
+        get_latest_by = "created_at"
+
+    def generate_file(self):
+        """Create on order export file."""
+        name = f"order_export_{timezone.now().strftime('%Y-%m-%d')}.csv"
+        orders = Order.objects.filter(id__in=self.order_ids)
+        data = OrderExporter().make_csv(orders)
+        return SimpleUploadedFile(name=name, content=data.encode("utf8"))
