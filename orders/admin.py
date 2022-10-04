@@ -69,3 +69,18 @@ class ProductSaleAdmin(admin.ModelAdmin):
     )
     list_select_related = ("order", "supplier")
     autocomplete_fields = ("order", "supplier")
+
+
+@admin.register(models.OrderExportDownload)
+class OrderExportDownloadAdmin(admin.ModelAdmin):
+    """Model admin for the OrderExportDownload model."""
+
+    exclude = ()
+    list_display = (
+        "status",
+        "created_at",
+        "completed_at",
+        "error_message",
+        "download_file",
+    )
+    date_hierarchy = "created_at"

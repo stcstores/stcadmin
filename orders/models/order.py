@@ -3,8 +3,12 @@ import csv
 import io
 from datetime import datetime, timedelta
 
+from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import ArrayField
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import models
 from django.utils import timezone
+from file_exchange.models import FileDownload
 
 from home.models import Staff
 from shipping.models import Country, Currency, ShippingPrice, ShippingService
@@ -216,6 +220,17 @@ class OrderExporter:
         PROFIT_PERCENTAGE,
     ]
 
+    def make_csv(self, orders):
+        """Return the export as a CSV string."""
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(self.header)
+        for order in orders:
+            row_data = self.make_row(order)
+            row = [row_data.get(col, "") for col in self.header]
+            writer.writerow(row)
+        return output.getvalue()
+
     def make_row(self, order):
         """Return a row of order data."""
         return {
@@ -240,7 +255,7 @@ class OrderExporter:
 
     def _order_dispatched_value(self, order):
         if order.is_dispatched():
-            return order.dispatched_at.strftime("%Y-%m-%d")
+            return self.format_date(order.dispatched_at)
         else:
             return "UNDISPATCHED"
 
@@ -248,13 +263,13 @@ class OrderExporter:
         try:
             return self.format_currency(order.channel_fee_paid())
         except Exception:
-            return ""
+            return None
 
     def _purchase_price_value(self, order):
         try:
             return self.format_currency(order.purchase_price())
         except Exception:
-            return ""
+            return None
 
     def _shipping_service_value(self, order):
         if order.shipping_service is None:
@@ -265,31 +280,51 @@ class OrderExporter:
     def _profit_value(self, order):
         if order.calculated_shipping_price is None:
             return None
-        return self.format_currency(order.profit())
+        try:
+            return self.format_currency(order.profit())
+        except Exception:
+            return None
 
     def _profit_percentage_value(self, order):
         if order.calculated_shipping_price is None:
             return None
-        return order.profit_percentage()
+        try:
+            return order.profit_percentage()
+        except Exception:
+            return None
 
     @staticmethod
     def format_date(date):
         """Return a date formatted as a string."""
         return date.strftime("%Y-%m-%d")
 
-    def format_currency(self, price):
+    @staticmethod
+    def format_currency(price):
         """Return a price as a formatted string."""
         if price is None:
             return None
         return f"{price / 100:.2f}"
 
-    def make_csv(self, orders):
-        """Return the export as a CSV string."""
-        output = io.StringIO()
-        writer = csv.writer(output)
-        writer.writerow(self.header)
-        for order in orders:
-            row_data = self.make_row(order)
-            row = [row_data.get(col, "") for col in self.header]
-            writer.writerow(row)
-        return output.getvalue()
+
+class OrderExportDownload(FileDownload):
+    """Model for managing order exports."""
+
+    order_ids = ArrayField(models.PositiveBigIntegerField())
+    download_file = models.FileField(blank=True, null=True)
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="order_downloads"
+    )
+
+    class Meta:
+        """Meta class for OrderExportDownload."""
+
+        verbose_name = "Order Export Download"
+        verbose_name_plural = "Order Export Downlaods"
+        get_latest_by = "created_at"
+
+    def generate_file(self):
+        """Create on order export file."""
+        name = f"order_export_{timezone.now().strftime('%Y-%m-%d')}.csv"
+        orders = Order.objects.filter(id__in=self.order_ids)
+        data = OrderExporter().make_csv(orders)
+        return SimpleUploadedFile(name=name, content=data.encode("utf8"))
