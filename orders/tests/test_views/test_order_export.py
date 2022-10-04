@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 
 
@@ -7,13 +9,16 @@ def url():
 
 
 @pytest.fixture
-def valid_get_response(valid_get_request, url):
-    return valid_get_request(url)
+def mock_create_order_export():
+    with patch(
+        "orders.views.models.OrderExportDownload.objects.create_download"
+    ) as mock:
+        yield mock
 
 
 @pytest.fixture
-def valid_get_response_content(url, valid_get_request):
-    return valid_get_request(url).content.decode("utf8")
+def valid_get_response(valid_get_request, url):
+    return valid_get_request(url)
 
 
 def test_logged_in_get(url, logged_in_client):
@@ -41,7 +46,7 @@ def test_logged_out_post(client, url):
     assert response.status_code == 302
 
 
-def test_logged_in_group_post(group_logged_in_client, url):
+def test_logged_in_group_post(mock_create_order_export, group_logged_in_client, url):
     response = group_logged_in_client.post(url)
     assert response.status_code == 200
 
@@ -49,3 +54,8 @@ def test_logged_in_group_post(group_logged_in_client, url):
 def test_invalid_form(url, group_logged_in_client):
     response = group_logged_in_client.post(url, {"country": 999999})
     assert response.status_code == 404
+
+
+def test_export_created(url, group_logged_in_client, mock_create_order_export):
+    group_logged_in_client.post(url)
+    mock_create_order_export.assert_called_once()
