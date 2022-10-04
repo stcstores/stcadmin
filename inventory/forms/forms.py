@@ -31,7 +31,7 @@ class BaseRangeForm(forms.ModelForm):
         """Meta for RangeForm."""
 
         model = models.ProductRange
-        exclude = ["hidden", "status"]
+        exclude = ["hidden", "status", "images"]
         field_classes = {
             "name": inventory_fields.Title,
             "description": inventory_fields.Description,
