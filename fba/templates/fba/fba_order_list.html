@@ -22,10 +22,10 @@
     <thead>
         <tr>
             <th colspan="5"></th>
-            <th colspan="2">Quantity</th>
-            <th colspan="2"></th>
-            <th colspan="2">Fulfilled</th>
+            <th colspan="3">Quantity</th>
             <th colspan="3"></th>
+            <th colspan="2">Fulfilled</th>
+            <th colspan="4"></th>
         </tr>
         <tr>
             <th>SKU</th>
@@ -38,9 +38,10 @@
             <th>Sent</th>
             <th>Status</th>
             <th>Tracking Number</th>
+            <th>Stock</th>
             <th>At</th>
             <th>By</th>
-            <th colspan="3"></th>
+            <th colspan="4"></th>
         </tr>
     </thead>
     <tbody>
@@ -68,6 +69,9 @@
                     <input type="text" size="10" class="tracking_number_input">
                     <button class="set_tracking_number" id="set_tracking_number_{{ order.id }}">Save</button>
                 {% endif %}
+            </td>
+            <td class="available_stock" id="available_stock_{{ order.pk }}">
+                <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
             </td>
             <td id="closed_at_{{ order.id }}">{{ order.closed_at|date:"Y-m-d H:i" }}</td>
             <td>
@@ -116,7 +120,27 @@
 
 <script>
 
+    function get_stock_levels() {
+        order_ids = [{% for order in object_list  %}{{ order.id }}, {% endfor %}]
+        $.ajax({
+            type: "POST",
+            url: "{% url 'fba:get_stock_levels' %}",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify({ order_ids: order_ids }),
+            success: function (response) {
+              $.each(response, function (order_id, stock_level_info) {
+                $('#available_stock_' + order_id).html(stock_level_info.available);
+              });
+            },
+            error: function (response) {
+              alert("Error getting stock level.")
+            },
+          });
+    }
+
 $(document).ready(function() {
+    get_stock_levels();
     $(".set_tracking_number").click(function() {
         var tracking_number = $(this).parent().find(".tracking_number_input").val();
         var order_id = $(this).attr("id").split("_").pop();
