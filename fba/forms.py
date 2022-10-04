@@ -85,6 +85,8 @@ class CreateFBAOrderForm(forms.ModelForm):
             "region": forms.HiddenInput(),
             "tracking_number": forms.HiddenInput(),
             "product_is_multipack": forms.HiddenInput(),
+            "selling_price": CurrencyWidget,
+            "FBA_fee": CurrencyWidget,
         }
 
     country = forms.ModelChoiceField(models.FBACountry.objects.all())
