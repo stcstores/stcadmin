@@ -12,9 +12,8 @@
 <button class="region_select" name="region" value="{{region.name}}" {% if region.name == selected_region %}disabled{% endif %}>{{region.flag}} {{region.name}}</button>
 {% endfor %}
 </form>
-<form action="" id="pagination">
+
 {% include 'orders/pagination_navigation.html' %}
-</form>
 <table class="orders">
     <thead>
         <tr>
@@ -67,9 +66,9 @@
         {% endfor %}
     </tbody>
 </table>
-<form action="" id="pagination">
+
 {% include 'orders/pagination_navigation.html' %}
-</form>
+
 {% endblock content %}
 
 {% block script %}
