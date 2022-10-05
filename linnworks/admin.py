@@ -92,3 +92,14 @@ class LinnworksOrderAdmin(admin.ModelAdmin):
     search_fields = ("order__order_id", "order_guid")
     list_select_related = ("order",)
     date_hierarchy = "order__dispatched_at"
+
+
+@admin.register(models.LinnworksShippingService)
+class LinnworksShippingServiceAdmin(admin.ModelAdmin):
+    """Model admin for LinnworksShippingService."""
+
+    exclude_fields = ()
+    list_display = ("name", "shipping_service")
+    search_fields = ("name", "shipping_service__name")
+    list_select_related = ("shipping_service",)
+    autocomplete_fields = ("shipping_service",)

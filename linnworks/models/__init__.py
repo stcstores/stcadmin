@@ -12,6 +12,7 @@ from .linnworks_import_files import (
     LinnworksProductImportFile,
 )
 from .orders import LinnworksOrder, OrderUpdater, ProcessedOrdersExport
+from .shipping import LinnworksShippingService
 from .stock_manager import (
     InitialStockLevel,
     StockLevelExportRecord,
@@ -28,6 +29,7 @@ __all__ = [
     "LinnworksOrder",
     "OrderUpdater",
     "ProcessedOrdersExport",
+    "LinnworksShippingService",
     "InventoryExport",
     "StockLevelExport",
     "InitialStockLevel",

@@ -14,10 +14,11 @@ from django.utils import timezone
 from home.models import Staff
 from inventory.models import BaseProduct
 from orders.models import Order, ProductSale
-from shipping.models import Country, Currency, ShippingService
+from shipping.models import Country, Currency
 
 from .config import LinnworksChannel, LinnworksConfig
 from .linnworks_export_files import BaseExportFile
+from .shipping import LinnworksShippingService
 
 logger = logging.getLogger("management_commands")
 
@@ -187,11 +188,9 @@ class OrderUpdater:
             country.ISO_code: country for country in Country.objects.all()
         }
         self.shipping_services = {
-            service.full_name: service for service in ShippingService.objects.all()
+            service.name: service.shipping_service
+            for service in LinnworksShippingService.objects.all()
         }
-        self.shipping_services["Walmart MP7"] = self.shipping_services[
-            "MP7: International Business Parcels Tracked Country Priced"
-        ]
 
     @transaction.atomic()
     def update_orders(self, processed_orders_export=None):
