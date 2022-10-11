@@ -37,9 +37,17 @@ class BaseReportDownload(FileDownload):
         self.save()
         return report_file
 
+    def _get_report_generator(self):
+        raise NotImplementedError()
+
+    def _get_filename(self):
+        raise NotImplementedError()
+
 
 class BaseReportGenerator:
     """Base class for report generators."""
+
+    header = []
 
     def __init__(self, download_object):
         """Create report data."""
@@ -54,22 +62,22 @@ class BaseReportGenerator:
         raise NotImplementedError()
 
     def _generate(self):
-        self.records = [self.make_row(**kwargs) for kwargs in self.get_row_kwargs()]
+        return [self.make_row(**kwargs) for kwargs in self.get_row_kwargs()]
 
     def generate_csv(self):
         """Return the export as a CSV string."""
-        self._generate()
+        records = self._generate()
         output = io.StringIO()
         writer = csv.writer(output)
         writer.writerow(self.header)
-        for row in self.make_rows():
+        for row in self.make_rows(records):
             writer.writerow(row)
         return output.getvalue()
 
-    def make_rows(self, **kwargs):
+    def make_rows(self, records):
         """Return the report data as a list of rows."""
         rows = []
-        for record in self.records:
+        for record in records:
             row = [record.get(col, "") for col in self.header]
             rows.append(row)
         return rows
