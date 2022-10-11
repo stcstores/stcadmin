@@ -1,0 +1,12 @@
+{% extends "reports/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<h1>Reports</h1>
+
+<ul>
+    <li><a href="{% url 'reports:reorder_reports' %}">Reorder Reports</a></li>
+</ul>
+
+{% endblock %}

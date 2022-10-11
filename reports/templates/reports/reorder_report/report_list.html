@@ -1,0 +1,26 @@
+{% if reports %}
+<table>
+    <tr>
+        <th>Created</th>
+        <th>Supplier</th>
+        <th>From</th>
+        <th>To</th>
+        <th>User</th>
+        <th>Rows</th>
+        <th></th>
+    </tr>
+    {% for report in reports %}
+    <tr>
+        <td>{{ report.created_at }}</td>
+        <td>{{ report.supplier }}</td>
+        <td>{{ report.date_from }}</td>
+        <td>{{ report.date_to }}</td>
+        <td>{{ report.user }}</td>
+        <td>{{ report.row_count }}</td>
+        <td><a href="{{ report.download_file.url }}">Download</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<h4>No reports have been created</h4>
+{% endif %}
