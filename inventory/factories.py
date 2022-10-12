@@ -25,16 +25,16 @@ class BarcodeFactory(DjangoModelFactory):
 
         model = models.Barcode
 
+    class Params:
+        used = False
+
     barcode = fuzzy.FuzzyText(length=12, chars=string.digits)
-    available = True
-    added_on = None
-    used_by = None
-    used_for = None
-
-
-class UsedBarcodeFactory(BarcodeFactory):
-    available = False
-    added_on = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+    available = factory.lazy_attribute(lambda o: False if o.used is True else True)
+    added_on = factory.Maybe(
+        "used", fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1))), None
+    )
+    used_by = factory.Maybe("used", factory.SubFactory(UserFactory), None)
+    used_for = factory.Maybe("used", fuzzy.FuzzyText(length=25), None)
 
 
 class PackageTypeFactory(DjangoModelFactory):
