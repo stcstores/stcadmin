@@ -23,7 +23,10 @@ class FBARegion(models.Model):
 
     name = models.CharField(max_length=255)
     default_country = models.ForeignKey("FBACountry", on_delete=models.CASCADE)
-    postage_price = models.PositiveIntegerField()
+    postage_price = models.PositiveIntegerField(blank=True, null=True)
+    postage_per_kg = models.PositiveIntegerField(default=0)
+    postage_overhead_g = models.PositiveBigIntegerField(default=0)
+    min_shipping_cost = models.PositiveBigIntegerField(blank=True, null=True)
     max_weight = models.PositiveIntegerField(blank=True, null=True)
     max_size = models.FloatField(blank=True, null=True)
     fulfillment_unit = models.CharField(choices=unit_choices, max_length=1)
@@ -72,6 +75,26 @@ class FBARegion(models.Model):
     def max_size_local(self):
         """Return the maximum sendable size in the fulfillment unit."""
         return f"{int(self.max_size)} {self.size_unit()}"
+
+    def calculate_shipping(self, weight_grams):
+        """Return the price for shipping a weight to this regsion.
+
+        Args:
+            weight_grams (int): The weight to be shipped in grams.
+
+        Returns:
+            int: The shipping cost in pence GBP.
+        """
+        if self.postage_price:
+            return self.postage_price
+        shipping_weight = weight_grams + self.postage_overhead_g
+        calculated_postage_price = int(
+            (float(shipping_weight) * self.postage_per_kg) / 1000
+        )
+        if calculated_postage_price < self.min_shipping_cost:
+            return self.min_shipping_cost
+        else:
+            return calculated_postage_price
 
 
 class FBACountry(models.Model):
