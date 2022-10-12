@@ -30,4 +30,17 @@
   </div>
 
 
-  {% endblock %}
+{% endblock %}
+
+{% block script %} {{ block.super }}
+<script>
+  $(document).ready(function() {
+    $(".product_form form").keydown(function(event){
+      if(event.keyCode == 13) {
+        event.preventDefault();
+        return false;
+      }
+    });
+  });
+</script>
+{% endblock script %}

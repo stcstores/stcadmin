@@ -120,6 +120,12 @@
 
     $(document).ready(function () { // After selectize and autoNumeric
       set_form_changed_event_triggers();
+      $(".product_form form").keydown(function(event){
+        if(event.keyCode == 13) {
+          event.preventDefault();
+          return false;
+        }
+      });
     });
 
   });
