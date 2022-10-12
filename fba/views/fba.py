@@ -402,7 +402,10 @@ class FBAPriceCalculator(FBAUserMixin, View):
 
     def get_postage_to_fba(self):
         """Return the caclulated price to post to FBA."""
-        self.postage_gbp = round(float(self.country.region.postage_price) / 100.0, 2)
+        shipped_weight = self.product_weight * self.quantity
+        self.postage_gbp = round(
+            float(self.country.region.calculate_shipping(shipped_weight)) / 100.0, 2
+        )
         self.postage_local = round(self.postage_gbp / self.exchange_rate, 2)
 
     def get_postage_per_item(self):

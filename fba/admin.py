@@ -9,21 +9,14 @@ from fba import models
 class FBARegionAdmin(admin.ModelAdmin):
     """Model admin for the FBARegion model."""
 
-    fields = [
-        "name",
-        "default_country",
-        "postage_price",
-        "max_weight",
-        "max_size",
-        "fulfillment_unit",
-        "currency",
-        "auto_close",
-        "warehouse_required",
-    ]
+    exclude = ()
     list_display = [
         "name",
         "default_country",
         "postage_price",
+        "postage_per_kg",
+        "postage_overhead_g",
+        "min_shipping_cost",
         "max_weight",
         "max_size",
         "fulfillment_unit",
