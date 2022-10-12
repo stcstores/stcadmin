@@ -7,3 +7,4 @@ docstring-convention = pep257
 per-file-ignores = 
     */tests/*: D
     */migrations/*: D
+    */factories.py: D

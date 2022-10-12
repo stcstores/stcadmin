@@ -1,8 +1,8 @@
 import factory
 import pytest_factoryboy
 
+from inventory.factories import ProductRangeFactory
 from inventory.models import PackageType
-from inventory.tests.conftest import ProductRangeFactory
 from price_calculator import models
 from shipping.factories import (
     CountryFactory,
