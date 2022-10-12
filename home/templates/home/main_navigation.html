@@ -27,6 +27,9 @@
     {% if 'channels' in groups %}
     <li><a href="{% url 'channels:index' %}">Channels</a></li>
     {% endif %}
+    {% if 'reports' in groups %}
+    <li><a href="{% url 'reports:index' %}">Reports</a></li>
+    {% endif %}
     {% if 'validation' in groups %}
     <li><a href="{% url 'validation:home' %}">Validation</a></li>
     {% endif %}

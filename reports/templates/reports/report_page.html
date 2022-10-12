@@ -1,0 +1,73 @@
+{% extends 'reports/base.html' %}
+
+{% block content %}
+
+<h1>{{ report_name}}</h1>
+
+<div class="management">
+    <div class="create_report">
+    {% if form %}
+        <form method="POST" id="create_report_form">{% csrf_token %}
+            {{ form.as_p }}
+            <button id="create_form_button">Create Report</button>
+        </form>
+        {% else %}
+        <button id="create_form_button">Create Report</button>
+        {% endif %}
+    </div>
+    <div id="report_status">
+        <p>STATUS</p>
+    </div>
+</div>
+
+<div id="report_list"></div>
+{% endblock content %}
+
+{% block script %}{{ block.super }}
+<script>
+
+    function updateReportList() {
+        $.ajax({
+            type: "GET",
+            url: "{{ report_list_url }}",
+            success: function(html) {
+                $("#report_list").html(html);
+            }
+        });
+    }
+
+    function updateStatus() {
+        $.ajax({
+            type: "GET",
+            url: "{{ status_url }}",
+            success: function(html) {
+                $("#report_status").html(html);
+                updateReportList();
+            }
+        });
+        $("#report_status")
+    }
+
+    function requestReport() {
+        $.ajax({
+            type: "POST",
+            url: "{{ create_report_url }}",
+            data: $("#create_report_form").serialize(),
+            success: function(data){
+                updateStatus();
+            }
+        });
+    }
+
+    $('#create_form_button').click(function(e) {
+        e.preventDefault();
+        requestReport();
+    })
+
+    $(document).ready(function() {
+        updateReportList();
+        updateStatus();
+        setInterval(updateStatus, 5000);
+    });
+</script>
+{% endblock script %}

@@ -25,6 +25,7 @@ urlpatterns = [
     path("feedback/", include("feedback.urls", namespace="feedback")),
     path("orders/", include("orders.urls", namespace="orders")),
     path("channels/", include("channels.urls", namespace="channels")),
+    path("reports/", include("reports.urls", namespace="reports")),
     path("fba/", include("fba.urls", namespace="fba")),
     path("purchases/", include("purchases.urls", namespace="purchases")),
     path("linnworks/", include("linnworks.urls", namespace="linnworks")),
