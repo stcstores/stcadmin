@@ -33,12 +33,14 @@ class FBARegion(models.Model):
     auto_close = models.BooleanField()
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
     warehouse_required = models.BooleanField(default=False)
+    position = models.PositiveSmallIntegerField(default=9999)
 
     class Meta:
         """Meta class for FBARegion."""
 
         verbose_name = "FBA Region"
         verbose_name_plural = "FBA Regions"
+        ordering = ("position",)
 
     def __str__(self):
         return self.name
