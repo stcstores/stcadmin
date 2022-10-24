@@ -230,12 +230,3 @@ class ListingAttributeValueFactory(DjangoModelFactory):
     product = factory.SubFactory(ProductFactory)
     listing_attribute = factory.SubFactory(ListingAttributeFactory)
     value = factory.Sequence(lambda n: f"Listing Attribute {n}")
-
-
-class ProductExportFactory(DjangoModelFactory):
-    class Meta:
-        model = models.ProductExport
-
-    name = fuzzy.FuzzyText(length=50)
-    timestamp = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
-    export_file = factory.django.FileField()
