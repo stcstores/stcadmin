@@ -749,7 +749,7 @@ toml = "^0.10.2"
 type = "git"
 url = "https://github.com/stcstores/linnapi.git"
 reference = "main"
-resolved_reference = "d6d4af9fbd6d77a76e58465472164d49f5e8e0d5"
+resolved_reference = "2def9a94a63b3688ec38cea4dc0b42d6912e2028"
 
 [[package]]
 name = "lml"
@@ -1014,14 +1014,11 @@ python-versions = "*"
 
 [[package]]
 name = "pymemcache"
-version = "3.5.2"
+version = "4.0.0"
 description = "A comprehensive, fast, pure Python memcached client"
 category = "main"
 optional = false
-python-versions = "*"
-
-[package.dependencies]
-six = "*"
+python-versions = ">=3.7"
 
 [[package]]
 name = "pyparsing"
@@ -1229,7 +1226,7 @@ toml = ">=0.10.2"
 type = "git"
 url = "https://github.com/stcstores/shopify_api_py.git"
 reference = "main"
-resolved_reference = "06c45a8b12470b4587ddeb4137f0c3fa8e3eeacc"
+resolved_reference = "18dc5687b3182b3a73c5e4d7d6c7fa1ecd0602e4"
 
 [[package]]
 name = "ShopifyAPI"
@@ -2035,8 +2032,8 @@ pylabels = [
     {file = "pylabels-1.2.1.tar.gz", hash = "sha256:299b4f97b6266427cc5acdb99b4699a8b6f381242f2d73513b892fa8857a073f"},
 ]
 pymemcache = [
-    {file = "pymemcache-3.5.2-py2.py3-none-any.whl", hash = "sha256:3fca0215845d7b2ecd5f4c627fcf4ce2345a703a897b7e116380115b5a197be2"},
-    {file = "pymemcache-3.5.2.tar.gz", hash = "sha256:8923ab59840f0d5338f1c52dba229fa835545b91c3c2f691c118e678d0fb974e"},
+    {file = "pymemcache-4.0.0-py2.py3-none-any.whl", hash = "sha256:f507bc20e0dc8d562f8df9d872107a278df049fa496805c1431b926f3ddd0eab"},
+    {file = "pymemcache-4.0.0.tar.gz", hash = "sha256:27bf9bd1bbc1e20f83633208620d56de50f14185055e49504f4f5e94e94aff94"},
 ]
 pyparsing = [
     {file = "pyparsing-3.0.9-py3-none-any.whl", hash = "sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc"},
