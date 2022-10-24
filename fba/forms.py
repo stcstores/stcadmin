@@ -177,6 +177,7 @@ class FBAOrderFilter(forms.Form):
             .order_by("product_supplier")
             .distinct()
         ]
+        self.fields["country"].empty_label = "All"
 
     def clean_created_from(self):
         """Return a timezone aware datetime object from the submitted date."""
