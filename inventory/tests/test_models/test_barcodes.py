@@ -8,7 +8,9 @@ from inventory.models import Barcode
 
 @pytest.fixture
 def barcode(barcode_factory):
-    return barcode_factory.create()
+    barcode = barcode_factory.create()
+    barcode.full_clean()
+    return barcode
 
 
 @pytest.fixture
