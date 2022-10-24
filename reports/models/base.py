@@ -66,11 +66,11 @@ class BaseReportGenerator:
 
     def generate_csv(self):
         """Return the export as a CSV string."""
-        records = self._generate()
+        self.records = self._generate()
         output = io.StringIO()
         writer = csv.writer(output)
         writer.writerow(self.header)
-        for row in self.make_rows(records):
+        for row in self.make_rows(self.records):
             writer.writerow(row)
         return output.getvalue()
 
