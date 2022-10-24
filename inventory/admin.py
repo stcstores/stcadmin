@@ -223,15 +223,6 @@ class ProductBayHistoryAdmin(admin.ModelAdmin):
     date_hierarchy = "timestamp"
 
 
-@admin.register(models.ProductExport)
-class ProductExportAdmin(admin.ModelAdmin):
-    """Model admin for the Product Export model."""
-
-    exclude_fields = ()
-    list_display = ("__str__", "name", "timestamp", "export_file")
-    date_hierarchy = "timestamp"
-
-
 @admin.register(models.ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):
     """Model admin for the ProductImage model."""
