@@ -22,7 +22,6 @@ from .product_attribute import (
     VariationOptionValue,
     VATRate,
 )
-from .product_export import ProductExport
 from .product_image import ProductImage, ProductImageLink, ProductRangeImageLink
 from .product_range import ProductRange
 from .stock_change import StockLevelHistory

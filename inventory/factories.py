@@ -68,7 +68,7 @@ class VATRateFactory(DjangoModelFactory):
         model = models.VATRate
 
     name = factory.Sequence(lambda n: f"VAT Rate {n}")
-    percentage = 20
+    percentage = 0.2
     ordering = 0
 
 
@@ -128,6 +128,7 @@ class ProductFactory(BaseProductFactory):
     manufacturer = factory.SubFactory(ManufacturerFactory)
     weight_grams = 500
     hs_code = "2315641"
+    vat_rate = factory.SubFactory(VATRateFactory)
 
 
 class InitialVariationFactory(ProductFactory):
@@ -182,7 +183,7 @@ class ProductBayLinkFactory(DjangoModelFactory):
         model = models.ProductBayLink
 
     product = factory.SubFactory(ProductFactory)
-    bay = factory.SubFactory(BarcodeFactory)
+    bay = factory.SubFactory(BayFactory)
 
 
 class ProductBayHistoryFactory(DjangoModelFactory):
@@ -227,5 +228,5 @@ class ListingAttributeValueFactory(DjangoModelFactory):
         model = models.ListingAttributeValue
 
     product = factory.SubFactory(ProductFactory)
-    variation_option = factory.SubFactory(VariationOptionFactory)
-    value = factory.Sequence(lambda n: f"Variation Value {n}")
+    listing_attribute = factory.SubFactory(ListingAttributeFactory)
+    value = factory.Sequence(lambda n: f"Listing Attribute {n}")
