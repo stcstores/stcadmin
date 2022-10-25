@@ -15,7 +15,7 @@ from stcadmin import settings
 
 def get_storage():
     """Return the storage method for the ProductImage model."""
-    return settings.ProductImageStorage
+    # return settings.ProductImageStorage
     if settings.TESTING:
         return None
     else:

@@ -1,4 +1,6 @@
+import pytest
 import pytest_factoryboy
+from django.conf import settings
 
 from inventory import factories
 
@@ -24,3 +26,9 @@ pytest_factoryboy.register(factories.VariationOptionFactory)
 pytest_factoryboy.register(factories.ListingAttributeFactory)
 pytest_factoryboy.register(factories.VariationOptionValueFactory)
 pytest_factoryboy.register(factories.ListingAttributeValueFactory)
+pytest_factoryboy.register(factories.ProductImageFactory)
+
+
+@pytest.fixture(autouse=True)
+def override_storage(tmp_path):
+    settings.MEDIA_ROOT = tmp_path
