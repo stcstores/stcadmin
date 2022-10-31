@@ -1,6 +1,6 @@
 import datetime as dt
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytest
 from imagekit.cachefiles import ImageCacheFile
@@ -15,6 +15,15 @@ def product_image(product_image_factory):
     product_image = product_image_factory.create()
     product_image.full_clean()
     return product_image
+
+
+@pytest.fixture
+def delete_file_exception():
+    with patch(
+        "django.core.files.storage.FileSystemStorage.delete",
+        Mock(side_effect=Exception()),
+    ) as mock_delete:
+        yield mock_delete
 
 
 @patch("inventory.models.product_image.settings.TESTING", False)
@@ -63,11 +72,70 @@ def test_product_image_str_method(product_image):
 
 
 @pytest.mark.django_db
-def test_delete(tmp_path, product_image):
-    print(product_image.thumbnail.storage)
-    print(tmp_path)
-    print(product_image.image_file.name)
-    print(Path(product_image.image_file.path).exists())
-    print(Path(product_image.square_image.path).exists())
-    print(Path(product_image.thumbnail.path).exists())
-    assert False
+def test_delete_method_deletes_file(product_image):
+    image_path = product_image.image_file.path
+    assert Path(image_path).exists() is True
+    product_image.delete()
+    assert Path(image_path).exists() is False
+
+
+@pytest.mark.django_db
+def test_delete_method_calls_delete_thumbnail(product_image):
+    image_path = Path(product_image.thumbnail.path)
+    assert image_path.exists() is True
+    product_image.delete()
+    assert image_path.exists() is False
+
+
+@pytest.mark.django_db
+def test_delete_method_calls_delete_square_image(product_image):
+    image_path = Path(product_image.square_image.path)
+    assert image_path.exists() is True
+    product_image.delete()
+    assert image_path.exists() is False
+
+
+@pytest.mark.django_db
+def test_delete_thumbnail_method_deletes_file(product_image):
+    image_path = Path(product_image.thumbnail.path)
+    assert image_path.exists() is True
+    product_image.delete_thumbnail()
+    assert image_path.exists() is False
+
+
+@pytest.mark.django_db
+def test_delete_thumbnail_fails_silently_when_passed_silent_true(
+    delete_file_exception, product_image
+):
+    product_image.delete_thumbnail(silent=True)
+
+
+@pytest.mark.django_db
+def test_delete_thumbnail_does_not_fail_silently_when_not_passed_silent(
+    delete_file_exception, product_image
+):
+    with pytest.raises(Exception):
+        product_image.delete_thumbnail()
+
+
+@pytest.mark.django_db
+def test_delete_square_image_method_deletes_file(product_image):
+    image_path = Path(product_image.square_image.path)
+    assert image_path.exists() is True
+    product_image.delete_square_image(silent=False)
+    assert image_path.exists() is False
+
+
+@pytest.mark.django_db
+def test_delete_square_image_fails_silently_when_passed_silent_true(
+    delete_file_exception, product_image
+):
+    product_image.delete_square_image(silent=True)
+
+
+@pytest.mark.django_db
+def test_delete_square_image_does_not_fail_silently_when_not_passed_silent(
+    delete_file_exception, product_image
+):
+    with pytest.raises(Exception):
+        product_image.delete_square_image()

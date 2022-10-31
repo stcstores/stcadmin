@@ -135,7 +135,7 @@ class ProductImage(models.Model):
         try:
             self.thumbnail.storage.delete(self.thumbnail.name)
         except Exception:
-            if silent is not False:
+            if silent is False:
                 raise
 
     def delete_square_image(self, silent=False):
@@ -143,7 +143,7 @@ class ProductImage(models.Model):
         try:
             self.square_image.storage.delete(self.square_image.name)
         except Exception:
-            if silent is not False:
+            if silent is False:
                 raise
 
 

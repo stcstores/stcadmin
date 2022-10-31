@@ -2,6 +2,7 @@
 
 import os
 import sys
+import tempfile
 from pathlib import Path
 from tempfile import SpooledTemporaryFile
 
@@ -404,5 +405,7 @@ IMAGEKIT_DEFAULT_CACHEFILE_STRATEGY = "imagekit.cachefiles.strategies.Optimistic
 IMAGEKIT_CACHEFILE_DIR = ""
 IMAGEKIT_SPEC_CACHEFILE_NAMER = "stcadmin.settings.imagekit_processor_namer"
 
+
 if TESTING:
+    MEDIA_ROOT = tempfile.mkdtemp()
     IMAGEKIT_DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
