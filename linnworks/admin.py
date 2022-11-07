@@ -24,10 +24,11 @@ class LinnworksChannelAdmin(admin.ModelAdmin):
         "source",
         "readable_name",
         "item_link_format",
+        "link_by_sku",
         "link_prime",
         "channel",
     )
-    list_editable = ("channel", "readable_name", "item_link_format")
+    list_editable = ("channel", "readable_name", "item_link_format", "link_by_sku")
     search_fields = ("sub_source", "source")
     list_select_related = ("channel",)
     autocomplete_fields = ("channel",)

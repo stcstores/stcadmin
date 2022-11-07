@@ -31,6 +31,10 @@ UNIQUE_SKU_ATTEMPTS = 100
 class ProductQueryset(PolymorphicQuerySet):
     """Custom queryset for products."""
 
+    def get_queryset(self):
+        """Sort queryset by range order."""
+        return super().get_queryset().order_by("range_order")
+
     def complete(self):
         """Return complete products."""
         return self.filter(product_range__status=ProductRange.COMPLETE).select_related(
