@@ -5,6 +5,7 @@ import string
 
 import factory
 from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
 from django.utils.timezone import make_aware
 from factory import fuzzy
 from factory.django import DjangoModelFactory
@@ -230,3 +231,40 @@ class ListingAttributeValueFactory(DjangoModelFactory):
     product = factory.SubFactory(ProductFactory)
     listing_attribute = factory.SubFactory(ListingAttributeFactory)
     value = factory.Sequence(lambda n: f"Listing Attribute {n}")
+
+
+class ProductImageFactory(DjangoModelFactory):
+    class Meta:
+        model = models.ProductImage
+
+    image_file = factory.LazyAttribute(
+        lambda _: ContentFile(
+            factory.django.ImageField()._make_data({"width": 2000, "height": 2000}),
+            "example.jpg",
+        )
+    )
+    hash = fuzzy.FuzzyText(length=32, chars=string.digits)
+    created_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+    modified_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+
+
+class ProductImageLinkFactory(DjangoModelFactory):
+    class Meta:
+        model = models.ProductImageLink
+
+    product = factory.SubFactory(BaseProductFactory)
+    image = factory.SubFactory(ProductImageFactory)
+    created_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+    modified_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+    position = fuzzy.FuzzyInteger(0)
+
+
+class ProductRangeImageLinkFactory(DjangoModelFactory):
+    class Meta:
+        model = models.ProductRangeImageLink
+
+    product = factory.SubFactory(ProductRangeFactory)
+    image = factory.SubFactory(ProductImageFactory)
+    created_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+    modified_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+    position = fuzzy.FuzzyInteger(0, 50)
