@@ -760,7 +760,7 @@ toml = "^0.10.2"
 type = "git"
 url = "https://github.com/stcstores/linnapi.git"
 reference = "main"
-resolved_reference = "eca7ceaaa016259e2411841be752eb68eb38b32f"
+resolved_reference = "45575909071a93b218c6d9bafa6c57eba846c704"
 
 [[package]]
 name = "lml"
