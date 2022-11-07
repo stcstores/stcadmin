@@ -48,7 +48,7 @@ python-versions = ">=3.5"
 dev = ["cloudpickle", "coverage[toml] (>=5.0.2)", "furo", "hypothesis", "mypy (>=0.900,!=0.940)", "pre-commit", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "sphinx", "sphinx-notfound-page", "zope.interface"]
 docs = ["furo", "sphinx", "sphinx-notfound-page", "zope.interface"]
 tests = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "zope.interface"]
-tests-no-zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
+tests_no_zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
 
 [[package]]
 name = "Babel"
@@ -191,7 +191,7 @@ optional = false
 python-versions = ">=3.6.0"
 
 [package.extras]
-unicode-backport = ["unicodedata2"]
+unicode_backport = ["unicodedata2"]
 
 [[package]]
 name = "click"
@@ -371,8 +371,8 @@ six = "*"
 
 [package.extras]
 async = ["django-celery (>=3.0)"]
-async-dramatiq = ["django-dramatiq (>=0.4.0)"]
-async-rq = ["django-rq (>=0.6.0)"]
+async_dramatiq = ["django-dramatiq (>=0.4.0)"]
+async_rq = ["django-rq (>=0.6.0)"]
 
 [[package]]
 name = "django-jchart"
@@ -400,7 +400,7 @@ python-versions = "*"
 django = ">=3.2"
 
 [package.extras]
-all-filter-dependencies = ["bleach (>=3.0)", "docutils (>=0.14)", "markdown (>=2.6.9)", "pygments (>=2.2.0)", "python-creole (>=1.3.1)", "smartypants (>=2.0.0)", "textile (>=2.3.16)"]
+all_filter_dependencies = ["bleach (>=3.0)", "docutils (>=0.14)", "markdown (>=2.6.9)", "pygments (>=2.2.0)", "python-creole (>=1.3.1)", "smartypants (>=2.0.0)", "textile (>=2.3.16)"]
 
 [[package]]
 name = "django-mathfilters"
@@ -662,9 +662,9 @@ python-versions = ">=3.6.1,<4.0"
 
 [package.extras]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
-pipfile-deprecated-finder = ["pipreqs", "requirementslib"]
+pipfile_deprecated_finder = ["pipreqs", "requirementslib"]
 plugins = ["setuptools"]
-requirements-deprecated-finder = ["pip-api", "pipreqs"]
+requirements_deprecated_finder = ["pip-api", "pipreqs"]
 
 [[package]]
 name = "isoweek"
@@ -760,7 +760,7 @@ toml = "^0.10.2"
 type = "git"
 url = "https://github.com/stcstores/linnapi.git"
 reference = "main"
-resolved_reference = "cea240bd9b1c4f79e6d229499697f0d0834a9816"
+resolved_reference = "eca7ceaaa016259e2411841be752eb68eb38b32f"
 
 [[package]]
 name = "lml"
@@ -1183,7 +1183,7 @@ urllib3 = ">=1.21.1,<1.27"
 
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
-use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
+use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "s3transfer"
@@ -2031,7 +2031,9 @@ PyJWT = [
     {file = "PyJWT-2.4.0.tar.gz", hash = "sha256:d42908208c699b3b973cbeb01a969ba6a96c821eefb1c5bfe4c390c01d67abba"},
 ]
 pylabels = [
+    {file = "pylabels-1.2.1-py2.7.egg", hash = "sha256:e3ed2b094694b2e9ae7ae429944ef5f546eefb8773c94857d8a9bc3a00906ca4"},
     {file = "pylabels-1.2.1-py2.py3-none-any.whl", hash = "sha256:32cad77ff07bac765a2ba9379c81b26fd679693aa4b24a640e5e53b2f3fec7af"},
+    {file = "pylabels-1.2.1-py3.5.egg", hash = "sha256:422fd5e839c92a3363d4fcd2b90308642aea1382e47e57fc4cfd4f737d4a7111"},
     {file = "pylabels-1.2.1.tar.gz", hash = "sha256:299b4f97b6266427cc5acdb99b4699a8b6f381242f2d73513b892fa8857a073f"},
 ]
 pymemcache = [
