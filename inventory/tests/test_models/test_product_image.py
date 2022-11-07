@@ -3,6 +3,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
 from imagekit.cachefiles import ImageCacheFile
 from imagekit.models.fields.files import ProcessedImageFieldFile
 
@@ -139,3 +140,92 @@ def test_delete_square_image_does_not_fail_silently_when_not_passed_silent(
 ):
     with pytest.raises(Exception):
         product_image.delete_square_image()
+
+
+def test_product_image_get_hash_method(test_image_path, test_image_hash):
+    with open(test_image_path, "rb") as f:
+        uploaded_file = SimpleUploadedFile(name="file_name", content=f.read())
+        hash = models.ProductImage.objects.get_hash(uploaded_file)
+    assert hash == test_image_hash
+
+
+@pytest.fixture
+def uploaded_file(test_image_path):
+    with open(test_image_path, "rb") as f:
+        yield SimpleUploadedFile(name="file_name", content=f.read())
+
+
+@pytest.fixture
+def added_image(uploaded_file):
+    return models.ProductImage.objects.add_image(uploaded_file=uploaded_file)
+
+
+class TestAddImageMethod:
+    @pytest.mark.django_db
+    def test_image_is_added(self, added_image):
+        assert isinstance(added_image.id, int)
+
+    @pytest.mark.django_db
+    def test_image_has_hash(self, added_image, test_image_hash):
+        assert added_image.hash == test_image_hash
+
+    @pytest.mark.django_db
+    @patch("inventory.models.product_image.ProductImageManager.get_hash")
+    def test_get_hash_is_not_called_when_hash_string_is_passed(
+        self, mock_get_hash, uploaded_file
+    ):
+        models.ProductImage.objects.add_image(
+            uploaded_file=uploaded_file, hash_string="FAKEHASHSTRING"
+        )
+        mock_get_hash.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_get_hash_string_is_used_when_passed(self, uploaded_file):
+        hash_string = "FAKEHASHSTRING"
+        image_object = models.ProductImage.objects.add_image(
+            uploaded_file=uploaded_file, hash_string=hash_string
+        )
+        assert image_object.hash == hash_string
+
+
+class TestGetOrAddImageMethod:
+    @pytest.fixture
+    def existing_image(self, test_image_hash, product_image_factory):
+        return product_image_factory.create(hash=test_image_hash)
+
+    @pytest.mark.django_db
+    def test_get_or_add_image_creates_an_image_if_no_match_is_found(
+        self, uploaded_file
+    ):
+        image = models.ProductImage.objects.get_or_add_image(
+            uploaded_file=uploaded_file
+        )
+        assert isinstance(image.id, int)
+
+    @pytest.mark.django_db
+    def test_returns_existing_image_if_a_match_is_found(
+        self, existing_image, uploaded_file
+    ):
+        new_image = models.ProductImage.objects.get_or_add_image(
+            uploaded_file=uploaded_file
+        )
+        assert new_image.id == existing_image.id
+        assert models.ProductImage.objects.count() == 1
+
+    @pytest.mark.django_db
+    @patch("inventory.models.product_image.ProductImageManager.add_image")
+    def test_does_not_call_add_image_when_match_is_found(
+        self, mock_add_image, uploaded_file, existing_image
+    ):
+        models.ProductImage.objects.get_or_add_image(uploaded_file=uploaded_file)
+        mock_add_image.assert_not_called()
+
+    @pytest.mark.django_db
+    @patch("inventory.models.product_image.ProductImageManager.add_image")
+    def test_calls_add_image_when_no_match_is_found(
+        self, mock_add_image, uploaded_file, test_image_hash
+    ):
+        models.ProductImage.objects.get_or_add_image(uploaded_file=uploaded_file)
+        mock_add_image.assert_called_once_with(
+            uploaded_file=uploaded_file, hash_string=test_image_hash
+        )

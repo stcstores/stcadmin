@@ -243,8 +243,28 @@ class ProductImageFactory(DjangoModelFactory):
             "example.jpg",
         )
     )
-    # square_image = factory.django.ImageField()
-    # thumbnail = factory.django.ImageField()
     hash = fuzzy.FuzzyText(length=32, chars=string.digits)
     created_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
     modified_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+
+
+class ProductImageLinkFactory(DjangoModelFactory):
+    class Meta:
+        model = models.ProductImageLink
+
+    product = factory.SubFactory(BaseProductFactory)
+    image = factory.SubFactory(ProductImageFactory)
+    created_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+    modified_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+    position = fuzzy.FuzzyInteger(0)
+
+
+class ProductRangeImageLinkFactory(DjangoModelFactory):
+    class Meta:
+        model = models.ProductRangeImageLink
+
+    product = factory.SubFactory(ProductRangeFactory)
+    image = factory.SubFactory(ProductImageFactory)
+    created_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+    modified_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+    position = fuzzy.FuzzyInteger(0, 50)

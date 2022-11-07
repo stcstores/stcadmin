@@ -74,13 +74,9 @@ class ProductImageManager(models.Manager):
             return self.add_image(uploaded_file=uploaded_file, hash_string=hash_string)
 
     def get_hash(self, uploaded_file):
-        """Return the has of an uploaded image."""
+        """Return the hash of an uploaded image."""
         ctx = hashlib.md5()
-        if uploaded_file.multiple_chunks():
-            for data in uploaded_file.chunks(2**20):
-                ctx.update(data)
-        else:
-            ctx.update(uploaded_file.read())
+        ctx.update(uploaded_file.read())
         return ctx.hexdigest()
 
 
