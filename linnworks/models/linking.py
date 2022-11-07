@@ -39,7 +39,9 @@ class LinnworksChannelMappingImportFile(BaseImportFile):
     @classmethod
     def create(cls):
         """Create a Linnworks Product Import file."""
-        channels = LinnworksChannel.objects.all().order_by("source", "sub_source")
+        channels = LinnworksChannel.objects.filter(link_by_sku=True).order_by(
+            "source", "sub_source"
+        )
         product_skus = cls.product_skus()
         channel_items_file = ChannelItemsExport()
         linked_skus = cls.linked_skus(channel_items_file)

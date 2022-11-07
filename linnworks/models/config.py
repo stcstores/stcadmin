@@ -46,6 +46,7 @@ class LinnworksChannel(models.Model):
     sub_source = models.CharField(max_length=255)
     readable_name = models.CharField(max_length=255, blank=True)
     item_link_format = models.CharField(max_length=255, blank=True)
+    link_by_sku = models.BooleanField(default=True)
     link_prime = models.BooleanField(default=False)
     channel = models.ForeignKey(
         Channel,
