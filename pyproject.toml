@@ -5,7 +5,7 @@ description = ""
 authors = ["Luke Shiner <luke@lukeshiner.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<4.0"
+python = ">=3.11,<4.0"
 gunicorn = ">=20.1.0"
 django = ">=4.0"
 django-formtools = ">=2.3"
