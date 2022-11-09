@@ -219,6 +219,8 @@ class StockManager:
     @linnapi.linnworks_api_session
     def _get_multiple_stock_level_info_from_linnworks(cls, *skus):
         """Return stock level information for multiple product SKUs."""
+        if not skus:
+            return {}
         return linnapi.inventory.get_stock_levels_by_skus(*skus)
 
     @classmethod
