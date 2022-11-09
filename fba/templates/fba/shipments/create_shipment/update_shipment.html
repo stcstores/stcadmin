@@ -9,9 +9,11 @@
 <form action="" method="POST">{% csrf_token %}
     {{ form.as_p }}
     <p>
-        Weight: {{ form.instance.weight_kg }}kg
+        Weight: {{ form.instance.weight_kg|floatformat:2 }}kg
         &nbsp;
         Value: {% format_price form.instance.value %}
+        &nbsp;
+        Item Count: {{ form.instance.item_count }}
     </p>
     <button type="submit">Save</button>
     <button type="submit" name="new_package">Add Package</button>
@@ -26,7 +28,7 @@
                 &nbsp;
                 Dimensions: {{ package.length_cm }}x{{ package.width_cm }}x{{ package.height_cm }}cm
                 &nbsp;
-                Weight: {{ package.weight_kg }}kg
+                Weight: {{ package.weight_kg|floatformat:2 }}kg
                 &nbsp;
                 Value: {% format_price package.value %}
                 &nbsp;
