@@ -42,17 +42,17 @@
     <tbody>
         {% for order in object_list %}
         <tr class="order">
-            <th>{{ order.product_SKU }} </th>
-            <th>
+            <th><span class="sku">{{ order.product_SKU }}</span></th>
+            <th><span class="name">
                 {% if order.closed_at == None %}
                 <a href="{% url 'fba:update_fba_order' order.id %}">{{ order.product_name }}</a>
                 {% else %}
                 {{ order.product_name }}
                 {% endif %}
-            </th>
+            </span></th>
             <td>{{ order.region.flag }}</td>
             <td>{{ order.product_supplier }}</td>
-            <td>{{ order.product_asin }}</td>
+            <td><span class="sku">{{ order.product_asin }}</span></td>
             <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
             <td>{{ order.aproximate_quantity }}</td>
             <td class="total_stock" id="total_stock_{{ order.pk }}">

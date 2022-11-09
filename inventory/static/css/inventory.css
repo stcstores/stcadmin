@@ -40,12 +40,15 @@ table.new_product {
   float: left;
 }
 
-.new_product tr input, .new_product tr select, .new_product tr textarea {
+.new_product tr input,
+.new_product tr select,
+.new_product tr textarea {
   border-radius: 3px;
   padding: 0.25em;
 }
 
-.new_product tr input:required, .new_product tr select {
+.new_product tr input:required,
+.new_product tr select {
   border: solid 1px black;
 }
 
@@ -53,7 +56,7 @@ table.new_product {
   background: #e2edff;
 }
 
-.variation_table .variation_option:disabled{
+.variation_table .variation_option:disabled {
   color: black;
 }
 
@@ -78,7 +81,8 @@ table.new_product {
   border: solid 3px grey;
 }
 
-.invalid_page, .current_page {
+.invalid_page,
+.current_page {
   pointer-events: none;
 }
 
@@ -122,8 +126,8 @@ table.new_product {
 }
 
 .selectize-control {
-    display: inline-block;
-    vertical-align: middle;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .supplier_list {
@@ -131,27 +135,9 @@ table.new_product {
   margin: 1em;
 }
 
-.sku {
-  font-family: 'Source Code Pro', monospace;
-  -webkit-user-select: all;  /* Chrome 49+ */
-  -moz-user-select: all;     /* Firefox 43+ */
-  -ms-user-select: all;      /* No support yet */
-  user-select: all;
-  white-space: nowrap;
-}
-
-.name {
-  font-family: 'Open Sans', sans-serif;
-  font-weight: bold;
-  -webkit-user-select: all;  /* Chrome 49+ */
-  -moz-user-select: all;     /* Firefox 43+ */
-  -ms-user-select: all;      /* No support yet */
-  user-select: all;
-}
-
 .variation_table {
   background: #eee;
-  border-collapse:separate;
+  border-collapse: separate;
   border-radius: 1em;
   border-spacing: 0 0.25em;
   padding: 0.5em;
@@ -166,7 +152,8 @@ table.new_product {
   text-align: left;
 }
 
-.variation_table td, .variation_table th {
+.variation_table td,
+.variation_table th {
   border-style: hidden;
   padding: 0.25em 1em;
 }
@@ -199,12 +186,14 @@ table.new_product {
   white-space: nowrap;
 }
 
-.variation_table tr td:first-child, .variation_table tr th:first-child {
+.variation_table tr td:first-child,
+.variation_table tr th:first-child {
   border-top-left-radius: 1em;
   border-bottom-left-radius: 1em;
 }
 
-.variation_table tr td:last-child, .variation_table tr th:last-child {
+.variation_table tr td:last-child,
+.variation_table tr th:last-child {
   border-top-right-radius: 1em;
   border-bottom-right-radius: 1em;
 }
@@ -213,7 +202,7 @@ a {
   text-decoration: none;
 }
 
-button:not(.fr-box)  {
+button:not(.fr-box) {
   background: #ddd;
   border-radius: 4px;
   box-shadow: 3px 2px rgba(0, 0, 0, 0.4);
@@ -236,15 +225,17 @@ button:disabled {
 }
 
 #barcode_table tr:nth-child(even) {
-    background: #CCC;
+  background: #CCC;
 }
+
 #barcode_table tr:nth-child(odd) {
-    background: #FFF;
+  background: #FFF;
 }
 
 .listing_option {
   font-weight: normal;
-  font-size: 0.75em;;
+  font-size: 0.75em;
+  ;
 }
 
 .page_center {
@@ -262,7 +253,8 @@ button:disabled {
   font-weight: bold;
 }
 
-.selectize-control .option, .selectize-input .option{
+.selectize-control .option,
+.selectize-input .option {
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -292,7 +284,10 @@ button:disabled {
   flex-direction: column;
 }
 
-.locations .option, .locations .value, .locations .sku, .locations th {
+.locations .option,
+.locations .value,
+.locations .sku,
+.locations th {
   font-size: 0.75em;
 }
 
