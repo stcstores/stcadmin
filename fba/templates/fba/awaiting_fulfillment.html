@@ -34,9 +34,9 @@
     <tbody>
         {% for order in object_list %}
         <tr class="order">
-            <th>{{ order.product_SKU }} </th>
-            <th>{{ order.product_name }} </th>
-            <td>{{ order.product_asin }}</td>
+            <th><span class="sku">{{ order.product_SKU }}</span></th>
+            <th><span class="name">{{ order.product_name }}</span></th>
+            <td><span class="sku">{{ order.product_asin }}</span></td>
             <td>{{ order.aproximate_quantity}}</td>
             <td>{{ order.region.flag }}</td>
             <td>{{ order.status }}</td>
