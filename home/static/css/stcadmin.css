@@ -431,3 +431,27 @@ th {
 .fr-box {
   overflow: hidden;
 }
+
+.sku {
+  font-family: 'Source Code Pro', monospace;
+  -webkit-user-select: all;
+  /* Chrome 49+ */
+  -moz-user-select: all;
+  /* Firefox 43+ */
+  -ms-user-select: all;
+  /* No support yet */
+  user-select: all;
+  white-space: nowrap;
+}
+
+.name {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: bold;
+  -webkit-user-select: all;
+  /* Chrome 49+ */
+  -moz-user-select: all;
+  /* Firefox 43+ */
+  -ms-user-select: all;
+  /* No support yet */
+  user-select: all;
+}
