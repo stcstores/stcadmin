@@ -22,6 +22,8 @@ from inventory.models import (
     CombinationProduct,
     MultipackProduct,
     ProductBayLink,
+    ProductImageLink,
+    ProductRangeImageLink,
 )
 from linnworks.models import StockManager
 
@@ -82,11 +84,15 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
 
     def get_image_url(self):
         """Return the URL of the product's image."""
-        image = self.product.images.first()
-        if image:
-            return mark_safe(image.image_file.url)
-        else:
+        image_link = ProductImageLink.objects.filter(product=self.product).first()
+        if image_link is None:
+            image_link = ProductRangeImageLink.objects.filter(
+                product_range=self.product.product_range
+            ).first()
+        if image_link is None:
             return ""
+        else:
+            return mark_safe(image_link.image.image_file.url)
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
