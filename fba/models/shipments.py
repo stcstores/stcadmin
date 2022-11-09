@@ -146,6 +146,12 @@ class FBAShipmentOrder(models.Model):
             "shipment_item__value__sum"
         ]
 
+    def item_count(self):
+        """Return the total number of items in the shipment."""
+        return self.shipment_package.aggregate(models.Sum("shipment_item__quantity"))[
+            "shipment_item__quantity__sum"
+        ]
+
     def description(self, max_length=30):
         """Return a text description of the shipment."""
         descriptons = self.shipment_package.values_list(
@@ -219,7 +225,7 @@ class FBAShipmentItem(models.Model):
         verbose_name_plural = "FBA Shipment Items"
 
     def __str__(self):
-        return f"{self.shipment_order} package {self.package.package_number()} - {self.sku}"
+        return f"{self.package.shipment_order} package {self.package.package_number()} - {self.sku}"
 
     def short_description(self, max_length=30):
         """Return a shortended description."""
