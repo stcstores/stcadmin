@@ -4,7 +4,7 @@
 
 <h1>{% if form.instance.id %}Edit{% elif to_repeat%}Repeat{% else %}Create{% endif %} FBA Order</h1>
 
-<h2>{{ product.sku}} - {{ product.full_name }}</h2>
+<h2><span class="sku">{{ product.sku}}</span> - <span class="name">{{ product.full_name }}</span></h2>
 
 {% if form.instance.id and form.instance.status != form.instance.ON_HOLD %}
 <a href="{% url 'fba:fulfill_fba_order' form.instance.id %}">
