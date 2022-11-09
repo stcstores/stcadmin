@@ -38,6 +38,8 @@ class GetShippingPrice(InventoryUserMixin, View):
             response_data = self.get_shipping_price_details()
         except models.NoShippingService:
             response_data = self.no_shipping_price_response()
+        if response_data is None:
+            return HttpResponse(status=500)
         return JsonResponse(response_data, safe=False)
 
     def product_type(self):
@@ -69,7 +71,7 @@ class GetShippingPrice(InventoryUserMixin, View):
             weight = int(self.request.POST["weight"])
             price = int(self.request.POST["price"])
         except ValueError:
-            return HttpResponse(status=500)
+            return None
         self.exchange_rate = float(self.country.currency.exchange_rate())
         (
             shipping_method,
