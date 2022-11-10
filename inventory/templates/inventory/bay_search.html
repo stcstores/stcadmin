@@ -1,0 +1,50 @@
+{% extends 'inventory/base.html' %}
+{% load static %}
+
+{% block additional_head %} {{ block.super }}
+<script src="{% static 'scripts/stock_manager.js' %}"></script>
+<style>
+    .search {
+        width: 50%;
+    }
+    .title {
+        font-size: 0.75em;
+    }
+</style>
+{% endblock additional_head %}
+
+{% block content %}
+<div class="search">
+    <form action="" method="GET">
+        {% include 'inventory/input_add_on_form.html' %}
+        <button>Search</button>
+    </form>
+</div>
+<div class="results">
+    {% if products %}
+        <table>
+        {% for product, other_bays in products %}
+        <tr>
+            <th><span class="sku">{{ product.sku}}</span></th>
+            <td class="title"><span class="name">{{ product.full_name }}</span></td>
+            <td><a href="{% url 'inventory:product_range' product.product_range.id %}">View</a></td>
+            <td class="column stock_level">
+                {% if product_range.is_end_of_line or product.is_end_of_line %}
+                  <span class="error">EOL</span>
+                {% else %}
+                  {% include 'inventory/update_stock.html' with updatable=false %}
+                {% endif %}
+            </td>
+            <td>
+                {% for bay in other_bays %}
+                <a href="{% url 'inventory:bay_search' %}?bay={{ bay.id }}">{{ bay }}</a> &nbsp;
+                {% endfor %}
+            </td>
+        </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+    This bay is empty
+    {% endif %}
+</div>
+{% endblock content %}

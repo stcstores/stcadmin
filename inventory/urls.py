@@ -100,6 +100,7 @@ inventory_urlpatterns = [
         views.images.AddRangeImage.as_view(),
         name="add_range_image",
     ),
+    path("bay_search", views.BaySearch.as_view(), name="bay_search"),
 ]
 
 api_urlpatterns = [

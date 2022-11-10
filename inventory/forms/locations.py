@@ -1,6 +1,7 @@
 """Forms for updating product locations."""
 
 from django import forms
+from django_select2 import forms as s2forms
 
 from inventory import models
 from inventory.forms.fields import BayField
@@ -28,3 +29,19 @@ class LocationsForm(forms.Form):
 
 
 LocationsFormSet = forms.formset_factory(LocationsForm, extra=0)
+
+
+class BayWidget(s2forms.ModelSelect2Widget):
+    """Widget for selecting a bay."""
+
+    search_fields = ["name__icontains"]
+
+    def get_queryset(*args, **kwargs):
+        """Return a queryset of bays."""
+        return models.Bay.objects.all()
+
+
+class BaySearchForm(forms.Form):
+    """Form for selecting a bay to view the contents of."""
+
+    bay = forms.ModelChoiceField(queryset=models.Bay.objects.all(), widget=BayWidget())
