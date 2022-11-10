@@ -14,7 +14,7 @@ from .forms import (
     SetProductOptionValuesFormset,
     SetupVariationsForm,
 )
-from .locations import LocationsFormSet
+from .locations import BaySearchForm, LocationsFormSet
 from .product_order import ProductOrderFormSet
 from .product_search import ProductSearchForm
 
@@ -31,6 +31,7 @@ __all__ = [
     "SetProductOptionValues",
     "SetProductOptionValuesFormset",
     "SetupVariationsForm",
+    "BaySearchForm",
     "LocationsFormSet",
     "ProductOrderFormSet",
     "ProductSearchForm",

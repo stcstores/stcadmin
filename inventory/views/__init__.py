@@ -11,7 +11,7 @@ from .api import (
 )
 from .descriptions import DescriptionsView
 from .images import ImageFormView
-from .locations import LocationFormView
+from .locations import BaySearch, LocationFormView
 from .print_barcodes import BarcodePDF, PrintBarcodeLabels
 from .product import ProductView
 from .product_editor import (
@@ -93,4 +93,5 @@ __all__ = [
     "InventoryUserMixin",
     "ProductSearchView",
     "SKUGeneratorView",
+    "BaySearch",
 ]

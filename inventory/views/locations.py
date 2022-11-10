@@ -2,9 +2,10 @@
 
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 
-from inventory import models
+from inventory import forms, models
 from inventory.forms import LocationsFormSet
 from linnworks.models import StockManager
 
@@ -59,3 +60,31 @@ class LocationFormView(InventoryUserMixin, FormView):
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
         return self.product_range.get_absolute_url()
+
+
+class BaySearch(InventoryUserMixin, TemplateView):
+    """View for finding the contents of a bay."""
+
+    template_name = "inventory/bay_search.html"
+    form_class = forms.BaySearchForm
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        if "bay" in self.request.GET:
+            context["form"] = self.form_class(self.request.GET)
+            bay = models.Bay.objects.get(id=int(self.request.GET["bay"]))
+            product_ids = bay.product_bay_links.all().values_list("product", flat=True)
+            context["products"] = [
+                (product, self.get_other_bays(product, bay))
+                for product in models.BaseProduct.objects.filter(id__in=product_ids)
+            ]
+
+        else:
+            context["form"] = self.form_class()
+        return context
+
+    def get_other_bays(self, product, bay):
+        """Return a list of other bays the product is in."""
+        links = product.product_bay_links.exclude(bay=bay)
+        return [link.bay for link in links]
