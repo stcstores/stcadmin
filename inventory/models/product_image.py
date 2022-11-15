@@ -230,14 +230,12 @@ class ProductRangeImageLinkManager(BaseImageLinkManager):
         """
         for image in uploaded_images:
             db_image = ProductImage.objects.get_or_add_image(image)
-            highest_position = self.get_highest_image_position(product_range.pk)
-            if highest_position is None:
-                highest_position = -1
             self.model(
                 product_range=product_range,
                 image=db_image,
-                position=highest_position + 1,
+                position=999999999,
             ).save()
+        self.normalize_image_positions(product_range.pk)
 
 
 class BaseImageLink(models.Model):
