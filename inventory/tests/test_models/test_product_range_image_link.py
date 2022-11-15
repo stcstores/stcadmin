@@ -1,0 +1,189 @@
+import datetime as dt
+
+import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
+
+from inventory import models
+
+
+@pytest.fixture
+def product_range_image_link(product_range_image_link_factory):
+    product_range_image_link = product_range_image_link_factory.create()
+    product_range_image_link.full_clean()
+    return product_range_image_link
+
+
+@pytest.fixture
+def new_product_range_image_link(product_range_factory, product_image_factory):
+    product_range_image_link = models.ProductRangeImageLink(
+        product_range=product_range_factory.create(),
+        image=product_image_factory.create(),
+    )
+    product_range_image_link.save()
+    product_range_image_link.full_clean()
+    return product_range_image_link
+
+
+@pytest.fixture
+def create_upload_file(test_image_path):
+    def _create_upload_file():
+        with open(test_image_path, "rb") as f:
+            return SimpleUploadedFile(name="file_name", content=f.read())
+
+    return _create_upload_file
+
+
+@pytest.fixture
+def uploaded_file(create_upload_file):
+    return create_upload_file()
+
+
+@pytest.mark.django_db
+def test_product_rangeattribute(product_range_image_link):
+    assert isinstance(product_range_image_link.product_range, models.ProductRange)
+
+
+@pytest.mark.django_db
+def test_image_attribute(product_range_image_link):
+    assert isinstance(product_range_image_link.image, models.ProductImage)
+
+
+@pytest.mark.django_db
+def test_created_at_attribute(product_range_image_link):
+    assert isinstance(product_range_image_link.created_at, dt.datetime)
+
+
+@pytest.mark.django_db
+def test_modified_at_attribute(product_range_image_link):
+    assert isinstance(product_range_image_link.modified_at, dt.datetime)
+
+
+@pytest.mark.django_db
+def test_position_attribute(product_range_image_link):
+    assert isinstance(product_range_image_link.position, int)
+
+
+@pytest.mark.django_db
+def test_position_attribute_defaults_to_zero(new_product_range_image_link):
+    assert new_product_range_image_link.position == 0
+
+
+@pytest.mark.django_db
+def test_get_highest_image_position_method(
+    product_range_factory, product_range_image_link_factory
+):
+    product_range = product_range_factory.create()
+    for i in range(5):
+        product_range_image_link_factory.create(product_range=product_range, position=i)
+    assert (
+        models.ProductRangeImageLink.objects.get_highest_image_position(
+            product_range.id
+        )
+        == 4
+    )
+
+
+@pytest.mark.django_db
+def test_set_image_order_method(
+    product_range_factory, product_range_image_link_factory
+):
+    product_range = product_range_factory.create()
+    links = product_range_image_link_factory.create_batch(
+        5, product_range=product_range
+    )
+    new_order = [4, 2, 1, 0, 3]
+    image_order = [links[i].image.id for i in new_order]
+    models.ProductRangeImageLink.objects.set_image_order(product_range.id, image_order)
+    for i, link in enumerate(links):
+        link.refresh_from_db()
+        assert link.position == new_order.index(i)
+
+
+@pytest.mark.django_db
+def test_set_image_order_fails_when_passed_incorrect_image_ids(
+    product_range_image_link_factory, product_range_factory
+):
+    product_range = product_range_factory.create()
+    product_range_image_link_factory.create_batch(5, product_range=product_range)
+    with pytest.raises(Exception):
+        models.ProductRangeImageLink.objects.set_image_order(
+            product_range.id, [55, 99, 1, 22, 3]
+        )
+
+
+@pytest.mark.django_db
+def test_normalize_image_positions_method(
+    product_range_image_link_factory, product_range_factory
+):
+    product_range = product_range_factory.create()
+    links = [
+        product_range_image_link_factory.create(
+            product_range=product_range, position=0
+        ),
+        product_range_image_link_factory.create(
+            product_range=product_range, position=20
+        ),
+        product_range_image_link_factory.create(
+            product_range=product_range, position=55
+        ),
+    ]
+    models.ProductRangeImageLink.objects.normalize_image_positions(product_range.id)
+    for i, link in enumerate(links):
+        link.refresh_from_db()
+        assert link.position == i
+
+
+class TestAddImagesMethod:
+    @pytest.fixture
+    def extra_uploaded_images(self, extra_image_paths):
+        images = []
+        for path in extra_image_paths:
+            with open(path, "rb") as f:
+                images.append(SimpleUploadedFile(name="file_name", content=f.read()))
+        return images
+
+    @pytest.mark.django_db
+    def test_method(self, product_range_factory, uploaded_file):
+        product_range = product_range_factory.create()
+        models.ProductRangeImageLink.objects.add_images(product_range, [uploaded_file])
+        assert models.ProductRangeImageLink.objects.filter(
+            product_range=product_range, position=0
+        ).exists()
+
+    @pytest.mark.django_db
+    def test_method_uses_existing_image(
+        self, product_range_factory, create_upload_file
+    ):
+        image = models.ProductImage.objects.add_image(create_upload_file())
+        product_range = product_range_factory.create()
+        models.ProductRangeImageLink.objects.add_images(
+            product_range, [create_upload_file()]
+        )
+        assert models.ProductRangeImageLink.objects.filter(
+            product_range=product_range, image=image, position=0
+        ).exists()
+
+    @pytest.mark.django_db
+    def test_with_existing_images(
+        self, product_range_factory, product_range_image_link_factory, uploaded_file
+    ):
+        product_range = product_range_factory.create()
+        existing_links = product_range_image_link_factory.create_batch(
+            5, product_range=product_range
+        )
+        models.ProductRangeImageLink.objects.add_images(product_range, [uploaded_file])
+        links = models.ProductRangeImageLink.objects.filter(product_range=product_range)
+        assert len(links) == 6
+        for link in links:
+            if link.id not in [_.id for _ in existing_links]:
+                assert link.position == 5
+
+    @pytest.mark.django_db
+    def test_with_multiple_images(self, product_range_factory, extra_uploaded_images):
+        product_range = product_range_factory.create()
+        models.ProductRangeImageLink.objects.add_images(
+            product_range, extra_uploaded_images
+        )
+        assert models.ProductRangeImageLink.objects.filter(
+            product_range=product_range
+        ).count() == len(extra_uploaded_images)

@@ -1,6 +1,7 @@
 import datetime as dt
 
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from inventory import models
 
@@ -20,6 +21,20 @@ def new_product_image_link(product_factory, product_image_factory):
     product_image_link.save()
     product_image_link.full_clean()
     return product_image_link
+
+
+@pytest.fixture
+def create_upload_file(test_image_path):
+    def _create_upload_file():
+        with open(test_image_path, "rb") as f:
+            return SimpleUploadedFile(name="file_name", content=f.read())
+
+    return _create_upload_file
+
+
+@pytest.fixture
+def uploaded_file(create_upload_file):
+    return create_upload_file()
 
 
 @pytest.mark.django_db
@@ -94,3 +109,73 @@ def test_normalize_image_positions_method(product_image_link_factory, product_fa
     for i, link in enumerate(links):
         link.refresh_from_db()
         assert link.position == i
+
+
+class TestAddImagesMethod:
+    @pytest.fixture
+    def extra_uploaded_images(self, extra_image_paths):
+        images = []
+        for path in extra_image_paths:
+            with open(path, "rb") as f:
+                images.append(SimpleUploadedFile(name="file_name", content=f.read()))
+        return images
+
+    @pytest.mark.django_db
+    def test_method(self, product_factory, uploaded_file):
+        product = product_factory.create()
+        models.ProductImageLink.objects.add_images([product], [uploaded_file])
+        assert models.ProductImageLink.objects.filter(
+            product=product, position=0
+        ).exists()
+
+    @pytest.mark.django_db
+    def test_method_uses_existing_image(self, product_factory, create_upload_file):
+        image = models.ProductImage.objects.add_image(create_upload_file())
+        product = product_factory.create()
+        models.ProductImageLink.objects.add_images([product], [create_upload_file()])
+        assert models.ProductImageLink.objects.filter(
+            product=product, image=image, position=0
+        ).exists()
+
+    @pytest.mark.django_db
+    def test_with_existing_images(
+        self, product_factory, product_image_link_factory, uploaded_file
+    ):
+        product = product_factory.create()
+        existing_links = product_image_link_factory.create_batch(5, product=product)
+        models.ProductImageLink.objects.add_images([product], [uploaded_file])
+        links = models.ProductImageLink.objects.filter(product=product)
+        assert len(links) == 6
+        for link in links:
+            if link.id not in [_.id for _ in existing_links]:
+                assert link.position == 5
+
+    @pytest.mark.django_db
+    def test_with_multiple_products(
+        self, product_factory, uploaded_file, test_image_hash
+    ):
+        products = product_factory.create_batch(5)
+        models.ProductImageLink.objects.add_images(products, [uploaded_file])
+        for product in products:
+            assert models.ProductImageLink.objects.filter(
+                product=product, position=0, image__hash=test_image_hash
+            ).exists()
+
+    @pytest.mark.django_db
+    def test_with_multiple_images(self, product_factory, extra_uploaded_images):
+        product = product_factory.create()
+        models.ProductImageLink.objects.add_images([product], extra_uploaded_images)
+        assert models.ProductImageLink.objects.filter(product=product).count() == len(
+            extra_uploaded_images
+        )
+
+    @pytest.mark.django_db
+    def test_with_multiple_products_and_images(
+        self, product_factory, extra_uploaded_images
+    ):
+        products = product_factory.create_batch(5)
+        models.ProductImageLink.objects.add_images(products, extra_uploaded_images)
+        for product in products:
+            assert models.ProductImageLink.objects.filter(
+                product=product
+            ).count() == len(extra_uploaded_images)
