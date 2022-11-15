@@ -263,7 +263,7 @@ class ProductRangeImageLinkFactory(DjangoModelFactory):
     class Meta:
         model = models.ProductRangeImageLink
 
-    product = factory.SubFactory(ProductRangeFactory)
+    product_range = factory.SubFactory(ProductRangeFactory)
     image = factory.SubFactory(ProductImageFactory)
     created_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
     modified_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
