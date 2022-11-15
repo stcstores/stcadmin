@@ -105,7 +105,7 @@ class ProductRange(models.Model):
 
     def variation_options(self):
         """Return the Range's variable product options."""
-        return (
+        return list(
             self.products.filter(
                 variation_option_values__variation_option__name__isnull=False
             )
@@ -116,7 +116,7 @@ class ProductRange(models.Model):
 
     def listing_attributes(self):
         """Return the Range's listing product options."""
-        return (
+        return list(
             self.products.filter(
                 listing_attribute_values__listing_attribute__name__isnull=False
             )
@@ -148,7 +148,7 @@ class ProductRange(models.Model):
 
     def variation_values(self):
         """Return a list of the product range's variation option values."""
-        return (
+        return list(
             self.products.filter(variation_option_values__value__isnull=False)
             .values_list("variation_option_values__value", flat=True)
             .order_by()
@@ -157,8 +157,8 @@ class ProductRange(models.Model):
 
     def listing_attribute_values(self):
         """Return a list of the product range's listing attribute values."""
-        return (
-            self.products.filter(listing_attribute_values__isnulll=False)
+        return list(
+            self.products.filter(listing_attribute_values__isnull=False)
             .values_list("listing_attribute_values__value", flat=True)
             .order_by()
             .distinct()

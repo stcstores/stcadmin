@@ -86,11 +86,11 @@ class ProductRangeFactory(DjangoModelFactory):
         model = models.ProductRange
 
     status = models.ProductRange.COMPLETE
-    sku = factory.Sequence(lambda n: f"RNG_AAA-BBB-00{n}")
+    sku = factory.Sequence(lambda n: f"RNG_AAA-BBB-{n:03.0f}")
     name = factory.Sequence(lambda n: f"Product Range {n}")
-    description = ""
-    search_terms = list()
-    bullet_points = list()
+    description = "Description Text"
+    search_terms = [f"Term {i}" for i in range(5)]
+    bullet_points = [f"Bullet {i}" for i in range(5)]
     is_end_of_line = False
     hidden = False
     managed_by = factory.SubFactory(UserFactory)
