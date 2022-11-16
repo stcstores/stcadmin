@@ -81,6 +81,19 @@ class SupplierFactory(DjangoModelFactory):
     active = True
 
 
+class SupplierContactFactory(DjangoModelFactory):
+    class Meta:
+        model = models.SupplierContact
+
+    supplier = factory.SubFactory(SupplierFactory)
+    name = "John Doe"
+    email = "noone@nowhere.com"
+    phone = "12345679"
+    notes = "Call on Fridays"
+    created_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+    modified_at = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+
+
 class ProductRangeFactory(DjangoModelFactory):
     class Meta:
         model = models.ProductRange

@@ -50,10 +50,10 @@ class SupplierContact(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        string = self.supplier.name
-        if self.name is not None:
-            string += f" - {self.name}"
-        return string
+        if self.name:
+            return f"{self.name} - {self.supplier.name}"
+        else:
+            return self.supplier.name
 
     def get_absolute_url(self):
         """Return the absolute URL for the contact instance's supplier."""
