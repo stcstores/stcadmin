@@ -69,5 +69,3 @@ jobs:
         uses: AndreMiras/coveralls-python-action@master
         with:
           github-token: ${{ github.token }}
-          parallel: true
-          flag-name: Unit Test
