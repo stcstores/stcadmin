@@ -50,8 +50,6 @@ class StockLevelHistoryManager(models.Manager):
             previous_change=previous_change,
         )
         new_update.save()
-        product.latest_stock_change = new_update
-        product.save()
         return new_update
 
 

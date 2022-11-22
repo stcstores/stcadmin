@@ -62,7 +62,7 @@ class ProductQueryset(PolymorphicQuerySet):
 
     def active(self):
         """Return a queryset of active products."""
-        return self.filter(is_end_of_line=False).select_related("latest_stock_change")
+        return self.filter(is_end_of_line=False)
 
 
 class ProductManager(PolymorphicManager):
@@ -159,13 +159,6 @@ class BaseProduct(PolymorphicModel):
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True, editable=False)
     range_order = models.PositiveSmallIntegerField(default=0)
-    latest_stock_change = models.ForeignKey(
-        "StockLevelHistory",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        editable=False,
-    )
 
     images = models.ManyToManyField(
         ProductImage, through=ProductImageLink, related_name="image_products"
