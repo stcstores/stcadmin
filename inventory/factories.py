@@ -126,11 +126,6 @@ class BaseProductFactory(DjangoModelFactory):
     depth = 500
     is_end_of_line = False
     range_order = 0
-    latest_stock_change = factory.post_generation(
-        lambda obj, create, extracted, **kwargs: StockLevelHistoryFactory.create(
-            product=obj
-        )
-    )
 
 
 class ProductFactory(BaseProductFactory):
@@ -177,11 +172,17 @@ class StockLevelHistoryFactory(DjangoModelFactory):
     class Meta:
         model = models.StockLevelHistory
 
+    class Params:
+        initial = False
+
     source = models.StockLevelHistory.USER
     user = factory.SubFactory(UserFactory)
-    product = factory.SubFactory(ProductFactory)
+    product = factory.SubFactory(BaseProductFactory)
     stock_level = 5
-    previous_change = None
+    previous_change = factory.SubFactory(
+        "inventory.factories.StockLevelHistoryFactory",
+        previous_change=None,
+    )
 
 
 class BayFactory(DjangoModelFactory):
