@@ -76,7 +76,7 @@ def test_base_report_generator_generate_csv_method():
     assert generator.generate_csv() == "row1,row2,row3\r\n1,2,3\r\n4,5,6\r\n7,8,9\r\n"
 
 
-class TestReportGenerator(models.BaseReportGenerator):
+class ReportGeneratorSubclass(models.BaseReportGenerator):
     header = ["row1", "row2", "row3"]
 
     def get_row_kwargs(self):
@@ -96,4 +96,4 @@ class TestReportGenerator(models.BaseReportGenerator):
 def test_report_generator_subclass():
     download_object = Mock(start_number=1)
     expected = "row1,row2,row3\r\n1,2,3\r\n4,5,6\r\n7,8,9\r\n"
-    assert TestReportGenerator(download_object).generate_csv() == expected
+    assert ReportGeneratorSubclass(download_object).generate_csv() == expected
