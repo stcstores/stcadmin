@@ -2,22 +2,11 @@
 import datetime
 
 import factory
-from django.contrib.auth import get_user_model
 from factory.django import DjangoModelFactory
 
+from home.factories import UserFactory
 from purchases import models
 from shipping.factories import ShippingPriceFactory
-
-
-class UserFactory(DjangoModelFactory):
-    """Factory for the User model."""
-
-    class Meta:
-        """Meta class for the purchases.UserFactory model."""
-
-        model = get_user_model()
-
-    username = factory.Sequence(lambda n: "user_%d" % n)
 
 
 class StockPurchaseFactory(DjangoModelFactory):
