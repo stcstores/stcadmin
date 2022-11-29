@@ -66,10 +66,4 @@ urlpatterns = [
         views.SmallLabelPDF.as_view(),
         name="small_label_pdf",
     ),
-    path("bay_labels/", views.BayLabelForm.as_view(), name="bay_labels"),
-    path(
-        "bay_labels/bay_labels_pdf/",
-        views.BayLabelPDF.as_view(),
-        name="bay_labels_pdf",
-    ),
 ]
