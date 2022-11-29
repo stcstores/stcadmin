@@ -188,12 +188,12 @@ def test_has_variations_method(product_count, expected, product_factory, product
 
 @pytest.mark.django_db
 def test_variation_options_method(variation_range):
-    assert variation_range.variation_options() == ["Colour", "Size"]
+    assert set(variation_range.variation_options()) == set(["Colour", "Size"])
 
 
 @pytest.mark.django_db
 def test_listing_attributes_method(variation_range):
-    assert variation_range.listing_attributes() == ["Design", "Quantity"]
+    assert set(variation_range.listing_attributes()) == set(["Design", "Quantity"])
 
 
 @pytest.mark.django_db
