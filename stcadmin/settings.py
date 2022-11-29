@@ -144,7 +144,6 @@ INSTALLED_APPS = [
     "file_exchange",
     "mathfilters",
     "solo",
-    "validation",
     "formtools",
     "stcadmin",
     "home",
