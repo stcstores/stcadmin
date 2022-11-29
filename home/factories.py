@@ -45,3 +45,12 @@ class StaffFactory(DjangoModelFactory):
     second_name = factory.Faker("last_name")
     email_address = factory.Faker("email")
     hidden = False
+
+
+class ExternalLinkFactory(DjangoModelFactory):
+    class Meta:
+        model = models.ExternalLink
+
+    name = factory.Faker("company")
+    url = factory.Faker("uri")
+    ordering = 3
