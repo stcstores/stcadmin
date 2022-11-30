@@ -148,7 +148,6 @@ INSTALLED_APPS = [
     "stcadmin",
     "home",
     "labelmaker",
-    "user",
     "inventory",
     "price_calculator",
     "django_markup",

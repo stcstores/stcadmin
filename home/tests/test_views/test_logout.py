@@ -18,7 +18,7 @@ def test_can_post(client, url):
 
 
 @pytest.mark.django_db
-def test_can_logout(url, user, valid_client):
+def test_logs_out(url, valid_client):
     valid_client.post(url)
     assert "_auth_user_id" not in valid_client.session
 

@@ -2,7 +2,7 @@
 
 {% block content %}
 <h2>{{ request.user.username }}</h2>
-<a href="{% url 'user:change_password' %}">Change Password</a>
+<a href="{% url 'home:change_password' %}">Change Password</a>
 <table>
     {% for feedback_type, count in feedback_count.items %}
         <td><img src="{{ feedback_type.image.url }}" alt="{{ feedback_type.name }}" height="15">&nbsp;{{ count }}</td>
