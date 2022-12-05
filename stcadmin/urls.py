@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.static import serve
 
-from user import views as user_views
+from home import views as home_views
 
 admin.site.site_header = "STC Stores Administration"
 
@@ -14,10 +14,8 @@ app_name = "stcadmin"
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("select2/", include("django_select2.urls")),
-    path("user/", include("user.urls", namespace="user")),
     path("labelmaker/", include("labelmaker.urls", namespace="labelmaker")),
     path("inventory/", include("inventory.urls", namespace="inventory")),
-    path("validation/", include("validation.urls", namespace="validation")),
     path(
         "price_calculator/",
         include("price_calculator.urls", namespace="price_calculator"),
@@ -32,7 +30,7 @@ urlpatterns = [
     path("", include("home.urls", namespace="home")),
     path(
         "password_change_done/",
-        user_views.ChangePasswordDone.as_view(),
+        home_views.ChangePasswordDone.as_view(),
         name="password_change_done",
     ),
     path("docs/<str:path>", serve, {"document_root": settings.DOCS_ROOT}),

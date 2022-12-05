@@ -35,7 +35,7 @@
                     feedback ]</a>
             </div>
             <div class="user_details">
-                <p>Welcome <a href="{% url 'user:user' %}">{{ request.user.username|title }}</a></p>
+                <p>Welcome <a href="{% url 'home:user' %}">{{ request.user.username|title }}</a></p>
                 <a href="{% url 'home:logout_user' %}">Logout</a>
             </div>
             {% block section_navigation %}{% endblock %}

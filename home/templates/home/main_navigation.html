@@ -30,11 +30,8 @@
     {% if 'reports' in groups %}
     <li><a href="{% url 'reports:index' %}">Reports</a></li>
     {% endif %}
-    {% if 'validation' in groups %}
-    <li><a href="{% url 'validation:home' %}">Validation</a></li>
-    {% endif %}
     {% if 'admin' in groups %}
-    <li><a href="/admin/">Admin</a></li>
+    <li><a href={% url 'admin:index' %}>Admin</a></li>
     {% endif %}
   </ul>
 </div>

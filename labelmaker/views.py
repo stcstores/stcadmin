@@ -1,6 +1,5 @@
 """Views for the labelmaker app."""
 import json
-from string import ascii_uppercase
 
 import labeler
 from django import http
@@ -80,9 +79,7 @@ class EditSizeChartSizes(LabelmakerUserMixin, FormView):
 
     def form_valid(self, form):
         """Update model object."""
-        for _form in form:
-            if _form.is_valid() and _form.has_changed():
-                form.save()
+        form.save()
         return super().form_valid(form)
 
     def get_context_data(self, *args, **kwargs):
@@ -304,43 +301,4 @@ class SmallLabelPDF(BasePDFLabelView):
             label_text = line.split("\r\n")
             for _ in range(quantities[i]):
                 data.append(label_text)
-        return data
-
-
-class BayLabelForm(LabelmakerUserMixin, TemplateView):
-    """View for the bay label creation form."""
-
-    template_name = "labelmaker/bay_label_form.html"
-
-    def get_context_data(self, **kwargs):
-        """Return template context."""
-        context = super().get_context_data(**kwargs)
-        letters = list(ascii_uppercase[: ascii_uppercase.index("U") + 1])
-        letters.extend(
-            [f"Z{_}" for _ in ascii_uppercase[: ascii_uppercase.index("P") + 1]]
-        )
-        context["rows"] = letters
-        return context
-
-
-class BayLabelPDF(BasePDFLabelView):
-    """Base view for product PDF labels."""
-
-    label_format = labeler.BayLabelFormat
-    label_sheet = labeler.BayLabelSheet
-
-    def get_label_data(self, *args, **kwargs):
-        """Return label data from POST data."""
-        bays = json.loads(self.request.POST.get("data"))
-        return self.parse_label_data(bays)
-
-    def parse_label_data(self, bays):
-        """Return a list of bays for which labels will be created."""
-        data = []
-        for bay_range in bays:
-
-            bay_numbers = range(int(bay_range["first"]), int(bay_range["last"]) + 1)
-            data.extend(
-                [[f"{bay_range['row']}-{str(i).zfill(3)}"] for i in bay_numbers]
-            )
         return data

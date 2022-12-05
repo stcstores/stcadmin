@@ -6,8 +6,11 @@ import sys
 import pkg_resources
 from django import get_version as get_django_version
 from django.conf import settings
+from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic.base import TemplateView
+from django.contrib.auth.views import PasswordChangeView
+from django.shortcuts import reverse
+from django.views.generic.base import RedirectView, TemplateView
 
 from home import models
 
@@ -81,3 +84,24 @@ class DisplayMonitor(TemplateView):
     """View for display monitor."""
 
     template_name = "home/monitor.html"
+
+
+class User(UserLoginMixin, TemplateView):
+    """View for the User page."""
+
+    template_name = "home/user.html"
+
+
+class ChangePassword(UserLoginMixin, PasswordChangeView):
+    """Allow user to change their password."""
+
+    template_name = "home/change_password.html"
+
+
+class ChangePasswordDone(UserLoginMixin, RedirectView):
+    """Landing page after succesful password update."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Logout user."""
+        logout(self.request)
+        return reverse("home:login_user")

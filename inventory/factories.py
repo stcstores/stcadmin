@@ -4,21 +4,13 @@ import datetime as dt
 import string
 
 import factory
-from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.utils.timezone import make_aware
 from factory import fuzzy
 from factory.django import DjangoModelFactory
 
+from home.factories import UserFactory
 from inventory import models
-
-
-class UserFactory(DjangoModelFactory):
-    class Meta:
-        model = get_user_model()
-
-    username = factory.Sequence(lambda n: f"Test User {n}")
-    password = hash("Password")
 
 
 class BarcodeFactory(DjangoModelFactory):

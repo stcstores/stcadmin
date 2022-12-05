@@ -30,16 +30,9 @@ class StockLevelHistoryManager(models.Manager):
             product=product, source=self.model.API, user=None, stock_level=stock_level
         )
 
-    def latest_update(self, product):
-        """Return the most recent stock level change for a product or None if none exist."""
-        try:
-            return self.filter(product=product).last()
-        except self.model.DoesNotExist:
-            return None
-
     @transaction.atomic
     def _update_stock_level(self, product, stock_level, source, user):
-        previous_change = self.latest_update(product)
+        previous_change = self.filter(product=product).last()
         if previous_change is not None and stock_level == previous_change.stock_level:
             return None
         new_update = self.model(
