@@ -227,13 +227,15 @@ class BaseProduct(PolymorphicModel):
 
     def variable_options(self):
         """Return list of Product Options which are variable for the range."""
-        return self.variation_option_values.values_list(
-            "variation_option__name", flat=True
+        return list(
+            self.variation_option_values.values_list(
+                "variation_option__name", flat=True
+            )
         )
 
     def variation_values(self):
         """Return a list of the product's variation option values."""
-        return (
+        return list(
             self.variation_option_values.all()
             .values_list("value", flat=True)
             .order_by("variation_option", "value")
@@ -282,20 +284,12 @@ class Product(BaseProduct):
         verbose_name = "Product"
         verbose_name_plural = "Products"
 
-    def stock_level(self):
-        """Return the products current stock level in Cloud Commerce."""
-        raise NotImplementedError()
-
     def name_extensions(self):
         """Return additions to the product name."""
         extensions = super().name_extensions()
         if self.supplier_sku:
             extensions.append(self.supplier_sku)
         return extensions
-
-    def update_stock_level(self, *, old, new):
-        """Set the product's stock level in Cloud Commerce."""
-        raise NotImplementedError()
 
 
 class InitialVariation(Product):
@@ -381,7 +375,7 @@ class MultipackProduct(BaseProduct):
 
     @property
     def product_bay_links(self):
-        """Return a querset of linked product bays."""
+        """Return a queryset of linked product bays."""
         return self.base_product.product_bay_links
 
 

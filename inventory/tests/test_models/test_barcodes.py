@@ -33,7 +33,7 @@ def new_barcode():
 def test_barcode_barcode_attribute(barcode_factory):
     barcode = barcode_factory.build()
     assert isinstance(barcode.barcode, str)
-    assert len(barcode.barcode) == 12
+    assert len(barcode.barcode) == 13
     assert barcode.barcode.isnumeric()
 
 

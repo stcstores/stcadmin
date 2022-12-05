@@ -75,7 +75,10 @@ def test_product_bay_history_str_method(product_bay_history_factory):
         bay__name="Bay Name",
         change=models.ProductBayHistory.ADDED,
     )
-    assert str(product_bay_history) == "AAA-AAA-AAA: Product Name added Bay Name"
+    assert (
+        str(product_bay_history)
+        == f"{product_bay_history.product} added {product_bay_history.bay}"
+    )
 
 
 class TestProductBayHistoryAddProductToBayMethod:
