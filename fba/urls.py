@@ -140,6 +140,11 @@ urlpatterns = [
         name="download_shipment_file",
     ),
     path(
+        "shipments/download_address_file/<int:pk>/",
+        views.DownloadUPSAddressFile.as_view(),
+        name="download_address_file",
+    ),
+    path(
         "shipments/toggle_held/<int:pk>/",
         views.ToggleShipmentHeld.as_view(),
         name="toggle_shipment_held",

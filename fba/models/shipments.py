@@ -4,7 +4,7 @@
 from django.db import models
 
 from .fba import FBAOrder
-from .shipment_files import UPSShipmentFile
+from .shipment_files import UPSAddressFile, UPSShipmentFile
 
 
 def shortened_description(desc, max_length=30):
@@ -88,6 +88,10 @@ class FBAShipmentExport(models.Model):
     def generate_export_file(self):
         """Return an FBA Shipment .csv."""
         return UPSShipmentFile().create(self)
+
+    def generate_address_file(self):
+        """Return a UPS Address .csv."""
+        return UPSAddressFile.create(self)
 
 
 class FBAShipmentMethod(models.Model):

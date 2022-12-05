@@ -95,6 +95,19 @@ class CreateFBAShipmentFile(FBAUserMixin, RedirectView):
         return reverse_lazy("fba:download_shipment_file", kwargs={"pk": export.pk})
 
 
+class DownloadUPSAddressFile(FBAUserMixin, RedirectView):
+    """View for generating FBA UPS address files."""
+
+    def get(self, *args, **kwargs):
+        """Return an ITD shipment file download."""
+        export = get_object_or_404(models.FBAShipmentExport, pk=self.kwargs["pk"])
+        contents = export.generate_address_file()
+        response = HttpResponse(contents, content_type="text/csv")
+        filename = "FBA_Shipment_ADDRESS.csv"
+        response["Content-Disposition"] = f"attachment; filename={filename}"
+        return response
+
+
 class DownloadFBAShipmentFile(FBAUserMixin, View):
     """View for generating FBA Shipment files."""
 
