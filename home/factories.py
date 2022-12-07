@@ -6,8 +6,7 @@ import datetime as dt
 import factory
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.utils.timezone import make_aware
-from factory import fuzzy
+from factory import faker
 from factory.django import DjangoModelFactory
 
 from home import models
@@ -17,7 +16,7 @@ class GroupFactory(DjangoModelFactory):
     class Meta:
         model = Group
 
-    name = fuzzy.FuzzyText()
+    name = faker.Faker("text", max_nb_chars=20)
 
 
 class UserFactory(DjangoModelFactory):
@@ -32,8 +31,18 @@ class UserFactory(DjangoModelFactory):
     is_staff = False
     is_active = True
     is_superuser = False
-    last_login = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
-    date_joined = fuzzy.FuzzyDateTime(make_aware(dt.datetime(2008, 1, 1)))
+    last_login = faker.Faker(
+        "date_time_this_decade",
+        before_now=True,
+        after_now=False,
+        tzinfo=dt.timezone.utc,
+    )
+    date_joined = faker.Faker(
+        "date_time_this_decade",
+        before_now=True,
+        after_now=False,
+        tzinfo=dt.timezone.utc,
+    )
 
 
 class StaffFactory(DjangoModelFactory):
