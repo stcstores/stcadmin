@@ -209,7 +209,7 @@ zstd = ["zstandard"]
 
 [[package]]
 name = "certifi"
-version = "2022.9.24"
+version = "2022.12.7"
 description = "Python package for providing Mozilla's CA Bundle."
 category = "main"
 optional = false
@@ -597,7 +597,7 @@ Django = ">=4.0"
 type = "git"
 url = "https://github.com/lukeshiner/django-file_exchange.git"
 reference = "main"
-resolved_reference = "8cd3c51f1b00ea3b6811394f4b91944210db828e"
+resolved_reference = "3c0ce21560c38b65a1c936d1fae90f731b4608c6"
 
 [[package]]
 name = "flake8"
@@ -778,7 +778,7 @@ reportlab = ">=3.6.8"
 type = "git"
 url = "https://github.com/lukeshiner/labeler.git"
 reference = "main"
-resolved_reference = "09c5b796f7aba4a4de39ea2c872bb50886d9f311"
+resolved_reference = "9cfa67283ed5cfbbbb4e60160bc84d1693021069"
 
 [[package]]
 name = "linnapi"
@@ -797,7 +797,7 @@ toml = "^0.10.2"
 type = "git"
 url = "https://github.com/stcstores/linnapi.git"
 reference = "main"
-resolved_reference = "640cac4aba3fc146684217a8ae739159a7de4e82"
+resolved_reference = "3450da75a43eaecd3ccaced5dff52a3a7525e4da"
 
 [[package]]
 name = "lml"
@@ -1326,7 +1326,7 @@ toml = ">=0.10.2"
 type = "git"
 url = "https://github.com/stcstores/shopify_api_py.git"
 reference = "main"
-resolved_reference = "389994ac7f08010d5461849200d83fb039d63749"
+resolved_reference = "006c4927d3d05e764617a6746ded6f521a75ab1b"
 
 [[package]]
 name = "shopifyapi"
@@ -1684,8 +1684,8 @@ celery = [
     {file = "celery-5.2.7.tar.gz", hash = "sha256:fafbd82934d30f8a004f81e8f7a062e31413a23d444be8ee3326553915958c6d"},
 ]
 certifi = [
-    {file = "certifi-2022.9.24-py3-none-any.whl", hash = "sha256:90c1a32f1d68f940488354e36370f6cca89f0f106db09518524c88d6ed83f382"},
-    {file = "certifi-2022.9.24.tar.gz", hash = "sha256:0d9c601124e5a6ba9712dbc60d9c53c21e34f5f641fe83002317394311bdce14"},
+    {file = "certifi-2022.12.7-py3-none-any.whl", hash = "sha256:4ad3232f5e926d6718ec31cfc1fcadfde020920e278684144551c91769c7bc18"},
+    {file = "certifi-2022.12.7.tar.gz", hash = "sha256:35824b4c3a97115964b408844d64aa14db1cc518f6562e8d7261699d1350a9e3"},
 ]
 charset-normalizer = [
     {file = "charset-normalizer-2.1.1.tar.gz", hash = "sha256:5a3d016c7c547f69d6f81fb0db9449ce888b418b5b9952cc5e6e66843e9dd845"},
