@@ -39,4 +39,4 @@ def test_product_bay_link_str_method(product_bay_link_factory):
         product__product_range__name="Product Name",
         bay__name="Bay Name",
     )
-    assert str(link) == "Bay Link: AAA-AAA-AAA: Product Name - Bay Name"
+    assert str(link) == f"Bay Link: {link.product} - {link.bay}"
