@@ -1,6 +1,7 @@
 """Model Admin for the FBA app."""
 
 from django.contrib import admin
+from solo.admin import SingletonModelAdmin
 
 from fba import models
 
@@ -277,3 +278,10 @@ class FBAShipmentItemAdmin(admin.ModelAdmin):
         "country_of_origin",
         "hr_code",
     )
+
+
+@admin.register(models.ShipmentConfig)
+class ShipmentConfigAdmin(SingletonModelAdmin):
+    """Model admin for the LinnworksConfig model."""
+
+    exclude_fields = ()

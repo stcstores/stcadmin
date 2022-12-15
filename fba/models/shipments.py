@@ -2,6 +2,7 @@
 
 
 from django.db import models
+from solo.models import SingletonModel
 
 from .fba import FBAOrder
 from .shipment_files import UPSAddressFile, UPSShipmentFile
@@ -26,6 +27,17 @@ def shortened_description_list(descriptions, max_length=30):
         else description_text
     )
     return description
+
+
+class ShipmentConfig(SingletonModel):
+    """Model for storing FBA Shipment settings."""
+
+    token = models.CharField(max_length=128)
+
+    class Meta:
+        """Meta class for ShipmentConfig."""
+
+        verbose_name = "Shipment Config"
 
 
 class FBAShipmentDestinationActiveManager(models.Manager):
@@ -93,6 +105,37 @@ class FBAShipmentExport(models.Model):
         """Return a UPS Address .csv."""
         return UPSAddressFile.create(self)
 
+    def description(self):
+        """Return a description of the shipments contained in the export."""
+        return "\n".join(
+            [shipment.description() for shipment in self.shipment_order.all()]
+        )
+
+    def order_numbers(self):
+        """Return the order numbers of the shipments contained in the export."""
+        return "\n".join(
+            [shipment.order_number() for shipment in self.shipment_order.all()]
+        )
+
+    def destinations(self):
+        """Return the destinations of the shipments contained in the export."""
+        return "\n".join(
+            [shipment.destination.name for shipment in self.shipment_order.all()]
+        )
+
+    def shipment_count(self):
+        """Return the number of shipments contained in the export."""
+        return self.shipment_order.count()
+
+    def package_count(self):
+        """Return the number of packages in the export."""
+        return sum(
+            (
+                shipment.shipment_package.count()
+                for shipment in self.shipment_order.all()
+            )
+        )
+
 
 class FBAShipmentMethod(models.Model):
     """View for FBA Shipment methods."""
@@ -113,6 +156,19 @@ class FBAShipmentMethod(models.Model):
         return self.name
 
 
+class FBAShipmentOrderManager(models.Manager):
+    """Manager for FBA Shipment Orders."""
+
+    def close_shipments(self):
+        """Add currently open shipments to a new Shipment Export."""
+        orders = FBAShipmentOrder.objects.filter(export__isnull=True, is_on_hold=False)
+        if orders.count() == 0:
+            raise Exception("No orders exist to export")
+        export = FBAShipmentExport.objects.create()
+        orders.update(export=export)
+        return export
+
+
 class FBAShipmentOrder(models.Model):
     """View for FBA Shipment orders."""
 
@@ -126,6 +182,8 @@ class FBAShipmentOrder(models.Model):
     destination = models.ForeignKey(FBAShipmentDestination, on_delete=models.PROTECT)
     shipment_method = models.ForeignKey(FBAShipmentMethod, on_delete=models.PROTECT)
     is_on_hold = models.BooleanField(default=False)
+
+    objects = FBAShipmentOrderManager()
 
     class Meta:
         """Meta class for FBAShipmentOrder."""

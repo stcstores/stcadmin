@@ -8,6 +8,7 @@ from .shipments import (
     FBAShipmentMethod,
     FBAShipmentOrder,
     FBAShipmentPackage,
+    ShipmentConfig,
 )
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "FBAShipmentMethod",
     "FBAShipmentOrder",
     "FBAShipmentPackage",
+    "ShipmentConfig",
 ]
