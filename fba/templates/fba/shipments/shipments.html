@@ -45,7 +45,7 @@
         <tr>
             <th>Export</th>
             <th>Order Count</th>
-            <td></td>
+            <td colspan="2"></td>
         </tr>
         {% for export in previous_exports %}
         <th>{{ export}}</th>
@@ -54,6 +54,10 @@
                 <button>Recreate File</button>
             </a>
         </td>
+        <td><a href="{% url 'fba:download_address_file' export.pk %}">
+            <button>Download Address File</button>
+        </a>
+    </td>
     </table>
 
     <br>

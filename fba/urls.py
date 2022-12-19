@@ -140,6 +140,11 @@ urlpatterns = [
         name="download_shipment_file",
     ),
     path(
+        "shipments/download_address_file/<int:pk>/",
+        views.DownloadUPSAddressFile.as_view(),
+        name="download_address_file",
+    ),
+    path(
         "shipments/toggle_held/<int:pk>/",
         views.ToggleShipmentHeld.as_view(),
         name="toggle_shipment_held",
@@ -161,5 +166,30 @@ urlpatterns = [
     ),
     path(
         "get_stock_levels/", views.fba.GetStockLevels.as_view(), name="get_stock_levels"
+    ),
+    path(
+        "api/current_shipments",
+        views.api.CurrentShipments.as_view(),
+        name="api_current_shipments",
+    ),
+    path(
+        "api/shipment_exports",
+        views.api.ShipmentExports.as_view(),
+        name="api_shipment_exports",
+    ),
+    path(
+        "api/download_shipment_file",
+        views.api.DownloadShipmentFile.as_view(),
+        name="api_download_shipment_file",
+    ),
+    path(
+        "api/download_address_file",
+        views.api.DownloadAddressFile.as_view(),
+        name="api_download_address_file",
+    ),
+    path(
+        "api/close_shipments",
+        views.api.CloseShipments.as_view(),
+        name="api_close_shipments",
     ),
 ]

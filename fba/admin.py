@@ -1,6 +1,7 @@
 """Model Admin for the FBA app."""
 
 from django.contrib import admin
+from solo.admin import SingletonModelAdmin
 
 from fba import models
 
@@ -130,38 +131,44 @@ class FBAShipmentDestinationAdmin(admin.ModelAdmin):
     fields = (
         "name",
         "is_enabled",
-        "recipient_last_name",
+        "recipient_name",
+        "contact_telephone",
         "address_line_1",
         "address_line_2",
         "address_line_3",
         "city",
         "state",
         "country",
+        "country_iso",
         "postcode",
     )
     list_display = (
         "__str__",
         "name",
         "is_enabled",
-        "recipient_last_name",
+        "recipient_name",
+        "contact_telephone",
         "address_line_1",
         "address_line_2",
         "address_line_3",
         "city",
         "state",
         "country",
+        "country_iso",
         "postcode",
     )
     list_editable = (
         "name",
         "is_enabled",
-        "recipient_last_name",
+        "recipient_name",
+        "contact_telephone",
         "address_line_1",
         "address_line_2",
         "address_line_3",
         "city",
         "state",
         "country",
+        "country_iso",
         "postcode",
     )
 
@@ -271,3 +278,10 @@ class FBAShipmentItemAdmin(admin.ModelAdmin):
         "country_of_origin",
         "hr_code",
     )
+
+
+@admin.register(models.ShipmentConfig)
+class ShipmentConfigAdmin(SingletonModelAdmin):
+    """Model admin for the LinnworksConfig model."""
+
+    exclude_fields = ()

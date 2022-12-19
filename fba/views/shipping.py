@@ -3,7 +3,6 @@
 from django.contrib import messages
 from django.db import transaction
 from django.http import HttpResponse
-from django.http.response import HttpResponseServerError
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import FormView, TemplateView, View
@@ -85,14 +84,21 @@ class CreateFBAShipmentFile(FBAUserMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         """Return an ITD shipment file download."""
-        orders = models.FBAShipmentOrder.objects.filter(
-            export__isnull=True, is_on_hold=False
-        )
-        if orders.count() == 0:
-            return HttpResponseServerError("No orders exist to export")
-        export = models.FBAShipmentExport.objects.create()
-        orders.update(export=export)
+        export = models.FBAShipmentOrder.objects.close_shipments()
         return reverse_lazy("fba:download_shipment_file", kwargs={"pk": export.pk})
+
+
+class DownloadUPSAddressFile(FBAUserMixin, RedirectView):
+    """View for generating FBA UPS address files."""
+
+    def get(self, *args, **kwargs):
+        """Return an ITD shipment file download."""
+        export = get_object_or_404(models.FBAShipmentExport, pk=self.kwargs["pk"])
+        contents = export.generate_address_file()
+        response = HttpResponse(contents, content_type="text/csv")
+        filename = "FBA_Shipment_ADDRESS.csv"
+        response["Content-Disposition"] = f"attachment; filename={filename}"
+        return response
 
 
 class DownloadFBAShipmentFile(FBAUserMixin, View):

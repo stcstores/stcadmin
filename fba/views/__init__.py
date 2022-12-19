@@ -1,4 +1,5 @@
 """Views for the fba app."""
+from . import api
 from .fba import (
     Awaitingfulfillment,
     DeleteFBAOrder,
@@ -31,6 +32,7 @@ from .shipping import (
     DeleteShipment,
     DisableDestination,
     DownloadFBAShipmentFile,
+    DownloadUPSAddressFile,
     ShipmentDestinations,
     Shipments,
     ToggleShipmentHeld,
@@ -40,6 +42,7 @@ from .shipping import (
 )
 
 __all__ = [
+    "api",
     "Awaitingfulfillment",
     "DeleteFBAOrder",
     "FBAOrderCreate",
@@ -69,6 +72,7 @@ __all__ = [
     "DeleteShipment",
     "DisableDestination",
     "DownloadFBAShipmentFile",
+    "DownloadUPSAddressFile",
     "ShipmentDestinations",
     "Shipments",
     "ToggleShipmentHeld",
