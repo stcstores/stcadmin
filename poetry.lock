@@ -597,7 +597,7 @@ Django = ">=4.0"
 type = "git"
 url = "https://github.com/lukeshiner/django-file_exchange.git"
 reference = "main"
-resolved_reference = "3a4668f2add5de15f47d2b8d29e0e8c2d57465ca"
+resolved_reference = "ab6e8c4fefa6fd436ca8dab96be6f8d49266793f"
 
 [[package]]
 name = "flake8"
@@ -778,7 +778,7 @@ reportlab = ">=3.6.8"
 type = "git"
 url = "https://github.com/lukeshiner/labeler.git"
 reference = "main"
-resolved_reference = "0cd5fb4a4bc03b31cf53fee77128f860eefed0c6"
+resolved_reference = "0f499689a0ddb1bd647e316d360ca48845fa55d9"
 
 [[package]]
 name = "linnapi"
@@ -797,7 +797,7 @@ toml = "^0.10.2"
 type = "git"
 url = "https://github.com/stcstores/linnapi.git"
 reference = "main"
-resolved_reference = "32b35cc5d38b8411af73fdabf0cdcbeb9df75f54"
+resolved_reference = "2a0ec9d728e338d51050f0a1db576e663747d165"
 
 [[package]]
 name = "lml"
@@ -1202,7 +1202,7 @@ six = ">=1.5"
 
 [[package]]
 name = "pytz"
-version = "2022.6"
+version = "2022.7"
 description = "World timezone definitions, modern and historical"
 category = "main"
 optional = false
@@ -1326,7 +1326,7 @@ toml = ">=0.10.2"
 type = "git"
 url = "https://github.com/stcstores/shopify_api_py.git"
 reference = "main"
-resolved_reference = "159daa0eaaad9b3365af15b6181715f12ec21edb"
+resolved_reference = "9b20271cf6a09dd7b10c4bcf1ad1e7c940424ddd"
 
 [[package]]
 name = "shopifyapi"
@@ -2227,8 +2227,8 @@ python-dateutil = [
     {file = "python_dateutil-2.8.2-py2.py3-none-any.whl", hash = "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"},
 ]
 pytz = [
-    {file = "pytz-2022.6-py2.py3-none-any.whl", hash = "sha256:222439474e9c98fced559f1709d89e6c9cbf8d79c794ff3eb9f8800064291427"},
-    {file = "pytz-2022.6.tar.gz", hash = "sha256:e89512406b793ca39f5971bc999cc538ce125c0e51c27941bef4568b460095e2"},
+    {file = "pytz-2022.7-py2.py3-none-any.whl", hash = "sha256:93007def75ae22f7cd991c84e02d434876818661f8df9ad5df9e950ff4e52cfd"},
+    {file = "pytz-2022.7.tar.gz", hash = "sha256:7ccfae7b4b2c067464a6733c6261673fdb8fd1be905460396b97a073e9fa683a"},
 ]
 pyyaml = [
     {file = "PyYAML-6.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d4db7c7aef085872ef65a8fd7d6d09a14ae91f691dec3e87ee5ee0539d516f53"},
