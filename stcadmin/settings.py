@@ -151,7 +151,6 @@ INSTALLED_APPS = [
     "inventory",
     "price_calculator",
     "django_markup",
-    "stock_check",
     "jchart",
     "orders",
     "shipping",
