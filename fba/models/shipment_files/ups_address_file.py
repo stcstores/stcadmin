@@ -69,6 +69,7 @@ class UPSAddressFile:
             cls.SHIP_TO_STATE: destination.state,
             cls.SHIP_TO_COUNTRY: destination.country,
             cls.SHIP_TO_POSTCODE: destination.postcode,
+            cls.SHIP_TO_PHONE: destination.contact_telephone,
             cls.SHIP_TO_EMAIL: "test@amazon.com",
             cls.GNERAL_DESCRIPTION: "TEST",
             cls.BILL_TRANSPORT_TO: "SHP",

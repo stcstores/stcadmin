@@ -52,20 +52,20 @@ class UPSShipmentFile:
                     )
                     row = [row_data[header] for header in cls.HEADER]
                     rows.append(row)
-        cls._add_totals(rows, items)
+        cls._add_totals(rows, shipment_export)
         return rows
 
     @classmethod
-    def _add_totals(cls, rows, items):
-        total_value = cls._calculate_total_value(items)
-        formatted_value = str(float(total_value / 100)).format("{:2f}")
+    def _add_totals(cls, rows, shipment_export):
+        total_weight = cls._calculate_total_weight(shipment_export)
+        formatted_value = round(total_weight, 3)
         new_row = [None for _ in cls.HEADER]
-        new_row[cls.HEADER.index(cls.PACKAGE_ITEM_VALUE)] = formatted_value
+        new_row[cls.HEADER.index(cls.PACKAGE_ITEM_WEIGHT)] = formatted_value
         rows.append(new_row)
 
     @classmethod
-    def _calculate_total_value(cls, items):
-        values = [item.value for item in items]
+    def _calculate_total_weight(cls, shipment_export):
+        values = [order.weight_kg() for order in shipment_export.shipment_order.all()]
         return sum(values)
 
     @classmethod
