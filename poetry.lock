@@ -597,7 +597,7 @@ Django = ">=4.0"
 type = "git"
 url = "https://github.com/lukeshiner/django-file_exchange.git"
 reference = "main"
-resolved_reference = "290ef33263b47f02d117d6afd71c1071742d0501"
+resolved_reference = "2cf5630801271d21fe94ff930d1ab5488a69ca36"
 
 [[package]]
 name = "flake8"
@@ -797,7 +797,7 @@ toml = "^0.10.2"
 type = "git"
 url = "https://github.com/stcstores/linnapi.git"
 reference = "main"
-resolved_reference = "93f1900d1ec90a75099a1f18057216f8f97cb34e"
+resolved_reference = "420da0975a32370ab802d740bab8d4ce2ea8894a"
 
 [[package]]
 name = "lml"
@@ -1594,11 +1594,11 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "xlsxwriter"
-version = "3.0.3"
+version = "3.0.5"
 description = "A Python module for creating Excel XLSX files."
 category = "main"
 optional = false
-python-versions = ">=3.4"
+python-versions = ">=3.6"
 
 [[package]]
 name = "zipp"
@@ -2499,8 +2499,8 @@ websockets = [
     {file = "websockets-10.4.tar.gz", hash = "sha256:eef610b23933c54d5d921c92578ae5f89813438fded840c2e9809d378dc765d3"},
 ]
 xlsxwriter = [
-    {file = "XlsxWriter-3.0.3-py3-none-any.whl", hash = "sha256:df0aefe5137478d206847eccf9f114715e42aaea077e6a48d0e8a2152e983010"},
-    {file = "XlsxWriter-3.0.3.tar.gz", hash = "sha256:e89f4a1d2fa2c9ea15cde77de95cd3fd8b0345d0efb3964623f395c8c4988b7f"},
+    {file = "XlsxWriter-3.0.5-py3-none-any.whl", hash = "sha256:a5c97a25b319e92b7eeab6e37593192c4dde718084eff23f045eb1df704dde83"},
+    {file = "XlsxWriter-3.0.5.tar.gz", hash = "sha256:fe2b1e2dec38ef8952e9a41a0290861a052e6771a9f43f5e3d56dc63b7112348"},
 ]
 zipp = [
     {file = "zipp-3.11.0-py3-none-any.whl", hash = "sha256:83a28fcb75844b5c0cdaf5aa4003c2d728c77e05f5aeabe8e95e56727005fbaa"},
