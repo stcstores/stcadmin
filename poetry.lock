@@ -320,7 +320,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "django"
-version = "4.1.4"
+version = "4.1.5"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 category = "main"
 optional = false
@@ -797,7 +797,7 @@ toml = "^0.10.2"
 type = "git"
 url = "https://github.com/stcstores/linnapi.git"
 reference = "main"
-resolved_reference = "2a0ec9d728e338d51050f0a1db576e663747d165"
+resolved_reference = "7a60d37e02c9baa848ce0294f7d6242cf5b26034"
 
 [[package]]
 name = "lml"
@@ -1772,8 +1772,8 @@ cssselect = [
     {file = "cssselect-1.2.0.tar.gz", hash = "sha256:666b19839cfaddb9ce9d36bfe4c969132c647b92fc9088c4e23f786b30f1b3dc"},
 ]
 django = [
-    {file = "Django-4.1.4-py3-none-any.whl", hash = "sha256:0b223bfa55511f950ff741983d408d78d772351284c75e9f77d2b830b6b4d148"},
-    {file = "Django-4.1.4.tar.gz", hash = "sha256:d38a4e108d2386cb9637da66a82dc8d0733caede4c83c4afdbda78af4214211b"},
+    {file = "Django-4.1.5-py3-none-any.whl", hash = "sha256:4b214a05fe4c99476e99e2445c8b978c8369c18d4dea8e22ec412862715ad763"},
+    {file = "Django-4.1.5.tar.gz", hash = "sha256:ff56ebd7ead0fd5dbe06fe157b0024a7aaea2e0593bb3785fb594cf94dad58ef"},
 ]
 django-admin-sortable2 = [
     {file = "django-admin-sortable2-2.1.4.tar.gz", hash = "sha256:7dc08ff0fbce5859502f809d108c0495f3b0d94609269eaedbb1237e03084acb"},
