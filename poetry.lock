@@ -490,7 +490,7 @@ django = ">=2.2"
 
 [[package]]
 name = "django-storages"
-version = "1.13.1"
+version = "1.13.2"
 description = "Support for many storage backends in Django"
 category = "main"
 optional = false
@@ -505,7 +505,7 @@ boto3 = ["boto3 (>=1.4.4)"]
 dropbox = ["dropbox (>=7.2.1)"]
 google = ["google-cloud-storage (>=1.27.0)"]
 libcloud = ["apache-libcloud"]
-sftp = ["paramiko"]
+sftp = ["paramiko (>=1.10.0)"]
 
 [[package]]
 name = "docopt"
@@ -597,7 +597,7 @@ Django = ">=4.0"
 type = "git"
 url = "https://github.com/lukeshiner/django-file_exchange.git"
 reference = "main"
-resolved_reference = "ab6e8c4fefa6fd436ca8dab96be6f8d49266793f"
+resolved_reference = "290ef33263b47f02d117d6afd71c1071742d0501"
 
 [[package]]
 name = "flake8"
@@ -778,7 +778,7 @@ reportlab = ">=3.6.8"
 type = "git"
 url = "https://github.com/lukeshiner/labeler.git"
 reference = "main"
-resolved_reference = "0f499689a0ddb1bd647e316d360ca48845fa55d9"
+resolved_reference = "72e7f079c48c706eb665db456c2b65c81ed1304d"
 
 [[package]]
 name = "linnapi"
@@ -797,7 +797,7 @@ toml = "^0.10.2"
 type = "git"
 url = "https://github.com/stcstores/linnapi.git"
 reference = "main"
-resolved_reference = "7a60d37e02c9baa848ce0294f7d6242cf5b26034"
+resolved_reference = "93f1900d1ec90a75099a1f18057216f8f97cb34e"
 
 [[package]]
 name = "lml"
@@ -1326,7 +1326,7 @@ toml = ">=0.10.2"
 type = "git"
 url = "https://github.com/stcstores/shopify_api_py.git"
 reference = "main"
-resolved_reference = "9b20271cf6a09dd7b10c4bcf1ad1e7c940424ddd"
+resolved_reference = "c2c20c35d41d120f72cda3170b215aaae2e91333"
 
 [[package]]
 name = "shopifyapi"
@@ -1824,8 +1824,8 @@ django-solo = [
     {file = "django_solo-2.0.0-py3-none-any.whl", hash = "sha256:9046eca738f2ed64dbef38c2107a02af1065a8899b4f9fabf61b06b8325de1b4"},
 ]
 django-storages = [
-    {file = "django-storages-1.13.1.tar.gz", hash = "sha256:b3d98ecc09f1b1627c2b2cf430964322ce4e08617dbf9b4236c16a32875a1e0b"},
-    {file = "django_storages-1.13.1-py3-none-any.whl", hash = "sha256:3540b45618b04be2c867c0982e8d2bd8e34f84dae922267fcebe4691fb93daf0"},
+    {file = "django-storages-1.13.2.tar.gz", hash = "sha256:cbadd15c909ceb7247d4ffc503f12a9bec36999df8d0bef7c31e57177d512688"},
+    {file = "django_storages-1.13.2-py3-none-any.whl", hash = "sha256:31dc5a992520be571908c4c40d55d292660ece3a55b8141462b4e719aa38eab3"},
 ]
 docopt = [
     {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
