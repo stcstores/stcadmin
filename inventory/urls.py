@@ -150,29 +150,6 @@ product_editor_patterns = [
         name="edit_range_details",
     ),
     path(
-        "add_dropdown/<int:edit_ID>/", views.AddDropdown.as_view(), name="add_dropdown"
-    ),
-    path(
-        "add_listing_option/<int:edit_ID>/",
-        views.AddListingOption.as_view(),
-        name="add_listing_option",
-    ),
-    path(
-        "set_product_option_values/<int:edit_ID>/",
-        views.SetProductOptionValues.as_view(),
-        name="set_product_option_values",
-    ),
-    path(
-        "add_product_option_values/<int:edit_ID>/<int:product_option_ID>/",
-        views.AddProductOptionValues.as_view(),
-        name="add_product_option_values",
-    ),
-    path(
-        "remove_product_option_value/<int:edit_ID>/<int:option_value_ID>/",
-        views.RemoveProductOptionValue.as_view(),
-        name="remove_product_option_value",
-    ),
-    path(
         "edit_new_variation/<int:pk>/",
         views.EditNewVariation.as_view(),
         name="edit_new_variation",
@@ -191,11 +168,6 @@ product_editor_patterns = [
         "discard_new_range/<int:range_pk>/",
         views.DiscardNewRange.as_view(),
         name="discard_new_range",
-    ),
-    path(
-        "remove_dowpdown/<int:edit_ID>/<int:product_option_ID>/",
-        views.RemoveDropdown.as_view(),
-        name="remove_dropdown",
     ),
     path(
         "complete_new_product/<int:range_pk>/",
