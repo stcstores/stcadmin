@@ -1594,7 +1594,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "xlsxwriter"
-version = "3.0.5"
+version = "3.0.6"
 description = "A Python module for creating Excel XLSX files."
 category = "main"
 optional = false
@@ -2499,8 +2499,8 @@ websockets = [
     {file = "websockets-10.4.tar.gz", hash = "sha256:eef610b23933c54d5d921c92578ae5f89813438fded840c2e9809d378dc765d3"},
 ]
 xlsxwriter = [
-    {file = "XlsxWriter-3.0.5-py3-none-any.whl", hash = "sha256:a5c97a25b319e92b7eeab6e37593192c4dde718084eff23f045eb1df704dde83"},
-    {file = "XlsxWriter-3.0.5.tar.gz", hash = "sha256:fe2b1e2dec38ef8952e9a41a0290861a052e6771a9f43f5e3d56dc63b7112348"},
+    {file = "XlsxWriter-3.0.6-py3-none-any.whl", hash = "sha256:56eae8ae587536734009aa819845c3e3c865462399823085b0baabbb081a929c"},
+    {file = "XlsxWriter-3.0.6.tar.gz", hash = "sha256:2f9e5ea13343fe85486e349d4e5fdf746bb69dc7bc1dedfa9b5fae2bb48c0795"},
 ]
 zipp = [
     {file = "zipp-3.11.0-py3-none-any.whl", hash = "sha256:83a28fcb75844b5c0cdaf5aa4003c2d728c77e05f5aeabe8e95e56727005fbaa"},
