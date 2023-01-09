@@ -75,7 +75,7 @@ urlpatterns = [
         name="update_shipment_destination",
     ),
     path(
-        "shipments/create_shipment_file/",
+        "shipments/create_shipment_file/<int:fba_order_pk>/",
         views.CreateFBAShipmentFile.as_view(),
         name="create_shipment_file",
     ),
@@ -188,8 +188,8 @@ urlpatterns = [
         name="api_download_address_file",
     ),
     path(
-        "api/close_shipments",
-        views.api.CloseShipments.as_view(),
-        name="api_close_shipments",
+        "api/close_shipment",
+        views.api.CloseShipment.as_view(),
+        name="api_close_shipment",
     ),
 ]
