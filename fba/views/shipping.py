@@ -84,8 +84,11 @@ class CreateFBAShipmentFile(FBAUserMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         """Return an ITD shipment file download."""
-        export = models.FBAShipmentOrder.objects.close_shipments()
-        return reverse_lazy("fba:download_shipment_file", kwargs={"pk": export.pk})
+        shipment = get_object_or_404(
+            models.FBAShipmentOrder, pk=self.kwargs["fba_order_pk"]
+        )
+        shipment.close_shipment_order()
+        return reverse_lazy("fba:shipments")
 
 
 class DownloadUPSAddressFile(FBAUserMixin, RedirectView):

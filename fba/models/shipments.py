@@ -159,15 +159,6 @@ class FBAShipmentMethod(models.Model):
 class FBAShipmentOrderManager(models.Manager):
     """Manager for FBA Shipment Orders."""
 
-    def close_shipments(self):
-        """Add currently open shipments to a new Shipment Export."""
-        orders = FBAShipmentOrder.objects.filter(export__isnull=True, is_on_hold=False)
-        if orders.count() == 0:
-            raise Exception("No orders exist to export")
-        export = FBAShipmentExport.objects.create()
-        orders.update(export=export)
-        return export
-
 
 class FBAShipmentOrder(models.Model):
     """View for FBA Shipment orders."""
@@ -223,6 +214,23 @@ class FBAShipmentOrder(models.Model):
             "shipment_item__description", flat=True
         )
         return shortened_description_list(descriptions, max_length=max_length)
+
+    def is_shipable(self):
+        """Return True if shipment is ready for completion, otherwise False."""
+        return all(
+            (
+                self.export is None,
+                self.is_on_hold is False,
+                self.shipment_package.count() > 0,
+            )
+        )
+
+    def close_shipment_order(self):
+        """Create a shipment export for this order."""
+        export = FBAShipmentExport.objects.create()
+        self.export = export
+        self.save()
+        return export
 
 
 class FBAShipmentPackage(models.Model):
