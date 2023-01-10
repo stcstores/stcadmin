@@ -33,7 +33,7 @@ class CurrentShipments(BaseShippingAPIView):
         """Return a queryset of current shipments."""
         return models.FBAShipmentOrder.objects.filter(
             export__isnull=True, is_on_hold=False, shipment_package__isnull=False
-        )
+        ).distinct()
 
     def shipment_data(self, shipment):
         """Return information about current shipments as a dict."""
