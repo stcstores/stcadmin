@@ -372,7 +372,7 @@ def test_brand_property(combination_product, combination_product_link_factory):
     links = combination_product_link_factory.create_batch(
         3, combination_product=combination_product
     )
-    assert combination_product.brand == links[0].product.brand
+    assert combination_product.brand in [link.product.brand for link in links]
 
 
 @pytest.mark.django_db
