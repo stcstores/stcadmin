@@ -109,7 +109,7 @@ class ShippingServiceAdmin(admin.ModelAdmin):
     exclude = ()
     list_display = ("name", "provider", "full_name", "priority", "active")
     list_editable = ("active",)
-    search_fields = ("name", " full_name", "provider__name")
+    search_fields = ("name", "full_name", "provider__name")
     list_filter = ("active", "provider")
     list_select_related = ("provider",)
     autocomplete_fields = ("provider",)
