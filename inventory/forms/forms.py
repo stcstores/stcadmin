@@ -12,18 +12,6 @@ from inventory.forms import fields as inventory_fields
 from stcadmin.forms import KwargFormSet
 
 
-class ProductRangeForm(forms.Form):
-    """Form for editing a Product Range."""
-
-    end_of_line = forms.BooleanField(
-        required=False,
-        help_text=(
-            "Ranges are marked as <b>end of line</b> if the entire range is"
-            " out of stock and unlikely to be re-ordered."
-        ),
-    )
-
-
 class BaseRangeForm(forms.ModelForm):
     """Base form for editing product ranges."""
 
