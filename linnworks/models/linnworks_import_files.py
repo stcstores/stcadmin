@@ -118,6 +118,7 @@ class LinnworksProductImportFile(BaseImportFile):
     VARIATION_GROUP_NAME = "Variation Group Name"
     HS_CODE = "HS Code"
     COUNTRY_OF_ORIGIN = "CountryOfOrigin"
+    PRODUCT_TYPE = "ProductType"
     MANUFACTURER = "Manufacturer"
     BRAND = "Brand"
     MATERIAL = "Material"
@@ -169,6 +170,7 @@ class LinnworksProductImportFile(BaseImportFile):
         VARIATION_GROUP_NAME,
         HS_CODE,
         COUNTRY_OF_ORIGIN,
+        PRODUCT_TYPE,
         MANUFACTURER,
         INTERNATIONAL_SHIPPING,
         DATE_CREATED,
@@ -276,7 +278,7 @@ class LinnworksProductImportFile(BaseImportFile):
 
     @classmethod
     def _get_default_row(cls):
-        return {cls.INTERNATIONAL_SHIPPING: "Standard", cls.COUNTRY_OF_ORIGIN: "CHN"}
+        return {cls.INTERNATIONAL_SHIPPING: "Standard", cls.COUNTRY_OF_ORIGIN: "CN"}
 
     @classmethod
     def _get_product_range_row(cls, product_range):
@@ -352,6 +354,7 @@ class LinnworksProductImportFile(BaseImportFile):
         row[cls.DATE_CREATED] = product.created_at.isoformat()
         row[cls.AMAZON_BULLETS] = "|".join(product.product_range.bullet_points)
         row[cls.AMAZON_SEARCH_TERMS] = "|".join(product.product_range.search_terms)
+        row[cls.PRODUCT_TYPE] = product.product_range.name
         product_attributes = product.attributes()
         if missing_attributes := set(product_attributes.keys()) - set(cls.header):
             raise ValueError(

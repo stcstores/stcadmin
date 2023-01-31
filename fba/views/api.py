@@ -32,8 +32,8 @@ class CurrentShipments(BaseShippingAPIView):
     def get_shipments(self):
         """Return a queryset of current shipments."""
         return models.FBAShipmentOrder.objects.filter(
-            export__isnull=True, is_on_hold=False
-        )
+            export__isnull=True, is_on_hold=False, shipment_package__isnull=False
+        ).distinct()
 
     def shipment_data(self, shipment):
         """Return information about current shipments as a dict."""
@@ -113,10 +113,12 @@ class DownloadAddressFile(BaseShippingAPIView):
         return response
 
 
-class CloseShipments(BaseShippingAPIView):
+class CloseShipment(BaseShippingAPIView):
     """View for processing currently open shipments."""
 
     def post(self, request, *args, **kwargs):
         """Close open shipments and return the ID of the created export."""
-        export = models.FBAShipmentOrder.objects.close_shipments()
+        shipment_id = request.POST["shipment_id"]
+        shipment_order = get_object_or_404(models.FBAShipmentOrder, pk=shipment_id)
+        export = shipment_order.close_shipment_order()
         return JsonResponse({"export_id": export.id})

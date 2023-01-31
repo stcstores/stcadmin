@@ -13,10 +13,6 @@
 </a>
 &nbsp;
 
-<button id="create_shipment_button" {% if current_shipments.count == 0 %}disabled{% endif %}>
-    Create Shipment File
-</button>
-
 <br><br>
 <div>
     <h3>Awaiting Shipment</h3>
@@ -64,19 +60,3 @@
     {% endfor %}
 </div>
 {% endblock %}
-
-{% block script %}
-
-<script>
-    $(document).ready(function () {
-        $("#create_shipment_button").click(function () {
-            document.location.href = "{% url 'fba:create_shipment_file' %}";
-            setTimeout(function () {
-                // Should be triggered after download started
-                location.reload();
-            }, 5000);
-        });
-    });
-</script>
-
-{% endblock script %}

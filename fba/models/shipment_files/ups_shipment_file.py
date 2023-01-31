@@ -76,7 +76,7 @@ class UPSShipmentFile:
             cls.PACKAGE_LENGTH: package.length_cm,
             cls.PACKAGE_WIDTH: package.width_cm,
             cls.PACKAGE_HEIGHT: package.height_cm,
-            cls.PACKAGE_ITEM_DESCRIPTION: item.description,
+            cls.PACKAGE_ITEM_DESCRIPTION: item.description.replace("'", ""),
             cls.PACKAGE_ITEM_SKU: item.sku,
             cls.PACKAGE_ITEM_WEIGHT: item.weight_kg,
             cls.PACKAGE_ITEM_VALUE: str(float(item.value / 100)).format("{:2f}"),

@@ -7,7 +7,6 @@ from .forms import (
     ImagesForm,
     InitialVariationForm,
     ProductFormset,
-    ProductRangeForm,
     SetupVariationsForm,
 )
 from .locations import BaySearchForm, LocationsFormSet
@@ -22,7 +21,6 @@ __all__ = [
     "ImagesForm",
     "InitialVariationForm",
     "ProductFormset",
-    "ProductRangeForm",
     "SetupVariationsForm",
     "BaySearchForm",
     "LocationsFormSet",

@@ -8,7 +8,7 @@
         <th>Weight (kg)</th>
         <th>Value</th>
         <th>Order Number</th>
-        <td colspan="3"></td>
+        <td colspan="4"></td>
     </tr>
     {% for shipment in shipments %}
     <tr>
@@ -25,6 +25,13 @@
             </a>
         </td>
         <td><a href="{% url 'fba:delete_shipment' shipment.pk %}"><button>Delete</button></a></td>
+        <td>
+            {% if shipment.is_shipable %}
+            <a href="{% url 'fba:create_shipment_file' shipment.pk %}">
+                <button class="create_shipment_button">Create Shipment File</button>
+            </a>
+            {% endif %}
+        </td>
     </tr>
     {% endfor %}
 </table>
