@@ -15,9 +15,6 @@ from .locations import BaySearch, LocationFormView
 from .print_barcodes import BarcodePDF, PrintBarcodeLabels
 from .product import ProductView
 from .product_editor import (
-    AddDropdown,
-    AddListingOption,
-    AddProductOptionValues,
     CompleteNewProduct,
     Continue,
     CreateInitialVariation,
@@ -27,10 +24,7 @@ from .product_editor import (
     EditNewVariation,
     EditProduct,
     EditRangeDetails,
-    RemoveDropdown,
-    RemoveProductOptionValue,
     ResumeEditingProduct,
-    SetProductOptionValues,
     SetupVariations,
     StartNewProduct,
 )
@@ -63,9 +57,6 @@ __all__ = [
     "BarcodePDF",
     "PrintBarcodeLabels",
     "ProductView",
-    "AddDropdown",
-    "AddListingOption",
-    "AddProductOptionValues",
     "Continue",
     "CreateInitialVariation",
     "DiscardNewRange",
@@ -74,11 +65,8 @@ __all__ = [
     "EditRangeDetails",
     "EditNewVariation",
     "EditNewProduct",
-    "RemoveDropdown",
-    "RemoveProductOptionValue",
     "ResumeEditingProduct",
     "CompleteNewProduct",
-    "SetProductOptionValues",
     "SetupVariations",
     "StartNewProduct",
     "ProductOrderView",
