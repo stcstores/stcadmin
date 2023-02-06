@@ -13,7 +13,6 @@ from inventory import models
 
 class BarcodeFactory(DjangoModelFactory):
     class Meta:
-
         model = models.Barcode
 
     class Params:
