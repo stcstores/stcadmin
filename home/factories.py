@@ -23,7 +23,7 @@ class UserFactory(DjangoModelFactory):
     class Meta:
         model = get_user_model()
 
-    username = factory.Faker("user_name")
+    username = factory.Faker("pystr", min_chars=10, max_chars=150)
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
     password = factory.PostGenerationMethodCall("set_password", "Password")
