@@ -135,7 +135,10 @@ class ProductFormset(KwargFormSet):
 class SetupVariationsForm(forms.Form):
     """Setup variaion product options for a new product."""
 
-    variations = forms.CharField()
+    variations = forms.CharField(
+        error_messages={"required": "Variation options cannot be empty."},
+        widget=forms.HiddenInput,
+    )
 
     def __init__(self, *args, **kwargs):
         """Add fields."""

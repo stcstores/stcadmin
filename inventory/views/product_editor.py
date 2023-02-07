@@ -50,7 +50,11 @@ class ResumeEditingProduct(InventoryUserMixin, RedirectView):
             redirect_name = "inventory:create_initial_variation"
 
         elif product_count == 1:
-            redirect_name = "inventory:setup_variations"
+            product = product_range.products.first()
+            if isinstance(product, models.InitialVariation):
+                redirect_name = "inventory:setup_variations"
+            else:
+                redirect_name = "inventory:edit_new_product"
         else:
             redirect_name = "inventory:edit_all_variations"
         return reverse_lazy(redirect_name, kwargs={"range_pk": product_range.pk})
