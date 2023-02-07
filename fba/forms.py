@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.utils.timezone import make_aware
 
 from fba import models
-from inventory.models import BaseProduct
+from inventory.models import BaseProduct, ProductRange
 
 
 class SelectFBAOrderProduct(forms.Form):
@@ -20,7 +20,8 @@ class SelectFBAOrderProduct(forms.Form):
         cleaned_data = super().clean()
         try:
             cleaned_data["product"] = BaseProduct.objects.get(
-                sku=cleaned_data["product_SKU"]
+                sku=cleaned_data["product_SKU"],
+                product_range__status=ProductRange.COMPLETE,
             )
         except BaseProduct.DoesNotExist:
             self.add_error("product_SKU", "Product not found")
