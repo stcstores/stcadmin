@@ -52,9 +52,9 @@ urlpatterns = [
         "shipping_price/<int:pk>/", views.ShippingPrice.as_view(), name="shipping_price"
     ),
     path(
-        "set_tracking_number/",
-        views.SetTrackingNumber.as_view(),
-        name="set_tracking_number",
+        "edit_tracking_numbers/<int:pk>/",
+        views.EditTrackingNumbers.as_view(),
+        name="edit_tracking_numbers",
     ),
     path("take_off_hold", views.TakeOffHold.as_view(), name="take_off_hold"),
     path("prioritise", views.PrioritiseOrder.as_view(), name="priortise_fba_order"),

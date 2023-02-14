@@ -290,13 +290,6 @@ class FBAOrder(models.Model):
                 ),
             )
 
-    def set_tracking_number(self, tracking_number):
-        """Set the order's tracking number."""
-        self.tracking_number = tracking_number
-        self.save()
-        if self.status == self.AWAITING_BOOKING:
-            self.close()
-
     def get_status(self):
         """Return a string describing the status of the order."""
         if self.on_hold:
@@ -308,6 +301,36 @@ class FBAOrder(models.Model):
         if self.printed is True:
             return self.PRINTED
         return self.NOT_PROCESSED
+
+    def update_tracking_numbers(self, *tracking_numbers):
+        """Update order tracking numbers."""
+        for tracking_number in self.tracking_numbers.all():
+            if tracking_number.tracking_number not in tracking_numbers:
+                tracking_number.delete()
+        for tracking_number in tracking_numbers:
+            FBATrackingNumber.objects.get_or_create(
+                fba_order=self, tracking_number=tracking_number
+            )
+        if len(tracking_numbers) > 0 and self.status == self.AWAITING_BOOKING:
+            self.close()
+
+
+class FBATrackingNumber(models.Model):
+    """Model for FBA tracking numbers."""
+
+    fba_order = models.ForeignKey(
+        FBAOrder, on_delete=models.CASCADE, related_name="tracking_numbers"
+    )
+    tracking_number = models.CharField(max_length=255, blank=False)
+
+    class Meta:
+        """Meta class for FBATrackingNumber."""
+
+        verbose_name = "FBA Tracking Number"
+        verbose_name_plural = "FBA Tracking Numbers"
+
+    def __str__(self):
+        return self.tracking_number
 
 
 class FBAShippingPrice(models.Model):

@@ -620,28 +620,6 @@ class ShippingPrice(FBAUserMixin, FormView):
         return self.fba_order.get_absolute_url()
 
 
-@method_decorator(csrf_exempt, name="dispatch")
-class SetTrackingNumber(FBAUserMixin, View):
-    """View for setting the tracking number of an FBA Order by AJAX."""
-
-    def post(self, *args, **kwargs):
-        """Set an FBA order tracking number."""
-        order = get_object_or_404(models.FBAOrder, pk=self.request.POST.get("order_id"))
-        tracking_number = self.request.POST.get("tracking_number")
-        order.set_tracking_number(tracking_number)
-        if order.closed_at is None:
-            closed_at = ""
-        else:
-            closed_at = order.closed_at.strftime("%Y-%m-%d %H:%M")
-        return JsonResponse(
-            {
-                "tracking_number": order.tracking_number,
-                "status": order.status,
-                "closed_at": closed_at,
-            }
-        )
-
-
 class PrioritiseOrder(FBAUserMixin, View):
     """View for prioritising FBA orders."""
 
@@ -650,6 +628,21 @@ class PrioritiseOrder(FBAUserMixin, View):
         order = get_object_or_404(models.FBAOrder, pk=int(request.GET["order_id"]))
         order.prioritise()
         return HttpResponse("ok")
+
+
+class EditTrackingNumbers(FBAUserMixin, UpdateView):
+    """View for updating FBA order tracking numbers."""
+
+    model = models.FBAOrder
+    template_name = "fba/tracking_numbers.html"
+    form_class = forms.TrackingNumbersForm
+
+    def get_success_url(self):
+        """Return the success URL."""
+        messages.add_message(
+            self.request, messages.SUCCESS, "Tracking numbers updated."
+        )
+        return reverse("fba:edit_tracking_numbers", kwargs={"pk": self.object.id})
 
 
 @method_decorator(csrf_exempt, name="dispatch")
