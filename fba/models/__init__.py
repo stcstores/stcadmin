@@ -1,6 +1,6 @@
 """Models for the fba app."""
 
-from .fba import FBACountry, FBAOrder, FBARegion, FBAShippingPrice
+from .fba import FBACountry, FBAOrder, FBARegion, FBAShippingPrice, FBATrackingNumber
 from .shipments import (
     FBAShipmentDestination,
     FBAShipmentExport,
@@ -22,5 +22,6 @@ __all__ = [
     "FBAShipmentMethod",
     "FBAShipmentOrder",
     "FBAShipmentPackage",
+    "FBATrackingNumber",
     "ShipmentConfig",
 ]

@@ -1,0 +1,92 @@
+{% extends 'fba/base.html' %}
+
+{% block additional_head %}
+{{ block.super }}
+<style>
+    #tracking_number_form {
+        display: flex;
+        flex-direction: column;
+        width: 20em;
+    }
+
+    .tracking_number_input {
+        margin: 1em;
+    }
+</style>
+{% endblock additional_head %}
+
+{% block content %}
+
+<h3>
+    <span class="sku">{{ form.instance.product_SKU }}</span> - 
+    <span class="name">{{ form.instance.product_name }}</span>
+</h3>
+
+<form action="" method="POST" id="tracking_number_form">{% csrf_token %}
+    {{ form.as_p }}
+    <button id="save_button">Save</button>
+</form>
+
+{% endblock content %}
+
+{% block script %}
+
+<script>
+
+    var tracking_numbers = [{% for tracking_number in form.instance.tracking_numbers.all %}"{{ tracking_number }}",{% endfor %}];
+
+    var emptyInput = $("<input class='tracking_number_input'>");
+
+    function addInput() {
+        var newInput = emptyInput.clone(true);
+        newInput.insertBefore($("#save_button"));
+        newInput.change(updateInputs);
+        return newInput;
+    }
+
+    function updateInputs() {
+        var emptyInputCount = 0;
+        $(".tracking_number_input").each(function() {
+            if ($(this).val() === "") {
+                if (emptyInputCount == 1) {
+                    $(this).remove();
+                } else {
+                    emptyInputCount += 1;
+                    $(this).insertBefore($("#save_button"));
+                }
+            }
+        });
+        if (emptyInputCount == 0) {
+            var newInput = addInput();
+            newInput.focus();
+        }
+    }
+
+    function readTrackingNumbers() {
+        var trackingNumbers = [];
+        $(".tracking_number_input").each(function() {
+            if ($(this).val() !== "") {
+                trackingNumbers.push($(this).val());
+            }
+        });
+        return JSON.stringify(trackingNumbers);
+    }
+
+    $(document).ready(function () {
+        $(tracking_numbers).each(function() {
+            var newInput = addInput();
+            newInput.val(this);
+        })
+        addInput();
+
+        $("#tracking_number_form").submit(function (e) {
+            e.preventDefault();
+            var trackingNumbers = readTrackingNumbers();
+            $("#id_tracking_numbers").val(trackingNumbers);
+            $(this).unbind('submit').submit();
+        })
+    });
+
+</script>
+
+{% endblock script %}

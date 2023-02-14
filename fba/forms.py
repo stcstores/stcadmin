@@ -1,5 +1,6 @@
 """Forms for the FBA app."""
 
+import json
 from datetime import datetime
 
 from django import forms
@@ -473,3 +474,28 @@ class SplitFBAOrderShipmentForm(forms.Form):
 SplitFBAOrderShipmentFormset = forms.formset_factory(
     form=SplitFBAOrderShipmentForm, extra=5
 )
+
+
+class TrackingNumbersForm(forms.ModelForm):
+    """Form for updating FBA order tracking numbers."""
+
+    tracking_numbers = forms.CharField(required=False, widget=forms.HiddenInput)
+
+    class Meta:
+        """Meta class for TrackingNumbersForm."""
+
+        model = models.FBAOrder
+        fields = ["id"]
+
+    def clean(self):
+        """Clean form submission data."""
+        cleaned_data = super().clean()
+        cleaned_data["tracking_numbers"] = [
+            _ for _ in json.loads(cleaned_data["tracking_numbers"]) if _
+        ]
+        return cleaned_data
+
+    def save(self):
+        """Update FBA Order tracking numbers."""
+        self.instance.update_tracking_numbers(*self.cleaned_data["tracking_numbers"])
+        return super().save()

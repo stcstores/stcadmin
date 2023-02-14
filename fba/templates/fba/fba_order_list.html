@@ -1,6 +1,15 @@
 {% extends 'fba/base.html' %}
 {% load orders_extras %}
 
+{% block additional_head %}
+{{ block.super }}
+<style>
+    .tracking_number {
+        white-space: nowrap;
+    }
+</style>
+{% endblock additional_head %}
+
 {% block content %}
 
 <h1>Manage FBA Orders</h1>
@@ -62,12 +71,26 @@
             <td>{{ order.aproximate_quantity }}</td>
             <td>{% if order.quantity_sent %}{{ order.quantity_sent }}{% endif %}</td>
             <td id="status_{{ order.id }}">{{ order.status }}</td>
-            <td>
-            {% if order.tracking_number %}
-                {{ order.tracking_number }}
+            <td class="tracking_number">
+                {% if order.tracking_numbers.exists %}
+                    {% for tracking_number in order.tracking_numbers.all %}
+                    {% if forloop.first %}
+                    <span class="sku">{{ tracking_number }}</span>
+                    <span class="show_tracking" id="show_tracking_{{ order.id }}" data-order-id="{{ order.id}}">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </span>
+                    <br>
+                    {% else %}
+                    <span class="extra_tracking extra_tracking_{{ order.id }}" hidden>
+                        <span class="sku">{{ tracking_number }}</span><br>
+                    </span>
+                    {% endif %}
+                    {% endfor %}
+                    <span class="extra_tracking extra_tracking_{{ order.id }}" hidden>
+                        <a href="{% url 'fba:edit_tracking_numbers' order.id %}" target="_blank">Edit</a>
+                    </span>
                 {% elif order.status == order.AWAITING_BOOKING or order.status == order.FULFILLED %}
-                    <input type="text" size="10" class="tracking_number_input">
-                    <button class="set_tracking_number" id="set_tracking_number_{{ order.id }}">Save</button>
+                    <a href="{% url 'fba:edit_tracking_numbers' order.id %}" target="_blank">Add tracking number</a>
                 {% endif %}
             </td>
             <td class="available_stock" id="available_stock_{{ order.pk }}">
@@ -94,7 +117,9 @@
             {% else %}
                 {% if order.region.auto_close %}
                 <th>CLOSED</th>
+                <td></td>
                 {% else %}
+                <td></td>
                 <td>
                     <a href="{% url 'fba:shipping_price' order.pk %}"><button>Set Price</button></a>
                     {% if order.tracking_number and order.fulfillment_center %}
@@ -141,20 +166,7 @@
 
 $(document).ready(function() {
     get_stock_levels();
-    $(".set_tracking_number").click(function() {
-        var tracking_number = $(this).parent().find(".tracking_number_input").val();
-        var order_id = $(this).attr("id").split("_").pop();
-        $.ajax({
-            url: "{% url 'fba:set_tracking_number' %}",
-            data: {'tracking_number': tracking_number, "order_id": order_id},
-            type: "POST",
-            success: function(result) {
-                $("#set_tracking_number_" + order_id).parent().html(result['tracking_number']);
-                $("#closed_at_" + order_id).html(result["closed_at"]);
-                $("#status_" + order_id).html(result['status']);
-            }
-        })
-    });
+
     $(".prioritise").click(function() {
         var order_id = $(this).attr("id").split("_").pop();
         $.ajax({
@@ -165,6 +177,10 @@ $(document).ready(function() {
                 alert("Order set to top priority")
             }
         })
+    });
+    $(".show_tracking").click(function() {
+        var order_id = $(this).data("order-id");
+        $(".extra_tracking_" + order_id).toggle();
     });
 });
 
