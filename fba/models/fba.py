@@ -182,7 +182,6 @@ class FBAOrder(models.Model):
     box_weight = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, null=True
     )
-    tracking_number = models.CharField(max_length=255, blank=True)
     notes = models.TextField(blank=True)
     priority = models.PositiveIntegerField(default=MAX_PRIORITY)
     printed = models.BooleanField(default=False)
