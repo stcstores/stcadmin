@@ -137,7 +137,6 @@ class SetupVariationsForm(forms.Form):
 
     variations = forms.CharField(
         error_messages={"required": "Variation options cannot be empty."},
-        widget=forms.HiddenInput,
     )
 
     def __init__(self, *args, **kwargs):
