@@ -106,7 +106,7 @@
   }
 
   function updateVariationField() {
-    variations_field.val(JSON.stringify(variations));
+    $("#id_variations").val(JSON.stringify(variations));
   }
 
   function updateVariations() {
@@ -123,6 +123,7 @@
   }
 
   $(document).ready(function () {
+    $("#id_variations").hide();
     /* beautify preserve:start */fields = {{ options|safe }};/* beautify preserve:end */
     options = {}
     variations = [];
@@ -132,7 +133,6 @@
         optionChanged($(this));
       })
     });
-
   });
 </script>
 
