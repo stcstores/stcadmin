@@ -117,7 +117,6 @@ class ProductOptionValueField(fieldtypes.SelectizeField):
     def __init__(self, *args, **kwargs):
         """Set options for selectize."""
         self.variation_option = kwargs.pop("variation_option")
-        self.product_range = kwargs.pop("product_range", None)
         self.selectize_options = self.selectize_options.copy()
         self.selectize_options["create"] = True
         self.allowed_characters = self.option_allowed_characters.get(
@@ -135,27 +134,8 @@ class ProductOptionValueField(fieldtypes.SelectizeField):
             .values_list("value", flat=True)
             .distinct()
         )
-        if self.product_range is not None:
-            available_options = self.remove_used_options(
-                available_options, self.product_range
-            )
         choices += [(option, option) for option in available_options]
         return choices
-
-    def remove_used_options(self, available_options, product_range):
-        """Filter values already used by the product from the choices."""
-        existing_links = (
-            models.VariationOptionValue.objects.filter(
-                product__product_range=self.product_range,
-            )
-            .values_list("variation_option", flat=True)
-            .distinct()
-            .order_by()
-        )
-        existing_values = models.VariationOption.objects.filter(
-            id__in=existing_links.values_list("name", flat=True)
-        )
-        return available_options.difference(existing_values)
 
     def valid_value(self, value):
         """Allow values not in choices."""
