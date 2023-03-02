@@ -182,7 +182,7 @@
     $(".channel_fee_input").each(function () {
       $(this).children().first().attr("selected", true);
     });
-    var ex_vat_price = parseFloat("{{ product.retail_price }}");
+    var ex_vat_price = {% if product.retail_price %}{{ product.retail_price }}{% else %}0.0{% endif %};
     var vat_rate = 20;
     var purchase_price = parseFloat("{{ product.purchase_price }}");
     var package_type = "{{ product.package_type.name }}";
