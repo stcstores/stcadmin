@@ -35,10 +35,6 @@
       <a href="{{ url }}">Description</a>
     </div>
     {% if product_range.has_variations %}
-    {% comment %} {% url 'inventory:variations' product_range.pk as url %}
-    <div {% if current_url == url %} class="active" {% endif %}>
-      <a href="{{ url }}">Variations</a>
-    </div> {% endcomment %}
     {% url 'inventory:product_order' product_range.pk as url %}
     <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Variation Order</a>
@@ -60,10 +56,6 @@
     <div {% if current_url == url %} class="active" {% endif %}>
       <a href="{{ url }}">Channel Links</a>
     </div>
-    {% comment %} {% url 'inventory:print_barcodes' product_range.pk as url %}
-    <div {% if current_url == url %} class="active" {% endif %}>
-      <a href="{{ url }}">Barcode Labels</a>
-    </div> {% endcomment %}
   </div>
 </div>
 {% endwith %}
