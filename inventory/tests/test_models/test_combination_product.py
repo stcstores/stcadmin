@@ -369,26 +369,29 @@ def test_vat_rate_property(
 
 @pytest.mark.django_db
 def test_brand_property(combination_product, combination_product_link_factory):
-    links = combination_product_link_factory.create_batch(
+    combination_product_link_factory.create_batch(
         3, combination_product=combination_product
     )
-    assert combination_product.brand in [link.product.brand for link in links]
+    assert combination_product.brand == combination_product.products.first().brand
 
 
 @pytest.mark.django_db
 def test_manufacturer_property(combination_product, combination_product_link_factory):
-    links = combination_product_link_factory.create_batch(
+    combination_product_link_factory.create_batch(
         3, combination_product=combination_product
     )
-    assert combination_product.manufacturer == links[0].product.manufacturer
+    assert (
+        combination_product.manufacturer
+        == combination_product.products.first().manufacturer
+    )
 
 
 @pytest.mark.django_db
 def test_hs_code_property(combination_product, combination_product_link_factory):
-    links = combination_product_link_factory.create_batch(
+    combination_product_link_factory.create_batch(
         3, combination_product=combination_product
     )
-    assert combination_product.hs_code == links[0].product.hs_code
+    assert combination_product.hs_code == combination_product.products.first().hs_code
 
 
 @pytest.mark.django_db
