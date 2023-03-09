@@ -18,12 +18,12 @@ class DescriptionsView(InventoryUserMixin, UpdateView):
 
     def form_valid(self, form):
         """Process form request and return HttpResponse."""
-        messages.add_message(self.request, messages.SUCCESS, "Description Updated")
         self.range_pk = form.instance.pk
         return super().form_valid(form)
 
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
+        messages.add_message(self.request, messages.SUCCESS, "Description Updated")
         return reverse_lazy("inventory:descriptions", kwargs={"pk": self.range_pk})
 
     def get_context_data(self, *args, **kwargs):
