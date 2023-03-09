@@ -29,12 +29,6 @@ inventory_urlpatterns = [
         views.ProductOrderView.as_view(),
         name="product_order",
     ),
-    path(
-        "print_barcodes/<int:range_pk>/",
-        views.PrintBarcodeLabels.as_view(),
-        name="print_barcodes",
-    ),
-    path("barcode_pdf/", views.BarcodePDF.as_view(), name="barcode_pdf"),
     path("suppliers/suppliers/", views.Suppliers.as_view(), name="suppliers"),
     path("suppliers/<int:pk>/", views.Supplier.as_view(), name="supplier"),
     path(
@@ -109,12 +103,6 @@ api_urlpatterns = [
         "get_new_range_sku/",
         views.GetNewRangeSKUView.as_view(),
         name="get_new_range_sku",
-    ),
-    path("get_stock_level/", views.GetStockLevelView.as_view(), name="get_stock_level"),
-    path(
-        "update_stock_level/",
-        views.UpdateStockLevelView.as_view(),
-        name="update_stock_level",
     ),
     path("new_brand", views.NewBrand.as_view(), name="new_brand"),
     path("new_manufacturer", views.NewManufacturer.as_view(), name="new_manufacturer"),
