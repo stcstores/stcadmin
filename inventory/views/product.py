@@ -16,16 +16,10 @@ class ProductView(InventoryUserMixin, UpdateView):
     model = models.Product
     form_class = forms.EditProductForm
 
-    def form_valid(self, form):
-        """Process form request and return HttpResponse."""
-        form.save()
-        messages.add_message(self.request, messages.SUCCESS, "Product Updated")
-        self.product = form.instance
-        return super().form_valid(form)
-
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
-        return reverse_lazy("inventory:product", kwargs={"pk": self.product.pk})
+        messages.add_message(self.request, messages.SUCCESS, "Product Updated")
+        return reverse_lazy("inventory:product", kwargs={"pk": self.object.pk})
 
     def get_context_data(self, *args, **kwargs):
         """Get template context data."""
