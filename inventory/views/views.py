@@ -27,16 +27,6 @@ class ProductSearchView(InventoryUserMixin, FormView):
     template_name = "inventory/product_search/search_page.html"
     form_class = forms.ProductSearchForm
 
-    def get_form_kwargs(self, *args, **kwargs):
-        """Return the kwargs to be passed to the form."""
-        kwargs = super().get_form_kwargs(*args, **kwargs)
-        if "data" in kwargs:
-            kwargs["data"] = kwargs["data"].copy()
-            for key, value in kwargs["initial"].items():
-                if key not in kwargs["data"]:
-                    kwargs["data"][key] = value
-        return kwargs
-
     def get_initial(self):
         """Return the initial values for the product search form."""
         initial = super().get_initial()
