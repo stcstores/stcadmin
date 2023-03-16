@@ -43,7 +43,9 @@ class ResumeEditingProduct(InventoryUserMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         """Return the URL to redirect to."""
         product_range = get_object_or_404(
-            models.ProductRange, pk=self.kwargs.get("range_pk")
+            models.ProductRange,
+            pk=self.kwargs.get("range_pk"),
+            status=models.ProductRange.CREATING,
         )
         product_count = product_range.products.count()
         if product_count == 0:
