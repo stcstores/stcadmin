@@ -4,6 +4,7 @@
     <tr>
         <th>Shipment Order</th>
         <th>Destination</th>
+        <th>User</th>
         <th>Package Count</th>
         <th>Weight (kg)</th>
         <th>Value</th>
@@ -14,6 +15,7 @@
     <tr>
         <th {% if shipment.is_on_hold %}class="error" {% endif %}>{{ shipment.description }}</th>
         <td>{{ shipment.destination }}</td>
+        <td>{{ shipment.user }}</td>
         <td>{{ shipment.shipment_package.count }}</td>
         <td>{{ shipment.weight_kg }}</td>
         <td>{% format_price shipment.value %}</td>

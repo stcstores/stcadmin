@@ -167,7 +167,9 @@ class CreateShipment(FBAUserMixin, RedirectView):
         )
         shipment_method = models.FBAShipmentMethod.objects.all()[0]
         shipment = models.FBAShipmentOrder.objects.create(
-            destination=destination, shipment_method=shipment_method
+            destination=destination,
+            shipment_method=shipment_method,
+            user=self.request.user,
         )
         messages.add_message(
             self.request,
