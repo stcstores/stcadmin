@@ -48,7 +48,7 @@ class ToggleSupplierActive(InventoryUserMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         """Toggle the active status of a supplier."""
         supplier = get_object_or_404(models.Supplier, pk=kwargs["pk"])
-        supplier.inactive = not supplier.inactive
+        supplier.active = not supplier.active
         supplier.save()
         return supplier.get_absolute_url()
 
