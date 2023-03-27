@@ -23,5 +23,5 @@ class Command(BaseCommand):
             with open(path, "w", encoding="utf8") as f:
                 csv_file.write(f)
         except Exception as e:
-            logger.exception("Error creating Linnworks Chaannel Linking Import file.")
+            logger.exception("Error creating Linnworks Channel Linking Import file.")
             raise e
