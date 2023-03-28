@@ -521,7 +521,8 @@ class FBAShipmentFilter(forms.Form):
         models.FBAShipmentDestination.objects.all(), required=False
     )
     user = forms.ModelChoiceField(
-        get_user_model().objects.filter(fba_shipments__isnull=False), required=False
+        get_user_model().objects.filter(fba_shipments__isnull=False).distinct(),
+        required=False,
     )
 
     def clean_completed_from(self):
