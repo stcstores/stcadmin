@@ -1,0 +1,59 @@
+{% extends 'fba/base.html' %}
+{% load orders_extras %}
+
+{% block additional_head %}
+{{ block.super }}
+<style>
+    .tracking_number {
+        white-space: nowrap;
+    }
+</style>
+{% endblock additional_head %}
+
+{% block content %}
+
+<h1>Historic Shipments</h1>
+
+<div class="filter">
+    <form action="" method="GET" id="filter">
+        {{ form.as_p }}
+        <p>
+            <button>Filter</button>
+        </p>
+    </form>
+        <div>
+        <p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
+        {% include 'orders/pagination_navigation.html' %}
+    </div>
+</div>
+
+<table>
+    <tr>
+        <th>Export</th>
+        <th>Order Numbers</th>
+        <th>Package Count</th>
+        <th>Destinations</th>
+        <td colspan="2"></td>
+    </tr>
+    {% for export in object_list %}
+    <tr>
+        <th>{{ export }}</th>
+        <td>{{ export.order_numbers }}</td>
+        <td>{{ export.package_count }}</td>
+        <td>{{ export.destinations }}</td>
+        <td><a href="{% url 'fba:download_shipment_file' export.pk %}">
+                <button>Recreate File</button>
+            </a>
+        </td>
+        <td>
+            <a href="{% url 'fba:download_address_file' export.pk %}">
+                <button>Download Address File</button>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% include 'orders/pagination_navigation.html' %}
+
+{% endblock content %}

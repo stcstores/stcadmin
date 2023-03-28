@@ -5,7 +5,7 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import FormView, TemplateView, View
+from django.views.generic import FormView, ListView, TemplateView, View
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
@@ -395,3 +395,38 @@ class AddFBAOrderPackages(FBAUserMixin, FormView):
         return reverse_lazy(
             "fba:update_fba_order", kwargs={"pk": self.kwargs["fba_order_pk"]}
         )
+
+
+class HistoricShipments(FBAUserMixin, ListView):
+    """Display a filterable list of orders."""
+
+    template_name = "fba/shipments/historic_shipments.html"
+    model = models.FBAShipmentExport
+    paginate_by = 50
+    orphans = 3
+    form_class = forms.FBAShipmentFilter
+
+    def get(self, *args, **kwargs):
+        """Instanciate the form."""
+        self.form = self.form_class(self.request.GET)
+        return super().get(*args, **kwargs)
+
+    def get_queryset(self):
+        """Return a queryset of orders based on GET data."""
+        if self.form.is_valid():
+            return self.form.get_queryset()
+        return []
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the template context."""
+        context = super().get_context_data(*args, **kwargs)
+        context["form"] = self.form
+        context["page_range"] = self.get_page_range(context["paginator"])
+        return context
+
+    def get_page_range(self, paginator):
+        """Return a list of pages to link to."""
+        if paginator.num_pages < 11:
+            return list(range(1, paginator.num_pages + 1))
+        else:
+            return list(range(1, 11)) + [paginator.num_pages]
