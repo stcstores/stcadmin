@@ -54,7 +54,7 @@ class ChannelLinks(InventoryUserMixin, TemplateView):
             models.ProductRange, pk=self.kwargs["range_pk"]
         )
         products = product_range.products.variations()
-        skus = [product.sku for product in products]
+        skus = sorted([product.sku for product in products])
         channel_links = StockManager.channel_links(*skus)
         for product in products:
             product.channel_links = channel_links.get(product.sku, [])

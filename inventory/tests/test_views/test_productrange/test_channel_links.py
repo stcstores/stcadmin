@@ -49,9 +49,8 @@ def test_products_in_context(products, get_response):
 
 @pytest.mark.django_db
 def test_gets_product_links(mock_stock_manager, products, get_response):
-    mock_stock_manager.channel_links.assert_called_once_with(
-        *[product.sku for product in products]
-    )
+    skus = sorted([product.sku for product in products])
+    mock_stock_manager.channel_links.assert_called_once_with(*skus)
 
 
 @pytest.mark.django_db
