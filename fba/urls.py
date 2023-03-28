@@ -165,6 +165,11 @@ urlpatterns = [
         name="add_order_packages_to_shipment",
     ),
     path(
+        "shipments/historic_shipments/",
+        views.HistoricShipments.as_view(),
+        name="historic_shipments",
+    ),
+    path(
         "get_stock_levels/", views.fba.GetStockLevels.as_view(), name="get_stock_levels"
     ),
     path(

@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 
 from django import forms
+from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.utils.timezone import make_aware
 
@@ -499,3 +500,83 @@ class TrackingNumbersForm(forms.ModelForm):
         """Update FBA Order tracking numbers."""
         self.instance.update_tracking_numbers(*self.cleaned_data["tracking_numbers"])
         return super().save()
+
+
+class FBAShipmentFilter(forms.Form):
+    """Form for filtering the FBA order list."""
+
+    CLOSED = "closed"
+    NOT_CLOSED = "not_closed"
+
+    search = forms.CharField(required=False)
+    completed_from = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
+    )
+    completed_to = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
+    )
+    destination = forms.ModelChoiceField(
+        models.FBAShipmentDestination.objects.all(), required=False
+    )
+    user = forms.ModelChoiceField(
+        get_user_model().objects.filter(fba_shipments__isnull=False), required=False
+    )
+
+    def clean_completed_from(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["completed_from"]
+        if date is not None:
+            return make_aware(datetime.combine(date, datetime.min.time()))
+
+    def clean_completed_to(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["completed_to"]
+        if date is not None:
+            return make_aware(datetime.combine(date, datetime.max.time()))
+
+    def query_kwargs(self, data):
+        """Return a dict of filter kwargs."""
+        kwargs = {
+            "created_at__gte": data.get("completed_from"),
+            "created_at__lte": data.get("completed_to"),
+            "shipment_order__destination": data.get("destination"),
+            "shipment_order__user": data.get("user"),
+        }
+        return {
+            key: value
+            for key, value in kwargs.items()
+            if value is not None and value != ""
+        }
+
+    def get_queryset(self):
+        """Return a queryset of orders based on the submitted data."""
+        kwargs = self.query_kwargs(self.cleaned_data)
+        qs = models.FBAShipmentExport.objects.filter(**kwargs).order_by("-created_at")
+        if search_text := self.cleaned_data["search"]:
+            qs = self.text_search(search_text, qs)
+        qs = qs.prefetch_related(
+            "shipment_order",
+            "shipment_order__shipment_package",
+            "shipment_order__shipment_package__shipment_item",
+        )
+        return qs.distinct()
+
+    def text_search(self, search_text, qs):
+        """Filter the queryset based on search text."""
+        if search_text.startswith("STC_FBA_"):
+            print(int(search_text[8:]))
+            qs = qs.filter(shipment_order__id=int(search_text[8:]))
+        else:
+            qs = qs.filter(
+                Q(
+                    Q(
+                        shipment_order__shipment_package__shipment_item__sku__icontains=search_text
+                    )
+                    | Q(
+                        shipment_order__shipment_package__shipment_item__description__icontains=search_text
+                    )
+                )
+            )
+        return qs
