@@ -1,6 +1,9 @@
 """Models for managing Linnworks channel linking."""
 
+import datetime as dt
+
 from django.db import models
+from django.utils import timezone
 
 from inventory.models import BaseProduct
 
@@ -32,7 +35,10 @@ class LinnworksChannelMappingImportFile(BaseImportFile):
     LINKED_SKU_CUSTOM_LABEL = "Linked SKU Custom Label"  # Channel SKU
     SKU = "SKU"  # Linnworks SKU
 
-    prime_identifers = ["_PRIME", "_PRIME2"]
+    prime_identifers = [
+        "_PRIME",
+        # "_PRIME2",
+    ]
 
     header = (SOURCE, SUBSOURCE, LINKED_SKU_CUSTOM_LABEL, SKU)
 
@@ -56,7 +62,13 @@ class LinnworksChannelMappingImportFile(BaseImportFile):
     @classmethod
     def product_skus(cls):
         """Return a set of all SKUs on Linnworks."""
-        skus = BaseProduct.objects.variations().active().values_list("sku", flat=True)
+        modified_since = timezone.now() - dt.timedelta(days=30)
+        skus = (
+            BaseProduct.objects.variations()
+            .active()
+            .filter(modified_at__gt=modified_since)
+            .values_list("sku", flat=True)
+        )
         return set(skus)
 
     @classmethod

@@ -205,7 +205,7 @@ class BayFactory(DjangoModelFactory):
     class Meta:
         model = models.Bay
 
-    name = factory.Faker("bothify", text="?-###")
+    name = factory.Faker("text", max_nb_chars=50)
     active = True
 
 

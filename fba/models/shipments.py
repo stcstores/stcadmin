@@ -1,6 +1,7 @@
 """Models for managing FBA shipments."""
 
 
+from django.conf import settings
 from django.db import models
 from solo.models import SingletonModel
 
@@ -172,6 +173,13 @@ class FBAShipmentOrder(models.Model):
     )
     destination = models.ForeignKey(FBAShipmentDestination, on_delete=models.PROTECT)
     shipment_method = models.ForeignKey(FBAShipmentMethod, on_delete=models.PROTECT)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=False,
+        on_delete=models.PROTECT,
+        related_name="fba_shipments",
+    )
     is_on_hold = models.BooleanField(default=False)
 
     objects = FBAShipmentOrderManager()
