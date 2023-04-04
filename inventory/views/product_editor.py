@@ -211,8 +211,10 @@ class EditAllVariations(InventoryUserMixin, FormView):
         )
 
 
-class BaseProductRangeEditView(InventoryUserMixin, TemplateView):
+class EditNewProduct(InventoryUserMixin, TemplateView):
     """Base view for product range edits."""
+
+    template_name = "inventory/product_editor/edit_new_product.html"
 
     def get_context_data(self, *args, **kwargs):
         """Get template context data."""
@@ -228,7 +230,7 @@ class BaseProductRangeEditView(InventoryUserMixin, TemplateView):
         """Return a dict of all possible variations for the range."""
         variations = {}
         products = product_range.products.all()
-        option_values = self.product_range.variation_option_values().values()
+        option_values = product_range.variation_option_values().values()
         for options in itertools.product(*option_values):
             for product in products:
                 if tuple(product.variation().values()) == options:
@@ -237,18 +239,6 @@ class BaseProductRangeEditView(InventoryUserMixin, TemplateView):
             else:
                 variations[options] = None
         return variations
-
-
-class EditNewProduct(BaseProductRangeEditView):
-    """View for finalising new products."""
-
-    template_name = "inventory/product_editor/edit_new_product.html"
-
-
-class EditProduct(BaseProductRangeEditView):
-    """Main view for in progress product edits."""
-
-    template_name = "inventory/product_editor/edit_product.html"
 
 
 class CompleteNewProduct(InventoryUserMixin, RedirectView):

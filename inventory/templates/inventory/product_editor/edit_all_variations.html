@@ -104,7 +104,7 @@
     </tr>
     {% endfor %}
     <th colspan="{{ formset.0.variation_options | length | add:"2" }}">
-      <a href="{% url 'inventory:edit_product' product_range.pk %}">
+      <a href="{% url 'inventory:edit_new_product' product_range.pk %}">
         <button type="button">Back</button>
       </a>
       <button type="submit">Save</button>
