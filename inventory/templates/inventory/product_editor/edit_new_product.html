@@ -61,14 +61,14 @@
     {% else %}
     <th>
       <div class="buttons">
-        <form action="{% url 'inventory:create_variation' product_range.id %}" method="POST"
+        {% comment %} <form action="{% url 'inventory:create_variation' product_range.id %}" method="POST"
           class="create_variation_form">
           {% csrf_token %}
           {% for option in options %}
           <input type="hidden" name="{{ option.product_option.id }}" value="{{ option.id }}">
           {% endfor %}
           <button>Create</button>
-        </form>
+        </form> {% endcomment %}
       </div>
     </th>
     <td>Does not exist</td>

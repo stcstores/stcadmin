@@ -128,9 +128,6 @@ product_editor_patterns = [
         views.EditNewProduct.as_view(),
         name="edit_new_product",
     ),
-    path(
-        "edit_product/<int:range_pk>/", views.EditProduct.as_view(), name="edit_product"
-    ),
     path("continue/", views.Continue.as_view(), name="continue"),
     path(
         "edit_range_details/<int:pk>/",

@@ -211,12 +211,12 @@ class BaseProduct(PolymorphicModel):
 
     def variation(self):
         """Return the product's variation product options as a dict."""
-        options = self.variation_option_values.all()
+        options = self.variation_option_values.all().order_by("variation_option")
         return {option.variation_option.name: option.value for option in options}
 
     def listing_attributes(self):
         """Return the product's listing product options as a dict."""
-        options = self.listing_attribute_values.all()
+        options = self.listing_attribute_values.all().order_by("listing_attribute")
         return {option.listing_attribute.name: option.value for option in options}
 
     def attributes(self):
