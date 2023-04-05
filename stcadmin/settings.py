@@ -332,7 +332,15 @@ class ManifestStaticFilesStorageForgiving(ManifestStaticFilesStorage):
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-STATICFILES_STORAGE = "stcadmin.settings.ManifestStaticFilesStorageForgiving"
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "stcadmin.settings.ManifestStaticFilesStorageForgiving",
+    },
+}
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
