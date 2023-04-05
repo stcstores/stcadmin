@@ -260,22 +260,6 @@ class EditNewVariation(InventoryUserMixin, UpdateView):
     model = models.Product
     form_class = forms.EditProductForm
 
-    def form_valid(self, form):
-        """Process form request and return HttpResponse."""
-        form.save()
-        self.product = form.instance
-        messages.add_message(
-            self.request, messages.SUCCESS, f"{self.product.full_name} Updated"
-        )
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        """Return URL to redirect to after successful form submission."""
-        return reverse_lazy(
-            "inventory:edit_new_product",
-            kwargs={"range_pk": self.product.product_range.pk},
-        )
-
     def get_context_data(self, *args, **kwargs):
         """Get template context data."""
         context_data = super().get_context_data(*args, **kwargs)
@@ -283,6 +267,16 @@ class EditNewVariation(InventoryUserMixin, UpdateView):
         context_data["product"] = form.instance
         context_data["product_range"] = form.instance.product_range
         return context_data
+
+    def get_success_url(self):
+        """Return URL to redirect to after successful form submission."""
+        messages.add_message(
+            self.request, messages.SUCCESS, f"{self.object.full_name} Updated"
+        )
+        return reverse_lazy(
+            "inventory:edit_new_product",
+            kwargs={"range_pk": self.object.product_range.pk},
+        )
 
 
 class DiscardNewRange(InventoryUserMixin, RedirectView):
@@ -293,6 +287,8 @@ class DiscardNewRange(InventoryUserMixin, RedirectView):
         product_range = get_object_or_404(
             models.ProductRange, pk=self.kwargs["range_pk"]
         )
+        if product_range.status != models.ProductRange.CREATING:
+            raise ValueError("Cannot delete completed product range.")
         product_range.products.all().delete()
         product_range.delete()
         return reverse_lazy("inventory:product_search")
