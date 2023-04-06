@@ -170,7 +170,7 @@ class FBAOrder(models.Model):
     product_name = models.CharField(max_length=255)
     product_weight = models.PositiveIntegerField()
     product_hs_code = models.CharField(max_length=255)
-    product_asin = models.CharField(max_length=24, blank=True)
+    product_asin = models.CharField(max_length=24)
     product_image_url = models.URLField(blank=True)
     product_supplier = models.CharField(max_length=255, blank=True)
     product_purchase_price = models.CharField(max_length=10)
