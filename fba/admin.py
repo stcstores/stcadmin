@@ -24,6 +24,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "currency",
         "auto_close",
         "warehouse_required",
+        "expiry_date_required",
         "position",
     ]
     list_editable = [
@@ -35,6 +36,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "currency",
         "auto_close",
         "warehouse_required",
+        "expiry_date_required",
         "position",
     ]
 

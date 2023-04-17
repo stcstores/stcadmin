@@ -33,6 +33,7 @@ class FBARegion(models.Model):
     auto_close = models.BooleanField()
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
     warehouse_required = models.BooleanField(default=False)
+    expiry_date_required = models.BooleanField(default=False)
     position = models.PositiveSmallIntegerField(default=9999)
 
     class Meta:
