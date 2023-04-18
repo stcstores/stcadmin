@@ -1,6 +1,8 @@
 {% extends "home/base.html" %}
 {% load static %}
 {% load stcadmin_extras %}
+{% load feedback_extras %}
+
 {% block page_title %}STC Admin{% endblock %}
 {% block content %}
 <style>
@@ -50,9 +52,10 @@
     <p><a href="{{ link.url }}">{{ link.name }}</a></p>
     {% endfor %}
   </div>
-  <table class="feedback" id="feedback">
-
-  </table>
+  <div class="header_feedback">
+    {% feedback_badges request.user %}
+    <a href="{% url 'feedback:feedback_quickview' %}">All feedback</a>
+  </div>
 </div>
 {% endblock %}
 
