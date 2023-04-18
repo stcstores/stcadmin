@@ -2,7 +2,7 @@
 name = "stcadmin"
 version = "0.1.0"
 description = ""
-authors = ["Luke Shiner <luke@lukeshiner.com>"]
+authors = ["Luke Shiner <luke@stcstores.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<4.0"
@@ -34,8 +34,8 @@ django-select2 = ">=7.10.0"
 pymemcache = ">=3.5.2"
 django-redis = ">=5.2.0"
 django-imagekit = ">=4.1.0"
-labeler = {git = "https://github.com/lukeshiner/labeler.git", rev = "main"}
-file-exchange = {git = "https://github.com/lukeshiner/django-file_exchange.git", rev = "main"}
+labeler = {git = "https://github.com/stcstores/labeler.git", rev = "main"}
+file-exchange = {git = "https://github.com/stcstores/django-file_exchange.git", rev = "main"}
 linnapi = {git = "https://github.com/stcstores/linnapi.git", rev = "main"}
 shopify_api_py = {git = "https://github.com/stcstores/shopify_api_py.git", rev = "main"}
 requests-html = "^0.10.0"

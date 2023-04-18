@@ -897,9 +897,9 @@ Django = ">=4.0"
 
 [package.source]
 type = "git"
-url = "https://github.com/lukeshiner/django-file_exchange.git"
+url = "https://github.com/stcstores/django-file_exchange.git"
 reference = "main"
-resolved_reference = "5a72b762dd79533ac2268e6637b5be60ef651427"
+resolved_reference = "cc79da0ca056d3918bdcb0ab91cf5718d639e76b"
 
 [[package]]
 name = "flake8"
@@ -1131,9 +1131,9 @@ reportlab = ">=3.6.8"
 
 [package.source]
 type = "git"
-url = "https://github.com/lukeshiner/labeler.git"
+url = "https://github.com/stcstores/labeler.git"
 reference = "main"
-resolved_reference = "a393b1c0a79c374d3de058fc36f50207461def36"
+resolved_reference = "896fac5ba525af843eabec6430955b95dfd7cd83"
 
 [[package]]
 name = "linnapi"
@@ -1146,6 +1146,7 @@ files = []
 develop = false
 
 [package.dependencies]
+pytz = "^2023.3"
 requests = "^2.28.2"
 toml = "^0.10.2"
 
@@ -1153,7 +1154,7 @@ toml = "^0.10.2"
 type = "git"
 url = "https://github.com/stcstores/linnapi.git"
 reference = "main"
-resolved_reference = "187d8d41fa369cf0b582a08a7e78df182d73a57d"
+resolved_reference = "dcf525fd4c0f787b723f05fc52853dbf41aa9198"
 
 [[package]]
 name = "lml"
@@ -2184,7 +2185,7 @@ toml = ">=0.10.2"
 type = "git"
 url = "https://github.com/stcstores/shopify_api_py.git"
 reference = "main"
-resolved_reference = "5b803404dc4785298c5259f92318755d3cde719c"
+resolved_reference = "961d10064e26d1f5c23df3d775f543375a8a5db8"
 
 [[package]]
 name = "shopifyapi"
@@ -2660,4 +2661,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<4.0"
-content-hash = "ce1b8e7e7f776a3f6813dfc8753288f82f1cf95c234916fe0a7897e02203c26a"
+content-hash = "b7cc45e800fbf0a05dd548ea5780f68013ff2f8da36d6e07f556e2a8cce3b48e"
