@@ -92,7 +92,7 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
         if image_link is None:
             return ""
         else:
-            return mark_safe(image_link.image.image_file.url)
+            return mark_safe(image_link.image.square_image.url)
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
