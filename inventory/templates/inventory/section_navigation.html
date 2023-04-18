@@ -1,32 +1,42 @@
-<div class="section_navigation">
-  <ul>
-    <li>
-      <a href="{% url 'inventory:product_search' %}">Product Search</a>
-    </li>
-    <li>
-      <a href="{% url 'inventory:start_new_product' %}">New Product</a>
-    </li>
-    <li>
-      <a href="{% url 'inventory:continue' %}">Continue Creating Product</a>
-    </li>
-    <li>
-      <a href="{% url 'price_calculator:price_calculator' %}">Price Calculator</a>
-    </li>
-    <li>
-      <a href="{% url 'inventory:sku_generator' %}">SKU Generator</a>
-    </li>
-    <li>
-      <a href="{% url 'inventory:suppliers' %}">Suppliers</a>
-    </li>
-    <li>
-      <a href="{% url 'linnworks:stock_value' %}">Stock Value</a>
-    </li>
-    <li>
-      <a href="{% url 'inventory:bay_search' %}">Bay Search</a>
-    </li>
-    <li>
-      <a href="{% url 'inventory:restock' %}">Restock</a>
-    </li>
-  </ul>
-  {% include "inventory/product_search/inline_search.html" %}
-</div>
+<header class="p-3 text-bg-secondary">
+  <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+    <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+      <li>
+        <a class="nav-link px-2 text-white"
+           href="{% url 'inventory:product_search' %}">Product Search</a>
+      </li>
+      <li>
+        <a class="nav-link px-2 text-white"
+           href="{% url 'inventory:start_new_product' %}">New Product</a>
+      </li>
+      <li>
+        <a class="nav-link px-2 text-white"
+           href="{% url 'inventory:continue' %}">Continue Creating Product</a>
+      </li>
+      <li>
+        <a class="nav-link px-2 text-white"
+           href="{% url 'price_calculator:price_calculator' %}">Price Calculator</a>
+      </li>
+      <li>
+        <a class="nav-link px-2 text-white"
+           href="{% url 'inventory:sku_generator' %}">SKU Generator</a>
+      </li>
+      <li>
+        <a class="nav-link px-2 text-white"
+           href="{% url 'inventory:suppliers' %}">Suppliers</a>
+      </li>
+      <li>
+        <a class="nav-link px-2 text-white"
+           href="{% url 'linnworks:stock_value' %}">Stock Value</a>
+      </li>
+      <li>
+        <a class="nav-link px-2 text-white"
+           href="{% url 'inventory:bay_search' %}">Bay Search</a>
+      </li>
+      <li>
+        <a class="nav-link px-2 text-white" href="{% url 'inventory:restock' %}">Restock</a>
+      </li>
+    </ul>
+    {% include "inventory/product_search/inline_search.html" %}
+  </div>
+</header>

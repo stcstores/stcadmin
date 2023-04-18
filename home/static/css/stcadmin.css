@@ -157,13 +157,6 @@ p {
   font-size: 1.25em;
 }
 
-table,
-form {
-  border-collapse: collapse;
-  margin: 1em;
-  padding: 1em;
-}
-
 .login_form td {
   border-style: none;
 }

@@ -12,34 +12,29 @@
       <ul>
         <li>
           <a title="Descriptions" href="{% url 'inventory:descriptions' product_range.pk %}" target="_blank">
-            <button>D</button>
+            <button class="btn btn-outline-dark btn-sm">D</button>
           </a>
         </li>
-        {% comment %} <li>
-          <a title="Edit" href="{% url 'inventory:edit_product' product_range.pk %}" target="_blank">
-            <button>E</button>
-          </a>
-        </li> {% endcomment %}
         <li>
           <a title="Images" href="{% url 'inventory:images' product_range.pk %}" target="_blank">
-            <button>I</button>
+            <button class="btn btn-outline-dark btn-sm">I</button>
           </a>
         </li>
         <li>
           <a title="Locations" href="{% url 'inventory:locations' product_range.pk %}" target="_blank">
-            <button>L</button>
+            <button class="btn btn-outline-dark btn-sm">L</button>
           </a>
         </li>
         <li>
           <a title="Price Calulator" href="{% url 'price_calculator:range_price_calculator' product_range.pk %}"
             target="_blank">
-            <button>P</button></a>
+            <button class="btn btn-outline-dark btn-sm">P</button></a>
         </li>
         <li>
           {% if product_range.is_end_of_line %}
           <span class="error">END OF LINE</span>
           {% else %}
-          <button title="Mark the range as End of Line" class="EOL_range" id="EOL_{{ product_range.pk }}">
+          <button title="Mark the range as End of Line" class="EOL_range btn btn-outline-dark btn-sm" id="EOL_{{ product_range.pk }}">
             End of Line
           </button>
           {% endif %}
@@ -51,10 +46,6 @@
   <div class="product_details">
     <div class="product">
       {% include "inventory/product_search/result_variation.html" %}
-      {% comment %} {% if range.products.all|length > 1 %}
-      {% else %}
-      {% include "inventory/product_search/result_single_product.html" %}
-      {% endif %} {% endcomment %}
     </div>
   </div>
   <div class="range_status">

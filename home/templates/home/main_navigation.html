@@ -2,37 +2,48 @@
 
 
 {% block main_navigation %}
-<div class="main_navigation">
-  <ul>
-    <li><a href="{% url 'home:index' %}">Home</a></li>
+<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start" id="main_navigation">
+  <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0 fs-5">
+    <li><a class="nav-link px-2 text-white" href="{% url 'home:index' %}">Home</a></li>
     {% user_groups user as groups %}
     {% if "inventory" in groups %}
-    <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
+    <li><a class="nav-link px-2 text-white" href="{% url 'inventory:product_search' %}">Inventory</a></li>
     {% endif %}
     {% if "orders" in groups %}
-    <li><a href="{% url 'orders:index' %}">Orders</a></li>
+    <li><a class="nav-link px-2 text-white" href="{% url 'orders:index' %}">Orders</a></li>
     {% endif %}
     {% if 'labelmaker' in groups %}
-    <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
+    <li><a class="nav-link px-2 text-white" href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
     {% endif %}
     {% if 'feedback' in groups %}
-    <li><a href="{% url 'feedback:user_feedback' %}">Feedback</a></li>
+    <li><a class="nav-link px-2 text-white" href="{% url 'feedback:user_feedback' %}">Feedback</a></li>
     {% endif %}
     {% if 'fba' in groups %}
-    <li><a href="{% url 'fba:index' %}">FBA</a></li>
+    <li><a class="nav-link px-2 text-white" href="{% url 'fba:index' %}">FBA</a></li>
     {% endif %}
     {% if 'purchaser' in groups or 'purchase_creator' in groups or 'purchase_manager' in groups%}
-    <li><a href="{% url 'purchases:purchase' %}">Purchases</a></li>
+    <li><a class="nav-link px-2 text-white" href="{% url 'purchases:purchase' %}">Purchases</a></li>
     {% endif %}
     {% if 'channels' in groups %}
-    <li><a href="{% url 'channels:index' %}">Channels</a></li>
+    <li><a class="nav-link px-2 text-white" href="{% url 'channels:index' %}">Channels</a></li>
     {% endif %}
     {% if 'reports' in groups %}
-    <li><a href="{% url 'reports:index' %}">Reports</a></li>
+    <li><a class="nav-link px-2 text-white" href="{% url 'reports:index' %}">Reports</a></li>
     {% endif %}
     {% if 'admin' in groups %}
-    <li><a href={% url 'admin:index' %}>Admin</a></li>
+    <li><a class="nav-link px-2 text-white" href={% url 'admin:index' %}>Admin</a></li>
     {% endif %}
   </ul>
+  <div class="text-end text-white">
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ request.user.username|title }}
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="{% url 'home:user' %}">User Details</a></li>
+        <li><a class="dropdown-item" href="{% url 'home:logout_user' %}">Logout</a></li>
+      </ul>
+    </div>
+  </div>
 </div>
 {% endblock %}

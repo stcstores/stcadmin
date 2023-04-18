@@ -11,7 +11,7 @@
 {% block page_title %}Product Search{% endblock %}
 
 {% block content %}
-
+<h3>Inventory Search</h3>
 <form method="POST" action="">{% csrf_token %}
   <div class="product_search_options">
     <div class="error">{{ form.non_field_errors }}</div>

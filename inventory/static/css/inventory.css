@@ -202,7 +202,7 @@ a {
   text-decoration: none;
 }
 
-button:not(.fr-box) {
+/* button:not(.fr-box) {
   background: #ddd;
   border-radius: 4px;
   box-shadow: 3px 2px rgba(0, 0, 0, 0.4);
@@ -211,7 +211,7 @@ button:not(.fr-box) {
   margin: 0;
   padding: 0.25em 1em;
   text-decoration: none;
-}
+} */
 
 button:hover {
   background: #ccc;

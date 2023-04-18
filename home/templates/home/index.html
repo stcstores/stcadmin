@@ -5,56 +5,57 @@
 
 {% block page_title %}STC Admin{% endblock %}
 {% block content %}
-<style>
-  .pack_count,
-  .feedback {
-    font-size: 0.5em;
-  }
-</style>
 {% user_groups user as groups %}
-<h1>STC Admin</h1>
-<div class="site_index">
-  <p>From here you can access:</p>
-  <ul class='app'>
-    {% if "inventory" in groups %}
-    <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
-    <p>Tools for working with Cloud Commerce Inventory</p>
-    <ul class="section">
-      <li><a href="{% url 'inventory:product_search' %}">Product Search</a></li>
-      <p>Find products in the Inventory</p>
-      <li><a href="{% url 'inventory:start_new_product' %}">New Product</a></li>
-      <p>Create a new <a href="{% url 'inventory:start_new_product' %}"> product</a>.</p>
-      <li><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>
-      <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
-    </ul>
-    {% endif %}
+<h1 class="display-1 text-start">STC Admin</h1>
+<div class="wrapper row">
+  <div class="col-md-10 text-start">
+    <div>
+      <ul class="list-inline">
+        {% if "inventory" in groups %}
+        <li class="list-inline-item"><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
+        <p>Tools for working with Cloud Commerce Inventory</p>
+        <ul class="list-inline">
+          <li class="list-inline-item"><a href="{% url 'inventory:product_search' %}">Product Search</a></li>
+          <p>Find products in the Inventory</p>
+          <li class="list-inline-item"><a href="{% url 'inventory:start_new_product' %}">New Product</a></li>
+          <p>Create a new product.</p>
+          <li class="list-inline-item"><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>
+          <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
+        </ul>
+        {% endif %}
 
-    {% if group.name == 'labelmaker' %}
-    <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
-    <p>Make printable product labels.</p>
-    {% endif %}
+        {% if group.name == 'labelmaker' %}
+        <li class="list-inline-item"><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
+        <p>Make printable product labels.</p>
+        {% endif %}
 
-    {% if 'admin' in groups %}
-    <li><a href="/admin/">Admin</a></li>
-    <p>Tools for administering STC Admin.</p>
-    <ul class="section">
-      <li>View and edit database tables.</li>
-      <li>Manage users and groups.</li>
-    </ul>
-    {% endif %}
+        {% if 'admin' in groups %}
+        <li class="list-inline-item"><a href="/admin/">Admin</a></li>
+        <p>Tools for administering STC Admin.</p>
+        <ul class="list-inline">
+          <li class="list-inline-item">View and edit database tables.</li>
+          <li class="list-inline-item">Manage users and groups.</li>
+        </ul>
+        {% endif %}
 
-  </ul>
-</div>
-<div class="homepage_feedback">
-  <div>
-    <h3>External Links</h3>
-    {% for link in external_links %}
-    <p><a href="{{ link.url }}">{{ link.name }}</a></p>
-    {% endfor %}
+      </ul>
+    </div>
   </div>
-  <div class="header_feedback">
-    {% feedback_badges request.user %}
-    <a href="{% url 'feedback:feedback_quickview' %}">All feedback</a>
+  <div class="col-md-2 text-start">
+    <div class="container-md">
+      <span class="fs-4">External Links</span>
+      <ul class="nav flex-column">
+      {% for link in external_links %}
+      <li class="nav-item"><a href="{{ link.url }}">{{ link.name }}</a></li>
+      {% endfor %}
+      </ul>
+    </div>
+    <hr>
+    <div class="container-md">
+      <span class="fs-4">Feedback</span>
+      {% feedback_badges request.user %}
+      <a href="{% url 'feedback:feedback_quickview' %}">All feedback</a>
+    </div>
   </div>
 </div>
 {% endblock %}

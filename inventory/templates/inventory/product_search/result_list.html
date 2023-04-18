@@ -1,8 +1,8 @@
 {% load stcadmin_extras %}
 
-<h3>Found {{ product_ranges|length }} product ranges.</h3>
-<button class="show_all">Show All Variations</button>
-<button class="hide_all">Hide All Variations</button>
+<p>Found {{ product_ranges|length }} product ranges.</p>
+<button class="show_all btn btn-outline-dark btn-sm">Show All Variations</button>
+<button class="hide_all btn btn-outline-dark btn-sm">Hide All Variations</button>
 
 {% for product_range in product_ranges %}
 <div class="product_search_results">

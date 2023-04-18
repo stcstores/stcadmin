@@ -89,5 +89,5 @@ def test_group_dependant_main_nav_links(group_name, reverse_path, text, user, ge
     group, _ = Group.objects.get_or_create(name=group_name)
     user.groups.add(group)
     html = get_html()
-    main_navigation = html.find('div[class="main_navigation"]')[0]
+    main_navigation = html.find('div[id="main_navigation"]')[0]
     assert main_navigation.find(f'a[href="{reverse(reverse_path)}"]', containing=text)

@@ -1,4 +1,3 @@
-<form action="{% url 'inventory:product_search' %}" method="POST">{% csrf_token %}
-  <input type="text" name="search_term" required>
-  <button>Search Products</button>
+<form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" class="form-control form-control-dark text-bg-dark" placeholder="Search Inventory..." aria-label="Search" action="{% url 'inventory:product_search' %}" method="POST" >{% csrf_token %}
+  <input type="search" name="search_term" class="form-control form-control-dark text-bg-dark" placeholder="Search Inventory..." aria-label="Search">
 </form>
