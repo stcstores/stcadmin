@@ -4,7 +4,7 @@
 {% block additional_head %}
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
-<link rel="stylesheet" href="{% static 'css/inventory.css' %}">
+{% comment %} <link rel="stylesheet" href="{% static 'css/inventory.css' %}"> {% endcomment %}
 <link rel="stylesheet" href="{% static 'css/update_stock.css' %}">
 <script>
     let get_stock_url = "{% url 'linnworks:get_stock_levels' %}";

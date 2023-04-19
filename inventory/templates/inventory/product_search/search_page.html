@@ -5,37 +5,43 @@
 
 {% block additional_head %}
 {{ block.super }}
-<link rel="stylesheet" href="{% static 'css/product_search.css' %}">
+{% comment %} <link rel="stylesheet" href="{% static 'css/product_search.css' %}"> {% endcomment %}
 {% endblock %}
 
 {% block page_title %}Product Search{% endblock %}
 
 {% block content %}
 <h3>Inventory Search</h3>
-<form method="POST" action="">{% csrf_token %}
-  <div class="product_search_options">
-    <div class="error">{{ form.non_field_errors }}</div>
-
-    {% for field in form %}
-    <div class="InputAddOn">
-      {% if forloop.first %}
-      {{ field|add_class:"InputAddOon-field" }}
-      <input type="submit" class="InputAddOn-item" value="Search">
-      {% else %}
-      <label for="{{ field.name }}" class="InputAddOn-item">{{ field.label }}</label>
-      {{ field|add_class:"InputAddOon-field" }}
-      {% endif %}
-      {% if field.errors %}
-      <span class="error InputAddOn-item">{{ field.errors }}</span>
-      {% endif %}
-    </div>
-    {% endfor %}
-  </div>
-</form>
-
-{% if product_ranges %}
-{% include "inventory/product_search/result_list.html" %}
-{% endif %}
+<div class="container text-start">
+  <div class="w-50">
+    <form method="POST" action="">{% csrf_token %}
+      <div class="product_search_options">
+        <div class="error">{{ form.non_field_errors }}</div>
+        {% for field in form %}
+        <div class="mb-3">
+          {% if forloop.first %}
+            <div class="input-group">
+              {{ field|add_class:"form-control" }}
+              <input type="submit" class="btn btn-primary" value="Search">
+          </div>
+          {% else %}
+          <div class="input-group">
+            <span class="input-group-text">{{ field.label }}</span>
+            {{ field }}
+          </div>
+          {% endif %}
+          {% if field.errors %}
+          <span class="error InputAddOn-item">{{ field.errors }}</span>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </form>
+</div>
+  {% if product_ranges %}
+  {% include "inventory/product_search/result_list.html" %}
+  {% endif %}
+</div>
 
 {% endblock %}
 
@@ -46,6 +52,8 @@
   }
 
   $(document).ready(function () {
+
+    $(".collapse_variations").hide();
 
     var range_ids = [];
     $(".expanded").each(function () {
@@ -68,11 +76,15 @@
       }
       $('#collapsed_' + range_id).hide();
       $('#expanded_' + range_id).show();
+      $('#expand_' + range_id).hide();
+      $('#collapse_' + range_id).show();
     }
 
     function collapse_variations(range_id) {
       $('#expanded_' + range_id).hide();
       $('#collapsed_' + range_id).show();
+      $('#collapse_' + range_id).hide();
+      $('#expand_' + range_id).show();
     }
 
     $('.expand_variations').click(function () {

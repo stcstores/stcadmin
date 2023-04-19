@@ -1,54 +1,65 @@
-<div class="product_search_result_range {% if range.end_of_line or range.hidden %} end_of_line{% endif %}">
-  <div class="range_details">
+<div class="product_search_result_range row border border-secondary p-3 mt-3 bg-light {% if range.end_of_line or range.hidden %} end_of_line{% endif %}">
+  <div class="range_details col-6">
     <div class="identification">
-      <div class="sku">{{ product_range.sku }}</div>
-      <div class="name">
-        <a title="View product range" href="{% url 'inventory:product_range' product_range.pk %}">
-          {{ product_range.name }}
-        </a>
+      <div class="fs-6 font-monospace sku">
+        <span class="user-select-all">{{ product_range.sku }}</span>
+      </div>
+      <div class="btn-group">
+          <a href="{% url 'inventory:product_range' product_range.pk %}" class="btn {% if product_range.is_end_of_line %}btn-secondary{% else %}btn-primary{% endif %}" role="button">
+            {{ product_range.name }}
+          </a>
+          <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="visually-hidden">Toggle Dropdown</span>
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" href="{% url 'inventory:descriptions' product_range.pk %}" target="_blank">
+                Edit Range
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'inventory:images' product_range.pk %}" target="_blank">
+                Edit Images
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'inventory:locations' product_range.pk %}" target="_blank">
+                Bays
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'price_calculator:range_price_calculator' product_range.pk %}" target="_blank">
+                Price Calculator
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              {% if product_range.is_end_of_line %}
+              <button class="dropdown-item text-danger EOL_range" type="button" id="EOL_{{ product_range.pk }}">
+                End of Line
+              </button>
+              {% endif %}
+            </li>
+          </ul>
       </div>
     </div>
-    <div class="range_links">
-      <ul>
-        <li>
-          <a title="Descriptions" href="{% url 'inventory:descriptions' product_range.pk %}" target="_blank">
-            <button class="btn btn-outline-dark btn-sm">D</button>
-          </a>
-        </li>
-        <li>
-          <a title="Images" href="{% url 'inventory:images' product_range.pk %}" target="_blank">
-            <button class="btn btn-outline-dark btn-sm">I</button>
-          </a>
-        </li>
-        <li>
-          <a title="Locations" href="{% url 'inventory:locations' product_range.pk %}" target="_blank">
-            <button class="btn btn-outline-dark btn-sm">L</button>
-          </a>
-        </li>
-        <li>
-          <a title="Price Calulator" href="{% url 'price_calculator:range_price_calculator' product_range.pk %}"
-            target="_blank">
-            <button class="btn btn-outline-dark btn-sm">P</button></a>
-        </li>
-        <li>
-          {% if product_range.is_end_of_line %}
-          <span class="error">END OF LINE</span>
-          {% else %}
-          <button title="Mark the range as End of Line" class="EOL_range btn btn-outline-dark btn-sm" id="EOL_{{ product_range.pk }}">
-            End of Line
-          </button>
-          {% endif %}
-        </li>
-      </ul>
-    </div>
   </div>
-
-  <div class="product_details">
+  <div class="col-1 range_status">
+    {% if product_range.is_end_of_line %}<span class="badge bg-danger">End of Line</span>{% endif %}
+  </div>
+  <div class="product_details col-5">
     <div class="product">
-      {% include "inventory/product_search/result_variation.html" %}
+      <button class="collapse_variations btn btn-outline-dark btn-sm" id="collapse_{{ product_range.pk }}">
+        Hide {{ product_range.variation_count }} Variations &#9650;
+      </button>
+      <div class="collapsed" id="collapsed_{{ product_range.pk }}">
+        <button class="expand_variations btn btn-outline-dark btn-sm" id="expand_{{ product_range.pk }}">
+          Show {{ product_range.variation_count }} Variations &#9660;
+        </button>
+      </div>
     </div>
   </div>
-  <div class="range_status">
-    {% if product_range.end_of_line %}<div class="error">End of Line</div>{% endif %}
+  <div class="col-12 expanded" id="expanded_{{ product_range.pk }}" data-link="{% url 'inventory:variation_list' product_range.id %}" style="display: none;">
+    <div class="variation_info"></div>
   </div>
 </div>

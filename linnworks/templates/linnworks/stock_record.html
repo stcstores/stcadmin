@@ -2,8 +2,8 @@
 
 {% if stock_record %}
 <span class="stock_record">
-    <span class="stock_level">{{ stock_record.available_stock_level }}</span>
-    <span class="timestamp" title="Stock level from daily update">
+    <span class="fs-4 stock_level me-2">{{ stock_record.available_stock_level }}</span>
+    <span class="fs-6 text-muted timestamp" title="Stock level from daily update">
         {{ stock_record.timestamp | naturaltime }}
     </span>
 </span>
