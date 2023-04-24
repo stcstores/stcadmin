@@ -1,33 +1,13 @@
 {% load stcadmin_extras %}
-{% if form.non_field_errors %}
-<div class="error">
-  <ul>
-    {% for error in form.non_field_errors %}
-    <li>{{ error }}</li>
-    {% endfor %}
-  </ul>
-</div>
-{% endif %}
-{% for field in form.hidden_fields %}
-<ul>
-  {% for error in field.errors %}
-  <li>{{ field.name }} - {{ error }}</li>
-  {% endfor %}
-</ul>
-{% endfor %}
+{% load django_bootstrap5 %}
+
+{% bootstrap_form_errors form layout='inline' %}
 {% for field in form.visible_fields %}
-<div class="InputAddOn">
-  {% if field.help_text %}
-  <span class="InputAddOn-item">{% tooltip_help_text field %}</span>
-  {% endif %}
-  <label for="{{ field.name }}" class="InputAddOn-item">{{ field.label }}</label>
-  {{ field|add_class:"InputAddOn-field" }}
-  {% if field.errors %}
-  <span class="error InputAddOn-item">{{ field.errors }}</span>
-  {% endif %}
-  <span class="InputAddOn-item required">{% if field.field.required %}*{% endif %}</span>
-</div>
-{% for field in form.hidden_fields %}
-{{ field}}
-{% endfor %}
+  <div class="mb-3">
+    {% bootstrap_field field wrapper_class='input-group' show_help=false label_class='input-group-text' %}
+    {% if field.errors %}<span class="error InputAddOn-item">{{ field.errors }}</span>{% endif %}
+    {% if field.required %}<span class="input-group-text">*</span>{% endif %}
+    <span class="text-muted">{{ field.help_text }}</span>
+  </div>
+  {% for field in form.hidden_fields %}{{ field }}{% endfor %}
 {% endfor %}

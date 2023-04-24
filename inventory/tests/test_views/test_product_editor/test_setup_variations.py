@@ -5,6 +5,7 @@ import pytest
 from django.urls import reverse
 
 from inventory import forms
+from inventory.views.product_editor import SetupVariations
 
 
 @pytest.fixture
@@ -63,9 +64,18 @@ def test_form_in_context(get_response):
 
 
 @pytest.mark.django_db
-def test_options_in_context(mock_form, get_response):
-    options = get_response.context["options"]
+def test_get_options(mock_form):
+    options = SetupVariations().get_options(mock_form)
     assert options == '{"key1": "value1", "key2": "value2"}'
+
+
+@pytest.mark.django_db
+def test_options_in_context(group_logged_in_client, url):
+    with mock.patch(
+        "inventory.views.product_editor.SetupVariations.get_options"
+    ) as mock_get_options:
+        context = group_logged_in_client.get(url).context
+        assert context["options"] == mock_get_options.return_value
 
 
 @pytest.mark.django_db

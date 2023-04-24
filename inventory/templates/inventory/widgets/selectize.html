@@ -1,4 +1,4 @@
-{% include 'django/forms/widgets/select.html' with widget=widget %}
+{% include "django/forms/widgets/select.html" with widget=widget %}
 <script>
     $(document).ready(function() {
         $('#{{ widget.attrs.id }}').selectize({{ widget.selectize_options }});

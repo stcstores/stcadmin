@@ -2,26 +2,30 @@
 {% load static %}
 
 {% block additional_head %}
-{{ block.super }}
-<link rel="stylesheet" href="{% static 'scripts/selectize/selectize.css' %}">
-{% comment %} <link rel="stylesheet" href="{% static 'css/inventory.css' %}"> {% endcomment %}
-<link rel="stylesheet" href="{% static 'css/update_stock.css' %}">
-<script>
+    {{ block.super }}
+    {% comment %} <link rel="stylesheet" href="{% static 'css/inventory.css' %}"> {% endcomment %}
+    <link rel="stylesheet" href="{% static 'css/update_stock.css' %}">
+    <script>
     let get_stock_url = "{% url 'linnworks:get_stock_levels' %}";
     let update_stock_url = "{% url 'linnworks:update_stock_levels' %}";
-</script>
-<script src="{% static 'scripts/selectize/selectize.js' %}"></script>
-{{ form.media.css }}
-{% endblock %}
+    </script>
+    <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+    {{ form.media.css }}
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+{% endblock additional_head %}
 
-{% block page_title %}Inventory{% endblock %}
+{% block page_title %}
+    Inventory
+{% endblock page_title %}
 
 {% block section_navigation %}
-{% include "inventory/section_navigation.html" %}
-{% endblock %}
+    {% include "inventory/section_navigation.html" %}
+{% endblock section_navigation %}
 
-{% block content %}{% endblock %}
+{% block content %}
+{% endblock content %}
 
 {% block script %}
-{{ form.media.js }}
+    {{ form.media.js }}
 {% endblock script %}

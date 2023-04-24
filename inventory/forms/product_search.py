@@ -5,8 +5,6 @@ from django.db.models import Count
 
 from inventory import models
 
-from .widgets import HorizontalRadio
-
 
 class ProductSearchForm(forms.Form):
     """Product search form."""
@@ -18,14 +16,13 @@ class ProductSearchForm(forms.Form):
     ONLY_EOL = "only_eol"
     END_OF_LINE_DEFAULT = EXCLUDE_EOL
     END_OF_LINE_CHOICES = (
-        (EXCLUDE_EOL, "Exclude EOL"),
-        (INCLUDE_EOL, "Include EOL"),
-        (ONLY_EOL, "Only EOL"),
+        (EXCLUDE_EOL, "Hide End of Line"),
+        (INCLUDE_EOL, "Show End of Line"),
+        (ONLY_EOL, "Only End of Line"),
     )
 
     search_term = forms.CharField(required=False)
     end_of_line = forms.ChoiceField(
-        widget=HorizontalRadio(),
         choices=END_OF_LINE_CHOICES,
         required=False,
         label="End of Line",

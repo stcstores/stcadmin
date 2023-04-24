@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.urls import reverse
 
 from inventory import forms, models
-from inventory.views.product_editor import EditNewVariation
 
 
 @pytest.fixture
@@ -45,30 +44,25 @@ def post_response(post_data, group_logged_in_client, url):
     return group_logged_in_client.post(url, post_data)
 
 
-def test_uses_form():
-    form_class = EditNewVariation().get_form_class()
-    assert form_class == forms.EditProductForm
-
-
 @pytest.mark.django_db
-def test_uses_template(mock_form, get_response):
+def test_uses_template(get_response):
     assert "inventory/product_editor/edit_new_variation.html" in (
         t.name for t in get_response.templates
     )
 
 
 @pytest.mark.django_db
-def test_form_in_context(mock_form, get_response):
-    assert get_response.context["form"] == mock_form
+def test_form_in_context(get_response):
+    assert isinstance(get_response.context["form"], forms.EditProductForm)
 
 
 @pytest.mark.django_db
-def test_product_in_context(mock_form, product, get_response):
+def test_product_in_context(product, get_response):
     assert get_response.context["product"] == product
 
 
 @pytest.mark.django_db
-def test_product_range_in_context(mock_form, product_range, get_response):
+def test_product_range_in_context(product_range, get_response):
     assert get_response.context["product_range"] == product_range
 
 

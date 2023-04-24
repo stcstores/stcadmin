@@ -1,7 +1,9 @@
 {% with id=widget.attrs.id %}
-        {% for group, options, index in widget.optgroups %}
+    {% for group, options, index in widget.optgroups %}
+        <div class="form-check form-check-inline">
             {% for option in options %}
-                <li style="display: inline-block">{% include option.template_name with widget=option %}</li>
+                {% include option.template_name with widget=option %}
             {% endfor %}
-        {% endfor %}
+        </div>
+    {% endfor %}
 {% endwith %}

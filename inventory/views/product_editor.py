@@ -140,10 +140,12 @@ class SetupVariations(InventoryUserMixin, FormView):
         """Return context for the template."""
         context = super().get_context_data(*args, **kwargs)
         context["product_range"] = self.product_range
-        context["options"] = json.dumps(
-            {key: value.label for key, value in context["form"].fields.items()}
-        )
+        context["options"] = self.get_options(context["form"])
         return context
+
+    def get_options(self, form):
+        """Return a dict of product options."""
+        return json.dumps({key: value.label for key, value in form.fields.items()})
 
     def form_valid(self, form):
         """Create variation products."""

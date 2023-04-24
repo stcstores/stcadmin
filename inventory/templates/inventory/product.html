@@ -1,133 +1,114 @@
 {% extends "inventory/base.html" %}
 {% load static %}
 
+{% block page_title %}
+  {{ product_range.name }}
+{% endblock page_title %}
 
-
-{% block page_title %}{{ product_range.name }}{% endblock %}
-
-{% block additional_head %}{{ block.super }}
-<script>
-  /* beautify preserve:start */
-  {% include 'inventory/widgets/product_widgets.js' %}
-  /* beautify preserve:end */
-</script>
-<link rel="stylesheet" href="{% static 'css/product_page.css' %}">
-{% endblock %}
-
-{% block content %}{{ block.super }}
-
-<a href="{% url 'inventory:product_range' product_range.pk %}" class="button-link">
-  <i class="fa-solid fa-arrow-left"></i> Back to Product Range
-</a>
-
-<div class="product_header">
-  <div class="details">
-    <p><span class="sku">{{ product.sku}}</span>: <span class="name">{{ product.full_name }}</span></p>
+{% block content %}
+  {{ block.super }}
+  <div class="container text-start">
+    <a href="{% url 'inventory:product_range' product_range.pk %}"
+       class="button-link">
+      <i class="fa-solid fa-arrow-left"></i> Back to Product Range
+    </a>
+    <div class="m-4 mb-5">
+      <div class="details">
+        <span class="font-monospace user-select-all">{{ product.sku }}</span>
+        <h3 class="user-select-all">{{ product.full_name }}</h3>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-6">
+          <form action="" method="post" autocomplete="off" id="product_form">
+            {% csrf_token %}
+            {% include "inventory/input_add_on_form.html" %}
+            <button type="submit" id="save_button" class="btn btn-primary" disabled>Save</button>
+          </form>
+        </div>
+        <div class="col-6">
+          <table class="table table-hover table-sm" id="variation_table">
+            <thead class="table-primary">
+              <tr>
+                <th>SKU</th>
+                {% for option in product_range.variation_options %}<th>{{ option }}</th>{% endfor %}
+                {% for option in product_range.listing_options %}<th class="listing_option">{{ option }}</th>{% endfor %}
+                <th>Supplier SKU</th>
+              </tr>
+            </thead>
+            {% for variation in product_range.products.variations %}
+              <tr class="{% if product == variation %}table-active{% else %}not_selected{% endif %}"
+                  data-href="{% url 'inventory:product' variation.pk %}">
+                <td>
+                  <span class="font-monospace user-select-all">{{ variation.sku }}</span>
+                </td>
+                {% for option, value in variation.variation.items %}<td class="option name">{{ value }}</td>{% endfor %}
+                {% for option, value in variation.listing_options.items %}
+                  <td class="option listing_option name">{{ value }}</td>
+                {% endfor %}
+                <td>
+                  <span class="font-monospace user-select-all">{{ variation.supplier_sku }}</span>
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+{% endblock content %}
 
-<div class="page_center">
+{% block script %}
+  {{ block.super }}
+  <script>
+    var form_changed = false;
+    var price_selectors = ['#id_purchase_price', '#id_retail_price'];
 
-  <div class="product_form">
-    <form action="" method="POST" autocomplete="off">{% csrf_token %}
-      {% include "inventory/input_add_on_form.html" %}
-      <button type="submit" class="save_button" disabled>Save</button>
-    </form>
-  </div>
+    function variation_link_click() {
+        $('#variation_table .not_selected').click(function() {
+            if ((!form_changed) || (window.confirm(
+                    "Changes not saved.\nDo you want to leave without saving your changes?"))) {
+                window.location = $(this).data('href');
+            }
+        });
+    }
 
-  <div>
-    <table class="variation_table">
-      <tr>
-        <th class="variation-selection">SKU</th>
-        {% for option in product_range.variation_options %}
-        <th>{{ option }}</th>
-        {% endfor %}
-        {% for option in product_range.listing_options %}
-        <th class="listing_option">{{ option }}</th>
-        {% endfor %}
-        <th>Supplier SKU</th>
-      </tr>
-      {% for variation in product_range.products.variations %}
-      <tr class="variation-selection {% if product == variation %}selected{% else %}not_selected{% endif %}"
-        data-href="{% url 'inventory:product' variation.pk %}">
-        <td class="sku">{{ variation.sku }}</td>
-        {% for option, value in variation.variation.items %}
-        <td class="option name">{{ value }}</td>
-        {% endfor %}
-        {% for option, value in variation.listing_options.items %}
-        <td class="option listing_option name">{{ value }}</td>
-        {% endfor %}
-        <td class="sku">{{ variation.supplier_sku }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
+    function set_autoNumeric() {
+        $.each(price_selectors, function(index, value) {
+            $(value).attr({
+                type: "text"
+            });
+            new AutoNumeric($(value)[0]).british({
+                'unformatOnSubmit': true
+            });
+        });
+    }
 
-</div>
-{% endblock %}
+    function set_form_changed() {
+        form_changed = true;
+        $('#save_button').prop('disabled', false);
+    }
 
-{% block script %}{{ block.super }}
-<script>
-  var form_changed = false;
-  var price_selectors = ['#id_purchase_price', '#id_retail_price'];
+    function set_form_changed_event_triggers() {
+        $('#product_form input, #product_form select').on('input', set_form_changed);
+        $('select').on('change', set_form_changed);
+    }
 
-  function set_variation_hover_style() {
-    $('.variation_table .not_selected').hover(
-      function () {
-        $(this).find('td').css('background', '#ccfff1');
-      },
-      function () {
-        $(this).find('td').css('background', '');
-      }
-    );
-  }
+    $(document).ready(function() {
+        variation_link_click();
+        set_autoNumeric();
 
-  function variation_link_click() {
-    $('.variation_table .not_selected').click(function () {
-      if ((!form_changed) || (window.confirm(
-          "Changes not saved.\nDo you want to leave without saving your changes?"))) {
-        window.location = $(this).data('href');
-      }
+        $(document).ready(function() { // After selectize and autoNumeric
+            set_form_changed_event_triggers();
+            $(".product_form form").keydown(function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        });
+
     });
-  }
-
-  function set_autoNumeric() {
-    $.each(price_selectors, function (index, value) {
-      $(value).attr({
-        type: "text"
-      });
-      new AutoNumeric($(value)[0]).british({
-        'unformatOnSubmit': true
-      });
-    });
-  }
-
-  function set_form_changed() {
-    form_changed = true;
-    $('.save_button').prop('disabled', false);
-  }
-
-  function set_form_changed_event_triggers() {
-    $('.product_form input, .product_form select').on('input', set_form_changed);
-    $('select').on('change', set_form_changed);
-  }
-
-  $(document).ready(function () {
-
-    set_variation_hover_style();
-    variation_link_click();
-    set_autoNumeric();
-
-    $(document).ready(function () { // After selectize and autoNumeric
-      set_form_changed_event_triggers();
-      $(".product_form form").keydown(function(event){
-        if(event.keyCode == 13) {
-          event.preventDefault();
-          return false;
-        }
-      });
-    });
-
-  });
-</script>
-{% endblock %}
+  </script>
+{% endblock script %}

@@ -2,51 +2,53 @@
 {% load static %}
 {% load stcadmin_extras %}
 
-
 {% block additional_head %}
-{{ block.super }}
-{% comment %} <link rel="stylesheet" href="{% static 'css/product_search.css' %}"> {% endcomment %}
-{% endblock %}
+  {{ block.super }}
+  {% comment %} <link rel="stylesheet" href="{% static 'css/product_search.css' %}"> {% endcomment %}
+{% endblock additional_head %}
 
-{% block page_title %}Product Search{% endblock %}
+{% block page_title %}
+  Product Search
+{% endblock page_title %}
 
 {% block content %}
-<h3>Inventory Search</h3>
-<div class="container text-start">
-  <div class="w-50">
-    <form method="POST" action="">{% csrf_token %}
-      <div class="product_search_options">
-        <div class="error">{{ form.non_field_errors }}</div>
-        {% for field in form %}
-        <div class="mb-3">
-          {% if forloop.first %}
-            <div class="input-group">
-              {{ field|add_class:"form-control" }}
-              <input type="submit" class="btn btn-primary" value="Search">
-          </div>
-          {% else %}
-          <div class="input-group">
-            <span class="input-group-text">{{ field.label }}</span>
-            {{ field }}
-          </div>
-          {% endif %}
-          {% if field.errors %}
-          <span class="error InputAddOn-item">{{ field.errors }}</span>
-          {% endif %}
+  <div class="container mb-5">
+    <h3>Inventory Search</h3>
+  </div>
+  <div class="container text-start">
+    <div class="w-50">
+      <form method="post" action="">
+        {% csrf_token %}
+        <div class="product_search_options">
+          <div class="error">{{ form.non_field_errors }}</div>
+          {% for field in form %}
+            <div class="mb-3">
+              {% if forloop.first %}
+                <div class="input-group">
+                  {{ field|add_class:"form-control" }}
+                  <input type="submit" class="btn btn-primary" value="Search">
+                </div>
+              {% else %}
+                <div class="input-group">
+                  <span class="input-group-text">{{ field.label }}</span>
+                  {{ field }}
+                </div>
+              {% endif %}
+              {% if field.errors %}<span class="error InputAddOn-item">{{ field.errors }}</span>{% endif %}
+            </div>
+          {% endfor %}
         </div>
-        {% endfor %}
-      </div>
-    </form>
-</div>
-  {% if product_ranges %}
-  {% include "inventory/product_search/result_list.html" %}
-  {% endif %}
-</div>
+      </form>
+    </div>
+    {% if product_ranges %}
+      {% include "inventory/product_search/result_list.html" %}
+    {% endif %}
+  </div>
 
-{% endblock %}
+{% endblock content %}
 
 {% block script %}
-<script>
+  <script>
   function end_of_line_range(range_id) {
     alert('End of Lined ' + range_id);
   }
@@ -152,5 +154,5 @@
     
 
   });
-</script>
-{% endblock %}
+  </script>
+{% endblock script %}
