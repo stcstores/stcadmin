@@ -1,0 +1,43 @@
+{% for supplier, products in suppliers.items %}
+    <h4>{{ supplier.name }}</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Product</th>
+                <th>Supplier SKU</th>
+                <th>Purchase Price</th>
+                <th>Stock Level</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                    <td class="sku">{{ product.sku }}</td>
+                    <td class="name">{{ product.full_name }}</td>
+                    <td class="sku">{{ product.supplier_sku }}</td>
+                    <td>
+                        <input type="text"
+                               value="{{ product.purchase_price }}"
+                               size="6"
+                               class="purchase_price_input"
+                               id="purchase_price_input_{{ product.id }}"
+                               data-product_id="{{ product.id }}"
+                               onclick="this.select()">
+                        <span class="purchase_price_status"
+                              id="purchase_price_status_{{ product.id }}">
+                            <i class="fa-solid fa-check"></i>
+                        </span>
+                    </td>
+                    <td>
+                        {% if product_range.is_end_of_line or product.is_end_of_line %}
+                            <span class="error">Stock levels are not available for EOL products</span>
+                        {% else %}
+                            {% include "inventory/update_stock.html" %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}

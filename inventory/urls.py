@@ -95,6 +95,17 @@ inventory_urlpatterns = [
         name="add_range_image",
     ),
     path("bay_search", views.BaySearch.as_view(), name="bay_search"),
+    path("restock", views.restock.RestockView.as_view(), name="restock"),
+    path(
+        "restock_results",
+        views.restock.RestockResults.as_view(),
+        name="restock_results",
+    ),
+    path(
+        "restock/update_purchase_price",
+        views.restock.UpdatePurchasePrice.as_view(),
+        name="update_purchase_price",
+    ),
 ]
 
 api_urlpatterns = [
