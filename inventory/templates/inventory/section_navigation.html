@@ -1,13 +1,32 @@
 <div class="section_navigation">
   <ul>
-    <li><a href="{% url 'inventory:product_search' %}">Product Search</a></li>
-    <li><a href="{% url 'inventory:start_new_product' %}">New Product</a></li>
-    <li><a href="{% url 'inventory:continue' %}">Continue Creating Product</a></li>
-    <li><a href="{% url 'price_calculator:price_calculator' %}">Price Calculator</a></li>
-    <li><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>
-    <li><a href="{% url 'inventory:suppliers' %}">Suppliers</a></li>
-    <li><a href="{% url 'linnworks:stock_value' %}">Stock Value</a></li>
-    <li><a href="{% url 'inventory:bay_search' %}">Bay Search</a></li>
+    <li>
+      <a href="{% url 'inventory:product_search' %}">Product Search</a>
+    </li>
+    <li>
+      <a href="{% url 'inventory:start_new_product' %}">New Product</a>
+    </li>
+    <li>
+      <a href="{% url 'inventory:continue' %}">Continue Creating Product</a>
+    </li>
+    <li>
+      <a href="{% url 'price_calculator:price_calculator' %}">Price Calculator</a>
+    </li>
+    <li>
+      <a href="{% url 'inventory:sku_generator' %}">SKU Generator</a>
+    </li>
+    <li>
+      <a href="{% url 'inventory:suppliers' %}">Suppliers</a>
+    </li>
+    <li>
+      <a href="{% url 'linnworks:stock_value' %}">Stock Value</a>
+    </li>
+    <li>
+      <a href="{% url 'inventory:bay_search' %}">Bay Search</a>
+    </li>
+    <li>
+      <a href="{% url 'inventory:restock' %}">Restock</a>
+    </li>
   </ul>
   {% include "inventory/product_search/inline_search.html" %}
 </div>

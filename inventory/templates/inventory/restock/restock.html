@@ -1,0 +1,67 @@
+{% extends "inventory/base.html" %}
+{% load static %}
+
+{% block additional_head %}
+    {{ block.super }}
+    <script src="{% static 'scripts/stock_manager.js' %}"></script>
+{% endblock additional_head %}
+
+{% block content %}
+    <label for="product_search">Products</label>
+    <textarea name="product_search" id="search_input" cols="60" rows="10"></textarea>
+    <button id="search_button">Search</button>
+
+    <div id="results"></div>
+{% endblock content %}
+
+{% block script %}
+
+    <script>
+
+        function getResults() {
+            $.ajax({
+                url: "{% url 'inventory:restock_results' %}",
+                type: "GET",
+                data: {'product_search': $('#search_input').val()},
+                success: function(response) {
+                    $('#results').html(response);
+                    enablePurchasePrice();
+                    stock_level_widget_manager.get_stock_levels();
+                }
+            });
+        }
+
+        function enablePurchasePrice() {
+            $('.purchase_price_input').change(function() {
+                var productId = $(this).data('product_id');
+                var updatedPrice = $(this).val();
+                updatePurchasePrice(productId, updatedPrice);
+            });
+        }
+
+        function updatePurchasePrice(productId, updatedPrice) {
+            var status = $('#purchase_price_status_' + productId);
+            status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
+            $.ajax({
+                url: "{% url 'inventory:update_purchase_price' %}",
+                type: "POST",
+                data: {"product_id": productId, "updated_purchase_price": updatedPrice},
+                success: function(response) {
+                    status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
+                    status.html('<i class="fa-solid fa-square-check success"></i>');
+                },
+                error: function(response) {
+                    status.html('<i class="fa-solid fa-triangle-exclamation error"></i>');
+                }
+            });
+        }
+
+        $(document).ready(function(){
+            $('#search_button').click(function() {
+                getResults();
+            });
+        });
+    
+    </script>
+
+{% endblock script %}
