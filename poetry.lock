@@ -660,18 +660,18 @@ test = ["coverage", "selenium"]
 
 [[package]]
 name = "django-markup"
-version = "1.7.1"
+version = "1.7.2"
 description = "A generic Django application to convert text with specific markup to html."
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.7"
 files = [
-    {file = "django-markup-1.7.1.tar.gz", hash = "sha256:0637b66256b327ccca307b3e9568a57083b41e442a39b109b5810849606ad409"},
-    {file = "django_markup-1.7.1-py2.py3-none-any.whl", hash = "sha256:d8876db3c501dbf5460ac0563257a7ea2231a5258a4bb1dd8bd2871c8804b348"},
+    {file = "django-markup-1.7.2.tar.gz", hash = "sha256:6cd09ecc701cd80d658a8eeeb0668b0450176bc0962f8c01dd26d64cbeacc945"},
+    {file = "django_markup-1.7.2-py2.py3-none-any.whl", hash = "sha256:c6473fa6c8047abcb94e12201a289c2bb06c340c61526d60eef5de53e26750bf"},
 ]
 
 [package.dependencies]
-django = ">=3.7"
+django = ">=3.2"
 
 [package.extras]
 all-filter-dependencies = ["bleach (>=3.0)", "docutils (>=0.14)", "markdown (>=2.6.9)", "pygments (>=2.10.0)", "pygments (>=2.2.0)", "python-creole (>=1.3.1)", "smartypants (>=2.0.0)", "textile (>=2.3.16)"]
