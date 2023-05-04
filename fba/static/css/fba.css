@@ -3,12 +3,27 @@
     flex-direction: row;
 }
 
+.price_calculator_container {
+    display: flex;
+    flex-direction: row;
+}
+
 .fba_order_form {
     display: flex;
     background: #efefef;
     border-radius: 1em;
     border: 2px solid #ddd;
     margin: 1em;
+}
+
+.price_calculator_results {
+    display: flex;
+    flex-direction: column;
+    background: #efefef;
+    border-radius: 1em;
+    border: 2px solid #ddd;
+    margin: 1em;
+    padding: 1em;
 }
 
 .price_calculator {

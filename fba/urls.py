@@ -58,6 +58,11 @@ urlpatterns = [
     ),
     path("take_off_hold", views.TakeOffHold.as_view(), name="take_off_hold"),
     path("prioritise", views.PrioritiseOrder.as_view(), name="priortise_fba_order"),
+    path(
+        "shipping_calculator",
+        views.fba.ShippingCalculator.as_view(),
+        name="shipping_calculator",
+    ),
     path("shipments", views.Shipments.as_view(), name="shipments"),
     path(
         "shipments/destinations",
