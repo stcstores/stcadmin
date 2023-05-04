@@ -8,7 +8,7 @@ from django.contrib.postgres.forms import SplitArrayField
 
 from inventory import models
 from inventory.forms import fields as inventory_fields
-from stcadmin.forms import KwargFormSet
+from stcadmin.forms import KwargFormSet, MultipleFileInput, MultipleImageField
 
 
 class BaseRangeForm(forms.ModelForm):
@@ -154,12 +154,10 @@ class ImagesForm(forms.Form):
     """Form for adding product images."""
 
     product_ids = forms.CharField(widget=forms.HiddenInput)
-    images = forms.ImageField(
+    images = MultipleImageField(
         required=False,
         label="Images",
-        widget=forms.ClearableFileInput(
-            attrs={"multiple": True, "accept": ".jpg, .png"}
-        ),
+        widget=MultipleFileInput(attrs={"multiple": True, "accept": ".jpg, .png"}),
     )
 
     def clean(self):
