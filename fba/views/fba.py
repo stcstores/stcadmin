@@ -365,7 +365,6 @@ class FBAPriceCalculator(FBAUserMixin, View):
     def parse_request(self):
         """Get request parameters from POST."""
         post_data = self.request.POST
-        self.sku = post_data.get("sku")
         self.selling_price = float(post_data.get("selling_price"))
         self.country_id = int(post_data.get("country"))
         self.purchase_price = float(post_data.get("purchase_price"))
@@ -417,12 +416,12 @@ class FBAPriceCalculator(FBAUserMixin, View):
     def get_postage_per_item(self):
         """Return the caclulated price per item to post to FBA."""
         postage_per_item = None
-        if not self.country.region.auto_close:
-            try:
-                record = models.FBAShippingPrice.objects.get(product_SKU=self.sku)
-                self.postage_per_item_gbp = record.price_per_item / 100
-            except models.FBAShippingPrice.DoesNotExist:
-                pass
+        # if not self.country.region.auto_close:
+        #     try:
+        #         record = models.FBAShippingPrice.objects.get(product_SKU=self.sku)
+        #         self.postage_per_item_gbp = record.price_per_item / 100
+        #     except models.FBAShippingPrice.DoesNotExist:
+        #         pass
         if postage_per_item is None:
             self.postage_per_item_gbp = round(self.postage_gbp / int(self.quantity), 2)
         self.postage_per_item_local = round(
@@ -665,3 +664,15 @@ class GetStockLevels(FBAUserMixin, View):
                 "total": stock_level.stock_level,
             }
         return JsonResponse(output)
+
+
+class ShippingCalculator(FBAUserMixin, TemplateView):
+    """View for FBA shipping calculator."""
+
+    template_name = "fba/shipping_calculator.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["countries"] = models.FBACountry.objects.all()
+        return context

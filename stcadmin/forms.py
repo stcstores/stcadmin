@@ -1,5 +1,6 @@
 """KwargFormSet class."""
 
+from django import forms
 from django.forms.formsets import BaseFormSet
 from django.forms.renderers import get_default_renderer
 
@@ -50,3 +51,27 @@ class KwargFormSet(BaseFormSet):
         form = self.form(**defaults)
         self.add_fields(form, i)
         return form
+
+
+class MultipleFileInput(forms.ClearableFileInput):
+    """Widget for multiple file uploads."""
+
+    allow_multiple_selected = True
+
+
+class MultipleImageField(forms.ImageField):
+    """Field for multiple file uploads."""
+
+    def __init__(self, *args, **kwargs):
+        """Set default widget."""
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        """Clean multiple file uploads."""
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            result = single_file_clean(data, initial)
+        return result
