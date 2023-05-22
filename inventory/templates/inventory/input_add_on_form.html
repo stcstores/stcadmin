@@ -5,9 +5,10 @@
 {% for field in form.visible_fields %}
   <div class="mb-3">
     {% bootstrap_field field wrapper_class='input-group' show_help=false label_class='input-group-text' %}
-    {% if field.errors %}<span class="error InputAddOn-item">{{ field.errors }}</span>{% endif %}
     {% if field.required %}<span class="input-group-text">*</span>{% endif %}
+
+    {% if field.errors %}<span class="text-danger">{{ field.errors }}</span>{% endif %}
     <span class="text-muted">{{ field.help_text }}</span>
   </div>
-  {% for field in form.hidden_fields %}{{ field }}{% endfor %}
 {% endfor %}
+{% for field in form.hidden_fields %}{{ field }}{% endfor %}

@@ -67,7 +67,7 @@ def test_logged_in_group_post(group_logged_in_client, url):
 
 
 def test_heading(valid_get_response_content):
-    assert "Price Calculator</h1>" in valid_get_response_content
+    assert "Price Calculator</h3>" in valid_get_response_content
 
 
 def test_uses_template(valid_get_response):

@@ -25,11 +25,20 @@ class BaseRangeForm(forms.ModelForm):
         }
 
     search_terms = SplitArrayField(
-        forms.CharField(), size=5, required=False, remove_trailing_nulls=True
+        forms.CharField(),
+        size=5,
+        required=False,
+        remove_trailing_nulls=True,
     )
     bullet_points = SplitArrayField(
         forms.CharField(), size=5, required=False, remove_trailing_nulls=True
     )
+
+    def __init__(self, *args, **kwargs):
+        """Set field HTML classes."""
+        super().__init__(*args, **kwargs)
+        self.fields["search_terms"].widget.attrs.update({"class": "form-control"})
+        self.fields["bullet_points"].widget.attrs.update({"class": "form-control"})
 
 
 class CreateRangeForm(BaseRangeForm):

@@ -3,7 +3,6 @@
 import re
 
 from django import forms
-from django.utils.safestring import mark_safe
 
 from inventory import models
 
@@ -53,10 +52,6 @@ class Title(fieldtypes.TextField):
     required_message = "Please supply a range title"
     placeholder = "Title"
     allowed_characters = ["%", "'"]
-    help_text = mark_safe(
-        "The title for the product.<br>This applies to the "
-        "Product Range and all of it's Products."
-    )
     size = 60
 
 
@@ -69,12 +64,6 @@ class Description(fieldtypes.TextareaField):
     html_class = "froala"
     placeholder = "Description. Will default to title if left blank"
     disallowed_characters = ["~"]
-    help_text = mark_safe(
-        "The Description for the listings.<br>"
-        "This can be changed on a channel by channel basis if necessary<br>"
-        "If left blank the description will duplicate the title.<br>"
-        "For variation items the description applies to the range as a whole."
-    )
 
     def clean(self, value):
         """Remove invalid characters."""

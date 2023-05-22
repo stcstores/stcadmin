@@ -40,7 +40,6 @@ linnapi = {git = "https://github.com/stcstores/linnapi.git", rev = "main"}
 shopify_api_py = {git = "https://github.com/stcstores/shopify_api_py.git", rev = "main"}
 requests-html = "^0.10.0"
 django-bootstrap5 = "^23.1"
-djlint = "^1.23.3"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=6.2.4"
@@ -53,6 +52,7 @@ isort = ">=5.10.1"
 factory_boy = ">=3.2.0"
 pytest_factoryboy = ">=2.1.0"
 pytest-celery = ">=0.0.0"
+djlint = "^1.23.3"
 
 [build-system]
 requires = ["poetry-core"]

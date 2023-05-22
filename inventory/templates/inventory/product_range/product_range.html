@@ -1,76 +1,78 @@
 {% extends "inventory/product_range/product_range_base.html" %}
 
-
-
-{% block content %}{{ block.super }}
-
-{% if products_exist %}
-<div class="product_status success">
-  All products exist in Linnworks.
-</div>
-{% elif products_exist is None %}
-  {% if product_range.is_end_of_line is False %}
-    <div class="product_status error">
-      <span class="heading">Error checking for product in Linnworks.</span>
-      This is likely due to a network error.
-    </div>
+{% block content %}
+  {{ block.super }}
+  <div class="container">
+    {% if products_exist %}
+      <div class="product_status success">All products exist in Linnworks.</div>
+    {% elif products_exist is None %}
+      {% if product_range.is_end_of_line is False %}
+        <div class="product_status error">
+          <span class="heading">Error checking for product in Linnworks.</span>
+          This is likely due to a network error.
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="product_status warning">
+        <span class="heading">This product cannot be found in Linnworks.</span>
+        If it has recently been created or changed it is likely these changes have not yet been processed.
+      </div>
     {% endif %}
-{% else %}
-<div class="product_status warning">
-  <span class="heading">This product cannot be found in Linnworks.</span>
-  If it has recently been created or changed it is likely these changes have not yet been processed.
-</div>
-{% endif %}
 
-{% if product.is_end_of_line is False %}
-<div class="buttons">
-  <a href="" class="button_link"><button>End-of-Line Range</button></a>
-</div>
-{% endif %}
-
-<div class="variations">
-  <h3>{% if product_range.has_variations %}Variations{% else %}Single Product{% endif %}</h3>
-  <table class="variation_table">
-    <tr class="row">
-      <th class="column header SKU">SKU</th>
-      <th class="column header edit"></th>
-      {% for option in product_range.variation_options %}
-      <th class="column header option">{{ option }}</th>
-      {% endfor %}
-      {% for option in product_range.listing_options %}
-      <th class="column header listing_option">{{ option }}</th>
-      {% endfor %}
-      <th class="column header supplier_SKU">Supplier SKU</th>
-      <th class="column header barcode">Barcode</th>
-      <th class="column header stock_level">Stock Level</th>
-    </tr>
-    {% for product in product_range.products.variations %}
-    <tr class="row">
-      <td class="column SKU sku">{{ product.sku }}</td>
-      <td class="column edit">
-        <a href="{% url 'inventory:product' product.pk %}">
-          <button>Edit</button>
+    {% if product.is_end_of_line is False %}
+      <div class="buttons">
+        <a href="" class="button_link">
+          <button>End-of-Line Range</button>
         </a>
-      </td>
-      {% for option, value in product.variation.items %}
-      <td class="column option name">{{ value }}</td>
-      {% endfor %}
-      {% for option, value in product.listing_options.items %}
-      <td class="column option listing_option name">{{ value }}</td>
-      {% endfor %}
-      <td class="column supplier_SKU sku">{{ product.supplier_sku }}</td>
-      <td class="column SKU sku">{{ product.barcode }}</td>
-      <td class="column stock_level">
-        {% if product_range.is_end_of_line or product.is_end_of_line %}
-          <span class="error">Stock levels are not available for EOL products</span>
-        {% elif products_exist is not True %}
-          <span class="error">Stock level is not available</span>
+      </div>
+    {% endif %}
+
+    <div class="variations">
+      <h3>
+        {% if product_range.has_variations %}
+          Variations
         {% else %}
-          {% include 'inventory/update_stock.html' %}
+          Single Product
         {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
-</div>
-{% endblock %}
+      </h3>
+      <table class="table table-hover table-sm mt-3">
+        <thead class="table-secondary">
+          <tr>
+            <th>SKU</th>
+            <th class="header edit"></th>
+            {% for option in product_range.variation_options %}<th>{{ option }}</th>{% endfor %}
+            {% for option in product_range.listing_options %}<th>{{ option }}</th>{% endfor %}
+            <th>Supplier SKU</th>
+            <th>Barcode</th>
+            <th>Stock Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in product_range.products.variations %}
+            <tr>
+              <td class="font-monospace user-select-all">{{ product.sku }}</td>
+              <td class="edit">
+                <a href="{% url 'inventory:product' product.pk %}">
+                  <button class="btn btn-primary">Edit</button>
+                </a>
+              </td>
+              {% for option, value in product.variation.items %}<td class="user-select-all">{{ value }}</td>{% endfor %}
+              {% for option, value in product.listing_options.items %}<td class="user-select-all">{{ value }}</td>{% endfor %}
+              <td class="font-monospace user-select-all">{{ product.supplier_sku }}</td>
+              <td class="font-monospace user-select-all">{{ product.barcode }}</td>
+              <td class="stock_level">
+                {% if product_range.is_end_of_line or product.is_end_of_line %}
+                  <span class="text-danger">Stock levels are not available for EOL products</span>
+                {% elif products_exist is not True %}
+                  <span class="text-danger">Stock level is not available</span>
+                {% else %}
+                  {% include "inventory/update_stock.html" %}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock content %}

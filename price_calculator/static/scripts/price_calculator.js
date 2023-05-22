@@ -184,11 +184,11 @@ function get_postage_price(
 
 function format_percentage(element, value, high, warn) {
   if (value >= high) {
-    element.removeClass('low_percentage').removeClass('warning_percentage').addClass('good_percentage');
+    element.removeClass('text-danger').removeClass('text-warning').addClass('text-success');
   } else if (value < warn) {
-    element.removeClass('warning_percentage').removeClass('good_percentage').addClass('low_percentage');
+    element.removeClass('text-warning').removeClass('text-success').addClass('text-danger');
   } else {
-    element.removeClass('low_percentage').removeClass('good_percentage').addClass('warning_percentage');
+    element.removeClass('text-danger').removeClass('text-success').addClass('text-warning');
   }
 }
 
