@@ -98,9 +98,11 @@
     <div class="header">
         <div class="order_info">
             <h2>{{ order.product_name }}</h2>
-            <h2>ASIN: {{ order.product_asin }}</h2>
+            <h3>Barcode: {{ order.product_barcode }}</h3>
+            <h3>ASIN: {{ order.product_asin }}</h3>
             <h2>
-                {{ order.region.name }} <img src="{{ order.region.default_country.country.flag.url}}" height="64">
+                {{ order.region.name }}
+                <img src="{{ order.region.default_country.country.flag.url }}" height="64">
             </h2>
             <h2>
                 {% if order.is_combinable %}&nbsp;COMBINABLE{% endif %}
@@ -111,7 +113,6 @@
         <div class="stock">
             <h3>Stock Level: {{ stock_level }}</h3>
             <h3>Pending Stock: {{ pending_stock }}</h3>
-            </h3>
         </div>
     </div>
     <div id="fba_order_form">
@@ -120,9 +121,7 @@
                 <tr>
                     <th>Locations</th>
                     <td>
-                        {% for bay in bays %}
-                        <div class="location">{{ bay }}</div>
-                        {% endfor %}
+                        {% for bay in bays %}<div class="location">{{ bay }}</div>{% endfor %}
                     </td>
                 </tr>
                 <tr>
@@ -142,16 +141,17 @@
                     <td>{{ order.region.currency.symbol }}{{ order.product_purchase_price }}</td>
                 </tr>
                 {% if order.small_and_light is True %}
-                <tr>
-                    <td colspan="2">SMALL AND LIGHT</td>
-                </tr>
+                    <tr>
+                        <td colspan="2">SMALL AND LIGHT</td>
+                    </tr>
                 {% endif %}
             </table>
-            <img src="{{ order.product_image_url }}" class="product_img" alt="" height="200">
+            <img src="{{ order.product_image_url }}"
+                 class="product_img"
+                 alt=""
+                 height="200">
         </div>
-        <div class="notes">
-            Notes: {{ order.notes }}
-        </div>
+        <div class="notes">Notes: {{ order.notes }}</div>
         <div class="inputs">
             <table class="fields">
                 <thead>
@@ -175,41 +175,41 @@
                     <th>Quantity</th>
                     <td class="write_space"></td>
                     {% if order.region.expiry_date_required %}
-                    <td></td>
-                    <th>Expiry&nbsp;Date</th>
-                    <td class="write_space"></td>
+                        <td></td>
+                        <th>Expiry&nbsp;Date</th>
+                        <td class="write_space"></td>
                     {% endif %}
                 </tr>
             </table>
             {% if order.region.fulfillment_unit == order.region.IMPERIAL %}
-            <table class="fields">
-                <thead>
+                <table class="fields">
+                    <thead>
+                        <tr>
+                            <th colspan="5">Delivery Details</th>
+                        </tr>
+                    </thead>
                     <tr>
-                        <th colspan="5">Delivery Details</th>
+                        <th>Weight (kg)</th>
+                        <td class="write_space"></td>
                     </tr>
-                </thead>
-                <tr>
-                    <th>Weight (kg)</th>
-                    <td class="write_space"></td>
-                </tr>
-                <tr>
-                    <th>Box (cm)</th>
-                    <td class="write_space"></td>
-                    <td class="write_space"></td>
-                    <td class="write_space"></td>
-                </tr>
-            </table>
+                    <tr>
+                        <th>Box (cm)</th>
+                        <td class="write_space"></td>
+                        <td class="write_space"></td>
+                        <td class="write_space"></td>
+                    </tr>
+                </table>
             {% endif %}
         </div>
         {% if order.region.warehouse_required %}
-        <div class="warehouse">
-            <table class="fields">
-                <tr>
-                    <td>Warehouse</td>
-                    <td class="write_space wide"></td>
-                </tr>
-            </table>
-        </div>
+            <div class="warehouse">
+                <table class="fields">
+                    <tr>
+                        <td>Warehouse</td>
+                        <td class="write_space wide"></td>
+                    </tr>
+                </table>
+            </div>
         {% endif %}
     </div>
 </body>
