@@ -77,6 +77,7 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
         initial["product_image_url"] = self.get_image_url()
         initial["product_supplier"] = self.product.supplier.name
         initial["product_purchase_price"] = self.product.purchase_price
+        initial["product_barcode"] = self.product.barcode
         initial["product_is_multipack"] = isinstance(
             self.product, MultipackProduct
         ) or isinstance(self.product, CombinationProduct)

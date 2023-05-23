@@ -85,6 +85,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "product_image_url": forms.HiddenInput(),
             "product_supplier": forms.HiddenInput(),
             "product_purchase_price": forms.HiddenInput(),
+            "product_barcode": forms.HiddenInput(),
             "region": forms.HiddenInput(),
             "tracking_number": forms.HiddenInput(),
             "product_is_multipack": forms.HiddenInput(),

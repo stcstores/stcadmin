@@ -1,147 +1,203 @@
 {% extends 'fba/base.html' %}
 
-{% block content %}{{ block.super }}
+{% block content %}
+    {{ block.super }}
 
-<h1>{% if form.instance.id %}Edit{% elif to_repeat%}Repeat{% else %}Create{% endif %} FBA Order</h1>
+    <h1>
+        {% if form.instance.id %}
+            Edit
+        {% elif to_repeat %}
+            Repeat
+        {% else %}
+            Create
+        {% endif %}
+        FBA Order
+    </h1>
 
-<h2><span class="sku">{{ product.sku}}</span> - <span class="name">{{ product.full_name }}</span></h2>
+    <h2>
+        <span class="sku">{{ product.sku }}</span> - <span class="name">{{ product.full_name }}</span>
+    </h2>
+    <h3>Barcode: {{ product.barcode }}</h3>
 
-{% if form.instance.id and form.instance.status != form.instance.ON_HOLD %}
-<a href="{% url 'fba:fulfill_fba_order' form.instance.id %}">
-    {% if form.instance.status == form.instance.NOT_PROCESSED or form.instance.status == form.instance.AWAITING_BOOKING %}
-    <button>Fulfill Order</button>
-    {% else %}
-    <button>Complete Order</button>
-    {% endif %}
-</a>
-<button class="prioritise" id="prioritise_{{ form.instance.pk }}">Prioritise</button>
-<a href="{% url 'fba:repeat_order' form.instance.id %}"><button>Repeat Order</button></a>
-{% if form.instance.status != form.instance.FULFILLED %}
-<a href="{% url 'fba:delete_order' form.instance.id %}"><button class="error">DELETE ORDER</button></a>
-{% elif form.instance.country.region.auto_close %}
-<a href="{% url 'fba:shipping_price' form.instance.id %}"><button>Add Shipping Price</button></a>
-{% endif %}
-{% if form.instance.tracking_number and form.instance.fulfillment_center %}
-<a href="{% url 'fba:invoice' form.instance.pk %}"><button>Invoice</button></a>
-{% endif %}
-{% endif %}
-
-<img src="{% if form.instance.id %}{{ form.instance.product_image_url }}{% else %}{{ image_url }}{% endif %}" alt=""
-    height="200">
-
-<div class="fba_order_form_container">
-
-    <div class="price_calculator">
-
-        <p>
-            <label for="stock_level">Stock Level</label>
-            <input type="number" step="1" name="stock_level" id="stock_level" value="{{ stock_level }}" disabled>
-        </p>
-
-        <p>
-            <label for="weight">Weight</label>
-            <input type="number" step="1" name="weight" id="weight" value="{{ product.weight_grams }}" disabled>
-        </p>
-
-        <p>
-            <label for="purchase_price">Purchase Price</label>
-            <span class="currency_symbol"></span>
-            <input type="number" step="0.01" name="purchase_price" value="{{ product.purchase_price }}"
-                id="purchase_price" disabled>
-        </p>
-
-        <p>
-            <label for="profit">Profit £</label>
-            <input type="number" step="0.01" name="profit" id="profit" disabled>
-        </p>
-
-        <p>
-            <label for="percentage">Profit Percentage</label>
-            <span>%</span>
-            <input type="number" step="0.01" name="percentage" id="percentage" disabled>
-        </p>
-
-        <p>
-            <label for="channel_fee">Channel Fee</label>
-            <span class="currency_symbol"></span>
-            <input type="number" step="0.01" name="channel_fee" id="channel_fee" disabled>
-        </p>
-
-        <p>
-            <label for="vat">VAT</label>
-            <span class="currency_symbol"></span>
-            <input type="number" step="0.01" name="vat" id="vat" disabled>
-        </p>
-
-        <p>
-            <label for="postage_to_fba">Total Postage</label>
-            <span>£</span>
-            <input type="number" step="0.01" name="postage_to_fba" id="postage_to_fba" disabled>
-        </p>
-
-        <p>
-            <label for="postage_per_item">Postage Per Item</label>
-            <span>£</span>
-            <input type="number" step="0.01" name="postage_per_item" id="postage_per_item" disabled>
-        </p>
-
-        <p>
-            <label for="max_quantity">Maximum Sendable</label>
-            <input type="number" class="max_quantity" id="max_quantity" disabled>
-        </p>
-
-        <p>
-            <label for="max_quantity_no_stock">Maximum Sendable (Ignoring Stock Level)</label>
-            <input type="number" class="max_quantity_no_stock" id="max_quantity_no_stock" disabled>
-        </p>
-
-    </div>
-
-    <div class="fba_order_form">
-        <form action="" method="POST">{% csrf_token %}
-            {{ form.as_p }}
-            {% if form.instance.id %}
-            <button>Update</button>
+    {% if form.instance.id and form.instance.status != form.instance.ON_HOLD %}
+        <a href="{% url 'fba:fulfill_fba_order' form.instance.id %}">
+            {% if form.instance.status == form.instance.NOT_PROCESSED or form.instance.status == form.instance.AWAITING_BOOKING %}
+                <button>Fulfill Order</button>
             {% else %}
-            <button>Create</button>
+                <button>Complete Order</button>
             {% endif %}
-        </form>
-    </div>
+        </a>
+        <button class="prioritise" id="prioritise_{{ form.instance.pk }}">Prioritise</button>
+        <a href="{% url 'fba:repeat_order' form.instance.id %}">
+            <button>Repeat Order</button>
+        </a>
+        {% if form.instance.status != form.instance.FULFILLED %}
+            <a href="{% url 'fba:delete_order' form.instance.id %}">
+                <button class="error">DELETE ORDER</button>
+            </a>
+        {% elif form.instance.country.region.auto_close %}
+            <a href="{% url 'fba:shipping_price' form.instance.id %}">
+                <button>Add Shipping Price</button>
+            </a>
+        {% endif %}
+        {% if form.instance.tracking_number and form.instance.fulfillment_center %}
+            <a href="{% url 'fba:invoice' form.instance.pk %}">
+                <button>Invoice</button>
+            </a>
+        {% endif %}
+    {% endif %}
 
-    {% if to_repeat %}
-    <div class="fba_order_form">
-        <form action="">
+    <img src="{% if form.instance.id %}{{ form.instance.product_image_url }}{% else %}{{ image_url }}{% endif %}"
+         alt=""
+         height="200">
+
+    <div class="fba_order_form_container">
+
+        <div class="price_calculator">
+
             <p>
-                <label for="prev_aprox_quantity">Aproximate Quantity</label>
-                <input type="text" name="prev_aprox_quantity" value="{{ to_repeat.aproximate_quantity }}" size="5"
-                    disabled>
+                <label for="stock_level">Stock Level</label>
+                <input type="number"
+                       step="1"
+                       name="stock_level"
+                       id="stock_level"
+                       value="{{ stock_level }}"
+                       disabled>
             </p>
+
             <p>
-                <label for="quantity_sent">Quantity Sent</label>
-                <input type="text" name="quantity_sent"
-                    value="{% if to_repeat.quantity_sent %}{{ to_repeat.quantity_sent }}{% else %}Not yet sent{% endif %}"
-                    disabled>
+                <label for="weight">Weight</label>
+                <input type="number"
+                       step="1"
+                       name="weight"
+                       id="weight"
+                       value="{{ product.weight_grams }}"
+                       disabled>
             </p>
+
             <p>
-                <textarea disabled>
+                <label for="purchase_price">Purchase Price</label>
+                <span class="currency_symbol"></span>
+                <input type="number"
+                       step="0.01"
+                       name="purchase_price"
+                       value="{{ product.purchase_price }}"
+                       id="purchase_price"
+                       disabled>
+            </p>
+
+            <p>
+                <label for="profit">Profit £</label>
+                <input type="number" step="0.01" name="profit" id="profit" disabled>
+            </p>
+
+            <p>
+                <label for="percentage">Profit Percentage</label>
+                <span>%</span>
+                <input type="number" step="0.01" name="percentage" id="percentage" disabled>
+            </p>
+
+            <p>
+                <label for="channel_fee">Channel Fee</label>
+                <span class="currency_symbol"></span>
+                <input type="number"
+                       step="0.01"
+                       name="channel_fee"
+                       id="channel_fee"
+                       disabled>
+            </p>
+
+            <p>
+                <label for="vat">VAT</label>
+                <span class="currency_symbol"></span>
+                <input type="number" step="0.01" name="vat" id="vat" disabled>
+            </p>
+
+            <p>
+                <label for="postage_to_fba">Total Postage</label>
+                <span>£</span>
+                <input type="number"
+                       step="0.01"
+                       name="postage_to_fba"
+                       id="postage_to_fba"
+                       disabled>
+            </p>
+
+            <p>
+                <label for="postage_per_item">Postage Per Item</label>
+                <span>£</span>
+                <input type="number"
+                       step="0.01"
+                       name="postage_per_item"
+                       id="postage_per_item"
+                       disabled>
+            </p>
+
+            <p>
+                <label for="max_quantity">Maximum Sendable</label>
+                <input type="number" class="max_quantity" id="max_quantity" disabled>
+            </p>
+
+            <p>
+                <label for="max_quantity_no_stock">Maximum Sendable (Ignoring Stock Level)</label>
+                <input type="number"
+                       class="max_quantity_no_stock"
+                       id="max_quantity_no_stock"
+                       disabled>
+            </p>
+
+        </div>
+
+        <div class="fba_order_form">
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                {% if form.instance.id %}
+                    <button>Update</button>
+                {% else %}
+                    <button>Create</button>
+                {% endif %}
+            </form>
+        </div>
+
+        {% if to_repeat %}
+            <div class="fba_order_form">
+                <form action="">
+                    <p>
+                        <label for="prev_aprox_quantity">Aproximate Quantity</label>
+                        <input type="text"
+                               name="prev_aprox_quantity"
+                               value="{{ to_repeat.aproximate_quantity }}"
+                               size="5"
+                               disabled>
+                    </p>
+                    <p>
+                        <label for="quantity_sent">Quantity Sent</label>
+                        <input type="text"
+                               name="quantity_sent"
+                               value="{% if to_repeat.quantity_sent %}{{ to_repeat.quantity_sent }}{% else %}Not yet sent{% endif %}"
+                               disabled>
+                    </p>
+                    <p>
+                        <textarea disabled>
             {{ to_repeat.notes }}
             </textarea>
-            </p>
-        </form>
+                    </p>
+                </form>
+            </div>
+        {% endif %}
+
     </div>
+
+    {% if form.instance.status == form.instance.CLOSED or form.instance.status == form.instance.FULFILLED %}
+        {% include 'fba/fba_order_manage_shipments.html' with fba_order=form.instance %}
     {% endif %}
-
-</div>
-
-{% if form.instance.status == form.instance.CLOSED or form.instance.status == form.instance.FULFILLED %}
-{% include 'fba/fba_order_manage_shipments.html' with fba_order=form.instance %}
-{% endif %}
 
 {% endblock content %}
 
 {% block script %}
 
-<script>
+    <script>
     function refresh_calculator() {
         var data = {
             "sku": "{{ product.sku }}",
@@ -236,6 +292,6 @@
         refresh_calculator();
 
     });
-</script>
+    </script>
 
 {% endblock script %}

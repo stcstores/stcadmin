@@ -176,6 +176,7 @@ class FBAOrder(models.Model):
     product_supplier = models.CharField(max_length=255, blank=True)
     product_purchase_price = models.CharField(max_length=10)
     product_is_multipack = models.BooleanField(default=False)
+    product_barcode = models.CharField(max_length=20, blank=True, null=True)
     selling_price = models.PositiveIntegerField()
     FBA_fee = models.PositiveIntegerField()
     aproximate_quantity = models.PositiveIntegerField()

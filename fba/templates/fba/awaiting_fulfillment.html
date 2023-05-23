@@ -2,83 +2,109 @@
 
 {% block content %}
 
-<h1>FBA Orders Awaiting Fulfillment</h1>
+    <h1>FBA Orders Awaiting Fulfillment</h1>
 
 
-<p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
-<div class="filter">
-    <form action="" class="region_filter" method="GET">
-        <button class="region_select" name="region" value="">All</button>
-        {% for region in regions %}
-        <button class="region_select" name="region" value="{{region.name}}" {% if region.name == selected_region %}disabled{% endif %}>{{region.flag}} {{region.name}}</button>
-        {% endfor %}
-    </form>
-</div>
+    <p>Showing {{ page_obj.object_list|length }} of {{ page_obj.paginator.count }} orders</p>
+    <div class="filter">
+        <form action="" class="region_filter" method="GET">
+            <button class="region_select" name="region" value="">All</button>
+            {% for region in regions %}
+                <button class="region_select"
+                        name="region"
+                        value="{{ region.name }}"
+                        {% if region.name == selected_region %}disabled{% endif %}>
+                    {{ region.flag }} {{ region.name }}
+                </button>
+            {% endfor %}
+        </form>
+    </div>
 
-{% include 'orders/pagination_navigation.html' %}
-<table class="orders">
-    <thead>
-        <tr>
-            <th>SKU</th>
-            <th>Name</th>
-            <th>ASIN</th>
-            <th colspan="2">Aprox Quantity</th>
-            <th>Status</th>
-            <th>Created At</th>
-            <th>Current Stock</th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for order in object_list %}
-        <tr class="order">
-            <th><span class="sku">{{ order.product_SKU }}</span></th>
-            <th><span class="name">{{ order.product_name }}</span></th>
-            <td><span class="sku">{{ order.product_asin }}</span></td>
-            <td>{{ order.aproximate_quantity}}</td>
-            <td>{{ order.region.flag }}</td>
-            <td>{{ order.status }}</td>
-            <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
-            <td class="available_stock" id="available_stock_{{ order.pk }}">
-                <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
-            </td>
-            <td class="success">{% if order.is_combinable %}Combinable{% endif %}</td>
-            <td>
-                <a href="{% url 'fba:fulfill_fba_order' order.id %}">
-                    {% if order.status != order.AWAITING_BOOKING %}
-                    <button>Fulfill</button>
-                    {% else %}
-                    <button>Complete</button>
-                    {% endif %}
-                </a>
-            </td>
-            <td>
-                {% if order.status != order.AWAITING_BOOKING %}
-                <a href="{% url 'fba:order_printout' order.pk %}" target="_blank">
-                    <button class="print_button">
-                        {% if order.printed is False %}Print{% else %}Reprint{% endif %}
-                    </button>
-                </a>
-                {% endif %}
-                {% if order.status == order.PRINTED %}
-                &nbsp;
-                <a href="{% url 'fba:unmark_printed' order.id %}?next={{ request.path }}">
-                    <button>Unmark printed</button></a>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    {% include 'orders/pagination_navigation.html' %}
+    <table class="orders">
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Name</th>
+                <th>ASIN</th>
+                <th>Barcode</th>
+                <th colspan="2">Aprox Quantity</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Current Stock</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in object_list %}
+                <tr class="order">
+                    <th>
+                        <span class="sku">{{ order.product_SKU }}</span>
+                    </th>
+                    <th>
+                        <small class="name">{{ order.product_name }}</small>
+                    </th>
+                    <td>
+                        <small class="sku">{{ order.product_asin }}</small>
+                    </td>
+                    <td>
+                        <small class="sku">{{ order.product_barcode }}</small>
+                    </td>
+                    <td>{{ order.aproximate_quantity }}</td>
+                    <td>{{ order.region.flag }}</td>
+                    <td>
+                        <small>{{ order.status }}</small>
+                    </td>
+                    <td>
+                        <small>{{ order.created_at|date:"Y-m-d H:i" }}</small>
+                    </td>
+                    <td class="available_stock" id="available_stock_{{ order.pk }}">
+                        <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
+                    </td>
+                    <td class="success">
+                        {% if order.is_combinable %}Combinable{% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'fba:fulfill_fba_order' order.id %}">
+                            {% if order.status != order.AWAITING_BOOKING %}
+                                <button>Fulfill</button>
+                            {% else %}
+                                <button>Complete</button>
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td>
+                        {% if order.status != order.AWAITING_BOOKING %}
+                            <a href="{% url 'fba:order_printout' order.pk %}" target="_blank">
+                                <button class="print_button">
+                                    {% if order.printed is False %}
+                                        Print
+                                    {% else %}
+                                        Reprint
+                                    {% endif %}
+                                </button>
+                            </a>
+                        {% endif %}
+                        {% if order.status == order.PRINTED %}
+                            &nbsp;
+                            <a href="{% url 'fba:unmark_printed' order.id %}?next={{ request.path }}">
+                                <button>Unmark printed</button>
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-{% include 'orders/pagination_navigation.html' %}
+    {% include 'orders/pagination_navigation.html' %}
 
 {% endblock content %}
 
 {% block script %}
-<script>
+    <script>
 
     function get_stock_levels() {
         order_ids = [{% for order in object_list  %}{{ order.id }}, {% endfor %}]
@@ -115,6 +141,6 @@
     $(document).ready(function() {
         get_stock_levels();
     });
-</script>
+    </script>
 
 {% endblock script %}
