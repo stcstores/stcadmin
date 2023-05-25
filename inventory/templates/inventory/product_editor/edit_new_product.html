@@ -2,93 +2,93 @@
 {% load static %}
 
 
-{% block content %}{{ block.super }}
-<a href="{% url 'inventory:edit_range_details' product_range.pk %}">
-  <button>Edit Range details</button>
-</a>
+{% block content %}
+  {{ block.super }}
+  <a href="{% url 'inventory:edit_range_details' product_range.pk %}">
+    <button>Edit Range details</button>
+  </a>
 
-<table class="variation_table">
-  <tr>
-    <th>SKU</th>
-    {% for option in product_range.variation_options %}
-    <th class="name">{{ option }}</th>
-    {% endfor %}
-    {% for option in product_range.listing_options %}
-    <th class="listing_option">{{ option }}</th>
-    {% endfor %}
-    <th colspan="3">
-      <a href="{% url 'inventory:edit_all_variations' product_range.pk %}">
-        <button>Edit All</button>
-      </a>
-    </th>
-  </tr>
-  {% for options, product in variations.items %}
-  <tr>
-    <th class="sku">{% if product %}{{ product.sku }}{% else %}-{% endif %}</th>
-    {% for option in options %}<td class="name">{{ option }}</td>{% endfor %}
-    {% if product %}
-    {% for option, value in product.listing_options.items %}
-    <td class="listing_option name">{{ value }}</td>
-    {% endfor %}
-    {% else %}
-    {% for option in product_range.listing_options %}
-    <th class="listing_option name">-</th>
-    {% endfor %}
-    {% endif %}
-    {% if product %}
-    <th>
-      <div class="buttons">
-        <a href="{% url 'inventory:edit_new_variation' product.pk %}">
-          <button>Edit</button>
+  <table class="variation_table">
+    <tr>
+      <th>SKU</th>
+      {% for option in product_range.variation_options %}<th class="name">{{ option }}</th>{% endfor %}
+      {% for option in product_range.listing_options %}<th class="listing_option">{{ option }}</th>{% endfor %}
+      <th colspan="3">
+        <a href="{% url 'inventory:edit_all_variations' product_range.pk %}">
+          <button>Edit All</button>
         </a>
-      </div>
-    </th>
-    <th>
-      {% if product_range.status == product_range.CREATING %}
-      {% include 'inventory/product_editor/set_initial_stock.html' %}
-      {% endif %}
-    </th>
-    {% if product.pre_existing %}
-    <td>Existing</td>
-    {% else %}
-    <td>New</td>
-    {% endif %}
-    {% if product.is_complete %}
-    <td class="positive">Complete</td>
-    {% else %}
-    <td class="error">Incomplete</td>
-    {% endif %}
-    {% else %}
-    <th>
-      <div class="buttons">
-        {% comment %} <form action="{% url 'inventory:create_variation' product_range.id %}" method="POST"
-          class="create_variation_form">
+      </th>
+    </tr>
+    {% for options, product in variations.items %}
+      <tr>
+        <th class="sku">
+          {% if product %}
+            {{ product.sku }}
+          {% else %}
+            -
+          {% endif %}
+        </th>
+        {% for option in options %}<td class="name">{{ option }}</td>{% endfor %}
+        {% if product %}
+          {% for option, value in product.listing_options.items %}<td class="listing_option name">{{ value }}</td>{% endfor %}
+        {% else %}
+          {% for option in product_range.listing_options %}<th class="listing_option name">-</th>{% endfor %}
+        {% endif %}
+        {% if product %}
+          <th>
+            <div class="buttons">
+              <a href="{% url 'inventory:edit_new_variation' product.pk %}">
+                <button>Edit</button>
+              </a>
+            </div>
+          </th>
+          <th>
+            {% if product_range.status == product_range.CREATING %}
+              {% include 'inventory/product_editor/set_initial_stock.html' %}
+            {% endif %}
+          </th>
+          {% if product.pre_existing %}
+            <td>Existing</td>
+          {% else %}
+            <td>New</td>
+          {% endif %}
+          {% if product.is_complete %}
+            <td class="positive">Complete</td>
+          {% else %}
+            <td class="error">Incomplete</td>
+          {% endif %}
+        {% else %}
+          <th>
+            <div class="buttons">
+              {% comment %} <form action="{% url 'inventory:create_variation' product_range.id %}" method="POST" class="create_variation_form">
           {% csrf_token %}
           {% for option in options %}
           <input type="hidden" name="{{ option.product_option.id }}" value="{{ option.id }}">
           {% endfor %}
           <button>Create</button>
-        </form> {% endcomment %}
-      </div>
-    </th>
-    <td>Does not exist</td>
-    <td>-</td>
-    {% endif %}
-  </tr>
-  {% endfor %}
-</table>
+              </form> {% endcomment %}
+            </div>
+          </th>
+          <td>Does not exist</td>
+          <td>-</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </table>
 
-<a href="{% url 'inventory:complete_new_product' product_range.pk %}">
-  <button>Complete Product</button>
-</a>
-<a id="discard_changes" href="{% url 'inventory:discard_new_range' product_range.id %}">
-  <button>Discard Product</button>
-</a>
+  <a href="{% url 'inventory:complete_new_product' product_range.pk %}">
+    <button>Complete Product</button>
+  </a>
+  <a id="discard_changes"
+     href="{% url 'inventory:discard_new_range' product_range.id %}">
+    <button>Discard Product</button>
+  </a>
 
 {% endblock %}
 
-{% block script %}{{ block.super }}
-<script>
+{% block script %}
+  {{ block.super }}
+  <script>
   
   let get_initial_stock_url = "{% url 'linnworks:get_initial_stock_levels' %}";
   let update_initial_stock_url = "{% url 'linnworks:update_initial_stock_levels' %}";
@@ -163,10 +163,10 @@
     });
 
     get_stock_levels();
-    $(".stock_level_update_button").click(function() {
-      var product_id = $(this).attr("id").replace("stock_level_update_button_", "");
+    $(".stock_level_field").on("focusout", function() {
+      var product_id = $(this).attr("id").replace("initial_stock_", "");
       update_stock_level(product_id);
     });
   });
-</script>
+  </script>
 {% endblock %}

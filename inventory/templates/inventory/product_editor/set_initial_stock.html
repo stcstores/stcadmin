@@ -1,13 +1,15 @@
 <div class="product_stock_level">
   <div class="stock_level_update_widget">
-    <input id="initial_stock_{{ product.pk }}" class="stock_level_field" type="text" size="1" value="0"
-          autocomplete="off" disabled>
-    <button id="stock_level_update_button_{{ product.pk }}" class="stock_level_update_button" disabled
-      autocomplete="off">
-      <i class="fa-solid fa-floppy-disk" title="Overwrite stock level"></i> Update
-    </button>
+    <input id="initial_stock_{{ product.pk }}"
+           class="stock_level_field"
+           type="text"
+           size="1"
+           value="0"
+           autocomplete="off"
+           disabled>
     <div class="stock_level_status_container">
-      <i class="fa-solid fa-spinner fa-spin-pulse fa-l" id="stock_level_status_{{ product.pk }}"></i>
+      <i class="fa-solid fa-spinner fa-spin-pulse fa-l"
+         id="stock_level_status_{{ product.pk }}"></i>
     </div>
   </div>
 </div>
