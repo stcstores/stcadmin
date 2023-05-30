@@ -745,18 +745,18 @@ test = ["pytest", "pytest-cov", "pytest-django", "selenium"]
 
 [[package]]
 name = "django-solo"
-version = "2.0.0"
+version = "2.1.0"
 description = "Django Solo helps working with singletons"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "django-solo-2.0.0.tar.gz", hash = "sha256:7c6dbe04ae858a4645b580ec83a31a960a067ad4525d8227cca50b7fc5983a62"},
-    {file = "django_solo-2.0.0-py3-none-any.whl", hash = "sha256:9046eca738f2ed64dbef38c2107a02af1065a8899b4f9fabf61b06b8325de1b4"},
+    {file = "django-solo-2.1.0.tar.gz", hash = "sha256:02a5689aaff95af3e741ef99b229600ec63a4d0ca48bb731aec48d9ba4a1a5cc"},
+    {file = "django_solo-2.1.0-py3-none-any.whl", hash = "sha256:7a43282e6f9b5fa37fc8c682963e1c0cea3681daa518a9b5283d79a5b76c1045"},
 ]
 
 [package.dependencies]
-django = ">=2.2"
+django = ">=3.2"
 
 [[package]]
 name = "django-storages"
