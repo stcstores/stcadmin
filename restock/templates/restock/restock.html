@@ -1,4 +1,4 @@
-{% extends "inventory/base.html" %}
+{% extends "restock/base.html" %}
 {% load static %}
 
 {% block additional_head %}
@@ -20,7 +20,7 @@
 
         function getResults() {
             $.ajax({
-                url: "{% url 'inventory:restock_results' %}",
+                url: "{% url 'restock:restock_results' %}",
                 type: "GET",
                 data: {'product_search': $('#search_input').val()},
                 success: function(response) {
@@ -43,7 +43,7 @@
             var status = $('#purchase_price_status_' + productId);
             status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
             $.ajax({
-                url: "{% url 'inventory:update_purchase_price' %}",
+                url: "{% url 'restock:update_purchase_price' %}",
                 type: "POST",
                 data: {"product_id": productId, "updated_purchase_price": updatedPrice},
                 success: function(response) {
