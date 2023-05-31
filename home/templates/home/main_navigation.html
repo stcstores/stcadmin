@@ -1,38 +1,62 @@
 {% load stcadmin_extras %}
 
-
 {% block main_navigation %}
-<div class="main_navigation">
-  <ul>
-    <li><a href="{% url 'home:index' %}">Home</a></li>
-    {% user_groups user as groups %}
-    {% if "inventory" in groups %}
-    <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
-    {% endif %}
-    {% if "orders" in groups %}
-    <li><a href="{% url 'orders:index' %}">Orders</a></li>
-    {% endif %}
-    {% if 'labelmaker' in groups %}
-    <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
-    {% endif %}
-    {% if 'feedback' in groups %}
-    <li><a href="{% url 'feedback:user_feedback' %}">Feedback</a></li>
-    {% endif %}
-    {% if 'fba' in groups %}
-    <li><a href="{% url 'fba:index' %}">FBA</a></li>
-    {% endif %}
-    {% if 'purchaser' in groups or 'purchase_creator' in groups or 'purchase_manager' in groups%}
-    <li><a href="{% url 'purchases:purchase' %}">Purchases</a></li>
-    {% endif %}
-    {% if 'channels' in groups %}
-    <li><a href="{% url 'channels:index' %}">Channels</a></li>
-    {% endif %}
-    {% if 'reports' in groups %}
-    <li><a href="{% url 'reports:index' %}">Reports</a></li>
-    {% endif %}
-    {% if 'admin' in groups %}
-    <li><a href={% url 'admin:index' %}>Admin</a></li>
-    {% endif %}
-  </ul>
-</div>
-{% endblock %}
+  <div class="main_navigation">
+    <ul>
+      <li>
+        <a href="{% url 'home:index' %}">Home</a>
+      </li>
+      {% user_groups user as groups %}
+      {% if "inventory" in groups %}
+        <li>
+          <a href="{% url 'inventory:product_search' %}">Inventory</a>
+        </li>
+      {% endif %}
+      {% if "orders" in groups %}
+        <li>
+          <a href="{% url 'orders:index' %}">Orders</a>
+        </li>
+      {% endif %}
+      {% if 'labelmaker' in groups %}
+        <li>
+          <a href="{% url 'labelmaker:index' %}">Labelmaker</a>
+        </li>
+      {% endif %}
+      {% if 'feedback' in groups %}
+        <li>
+          <a href="{% url 'feedback:user_feedback' %}">Feedback</a>
+        </li>
+      {% endif %}
+      {% if 'fba' in groups %}
+        <li>
+          <a href="{% url 'fba:index' %}">FBA</a>
+        </li>
+      {% endif %}
+      {% if 'purchaser' in groups or 'purchase_creator' in groups or 'purchase_manager' in groups %}
+        <li>
+          <a href="{% url 'purchases:purchase' %}">Purchases</a>
+        </li>
+      {% endif %}
+      {% if 'channels' in groups %}
+        <li>
+          <a href="{% url 'channels:index' %}">Channels</a>
+        </li>
+      {% endif %}
+      {% if 'restock' in groups %}
+        <li>
+          <a href="{% url 'restock:restock' %}">Restock</a>
+        </li>
+      {% endif %}
+      {% if 'reports' in groups %}
+        <li>
+          <a href="{% url 'reports:index' %}">Reports</a>
+        </li>
+      {% endif %}
+      {% if 'admin' in groups %}
+        <li>
+          <a href={% url 'admin:index' %}>Admin</a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+{% endblock main_navigation %}

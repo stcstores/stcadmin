@@ -27,6 +27,7 @@ urlpatterns = [
     path("fba/", include("fba.urls", namespace="fba")),
     path("purchases/", include("purchases.urls", namespace="purchases")),
     path("linnworks/", include("linnworks.urls", namespace="linnworks")),
+    path("restock/", include("restock.urls", namespace="restock")),
     path("", include("home.urls", namespace="home")),
     path(
         "password_change_done/",

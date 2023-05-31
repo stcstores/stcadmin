@@ -1,4 +1,4 @@
-"""Views for the restock page."""
+"""Views for the restock app."""
 
 from collections import defaultdict
 
@@ -9,21 +9,26 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView, View
 
-from inventory import models
+from home.views import UserInGroupMixin
+from inventory.models import BaseProduct
 
-from .views import InventoryUserMixin
+
+class RestockUserMixin(UserInGroupMixin):
+    """Mixin to validate user in in inventory group."""
+
+    groups = ["restock"]
 
 
-class RestockView(InventoryUserMixin, TemplateView):
+class RestockView(RestockUserMixin, TemplateView):
     """View for the restock page."""
 
-    template_name = "inventory/restock/restock.html"
+    template_name = "restock/restock.html"
 
 
-class RestockResults(InventoryUserMixin, TemplateView):
+class SearchResults(RestockUserMixin, TemplateView):
     """View for restock page search results."""
 
-    template_name = "inventory/restock/restock_results.html"
+    template_name = "restock/restock_results.html"
 
     def get_context_data(self, *args, **kwargs):
         """Return context for the template."""
@@ -38,7 +43,7 @@ class RestockResults(InventoryUserMixin, TemplateView):
         search_terms = [_ for _ in search_terms if _]
         suppliers = defaultdict(list)
         products = (
-            models.BaseProduct.objects.filter(
+            BaseProduct.objects.filter(
                 Q(sku__in=search_terms) | Q(supplier_sku__in=search_terms)
             )
             .distinct()
@@ -51,7 +56,7 @@ class RestockResults(InventoryUserMixin, TemplateView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class UpdatePurchasePrice(InventoryUserMixin, View):
+class UpdatePurchasePrice(RestockUserMixin, View):
     """View for handling purchase price updates from the restock page."""
 
     def post(self, *args, **kwargs):
@@ -67,6 +72,6 @@ class UpdatePurchasePrice(InventoryUserMixin, View):
         """Update purchase price."""
         product_id = self.request.POST["product_id"]
         updated_purchase_price = self.request.POST["updated_purchase_price"]
-        product = get_object_or_404(models.BaseProduct, id=product_id)
+        product = get_object_or_404(BaseProduct, id=product_id)
         product.purchase_price = updated_purchase_price
         product.save()

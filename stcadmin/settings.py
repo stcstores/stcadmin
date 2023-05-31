@@ -161,6 +161,7 @@ INSTALLED_APPS = [
     "reports",
     "hardware",
     "linnworks",
+    "restock",
     "debug_toolbar",
 ]
 
