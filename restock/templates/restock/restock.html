@@ -25,9 +25,20 @@
                 data: {'product_search': $('#search_input').val()},
                 success: function(response) {
                     $('#results').html(response);
+                    reorderCounts = JSON.parse(document.getElementById('reorderCounts').textContent);
                     enablePurchasePrice();
+                    enableOrderCount();
+                    enableOrderedButton();
+                    setReorderCount();
                     stock_level_widget_manager.get_stock_levels();
                 }
+            });
+        }
+
+        function setReorderCount() {
+            $.each(reorderCounts, function(productId, count) {
+                console.log([productId, count]);
+                $("#order_count_input_" + productId).val(count);
             });
         }
 
@@ -39,6 +50,21 @@
             });
         }
 
+        function enableOrderCount() {
+            $('.order_count_input').change(function() {
+                var productId = $(this).data('product_id');
+                var updatedCount = $(this).val();
+                updateOrderCount(productId, updatedCount);
+            });
+        }
+
+        function enableOrderedButton() {
+            $('.ordered_button').click(function() {
+                var productId = $(this).data('product_id');
+                updateOrderCount(productId, 0);
+            });
+        }
+
         function updatePurchasePrice(productId, updatedPrice) {
             var status = $('#purchase_price_status_' + productId);
             status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
@@ -47,6 +73,25 @@
                 type: "POST",
                 data: {"product_id": productId, "updated_purchase_price": updatedPrice},
                 success: function(response) {
+                    $("#purchase_price_input_" + productId).val(response['purchase_price']);
+                    status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
+                    status.html('<i class="fa-solid fa-square-check success"></i>');
+                },
+                error: function(response) {
+                    status.html('<i class="fa-solid fa-triangle-exclamation error"></i>');
+                }
+            });
+        }
+
+        function updateOrderCount(productId, updatedCount) {
+            var status = $('#order_count_status_' + productId);
+            status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
+            $.ajax({
+                url: "{% url 'restock:update_order_count' %}",
+                type: "POST",
+                data: {"product_id": productId, "updated_order_count": updatedCount},
+                success: function(response) {
+                    $("#order_count_input_" + productId).val(response['count'])
                     status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
                     status.html('<i class="fa-solid fa-square-check success"></i>');
                 },
