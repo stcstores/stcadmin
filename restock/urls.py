@@ -14,8 +14,13 @@ urlpatterns = [
         name="restock_results",
     ),
     path(
-        "restock/update_purchase_price",
+        "update_purchase_price",
         views.UpdatePurchasePrice.as_view(),
         name="update_purchase_price",
+    ),
+    path(
+        "update_order_count",
+        views.UpdateOrderCount.as_view(),
+        name="update_order_count",
     ),
 ]
