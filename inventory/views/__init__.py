@@ -25,7 +25,6 @@ from .product_editor import (
 )
 from .product_order import ProductOrderView
 from .productrange import ProductRangeView
-from .restock import RestockResults, RestockView
 from .suppliers import (
     CreateSupplier,
     CreateSupplierContact,
@@ -62,8 +61,6 @@ __all__ = [
     "StartNewProduct",
     "ProductOrderView",
     "ProductRangeView",
-    "RestockView",
-    "RestockResults",
     "CreateSupplier",
     "CreateSupplierContact",
     "DeleteSupplierContact",

@@ -8,6 +8,7 @@
                     <th>Product</th>
                     <th>Supplier SKU</th>
                     <th>Purchase Price</th>
+                    <th>Re-Order</th>
                     <th>Stock Level</th>
                 </tr>
             </thead>
@@ -31,6 +32,21 @@
                             </span>
                         </td>
                         <td>
+                            <input type="text"
+                                   value="0"
+                                   size="2"
+                                   class="order_count_input"
+                                   id="order_count_input_{{ product.id }}"
+                                   data-product_id="{{ product.id }}"
+                                   onclick="this.select()">
+                            <button class="ordered_button"
+                                    id="ordered_button_{{ product.id }}"
+                                    data-product_id="{{ product.id }}">Ordered</button>
+                            <span class="order_count_status" id="order_count_status_{{ product.id }}">
+                                <i class="fa-solid fa-check"></i>
+                            </span>
+                        </td>
+                        <td>
                             {% if product_range.is_end_of_line or product.is_end_of_line %}
                                 <span class="error">Stock levels are not available for EOL products</span>
                             {% else %}
@@ -43,3 +59,5 @@
         </table>
     </div>
 {% endfor %}
+
+{{ reorder_counts|json_script:"reorderCounts" }}
