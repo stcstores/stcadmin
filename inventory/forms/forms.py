@@ -11,6 +11,12 @@ from inventory.forms import fields as inventory_fields
 from stcadmin.forms import KwargFormSet, MultipleFileInput, MultipleImageField
 
 
+class ListWidget(forms.TextInput):
+    """Widget for search terms and bullet point inputs."""
+
+    template_name = "inventory/widgets/list_widget.html"
+
+
 class BaseRangeForm(forms.ModelForm):
     """Base form for editing product ranges."""
 
@@ -25,13 +31,16 @@ class BaseRangeForm(forms.ModelForm):
         }
 
     search_terms = SplitArrayField(
-        forms.CharField(),
+        forms.CharField(widget=ListWidget()),
         size=5,
         required=False,
         remove_trailing_nulls=True,
     )
     bullet_points = SplitArrayField(
-        forms.CharField(), size=5, required=False, remove_trailing_nulls=True
+        forms.CharField(widget=ListWidget()),
+        size=5,
+        required=False,
+        remove_trailing_nulls=True,
     )
 
     def __init__(self, *args, **kwargs):
