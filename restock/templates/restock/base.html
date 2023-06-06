@@ -1,0 +1,28 @@
+{% extends "home/base.html" %}
+{% load static %}
+
+{% block page_title %}
+    Restock
+{% endblock page_title %}
+
+{% block additional_head %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/update_stock.css' %}">
+    <script>
+    let get_stock_url = "{% url 'linnworks:get_stock_levels' %}";
+    let update_stock_url = "{% url 'linnworks:update_stock_levels' %}";
+    </script>
+    <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+    {{ form.media.css }}
+{% endblock additional_head %}
+
+{% block section_navigation %}
+    {% include "restock/section_navigation.html" %}
+{% endblock section_navigation %}
+
+{% block content %}
+{% endblock content %}
+
+{% block script %}
+    {{ form.media.js }}
+{% endblock script %}

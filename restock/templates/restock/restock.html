@@ -1,0 +1,53 @@
+{% extends "restock/base.html" %}
+{% load static %}
+
+{% block additional_head %}
+    {{ block.super }}
+    <script src="{% static 'scripts/stock_manager.js' %}"></script>
+    <script src="{% static 'scripts/restock.js' %}"></script>
+    <script>
+        updatePriceUrl = "{% url 'restock:update_purchase_price' %}";
+        updateOrderCountUrl = "{% url 'restock:update_order_count' %}";
+    </script>
+{% endblock additional_head %}
+
+{% block content %}
+    <h1>Restock Product Search</h1>
+
+    <label for="product_search">Products</label>
+    <textarea name="product_search" id="search_input" cols="60" rows="10"></textarea>
+    <button id="search_button">Search</button>
+
+    <div id="results"></div>
+{% endblock content %}
+
+{% block script %}
+
+    <script>
+
+        function getResults() {
+            $.ajax({
+                url: "{% url 'restock:restock_results' %}",
+                type: "GET",
+                data: {'product_search': $('#search_input').val()},
+                success: function(response) {
+                    $('#results').html(response);
+                    reorderCounts = JSON.parse(document.getElementById('reorderCounts').textContent);
+                    enablePurchasePrice();
+                    enableOrderCount();
+                    enableOrderedButton();
+                    setReorderCount();
+                    stock_level_widget_manager.get_stock_levels();
+                }
+            });
+        }
+
+        $(document).ready(function(){
+            $('#search_button').click(function() {
+                getResults();
+            });
+        });
+    
+    </script>
+
+{% endblock script %}
