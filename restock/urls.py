@@ -13,6 +13,7 @@ urlpatterns = [
         views.SearchResults.as_view(),
         name="restock_results",
     ),
+    path("restock_list", views.RestockList.as_view(), name="restock_list"),
     path(
         "update_purchase_price",
         views.UpdatePurchasePrice.as_view(),
