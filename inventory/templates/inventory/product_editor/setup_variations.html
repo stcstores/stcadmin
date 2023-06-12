@@ -1,27 +1,31 @@
 {% extends "inventory/product_editor/base.html" %}
 
-{% block content %}{{ block.super }}
-<h3>Add the variation options for the product.</h3>
-<form action="" method="POST" id="setup_variations_form">{% csrf_token %}
-  <div style="display: flex;">
-    <div style="display: flex; flex-direction: column;">
-      <h3>Variation Values</h3>
-      {% include "inventory/input_add_on_form.html" %}
+{% block content %}
+  {{ block.super }}
+  <h3>Add the variation options for the product.</h3>
+  <form action="" method="post" id="setup_variations_form">
+    {% csrf_token %}
+    <div class="container">
+      <div class="row">
+        <div class="col col-md-6">
+          <h3>Variation Values</h3>
+          {% include "inventory/input_add_on_form.html" %}
+        </div>
+        <div class="col">
+          <h3>Variations</h3>
+          <table id="variation_table">
+ 
+          </table>
+        </div>
+      </div>
     </div>
-    <div class="variations col w-50">
-      <h3>Variations</h3>
-      <table id="variation_table">
-
-      </table>
-    </div>
-  </div>
-  <button>Continue</button>
-</form>
-{% endblock %}
+    <button class="btn btn-primary">Continue</button>
+  </form>
+{% endblock content %}
 
 {% block script %}
 
-<script>
+  <script>
   function product(args) {
     if (!args.length)
       return [
@@ -124,16 +128,22 @@
 
   $(document).ready(function () {
     $("#id_variations").hide();
-    /* beautify preserve:start */fields = {{ options|safe }};/* beautify preserve:end */
+    fields = {{ options|safe }};
     options = {}
     variations = [];
     variations_field = $("#id_variations");
-    $(".InputAddOn-field.selectized").each(function () {
+    
+    $(".selectized").each(function () {
       $(this).change(function () {
         optionChanged($(this));
       })
     });
+    
+    $(".selectized").each(function () {
+      optionChanged($(this));
+    });
+  
   });
-</script>
+  </script>
 
 {% endblock script %}
