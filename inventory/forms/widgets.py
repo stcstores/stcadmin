@@ -10,7 +10,34 @@ from django_select2.forms import ModelSelect2Widget
 from inventory import models
 
 
-class ModelSelect2CreateableWidget(ModelSelect2Widget):
+class BootstrapSelect2Mixin(object):
+    """Make select2 fields work with Bootstrap 5."""
+
+    def build_attrs(self, *args, **kwargs):
+        """Set theme."""
+        attrs = super().build_attrs(*args, **kwargs)
+        attrs["data-theme"] = "bootstrap-5"
+        return attrs
+
+    def _get_media(self):
+        return forms.Media(
+            js=(
+                "https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js",
+                "django_select2/django_select2.js",
+            ),
+            css={
+                "screen": (
+                    "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css",
+                    "https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css",
+                    "https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css",
+                )
+            },
+        )
+
+    media = property(_get_media)
+
+
+class ModelSelect2CreateableWidget(BootstrapSelect2Mixin, ModelSelect2Widget):
     """Widget for selecting model instances with select2 and a create button."""
 
     template_name = "inventory/widgets/model_select_2_creatable_widget.html"
@@ -18,7 +45,7 @@ class ModelSelect2CreateableWidget(ModelSelect2Widget):
 
     def get_context(self, *args, **kwargs):
         """Add the URL to use to create the new instance to the context."""
-        context = super(ModelSelect2Widget, self).get_context(*args, **kwargs)
+        context = super().get_context(*args, **kwargs)
         context["create_new_url"] = self.create_new_url
         return context
 
