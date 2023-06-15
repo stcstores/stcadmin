@@ -26,8 +26,8 @@ function product_row_copy(row) {
   }
 
   function hide_field(field_selector) {
-      $('.field_select').removeClass('selected');
-      field_selector.addClass('selected');
+      $('.field_select').removeClass('active');
+      field_selector.addClass('active');
       var name = field_selector.attr('id');
       var target = $('.' + name.replace('hide_', ''));
       $('.field_cell').prop('hidden', true);
@@ -95,8 +95,8 @@ function product_row_copy(row) {
       $('#select_none').click(function() {select_none()});
 
       $('.select_option').click(function() {
-        var value = $(this).text();
-        var option = $(this).closest('tr').find('th').text();
+        var value = $(this).data('value');
+        var option = $(this).data('option');
         select_products(option, value);
       });
 

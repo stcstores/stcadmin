@@ -17,6 +17,8 @@ class BootstrapSelect2Mixin(object):
         """Set theme."""
         attrs = super().build_attrs(*args, **kwargs)
         attrs["data-theme"] = "bootstrap-5"
+        attrs["data-minimum-input-length"] = 1
+        attrs["width"] = "100%"
         return attrs
 
     def _get_media(self):
@@ -47,6 +49,7 @@ class ModelSelect2CreateableWidget(BootstrapSelect2Mixin, ModelSelect2Widget):
         """Add the URL to use to create the new instance to the context."""
         context = super().get_context(*args, **kwargs)
         context["create_new_url"] = self.create_new_url
+        context["safe_name"] = str(self.__hash__())
         return context
 
 

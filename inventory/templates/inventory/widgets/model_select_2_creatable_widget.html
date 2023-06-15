@@ -1,11 +1,10 @@
- 
 {% include "django/forms/widgets/select.html" %}
-<button class="btn btn-outline-secondary btn-sm"
+<button class="btn btn-outline-secondary btn-sm add_object_button"
         type="button"
-        onclick="new_instance_dialogue_{{ widget.attrs.id }}();">New</button>
+        onclick="new_instance_dialogue_{{ safe_name }}();">New</button>
 
 <script>
-    function success_creating_{{ widget.attrs.id }}(result, status, xhr) {
+    function success_creating_{{ safe_name }}(result, status, xhr) {
         var instance_id = result['id'];
         var instance_name = result['name'];
         var input = $("#{{ widget.attrs.id }}");
@@ -13,11 +12,11 @@
         input.append(newOption).trigger('change');
     }
 
-    function error_creating_{{ widget.attrs.id }}(result, status, xhr) {
-        alert("New {{ widget.name}} was not created.")
+    function error_creating_{{ safe_name }}(result, status, xhr) {
+        alert("New {{ widget.name }} was not created.")
     }
 
-    function new_instance_dialogue_{{ widget.attrs.id }}() {
+    function new_instance_dialogue_{{ safe_name }}() {
         var new_name = prompt("Name of new {{ widget.name }}:", "");
         if (new_name) {
             $.ajax({
@@ -26,8 +25,8 @@
                 data: {
                     'name': new_name
                 },
-                success: success_creating_{{ widget.attrs.id }},
-                error: error_creating_{{ widget.attrs.id }},
+                success: success_creating_{{ safe_name }},
+                error: error_creating_{{ safe_name }},
             });
         }
 
