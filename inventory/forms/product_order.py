@@ -10,8 +10,10 @@ from stcadmin.forms import KwargFormSet
 class ProductOrderForm(forms.Form):
     """Form for setting the order of products within a range."""
 
-    product_id = forms.CharField()
-    range_order = forms.IntegerField()
+    product_id = forms.CharField(widget=forms.HiddenInput())
+    range_order = forms.IntegerField(
+        widget=forms.HiddenInput(attrs={"class": "product_order_field"})
+    )
 
     def __init__(self, *args, **kwargs):
         """Add product to the form."""
