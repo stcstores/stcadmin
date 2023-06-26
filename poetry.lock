@@ -201,13 +201,13 @@ beautifulsoup4 = "*"
 
 [[package]]
 name = "celery"
-version = "5.3.0"
+version = "5.3.1"
 description = "Distributed Task Queue."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "celery-5.3.0-py3-none-any.whl", hash = "sha256:95d29f9a93f41c4b122fddf1fe3ef13f872029dca4ad1f9af4f1a414442ceecf"},
-    {file = "celery-5.3.0.tar.gz", hash = "sha256:1eaba5ee14d8c8c0bed8f6063e5e10dabdbcf23503a861cf0e10b7221d99cb0d"},
+    {file = "celery-5.3.1-py3-none-any.whl", hash = "sha256:27f8f3f3b58de6e0ab4f174791383bbd7445aff0471a43e99cfd77727940753f"},
+    {file = "celery-5.3.1.tar.gz", hash = "sha256:f84d1c21a1520c116c2b7d26593926581191435a03aa74b77c941b93ca1c6210"},
 ]
 
 [package.dependencies]
@@ -216,7 +216,7 @@ click = ">=8.1.2,<9.0"
 click-didyoumean = ">=0.3.0"
 click-plugins = ">=1.1.1"
 click-repl = ">=0.2.0"
-kombu = ">=5.3.0,<6.0"
+kombu = ">=5.3.1,<6.0"
 pytest-celery = {version = "0.0.0", optional = true, markers = "extra == \"pytest\""}
 python-dateutil = ">=2.8.2"
 tzdata = ">=2022.7"
@@ -244,12 +244,12 @@ msgpack = ["msgpack (==1.0.5)"]
 pymemcache = ["python-memcached (==1.59)"]
 pyro = ["pyro4 (==4.82)"]
 pytest = ["pytest-celery (==0.0.0)"]
-redis = ["redis (>=4.5.2)"]
+redis = ["redis (>=4.5.2,!=4.5.5)"]
 s3 = ["boto3 (>=1.26.143)"]
 slmq = ["softlayer-messaging (>=1.0.3)"]
 solar = ["ephem (==4.1.4)"]
 sqlalchemy = ["sqlalchemy (>=1.4.48,<2.1)"]
-sqs = ["kombu[sqs] (>=5.3.0)"]
+sqs = ["boto3 (>=1.26.143)", "kombu[sqs] (>=5.3.0)", "pycurl (>=7.43.0.5)", "urllib3 (>=1.26.16)"]
 tblib = ["tblib (>=1.3.0)", "tblib (>=1.5.0)"]
 yaml = ["PyYAML (>=3.10)"]
 zookeeper = ["kazoo (>=1.3.1)"]
@@ -704,17 +704,17 @@ Django = ">=2.1"
 
 [[package]]
 name = "django-redis"
-version = "5.2.0"
+version = "5.3.0"
 description = "Full featured redis cache backend for Django."
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "django-redis-5.2.0.tar.gz", hash = "sha256:8a99e5582c79f894168f5865c52bd921213253b7fd64d16733ae4591564465de"},
-    {file = "django_redis-5.2.0-py3-none-any.whl", hash = "sha256:1d037dc02b11ad7aa11f655d26dac3fb1af32630f61ef4428860a2e29ff92026"},
+    {file = "django-redis-5.3.0.tar.gz", hash = "sha256:8bc5793ec06b28ea802aad85ec437e7646511d4e571e07ccad19cfed8b9ddd44"},
+    {file = "django_redis-5.3.0-py3-none-any.whl", hash = "sha256:2d8660d39f586c41c9907d5395693c477434141690fd7eca9d32376af00b0aac"},
 ]
 
 [package.dependencies]
-Django = ">=2.2"
+Django = ">=3.2"
 redis = ">=3,<4.0.0 || >4.0.0,<4.0.1 || >4.0.1"
 
 [package.extras]
@@ -1430,6 +1430,7 @@ description = "parse() is the opposite of format()"
 optional = false
 python-versions = "*"
 files = [
+    {file = "parse-1.19.0-py2.py3-none-any.whl", hash = "sha256:6ce007645384a91150cb7cd7c8a9db2559e273c2e2542b508cd1e342508c2601"},
     {file = "parse-1.19.0.tar.gz", hash = "sha256:9ff82852bcb65d139813e2a5197627a94966245c897796760a3a2a8eb66f020b"},
 ]
 
@@ -1869,13 +1870,13 @@ test = ["pytest", "pytest-cov", "requests", "webob", "webtest"]
 
 [[package]]
 name = "pytest"
-version = "7.3.2"
+version = "7.4.0"
 description = "pytest: simple powerful testing with Python"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pytest-7.3.2-py3-none-any.whl", hash = "sha256:cdcbd012c9312258922f8cd3f1b62a6580fdced17db6014896053d47cddf9295"},
-    {file = "pytest-7.3.2.tar.gz", hash = "sha256:ee990a3cc55ba808b80795a79944756f315c67c12b56abd3ac993a7b8c17030b"},
+    {file = "pytest-7.4.0-py3-none-any.whl", hash = "sha256:78bf16451a2eb8c7a2ea98e32dc119fd2aa758f1d5d66dbf0a59d69a3969df32"},
+    {file = "pytest-7.4.0.tar.gz", hash = "sha256:b4bf8c45bd59934ed84001ad51e11b4ee40d40a1229d2c79f9c592b0a3f6bd8a"},
 ]
 
 [package.dependencies]
