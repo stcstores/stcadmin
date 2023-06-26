@@ -55,9 +55,13 @@ class ChannelLinks(InventoryUserMixin, TemplateView):
         )
         products = product_range.products.variations()
         skus = sorted([product.sku for product in products])
-        channel_links = StockManager.channel_links(*skus)
-        for product in products:
-            product.channel_links = channel_links.get(product.sku, [])
         context["product_range"] = product_range
-        context["products"] = products
+        try:
+            channel_links = StockManager.channel_links(*skus)
+        except Exception:
+            context["products"] = None
+        else:
+            for product in products:
+                product.channel_links = channel_links.get(product.sku, [])
+            context["products"] = products
         return context
