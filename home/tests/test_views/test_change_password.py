@@ -52,12 +52,12 @@ def test_can_post(valid_client, url):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "reverse_path,text,count",
-    (("home:index", "Home", 1),),
+    "reverse_path,count",
+    (("home:index", 1),),
 )
-def test_has_links(reverse_path, text, count, html):
+def test_has_links(reverse_path, count, html):
     target = reverse(reverse_path)
-    elements = html.find(f'a[href="{target}"]', containing=text)
+    elements = html.find(f'a[href="{target}"]')
     assert len(elements) == count
 
 

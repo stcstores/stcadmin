@@ -1,26 +1,25 @@
-{% extends 'orders/base.html' %}
+{% extends "orders/base.html" %}
 {% load static %}
 
 {% block additional_head %}
-<link rel="stylesheet" href="{% static "css/orders.css" %}">
-<script src="{% static 'scripts/undispatched.js' %}"></script>
+    <link rel="stylesheet" href="{% static "css/orders.css" %}">
+    <script src="{% static 'scripts/undispatched.js' %}"></script>
 {% endblock additional_head %}
 
 {% block content %}
 
-<div class="undispatched">
-
-</div>
+    <div class="undispatched"></div>
 
 {% endblock content %}
 
 {% block script %}
-<script>
+    {{ block.super }}
+    <script>
     $(document).ready(function() {
         $.get("{% url 'orders:undispatched_data' %}", function(response) {
             $(".undispatched").html(response);
             setup_order_ids();
         });
     });
-</script>
+    </script>
 {% endblock script %}

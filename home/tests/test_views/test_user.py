@@ -54,7 +54,7 @@ def test_cannot_post(valid_client, url):
 @pytest.mark.parametrize(
     "reverse_path,text,count",
     (
-        ("home:index", "Home", 1),
+        ("home:index", None, 1),
         ("home:change_password", "Change Password", 1),
     ),
 )

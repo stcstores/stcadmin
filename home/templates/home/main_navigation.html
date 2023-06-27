@@ -1,3 +1,4 @@
+{% load static %}
 {% load stcadmin_extras %}
 
 {% block main_navigation %}
@@ -5,7 +6,10 @@
        id="main_navigation">
     <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0 fs-5">
       <li>
-        <a class="nav-link px-2 text-white" href="{% url 'home:index' %}">Home</a>
+        <a class="nav-link px-2 text-white navbar-brand"
+           href="{% url 'home:index' %}">
+          <img src="{% static "images/logo.png" %}" alt="Home" width="50" height="50">
+        </a>
       </li>
       {% user_groups user as groups %}
       {% if "inventory" in groups %}
