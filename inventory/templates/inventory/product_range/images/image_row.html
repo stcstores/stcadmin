@@ -1,27 +1,48 @@
-{% for image in images %}
-<div class="product_image" id="product_image_{{ image.id }}" data-image-id="{{ image.pk }}" data-product-id="{{ product_id }}">
-    <a class="image_name" href="{{ image.image_file.url }}" target="_blank">
-      <img src="{{ image.thumbnail.url }}" alt="{{ image.image_file }}" height="100">
-    </a>
-    <span class="image_id" hidden>{{ image.pk }}</span>
-    <div class="image_buttons">
-      {% if forloop.first %}
-      <div class="image_button disabled"></div>
-      {% else %}
-      <div class="image_button move_image move_image_left" data-image-id="{{ image.pk }}" data-product-id="{{ product_id }}">
-        <i class="fa-solid fa-angle-left"></i>
+<div class="row">
+  {% for image in images %}
+    <div class="col-2">
+      <div class="product_image mb-3 bg-secondary rounded pt-3 pb-2 container justify-content-center align-items-center"
+           id="product_image_{{ image.id }}"
+           data-image-id="{{ image.pk }}"
+           data-product-id="{{ product_id }}">
+        <div class="mb-2 text-center">
+          <a class="image_name" href="{{ image.image_file.url }}" target="_blank">
+            <img src="{{ image.thumbnail.url }}"
+                 alt="{{ image.image_file }}"
+                 height="100"
+                 width="100"
+                 class="border border-light">
+          </a>
+          <span class="image_id" hidden>{{ image.pk }}</span>
+        </div>
+        <div class="d-flex justify-content-between w-100">
+ 
+          <button class="image_button move_image move_image_left btn btn-primary btn-sm"
+                  data-image-id="{{ image.pk }}"
+                  data-product-id="{{ product_id }}"
+                  {% if forloop.first %}disabled{% endif %}>
+            <i class="fa-solid fa-angle-left"></i>
+          </button>
+
+ 
+ 
+          <button class="image_button delete_image btn btn-primary btn-sm"
+                  data-image-id="{{ image.pk }}"
+                  data-product-id="{{ product_id }}">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+ 
+ 
+          <button class="image_button move_image move_image_right btn btn-primary btn-sm"
+                  data-image-id="{{ image.pk }}"
+                  data-product-id="{{ product_id }}"
+                  {% if forloop.last %}disabled{% endif %}>
+            <i class="fa-solid fa-angle-right"></i>
+          </button>
+ 
+ 
+        </div>
       </div>
-      {% endif %}
-      <div class="image_button delete_image" data-image-id="{{ image.pk }}" data-product-id="{{ product_id }}">
-        <i class="fa-solid fa-trash"></i>
-      </div>
-      {% if forloop.last %}
-      <div class="image_button disabled"></div>
-      {% else %}
-      <div class="image_button move_image move_image_right" data-image-id="{{ image.pk }}" data-product-id="{{ product_id }}">
-        <i class="fa-solid fa-angle-right"></i>
-      </div>
-      {% endif %}
     </div>
-  </div>
   {% endfor %}
+</div>
