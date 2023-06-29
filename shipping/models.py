@@ -275,7 +275,7 @@ class ShippingPrice(models.Model):
         price += price * (self.fuel_surcharge / 100)
         price += self.item_surcharge
         price += self.covid_surcharge
-        return price
+        return round(price)
 
     def _per_kg_price(self, weight):
         weight_kg = math.ceil(weight / 1000)
