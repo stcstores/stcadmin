@@ -1,8 +1,13 @@
 {% extends "inventory/base.html" %}
 {% block content %}
-  <form method="POST">{% csrf_token %}
-    {{ form.as_p }}
-    <button>Save</button>
-    <a href="{% url 'inventory:suppliers' %}"><button type="button">Cancel</button></a>
-  </form>
-{% endblock %}
+  <div class="container">
+    <h1 class="display-3">Create Supplier</h1>
+    <form method="post">
+      {% csrf_token %}
+      {% include "inventory/input_add_on_form.html" %}
+      <button class="btn btn-primary from-control">Save</button>
+      <a href="{% url 'inventory:suppliers' %}"
+         class="btn btn-primary from-control">Cancel</a>
+    </form>
+  </div>
+{% endblock content %}

@@ -18,7 +18,8 @@ class Suppliers(InventoryUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Add suppliers to the template context."""
         context = super().get_context_data(*args, **kwargs)
-        context["suppliers"] = models.Supplier.objects.all()
+        context["active_suppliers"] = models.Supplier.objects.filter(active=True)
+        context["inactive_suppliers"] = models.Supplier.objects.filter(active=False)
         return context
 
 
@@ -57,15 +58,16 @@ class CreateSupplierContact(InventoryUserMixin, CreateView):
     """View for creating supplier contacts."""
 
     model = models.SupplierContact
-    fields = ["supplier", "name", "phone", "email", "notes"]
+    fields = ["name", "phone", "email", "notes"]
 
-    def get_initial(self, *args, **kwargs):
-        """Set the initial value for the supplier field."""
-        initial = super().get_initial(*args, **kwargs)
-        initial["supplier"] = get_object_or_404(
+    def form_valid(self, form):
+        """Add the supplier to the contact object."""
+        self.object = form.save(commit=False)
+        self.object.supplier = get_object_or_404(
             models.Supplier, pk=self.kwargs["supplier_pk"]
         )
-        return initial
+        self.object.save()
+        return super().form_valid(form)
 
     def get_context_data(self, *args, **kwargs):
         """Add supplier to the template context."""

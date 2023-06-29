@@ -1,7 +1,10 @@
 {% extends "inventory/base.html" %}
 {% block content %}
-  <form method="post">{% csrf_token %}
-    <p>Are you sure you want to delete "{{ object }}"?</p>
-    <input type="submit" value="Confirm">
-</form>
-{% endblock %}
+  <div class="container">
+    <form method="post">
+      {% csrf_token %}
+      <p>Are you sure you want to delete contact "{{ object.name }}" from {{ object.supplier.name }}?</p>
+      <input type="submit" value="Confirm" class="btn btn-primary">
+    </form>
+  </div>
+{% endblock content %}

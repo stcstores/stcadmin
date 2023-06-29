@@ -1,27 +1,38 @@
 {% extends "inventory/base.html" %}
 {% block content %}
-  <a href="{% url 'inventory:create_supplier' %}"><button>Create New Supplier</button></a>
-  <div>
-    <div class="supplier_list">
-      <h3>Active Suppliers</h3>
-      <ul>
-      {% for supplier in suppliers %}
-        {% if supplier.active %}
-          <li><a href="{% url 'inventory:supplier' supplier.id %}">{{ supplier.name }}</a></li>
-        {% endif %}
-      {% endfor %}
-      </ul>
+  <div class="container">
+    <h3 class="display-3">Suppliers</h3>
+    <div class="mb-3">
+      <a href="{% url 'inventory:create_supplier' %}" class="btn btn-primary">Create New Supplier</a>
     </div>
+    <div>
+      <div class="row">
+        <div class="col">
+          <h3>Active Suppliers</h3>
+          <ul class="list-group">
+            {% for supplier in active_suppliers %}
+              <li class="list-group-item  d-flex justify-content-between align-items-start">
+                <a href="{% url 'inventory:supplier' supplier.id %}">{{ supplier.name }}</a>
+              </li>
+            {% empty %}
+              There are no active suppliers.
+            {% endfor %}
+          </ul>
+        </div>
 
-    <div class="supplier_list">
-      <h3>Inactive Suppliers</h3>
-      <ul>
-      {% for supplier in suppliers %}
-        {% if supplier.inactive %}
-          <li><a href="{% url 'inventory:supplier' supplier.id %}">{{ supplier.name }}</a></li>
-        {% endif %}
-      {% endfor %}
-      </ul>
+        <div class="col">
+          <h3>Inactive Suppliers</h3>
+          <ul class="list-group">
+            {% for supplier in inactive_suppliers %}
+              <li class="list-group-item  d-flex justify-content-between align-items-start">
+                <a href="{% url 'inventory:supplier' supplier.id %}">{{ supplier.name }}</a>
+              </li>
+            {% empty %}
+              <p>There are no inactive suppliers.</p>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
-{% endblock %}
+{% endblock content %}

@@ -1,38 +1,53 @@
 {% extends "inventory/base.html" %}
 
 {% block content %}
-  <a href="{% url 'inventory:suppliers' %}"><button>&larr; Back to suppliers</button></a>
-  <h1>{{ supplier.name }}</h1>
-  {% if supplier.inactive %}
-    <h2 class="error">
-      INACTIVE&emsp;
-      <a href="{% url 'inventory:toggle_supplier_active' supplier.id %}">
-        <button class="error">Reactivate Supplier</button>
-      </a>
-    </h2>
-  {% else %}
-    <h2>
-      <a href="{% url 'inventory:toggle_supplier_active' supplier.id %}">
-        <button>Set Inactive</button>
-      </a>
-    </h2>
-  {% endif %}
-  <br>
-  {% if contacts %}
-  <h3>Contacts</h3>
-  {% for contact in contacts %}
-    <div class="contact">
-      {% if contact.name %}{{ contact.name }}<br>{% endif %}
-      {% if contact.phone %}{{ contact.phone }}<br>{% endif %}
-      {% if contact.email %}{{ contact.email }}<br>{% endif %}
-      {% if contact.notes %}{{ contact.notes }}<br>{% endif %}
-      <a href="{% url 'inventory:update_supplier_contact' contact.id %}"><button>Edit</button></a>
-      <a href="{% url 'inventory:delete_supplier_contact' contact.id %}"><button>Delete</button></a>
+  <div class="container">
+    <div class="mb-3">
+      <a href="{% url 'inventory:suppliers' %}" class="btn btn-primary btn-sm">← Back to suppliers</a>
     </div>
-    <br>
-  {% endfor %}
-  {% else %}
-  <h3>No contacts for supplier</h3>
-  {% endif %}
-  <a href="{% url 'inventory:create_supplier_contact' supplier.id %}"><button>Add new contact</button></a>
-{% endblock %}
+ 
+ 
+    <h3 class="display-3">
+      {{ supplier.name }}
+      {% if supplier.active == False %}<span class="badge bg-danger rounded-pill fs-5">Inactive</span>{% endif %}
+    </h3>
+    <div class="mb-3">
+      {% if supplier.active %}
+        <a href="{% url 'inventory:toggle_supplier_active' supplier.id %}"
+           class="btn btn-warning">Set Inactive</a>
+      {% else %}
+        <a href="{% url 'inventory:toggle_supplier_active' supplier.id %}"
+           class="btn btn-danger btn">Reactivate Supplier</a>
+      {% endif %}
+    </div>
+    <h3 class="display-5">Contacts</h3>
+    <div class="row">
+      {% for contact in contacts %}
+        <div class="col-3">
+          <div class="card m-3 bg-light rounded">
+            <div class="card-body">
+              <h5 class="card-title">{{ contact.name }}</h5>
+              <p class="card-text">
+                <i class="fa-solid fa-phone"></i> {{ contact.phone }}
+              </p>
+              <p class="card-text">
+                <i class="fa-solid fa-at"></i> {{ contact.email }}
+              </p>
+              <p class="card-text">{{ contact.notes|linebreaks }}</p>
+              <div class="card-footer">
+                <a href="{% url 'inventory:update_supplier_contact' contact.id %}"
+                   class="btn btn-primary btn-sm">Edit</a>
+                <a href="{% url 'inventory:delete_supplier_contact' contact.id %}"
+                   class="btn btn-primary btn-sm">Delete</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <h3>No contacts for supplier</h3>
+      {% endfor %}
+    </div>
+    <a href="{% url 'inventory:create_supplier_contact' supplier.id %}"
+       class="btn btn-primary">Add new contact</a>
+  </div>
+{% endblock content %}

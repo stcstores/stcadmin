@@ -55,14 +55,11 @@ def test_supplier_in_context(get_response, supplier):
 
 
 @pytest.mark.django_db
-def test_get_initial(get_response, supplier):
-    assert get_response.context["form"].initial["supplier"] == supplier
-
-
-@pytest.mark.django_db
-def test_form_is_saved(post_response):
+def test_form_is_saved(supplier, post_response):
     assert post_response.status_code == 302
-    assert models.SupplierContact.objects.filter(name="New Supplier Contact").exists()
+    assert models.SupplierContact.objects.filter(
+        name="New Supplier Contact", supplier=supplier
+    ).exists()
 
 
 @pytest.mark.django_db

@@ -3,8 +3,13 @@ from django.urls import reverse
 
 
 @pytest.fixture
-def suppliers(supplier_factory):
-    return supplier_factory.create_batch(3)
+def active_suppliers(supplier_factory):
+    return supplier_factory.create_batch(3, active=True)
+
+
+@pytest.fixture
+def inactive_suppliers(supplier_factory):
+    return supplier_factory.create_batch(3, active=False)
 
 
 @pytest.fixture
@@ -23,5 +28,10 @@ def test_uses_template(get_response):
 
 
 @pytest.mark.django_db
-def test_suppliers_in_context(suppliers, get_response):
-    assert set(get_response.context["suppliers"]) == set(suppliers)
+def test_active_suppliers_in_context(active_suppliers, get_response):
+    assert set(get_response.context["active_suppliers"]) == set(active_suppliers)
+
+
+@pytest.mark.django_db
+def test_inactive_suppliers_in_context(inactive_suppliers, get_response):
+    assert set(get_response.context["inactive_suppliers"]) == set(inactive_suppliers)
