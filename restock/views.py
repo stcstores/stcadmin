@@ -46,7 +46,12 @@ class SearchResults(RestockUserMixin, TemplateView):
         search_text = self.request.GET["product_search"]
         products = self.get_products(search_text)
         context["suppliers"] = sort_products_by_supplier(products)
-        context["reorder_counts"] = self.get_reorder_counts(products)
+        reorders = models.Reorder.objects.filter(product__in=products)
+        context["reorder_counts"] = {}
+        context["comments"] = {}
+        for reorder in reorders:
+            context["reorder_counts"][reorder.product.id] = reorder.count
+            context["comments"][reorder.product.id] = reorder.comment
         return context
 
     def get_products(self, search_text):
@@ -61,11 +66,6 @@ class SearchResults(RestockUserMixin, TemplateView):
             .select_related("supplier")
             .order_by("supplier__name")
         )
-
-    def get_reorder_counts(self, products):
-        """Return Reorder objects relating to searched products."""
-        reorders = models.Reorder.objects.filter(product__in=products)
-        return {reorder.product.id: reorder.count for reorder in reorders}
 
 
 class RestockList(RestockUserMixin, TemplateView):
@@ -82,9 +82,11 @@ class RestockList(RestockUserMixin, TemplateView):
         product_ids = reorders.values_list("product__id", flat=True)
         products = models.BaseProduct.objects.filter(id__in=product_ids)
         context["suppliers"] = sort_products_by_supplier(products)
-        context["reorder_counts"] = {
-            reorder.product.id: reorder.count for reorder in reorders
-        }
+        context["reorder_counts"] = {}
+        context["comments"] = {}
+        for reorder in reorders:
+            context["reorder_counts"][reorder.product_id] = reorder.count
+            context["comments"][reorder.product_id] = reorder.comment
         return context
 
 
@@ -132,3 +134,25 @@ class UpdateOrderCount(RestockUserMixin, View):
         count = int(self.request.POST["updated_order_count"])
         product = get_object_or_404(BaseProduct, id=product_id)
         return models.Reorder.objects.set_count(product, count)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class SetOrderComment(RestockUserMixin, View):
+    """View for setting re-order comments."""
+
+    def post(self, *args, **kwargs):
+        """Update re-order comment."""
+        try:
+            comment = self.update_order_comment()
+        except Exception:
+            raise
+            return HttpResponseBadRequest()
+        else:
+            return JsonResponse({"comment": comment})
+
+    def update_order_comment(self):
+        """Update re-order comment."""
+        product_id = self.request.POST["product_id"]
+        comment = self.request.POST["comment"]
+        product = get_object_or_404(BaseProduct, id=product_id)
+        return models.Reorder.objects.set_comment(product, comment)

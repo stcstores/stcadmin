@@ -23,7 +23,17 @@ class ReorderManager(models.Manager):
         else:
             obj, _ = self.update_or_create(product=product, defaults={"count": count})
             obj.full_clean()
+            obj.refresh_from_db
             return obj.count
+
+    def set_comment(self, product, comment):
+        """Set a reorder's comment field."""
+        obj = self.get(product=product)
+        obj.comment = comment
+        obj.save()
+        obj.full_clean()
+        obj.refresh_from_db()
+        return obj.comment
 
 
 class Reorder(models.Model):
@@ -37,6 +47,7 @@ class Reorder(models.Model):
         unique=True,
     )
     count = models.PositiveIntegerField(validators=[validators.MinValueValidator(1)])
+    comment = models.TextField(blank=True, null=True)
 
     objects = ReorderManager()
 
