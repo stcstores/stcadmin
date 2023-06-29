@@ -2,23 +2,27 @@
 {% load static %}
 
 {% block additional_head %}
-<script src="{% static 'scripts/sku_generator.js' %}"></script>
-{% endblock %}
+    <script src="{% static 'scripts/sku_generator.js' %}"></script>
+{% endblock additional_head %}
 
-{% block page_title %}CCP SKU Generator{% endblock %}
+{% block page_title %}
+    SKU Generator
+{% endblock page_title %}
 
 {% block content %}
-    <input type="text" id="variation_sku" name="variation_sku">
-    <button id="get_variation_sku">Get Variation SKU</button>
-    <br>
-    <br>
-    <input type="text" id="range_sku" name="range_sku">
-    <button id="get_range_sku">Get Range SKU</button>
-{% endblock %}
+    <div class="container">
+        <h1 class="display-3">SKU Generator</h1>
+        <div class="col-3 mt-3">
+            <input type="text" id="sku_input" name="sku_input" class="form-control mb-2">
+            <button id="get_variation_sku" class="btn btn-primary">Get Variation SKU</button>
+            <button id="get_range_sku" class="btn btn-primary">Get Range SKU</button>
+        </div>
+    </div>
+{% endblock content %}
 
 {% block script %}
     <script>
         var new_sku_url = "{% url 'inventory:get_new_sku' %}";
         var new_range_sku_url = "{% url 'inventory:get_new_range_sku' %}";
     </script>
-{% endblock %}
+{% endblock script %}
