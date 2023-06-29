@@ -9,8 +9,8 @@ class ReorderAdmin(admin.ModelAdmin):
     """Model admin for the Reorder model."""
 
     exclude_fields = ()
-    list_display = ("product", "count")
-    list_editable = ("count",)
+    list_display = ("product", "count", "comment")
+    list_editable = ("count", "comment")
     search_fields = (
         "product__sku",
         "product__id",

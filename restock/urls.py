@@ -24,4 +24,7 @@ urlpatterns = [
         views.UpdateOrderCount.as_view(),
         name="update_order_count",
     ),
+    path(
+        "set_order_comment", views.SetOrderComment.as_view(), name="set_order_comment"
+    ),
 ]

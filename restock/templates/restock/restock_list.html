@@ -8,6 +8,7 @@
     <script>
         updatePriceUrl = "{% url 'restock:update_purchase_price' %}";
         updateOrderCountUrl = "{% url 'restock:update_order_count' %}";
+        updateCommentUrl = "{% url 'restock:set_order_comment' %}";
     </script>
 {% endblock additional_head %}
 
@@ -23,10 +24,13 @@
 
         $(document).ready(function(){
             reorderCounts = JSON.parse(document.getElementById('reorderCounts').textContent);
+            reorderComments = JSON.parse(document.getElementById('reorderComments').textContent);
             enablePurchasePrice();
             enableOrderCount();
             enableOrderedButton();
             setReorderCount();
+            setComments();
+            enableComment();
             stock_level_widget_manager.get_stock_levels();
         });
     

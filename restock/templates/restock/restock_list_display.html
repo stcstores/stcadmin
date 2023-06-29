@@ -53,6 +53,17 @@
                                 {% include "inventory/update_stock.html" %}
                             {% endif %}
                         </td>
+                        <td>
+                            <textarea name="comment"
+                                      id="comment_{{ product.id }}"
+                                      class="comment_input"
+                                      cols="30"
+                                      rows="1"
+                                      data-product_id="{{ product.id }}"></textarea>
+                            <span class="comment_status" id="comment_status_{{ product.id }}">
+                                <i class="fa-solid fa-check"></i>
+                            </span>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -61,3 +72,4 @@
 {% endfor %}
 
 {{ reorder_counts|json_script:"reorderCounts" }}
+{{ comments|json_script:"reorderComments" }}
