@@ -1,17 +1,17 @@
 """Forms for updating product locations."""
 
 from django import forms
-from django_select2 import forms as s2forms
 
 from inventory import models
 from inventory.forms.fields import BayField
+from inventory.forms.widgets import SingleBayWidget
 
 
 class LocationsForm(forms.Form):
     """Form for changing the Warehouse Bays associated with a product."""
 
     product_id = forms.CharField(max_length=255, widget=forms.HiddenInput)
-    bays = BayField(required=False)
+    bays = BayField(queryset=models.Bay.objects.filter(active=True), required=False)
 
     def clean(self):
         """Add list of bay IDs to cleaned data."""
@@ -31,17 +31,9 @@ class LocationsForm(forms.Form):
 LocationsFormSet = forms.formset_factory(LocationsForm, extra=0)
 
 
-class BayWidget(s2forms.ModelSelect2Widget):
-    """Widget for selecting a bay."""
-
-    search_fields = ["name__icontains"]
-
-    def get_queryset(*args, **kwargs):
-        """Return a queryset of bays."""
-        return models.Bay.objects.all()
-
-
 class BaySearchForm(forms.Form):
     """Form for selecting a bay to view the contents of."""
 
-    bay = forms.ModelChoiceField(queryset=models.Bay.objects.all(), widget=BayWidget())
+    bay = forms.ModelChoiceField(
+        queryset=models.Bay.objects.all(), widget=SingleBayWidget()
+    )
