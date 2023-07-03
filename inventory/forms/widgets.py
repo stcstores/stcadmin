@@ -5,7 +5,7 @@ import json
 from django import forms
 from django.urls import reverse_lazy
 from django.utils.safestring import mark_safe
-from django_select2.forms import ModelSelect2Widget
+from django_select2.forms import ModelSelect2MultipleWidget, ModelSelect2Widget
 
 from inventory import models
 
@@ -37,6 +37,20 @@ class BootstrapSelect2Mixin(object):
         )
 
     media = property(_get_media)
+
+
+class SingleBayWidget(BootstrapSelect2Mixin, ModelSelect2Widget):
+    """Widget for selecting a bay."""
+
+    model = models.Bay
+    search_fields = ["name__icontains"]
+
+
+class MultipleBayWidget(BootstrapSelect2Mixin, ModelSelect2MultipleWidget):
+    """Widget for selecting a bay."""
+
+    model = models.Bay
+    search_fields = ["name__icontains"]
 
 
 class ModelSelect2CreateableWidget(BootstrapSelect2Mixin, ModelSelect2Widget):

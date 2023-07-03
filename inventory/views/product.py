@@ -1,5 +1,4 @@
 """View for Product page."""
-
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import UpdateView
@@ -15,6 +14,12 @@ class ProductView(InventoryUserMixin, UpdateView):
     template_name = "inventory/product.html"
     model = models.Product
     form_class = forms.EditProductForm
+
+    def get_form_kwargs(self):
+        """Return form kwargs."""
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""

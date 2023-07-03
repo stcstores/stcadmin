@@ -4,6 +4,11 @@
 {% block additional_head %}
   {{ block.super }}
   <script src="{% static 'scripts/stock_manager.js' %}"></script>
+  <style>
+      .select2-container {
+          min-width: 30em;
+      }
+  </style>
 {% endblock additional_head %}
 
 {% block content %}

@@ -10,6 +10,12 @@ from . import fieldtypes, widgets
 from .fieldtypes import Validators
 
 
+class BayField(forms.ModelMultipleChoiceField):
+    """Field for selecting bays."""
+
+    widget = widgets.MultipleBayWidget(attrs={"data-minimum-input-length": 1})
+
+
 class Brand(forms.ModelChoiceField):
     """Field for product brand."""
 
@@ -71,27 +77,6 @@ class Description(fieldtypes.TextareaField):
         value = value.replace("&nbsp;", " ")  # Remove Non breaking spaces
         value = re.sub(" +", " ", value)  # Remove multiple space characters
         return value
-
-
-class BayField(fieldtypes.SelectizeModelMultipleChoiceField):
-    """Field for choosing warehouse bays."""
-
-    label = "Bays"
-    name = "bays"
-    placeholder = "Bays"
-    variable = True
-    html_class = "location_field"
-    required = False
-    help_text = (
-        "The name of the <b>Bay</b> in which the product will be located."
-        "<br>This should be left blank if the product does not have a "
-        "specific <b>Bay</b>.<br>If additional bays are required they "
-        "must be added after the product has been created."
-    )
-
-    def get_queryset(self):
-        """Return choices for field."""
-        return models.Bay.objects.filter(active=True)
 
 
 class ProductOptionValueField(fieldtypes.SelectizeField):

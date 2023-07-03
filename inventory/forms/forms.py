@@ -138,10 +138,35 @@ class InitialVariationForm(BaseProductForm):
 class EditProductForm(BaseProductForm):
     """Form for editing the Product model."""
 
+    bays = inventory_fields.BayField(
+        queryset=models.Bay.objects.filter(active=True), required=False
+    )
+
     class Meta(BaseProductForm.Meta):
         """Meta class for EditProductForm."""
 
         exclude = BaseProductForm.Meta.exclude + ("product_range", "sku")
+
+    def __init__(self, *args, **kwargs):
+        """Allow user to be passed to the form."""
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+
+    def get_initial_for_field(self, field, field_name):
+        """Set the initial value for the bays field."""
+        if field_name == "bays":
+            return models.Bay.objects.get_bays_for_product(self.instance)
+        return super().get_initial_for_field(field, field_name)
+
+    def save(self, *args, **kwargs):
+        """Update the product."""
+        obj = super().save(*args, **kwargs)
+        models.ProductBayHistory.objects.set_product_bays(
+            user=self.user,
+            product=obj,
+            bays=self.cleaned_data["bays"],
+        )
+        return obj
 
 
 class ProductFormset(KwargFormSet):

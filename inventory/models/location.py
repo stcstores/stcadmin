@@ -6,6 +6,15 @@ from django.db import models, transaction
 from django.utils import timezone
 
 
+class BayManager(models.Manager):
+    """Manager for the Bay model."""
+
+    def get_bays_for_product(self, product):
+        """Return a list of bays associated with the passed product."""
+        links = ProductBayLink.objects.filter(product=product)
+        return links.values_list("bay", flat=True)
+
+
 class Bay(models.Model):
     """Model for Warehouse Bays."""
 
@@ -14,7 +23,7 @@ class Bay(models.Model):
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
 
-    objects = models.Manager()
+    objects = BayManager()
 
     class Meta:
         """Meta class for Bay."""

@@ -2,9 +2,16 @@
 {% load static %}
 {% load django_bootstrap5 %}
 
-{% block content %}
+{% block additional_head %}
   {{ block.super }}
+  <style>
+      .select2-container {
+          min-width: 30em;
+      }
+  </style>
+{% endblock additional_head %}
 
+{% block content %}
   <div class="variation_selectors mb-3">
     <div class="container w-50">
       <div class="row mb-2">

@@ -185,7 +185,7 @@ class EditAllVariations(InventoryUserMixin, FormView):
         kwargs.update(
             {
                 "form_kwargs": [
-                    {"instance": product}
+                    {"instance": product, "user": self.request.user}
                     for product in self.product_range.products.all()
                 ]
             }
@@ -261,6 +261,12 @@ class EditNewVariation(InventoryUserMixin, UpdateView):
     template_name = "inventory/product_editor/edit_new_variation.html"
     model = models.Product
     form_class = forms.EditProductForm
+
+    def get_form_kwargs(self):
+        """Return form kwargs."""
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def get_context_data(self, *args, **kwargs):
         """Get template context data."""
