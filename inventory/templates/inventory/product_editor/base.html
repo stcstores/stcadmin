@@ -3,20 +3,19 @@
 
 {% block additional_head %}
   {{ block.super }}
-  {% comment %} <link rel="stylesheet" href="{% static "css/product_editor.css" %}"> {% endcomment %}
   <script src="{% static 'scripts/stock_manager.js' %}"></script>
 {% endblock additional_head %}
 
 {% block content %}
   {{ block.super }}
   <div class="mb-5">
-    <h1>
+    <h3 class="display-3 mb-5">
       Creating
       {% if product_range %}
         <span class="sku">{{ product_range.name }}</span>
       {% else %}
         New Range
       {% endif %}
-    </h1>
+    </h3>
   </div>
 {% endblock content %}

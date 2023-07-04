@@ -1,7 +1,7 @@
 <table class="table table-hover table-sm mt-3 variation_table">
   {% for product in products %}
     {% if forloop.first %}
-      <thead class="table-secondary">
+      <thead class="table-primary">
         <tr>
           <th>SKU</th>
           <th>Supplier SKU</th>
@@ -30,7 +30,7 @@
         {% endif %}
         <td>
           <a href="{% url 'inventory:product' product.pk %}">
-            <button class="btn btn-sm btn-dark">Edit</button>
+            <button class="btn btn-sm btn-primary">Edit</button>
           </a>
         </td>
       </tr>
