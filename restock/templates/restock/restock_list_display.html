@@ -6,6 +6,7 @@
                 <th>SKU</th>
                 <th>Product</th>
                 <th>Supplier SKU</th>
+                <th>Barcode</th>
                 <th>Purchase Price</th>
                 <th>Re-Order</th>
                 <th>Stock Level</th>
@@ -18,6 +19,7 @@
                     <td class="sku">{{ product.sku }}</td>
                     <td class="name">{{ product.full_name }}</td>
                     <td class="sku">{{ product.supplier_sku }}</td>
+                    <td class="sku">{{ product.barcode }}</td>
                     <td>
                         <input type="text"
                                value="{{ product.purchase_price }}"
