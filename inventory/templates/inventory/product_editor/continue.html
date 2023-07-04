@@ -1,37 +1,38 @@
 {% extends "inventory/base.html" %}
 
 {% block content %}
-<div>
-  <h2>Your in progress products</h2>
-  {% if user_product_ranges %}
-  <ul>
-    {% for product_range in user_product_ranges %}
-    <li>
-      <a href="{% url 'inventory:resume_editing_product' product_range.pk %}">{{ product_range }}</a>
-    </li>
-    {% endfor %}
-  </ul>
-  {% else %}
-  <p>You do not have any in progress products.</p>
-  {% endif %}
-</div>
-<div>
-  <h2>Other User's in progress products</h2>
-  {% if others_product_ranges %}
-  {% for user, product_ranges in others_product_ranges.items %}
-  <div>
-    {{ user }}:
-    <ul>
-      {% for product_range in product_ranges %}
-      <li>
-        <a href="{% url 'inventory:resume_editing_product' product_range.pk %}">{{ product_range }}</a>
-      </li>
+  <div class="container">
+    <h3 class="display-3 mb-5">Continue Creating Product</h3>
+    <div class="mb-4">
+      <h2>Your in progress products</h2>
+      {% if user_product_ranges %}
+        <ul class="list-group">
+          {% for product_range in user_product_ranges %}
+            <li class="list-group-item">
+              <a href="{% url 'inventory:resume_editing_product' product_range.pk %}">{{ product_range }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>You do not have any in progress products.</p>
+      {% endif %}
+    </div>
+    <div class="row">
+      <h2>Other User's in progress products</h2>
+      {% for user, product_ranges in others_product_ranges.items %}
+        <div class="col-6">
+          <ul class="list-group mb-3">
+            <li class="list-group-item bg-light">{{ user.first_name }} {{ user.last_name }}</li>
+            {% for product_range in product_ranges %}
+              <li class="list-group-item">
+                <a href="{% url 'inventory:resume_editing_product' product_range.pk %}">{{ product_range }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% empty %}
+        <p>No other users have in progress products.</p>
       {% endfor %}
-    </ul>
+    </div>
   </div>
-  {% endfor %}
-  {% else %}
-  <p>No other users have in progress products.</p>
-  {% endif %}
-</div>
-{% endblock %}
+{% endblock content %}
