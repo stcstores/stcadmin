@@ -1,44 +1,66 @@
-{% extends 'inventory/base.html' %}
+{% extends "inventory/base.html" %}
 
 {% block additional_head %}
-<script src="https://cdn.jsdelivr.net/npm/luxon@1.26.0" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/1.2.1/chartjs-plugin-zoom.min.js" integrity="sha512-klQv6lz2YR+MecyFYMFRuU2eAl8IPRo6zHnsc9n142TJuJHS8CG0ix4Oq9na9ceeg1u5EkBfZsFcV3U7J51iew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js" crossorigin="anonymous"></script>
-<style>
-    canvas {
-        max-width: 80%;
-    }
-</style>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@1.26.0"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/1.2.1/chartjs-plugin-zoom.min.js"
+            integrity="sha512-klQv6lz2YR+MecyFYMFRuU2eAl8IPRo6zHnsc9n142TJuJHS8CG0ix4Oq9na9ceeg1u5EkBfZsFcV3U7J51iew=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js"
+            crossorigin="anonymous"></script>
+    <style>
+        canvas {
+            max-width: 80%;
+        }
+    </style>
 {% endblock additional_head %}
 
 {% block content %}
-<h1>Stock History</h1>
-<h2><span class="sku">{{ product.sku }}</span> - <span class="name">{{ product.full_name }}</span></h2>
+    <div class="container">
+        <h3 class="display-3 mb-5">Stock History</h3>
+        <h2>
+            <span class="font-monospace user-select-all">{{ product.sku }}</span> - <span class="user-select-all">{{ product.full_name }}</span>
+        </h2>
 
-<canvas id="stock_level_chart" width="400" height="100"></canvas>
-
-<table class="stock_level_history variation_table">
-    <tr>
-        <th>Time</th>
-        <th>Change</th>
-        <th>New Stock Level</th>
-        <th>Changed By</th>
-    </tr>
-{% for record in stock_history %}
-    <tr>
-        <td>{{ record.timestamp }}</td>
-        <td>{{ record.text }}</td>
-        <td>{{ record.stock_level }}</td>
-        <td>{{ record.relative_change }}</td>
-    </tr>
-{% endfor %}
-</table>
+        <canvas id="stock_level_chart" width="400" height="100" class="mb-3"></canvas>
+        <table class="stock_level_history table table-hover table-sm">
+            <thead class="table-primary">
+                <tr>
+                    <th>Time</th>
+                    <th>Change</th>
+                    <th>New Stock Level</th>
+                    <th>Changed By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in stock_history %}
+                    <tr>
+                        <td>{{ record.timestamp }}</td>
+                        <td>{{ record.text }}</td>
+                        <td class="font-monospace">{{ record.stock_level }}</td>
+                        <td class="font-monospace">
+                            {% if record.relative_change > 0 %}
+                                <span class="text-success">+{{ record.relative_change }}</span>
+                            {% elif record.relative_change < 0 %}
+                                <span class="text-danger">{{ record.relative_change }}</span>
+                            {% else %}
+                                <span>&nbsp;0</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock content %}
 
 {% block script %}
-<script>
+    <script>
 
 
 const canvas = document.getElementById('stock_level_chart').getContext('2d');
@@ -91,5 +113,5 @@ const stock_level_chart = new Chart(canvas, {
 });
 
 
-</script>
+    </script>
 {% endblock script %}
