@@ -6,11 +6,6 @@
 {% block page_title %}{{ product_range.name }}{% endblock %}
 
 {% block additional_head %}{{ block.super }}
-<script>
-  /* beautify preserve:start */
-  {% include 'inventory/widgets/product_widgets.js' %}
-  /* beautify preserve:end */
-</script>
 <link rel="stylesheet" href="{% static 'css/product_page.css' %}">
 {% endblock %}
 

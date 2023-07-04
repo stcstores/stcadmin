@@ -1,6 +1,0 @@
-{% for product in range.products.variations %}
-{% if forloop.first %}
-<span class="sku">{{ product.sku }}</span>&nbsp;
-<a href="{% url 'inventory:product' product.pk %}"><button>View</button></a>
-{% endif %}
-{% endfor %}
