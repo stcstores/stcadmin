@@ -4,7 +4,7 @@
 
 {% block additional_head %}
   {{ block.super }}
-  <script>{% include 'inventory/widgets/product_widgets.js' %}</script>
+  <link rel="stylesheet" href="{% static 'css/product_page.css' %}">
   <script src="{% static 'scripts/new_product.js' %}"></script>
   {% include "home/froala_head.html" %}
 {% endblock additional_head %}

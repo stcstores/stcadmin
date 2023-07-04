@@ -4,6 +4,12 @@
 
 {% block additional_head %}
   {{ block.super }}
+  {{ block.super }}
+  <script src="{% static 'scripts/stock_manager.js' %}"></script>
+  <link rel="stylesheet"
+        href="{% static 'scripts/selectize/selectize.css' %}">
+  <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'css/range_page.css' %}">
   <style>
       .select2-container {
           min-width: 30em;

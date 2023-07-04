@@ -3,11 +3,6 @@
 {% load static %}
 
 {% block additional_head %}{{ block.super }}
-<script>
-  /* beautify preserve:start */
-  {% include 'inventory/widgets/product_widgets.js' %}
-  /* beautify preserve:end */
-</script>
 <link rel="stylesheet" href="{% static 'css/inventory.css' %}">
 <link rel="stylesheet" href="{% static 'css/product_page.css' %}">
 <script src="{% static 'scripts/new_product.js' %}"></script>

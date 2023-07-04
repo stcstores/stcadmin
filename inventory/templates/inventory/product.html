@@ -7,55 +7,52 @@
 
 {% block content %}
   {{ block.super }}
-  <div class="container text-start">
-    <a href="{% url 'inventory:product_range' product_range.pk %}"
-       class="button-link">
-      <i class="fa-solid fa-arrow-left"></i> Back to Product Range
-    </a>
-    <div class="m-4 mb-5">
-      <div class="details">
-        <span class="font-monospace user-select-all">{{ product.sku }}</span>
-        <h3 class="user-select-all">{{ product.full_name }}</h3>
-      </div>
+
+  <a href="{% url 'inventory:product_range' product_range.pk %}"
+     class="button-link">
+    <i class="fa-solid fa-arrow-left"></i> Back to Product Range
+  </a>
+
+  <div class="product_header">
+    <div class="details">
+      <p>
+        <span class="sku">{{ product.sku }}</span>: <span class="name">{{ product.full_name }}</span>
+      </p>
     </div>
-    <div class="container">
-      <div class="row">
-        <div class="col-6">
-          <form action="" method="post" autocomplete="off" id="product_form">
-            {% csrf_token %}
-            {% include "inventory/input_add_on_form.html" %}
-            <button type="submit" id="save_button" class="btn btn-primary" disabled>Save</button>
-          </form>
-        </div>
-        <div class="col-6">
-          <table class="table table-hover table-sm" id="variation_table">
-            <thead class="table-primary">
-              <tr>
-                <th>SKU</th>
-                {% for option in product_range.variation_options %}<th>{{ option }}</th>{% endfor %}
-                {% for option in product_range.listing_options %}<th class="listing_option">{{ option }}</th>{% endfor %}
-                <th>Supplier SKU</th>
-              </tr>
-            </thead>
-            {% for variation in product_range.products.variations %}
-              <tr class="{% if product == variation %}table-active{% else %}not_selected{% endif %}"
-                  data-href="{% url 'inventory:product' variation.pk %}">
-                <td>
-                  <span class="font-monospace user-select-all">{{ variation.sku }}</span>
-                </td>
-                {% for option, value in variation.variation.items %}<td class="option name">{{ value }}</td>{% endfor %}
-                {% for option, value in variation.listing_options.items %}
-                  <td class="option listing_option name">{{ value }}</td>
-                {% endfor %}
-                <td>
-                  <span class="font-monospace user-select-all">{{ variation.supplier_sku }}</span>
-                </td>
-              </tr>
+  </div>
+
+  <div class="page_center">
+
+    <div class="product_form">
+      <form action="" method="post" autocomplete="off">
+        {% csrf_token %}
+        {% include "inventory/input_add_on_form.html" %}
+        <button type="submit" class="save_button" disabled>Save</button>
+      </form>
+    </div>
+
+    <div>
+      <table class="variation_table">
+        <tr>
+          <th class="variation-selection">SKU</th>
+          {% for option in product_range.variation_options %}<th>{{ option }}</th>{% endfor %}
+          {% for option in product_range.listing_options %}<th class="listing_option">{{ option }}</th>{% endfor %}
+          <th>Supplier SKU</th>
+        </tr>
+        {% for variation in product_range.products.variations %}
+          <tr class="variation-selection {% if product == variation %}selected{% else %}not_selected{% endif %}"
+              data-href="{% url 'inventory:product' variation.pk %}">
+            <td class="sku">{{ variation.sku }}</td>
+            {% for option, value in variation.variation.items %}<td class="option name">{{ value }}</td>{% endfor %}
+            {% for option, value in variation.listing_options.items %}
+              <td class="option listing_option name">{{ value }}</td>
             {% endfor %}
-          </table>
-        </div>
-      </div>
+            <td class="sku">{{ variation.supplier_sku }}</td>
+          </tr>
+        {% endfor %}
+      </table>
     </div>
+
   </div>
 {% endblock content %}
 
