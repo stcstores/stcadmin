@@ -1,50 +1,48 @@
-{% extends 'inventory/base.html' %}
+{% extends "inventory/base.html" %}
 {% load static %}
 
-{% block additional_head %} {{ block.super }}
-<script src="{% static 'scripts/stock_manager.js' %}"></script>
-<style>
-    .search {
-        width: 50%;
-    }
-    .title {
-        font-size: 0.75em;
-    }
-</style>
+{% block additional_head %}
+    {{ block.super }}
+    <script src="{% static 'scripts/stock_manager.js' %}"></script>
 {% endblock additional_head %}
 
 {% block content %}
-<div class="search">
-    <form action="" method="GET">
-        {% include 'inventory/input_add_on_form.html' %}
-        <button>Search</button>
-    </form>
-</div>
-<div class="results">
-    {% if products %}
-        <table>
+    <div class="container">
+        <h3 class="display-3 mb-5">Bay Search</h3>
+        <div class="search col-6 mb-4">
+            <form action="" method="get">
+                {% include "inventory/input_add_on_form.html" %}
+                <button class="btn btn-primary">Search</button>
+            </form>
+        </div>
         {% for product, other_bays in products %}
-        <tr>
-            <th><span class="sku">{{ product.sku}}</span></th>
-            <td class="title"><span class="name">{{ product.full_name }}</span></td>
-            <td><a href="{% url 'inventory:product_range' product.product_range.id %}">View</a></td>
-            <td class="column stock_level">
-                {% if product_range.is_end_of_line or product.is_end_of_line %}
-                  <span class="error">EOL</span>
-                {% else %}
-                  {% include 'inventory/update_stock.html' with updatable=false %}
-                {% endif %}
-            </td>
-            <td>
-                {% for bay in other_bays %}
-                <a href="{% url 'inventory:bay_search' %}?bay={{ bay.id }}">{{ bay }}</a> &nbsp;
-                {% endfor %}
-            </td>
-        </tr>
+            <div class="row mb-3 p-1 bg-light rounded">
+                <div class="col-2">
+                    <span class="font-monospace user-select-all">{{ product.sku }}</span>
+                </div>
+                <div class="col-3">
+                    <span class="name">{{ product.full_name }}</span>
+                </div>
+                <div class="col-1">
+                    <a href="{% url 'inventory:product_range' product.product_range.id %}"
+                       class="btn btn-primary btn-sm">View</a>
+                </div>
+                <div class="col-4">
+                    {% if product_range.is_end_of_line or product.is_end_of_line %}
+                        <span class="danger">EOL</span>
+                    {% else %}
+                        {% include "inventory/update_stock.html" with updatable=false %}
+                    {% endif %}
+                </div>
+                <div class="col-2">
+                    {% for bay in other_bays %}
+                        <a href="{% url 'inventory:bay_search' %}?bay={{ bay.id }}"
+                           class="btn btn-primary btn-sm mb-1">{{ bay }}</a> &nbsp;
+                    {% endfor %}
+                </div>
+            </div>
+        {% empty %}
+            This bay is empty
         {% endfor %}
-        </table>
-    {% else %}
-    This bay is empty
-    {% endif %}
-</div>
+    </div>
 {% endblock content %}
