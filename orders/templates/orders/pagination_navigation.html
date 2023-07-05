@@ -1,65 +1,69 @@
 {% load stcadmin_extras %}
 
-<div class="row">
-    <div class="col-1">
-        <nav>
-            <ul class="pagination">
-                {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a href="?{% query_transform page=1 %}" class="page-link">
-                            <i class="fa-solid fa-angles-left"></i>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a href="?{% query_transform page=page_obj.previous_page_number %}"
-                           class="page-link">
-                            <i class="fa-solid fa-angle-left"></i>
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link"><i class="fa-solid fa-angles-left"></i></span>
-                    </li>
-                    <li class="page-item disabled">
-                        <span class="page-link"><i class="fa-solid fa-angle-left"></i></span>
-                    </li>
-                {% endif %}
- 
-            </ul>
-        </nav>
-    </div>
-    <div class="col-2 text-center">
-        <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-    </div>
-    <div class="col-1">
-        <nav>
-            <ul class="pagination">
-                {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a href="?{% query_transform page=page_obj.next_page_number %}"
-                           class="page-link">
-                            <i class="fa-solid fa-angle-right"></i>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a href="?{% query_transform page=page_obj.paginator.num_pages %}"
-                           class="page-link">
-                            <i class="fa-solid fa-angles-right"></i>
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">
-                            <i class="fa-solid fa-angle-right"></i>
-                        </span>
-                    </li>
-                    <li class="page-item disabled">
-                        <span class="page-link">
-                            <i class="fa-solid fa-angles-right"></i>
-                        </span>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
-    </div>
-</div>
+<nav class="nav justify-content-center">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a href="?{% query_transform page=page_obj.previous_page_number %}"
+                   class="page-link">
+                    <i class="fa-solid fa-angle-left"></i>
+                </a>
+            </li>
+        {% else %}
+
+            <li class="page-item disabled">
+                <span class="page-link"><i class="fa-solid fa-angle-left"></i></span>
+            </li>
+        {% endif %}
+
+        {% if page_obj.number|add:'-5' > 1 %}
+            <li class="page-item">
+                <a href="?{% query_transform page=1 %}" class="page-link">1</a>
+            </li>
+        {% endif %}
+
+        {% if page_obj.number|add:'-4' > 1 %}
+            <li class="page-item">
+                <a href="?{% query_transform page=page_obj.number|add:'-5' %}"
+                   class="page-link">...</a>
+            </li>
+        {% endif %}
+
+        {% for page_num in paginator.page_range %}
+            {% if page_num > page_obj.number|add:'-5' and page_num < page_obj.number|add:'5' %}
+                <li class="page-item {% if page_obj.number == page_num %}active{% endif %}">
+                    <a href="?{% query_transform page=page_num %}" class="page-link">{{ page_num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}
+            <li class="page-item">
+                <a href="?{% query_transform page=page_obj.number|add:'5' %}"
+                   class="page-link">...</a>
+            </li>
+        {% endif %}
+
+        {% if page_obj.paginator.num_pages > page_obj.number|add:'5' %}
+            <li class="page-item">
+                <a href="?{% query_transform page=page_obj.paginator.num_pages %}"
+                   class="page-link">{{ page_obj.paginator.num_pages }}</a>
+            </li>
+        {% endif %}
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a href="?{% query_transform page=page_obj.next_page_number %}"
+                   class="page-link">
+                    <i class="fa-solid fa-angle-right"></i>
+                </a>
+            </li>
+        {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    <i class="fa-solid fa-angle-right"></i>
+                </span>
+            </li>
+        {% endif %}
+    </ul>
+</nav>

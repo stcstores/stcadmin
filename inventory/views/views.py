@@ -25,7 +25,7 @@ class ProductSearchView(InventoryUserMixin, ListView):
 
     template_name = "inventory/product_search/search_page.html"
     form_class = forms.ProductSearchForm
-    paginate_by = 5
+    paginate_by = 30
     orphans = 3
 
     def get(self, *args, **kwargs):
