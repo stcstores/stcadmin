@@ -26,17 +26,16 @@ class ProductSearchForm(forms.Form):
         choices=END_OF_LINE_CHOICES,
         required=False,
         label="End of Line",
-        help_text="Hide End of Line Ranges",
     )
     supplier = forms.ModelChoiceField(
         queryset=models.Supplier.objects.filter(active=True), required=False
     )
 
-    def save(self):
+    def get_queryset(self):
         """Search for product ranges matching the search parameters."""
         products = self._filter_products(self._query_products())
         range_queryset = self._filter_ranges(self._query_ranges(products))
-        self.ranges = range_queryset.order_by("name").annotate(
+        return range_queryset.order_by("name").annotate(
             variation_count=Count("products")
         )
 

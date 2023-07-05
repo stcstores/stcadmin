@@ -1,23 +1,24 @@
 {% extends "inventory/product_editor/base.html" %}
 {% load static %}
 
-{% block additional_head %}
-  {{ block.super }}
-  <link rel="stylesheet" href="{% static 'css/product_page.css' %}">
-{% endblock additional_head %}
-
 {% block content %}
-  <div class="w-50">
-    <form action="" method="post" autocomplete="off">
-      {% csrf_token %}
-      {% include "inventory/input_add_on_form.html" %}
-      <div>
-        <button type="submit" class="btn btn-primary" id="save_changes">Save Changes</button>
-        <a href="{% url 'inventory:edit_new_variation' product.pk %}"
-           class="btn btn-primary">Clear Changes</a>
-        <a href="{% url 'inventory:edit_new_product' product.product_range.pk %}"
-           class="btn btn-primary">Cancel</a>
-      </div>
-    </form>
+  <div class="container">
+    <h3 class="display-3 mb-3">Edit New Variation</h3>
+    <h6 class="display-6 mb-5">
+      <span class="font-monospace user-select-all">{{ product.sku }}</span> <span>{{ product.full_name }}</span>
+    </h6>
+    <div class="col-6">
+      <form action="" method="post" autocomplete="off">
+        {% csrf_token %}
+        {% include "home/bootstrap_inline_form.html" %}
+        <div>
+          <button type="submit" class="btn btn-primary" id="save_changes">Save Changes</button>
+          <a href="{% url 'inventory:edit_new_variation' product.pk %}"
+             class="btn btn-primary">Clear Changes</a>
+          <a href="{% url 'inventory:edit_new_product' product.product_range.pk %}"
+             class="btn btn-primary">Cancel</a>
+        </div>
+      </form>
+    </div>
   </div>
 {% endblock content %}

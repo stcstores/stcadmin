@@ -1,7 +1,9 @@
 <div class="variation">
-    <span class="sku">{{ product.sku }}</span><br>
+    <span class="sku">{{ product.sku }}</span>
+    <br>
     {% for value in product.variation_values %}
-    <span class="sku">{{ value }}</span><br>
+        <span class="sku">{{ value }}</span>
+        <br>
     {% endfor %}
-    {% include "inventory/input_add_on_form.html" with form=variation_form %}
+    {% include "home/bootstrap_inline_form.html" with form=variation_form %}
 </div>

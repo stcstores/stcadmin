@@ -11,33 +11,17 @@
     <h3 class="display-3 mb-5">Inventory Search</h3>
   </div>
   <div class="container text-start">
-    <div class="w-50">
-      <form method="post" action="">
-        {% csrf_token %}
-        <div class="product_search_options">
-          <div class="error">{{ form.non_field_errors }}</div>
-          {% for field in form %}
-            <div class="mb-3">
-              {% if forloop.first %}
-                <div class="input-group">
-                  {{ field|add_class:"form-control" }}
-                  <input type="submit" class="btn btn-primary" value="Search">
-                </div>
-              {% else %}
-                <div class="input-group">
-                  <span class="input-group-text">{{ field.label }}</span>
-                  {{ field }}
-                </div>
-              {% endif %}
-              {% if field.errors %}<span class="error InputAddOn-item">{{ field.errors }}</span>{% endif %}
-            </div>
-          {% endfor %}
-        </div>
+    <div class="col-6 mb-5">
+      <form method="get" action="">
+        {% include "home/bootstrap_inline_form.html" %}
+        <button class="btn btn-primary">Search</button>
       </form>
     </div>
-    {% if product_ranges %}
-      {% include "inventory/product_search/result_list.html" %}
-    {% endif %}
+    <div class="mb-3">
+      <p>Showing {{ page_obj.object_list|length }} of {{ page_obj.paginator.count }} orders</p>
+      {% include "orders/pagination_navigation.html" %}
+    </div>
+    {% include "inventory/product_search/result_list.html" %}
   </div>
 
 {% endblock content %}

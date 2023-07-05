@@ -4,7 +4,6 @@
 
 {% block additional_head %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'css/product_page.css' %}">
   <script src="{% static 'scripts/new_product.js' %}"></script>
   {% include "home/froala_head.html" %}
 {% endblock additional_head %}
@@ -19,7 +18,7 @@
         <div class="product_form">
           <form action="" method="post" autocomplete="off">
             {% csrf_token %}
-            {% include "inventory/input_add_on_form.html" %}
+            {% include "home/bootstrap_inline_form.html" %}
             <button type="submit" class="btn btn-primary">Save</button>
           </form>
         </div>
