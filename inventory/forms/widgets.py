@@ -53,7 +53,14 @@ class MultipleBayWidget(BootstrapSelect2Mixin, ModelSelect2MultipleWidget):
     search_fields = ["name__icontains"]
 
 
-class ModelSelect2CreateableWidget(BootstrapSelect2Mixin, ModelSelect2Widget):
+class AdditionalSuppliersWidget(ModelSelect2MultipleWidget):
+    """Widget for selecting additional_suppliers."""
+
+    queryset = models.Supplier.objects.filter(active=True)
+    search_fields = ["name__icontains"]
+
+
+class ModelSelect2CreateableWidget(ModelSelect2Widget):
     """Widget for selecting model instances with select2 and a create button."""
 
     template_name = "inventory/widgets/model_select_2_creatable_widget.html"

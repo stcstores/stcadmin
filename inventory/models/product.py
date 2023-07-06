@@ -135,6 +135,12 @@ class BaseProduct(PolymorphicModel):
         related_name="products",
         verbose_name="Supplier",
     )
+    additional_suppliers = models.ManyToManyField(
+        Supplier,
+        related_name="additional_products",
+        verbose_name="Additional Suppliers",
+        blank=True,
+    )
     supplier_sku = models.CharField(
         max_length=255, null=True, blank=True, verbose_name="Supplier SKU"
     )
@@ -313,6 +319,7 @@ class InitialVariation(Product):
         product_kwargs = self._to_dict()
         product_kwargs["sku"] = new_product_sku()
         del product_kwargs["images"]
+        del product_kwargs["additional_suppliers"]
         product = Product(**product_kwargs)
         product.save()
         for option, value in variation.items():
