@@ -72,6 +72,7 @@ class BaseProductForm(forms.ModelForm):
             "brand": inventory_fields.Brand,
             "manufacturer": inventory_fields.Manufacturer,
             "supplier": inventory_fields.Supplier,
+            "additional_suppliers": inventory_fields.AdditionalSuppliers,
         }
 
     field_order = (
@@ -80,6 +81,7 @@ class BaseProductForm(forms.ModelForm):
         "purchase_price",
         "vat_rate",
         "supplier",
+        "additional_suppliers",
         "supplier_sku",
         "brand",
         "manufacturer",
@@ -105,6 +107,7 @@ class InitialVariationForm(BaseProductForm):
 
         model = models.InitialVariation
         widgets = {"product_range": forms.HiddenInput, "sku": forms.HiddenInput}
+        exclude = BaseProductForm.Meta.exclude + ("bays", "additional_suppliers")
 
     sku = forms.CharField(required=False, widget=forms.HiddenInput)
 

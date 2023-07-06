@@ -50,6 +50,12 @@ class Supplier(forms.ModelChoiceField):
     widget = widgets.SupplierWidget
 
 
+class AdditionalSuppliers(forms.ModelMultipleChoiceField):
+    """Field for selecting additional suppliers."""
+
+    widget = widgets.AdditionalSuppliersWidget(attrs={"data-minimum-input-length": 2})
+
+
 class Title(fieldtypes.TextField):
     """Product Range Title field."""
 

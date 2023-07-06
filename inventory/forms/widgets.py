@@ -24,6 +24,13 @@ class MultipleBayWidget(ModelSelect2MultipleWidget):
     search_fields = ["name__icontains"]
 
 
+class AdditionalSuppliersWidget(ModelSelect2MultipleWidget):
+    """Widget for selecting additional_suppliers."""
+
+    queryset = models.Supplier.objects.filter(active=True)
+    search_fields = ["name__icontains"]
+
+
 class ModelSelect2CreateableWidget(ModelSelect2Widget):
     """Widget for selecting model instances with select2 and a create button."""
 
