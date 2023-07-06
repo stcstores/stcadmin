@@ -51,7 +51,7 @@ def test_can_post(logged_out_client, url):
 
 
 def test_contains_form(url, html):
-    assert html.find(f'form[action="{url}"][method="POST"]')
+    assert html.find(f'form[action="{url}"][method="post"]')
 
 
 def test_contains_username_input(html):

@@ -4,7 +4,6 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        {% comment %} <link rel="stylesheet" href="{% static 'css/stcadmin.css' %}"> {% endcomment %}
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="shortcut icon"
               type="image/png"
@@ -20,12 +19,9 @@
         <script src="{% static 'scripts/jquery.cookie.js' %}"></script>
         <script src="{% static 'scripts/stcadmin.js' %}"></script>
         <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}">
-        {% comment %} <link rel="stylesheet" href="{% static 'css/awesomplete.css' %}"> {% endcomment %}
         <script src="{% static 'scripts/jquery-ui.min.js' %}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/autonumeric/4.1.0/autoNumeric.js"></script>
-        {% comment %} <script src="{% static 'scripts/awesomplete.min.js' %}"></script> {% endcomment %}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
-        {% comment %} <link rel="stylesheet" href="{% static 'css/input-add-on.css' %}"> {% endcomment %}
         <script src="https://kit.fontawesome.com/90f633c7cb.js"
                 crossorigin="anonymous"></script>
         {% block additional_head %}
@@ -43,13 +39,9 @@
             </header>
             {% block section_navigation %}
             {% endblock section_navigation %}
-            {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                        <li {% if message.tags %}class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+ 
+            {% include "home/messages.html" %}
+ 
             <div class="container-fluid p-4 text-start">
                 {% block content %}
                 {% endblock content %}

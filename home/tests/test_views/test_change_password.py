@@ -63,7 +63,7 @@ def test_has_links(reverse_path, count, html):
 
 @pytest.mark.django_db
 def test_contains_form(html):
-    assert html.find('form[method="POST"]')
+    assert html.find('form[method="post"]')
 
 
 @pytest.mark.django_db

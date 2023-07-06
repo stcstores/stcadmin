@@ -2,5 +2,5 @@
     "profile": "django",
     "format_js": false,
     "format_css": true,
-    "ignore": "H037,H030,H031"
+    "ignore": "H037,H030,H031,H021"
 }
