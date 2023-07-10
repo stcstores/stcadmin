@@ -3,8 +3,7 @@
     <table>
         <thead>
             <tr>
-                <th>SKU</th>
-                <th>Barcode</th>
+                <th colspan="2">Product</th>
                 <th>Purchase Price</th>
                 <th>Re-Order</th>
                 <th>Stock Level</th>
@@ -17,13 +16,16 @@
             {% for product in products %}
                 <tr>
                     <td>
-                        <p class="sku">{{ product.sku }}</p>
-                        <p class="name">{{ product.product_range.name }}</p>
-                        <p>
-                            {% for value in product.variation_values %}<span>{{ value }}</span>{% endfor %}
-                        </p>
+                        <div class="sku">{{ product.sku }}</div>
+                        <div class="name">{{ product.product_range.name }}</div>
+                        <div>
+                            {% for value in product.variation_values %}<span>{{ value }}&nbsp;</span>{% endfor %}
+                        </div>
                     </td>
-                    <td class="sku">{{ product.barcode }}</td>
+                    <td>
+                        <div class="sku">{{ product.supplier_sku }}</div>
+                        <div class="sku">{{ product.barcode }}</div>
+                    </td>
                     <td>
                         <input type="text"
                                value="{{ product.purchase_price }}"
@@ -45,9 +47,6 @@
                                id="order_count_input_{{ product.id }}"
                                data-product_id="{{ product.id }}"
                                onclick="this.select()">
-                        <button class="ordered_button"
-                                id="ordered_button_{{ product.id }}"
-                                data-product_id="{{ product.id }}">Ordered</button>
                         <span class="order_count_status" id="order_count_status_{{ product.id }}">
                             <i class="fa-solid fa-check"></i>
                         </span>
@@ -78,7 +77,14 @@
                         {% endfor %}
                     </td>
                     <td>
-                        <button onclick="window.open('{% url 'fba:create_order' product_id=product.id %}');">Create FBA Order</button>
+                        <div>
+                            <button onclick="window.open('{% url 'fba:create_order' product_id=product.id %}');">Create FBA Order</button>
+                        </div>
+                        <div>
+                            <button class="ordered_button"
+                                    id="ordered_button_{{ product.id }}"
+                                    data-product_id="{{ product.id }}">Mark Ordered</button>
+                        </div>
                     </td>
                 </tr>
             {% endfor %}
