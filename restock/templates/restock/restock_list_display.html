@@ -4,22 +4,25 @@
         <thead>
             <tr>
                 <th>SKU</th>
-                <th>Product</th>
-                <th>Supplier SKU</th>
                 <th>Barcode</th>
                 <th>Purchase Price</th>
                 <th>Re-Order</th>
                 <th>Stock Level</th>
                 <th>Comment</th>
                 <th>Additional Suppliers</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             {% for product in products %}
                 <tr>
-                    <td class="sku">{{ product.sku }}</td>
-                    <td class="name">{{ product.full_name }}</td>
-                    <td class="sku">{{ product.supplier_sku }}</td>
+                    <td>
+                        <p class="sku">{{ product.sku }}</p>
+                        <p class="name">{{ product.product_range.name }}</p>
+                        <p>
+                            {% for value in product.variation_values %}<span>{{ value }}</span>{% endfor %}
+                        </p>
+                    </td>
                     <td class="sku">{{ product.barcode }}</td>
                     <td>
                         <input type="text"
@@ -73,6 +76,9 @@
                                 <small>{{ supplier }}</small>
                             </p>
                         {% endfor %}
+                    </td>
+                    <td>
+                        <button onclick="window.open('{% url 'fba:create_order' product_id=product.id %}');">Create FBA Order</button>
                     </td>
                 </tr>
             {% endfor %}
