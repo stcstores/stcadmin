@@ -2,52 +2,55 @@
     <div class="result mt-5">
         <h4>{{ supplier.name }}</h4>
         <table class="table table-hover table-sm mt-3">
-            <thead>
+            <thead class="table-primary">
                 <tr>
-                    <th>SKU</th>
-                    <th>Product</th>
-                    <th>Supplier SKU</th>
-                    <th>Barcode</th>
+                    <th colspan="2">Product</th>
                     <th>Purchase Price</th>
                     <th>Re-Order</th>
                     <th>Stock Level</th>
+                    <th>Comment</th>
                     <th>Additional Suppliers</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for product in products %}
                     <tr>
-                        <td class="sku">{{ product.sku }}</td>
-                        <td class="name">{{ product.full_name }}</td>
-                        <td class="sku">{{ product.supplier_sku }}</td>
-                        <td class="sku">{{ product.barcode }}</td>
+                        <td>
+                            <p class="font-monospace user-select-all text-muted fs-6">{{ product.sku }}</p>
+                            <p class="user-select-all fs-5">{{ product.product_range.name }}</p>
+                            <p class="fs-6">
+                                {% for value in product.variation_values %}<span>{{ value }}</span>{% endfor %}
+                            </p>
+                        </td>
+                        <td>
+                            <p class="font-monospace user-select-all">{{ product.supplier_sku }}</p>
+                            <p class="font-monospace user-select-all">{{ product.barcode }}</p>
+                        </td>
                         <td>
                             <input type="text"
                                    value="{{ product.purchase_price }}"
                                    size="6"
-                                   class="purchase_price_input"
+                                   class="purchase_price_input form-control"
                                    id="purchase_price_input_{{ product.id }}"
                                    data-product_id="{{ product.id }}"
                                    onclick="this.select()">
-                            <span class="purchase_price_status"
-                                  id="purchase_price_status_{{ product.id }}">
+                            <p class="purchase_price_status"
+                               id="purchase_price_status_{{ product.id }}">
                                 <i class="fa-solid fa-check"></i>
-                            </span>
+                            </p>
                         </td>
                         <td>
                             <input type="text"
                                    value="0"
                                    size="2"
-                                   class="order_count_input"
+                                   class="order_count_input form-control"
                                    id="order_count_input_{{ product.id }}"
                                    data-product_id="{{ product.id }}"
                                    onclick="this.select()">
-                            <button class="ordered_button"
-                                    id="ordered_button_{{ product.id }}"
-                                    data-product_id="{{ product.id }}">Ordered</button>
-                            <span class="order_count_status" id="order_count_status_{{ product.id }}">
+                            <p class="order_count_status" id="order_count_status_{{ product.id }}">
                                 <i class="fa-solid fa-check"></i>
-                            </span>
+                            </p>
                         </td>
                         <td>
                             {% if product_range.is_end_of_line or product.is_end_of_line %}
@@ -71,6 +74,17 @@
                             {% for supplier in product.additional_suppliers.all %}
                                 <span class="badge bg-secondary">{{ supplier }}</span>
                             {% endfor %}
+                        </td>
+                        <td>
+                            <p>
+                                <button class="ordered_button btn btn-primary btn-sm"
+                                        id="ordered_button_{{ product.id }}"
+                                        data-product_id="{{ product.id }}">Mark Ordered</button>
+                            </p>
+                            <p>
+                                <a href="{% url 'fba:create_order' product_id=product.id %}"
+                                   class="btn btn-primary btn-sm">Create FBA Order</a>
+                            </p>
                         </td>
                     </tr>
                 {% endfor %}

@@ -59,8 +59,12 @@ class SearchResults(RestockUserMixin, TemplateView):
         search_terms = [_.strip() for _ in search_text.split()]
         search_terms = [_ for _ in search_terms if _]
         return (
-            BaseProduct.objects.filter(
-                Q(sku__in=search_terms) | Q(supplier_sku__in=search_terms)
+            BaseProduct.objects.complete()
+            .active()
+            .filter(
+                Q(sku__in=search_terms)
+                | Q(supplier_sku__in=search_terms)
+                | Q(barcode__in=search_terms)
             )
             .distinct()
             .select_related("supplier")
