@@ -13,11 +13,18 @@
 {% endblock additional_head %}
 
 {% block content %}
-    <h1>Restock Product Search</h1>
-
-    <label for="product_search">Products</label>
-    <textarea name="product_search" id="search_input" cols="60" rows="10"></textarea>
-    <button id="search_button">Search</button>
+    <h3 class="display-3 mb-5">Restock Product Search</h3>
+    <div class="container">
+        <div>
+            <textarea name="product_search form-control"
+                      id="search_input"
+                      cols="60"
+                      rows="10"></textarea>
+        </div>
+        <div>
+            <button id="search_button" class="btn btn-primary">Search</button>
+        </div>
+    </div>
 
     <div id="results"></div>
 {% endblock content %}

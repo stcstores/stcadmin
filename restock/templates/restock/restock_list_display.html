@@ -17,11 +17,11 @@
                 {% for product in products %}
                     <tr>
                         <td>
-                            <p class="font-monospace user-select-all text-muted fs-6">{{ product.sku }}</p>
-                            <p class="user-select-all fs-5">{{ product.product_range.name }}</p>
-                            <p class="fs-6">
-                                {% for value in product.variation_values %}<span>{{ value }}</span>{% endfor %}
-                            </p>
+                            <div class="font-monospace user-select-all text-muted fs-6">{{ product.sku }}</div>
+                            <div class="user-select-all fs-5">{{ product.product_range.name }}</div>
+                            <div class="fs-6">
+                                {% for value in product.variation_values %}<span class="me-2">{{ value }}</span>{% endfor %}
+                            </div>
                         </td>
                         <td>
                             <p class="font-monospace user-select-all">{{ product.supplier_sku }}</p>
@@ -76,15 +76,13 @@
                             {% endfor %}
                         </td>
                         <td>
-                            <p>
+                            <div class="btn-group-vertical">
                                 <button class="ordered_button btn btn-primary btn-sm"
                                         id="ordered_button_{{ product.id }}"
                                         data-product_id="{{ product.id }}">Mark Ordered</button>
-                            </p>
-                            <p>
                                 <a href="{% url 'fba:create_order' product_id=product.id %}"
                                    class="btn btn-primary btn-sm">Create FBA Order</a>
-                            </p>
+                            </div>
                         </td>
                     </tr>
                 {% endfor %}
