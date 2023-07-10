@@ -3,7 +3,6 @@
 
 {% block additional_head %}
   {{ block.super }}
-  <script src="{% static 'scripts/stock_manager.js' %}"></script>
   <style>
       .select2-container {
           min-width: 30em;
@@ -18,60 +17,49 @@
       {% csrf_token %}
       {{ formset.management_form }}
       {{ formset.non_form_errors }}
-      <table class="variation_table locations table table-hover table-sm mt-3">
-        <tr>
-          <th class="column header SKU">SKU</th>
-          {% for option in product_range.variation_options %}<th class="column header option">{{ option }}</th>{% endfor %}
-          <th class="column header supplier_sku">Supplier SKU</th>
-          <th></th>
-          <th>Locations</th>
-          <th>Stock Level</th>
-        </tr>
-        {% for form in formset %}
-          {% with form.product as product %}
-            <tr hidden>
-              <td>{{ form.product_id }}</td>
-            </tr>
-            <tr>
-              <td class="column SKU sku">{{ product.sku }}</td>
-              {% for option, value in product.variation.items %}<td class="column option name">{{ value }}</td>{% endfor %}
-              <td class="column supplier_SKU sku">{{ product.supplier_sku }}</td>
-              {% for field in form %}
-                <td class="location_field">
-                  {{ field }}
-                  {{ field.errors }}
+      <table class="table table-hover table-sm mt-3">
+        <thead class="table-primary">
+          <tr>
+            <th>SKU</th>
+            {% for option in product_range.variation_options %}<th>{{ option }}</th>{% endfor %}
+            <th>Supplier SKU</th>
+            <th></th>
+            <th>Locations</th>
+            <th>Stock Level</th>
+          </tr>
+        </thead>
+        <tbody class="border-0">
+          {% for form in formset %}
+            {% with form.product as product %}
+              <tr>
+                <td class="font-monospace user-select-all">{{ product.sku }}</td>
+                {% for option, value in product.variation.items %}<td>{{ value }}</td>{% endfor %}
+                <td class="font-monospace user-select-all">{{ product.supplier_sku }}</td>
+                {% for field in form %}
+                  <td class="location_field">
+                    {{ field }}
+                    {{ field.errors }}
+                  </td>
+                {% endfor %}
+                <td>
+                  {% if products_exist is not True %}
+                    <span class="danger">Stock level is not available</span>
+                  {% else %}
+                    {% include "inventory/update_stock.html" %}
+                  {% endif %}
                 </td>
-              {% endfor %}
-              <td class="column stock_level">
-                {% if product_range.is_end_of_line or product.is_end_of_line %}
-                  <span class="error">Stock levels are not available for EOL products</span>
-                {% elif products_exist is not True %}
-                  <span class="error">Stock level is not available</span>
-                {% else %}
-                  {% include "inventory/update_stock.html" %}
-                {% endif %}
-              </td>
-              <td>{{ form.non_field_errors }}</td>
-            </tr>
-          {% endwith %}
-        {% endfor %}
-        <tr>
-          <td class="save_row">
-            <button type="submit" class="save_button btn btn-primary">Save</button>
-          </td>
-        </tr>
+                <td>{{ form.non_field_errors }}</td>
+              </tr>
+            {% endwith %}
+          {% endfor %}
+          <tr>
+            <td>
+              <button type="submit" class="save_button btn btn-primary">Save</button>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </form>
   </div>
 
 {% endblock content %}
-
-{% block script %}
-  {{ block.super }}
-  <script>
-  $(document).ready(function () {
-    var table_width = $('.variation_table').find("tr:first th").length;
-    $('.save_row').attr('colspan', table_width);
-  });
-  </script>
-{% endblock script %}

@@ -10,11 +10,11 @@
         {% if products %}
             <div class="range_channel_links">
                 {% for product in products %}
-                    <div class="product_link card mb-5">
+                    <div class="product_link card mb-5 bg-light">
                         <div class="linked_channels card-body">
                             <h5 class="mb-3">
-                                <span class="card-subtitle text-muted">{{ product.sku }}</span>
-                                <span class="sku card-title">{{ product.name_extensions|join:" - " }}</span>
+                                <span class="card-subtitle text-muted user-select-all font-monospace me-2">{{ product.sku }}</span>
+                                <span class="sku card-title user-select-all">{{ product.name_extensions|join:" - " }}</span>
                             </h5>
                             <div class="container">
                                 <div class="row">

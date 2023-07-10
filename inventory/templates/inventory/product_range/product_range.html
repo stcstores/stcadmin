@@ -27,19 +27,19 @@
       </div>
     {% endif %}
 
-    <div class="variations">
-      <h3>
+    <div>
+      <h6 class="display-6 mb-3">
         {% if product_range.has_variations %}
           Variations
         {% else %}
           Single Product
         {% endif %}
-      </h3>
+      </h6>
       <table class="table table-hover table-sm mt-3">
-        <thead class="table-secondary">
+        <thead class="table-primary">
           <tr>
             <th>SKU</th>
-            <th class="header edit"></th>
+            <th></th>
             {% for option in product_range.variation_options %}<th>{{ option }}</th>{% endfor %}
             {% for option in product_range.listing_options %}<th>{{ option }}</th>{% endfor %}
             <th>Supplier SKU</th>
@@ -51,7 +51,7 @@
           {% for product in product_range.products.variations %}
             <tr>
               <td class="font-monospace user-select-all">{{ product.sku }}</td>
-              <td class="edit">
+              <td>
                 <a href="{% url 'inventory:product' product.pk %}">
                   <button class="btn btn-primary">Edit</button>
                 </a>
@@ -60,7 +60,7 @@
               {% for option, value in product.listing_options.items %}<td class="user-select-all">{{ value }}</td>{% endfor %}
               <td class="font-monospace user-select-all">{{ product.supplier_sku }}</td>
               <td class="font-monospace user-select-all">{{ product.barcode }}</td>
-              <td class="stock_level">
+              <td>
                 {% if product_range.is_end_of_line or product.is_end_of_line %}
                   <span class="text-danger">Stock levels are not available for EOL products</span>
                 {% elif products_exist is not True %}

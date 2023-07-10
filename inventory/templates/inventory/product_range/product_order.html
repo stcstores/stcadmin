@@ -9,41 +9,43 @@
       {{ formset.management_form }}
       {{ formset.non_form_errors }}
       <p>Drag and drop variations to change the order in which they are displayed.</p>
-      <table class="table table-hover table-sm mt-3" id="productOrderTable">
-        <thead>
-          <tr>
-            <th class="column header SKU">SKU</th>
-            {% for option in product_range.variation_options %}<th class="column header option">{{ option }}</th>{% endfor %}
-            <th class="column header supplier_SKU">Supplier SKU</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for form in formset %}
-            {% with form.product as product %}
-              <tr>
-                <td class="column SKU sku">{{ product.sku }}</td>
-                {% for option, value in product.variation.items %}<td class="column option name">{{ value }}</td>{% endfor %}
-                <td class="column supplier_SKU sku">{{ product.supplier_sku }}</td>
-                <td>
-                  {% for field in form %}
-                    {{ field }}
-                    {{ field.errors }}
-                  {% endfor %}
-                </td>
-                <td></td>
-              </tr>
-            {% endwith %}
-          {% endfor %}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td class="save_row">
-              <button type="submit" class="save_button btn btn-primary">Save</button>
-            </td>
-          </tr>
-        </tfoot>
-      </table>
+      <div class="col-8">
+        <table class="table table-hover table-sm mt-3" id="productOrderTable">
+          <thead class="table-primary">
+            <tr>
+              <th class="column header SKU">SKU</th>
+              {% for option in product_range.variation_options %}<th class="column header option">{{ option }}</th>{% endfor %}
+              <th class="column header supplier_SKU">Supplier SKU</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for form in formset %}
+              {% with form.product as product %}
+                <tr>
+                  <td class="column SKU sku">{{ product.sku }}</td>
+                  {% for option, value in product.variation.items %}<td class="column option name">{{ value }}</td>{% endfor %}
+                  <td class="column supplier_SKU sku">{{ product.supplier_sku }}</td>
+                  <td>
+                    {% for field in form %}
+                      {{ field }}
+                      {{ field.errors }}
+                    {% endfor %}
+                  </td>
+                  <td></td>
+                </tr>
+              {% endwith %}
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td class="save_row">
+                <button type="submit" class="save_button btn btn-primary">Save</button>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </form>
   </div>
 
