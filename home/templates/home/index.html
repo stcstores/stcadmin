@@ -5,69 +5,72 @@
 
 {% block page_title %}STC Admin{% endblock %}
 {% block content %}
-<style>
-  .pack_count,
-  .feedback {
-    font-size: 0.5em;
-  }
-</style>
-{% user_groups user as groups %}
-<h1>STC Admin</h1>
-<div class="site_index">
-  <p>From here you can access:</p>
-  <ul class='app'>
-    {% if "inventory" in groups %}
-    <li><a href="{% url 'inventory:product_search' %}">Inventory</a></li>
-    <p>Tools for working with Cloud Commerce Inventory</p>
-    <ul class="section">
-      <li><a href="{% url 'inventory:product_search' %}">Product Search</a></li>
-      <p>Find products in the Inventory</p>
-      <li><a href="{% url 'inventory:start_new_product' %}">New Product</a></li>
-      <p>Create a new <a href="{% url 'inventory:start_new_product' %}"> product</a>.</p>
-      <li><a href="{% url 'inventory:sku_generator' %}">SKU Generator</a></li>
-      <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
-    </ul>
-    {% endif %}
-
-    {% if group.name == 'labelmaker' %}
-    <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
-    <p>Make printable product labels.</p>
-    {% endif %}
-
-    {% if 'admin' in groups %}
-    <li><a href="/admin/">Admin</a></li>
-    <p>Tools for administering STC Admin.</p>
-    <ul class="section">
-      <li>View and edit database tables.</li>
-      <li>Manage users and groups.</li>
-    </ul>
-    {% endif %}
-
-  </ul>
-</div>
-<div class="homepage_feedback">
-  <div>
-    <h3>External Links</h3>
-    {% for link in external_links %}
-    <p><a href="{{ link.url }}">{{ link.name }}</a></p>
-    {% endfor %}
-  </div>
-  <div class="header_feedback">
-    {% feedback_badges request.user %}
-    <a href="{% url 'feedback:feedback_quickview' %}">All feedback</a>
-  </div>
-</div>
-{% endblock %}
-
-{% block script %}{{ block.super }}
-<script>
-  $(document).ready(function () {
-    $.get("{% url 'feedback:monitor' %}",
-      function (response) {
-        $('.feedback').html(response);
-        current = 'feedback'
+  <style>
+      .pack_count,
+      .feedback {
+          font-size: 0.5em;
       }
-    );
-  });
-</script>
+  </style>
+  {% user_groups user as groups %}
+  <h1>STC Admin</h1>
+  <div class="site_index">
+    <p>From here you can access:</p>
+    <ul class='app'>
+      {% if "inventory" in groups %}
+        <li>
+          <a href="{% url 'inventory:product_search' %}">Inventory</a>
+        </li>
+        <p>Tools for working with Cloud Commerce Inventory</p>
+        <ul class="section">
+          <li>
+            <a href="{% url 'inventory:product_search' %}">Product Search</a>
+          </li>
+          <p>Find products in the Inventory</p>
+          <li>
+            <a href="{% url 'inventory:start_new_product' %}">New Product</a>
+          </li>
+          <p>
+            Create a new <a href="{% url 'inventory:start_new_product' %}">product</a>.
+          </p>
+          <li>
+            <a href="{% url 'inventory:sku_generator' %}">SKU Generator</a>
+          </li>
+          <p>Get unused SKUs for Cloud Commerce products or product ranges.</p>
+        </ul>
+      {% endif %}
+
+      {% if group.name == 'labelmaker' %}
+        <li>
+          <a href="{% url 'labelmaker:index' %}">Labelmaker</a>
+        </li>
+        <p>Make printable product labels.</p>
+      {% endif %}
+
+      {% if 'admin' in groups %}
+        <li>
+          <a href="/admin/">Admin</a>
+        </li>
+        <p>Tools for administering STC Admin.</p>
+        <ul class="section">
+          <li>View and edit database tables.</li>
+          <li>Manage users and groups.</li>
+        </ul>
+      {% endif %}
+
+    </ul>
+  </div>
+  <div class="homepage_feedback">
+    <div>
+      <h3>External Links</h3>
+      {% for link in external_links %}
+        <p>
+          <a href="{{ link.url }}">{{ link.name }}</a>
+        </p>
+      {% endfor %}
+    </div>
+    <div class="header_feedback">
+      {% feedback_badges request.user %}
+      <a href="{% url 'feedback:user_feedback' %}">All feedback</a>
+    </div>
+  </div>
 {% endblock %}

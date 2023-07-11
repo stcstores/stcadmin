@@ -27,14 +27,8 @@ urlpatterns = [
     ),
     path("feedback_list/", views.FeedbackList.as_view(), name="feedback_list"),
     path(
-        "feedback_quickview/",
-        views.FeedbackQuickview.as_view(),
-        name="feedback_quickview",
-    ),
-    path(
         "feedback_details/<int:feedback_id>/",
         views.FeedbackDetails.as_view(),
         name="feedback_details",
     ),
-    path("monitor/", views.Monitor.as_view(), name="monitor"),
 ]

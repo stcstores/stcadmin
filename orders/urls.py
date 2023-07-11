@@ -7,11 +7,6 @@ from orders import views
 app_name = "orders"
 urlpatterns = [
     path("", views.Index.as_view(), name="index"),
-    path(
-        "pack_count_monitor/",
-        views.PackCountMonitor.as_view(),
-        name="pack_count_monitor",
-    ),
     path("charts/", views.Charts.as_view(), name="charts"),
     path(
         "undispatched_data/",
