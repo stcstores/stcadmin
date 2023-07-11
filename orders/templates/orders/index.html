@@ -2,24 +2,26 @@
 {% load static %}
 
 {% block content %}
-<h1>Orders</h1>
-<div class="site_index">
-    <p>From here you can access:</p>
-    <ul class="app">
-        <li><a href="{% url 'orders:order_list' %}">Order List</a></li>
-        <p>Search and view orders.</p>
-    </ul>
-    <ul class="app">
-        <li><a href="{% url 'orders:charts' %}">Undispatched Orders</a></li>
-        <p>View orders currently awaiting dispatch.</p>
-    </ul>
-    <ul class="app">
-        <li><a href="{% url 'orders:charts' %}">Charts</a></li>
-        <p>View Charts.</p>
-    </ul>
-    <ul class="app">
-        <li><a href="{% url 'orders:refund_list' %}">Refunds</a></li>
-        <p>Track refunds.</p>
-    </ul>
-</div>
-{% endblock %}
+    <h1>Orders</h1>
+    <div class="site_index">
+        <p>From here you can access:</p>
+        <ul class="app">
+            <li>
+                <a href="{% url 'orders:order_list' %}">Order List</a>
+            </li>
+            <p>Search and view orders.</p>
+        </ul>
+        <ul class="app">
+            <li>
+                <a href="{% url 'orders:charts' %}">Undispatched Orders</a>
+            </li>
+            <p>View orders currently awaiting dispatch.</p>
+        </ul>
+        <ul class="app">
+            <li>
+                <a href="{% url 'orders:charts' %}">Charts</a>
+            </li>
+            <p>View Charts.</p>
+        </ul>
+    </div>
+{% endblock content %}

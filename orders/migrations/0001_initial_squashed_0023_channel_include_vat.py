@@ -4,11 +4,8 @@ import django.db.models.deletion
 import django.utils.timezone
 from django.db import migrations, models
 
-import orders.models.refund
-
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("orders", "0001_initial"),
         ("orders", "0002_remove_order_shipping_service"),
@@ -412,7 +409,6 @@ class Migration(migrations.Migration):
                     "image",
                     models.ImageField(
                         height_field="image_height",
-                        upload_to=orders.models.refund.image_path,
                         width_field="image_width",
                     ),
                 ),
@@ -589,7 +585,6 @@ class Migration(migrations.Migration):
                     "image",
                     models.ImageField(
                         height_field="image_height",
-                        upload_to=orders.models.refund.image_path,
                         width_field="image_width",
                     ),
                 ),

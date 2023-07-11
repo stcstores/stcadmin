@@ -15,7 +15,6 @@ def section_navigation_content():
         ("Charts", "orders:charts"),
         ("Undispatched Orders", "orders:undispatched_orders"),
         ("Order List", "orders:order_list"),
-        ("Refunds", "orders:refund_list"),
     ],
 )
 def test_orders_section_navigation(name, link, section_navigation_content):
