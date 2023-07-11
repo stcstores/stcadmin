@@ -11,7 +11,7 @@
   <div class="container">
     <h1 class="display-1 text-start mb-5">STC Admin</h1>
     <div class="wrapper row">
-      <div class="col-md-10 text-start">
+      <div class="col-9 text-start">
         <div>
           <ul class="list-inline">
             {% if "inventory" in groups %}
@@ -56,12 +56,12 @@
           </ul>
         </div>
       </div>
-      <div class="col-2 text-start">
-        <span class="fs-4">External Links</span>
+      <div class="col-3 text-start">
+        <h6 class="display-6">External Links</h6>
         <ul class="nav flex-column">
           {% for link in external_links %}
             <li class="nav-item">
-              <a href="{{ link.url }}">{{ link.name }}</a>
+              <a href="{{ link.url }}" class="nav-link">{{ link.name }}</a>
             </li>
           {% endfor %}
         </ul>
