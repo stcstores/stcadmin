@@ -3,11 +3,8 @@
 import django.db.models.deletion
 from django.db import migrations, models
 
-import orders.models.refund
-
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("contenttypes", "0002_remove_content_type_name"),
         ("inventory", "0005_delete_stcadminimage"),
@@ -127,7 +124,6 @@ class Migration(migrations.Migration):
                     "image",
                     models.ImageField(
                         height_field="image_height",
-                        upload_to=orders.models.refund.image_path,
                         width_field="image_width",
                     ),
                 ),
