@@ -1,7 +1,6 @@
 """Views for the Orders app."""
 from datetime import timedelta
 
-from django.db.models import Count, Q
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -10,7 +9,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView, View
 from django.views.generic.list import ListView
 
-from home.models import Staff
 from home.views import UserInGroupMixin
 from orders import forms, models
 
@@ -25,34 +23,6 @@ class Index(OrdersUserMixin, TemplateView):
     """Main view for the orders app."""
 
     template_name = "orders/index.html"
-
-
-class PackCountMonitor(TemplateView):
-    """View for pack count display."""
-
-    template_name = "orders/pack_count_monitor.html"
-
-    def get_context_data(self, *args, **kwargs):
-        """Return HttpResponse with pack count data."""
-        context = super().get_context_data(*args, **kwargs)
-        date = timezone.now()
-        qs = (
-            Staff.unhidden.annotate(
-                pack_count=Count(
-                    "packed_orders",
-                    filter=Q(
-                        packed_orders__dispatched_at__year=date.year,
-                        packed_orders__dispatched_at__month=date.month,
-                        packed_orders__dispatched_at__day=date.day,
-                    ),
-                )
-            )
-            .filter(pack_count__gt=0)
-            .order_by("-pack_count")
-        )
-        pack_count = [[_.full_name(), _.pack_count] for _ in qs]
-        context["pack_counts"] = pack_count
-        return context
 
 
 class Charts(OrdersUserMixin, TemplateView):

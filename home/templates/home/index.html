@@ -56,38 +56,16 @@
           </ul>
         </div>
       </div>
-      <div class="col-md-2 text-start">
-        <div class="container-md">
-          <span class="fs-4">External Links</span>
-          <ul class="nav flex-column">
-            {% for link in external_links %}
-              <li class="nav-item">
-                <a href="{{ link.url }}">{{ link.name }}</a>
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
-        <hr>
-        <div class="container-md">
-          <span class="fs-4">Feedback</span>
-          {% feedback_badges request.user %}
-          <a href="{% url 'feedback:feedback_quickview' %}">All feedback</a>
-        </div>
+      <div class="col-2 text-start">
+        <span class="fs-4">External Links</span>
+        <ul class="nav flex-column">
+          {% for link in external_links %}
+            <li class="nav-item">
+              <a href="{{ link.url }}">{{ link.name }}</a>
+            </li>
+          {% endfor %}
+        </ul>
       </div>
     </div>
   </div>
 {% endblock content %}
-
-{% block script %}
-  {{ block.super }}
-  <script>
-  $(document).ready(function () {
-    $.get("{% url 'feedback:monitor' %}",
-      function (response) {
-        $('.feedback').html(response);
-        current = 'feedback'
-      }
-    );
-  });
-  </script>
-{% endblock script %}

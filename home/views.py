@@ -80,12 +80,6 @@ class Version(TemplateView):
         return context
 
 
-class DisplayMonitor(TemplateView):
-    """View for display monitor."""
-
-    template_name = "home/monitor.html"
-
-
 class User(UserLoginMixin, TemplateView):
     """View for the User page."""
 
