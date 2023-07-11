@@ -2,13 +2,16 @@
 {% load static %}
 
 {% block additional_head %}
-    <link rel="stylesheet" href="{% static 'css/orders.css' %}">
+    {% comment %} <link rel="stylesheet" href="{% static 'css/orders.css' %}"> {% endcomment %}
 {% endblock additional_head %}
 
-{% block page_title %}Orders{% endblock %}
+{% block page_title %}
+    Orders
+{% endblock page_title %}
 
 {% block section_navigation %}
     {% include "orders/section_navigation.html" %}
-{% endblock %}
+{% endblock section_navigation %}
 
-{% block content %}{% endblock %}
+{% block content %}
+{% endblock content %}

@@ -1,84 +1,72 @@
-{% extends 'orders/base.html' %}
+{% extends "orders/base.html" %}
 {% load orders_extras %}
 
-{% block additional_head %}
-{{ block.super }}
-<style>
-    #top {
-        display: flex;
-        flex-direction: row;
-    }
-
-    #export {
-        border: 2px solid #444;
-        border-radius: 1em;
-        margin: 1em;
-        padding: 1em;
-        width: 100%;
-    }
-</style>
-{% endblock additional_head %}
-
 {% block content %}
+    <div class="container">
+        <h3 class="display-3 mb-5">Orders</h3>
 
-<h1>Orders</h1>
-
-<div id="top">
-    <div class="filter">
-        <form action="" method="GET" id="fliter_orders">
-            {{ form.as_p }}
-            <p><button>Filter</button></p>
-        </form>
+        <div class="row mb-5 justify">
+            <div class="col-4 me-5">
+                <form action="" method="get" id="fliter_orders">
+                    {% include "home/bootstrap_inline_form.html" %}
+                    <button class="btn btn-primary">Filter</button>
+                </form>
+            </div>
+            <div class="col bg-light rounded p-3" id="export"></div>
+        </div>
+        <div class="text-center">Showing {{ page_obj.object_list|length }} of {{ page_obj.paginator.count }} orders</div>
+        {% include "orders/pagination_navigation.html" %}
+        <table class="orders table table-sm table-hover mb-3">
+            <thead class="table-primary">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Recieved At</th>
+                    <th>Dispatched At</th>
+                    <th>Country</th>
+                    <th>Channel</th>
+                    <th>Tracking Number</th>
+                    <th>Shipping Service</th>
+                    <th>Profit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in object_list %}
+                    <tr class="order">
+                        <th class="font-monospace user-select-all">{{ order.order_id }}</th>
+                        <td>{{ order.recieved_at|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            {% if order.dispatched_at %}
+                                {{ order.dispatched_at|date:"Y-m-d H:i" }}
+                            {% else %}
+                                UNDISPATCHED
+                            {% endif %}
+                        </td>
+                        <td>{{ order.country }}</td>
+                        <td>{{ order.channel }}</td>
+                        <td class="font-monospace user-select-all">{{ order.tracking_number }}</td>
+                        <td>{{ order.shipping_service.name }}</td>
+                        <td>
+                            {% if order.calculated_shipping_price is None %}
+                                Not yet calculated
+                            {% else %}
+                                <a href="{% url 'orders:order_profit' order.id %}">
+                                    {% format_price order.profit %}
+                                    &nbsp;
+                                    {% format_percentage order.profit_percentage %}
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% include "orders/pagination_navigation.html" %}
     </div>
-    <div id="export">
-        
-    </div>
-</div>
-    <p>Showing {{page_obj.object_list|length}} of {{page_obj.paginator.count}} orders</p>
-    {% include 'orders/pagination_navigation.html' %}
-    <table class="orders">
-        <tr>
-            <th>Order ID</th>
-            <th>Recieved At</th>
-            <th>Dispatched At</th>
-            <th>Country</th>
-            <th>Channel</th>
-            <th>Tracking Number</th>
-            <th>Shipping Service</th>
-            <th>Profit</th>
-        </tr>
-        {% for order in object_list %}
-        <tr class="order">
-            <th>{{ order.order_id }} </th>
-            <td>{{ order.recieved_at|date:"Y-m-d H:i" }}</td>
-            <td>{% if order.dispatched_at %}
-                {{ order.dispatched_at|date:"Y-m-d H:i" }}
-                {% else %}
-                UNDISPATCHED
-                {% endif %}
-            </td>
-            <td>{{ order.country }}</td>
-            <td>{{ order.channel }}</td>
-            <td>{{ order.tracking_number }}</td>
-            <td>{{ order.shipping_service.name }}</td>
-            <td>
-                {% if order.calculated_shipping_price is None %}
-                Not yet calculated
-                {% else %}
-                <a href="{% url 'orders:order_profit' order.id %}">
-                    {% format_price order.profit %}&nbsp;
-                    {% format_percentage order.profit_percentage %}
-                </a>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% include 'orders/pagination_navigation.html' %}
 {% endblock content %}
 
 {% block script %}
-<script>
+    {{ block.super }}
+    <script>
     var export_url = "{% url 'orders:export_orders' %}";
     var order_status_url = "{% url 'orders:order_export_status' %}";
 
@@ -118,5 +106,5 @@
         setInterval(update_export_status, 30000);
     });
     
-</script>
+    </script>
 {% endblock script %}
