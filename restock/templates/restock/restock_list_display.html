@@ -52,11 +52,12 @@
                         </span>
                     </td>
                     <td>
-                        {% if product_range.is_end_of_line or product.is_end_of_line %}
-                            <span class="error">Stock levels are not available for EOL products</span>
-                        {% else %}
-                            {% include "inventory/update_stock.html" %}
-                        {% endif %}
+                        <div>{% include "inventory/update_stock.html" %}</div>
+                        <div>
+                            <small>
+                                {% if product.fba_order_count > 0 %}<p>{{ product.fba_order_count }} Current FBA Order</p>{% endif %}
+                            </small>
+                        </div>
                     </td>
                     <td>
                         <textarea name="comment"
