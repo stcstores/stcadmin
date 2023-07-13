@@ -1,0 +1,25 @@
+{% extends "orders/base.html" %}
+
+{% block content %}
+    <h3>
+        {% if form.instance.id %}
+            Editing
+        {% else %}
+            Creating
+        {% endif %}
+        Packing Mistake
+    </h3>
+    <div style="width:50%;">
+        <form action="" method="post">
+            {% csrf_token %}
+            {% include "inventory/input_add_on_form.html" %}
+            <button type="submit">
+                {% if form.instance.id %}
+                    Save
+                {% else %}
+                    Create
+                {% endif %}
+            </button>
+        </form>
+    </div>
+{% endblock content %}

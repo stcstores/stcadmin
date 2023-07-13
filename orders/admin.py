@@ -84,3 +84,13 @@ class OrderExportDownloadAdmin(admin.ModelAdmin):
         "download_file",
     )
     date_hierarchy = "created_at"
+
+
+@admin.register(models.PackingMistake)
+class PackingMistakeAdmin(admin.ModelAdmin):
+    """Model admin for the PackingMistake model."""
+
+    exclude = ()
+    list_display = ("user", "timestamp", "order_id", "note")
+    date_hierarchy = "timestamp"
+    list_filter = (("user", admin.RelatedOnlyFieldListFilter),)

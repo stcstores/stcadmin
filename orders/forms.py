@@ -1,9 +1,11 @@
 """Forms for print audit app."""
+import calendar
 from datetime import datetime
 
 from django import forms
-from django.utils.timezone import make_aware
+from django.utils import timezone
 
+from home.models import Staff
 from orders import models
 from shipping.models import Country
 
@@ -51,13 +53,13 @@ class OrderListFilter(forms.Form):
         """Return a timezone aware datetime object from the submitted date."""
         date = self.cleaned_data["recieved_from"]
         if date is not None:
-            return make_aware(datetime.combine(date, datetime.min.time()))
+            return timezone.make_aware(datetime.combine(date, datetime.min.time()))
 
     def clean_recieved_to(self):
         """Return a timezone aware datetime object from the submitted date."""
         date = self.cleaned_data["recieved_to"]
         if date is not None:
-            return make_aware(datetime.combine(date, datetime.max.time()))
+            return timezone.make_aware(datetime.combine(date, datetime.max.time()))
 
     def query_kwargs(self, data):
         """Return a dict of filter kwargs."""
@@ -89,3 +91,90 @@ class OrderListFilter(forms.Form):
             )
             .distinct()
         )
+
+
+class PackingMistakeForm(forms.ModelForm):
+    """Form for packing mistakes."""
+
+    class Meta:
+        """Meta class for Packing Mistake Form."""
+
+        model = models.PackingMistake
+        fields = ["user", "timestamp", "order_id", "note"]
+        widgets = {"timestamp": forms.DateInput(attrs={"class": "datepicker"})}
+
+    def __init__(self, *args, **kwargs):
+        """Set the user queryset."""
+        super().__init__(*args, **kwargs)
+        self.fields["user"].queryset = Staff.unhidden.all()
+
+
+class PackCountFilter(forms.Form):
+    """Form for filtering packing counts."""
+
+    month = forms.ChoiceField()
+    year = forms.ChoiceField()
+
+    def __init__(self, *args, **kwargs):
+        """Set choices."""
+        super().__init__(*args, **kwargs)
+        now = timezone.now()
+        self.fields["month"].choices = (
+            (i, month) for i, month in enumerate(calendar.month_name[1:], 1)
+        )
+        self.fields["year"].choices = (
+            (year, str(year))
+            for year in reversed(
+                sorted(
+                    models.Order.objects.filter(dispatched_at__isnull=False)
+                    .values_list("dispatched_at__year", flat=True)
+                    .distinct()
+                )
+            )
+        )
+        self.initial = {"year": now.year, "month": now.month}
+
+
+class PackingMistakeFilterForm(forms.Form):
+    """Form for filtering packing mistakes."""
+
+    user = forms.ChoiceField(required=False)
+    made_from = forms.DateField(
+        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+    )
+    made_to = forms.DateField(
+        required=False, widget=forms.DateInput(attrs={"class": "datepicker"})
+    )
+
+    def __init__(self, *args, **kwargs):
+        """Set choices."""
+        super().__init__(*args, **kwargs)
+        self.fields["user"].choices = [("", "Any")] + [
+            (_.id, str(_)) for _ in Staff.unhidden.all()
+        ]
+
+    def clean_made_from(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["made_from"]
+        if date is not None:
+            return timezone.make_aware(datetime.combine(date, datetime.min.time()))
+
+    def clean_made_to(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["made_to"]
+        if date is not None:
+            return timezone.make_aware(datetime.combine(date, datetime.max.time()))
+
+    def get_queryset(self):
+        """Return a queryset with filters."""
+        if self.is_valid():
+            data = self.cleaned_data
+            qs = models.PackingMistake.objects.all()
+            if user := data["user"]:
+                qs = qs.filter(user=user)
+            if made_from := data["made_from"]:
+                qs = qs.filter(timestamp__gte=made_from)
+            if made_to := data.get("made_to"):
+                qs = qs.filter(timestamp__lte=made_to)
+            return qs
+        raise Exception("Form Invalid")

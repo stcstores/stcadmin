@@ -1,0 +1,37 @@
+{% extends "orders/base.html" %}
+
+{% block content %}
+    <h3>Packing Mistakes</h3>
+    <div style="width:50%;">
+        <form action="" method="get">
+            {% include "inventory/input_add_on_form.html" %}
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    <a href="{% url 'orders:create_packing_mistake' %}">Add a packing Mistake</a>
+    {% include "orders/pagination_navigation.html" %}
+    <table class="orders">
+        <tr>
+            <th>User</th>
+            <th>Date</th>
+            <th>Order ID</th>
+            <th>Notes</th>
+            <th colspan="2"></th>
+        </tr>
+        {% for packing_mistake in object_list %}
+            <tr>
+                <td>{{ packing_mistake.user }}</td>
+                <td>{{ packing_mistake.timestamp }}</td>
+                <td>{{ packing_mistake.order_id }}</td>
+                <td>{{ packing_mistake.note }}</td>
+                <td>
+                    <a href="{% url 'orders:update_packing_mistake' packing_mistake.pk %}">Edit</a>
+                </td>
+                <td>
+                    <a href="{% url 'orders:delete_packing_mistake' packing_mistake.pk %}">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% include "orders/pagination_navigation.html" %}
+{% endblock content %}

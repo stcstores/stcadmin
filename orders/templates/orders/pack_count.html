@@ -1,0 +1,34 @@
+{% extends "orders/base.html" %}
+
+{% block content %}
+    <form action="" method="get" id="pack_count_filter">
+        {{ form.as_p }}
+        <button type="submit">Search</button>
+    </form>
+    <a href="{% url 'orders:create_packing_mistake' %}">Add a packing Mistake</a>
+    <div id="results"></div>
+{% endblock content %}
+
+{% block script %}
+    {{ block.super }}
+    <script>
+    $(document).ready(function() {
+        $("#pack_count_filter").submit(function(e){
+            e.preventDefault();
+            $("#results").html('<i class="fa-solid fa-spinner fa-spin-pulse fa-xl"></i>');
+            $.ajax({
+                url: "{% url 'orders:pack_count_results' %}",
+                method: "GET",
+                data: $(this).serialize(),
+                success: function(response) {
+                    $("#results").html(response);
+                },
+                error: function(response) {
+                    alert("There was an error retriving pack counts.");
+                    $("#results").html("");
+                }
+            });
+        });
+    });
+    </script>
+{% endblock script %}

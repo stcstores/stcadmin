@@ -1,14 +1,19 @@
 """Views for the Orders app."""
 from datetime import timedelta
 
+from django.contrib import messages
+from django.db.models import Count, Q
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView, View
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
+from home.models import Staff
 from home.views import UserInGroupMixin
 from orders import forms, models
 
@@ -189,3 +194,113 @@ class OrderProfit(OrdersUserMixin, TemplateView):
         context["order"] = get_object_or_404(models.Order, id=order_id)
         context["products"] = context["order"].productsale_set.all()
         return context
+
+
+class PackCount(OrdersUserMixin, TemplateView):
+    """View for displaying pack counts and mistakes."""
+
+    template_name = "orders/pack_count.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["form"] = forms.PackCountFilter()
+        return context
+
+
+class PackCountResults(OrdersUserMixin, TemplateView):
+    """Return view for AJAX requests for pack counts."""
+
+    template_name = "orders/pack_count_results.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        month = int(self.request.GET["month"])
+        year = int(self.request.GET["year"])
+        context["users"] = self.get_users(month=month, year=year)
+        return context
+
+    def get_users(self, month, year):
+        """Return a queryset of staff annotated with pack counts and mistake counts."""
+        return Staff.unhidden.order_by("first_name", "second_name").annotate(
+            pack_count=Count(
+                "packed_orders",
+                filter=Q(
+                    packed_orders__dispatched_at__month=month,
+                    packed_orders__dispatched_at__year=year,
+                ),
+                distinct=True,
+            ),
+            mistake_count=Count(
+                "packing_mistakes",
+                filter=Q(
+                    packing_mistakes__timestamp__month=month,
+                    packing_mistakes__timestamp__year=year,
+                ),
+                distinct=True,
+            ),
+        )
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class PackingMistakes(OrdersUserMixin, ListView):
+    """View for viewing packing mistakes."""
+
+    model = models.PackingMistake
+    template_name = "orders/packing_mistakes.html"
+    paginate_by = 50
+    orphans = 3
+    form_class = forms.PackingMistakeFilterForm
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["form"] = self.form_class(self.request.GET)
+        return context
+
+    def get_queryset(self):
+        """Filter the packing mistake list."""
+        return self.form_class(self.request.GET).get_queryset()
+
+
+class CreatePackingMistake(OrdersUserMixin, CreateView):
+    """View for creating packing mistakes."""
+
+    model = models.PackingMistake
+    form_class = forms.PackingMistakeForm
+
+    def get_success_url(self):
+        """Return redirect URL."""
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            f"Added a packing mistake for {self.object.user}.",
+        )
+        return reverse("orders:packing_mistakes")
+
+
+class UpdatePackingMistake(OrdersUserMixin, UpdateView):
+    """View for updating packing mistakes."""
+
+    model = models.PackingMistake
+    form_class = forms.PackingMistakeForm
+
+    def get_success_url(self):
+        """Return redirect URL."""
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            f"Updated a packing mistake for {self.object.user}.",
+        )
+        return reverse("orders:packing_mistakes")
+
+
+class DeletePackingMistake(OrdersUserMixin, DeleteView):
+    """View for deleting packing mistakes."""
+
+    model = models.PackingMistake
+
+    def get_success_url(self):
+        """Return redirect URL."""
+        return reverse("orders:packing_mistakes")
