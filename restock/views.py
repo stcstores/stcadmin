@@ -10,6 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView, View
 
+from fba.models import FBAOrder
 from home.views import UserInGroupMixin
 from inventory.models import BaseProduct
 from restock import models
@@ -31,6 +32,9 @@ def sort_products_by_supplier(products):
     """Return a dict of {supplier:[products]}."""
     suppliers = defaultdict(list)
     for product in products.order_by("supplier__name"):
+        product.fba_order_count = FBAOrder.awaiting_fulfillment.filter(
+            product_SKU=product.sku
+        ).count()
         suppliers[product.supplier].append(product)
     return dict(suppliers)
 
@@ -52,6 +56,7 @@ class SearchResults(RestockUserMixin, TemplateView):
         for reorder in reorders:
             context["reorder_counts"][reorder.product.id] = reorder.count
             context["comments"][reorder.product.id] = reorder.comment
+
         return context
 
     def get_products(self, search_text):
