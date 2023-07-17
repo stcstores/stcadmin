@@ -216,9 +216,8 @@ class PackCountResults(OrdersUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return context for the template."""
         context = super().get_context_data(*args, **kwargs)
-        month = int(self.request.GET["month"])
-        year = int(self.request.GET["year"])
-        context["users"] = self.get_users(month=month, year=year)
+        form = forms.PackCountFilter(self.request.GET)
+        context["users"] = form.get_queryset()
         return context
 
     def get_users(self, month, year):
