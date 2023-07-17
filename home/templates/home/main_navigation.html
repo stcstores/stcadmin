@@ -22,11 +22,6 @@
           <a href="{% url 'labelmaker:index' %}">Labelmaker</a>
         </li>
       {% endif %}
-      {% if 'feedback' in groups %}
-        <li>
-          <a href="{% url 'feedback:user_feedback' %}">Feedback</a>
-        </li>
-      {% endif %}
       {% if 'fba' in groups %}
         <li>
           <a href="{% url 'fba:index' %}">FBA</a>
