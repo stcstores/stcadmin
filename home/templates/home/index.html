@@ -1,16 +1,9 @@
 {% extends "home/base.html" %}
 {% load static %}
 {% load stcadmin_extras %}
-{% load feedback_extras %}
 
 {% block page_title %}STC Admin{% endblock %}
 {% block content %}
-  <style>
-      .pack_count,
-      .feedback {
-          font-size: 0.5em;
-      }
-  </style>
   {% user_groups user as groups %}
   <h1>STC Admin</h1>
   <div class="site_index">
@@ -67,10 +60,6 @@
           <a href="{{ link.url }}">{{ link.name }}</a>
         </p>
       {% endfor %}
-    </div>
-    <div class="header_feedback">
-      {% feedback_badges request.user %}
-      <a href="{% url 'feedback:user_feedback' %}">All feedback</a>
     </div>
   </div>
 {% endblock %}
