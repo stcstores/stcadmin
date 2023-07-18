@@ -45,7 +45,7 @@ requests-html = "^0.10.0"
 pytest = ">=6.2.4"
 pytest-django = ">=4.5.2"
 pytest-cov = ">=3.0.0"
-coveralls = ">=3.3.1"
+coveralls = {extras = ["toml"], version= ">=3.3.1"}
 black = ">=21.12b0"
 flake8 = ">=4.0.1"
 isort = ">=5.10.1"
