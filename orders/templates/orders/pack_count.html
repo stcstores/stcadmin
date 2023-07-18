@@ -1,0 +1,50 @@
+{% extends "orders/base.html" %}
+
+{% block content %}
+    <form action="" method="get" id="pack_count_filter">
+        {{ form.as_p }}
+        <button type="submit">Search</button>
+    </form>
+    <a href="{% url 'orders:create_packing_mistake' %}">Add a packing Mistake</a>
+    <div id="results"></div>
+{% endblock content %}
+
+{% block script %}
+    {{ block.super }}
+    <script>
+
+    function getSearchResults(e) {
+        e.preventDefault();
+        $("#results").html('<i class="fa-solid fa-spinner fa-spin-pulse fa-xl"></i>');
+        $.ajax({
+            url: "{% url 'orders:pack_count_results' %}",
+            method: "GET",
+            data: $(this).serialize(),
+            success: function(response) {
+                $("#results").html(response);
+            },
+            error: function(response) {
+                alert("There was an error retriving pack counts.");
+                $("#results").html("");
+            }
+        });
+    }
+
+    function showHideCustomDates() {
+        if ($('input[name="{{ form.dates.name }}"]:checked').val() === "{{ form.CUSTOM }}") {
+            $("#{{ form.date_from.auto_id }}").attr('disabled', false);
+            $("#{{ form.date_to.auto_id }}").attr('disabled', false);
+        } else {
+            $("#{{ form.date_from.auto_id }}").attr('disabled', true).val("");
+            $("#{{ form.date_to.auto_id }}").attr('disabled', true).val("");
+        }
+        
+    }
+
+    $(document).ready(function() {
+        showHideCustomDates();
+        $("#{{ form.dates.auto_id }}").change(showHideCustomDates);
+        $("#pack_count_filter").submit(getSearchResults);
+    });
+    </script>
+{% endblock script %}
