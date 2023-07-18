@@ -1,57 +1,63 @@
 {% load static %}
 {% load stcadmin_extras %}
-{% load feedback_extras %}
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{% static 'css/stcadmin.css' %}">
-    <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-    <script src="{% static 'scripts/jquery.cookie.js' %}"></script>
-    <script src="{% static 'scripts/stcadmin.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/awesomplete.css' %}">
-    <script src="{% static 'scripts/jquery-ui.min.js' %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/autonumeric/4.1.0/autoNumeric.js"></script>
-    <script src="{% static 'scripts/awesomplete.min.js' %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
-    <link rel="stylesheet" href="{% static 'css/input-add-on.css' %}">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Code+Pro" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/90f633c7cb.js" crossorigin="anonymous"></script>
-    {% block additional_head %}{% endblock %}
-    <title>STCAdmin - {% block page_title %}{% endblock %}</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{% static 'css/stcadmin.css' %}">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <link rel="shortcut icon"
+              type="image/png"
+              href="{% static 'images/favicon.ico' %}" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+        <script src="{% static 'scripts/jquery.cookie.js' %}"></script>
+        <script src="{% static 'scripts/stcadmin.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/awesomplete.css' %}">
+        <script src="{% static 'scripts/jquery-ui.min.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/autonumeric/4.1.0/autoNumeric.js"></script>
+        <script src="{% static 'scripts/awesomplete.min.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+        <link rel="stylesheet" href="{% static 'css/input-add-on.css' %}">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Code+Pro"
+              rel="stylesheet">
+        <script src="https://kit.fontawesome.com/90f633c7cb.js"
+                crossorigin="anonymous"></script>
+        {% block additional_head %}{% endblock %}
+        <title>STCAdmin -
+            {% block page_title %}{% endblock %}
+        </title>
+    </head>
 
-<body>
-    <div class="container">
-        <div class="head">
-            {% include "home/main_navigation.html" %}
-            
-            <div class="user_details">
-                <p>Welcome <a href="{% url 'home:user' %}">{{ request.user.username|title }}</a></p>
-                <a href="{% url 'home:logout_user' %}">Logout</a>
+    <body>
+        <div class="container">
+            <div class="head">
+                {% include "home/main_navigation.html" %}
+ 
+                <div class="user_details">
+                    <p>
+                        Welcome <a href="{% url 'home:user' %}">{{ request.user.username|title }}</a>
+                    </p>
+                    <a href="{% url 'home:logout_user' %}">Logout</a>
+                </div>
+                {% block section_navigation %}{% endblock %}
+                {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li {% if message.tags %}class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
             </div>
-            {% block section_navigation %}{% endblock %}
-            {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-                    {% endfor %}
-            </ul>
-            {% endif %}
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+            {% block footer %}{% endblock %}
         </div>
-        <div class="content">
-            {% block content %}
-            {% endblock %}
-        </div>
-        {% block footer %}{% endblock %}
-    </div>
-    {% block script %}
-    <script>
+        {% block script %}
+            <script>
         $(document).ready(function () {
             $('.tooltip').each(function () {
                 var text = $(this).attr('tooltiptext');
@@ -68,9 +74,9 @@
                 });
             });
         });
-    </script>
-    {% endblock %}
+            </script>
+        {% endblock %}
 
-</body>
+    </body>
 
 </html>
