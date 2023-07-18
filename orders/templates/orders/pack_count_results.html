@@ -1,0 +1,22 @@
+{% block content %}
+    <table class="table table-hover table-sm mt-3">
+        <thead class="table-primary">
+            <tr>
+                <th>User</th>
+                <th>Packed</th>
+                <th>Mistakes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                {% if user.pack_count > 0 or user.mistake_count > 0 %}
+                    <tr>
+                        <td>{{ user }}</td>
+                        <td>{{ user.pack_count }}</td>
+                        <td>{{ user.mistake_count }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}

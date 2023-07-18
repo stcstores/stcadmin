@@ -155,7 +155,6 @@ INSTALLED_APPS = [
     "jchart",
     "orders",
     "shipping",
-    "feedback",
     "fba",
     "channels",
     "purchases",

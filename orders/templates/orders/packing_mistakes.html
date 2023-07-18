@@ -1,0 +1,50 @@
+{% extends "orders/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h3 class="display-3 mb-3">Packing Mistakes</h3>
+        <div class="row">
+            <div class="col-6">
+                <form action="" method="get">
+                    {% include "home/bootstrap_inline_form.html" %}
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+            <div class="col text-end">
+                <a href="{% url 'orders:create_packing_mistake' %}"
+                   class="btn btn-primary">Add a packing Mistake</a>
+            </div>
+        </div>
+        {% include "orders/pagination_navigation.html" %}
+        <table class="table table-hover table-sm mt-3">
+            <thead class="table-primary">
+                <tr>
+                    <th>User</th>
+                    <th>Date</th>
+                    <th>Order ID</th>
+                    <th>Notes</th>
+                    <th colspan="2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for packing_mistake in object_list %}
+                    <tr>
+                        <td>{{ packing_mistake.user }}</td>
+                        <td>{{ packing_mistake.timestamp }}</td>
+                        <td>{{ packing_mistake.order_id }}</td>
+                        <td>{{ packing_mistake.note }}</td>
+                        <td>
+                            <a href="{% url 'orders:update_packing_mistake' packing_mistake.pk %}"
+                               class="btn btn-primary btn-sm">Edit</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'orders:delete_packing_mistake' packing_mistake.pk %}"
+                               class="btn btn-primary btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% include "orders/pagination_navigation.html" %}
+    </div>
+{% endblock content %}

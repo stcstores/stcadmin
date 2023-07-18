@@ -28,12 +28,6 @@
           <a class="nav-link px-2 text-white" href="{% url 'labelmaker:index' %}">Labelmaker</a>
         </li>
       {% endif %}
-      {% if 'feedback' in groups %}
-        <li>
-          <a class="nav-link px-2 text-white"
-             href="{% url 'feedback:user_feedback' %}">Feedback</a>
-        </li>
-      {% endif %}
       {% if 'fba' in groups %}
         <li>
           <a class="nav-link px-2 text-white" href="{% url 'fba:index' %}">FBA</a>

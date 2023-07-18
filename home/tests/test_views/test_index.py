@@ -76,7 +76,6 @@ def test_links_to_external_links(get_html, external_link_factory):
         ("inventory", "inventory:product_search", "Inventory"),
         ("orders", "orders:index", "Orders"),
         ("labelmaker", "labelmaker:index", "Labelmaker"),
-        ("feedback", "feedback:user_feedback", "Feedback"),
         ("fba", "fba:index", "FBA"),
         ("purchaser", "purchases:purchase", "Purchases"),
         ("purchase_creator", "purchases:purchase", "Purchases"),

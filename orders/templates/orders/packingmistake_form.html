@@ -1,0 +1,27 @@
+{% extends "orders/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h3 class="display-3 mb-3">
+            {% if form.instance.id %}
+                Editing
+            {% else %}
+                Creating
+            {% endif %}
+            Packing Mistake
+        </h3>
+        <div class="col-6">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% include "home/bootstrap_inline_form.html" %}
+                <button type="submit" class="btn btn-primary">
+                    {% if form.instance.id %}
+                        Save
+                    {% else %}
+                        Create
+                    {% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,61 @@
+{% extends "orders/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h3 class="display-3 mb-3">Pack Counts</h3>
+        <div class="row">
+            <div class="col-3">
+                <form action="" method="get" id="pack_count_filter">
+                    {% comment %} {{ form.as_p }} {% endcomment %}
+                    {% include "home/bootstrap_inline_form.html" %}
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+            <div class="col">
+                <a href="{% url 'orders:create_packing_mistake' %}"
+                   class="btn btn-primary">Add a packing Mistake</a>
+                <div id="results" class="m-3"></div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+    {{ block.super }}
+    <script>
+
+    function getSearchResults(e) {
+        e.preventDefault();
+        $("#results").html('<i class="fa-solid fa-spinner fa-spin-pulse fa-xl"></i>');
+        $.ajax({
+            url: "{% url 'orders:pack_count_results' %}",
+            method: "GET",
+            data: $(this).serialize(),
+            success: function(response) {
+                $("#results").html(response);
+            },
+            error: function(response) {
+                alert("There was an error retriving pack counts.");
+                $("#results").html("");
+            }
+        });
+    }
+
+    function showHideCustomDates() {
+        if ($('input[name="{{ form.dates.name }}"]:checked').val() === "{{ form.CUSTOM }}") {
+            $("#{{ form.date_from.auto_id }}").attr('disabled', false);
+            $("#{{ form.date_to.auto_id }}").attr('disabled', false);
+        } else {
+            $("#{{ form.date_from.auto_id }}").attr('disabled', true).val("");
+            $("#{{ form.date_to.auto_id }}").attr('disabled', true).val("");
+        }
+        
+    }
+
+    $(document).ready(function() {
+        showHideCustomDates();
+        $("#{{ form.dates.auto_id }}").change(showHideCustomDates);
+        $("#pack_count_filter").submit(getSearchResults);
+    });
+    </script>
+{% endblock script %}

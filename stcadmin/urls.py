@@ -20,7 +20,6 @@ urlpatterns = [
         "price_calculator/",
         include("price_calculator.urls", namespace="price_calculator"),
     ),
-    path("feedback/", include("feedback.urls", namespace="feedback")),
     path("orders/", include("orders.urls", namespace="orders")),
     path("channels/", include("channels.urls", namespace="channels")),
     path("reports/", include("reports.urls", namespace="reports")),

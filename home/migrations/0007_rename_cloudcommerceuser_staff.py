@@ -5,17 +5,15 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('feedback', '0002_auto_20210601_1017'),
-        ('orders', '0033_order_packed_by'),
+        ("orders", "0033_order_packed_by"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('home', '0006_alter_cloudcommerceuser_stcadmin_user'),
+        ("home", "0006_alter_cloudcommerceuser_stcadmin_user"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='CloudCommerceUser',
-            new_name='Staff',
+            old_name="CloudCommerceUser",
+            new_name="Staff",
         ),
     ]

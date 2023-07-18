@@ -64,7 +64,7 @@ class LinnworksOrderManager(models.Manager):
             try:
                 audits = get_order_audit_trail(order.linnworks_order.order_guid)
                 for audit in audits:
-                    if audit.audit_type == "ORDER_PROCESSED":
+                    if audit.audit_type in ("ORDER_PROCESSED", "SHIPPING_LABEL_"):
                         order.packed_by = staff[audit.updated_by]
                         order.save()
                         break
