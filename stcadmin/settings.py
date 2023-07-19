@@ -156,7 +156,7 @@ INSTALLED_APPS = [
     "shipping",
     "fba",
     "channels",
-    "purchases",
+    # "purchases",
     "reports",
     "hardware",
     "linnworks",
