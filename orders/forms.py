@@ -296,7 +296,6 @@ class PackCountFilter(forms.Form):
                     distinct=True,
                 ),
             )
-            print(date_from, date_to)
             return qs
         raise Exception("Error parsing form.")
 
