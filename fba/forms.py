@@ -568,7 +568,6 @@ class FBAShipmentFilter(forms.Form):
     def text_search(self, search_text, qs):
         """Filter the queryset based on search text."""
         if search_text.startswith("STC_FBA_"):
-            print(int(search_text[8:]))
             qs = qs.filter(shipment_order__id=int(search_text[8:]))
         else:
             qs = qs.filter(
