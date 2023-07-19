@@ -17,8 +17,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Create a linnworks composition file."""
         try:
-            csv_file = LinnworksCompostitionImportFile.create()
-            print(csv_file.to_string())
+            LinnworksCompostitionImportFile.create()
         except Exception as e:
             logger.exception("Error creating Linnworks Product Import file.")
             raise e

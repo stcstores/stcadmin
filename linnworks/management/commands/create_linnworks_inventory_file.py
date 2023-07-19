@@ -17,8 +17,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Create a linnworks inventory file."""
         try:
-            csv_file = LinnworksProductImportFile.create()
-            print(csv_file.to_string())
+            LinnworksProductImportFile.create()
         except Exception as e:
             logger.exception("Error creating Linnworks Product Import file.")
             raise e

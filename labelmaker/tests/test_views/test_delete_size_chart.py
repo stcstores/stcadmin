@@ -65,7 +65,6 @@ def test_can_post(valid_client, url):
 @pytest.mark.django_db
 def test_page_contains_app_name(size_chart, page_text):
     message = f'Are you sure you want to delete supplier "{str(size_chart)}"?'
-    print(page_text)
     assert message in page_text
 
 
