@@ -1,48 +1,107 @@
 """Models for the Purhcases app."""
 
-from django.contrib.auth import get_user_model
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
-from polymorphic.models import PolymorphicModel
+from django.core.validators import MinValueValidator
+from django.db import models, transaction
+from solo.models import SingletonModel
 
-from shipping.models import ShippingPrice
+from home.models import Staff
+from inventory.models import BaseProduct
 
 
-class Purchase(PolymorphicModel):
-    """Base model for purchases."""
+class PurchaseSettings(SingletonModel):
+    """Model for storing settings for the purchases app."""
 
-    user = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE, related_name="purchaser"
+    purchase_charge = models.DecimalField(max_digits=4, decimal_places=2)
+    send_report_to = models.EmailField()
+
+    class Meta:
+        """Meta class for PurchaseSettings."""
+
+        verbose_name = "Purchase Settings"
+
+
+class PurchaseExportManager(models.Manager):
+    """Manager for the PurchaseExport model."""
+
+    @transaction.atomic
+    def new_export(self):
+        """Create a new purchase export."""
+        purchases = Purchase.objects.filter(export__isnull=True)
+        export = self.create()
+        purchases.update(export=export)
+        return export
+
+
+class PurchaseExport(models.Model):
+    """Model for purchase exports."""
+
+    export_date = models.DateField(auto_now_add=True, unique=True)
+    report_sent = models.BooleanField(default=False)
+
+    objects = PurchaseExportManager()
+
+    class Meta:
+        """Meta class for PurchaseExport."""
+
+        verbose_name = "Purchase Export"
+        verbose_name_plural = "Purchase Exports"
+        ordering = ("-export_date",)
+
+
+class PurchaseManager(models.Manager):
+    """Manager for the Purchase model."""
+
+    def new_purchase(self, purchased_by, product, quantity):
+        """Create a new purchase."""
+        settings = PurchaseSettings.get_solo()
+        purchase = self.create(
+            purchased_by=purchased_by,
+            product=product,
+            quantity=quantity,
+            time_of_purchase_item_price=product.purchase_price,
+            time_of_purchase_charge=settings.purchase_charge,
+        )
+        purchase.full_clean()
+        return purchase
+
+
+class Purchase(models.Model):
+    """Model for purchases."""
+
+    purchased_by = models.ForeignKey(
+        Staff, on_delete=models.CASCADE, related_name="purchases"
+    )
+    product = models.ForeignKey(
+        BaseProduct, on_delete=models.PROTECT, related_name="staff_purchases"
+    )
+    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    time_of_purchase_item_price = models.PositiveIntegerField(
+        validators=[MinValueValidator(1)]
+    )
+    time_of_purchase_charge = models.DecimalField(max_digits=4, decimal_places=2)
+    export = models.ForeignKey(
+        PurchaseExport,
+        on_delete=models.PROTECT,
+        related_name="purchases",
+        blank=True,
+        null=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(
-        get_user_model(), on_delete=models.CASCADE, related_name="purchase_creator"
-    )
     modified_at = models.DateTimeField(auto_now=True)
-    to_pay = models.IntegerField()
-    cancelled = models.BooleanField(default=False)
 
+    objects = PurchaseManager()
 
-class StockPurchase(Purchase):
-    """Model for stock purchases."""
+    class Meta:
+        """Meta class for Purchase."""
 
-    product_id = models.CharField(max_length=20)
-    product_sku = models.CharField(max_length=20)
-    product_name = models.CharField(max_length=255)
-    full_price = models.IntegerField()
-    discount_percentage = models.PositiveSmallIntegerField(
-        validators=(MinValueValidator(0), MaxValueValidator(100))
-    )
-    quantity = models.IntegerField()
+        verbose_name = "Purchase"
+        verbose_name_plural = "Purchases"
+        ordering = ("-created_at",)
 
-
-class ShippingPurchase(Purchase):
-    """Model for shipping purchaes."""
-
-    shipping_price = models.ForeignKey(ShippingPrice, on_delete=models.PROTECT)
-
-
-class PurchaseNote(Purchase):
-    """Model for purchase notes."""
-
-    text = models.TextField()
+    def to_pay(self):
+        """Return the price to pay for this purchase."""
+        return int(
+            self.time_of_purchase_item_price
+            * self.time_of_purchase_charge
+            * self.quantity
+        )
