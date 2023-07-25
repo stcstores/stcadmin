@@ -3,7 +3,9 @@
 from django import forms
 from django.db.models import Q
 
+from home.models import Staff
 from inventory.models import BaseProduct
+from purchases import models
 
 
 class ProductSearchForm(forms.Form):
@@ -28,3 +30,21 @@ class ProductSearchForm(forms.Form):
                 .distinct()
                 .select_related("product_range")
             )
+        raise Exception("Form is invalid")
+
+
+class CreatePurchaseForm(forms.Form):
+    """Form for creating purchases."""
+
+    purchaser = forms.ModelChoiceField(queryset=Staff.unhidden.all())
+    product_id = forms.IntegerField(widget=forms.HiddenInput())
+    quantity = forms.IntegerField()
+
+    def save(self):
+        """Create a new purchase."""
+        product = BaseProduct.objects.get(pk=self.cleaned_data["product_id"])
+        models.Purchase.objects.new_purchase(
+            purchased_by=self.cleaned_data["purchaser"],
+            product=product,
+            quantity=self.cleaned_data["quantity"],
+        )

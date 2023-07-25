@@ -11,8 +11,8 @@ from inventory.models import BaseProduct
 class PurchaseSettings(SingletonModel):
     """Model for storing settings for the purchases app."""
 
-    purchase_charge = models.DecimalField(max_digits=4, decimal_places=2)
-    send_report_to = models.EmailField()
+    purchase_charge = models.DecimalField(max_digits=4, decimal_places=2, null=True)
+    send_report_to = models.EmailField(null=True)
 
     class Meta:
         """Meta class for PurchaseSettings."""
@@ -97,6 +97,9 @@ class Purchase(models.Model):
         verbose_name = "Purchase"
         verbose_name_plural = "Purchases"
         ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.quantity} x {self.product.sku} for {self.purchased_by}"
 
     def to_pay(self):
         """Return the price to pay for this purchase."""

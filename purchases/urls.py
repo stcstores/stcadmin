@@ -12,4 +12,9 @@ urlpatterns = [
         views.ProductSearchResults.as_view(),
         name="product_search_results",
     ),
+    path(
+        "create_purchase/<int:product_pk>",
+        views.CreatePurchase.as_view(),
+        name="create_purchase",
+    ),
 ]

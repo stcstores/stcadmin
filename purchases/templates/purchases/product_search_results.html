@@ -20,7 +20,7 @@
                          width="50">
                 </td>
                 <td>
-                    <button>Purchase</button>
+                    <a href="{% url 'purchases:create_purchase' product.pk %}">Purchase</a>
                 </td>
             </tr>
         {% endfor %}

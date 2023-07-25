@@ -129,3 +129,14 @@ def test_cannot_create_purchase_with_zero_quantity(
         models.Purchase.objects.new_purchase(
             purchased_by=purchased_by, product=product, quantity=0
         )
+
+
+@pytest.mark.django_db
+def test_str_method(purchase_factory):
+    purchase = purchase_factory.create(
+        product__sku="AAA-AAA-AAA",
+        purchased_by__first_name="Joe",
+        purchased_by__second_name="Man",
+        quantity=2,
+    )
+    assert str(purchase) == "2 x AAA-AAA-AAA for Joe Man"

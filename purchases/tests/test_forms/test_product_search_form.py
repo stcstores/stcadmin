@@ -31,6 +31,13 @@ def test_get_queryset_method_returns_queryset():
 
 
 @pytest.mark.django_db
+def test_get_queryset_raises_for_invalid_form():
+    form = ProductSearchForm()
+    with pytest.raises(Exception):
+        form.get_queryset()
+
+
+@pytest.mark.django_db
 def test_returns_product_by_sku(product):
     form = ProductSearchForm({"search_term": product.sku})
     assert product in form.get_queryset()
