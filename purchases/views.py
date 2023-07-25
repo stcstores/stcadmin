@@ -5,9 +5,10 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, TemplateView
 from django.views.generic.edit import FormView
 
+from home.models import Staff
 from home.views import UserInGroupMixin
 from inventory.models import BaseProduct
-from purchases import forms
+from purchases import forms, models
 
 
 class PurchasesUserMixin(UserInGroupMixin):
@@ -73,3 +74,36 @@ class CreatePurchase(PurchasesUserMixin, FormView):
         """Create a new purchase."""
         form.save()
         return super().form_valid(form)
+
+
+class ManagePurchases(PurchasesUserMixin, TemplateView):
+    """View for managing purchases."""
+
+    template_name = "purchases/manage_purchases.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        staff_ids = (
+            models.Purchase.objects.filter(export__isnull=True)
+            .values_list("purchased_by", flat=True)
+            .distinct()
+        )
+        context["purchasers"] = Staff.objects.filter(id__in=staff_ids)
+        return context
+
+
+class ManageUserPurchases(PurchasesUserMixin, TemplateView):
+    """View for managing user purchaes."""
+
+    template_name = "purchases/manage_user_purchases.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        purchaser = get_object_or_404(Staff, pk=self.kwargs["staff_pk"])
+        context["purchaser"] = purchaser
+        context["purchases"] = models.Purchase.objects.filter(
+            purchased_by=purchaser, export__isnull=True
+        ).order_by("-created_at")
+        return context

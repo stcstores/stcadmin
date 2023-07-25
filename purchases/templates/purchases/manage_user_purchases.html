@@ -1,0 +1,37 @@
+{% extends "purchases/base.html" %}
+
+{% load fba_extras %}
+
+{% block content %}
+
+    <h1>Purchases</h1>
+    <h2>{{ purchaser }}</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>SKU</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>To Pay</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for purchase in purchases %}
+                <tr>
+                    <td>{{ purchase.created_at }}</td>
+                    <td>{{ purchase.product.sku }}</td>
+                    <td>{{ purchase.product.full_name }}</td>
+                    <td>{{ purchase.quantity }}</td>
+                    <td>£{{ purchase.to_pay|floatformat:2 }}</td>
+                    <td>
+                        <a href="">Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock content %}

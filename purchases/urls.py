@@ -17,4 +17,10 @@ urlpatterns = [
         views.CreatePurchase.as_view(),
         name="create_purchase",
     ),
+    path("manage_purchases", views.ManagePurchases.as_view(), name="manage_purchases"),
+    path(
+        "manage_user_purchases/<int:staff_pk>",
+        views.ManageUserPurchases.as_view(),
+        name="manage_user_purchases",
+    ),
 ]

@@ -75,9 +75,7 @@ class Purchase(models.Model):
         BaseProduct, on_delete=models.PROTECT, related_name="staff_purchases"
     )
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
-    time_of_purchase_item_price = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)]
-    )
+    time_of_purchase_item_price = models.DecimalField(decimal_places=2, max_digits=8)
     time_of_purchase_charge = models.DecimalField(max_digits=4, decimal_places=2)
     export = models.ForeignKey(
         PurchaseExport,
@@ -103,8 +101,8 @@ class Purchase(models.Model):
 
     def to_pay(self):
         """Return the price to pay for this purchase."""
-        return int(
-            self.time_of_purchase_item_price
+        return float(
+            (self.time_of_purchase_item_price)
             * self.time_of_purchase_charge
             * self.quantity
         )

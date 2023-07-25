@@ -1,0 +1,12 @@
+{% extends "purchases/base.html" %}
+
+{% block content %}
+    <h1>Manage Purchases</h1>
+    <p>Manage purchases for:</p>
+    {% for purchaser in purchasers %}
+        <p>
+            <a href="{% url 'purchases:manage_user_purchases' purchaser.id %}">{{ purchaser }}</a>
+        </p>
+    {% endfor %}
+
+{% endblock content %}

@@ -60,7 +60,7 @@ def test_purchase_has_quantity_attribute(purchase):
 
 @pytest.mark.django_db
 def test_purchase_has_time_of_purchase_item_price_attribute(purchase):
-    assert isinstance(purchase.time_of_purchase_item_price, int)
+    assert isinstance(purchase.time_of_purchase_item_price, Decimal)
 
 
 @pytest.mark.django_db
