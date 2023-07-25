@@ -1,0 +1,30 @@
+{% include "orders/pagination_navigation.html" %}
+<table>
+    <thead>
+        <tr>
+            <th>SKU</th>
+            <th>Product</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in object_list %}
+            <tr>
+                <td>{{ product.sku }}</td>
+                <td>{{ product.full_name }}</td>
+                <td>
+                    <img src="{{ product.get_primary_image.thumbnail.url }}"
+                         alt="{{ image.image_file }}"
+                         height="50"
+                         width="50">
+                </td>
+                <td>
+                    <button>Purchase</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include "orders/pagination_navigation.html" %}
