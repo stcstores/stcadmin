@@ -1,4 +1,4 @@
-{% extends 'fba/base.html' %}
+{% extends "fba/base.html" %}
 
 {% block content %}
     {{ block.super }}
@@ -45,6 +45,12 @@
                 <button>Invoice</button>
             </a>
         {% endif %}
+    {% endif %}
+ 
+    {% if form.instance.id == none %}
+        <div>
+            <h3>{{ existing_order_count }} current FBA order{{ existing_order_count|pluralize }} for this product.</h3>
+        </div>
     {% endif %}
 
     <img src="{% if form.instance.id %}{{ form.instance.product_image_url }}{% else %}{{ image_url }}{% endif %}"
@@ -149,7 +155,7 @@
         </div>
 
         <div class="fba_order_form">
-            <form action="" method="POST">
+            <form action="" method="post">
                 {% csrf_token %}
                 {{ form.as_p }}
                 {% if form.instance.id %}
@@ -190,7 +196,7 @@
     </div>
 
     {% if form.instance.status == form.instance.CLOSED or form.instance.status == form.instance.FULFILLED %}
-        {% include 'fba/fba_order_manage_shipments.html' with fba_order=form.instance %}
+        {% include "fba/fba_order_manage_shipments.html" with fba_order=form.instance %}
     {% endif %}
 
 {% endblock content %}

@@ -105,6 +105,11 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
             stock_level = 0
         context["stock_level"] = stock_level
         context["image_url"] = context["form"].initial["product_image_url"]
+        context["existing_order_count"] = (
+            models.FBAOrder.objects.filter(product_SKU=self.product.sku)
+            .exclude(status=models.FBAOrder.FULFILLED)
+            .count()
+        )
         return context
 
     def get_success_url(self):
