@@ -1,9 +1,9 @@
 """Views for the purchases app."""
 
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, TemplateView
-from django.views.generic.edit import FormView
+from django.views.generic.edit import DeleteView, FormView, UpdateView
 
 from home.models import Staff
 from home.views import UserInGroupMixin
@@ -107,3 +107,27 @@ class ManageUserPurchases(PurchasesUserMixin, TemplateView):
             purchased_by=purchaser, export__isnull=True
         ).order_by("-created_at")
         return context
+
+
+class UpdatePurchase(PurchasesUserMixin, UpdateView):
+    """View for updating purchases."""
+
+    model = models.Purchase
+    fields = ("quantity",)
+    template_name = "purchases/update_purchase.html"
+    queryset = models.Purchase.objects.filter(export__isnull=True)
+
+    def get_success_url(self):
+        """Return the success URL."""
+        return reverse(
+            "purchases:manage_user_purchases",
+            kwargs={"staff_pk": self.object.purchased_by.pk},
+        )
+
+
+class DeletePurchase(PurchasesUserMixin, DeleteView):
+    """View for deleting purchases."""
+
+    model = models.Purchase
+    queryset = models.Purchase.objects.filter(export__isnull=True)
+    success_url = reverse_lazy("purchases:manage_purchases")

@@ -2,11 +2,15 @@
 
 {% block content %}
     <h1>Manage Purchases</h1>
-    <p>Manage purchases for:</p>
-    {% for purchaser in purchasers %}
-        <p>
-            <a href="{% url 'purchases:manage_user_purchases' purchaser.id %}">{{ purchaser }}</a>
-        </p>
-    {% endfor %}
 
+    {% if purchasers %}
+        <p>Manage purchases for:</p>
+        {% for purchaser in purchasers %}
+            <p>
+                <a href="{% url 'purchases:manage_user_purchases' purchaser.id %}">{{ purchaser }}</a>
+            </p>
+        {% endfor %}
+    {% else %}
+        <p>There are no open purchases.</p>
+    {% endif %}
 {% endblock content %}

@@ -23,4 +23,14 @@ urlpatterns = [
         views.ManageUserPurchases.as_view(),
         name="manage_user_purchases",
     ),
+    path(
+        "update_purchase/<int:pk>",
+        views.UpdatePurchase.as_view(),
+        name="update_purchase",
+    ),
+    path(
+        "delete_purchase/<int:pk>",
+        views.DeletePurchase.as_view(),
+        name="delete_purchase",
+    ),
 ]
