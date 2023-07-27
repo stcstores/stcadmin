@@ -56,6 +56,12 @@ def test_new_purchases_in_purchases(purchaser, new_purchases, get_response):
 
 
 @pytest.mark.django_db
+def test_total_to_pay_in_context(new_purchases, get_response):
+    expected_value = sum((_.to_pay() for _ in new_purchases))
+    assert get_response.context["total_to_pay"] == expected_value
+
+
+@pytest.mark.django_db
 def test_old_purchases_not_in_purchases(old_purchase, get_response):
     assert old_purchase not in get_response.context["purchases"]
 

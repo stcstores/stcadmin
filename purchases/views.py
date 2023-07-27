@@ -106,6 +106,7 @@ class ManageUserPurchases(PurchasesUserMixin, TemplateView):
         context["purchases"] = models.Purchase.objects.filter(
             purchased_by=purchaser, export__isnull=True
         ).order_by("-created_at")
+        context["total_to_pay"] = sum((_.to_pay() for _ in context["purchases"]))
         return context
 
 
