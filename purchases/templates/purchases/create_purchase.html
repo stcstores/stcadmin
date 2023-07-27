@@ -8,6 +8,10 @@
          alt="{{ image.image_file }}"
          height="100"
          width="100">
+ 
+    <p>Item price: £{{ product.purchase_price|floatformat:2 }}</p>
+    <p>To Pay for each: £{{ to_pay|floatformat:2 }}</p>
+ 
     <form action="" method="post">
         {% csrf_token %}
         {{ form.as_p }}

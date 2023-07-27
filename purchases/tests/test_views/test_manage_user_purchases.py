@@ -57,7 +57,7 @@ def test_new_purchases_in_purchases(purchaser, new_purchases, get_response):
 
 @pytest.mark.django_db
 def test_total_to_pay_in_context(new_purchases, get_response):
-    expected_value = sum((_.to_pay() for _ in new_purchases))
+    expected_value = round(sum((_.to_pay() for _ in new_purchases)), 2)
     assert get_response.context["total_to_pay"] == expected_value
 
 

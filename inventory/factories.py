@@ -1,6 +1,7 @@
 """Model factories for the inventory app."""
 
 import datetime as dt
+from decimal import Decimal
 
 import factory
 from django.core.files.base import ContentFile
@@ -141,7 +142,7 @@ class ProductFactory(BaseProductFactory):
     class Meta:
         model = models.Product
 
-    purchase_price = 5.00
+    purchase_price = Decimal("5.00")
     brand = factory.SubFactory(BrandFactory)
     manufacturer = factory.SubFactory(ManufacturerFactory)
     weight_grams = 500

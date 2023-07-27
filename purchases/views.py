@@ -68,6 +68,8 @@ class CreatePurchase(PurchasesUserMixin, FormView):
         context["product"] = get_object_or_404(
             BaseProduct, pk=self.kwargs["product_pk"]
         )
+        purchase_charge = models.PurchaseSettings.get_solo().purchase_charge
+        context["to_pay"] = context["product"].purchase_price * purchase_charge
         return context
 
     def form_valid(self, form):
@@ -106,7 +108,9 @@ class ManageUserPurchases(PurchasesUserMixin, TemplateView):
         context["purchases"] = models.Purchase.objects.filter(
             purchased_by=purchaser, export__isnull=True
         ).order_by("-created_at")
-        context["total_to_pay"] = sum((_.to_pay() for _ in context["purchases"]))
+        context["total_to_pay"] = round(
+            sum((_.to_pay() for _ in context["purchases"])), 2
+        )
         return context
 
 

@@ -6,8 +6,8 @@
     <h2>{{ form.instance.product.sku }} - {{ form.instance.product.full_name }}</h2>
     <h2>Purchased by {{ form.instance.purchased_by }} - {{ form.instance.created_at.date }}</h2>
 
-    <p>Item price: {{ form.instance.time_of_purchase_item_price }}</p>
-    <p>To Pay: {{ form.instance.to_pay }}</p>
+    <p>Item price: £{{ form.instance.time_of_purchase_item_price|floatformat:2 }}</p>
+    <p>To Pay: £{{ form.instance.to_pay|floatformat:2 }}</p>
 
     <a href="{% url 'purchases:delete_purchase' purchase.pk %}">
         <button>Cancel Purchase</button>

@@ -7,6 +7,11 @@ from home.models import Staff
 
 
 @pytest.fixture
+def purchase_settings(purchase_settings_factory):
+    return purchase_settings_factory.create()
+
+
+@pytest.fixture
 def staff(staff_factory, user):
     staff_obj, _ = Staff.objects.get_or_create(stcadmin_user=user)
     return staff_obj
@@ -18,7 +23,7 @@ def product(product_factory):
 
 
 @pytest.fixture
-def url(staff, product):
+def url(staff, purchase_settings, product):
     return reverse("purchases:create_purchase", kwargs={"product_pk": product.id})
 
 
@@ -63,6 +68,12 @@ def test_get_initial(staff, product, get_response):
 @pytest.mark.django_db
 def test_product_in_context(product, get_response):
     assert get_response.context["product"] == product
+
+
+@pytest.mark.django_db
+def test_to_pay_in_context(purchase_settings, product, get_response):
+    expected_value = product.purchase_price * purchase_settings.purchase_charge
+    assert get_response.context["to_pay"] == expected_value
 
 
 @pytest.mark.django_db
