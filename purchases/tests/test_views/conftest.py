@@ -4,7 +4,6 @@ import pytest
 from django.contrib.auth.models import Group
 
 PURCHASES_GROUP_NAME = "purchases"
-PURCHASE_MANAGER_GROUP_NAME = "purchase_manager"
 
 
 @pytest.fixture
@@ -28,14 +27,6 @@ def logged_in_client(client, user, test_password):
 @pytest.fixture
 def group_logged_in_client(client, user, test_password):
     group, _ = Group.objects.get_or_create(name=PURCHASES_GROUP_NAME)
-    group.user_set.add(user)
-    client.login(username=user.username, password=test_password)
-    return client
-
-
-@pytest.fixture
-def manager_group_logged_in_client(client, user, test_password):
-    group, _ = Group.objects.get_or_create(name=PURCHASE_MANAGER_GROUP_NAME)
     group.user_set.add(user)
     client.login(username=user.username, password=test_password)
     return client

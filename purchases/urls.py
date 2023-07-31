@@ -33,4 +33,10 @@ urlpatterns = [
         views.DeletePurchase.as_view(),
         name="delete_purchase",
     ),
+    path("purchase_reports", views.PurchaseReports.as_view(), name="purchase_reports"),
+    path(
+        "download_purchase_report/<int:pk>",
+        views.DownloadPurchaseReport.as_view(),
+        name="download_purchase_report",
+    ),
 ]

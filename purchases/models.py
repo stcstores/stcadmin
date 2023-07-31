@@ -5,6 +5,7 @@ from io import StringIO
 
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
+from django.utils import timezone
 from solo.models import SingletonModel
 
 from home.models import Staff
@@ -38,7 +39,7 @@ class PurchaseExportManager(models.Manager):
 class PurchaseExport(models.Model):
     """Model for purchase exports."""
 
-    export_date = models.DateField(auto_now_add=True, unique=True)
+    export_date = models.DateField(default=timezone.now, unique=True)
     report_sent = models.BooleanField(default=False)
 
     objects = PurchaseExportManager()
@@ -91,7 +92,7 @@ class Purchase(models.Model):
         blank=True,
         null=True,
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(auto_now=True)
 
     objects = PurchaseManager()

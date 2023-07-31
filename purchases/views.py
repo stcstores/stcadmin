@@ -1,8 +1,9 @@
 """Views for the purchases app."""
 
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, View
 from django.views.generic.edit import DeleteView, FormView, UpdateView
 
 from home.models import Staff
@@ -15,12 +16,6 @@ class PurchasesUserMixin(UserInGroupMixin):
     """Mixin to validate user in in purchases group."""
 
     groups = ["purchases", "purchase_manager"]
-
-
-class PurchaseManagerUserMixin(UserInGroupMixin):
-    """Mixin to validate user in in purchase_manager group."""
-
-    groups = ["purchase_manager"]
 
 
 class ProductSearch(PurchasesUserMixin, TemplateView):
@@ -136,3 +131,29 @@ class DeletePurchase(PurchasesUserMixin, DeleteView):
     model = models.Purchase
     queryset = models.Purchase.objects.filter(export__isnull=True)
     success_url = reverse_lazy("purchases:manage_purchases")
+
+
+class PurchaseReports(PurchasesUserMixin, ListView):
+    """View for listing purchase reports."""
+
+    model = models.PurchaseExport
+    paginate_by = 50
+    template_name = "purchases/purchase_reports.html"
+
+
+class DownloadPurchaseReport(PurchasesUserMixin, View):
+    """View for downloading purchase reports."""
+
+    def get(self, *args, **kwargs):
+        """Download a purchase report .csv file."""
+        export = get_object_or_404(models.PurchaseExport, pk=self.kwargs["pk"])
+        report = export.generate_report().getvalue()
+        filename = self.get_filename(export)
+        response = HttpResponse(report)
+        response["Content-Disposition"] = f"attachment;filename={filename}"
+        return response
+
+    @staticmethod
+    def get_filename(export):
+        """Return the filename for the report."""
+        return f"purchase_report_{export.export_date.strftime('%b_%Y')}.csv"

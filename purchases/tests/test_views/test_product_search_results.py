@@ -30,5 +30,4 @@ def test_products_in_context(get_response):
 @pytest.mark.django_db
 def test_page_obj_in_context(get_response):
     page_obj = get_response.context["page_obj"]
-    print(type(page_obj))
     assert isinstance(page_obj, Page)

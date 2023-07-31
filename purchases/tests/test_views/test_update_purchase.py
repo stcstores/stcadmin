@@ -65,7 +65,7 @@ def test_post_updates_purchase(purchase, new_quantity, post_response):
 
 
 @pytest.mark.django_db
-def test_success_new_purchase_url(purchase, post_response):
+def test_success_url(purchase, post_response):
     assert post_response["location"] == reverse(
         "purchases:manage_user_purchases", kwargs={"staff_pk": purchase.purchased_by.id}
     )
