@@ -148,12 +148,7 @@ class DownloadPurchaseReport(PurchasesUserMixin, View):
         """Download a purchase report .csv file."""
         export = get_object_or_404(models.PurchaseExport, pk=self.kwargs["pk"])
         report = export.generate_report().getvalue()
-        filename = self.get_filename(export)
+        filename = export.get_report_filename()
         response = HttpResponse(report)
         response["Content-Disposition"] = f"attachment;filename={filename}"
         return response
-
-    @staticmethod
-    def get_filename(export):
-        """Return the filename for the report."""
-        return f"purchase_report_{export.export_date.strftime('%b_%Y')}.csv"

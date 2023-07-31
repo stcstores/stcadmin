@@ -27,7 +27,7 @@
           <a href="{% url 'fba:index' %}">FBA</a>
         </li>
       {% endif %}
-      {% if 'purchases' in groups or 'purchase_manager' in groups %}
+      {% if 'purchases' in groups %}
         <li>
           <a href="{% url 'purchases:product_search' %}">Purchases</a>
         </li>

@@ -3,8 +3,6 @@ import datetime as dt
 import pytest
 from django.urls import reverse
 
-from purchases.views import DownloadPurchaseReport
-
 
 @pytest.fixture
 def date():
@@ -26,12 +24,6 @@ def url(purchase_export):
 @pytest.fixture
 def get_response(group_logged_in_client, url):
     return group_logged_in_client.get(url)
-
-
-@pytest.mark.django_db
-def test_get_filename(purchase_export):
-    returned_value = DownloadPurchaseReport.get_filename(purchase_export)
-    assert returned_value == "purchase_report_Feb_2023.csv"
 
 
 @pytest.mark.django_db

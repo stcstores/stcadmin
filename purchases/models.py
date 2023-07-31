@@ -3,6 +3,8 @@
 import csv
 from io import StringIO
 
+from django.conf import settings
+from django.core.mail import EmailMessage
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.utils import timezone
@@ -54,6 +56,31 @@ class PurchaseExport(models.Model):
     def generate_report(self):
         """Return a .csv report as io.StringIO."""
         return PurchaseExportReport.generate_report_text(self)
+
+    def get_report_filename(self):
+        """Return a filename for .csv reports based on this expot."""
+        return f"purchase_report_{self.export_date.strftime('%b_%Y')}.csv"
+
+    def send_report_email(self):
+        """Send montly staff purchase report email."""
+        purchases_exist = self.purchases.count() > 0
+        if purchases_exist:
+            message_body = "Please find this months staff purchase report attached."
+        else:
+            message_body = "No staff purchases were made this month."
+        message = EmailMessage(
+            subject=f"Staff Purchases Report {self.export_date.strftime('%b %Y')}",
+            body=message_body,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[PurchaseSettings.get_solo().send_report_to],
+        )
+        if purchases_exist:
+            message.attach(
+                self.get_report_filename(),
+                self.generate_report().getvalue(),
+                "text/csv",
+            )
+        message.send()
 
 
 class PurchaseManager(models.Manager):

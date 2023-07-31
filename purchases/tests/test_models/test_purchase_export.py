@@ -2,9 +2,15 @@ import datetime as dt
 from unittest import mock
 
 import pytest
+from django.conf import settings
 from django.db.utils import IntegrityError
 
 from purchases import models
+
+
+@pytest.fixture
+def purchase_settings(purchase_settings_factory):
+    return purchase_settings_factory.create()
 
 
 @pytest.fixture
@@ -14,12 +20,19 @@ def purchases(purchase_factory):
 
 @pytest.fixture
 def purchase_export(purchase_export_factory):
-    return purchase_export_factory.create()
+    return purchase_export_factory.create(
+        export_date=dt.date(day=1, month=2, year=2022)
+    )
 
 
 @pytest.fixture
 def new_purchase_export():
     return models.PurchaseExport.objects.new_export()
+
+
+@pytest.fixture
+def purchases_on_export(purchase_factory, purchase_export):
+    return purchase_factory.create_batch(3, export=purchase_export)
 
 
 @pytest.fixture
@@ -79,8 +92,52 @@ def test_new_export_does_not_add_exported_purchases(
 
 
 @pytest.mark.django_db
+def test_get_report_filename(purchase_export):
+    returned_value = purchase_export.get_report_filename()
+    assert returned_value == "purchase_report_Feb_2022.csv"
+
+
+@pytest.mark.django_db
 @mock.patch("purchases.models.PurchaseExportReport.generate_report_text")
 def test_generate_report(mock_generate_report_text, purchase_export):
     returned_value = purchase_export.generate_report()
     mock_generate_report_text.assert_called_once_with(purchase_export)
     assert returned_value == mock_generate_report_text.return_value
+
+
+@pytest.mark.django_db
+@mock.patch("purchases.models.EmailMessage")
+def test_send_report_email(
+    mock_email_message, purchases_on_export, purchase_settings, purchase_export
+):
+    purchase_export.generate_report = mock.Mock()
+    purchase_export.send_report_email()
+    mock_email_message.assert_called_once_with(
+        subject="Staff Purchases Report Feb 2022",
+        body="Please find this months staff purchase report attached.",
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[purchase_settings.send_report_to],
+    )
+    mock_email_message.return_value.attach.assert_called_once_with(
+        purchase_export.get_report_filename(),
+        purchase_export.generate_report.return_value.getvalue.return_value,
+        "text/csv",
+    )
+    mock_email_message.return_value.send.assert_called_once_with()
+
+
+@pytest.mark.django_db
+@mock.patch("purchases.models.EmailMessage")
+def test_send_empty_report_email(
+    mock_email_message, purchase_settings, purchase_export
+):
+    purchase_export.generate_report = mock.Mock()
+    purchase_export.send_report_email()
+    mock_email_message.assert_called_once_with(
+        subject="Staff Purchases Report Feb 2022",
+        body="No staff purchases were made this month.",
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[purchase_settings.send_report_to],
+    )
+    mock_email_message.return_value.attach.assert_not_called
+    mock_email_message.return_value.send.assert_called_once_with()
