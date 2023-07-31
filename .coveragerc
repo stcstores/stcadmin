@@ -9,3 +9,10 @@ omit =
   *urls.py,
   *wsgi.py,
   manage.py
+  stcadmin/celery.py
+
+[html]
+directory = ./htmlcov
+skip_covered = True
+skip_empty = True
+show_contexts = True
