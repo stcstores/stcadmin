@@ -1,5 +1,8 @@
 """Models for the Purhcases app."""
 
+import csv
+from io import StringIO
+
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from solo.models import SingletonModel
@@ -46,6 +49,10 @@ class PurchaseExport(models.Model):
         verbose_name = "Purchase Export"
         verbose_name_plural = "Purchase Exports"
         ordering = ("-export_date",)
+
+    def generate_report(self):
+        """Return a .csv report as io.StringIO."""
+        return PurchaseExportReport.generate_report_text(self)
 
 
 class PurchaseManager(models.Manager):
@@ -106,3 +113,58 @@ class Purchase(models.Model):
             * self.time_of_purchase_charge
             * self.quantity
         )
+
+
+class PurchaseExportReport:
+    """Generate reports for purchase exports."""
+
+    header = [
+        "Purchased By",
+        "SKU",
+        "Product",
+        "Quantity",
+        "Date",
+        "Item Price",
+        "To Pay",
+    ]
+
+    @classmethod
+    def generate_report_text(cls, export):
+        """Return io.StringIO containing the report as a .csv."""
+        rows = cls._get_report_data(cls._get_staff_purchases(export))
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerows(rows)
+        return output
+
+    @staticmethod
+    def _get_staff_purchases(export):
+        staff_ids = export.purchases.values_list("purchased_by", flat=True)
+        return {
+            staff: export.purchases.filter(purchased_by=staff)
+            for staff in Staff.objects.filter(id__in=staff_ids)
+        }
+
+    @staticmethod
+    def _get_report_data(staff_purchases):
+        rows = [PurchaseExportReport.header]
+        for purchases in staff_purchases.values():
+            for purchase in purchases:
+                rows.append(PurchaseExportReport._get_purchase_row(purchase))
+            rows.append(
+                ["" for _ in range(6)] + [str(sum((_.to_pay() for _ in purchases)))]
+            )
+            rows.append([])
+        return rows
+
+    @staticmethod
+    def _get_purchase_row(purchase):
+        return [
+            str(purchase.purchased_by),
+            purchase.product.sku,
+            purchase.product.full_name,
+            purchase.quantity,
+            str(purchase.created_at.date()),
+            str(purchase.time_of_purchase_item_price),
+            str(purchase.to_pay()),
+        ]

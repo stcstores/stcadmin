@@ -1,4 +1,5 @@
 import datetime as dt
+from unittest import mock
 
 import pytest
 from django.db.utils import IntegrityError
@@ -75,3 +76,11 @@ def test_new_export_does_not_add_exported_purchases(
     purchase = purchase_factory.create(export=old_export)
     export = models.PurchaseExport.objects.new_export()
     assert purchase not in export.purchases.all()
+
+
+@pytest.mark.django_db
+@mock.patch("purchases.models.PurchaseExportReport.generate_report_text")
+def test_generate_report(mock_generate_report_text, purchase_export):
+    returned_value = purchase_export.generate_report()
+    mock_generate_report_text.assert_called_once_with(purchase_export)
+    assert returned_value == mock_generate_report_text.return_value
