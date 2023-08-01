@@ -113,15 +113,15 @@ var LabelSelectionTable = function(parent, data, form) {
         data: data,
         sizes: data.sizes,
         colours: data.colours,
-        table: $('<table id="label_selection_table" class="label_selection_table"></table>'),
+        table: $('<table id="label_selection_table" class="table table-secondary"></table>'),
     };
 
-    self.thead = $('<thead></thead>');
+    self.thead = $('<thead class="table-primary"></thead>');
     self.tbody = $('<tbody></tbody>');
     self.table.append(self.thead);
     self.table.append(self.tbody);
     self.thead.append('<tr><th>Size</th><th>Colour</th><th>Quantity</th><th></th><tr>');
-    self.toggle_selected = $('<button>Toggle</button>');
+    self.toggle_selected = $('<button class="btn btn-primary">Toggle</button>');
 
     $.each(self.sizes, function(index, size) {
         var size_reference = size[0];
@@ -131,7 +131,7 @@ var LabelSelectionTable = function(parent, data, form) {
         });
     });
     parent.append(self.table);
-    generate_labels_button = $('<button id="generate_labels_button">Generate labels</button>');
+    generate_labels_button = $('<button id="generate_labels_button" class="btn btn-primary">Generate labels</button>');
     generate_labels_button.click(function() {
         var data = [];
         var rows = self.tbody.find('tr');
@@ -150,8 +150,8 @@ var LabelSelectionTable = function(parent, data, form) {
         form.submit();
     });
     parent.append(generate_labels_button);
-    self.update_selected_input = $('<input>', {'type': 'number', 'name': 'update_selected', 'value': '0', 'min': '0', 'step': '1'});
-    self.update_selected_button = $('<button>Update Selected</button>');
+    self.update_selected_input = $('<input>', {'type': 'number', 'name': 'update_selected', 'value': '0', 'min': '0', 'step': '1', 'size':3});
+    self.update_selected_button = $('<button class="btn btn-primary">Update Selected</button>');
     self.update_selected_input.insertBefore(self.table);
     self.update_selected_button.insertBefore(self.table);
     self.update_selected_button.click(function() {

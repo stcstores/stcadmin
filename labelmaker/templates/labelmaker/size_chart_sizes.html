@@ -2,43 +2,56 @@
 {% load static %}
 
 {% block content %}
-<h1>
-    {% if size_chart.supplier %}{{ size_chart.supplier.name }}{% else %}No Supplier{% endif %} - {{ size_chart.name }}&nbsp;
-    <a href="{{ size_chart.get_absolute_url }}">
-        <img src="{% static 'images/edit.png' %}" alt="Edit" height="35" width="35">
-    </a>
-</h1>
-<div>
-    <button id="add_row">Add Size</button>
-</div>
-<form class="size_chart_form" method="POST" id="size_form">{% csrf_token %}
-    {{ formset.management_form }}
-    <table id="sizes">
-        <thead>
-            <tr>
-                {% for field in formset.0.visible_fields %}<th>{{ field.label }}</th>{% endfor %}
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for form in formset %}
-            <div class="error">{{ form.non_field_errors }}</div>
-            <tr class="size">
-                {% for field in form.visible_fields %}
-                <td>{{ field }}{{ field.errors }}</td>{% endfor %}
-                <td><input type="button" value="&uarr;" class="order_button up"></td>
-                <td><input type="button" value="&darr;" class="order_button down"></td>
-                {% for field in form.hidden_fields %}{{ field }}{% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <input type="submit" value="Save">
-</form>
-{% endblock %}
-{% block script %}{{ block.super }}
-<script>
+    <div class="container">
+        <h3 class="display-3 mb-2">Edit Size Chart</h3>
+        <p class="mb-5 fs-4">
+            {% if size_chart.supplier %}
+                {{ size_chart.supplier.name }}
+            {% else %}
+                No Supplier
+            {% endif %}
+            - {{ size_chart.name }}&nbsp;
+            <a href="{{ size_chart.get_absolute_url }}"
+               class="btn btn-primary btn-sm">Edit</a>
+        </p>
+        <div>
+            <button id="add_row" class="btn btn-primary">Add Size</button>
+        </div>
+        <form class="size_chart_form" method="post" id="size_form">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            <table id="sizes" class="table table-secondary">
+                <thead class="table-primary">
+                    <tr>
+                        {% for field in formset.0.visible_fields %}<th>{{ field.label }}</th>{% endfor %}
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in formset %}
+                        <div class="error">{{ form.non_field_errors }}</div>
+                        <tr class="size">
+                            {% for field in form.visible_fields %}<td>{{ field }}{{ field.errors }}</td>{% endfor %}
+                            <td>
+                                <a class="order_button up btn btn-sm btn-primary"><i class="fa-solid fa-arrow-up"></i></a>
+                            </td>
+                            <td>
+                                <a class="order_button down btn btn-sm btn-primary"><i class="fa-solid fa-arrow-down"></i></a>
+                            </td>
+                            {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <input type="submit" value="Save" class="btn btn-primary">
+        </form>
+    </div>
+{% endblock content %}
+
+{% block script %}
+    {{ block.super }}
+    <script>
     function cloneMore(selector, type) {
         var newElement = $(selector).clone(false);
         var total = $('#id_' + type + '-TOTAL_FORMS').val();
@@ -95,5 +108,5 @@
             });
         });
     });
-</script>
-{% endblock %}
+    </script>
+{% endblock script %}

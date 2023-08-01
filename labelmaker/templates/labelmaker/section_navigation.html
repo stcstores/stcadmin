@@ -1,8 +1,22 @@
-<div class="section_navigation">
-    <ul>
-        <li><a href="{% url 'labelmaker:index' %}">Labelmaker</a></li>
-        <li><a href="{% url 'labelmaker:product_labels' %}">Product Labels</a></li>
-        <li><a href="{% url 'labelmaker:address_labels' %}">Address Labels</a></li>
-        <li><a href="{% url 'labelmaker:small_labels' %}">Small Labels</a></li>
-    </ul>
-</div>
+<header class="p-3 text-bg-secondary">
+    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+            <li>
+                <a class="nav-link px-2 text-white fw-bold fs-4 navbar-brand"
+                   href="{% url 'labelmaker:index' %}">Labelmaker</a>
+            </li>
+            <li>
+                <a class="nav-link px-2 text-white"
+                   href="{% url 'labelmaker:product_labels' %}">Product Labels</a>
+            </li>
+            <li>
+                <a class="nav-link px-2 text-white"
+                   href="{% url 'labelmaker:address_labels' %}">Address Labels</a>
+            </li>
+            <li>
+                <a class="nav-link px-2 text-white"
+                   href="{% url 'labelmaker:small_labels' %}">Small Labels</a>
+            </li>
+        </ul>
+    </div>
+</header>

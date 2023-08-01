@@ -2,40 +2,62 @@
 
 {% block content %}
 
-<h1>Small Labels</h1>
-<h2>Create labels with generic text on small labels</h2>
+  <div class="container">
+    <h3 class="display-3 mb-2">Small Labels</h3>
+    <p class="mb-5">Create labels with generic text on small labels</p>
 
-<form action="{% url 'labelmaker:small_label_pdf' %}" method="POST" target="_blank" autocomplete="off">{% csrf_token %}
-  <table>
-    <thead>
-      <tr>
-        <th>Text</th>
-        <th>Quantity</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>
-          <textarea name="label_text" id="label_text_input" cols="20" rows="3" style="text-align: center;"></textarea>
-          <td>
-            <input name="quantity" type="number" value="1" min="0" max="999" step="1">
-          </td>
-        </td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr>
-        <th colspan="2"><button type="submit">Generate Label</button></th>
-      </tr>
-    </tfoot>
-  </table>
-  <br>
-</form>
+    <div class="col-6">
+      <form action="{% url 'labelmaker:small_label_pdf' %}"
+            method="post"
+            target="_blank"
+            autocomplete="off">
+        {% csrf_token %}
+        <table class="table table-primary">
+          <thead class="table-secondary">
+            <tr>
+              <th>Text</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <textarea name="label_text"
+                          id="label_text_input"
+                          class="form-control"
+                          cols="20"
+                          rows="3"
+                          style="text-align: center"></textarea>
+                <td>
+                  <input name="quantity"
+                         class="form-control"
+                         type="number"
+                         value="1"
+                         min="0"
+                         max="999"
+                         step="1">
+                </td>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th colspan="2">
+                <button type="submit" class="btn btn-primary">Generate Labels</button>
+              </th>
+            </tr>
+          </tfoot>
+        </table>
+        <br>
+      </form>
+    </div>
+  </div>
 
-{% endblock %}
+{% endblock content %}
 
 {% block script %}
-<script>
+
+  <script>
   function addRow() {
     var row = $('tbody tr:last').clone();
     row.find('textarea').val('');
@@ -50,5 +72,6 @@
       }
     });
   });
-</script>
-{% endblock %}
+  </script>
+
+{% endblock script %}

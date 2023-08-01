@@ -3,23 +3,22 @@
 
 {% block content %}
 
-<h1>Address Labels</h1>
-<h2>Create labels using address label paper</h2>
-
-<form action="{% url 'labelmaker:address_label_pdf' %}" method="POST" target="_blank">{% csrf_token %}
-    <table>
-        <tr>
-            <th>Label text</th>
-            <td>
-                <textarea name="label_text" id="label_text_input" cols="20" rows="5" style="text-align: center;"></textarea>
-            </td>
-
-        </tr>
-        <tr>
-            <th colspan="2"><button type="submit">Generate Label</button></th>
-        </tr>
-    </table>
-    <br>
-</form>
-
-{% endblock %}
+    <div class="container">
+        <h3 class="display-3 mb-2">Address Labels</h3>
+        <p class="mb-5">Create labels using address label paper</p>
+        <div class="col-6">
+            <form action="{% url 'labelmaker:address_label_pdf' %}"
+                  method="post"
+                  target="_blank">
+                {% csrf_token %}
+                <textarea name="label_text"
+                          id="label_text_input"
+                          class="form-control mb-3"
+                          cols="20"
+                          rows="5"
+                          style="text-align: center"></textarea>
+                <button type="submit" class="btn btn-primary">Generate Label</button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

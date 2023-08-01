@@ -1,8 +1,16 @@
-{% extends 'labelmaker/base.html' %}
+{% extends "labelmaker/base.html" %}
 
 {% block content %}
-<form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Save">
-</form>
+    <div class="container">
+
+        <h3 class="display-3 mb-5">Create Size Chart</h3>
+
+        <div class="col-6">
+            <form method="post">
+                {% csrf_token %}
+                {% include "home/bootstrap_inline_form.html" %}
+                <input type="submit" value="Save" class="btn btn-primary">
+            </form>
+        </div>
+    </div>
 {% endblock content %}

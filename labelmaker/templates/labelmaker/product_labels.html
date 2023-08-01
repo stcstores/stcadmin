@@ -2,51 +2,46 @@
 {% load static %}
 
 {% block content %}
-<h1>Product Labels</h1>
+    <div class="container">
+        <h3 class="display-3 mb-5">Product Labels</h3>
+ 
 
-<div class="template_supplier">
-    <a href="{% url 'labelmaker:create_product_labels' %}">
-        <button>Create Product Labels without a Template</button>
-    </a>
-    <a href="{% url 'labelmaker:test_product_labels' %}">
-        <button>Test Label Sheet</button>
-    </a>
-</div>
+        <div class="mb-5">
+            <a href="{% url 'labelmaker:create_product_labels' %}"
+               class="btn btn-primary">Create Product Labels without a Template</a>
+            <a href="{% url 'labelmaker:create_size_chart' %}"
+               class="btn btn-primary">Create a New Product Label Template</a>
+            <a href="{% url 'labelmaker:test_product_labels' %}"
+               class="btn btn-secondary">Test Label Sheet</a>
+        </div>
 
-<h2>Templates</h2>
-
-<div class="template_list">
-    {% for supplier, supplier_charts in size_charts.items %}
-    <div class="template_supplier">
-        {% if supplier %}
-        <p>{{ supplier.name }}</p>
-        {% else %}
-        <p>Unknown Supplier</p>
-        {% endif %}
-        <ul class="supplier_template_list">
-            {% for chart in supplier_charts %}
-            <div class="template">
-                <a href="{{ chart.get_use_url }}">
-                    <li>{{ chart.name }}</li>
-                </a>
-                <div class="template_buttons">
-                    <a href="{{ chart.get_edit_sizes_url }}" title="Edit">
-                        <img src="{% static 'images/edit.png' %}" alt="Edit" height="20" width="20">
-                    </a>
-                    <a href="{{ chart.get_delete_url }}" title="Delete">
-                        <img src="{% static 'images/delete.png' %}" alt="Delete" height="20" width="20">
-                    </a>
+        <div class="row">
+            {% for supplier, supplier_charts in size_charts.items %}
+                <div class="col-4">
+                    <ul class="list-group mb-5 bg-light border-rounded">
+                        <li class="list-group-item active fs-4">
+                            {% if supplier %}
+                                {{ supplier.name }}
+                            {% else %}
+                                Unknown Supplier
+                            {% endif %}
+                        </li>
+                        {% for chart in supplier_charts %}
+                            <li class="list-group-item d-flex justify-content-between">
+                                <a href="{{ chart.get_use_url }}">{{ chart.name }}</a>
+                                <span class="text-end text-nowrap">
+                                    <a href="{{ chart.get_edit_sizes_url }}"
+                                       title="Edit"
+                                       class="btn btn-primary btn-sm">Edit</a>
+                                    <a href="{{ chart.get_delete_url }}"
+                                       title="Delete"
+                                       class="btn btn-danger btn-sm">Delete</a>
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
-            </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
-    {% endfor %}
-</div>
-
-<div class="template_supplier">
-    <a href="{% url 'labelmaker:create_size_chart' %}">
-        <button>Create a New Product Label Template</button>
-    </a>
-</div>
-{% endblock %}
+{% endblock content %}

@@ -3,13 +3,15 @@
 
 {% block content %}
 
-<h1>Labelmaker</h1>
-<h2>Create printable labels</h2>
+    <div class="container">
+        <h1 class="display-1 mb-0">Labelmaker</h1>
+        <p class="fs-4 mb-5">Create printable labels</p>
+ 
+        <div class="list-group col-6">
+            <a href="{% url 'labelmaker:product_labels' %}" class="list-group-item">Product Labels</a>
+            <a href="{% url 'labelmaker:address_labels' %}" class="list-group-item">Address Labels</a>
+            <a href="{% url 'labelmaker:small_labels' %}" class="list-group-item">Small Labels</a>
+        </div>
+    </div>
 
-<ul>
-    <li><a href="{% url 'labelmaker:product_labels' %}">Product Labels</a></li>
-    <li><a href="{% url 'labelmaker:address_labels' %}">Address Labels</a></li>
-    <li><a href="{% url 'labelmaker:small_labels' %}">Small Labels</a></li>
-</ul>
-
-{% endblock %}
+{% endblock content %}

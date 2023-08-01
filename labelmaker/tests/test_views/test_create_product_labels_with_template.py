@@ -88,7 +88,7 @@ def test_has_links(reverse_path, text, count, html):
 @pytest.mark.django_db
 def test_has_form(size_chart, html):
     target = reverse("labelmaker:generate_product_labels", args=[size_chart.id])
-    assert html.find(f'form[action="{target}"][method="POST"]')
+    assert html.find(f'form[action="{target}"][method="post"]')
 
 
 @pytest.mark.django_db
