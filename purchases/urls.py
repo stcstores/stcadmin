@@ -5,34 +5,38 @@ from django.urls import path
 from purchases import views
 
 app_name = "purchases"
-
 urlpatterns = [
-    path("purchase/", views.Purchase.as_view(), name="purchase"),
-    path("view_purchases/", views.ViewPurchases.as_view(), name="view_purchases"),
-    path("manage_purchases/", views.ManagePurchases.as_view(), name="manage_purchases"),
-    path("from_stock/", views.PurchaseFromStock.as_view(), name="from_stock"),
-    path("from_shop/", views.PurchaseFromShop.as_view(), name="from_shop"),
-    path("shipping/", views.PurchaseShipping.as_view(), name="shipping"),
+    path("", views.ProductSearch.as_view(), name="product_search"),
     path(
-        "search_product_name/",
-        views.SearchProductName.as_view(),
-        name="search_product_name",
+        "product_search_results",
+        views.ProductSearchResults.as_view(),
+        name="product_search_results",
     ),
     path(
-        "search_product_sku/",
-        views.SearchProductSKU.as_view(),
-        name="search_product_sku",
+        "create_purchase/<int:product_pk>",
+        views.CreatePurchase.as_view(),
+        name="create_purchase",
+    ),
+    path("manage_purchases", views.ManagePurchases.as_view(), name="manage_purchases"),
+    path(
+        "manage_user_purchases/<int:staff_pk>",
+        views.ManageUserPurchases.as_view(),
+        name="manage_user_purchases",
     ),
     path(
-        "purchase_price/",
-        views.ProductPurchasePrice.as_view(),
-        name="product_purchase_price",
+        "update_purchase/<int:pk>",
+        views.UpdatePurchase.as_view(),
+        name="update_purchase",
     ),
     path(
-        "mark_purchase_cancelled/",
-        views.MarkOrderCancelled.as_view(),
-        name="mark_purchase_cancelled",
+        "delete_purchase/<int:pk>",
+        views.DeletePurchase.as_view(),
+        name="delete_purchase",
     ),
-    path("shipping_price/", views.GetShippingPrice.as_view(), name="shipping_price"),
-    path("purchase_note", views.PurchaseNote.as_view(), name="purchase_note"),
+    path("purchase_reports", views.PurchaseReports.as_view(), name="purchase_reports"),
+    path(
+        "download_purchase_report/<int:pk>",
+        views.DownloadPurchaseReport.as_view(),
+        name="download_purchase_report",
+    ),
 ]

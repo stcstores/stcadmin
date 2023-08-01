@@ -1,39 +1,37 @@
-"""Model admin for the Purchases app."""
+"""Model admin for the purchases app."""
 
 from django.contrib import admin
-from polymorphic.admin import (
-    PolymorphicChildModelAdmin,
-    PolymorphicChildModelFilter,
-    PolymorphicParentModelAdmin,
-)
+from solo.admin import SingletonModelAdmin
 
 from purchases import models
 
 
-class PurchaseChildAdmin(PolymorphicChildModelAdmin):
-    """Model Admin for children of purchases.models.Purchase."""
+@admin.register(models.PurchaseSettings)
+class PurchaseSettingsAdmin(SingletonModelAdmin):
+    """Admin for the PurchaseSettings model."""
 
-    base_fields = ("user", "to_pay")
-
-
-@admin.register(models.StockPurchase)
-class StockPurchaseAdmin(PurchaseChildAdmin):
-    """Model admin for the StockPurchase mode."""
-
-    base_model = models.Purchase
+    exclude = ()
 
 
-@admin.register(models.ShippingPurchase)
-class ShippingPurchaseAdmin(PurchaseChildAdmin):
-    """Model admin for the ShippingPurchase mode."""
+@admin.register(models.PurchaseExport)
+class PurchaseExportAdmin(admin.ModelAdmin):
+    """Admin for the PurchaseExport model."""
 
-    base_model = models.Purchase
+    exclude = ()
 
 
 @admin.register(models.Purchase)
-class PurchasesAdmin(PolymorphicParentModelAdmin):
-    """ModelAdmin for the Purchases model."""
+class PurchaseAdmin(admin.ModelAdmin):
+    """Admin for the Purchase model."""
 
-    base_model = models.Purchase
-    child_models = (models.StockPurchase, models.ShippingPurchase)
-    list_filter = (PolymorphicChildModelFilter,)
+    exclude = ()
+    raw_id_fields = ("product", "export")
+    list_display = (
+        "__str__",
+        "purchased_by",
+        "product",
+        "quantity",
+        "export",
+        "created_at",
+        "to_pay",
+    )

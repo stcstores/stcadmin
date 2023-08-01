@@ -1,0 +1,20 @@
+{% extends "purchases/base.html" %}
+
+{% block content %}
+    <h1>Create Purchase</h1>
+    <h2>{{ product.sku }}</h2>
+    <h2>{{ product.full_name }}</h2>
+    <img src="{{ product.get_primary_image.thumbnail.url }}"
+         alt="{{ image.image_file }}"
+         height="100"
+         width="100">
+ 
+    <p>Item price: £{{ product.purchase_price|floatformat:2 }}</p>
+    <p>To Pay for each: £{{ to_pay|floatformat:2 }}</p>
+ 
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button>Create</button>
+    </form>
+{% endblock content %}

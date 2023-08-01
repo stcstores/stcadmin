@@ -1,10 +1,13 @@
 {% extends "home/base.html" %}
 {% load static %}
-{% block additional_head %}
-<link rel="stylesheet" href="{% static 'css/purchases.css' %}">
-{% endblock %}
-{% block page_title %}Purchases{% endblock %}
+
+{% block page_title %}
+    Purchases
+{% endblock page_title %}
+
 {% block section_navigation %}
-{% include "purchases/section_navigation.html" %}
-{% endblock %}
-{% block content %}{% endblock %}
+    {% include "purchases/section_navigation.html" %}
+{% endblock section_navigation %}
+
+{% block content %}
+{% endblock content %}
