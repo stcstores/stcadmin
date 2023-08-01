@@ -1,30 +1,24 @@
 {% include "orders/pagination_navigation.html" %}
-<table>
-    <thead>
-        <tr>
-            <th>SKU</th>
-            <th>Product</th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for product in object_list %}
-            <tr>
-                <td>{{ product.sku }}</td>
-                <td>{{ product.full_name }}</td>
-                <td>
-                    <img src="{{ product.get_primary_image.thumbnail.url }}"
-                         alt="{{ image.image_file }}"
-                         height="50"
-                         width="50">
-                </td>
-                <td>
-                    <a href="{% url 'purchases:create_purchase' product.pk %}">Purchase</a>
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+
+<div class="container">
+    {% for product in object_list %}
+        <div class="row border border-secondary p-1 mt-3 bg-light rounded align-items-center">
+            <div class="col-9">
+                <p class="font-monospace user-select-all text-muted fs-6 p-0 m-0">{{ product.sku }}</p>
+                <p>{{ product.full_name }}</p>
+            </div>
+            <div class="col-1">
+                <img src="{{ product.get_primary_image.thumbnail.url }}"
+                     alt="{{ image.image_file }}"
+                     height="75"
+                     width="75">
+            </div>
+            <div class="col-2">
+                <a href="{% url 'purchases:create_purchase' product.pk %}"
+                   class="btn btn-primary">Purchase</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 
 {% include "orders/pagination_navigation.html" %}

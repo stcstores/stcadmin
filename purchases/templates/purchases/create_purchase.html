@@ -1,20 +1,32 @@
 {% extends "purchases/base.html" %}
 
 {% block content %}
-    <h1>Create Purchase</h1>
-    <h2>{{ product.sku }}</h2>
-    <h2>{{ product.full_name }}</h2>
-    <img src="{{ product.get_primary_image.thumbnail.url }}"
-         alt="{{ image.image_file }}"
-         height="100"
-         width="100">
- 
-    <p>Item price: £{{ product.purchase_price|floatformat:2 }}</p>
-    <p>To Pay for each: £{{ to_pay|floatformat:2 }}</p>
- 
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button>Create</button>
-    </form>
+    <div class="container">
+        <h3 class="display-3 mb-5">Create Purchase</h3>
+        <p class="text-muted font-monospace user-select-all fs-5 p-0 m-0">{{ product.sku }}</p>
+        <h6 class="display-6 mb-5">{{ product.full_name }}</h6>
+        <div class="row">
+            <div class="col-3">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {% include "home/bootstrap_inline_form.html" %}
+                    <button class="btn btn-primary">Create</button>
+                </form>
+            </div>
+            <div class="col-3">
+                <p>
+                    <span class="fs-5">Item price:</span> <span class="fs-4">£{{ product.purchase_price|floatformat:2 }}</span>
+                </p>
+                <p>
+                    <span class="fs-5">To Pay for each:</span> <span class="fs-4 fw-bold">£{{ to_pay|floatformat:2 }}</span>
+                </p>
+            </div>
+            <div class="col-6">
+                <img src="{{ product.get_primary_image.image_file.url }}"
+                     alt="{{ image.image_file }}"
+                     height="300"
+                     width="product.get_primary_image.image_file.width">
+            </div>
+        </div>
+    </div>
 {% endblock content %}

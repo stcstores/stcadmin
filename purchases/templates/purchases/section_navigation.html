@@ -1,13 +1,18 @@
-<div class="section_navigation">
-    <ul>
-        <li>
-            <a href="{% url 'purchases:product_search' %}">Search Products</a>
-        </li>
-        <li>
-            <a href="{% url 'purchases:manage_purchases' %}">Manage Purchases</a>
-        </li>
-        <li>
-            <a href="{% url 'purchases:purchase_reports' %}">Purchase Reports</a>
-        </li>
-    </ul>
-</div>
+<header class="p-3 text-bg-secondary">
+    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+            <li>
+                <a class="nav-link px-2 text-white fw-bold fs-4 navbar-brand"
+                   href="{% url 'purchases:product_search' %}">New Purchase</a>
+            </li>
+            <li>
+                <a class="nav-link px-2 text-white"
+                   href="{% url 'purchases:manage_purchases' %}">Manage Purchases</a>
+            </li>
+            <li>
+                <a class="nav-link px-2 text-white"
+                   href="{% url 'purchases:purchase_reports' %}">Purchase Reports</a>
+            </li>
+        </ul>
+    </div>
+</header>

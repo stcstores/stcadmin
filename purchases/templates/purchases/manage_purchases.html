@@ -1,16 +1,23 @@
 {% extends "purchases/base.html" %}
 
 {% block content %}
-    <h1>Manage Purchases</h1>
+    <div class="container">
+        <h3 class="display-3 mb-5">Manage Purchases</h3>
 
-    {% if purchasers %}
-        <p>Manage purchases for:</p>
-        {% for purchaser in purchasers %}
-            <p>
-                <a href="{% url 'purchases:manage_user_purchases' purchaser.id %}">{{ purchaser }}</a>
-            </p>
-        {% endfor %}
-    {% else %}
-        <p>There are no open purchases.</p>
-    {% endif %}
+        <div class="col-4">
+            {% if purchasers %}
+                <p class="fs-4">Manage purchases for:</p>
+                <div class="list-group">
+                    {% for purchaser in purchasers %}
+                        <a class="list-group-item"
+                           href="{% url 'purchases:manage_user_purchases' purchaser.id %}">{{ purchaser }}</a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="fs-4">There are no open purchases.</p>
+            {% endif %}
+        </div>
+    </div>
+
+ 
 {% endblock content %}

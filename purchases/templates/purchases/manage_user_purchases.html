@@ -3,43 +3,45 @@
 {% load fba_extras %}
 
 {% block content %}
-
-    <h1>Purchases</h1>
-    <h2>{{ purchaser }}</h2>
-    {% if purchases %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>SKU</th>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>To Pay</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for purchase in purchases %}
+    <div class="container">
+        <h3 class="display-3 mb-5">Current Purchases</h3>
+        <h6 class="display-6 mb-5">{{ purchaser }}</h6>
+ 
+        {% if purchases %}
+            <table class="table table-hover table-sm mt-3">
+                <thead class="table-primary">
                     <tr>
-                        <td>{{ purchase.created_at }}</td>
-                        <td>{{ purchase.product.sku }}</td>
-                        <td>{{ purchase.product.full_name }}</td>
-                        <td>{{ purchase.quantity }}</td>
-                        <td>£{{ purchase.to_pay|floatformat:2 }}</td>
-                        <td>
-                            <a href="{% url 'purchases:update_purchase' purchase.id %}">Edit</a>
-                        </td>
+                        <th>Date</th>
+                        <th>SKU</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>To Pay</th>
+                        <th></th>
                     </tr>
-                {% endfor %}
-                <tr>
-                    <td colspan="4"></td>
-                    <th>£{{ total_to_pay|floatformat:2 }}</th>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
-    {% else %}
-        <p>{{ purchaser }} has no current purchases</p>
-    {% endif %}
-
+                </thead>
+                <tbody>
+                    {% for purchase in purchases %}
+                        <tr>
+                            <td>{{ purchase.created_at }}</td>
+                            <td>{{ purchase.product.sku }}</td>
+                            <td>{{ purchase.product.full_name }}</td>
+                            <td>{{ purchase.quantity }}</td>
+                            <td class="fs-5">£{{ purchase.to_pay|floatformat:2 }}</td>
+                            <td>
+                                <a href="{% url 'purchases:update_purchase' purchase.id %}"
+                                   class="btn btn-primary btn-sm">Edit</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="4"></td>
+                        <th class="fs-4 fw-bold">£{{ total_to_pay|floatformat:2 }}</th>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        {% else %}
+            <p>{{ purchaser }} has no current purchases</p>
+        {% endif %}
+    </div>
 {% endblock content %}

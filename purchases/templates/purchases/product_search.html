@@ -1,13 +1,25 @@
 {% extends "purchases/base.html" %}
+{% load django_bootstrap5 %}
 
 {% block content %}
-    <form id="productSearchForm"
-          action="{% url 'purchases:product_search_results' %}"
-          method="get">
-        {{ form.as_p }}
-        <button>Search</button>
-    </form>
-    <div id="searchResults"></div>
+    <div class="container">
+        <h3 class="display-3 mb-5">New Purchase</h3>
+        <div class="row">
+            <div class="col-3">
+                <form id="productSearchForm"
+                      action="{% url 'purchases:product_search_results' %}"
+                      method="get">
+                    {% bootstrap_form_errors form %}
+                    {% for field in form.visible_fields %}
+                        {% bootstrap_field field show_help=false show_label=false %}
+                    {% endfor %}
+                    <button class="btn btn-primary">Search</button>
+                </form>
+            </div>
+        </div>
+        <div id="searchResults"></div>
+    </div>
+ 
 {% endblock content %}
 
 {% block script %}

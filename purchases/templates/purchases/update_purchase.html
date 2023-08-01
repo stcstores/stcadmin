@@ -1,22 +1,45 @@
 {% extends "purchases/base.html" %}
 
 {% block content %}
+    <div class="container">
+        <h3 class="display-3 mb-3">Edit Purchase</h3>
+        <p class="fs-4 font-monospace user-select-all m-0 p-0">{{ form.instance.sku }}</p>
+        <h6 class="display-6 mb-3">{{ form.instance.product.full_name }}</h6>
+        <p class="fs-4 mb-5">Purchased by {{ form.instance.purchased_by }} - {{ form.instance.created_at.date }}</p>
+ 
+        <div class="row">
 
-    <h1>Editing Purchase</h1>
-    <h2>{{ form.instance.product.sku }} - {{ form.instance.product.full_name }}</h2>
-    <h2>Purchased by {{ form.instance.purchased_by }} - {{ form.instance.created_at.date }}</h2>
+            <div class="col-3">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {% include "home/bootstrap_inline_form.html" %}
+                    <button class="btn btn-primary">Save</button>
+                </form>
+            </div>
 
-    <p>Item price: £{{ form.instance.time_of_purchase_item_price|floatformat:2 }}</p>
-    <p>To Pay: £{{ form.instance.to_pay|floatformat:2 }}</p>
+            <div class="col-2">
+                <a href="{% url 'purchases:delete_purchase' purchase.pk %}">
+                    <button class="btn btn-danger">Cancel Purchase</button>
+                </a>
+            </div>
 
-    <a href="{% url 'purchases:delete_purchase' purchase.pk %}">
-        <button>Cancel Purchase</button>
-    </a>
+            <div class="col-3">
+                <p>
+                    <span class="fs-5">Item price:</span> <span class="fs-4">£{{ form.instance.time_of_purchase_item_price|floatformat:2 }}</span>
+                </p>
+                <p>
+                    <span class="fs-5">To Pay for each:</span> <span class="fs-4 fw-bold">£{{ form.instance.to_pay|floatformat:2 }}</span>
+                </p>
+            </div>
 
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button>Save</button>
-    </form>
+            <div class="col-4">
+                <img src="{{ form.instance.product.get_primary_image.image_file.url }}"
+                     alt="{{ image.image_file }}"
+                     height="300"
+                     width="form.instance.product.get_primary_image.image_file.width">
+            </div>
+ 
+        </div>
+    </div>
 
 {% endblock content %}
