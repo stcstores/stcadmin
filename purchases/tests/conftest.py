@@ -1,10 +1,9 @@
 import pytest_factoryboy
 
 from purchases import factories
-from shipping.factories import ShippingPriceFactory
 
-pytest_factoryboy.register(ShippingPriceFactory)
-pytest_factoryboy.register(factories.UserFactory)
-pytest_factoryboy.register(factories.PurchaseNoteFactory)
-pytest_factoryboy.register(factories.StockPurchaseFactory)
-pytest_factoryboy.register(factories.ShippingPurchaseFactory)
+pytest_factoryboy.register(factories.ProductFactory)
+pytest_factoryboy.register(factories.StaffFactory)
+pytest_factoryboy.register(factories.PurchaseSettingsFactory)
+pytest_factoryboy.register(factories.PurchaseFactory)
+pytest_factoryboy.register(factories.PurchaseExportFactory)

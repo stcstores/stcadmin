@@ -33,10 +33,10 @@
           <a class="nav-link px-2 text-white" href="{% url 'fba:index' %}">FBA</a>
         </li>
       {% endif %}
-      {% if 'purchaser' in groups or 'purchase_creator' in groups or 'purchase_manager' in groups %}
+      {% if 'purchases' in groups %}
         <li>
           <a class="nav-link px-2 text-white"
-             href="{% url 'purchases:purchase' %}">Purchases</a>
+             href="{% url 'purchases:product_search' %}">Purchases</a>
         </li>
       {% endif %}
       {% if 'channels' in groups %}

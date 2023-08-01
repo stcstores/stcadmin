@@ -1,0 +1,36 @@
+{% extends "purchases/base.html" %}
+
+{% block content %}
+
+    <h3>Purchase Reports</h3>
+
+    {% include "orders/pagination_navigation.html" %}
+
+    <table>
+        <thead>
+            <th>Date</th>
+            <th>Purchase Count</th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for purchase_export in object_list %}
+                {% with purchase_export.purchases.count as purchase_count %}
+                    <tr>
+                        <td>{{ purchase_export.export_date|date:"F Y" }}</td>
+                        <td>{{ purchase_count }}</td>
+                        <td>
+                            {% if purchase_count > 0 %}
+                                <a href="{% url 'purchases:download_purchase_report' purchase_export.pk %}">
+                                    <button>Download</button>
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endwith %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% include "orders/pagination_navigation.html" %}
+
+{% endblock content %}

@@ -50,7 +50,7 @@ def new_product(
         supplier=supplier_factory.create(),
         product_range=product_range_factory.create(),
         package_type=package_type_factory.create(),
-        purchase_price=8.50,
+        purchase_price=Decimal("8.50"),
         vat_rate=vat_rate_factory.create(),
         brand=brand_factory.create(),
         manufacturer=manufacturer_factory.create(),
@@ -230,7 +230,7 @@ def test_images_uses_through_model(product, image):
 
 @pytest.mark.django_db
 def test_has_purchase_price_attribute(product):
-    assert isinstance(product.purchase_price, float)
+    assert isinstance(product.purchase_price, Decimal)
 
 
 @pytest.mark.django_db

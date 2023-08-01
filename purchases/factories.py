@@ -1,65 +1,59 @@
 """Factories for the Purchases app."""
-import datetime
+import datetime as dt
+from decimal import Decimal
 
 import factory
+from factory import faker
 from factory.django import DjangoModelFactory
 
-from home.factories import UserFactory
+from home.factories import StaffFactory
+from inventory.factories import ProductFactory
 from purchases import models
-from shipping.factories import ShippingPriceFactory
 
 
-class StockPurchaseFactory(DjangoModelFactory):
-    """Factory for purchases.StockPurchaseFactory."""
-
-    class Meta:
-        """Meta class for the purchases.UserFactory model."""
-
-        model = models.StockPurchase
-
-    user = factory.SubFactory(UserFactory)
-    created_at = datetime.datetime(2021, 5, 26, 10, 51, 36)
-    created_by = factory.SubFactory(UserFactory)
-    modified_at = datetime.datetime(2021, 5, 26, 10, 51, 36)
-    to_pay = 1250
-    cancelled = False
-    product_id = "16846153"
-    product_sku = "ABC-GHT-865"
-    product_name = factory.sequence(lambda x: f"Test Product {x}")
-    full_price = 2780
-    discount_percentage = 20
-    quantity = 5
-
-
-class ShippingPurchaseFactory(DjangoModelFactory):
-    """Factory for the purchases.ShippingPurchase model."""
+class PurchaseSettingsFactory(DjangoModelFactory):
+    """Factory for purchases.PurchaseSettings."""
 
     class Meta:
-        """Meta class for purchases.ShippingPurchase."""
+        """Meta class PurchaseSettingsFactory."""
 
-        model = models.ShippingPurchase
+        model = models.PurchaseSettings
 
-    user = factory.SubFactory(UserFactory)
-    created_at = datetime.datetime(2021, 5, 26, 10, 51, 36)
-    created_by = factory.SubFactory(UserFactory)
-    modified_at = datetime.datetime(2021, 5, 26, 10, 51, 36)
-    to_pay = 1250
-    cancelled = False
-    shipping_price = factory.SubFactory(ShippingPriceFactory)
+    purchase_charge = Decimal("1.30")
+    send_report_to = faker.Faker("ascii_email")
 
 
-class PurchaseNoteFactory(DjangoModelFactory):
-    """Factory for the purchases.PurchaseNote model."""
+class PurchaseExportFactory(DjangoModelFactory):
+    """Factory for purchases.PurchaseExport."""
 
     class Meta:
-        """Meta class for purchases.PurchaseNoteFactory."""
+        """Meta class for PurchaseExportFactory."""
 
-        model = models.PurchaseNote
+        model = models.PurchaseExport
 
-    user = factory.SubFactory(UserFactory)
-    created_at = datetime.datetime(2021, 5, 26, 10, 51, 36)
-    created_by = factory.SubFactory(UserFactory)
-    modified_at = datetime.datetime(2021, 5, 26, 10, 51, 36)
-    to_pay = 1250
-    cancelled = False
-    text = "Test purchase note text"
+    export_date = faker.Faker(
+        "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
+    )
+    report_sent = True
+
+
+class PurchaseFactory(DjangoModelFactory):
+    """Factory for purchases.Purchase."""
+
+    class Meta:
+        """Meta class for PurchaseFactory."""
+
+        model = models.Purchase
+
+    purchased_by = factory.SubFactory(StaffFactory)
+    product = factory.SubFactory(ProductFactory)
+    quantity = faker.Faker("pyint", min_value=1, max_value=10)
+    time_of_purchase_item_price = faker.Faker("pyint", min_value=100, max_value=1000)
+    time_of_purchase_charge = Decimal("1.30")
+    export = factory.SubFactory(PurchaseExportFactory)
+    created_at = faker.Faker(
+        "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
+    )
+    modified_at = faker.Faker(
+        "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
+    )
