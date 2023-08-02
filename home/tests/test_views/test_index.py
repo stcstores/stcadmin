@@ -77,8 +77,7 @@ def test_links_to_external_links(get_html, external_link_factory):
         ("orders", "orders:index", "Orders"),
         ("labelmaker", "labelmaker:index", "Labelmaker"),
         ("fba", "fba:index", "FBA"),
-        # ("purchaser", "purchases:purchase", "Purchases"),
-        # ("purchase_creator", "purchases:purchase", "Purchases"),
+        ("purchases", "purchases:product_search", "Purchases"),
         ("channels", "channels:index", "Channels"),
         ("reports", "reports:index", "Reports"),
         ("admin", "admin:index", "Admin"),
@@ -86,7 +85,9 @@ def test_links_to_external_links(get_html, external_link_factory):
 )
 def test_group_dependant_main_nav_links(group_name, reverse_path, text, user, get_html):
     group, _ = Group.objects.get_or_create(name=group_name)
-    user.groups.add(group)
+    group.user_set.add(user)
     html = get_html()
+    print(user)
+    print(html)
     main_navigation = html.find('div[class="main_navigation"]')[0]
     assert main_navigation.find(f'a[href="{reverse(reverse_path)}"]', containing=text)

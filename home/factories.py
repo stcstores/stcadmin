@@ -22,6 +22,7 @@ class GroupFactory(DjangoModelFactory):
 class UserFactory(DjangoModelFactory):
     class Meta:
         model = get_user_model()
+        skip_postgeneration_save = True
 
     username = factory.Faker("pystr", min_chars=10, max_chars=150)
     first_name = factory.Faker("first_name")
@@ -48,6 +49,7 @@ class UserFactory(DjangoModelFactory):
 class StaffFactory(DjangoModelFactory):
     class Meta:
         model = models.Staff
+        skip_postgeneration_save = True
 
     stcadmin_user = factory.RelatedFactory(UserFactory)
     first_name = factory.Faker("first_name")

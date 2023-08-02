@@ -87,11 +87,11 @@ def new_password():
 
 
 @pytest.mark.django_db
-def test_changes_password(user, url, valid_client, new_password):
+def test_changes_password(user, url, valid_client, new_password, test_password):
     valid_client.post(
         url,
         {
-            "old_password": "Password",
+            "old_password": test_password,
             "new_password1": new_password,
             "new_password2": new_password,
         },
@@ -102,11 +102,11 @@ def test_changes_password(user, url, valid_client, new_password):
 
 
 @pytest.mark.django_db
-def test_redirects(user, url, valid_client, new_password):
+def test_redirects(user, url, test_password, valid_client, new_password):
     response = valid_client.post(
         url,
         {
-            "old_password": "Password",
+            "old_password": test_password,
             "new_password1": new_password,
             "new_password2": new_password,
         },
