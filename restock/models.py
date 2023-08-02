@@ -40,12 +40,12 @@ class ReorderManager(models.Manager):
                 product=product, closed_at=None, defaults={"count": count}
             )
             obj.full_clean()
-            obj.refresh_from_db
+            obj.refresh_from_db()
             return obj.count
 
     def set_comment(self, product, comment):
         """Set a reorder's comment field."""
-        obj = self.get(product=product)
+        obj = self.open().get(product=product)
         obj.comment = comment
         obj.save()
         obj.full_clean()
