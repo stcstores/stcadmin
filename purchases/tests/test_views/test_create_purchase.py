@@ -1,6 +1,7 @@
 from unittest import mock
 
 import pytest
+from django.contrib import messages
 from django.urls import reverse
 
 from home.models import Staff
@@ -84,6 +85,28 @@ def test_post_calls_form_is_valid_method(mock_form, post_response):
 @pytest.mark.django_db
 def test_post_calls_form_save_method(mock_form, post_response):
     mock_form.save.assert_called_once_with()
+
+
+@pytest.mark.django_db
+def test_post_calls_form_udpate_stock_method(mock_form, post_response):
+    mock_form.update_stock_level.assert_called_once_with()
+
+
+@pytest.mark.django_db
+def test_sets_success_message(group_logged_in_client, mock_get_form, url, form_data):
+    response = group_logged_in_client.post(url, form_data, follow=True)
+    message = list(response.context["messages"])[0]
+    assert message.level == messages.SUCCESS
+
+
+@pytest.mark.django_db
+def test_sets_error_message(
+    group_logged_in_client, mock_get_form, mock_form, url, form_data
+):
+    mock_form.update_stock_level.side_effect = Exception
+    response = group_logged_in_client.post(url, form_data, follow=True)
+    message = list(response.context["messages"])[0]
+    assert message.level == messages.ERROR
 
 
 @pytest.mark.django_db

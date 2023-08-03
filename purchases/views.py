@@ -1,5 +1,6 @@
 """Views for the purchases app."""
 
+from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -70,6 +71,21 @@ class CreatePurchase(PurchasesUserMixin, FormView):
     def form_valid(self, form):
         """Create a new purchase."""
         form.save()
+        try:
+            new_stock_level = form.update_stock_level()
+        except Exception:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                f"Failed to reduce stock level by {form.instance.quantity} for "
+                f"{form.instance.product.sku} - {form.instance.product.full_name}",
+            )
+        else:
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                f"Purchase created. Stock level set to {new_stock_level}",
+            )
         return super().form_valid(form)
 
 
