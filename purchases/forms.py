@@ -14,7 +14,7 @@ from purchases import models
 class ProductSearchForm(forms.Form):
     """Form for searching for products to purchase."""
 
-    search_term = forms.CharField()
+    search_term = forms.CharField(required=False)
 
     def get_queryset(self):
         """Return a queryset of matching products."""

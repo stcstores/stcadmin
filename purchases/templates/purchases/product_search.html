@@ -1,31 +1,20 @@
 {% extends "purchases/base.html" %}
+{% load static %}
+
+{% block additional_head %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/update_stock.css' %}">
+    <script>
+        let get_stock_url = "{% url 'linnworks:get_stock_levels' %}";
+        let update_stock_url = "{% url 'linnworks:update_stock_levels' %}";
+    </script>
+    <script src="{% static 'scripts/stock_manager.js' %}"></script>
+{% endblock additional_head %}
 
 {% block content %}
-    <form id="productSearchForm"
-          action="{% url 'purchases:product_search_results' %}"
-          method="get">
+    <form id="productSearchForm" method="get">
         {{ form.as_p }}
         <button>Search</button>
     </form>
-    <div id="searchResults"></div>
+    <div>{% include "purchases/product_search_results.html" %}</div>
 {% endblock content %}
-
-{% block script %}
-    <script>
-    $(document).ready(function() {
-        $("#productSearchForm").submit(function (e) {
-            e.preventDefault();
-            var form = $(this);
-            var url = form.attr('action');
-            $.ajax({
-                type: "GET",
-                url: url,
-                data: form.serialize(),
-                success: function(response) {
-                  $("#searchResults").html(response);
-                }
-            });
-          });
-    });
-    </script>
-{% endblock script %}
