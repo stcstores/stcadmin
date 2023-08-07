@@ -6,6 +6,8 @@
             <th>Product</th>
             <th></th>
             <th></th>
+            <th>Stock Level</th>
+            <th>Locations</th>
         </tr>
     </thead>
     <tbody>
@@ -21,6 +23,10 @@
                 </td>
                 <td>
                     <a href="{% url 'purchases:create_purchase' product.pk %}">Purchase</a>
+                </td>
+                <td>{% include "inventory/update_stock.html" %}</td>
+                <td>
+                    {% for bay_link in product.product_bay_links.distinct %}<small>{{ bay_link.bay }}&nbsp;</small>{% endfor %}
                 </td>
             </tr>
         {% endfor %}
