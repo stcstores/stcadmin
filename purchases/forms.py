@@ -20,6 +20,8 @@ class ProductSearchForm(forms.Form):
         """Return a queryset of matching products."""
         if self.is_valid():
             search_term = self.cleaned_data["search_term"]
+            if not search_term:
+                return []
             return (
                 BaseProduct.objects.complete()
                 .active()
