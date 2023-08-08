@@ -1,5 +1,6 @@
 """Views for the purchases app."""
 
+from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -18,29 +19,25 @@ class PurchasesUserMixin(UserInGroupMixin):
     groups = ["purchases", "purchase_manager"]
 
 
-class ProductSearch(PurchasesUserMixin, TemplateView):
+class ProductSearch(PurchasesUserMixin, ListView):
     """View for searching for products to purchase."""
 
     template_name = "purchases/product_search.html"
-
-    def get_context_data(self, *args, **kwargs):
-        """Return context for the template."""
-        context = super().get_context_data(*args, **kwargs)
-        context["form"] = forms.ProductSearchForm()
-        return context
-
-
-class ProductSearchResults(PurchasesUserMixin, ListView):
-    """AJAX view for displaying product search results."""
-
+    form_class = forms.ProductSearchForm
     model = BaseProduct
     paginate_by = 50
-    template_name = "purchases/product_search_results.html"
 
     def get_queryset(self):
-        """Return product queryset."""
-        form = forms.ProductSearchForm(self.request.GET)
+        """Return a queryset of product ranges filtered by the request's GET params."""
+        form = self.form_class(self.request.GET)
+        form.is_valid()
         return form.get_queryset()
+
+    def get_context_data(self, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(**kwargs)
+        context["form"] = self.form_class(self.request.GET)
+        return context
 
 
 class CreatePurchase(PurchasesUserMixin, FormView):
@@ -70,6 +67,21 @@ class CreatePurchase(PurchasesUserMixin, FormView):
     def form_valid(self, form):
         """Create a new purchase."""
         form.save()
+        try:
+            new_stock_level = form.update_stock_level()
+        except Exception:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                f"Failed to reduce stock level by {form.instance.quantity} for "
+                f"{form.instance.product.sku} - {form.instance.product.full_name}",
+            )
+        else:
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                f"Purchase created. Stock level set to {new_stock_level}",
+            )
         return super().form_valid(form)
 
 

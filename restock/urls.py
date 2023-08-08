@@ -9,11 +9,16 @@ app_name = "restock"
 urlpatterns = [
     path("", views.RestockView.as_view(), name="restock"),
     path(
-        "search_results",
+        "restock_results",
         views.SearchResults.as_view(),
         name="restock_results",
     ),
     path("restock_list", views.RestockList.as_view(), name="restock_list"),
+    path(
+        "restock_list/<int:supplier_pk>",
+        views.SupplierRestockList.as_view(),
+        name="supplier_restock_list",
+    ),
     path(
         "update_purchase_price",
         views.UpdatePurchasePrice.as_view(),

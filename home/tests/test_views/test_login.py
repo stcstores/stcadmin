@@ -63,6 +63,6 @@ def test_contains_password_input(html):
 
 
 @pytest.mark.django_db
-def test_can_login(url, user, client):
-    client.post(url, {"username": user.username, "password": "Password"})
+def test_can_login(url, user, test_password, client):
+    client.post(url, {"username": user.username, "password": test_password})
     assert client.session["_auth_user_id"]

@@ -1,14 +1,23 @@
 {% extends "purchases/base.html" %}
 {% load django_bootstrap5 %}
+{% load static %}
+
+{% block additional_head %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/update_stock.css' %}">
+    <script>
+        let get_stock_url = "{% url 'linnworks:get_stock_levels' %}";
+        let update_stock_url = "{% url 'linnworks:update_stock_levels' %}";
+    </script>
+    <script src="{% static 'scripts/stock_manager.js' %}"></script>
+{% endblock additional_head %}
 
 {% block content %}
     <div class="container">
         <h3 class="display-3 mb-5">New Purchase</h3>
         <div class="row">
             <div class="col-3">
-                <form id="productSearchForm"
-                      action="{% url 'purchases:product_search_results' %}"
-                      method="get">
+                <form id="productSearchForm" method="get">
                     {% bootstrap_form_errors form %}
                     {% for field in form.visible_fields %}
                         {% bootstrap_field field show_help=false show_label=false %}
@@ -17,27 +26,7 @@
                 </form>
             </div>
         </div>
-        <div id="searchResults"></div>
+        <div>{% include "purchases/product_search_results.html" %}</div>
     </div>
  
 {% endblock content %}
-
-{% block script %}
-    <script>
-    $(document).ready(function() {
-        $("#productSearchForm").submit(function (e) {
-            e.preventDefault();
-            var form = $(this);
-            var url = form.attr('action');
-            $.ajax({
-                type: "GET",
-                url: url,
-                data: form.serialize(),
-                success: function(response) {
-                  $("#searchResults").html(response);
-                }
-            });
-          });
-    });
-    </script>
-{% endblock script %}

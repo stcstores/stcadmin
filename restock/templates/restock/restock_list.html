@@ -13,27 +13,15 @@
 {% endblock additional_head %}
 
 {% block content %}
-    <h3 class="display-3 mb-5">Restock List</h3>
+    <div class="container">
+        <h3 class="display-3 mb-5">Restock List</h3>
 
-    {% include "restock/restock_list_display.html" %}
+        {% for supplier in suppliers %}
+            <div class="list-group col-6">
+                <a href="{% url 'restock:supplier_restock_list' supplier.pk %}"
+                   class="list-group-item">{{ supplier }}</a>
+            </div>
+        {% endfor %}
+    </div>
+
 {% endblock content %}
-
-{% block script %}
-
-    <script>
-
-        $(document).ready(function(){
-            reorderCounts = JSON.parse(document.getElementById('reorderCounts').textContent);
-            reorderComments = JSON.parse(document.getElementById('reorderComments').textContent);
-            enablePurchasePrice();
-            enableOrderCount();
-            enableOrderedButton();
-            setReorderCount();
-            setComments();
-            enableComment();
-            stock_level_widget_manager.get_stock_levels();
-        });
-    
-    </script>
-
-{% endblock script %}

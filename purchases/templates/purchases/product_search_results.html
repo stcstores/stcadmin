@@ -1,9 +1,11 @@
-{% include "orders/pagination_navigation.html" %}
+{% if object_list %}
+    {% include "orders/pagination_navigation.html" %}
+{% endif %}
 
 <div class="container">
     {% for product in object_list %}
         <div class="row border border-secondary p-1 mt-3 bg-light rounded align-items-center">
-            <div class="col-9">
+            <div class="col-5">
                 <p class="font-monospace user-select-all text-muted fs-6 p-0 m-0">{{ product.sku }}</p>
                 <p>{{ product.full_name }}</p>
             </div>
@@ -17,8 +19,18 @@
                 <a href="{% url 'purchases:create_purchase' product.pk %}"
                    class="btn btn-primary">Purchase</a>
             </div>
+            <div class="col-3">
+                {% with updatable=False %}
+                    {% include "inventory/update_stock.html" %}
+                {% endwith %}
+            </div>
+            <div class="col-1">
+                {% for bay_link in product.product_bay_links.distinct %}<small class="me-2">{{ bay_link.bay }}</small>{% endfor %}
+            </div>
         </div>
     {% endfor %}
 </div>
 
-{% include "orders/pagination_navigation.html" %}
+{% if object_list %}
+    {% include "orders/pagination_navigation.html" %}
+{% endif %}
