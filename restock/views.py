@@ -22,19 +22,19 @@ class RestockUserMixin(UserInGroupMixin):
     groups = ["restock"]
 
 
+def sort_products_by_supplier(products):
+    """Return a dict of {supplier:[products]}."""
+    suppliers = defaultdict(list)
+    for product in products:
+        add_details_to_product(product)
+        suppliers[product.supplier].append(product)
+    return dict(suppliers)
+
+
 class RestockView(RestockUserMixin, TemplateView):
     """View for the restock page."""
 
     template_name = "restock/restock.html"
-
-
-def sort_products_by_supplier(products):
-    """Return a dict of {supplier:[products]}."""
-    suppliers = defaultdict(list)
-    for product in products.order_by("supplier__name"):
-        add_details_to_product(product)
-        suppliers[product.supplier].append(product)
-    return dict(suppliers)
 
 
 def add_details_to_product(product):
@@ -62,7 +62,6 @@ class SearchResults(RestockUserMixin, TemplateView):
         for reorder in reorders:
             context["reorder_counts"][reorder.product.id] = reorder.count
             context["comments"][reorder.product.id] = reorder.comment
-
         return context
 
     def get_products(self, search_text):
