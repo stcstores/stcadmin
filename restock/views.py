@@ -12,7 +12,7 @@ from django.views.generic.base import TemplateView, View
 
 from fba.models import FBAOrder
 from home.views import UserInGroupMixin
-from inventory.models import BaseProduct
+from inventory.models import BaseProduct, Supplier
 from restock import models
 
 
@@ -22,21 +22,27 @@ class RestockUserMixin(UserInGroupMixin):
     groups = ["restock"]
 
 
+def sort_products_by_supplier(products):
+    """Return a dict of {supplier:[products]}."""
+    suppliers = defaultdict(list)
+    for product in products:
+        add_details_to_product(product)
+        suppliers[product.supplier].append(product)
+    return dict(suppliers)
+
+
 class RestockView(RestockUserMixin, TemplateView):
     """View for the restock page."""
 
     template_name = "restock/restock.html"
 
 
-def sort_products_by_supplier(products):
-    """Return a dict of {supplier:[products]}."""
-    suppliers = defaultdict(list)
-    for product in products.order_by("supplier__name"):
-        product.fba_order_count = FBAOrder.awaiting_fulfillment.filter(
-            product_SKU=product.sku
-        ).count()
-        suppliers[product.supplier].append(product)
-    return dict(suppliers)
+def add_details_to_product(product):
+    """Add fba order count and last reorder to product objects."""
+    product.fba_order_count = FBAOrder.awaiting_fulfillment.filter(
+        product_SKU=product.sku
+    ).count()
+    product.last_reorder = models.Reorder.objects.last_reorder(product)
 
 
 class SearchResults(RestockUserMixin, TemplateView):
@@ -50,13 +56,12 @@ class SearchResults(RestockUserMixin, TemplateView):
         search_text = self.request.GET["product_search"]
         products = self.get_products(search_text)
         context["suppliers"] = sort_products_by_supplier(products)
-        reorders = models.Reorder.objects.filter(product__in=products)
+        reorders = models.Reorder.objects.filter(product__in=products).open()
         context["reorder_counts"] = {}
         context["comments"] = {}
         for reorder in reorders:
             context["reorder_counts"][reorder.product.id] = reorder.count
             context["comments"][reorder.product.id] = reorder.comment
-
         return context
 
     def get_products(self, search_text):
@@ -85,12 +90,32 @@ class RestockList(RestockUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return context for the template."""
         context = super().get_context_data(*args, **kwargs)
-        reorders = models.Reorder.objects.all().select_related(
+        supplier_ids = models.Reorder.objects.values_list(
+            "product__supplier", flat=True
+        ).distinct()
+        context["suppliers"] = Supplier.objects.filter(pk__in=supplier_ids)
+        return context
+
+
+class SupplierRestockList(RestockUserMixin, TemplateView):
+    """View for displaying products marked for restock."""
+
+    template_name = "restock/supplier_restock_list.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        supplier = get_object_or_404(Supplier, pk=self.kwargs["supplier_pk"])
+        reorders = models.Reorder.objects.open().select_related(
             "product", "product__supplier"
         )
         product_ids = reorders.values_list("product__id", flat=True)
-        products = models.BaseProduct.objects.filter(id__in=product_ids)
-        context["suppliers"] = sort_products_by_supplier(products)
+        products = models.BaseProduct.objects.filter(
+            id__in=product_ids, supplier=supplier
+        )
+        for product in products:
+            add_details_to_product(product)
+        context["suppliers"] = {supplier: products}
         context["reorder_counts"] = {}
         context["comments"] = {}
         for reorder in reorders:
@@ -154,7 +179,6 @@ class SetOrderComment(RestockUserMixin, View):
         try:
             comment = self.update_order_comment()
         except Exception:
-            raise
             return HttpResponseBadRequest()
         else:
             return JsonResponse({"comment": comment})

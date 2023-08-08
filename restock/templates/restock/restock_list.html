@@ -15,25 +15,10 @@
 {% block content %}
     <h1>Restock List</h1>
 
-    {% include "restock/restock_list_display.html" %}
+    {% for supplier in suppliers %}
+        <div>
+            <a href="{% url 'restock:supplier_restock_list' supplier.pk %}">{{ supplier }}</a>
+        </div>
+    {% endfor %}
+
 {% endblock content %}
-
-{% block script %}
-
-    <script>
-
-        $(document).ready(function(){
-            reorderCounts = JSON.parse(document.getElementById('reorderCounts').textContent);
-            reorderComments = JSON.parse(document.getElementById('reorderComments').textContent);
-            enablePurchasePrice();
-            enableOrderCount();
-            enableOrderedButton();
-            setReorderCount();
-            setComments();
-            enableComment();
-            stock_level_widget_manager.get_stock_levels();
-        });
-    
-    </script>
-
-{% endblock script %}

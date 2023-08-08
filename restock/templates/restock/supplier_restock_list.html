@@ -1,0 +1,39 @@
+{% extends "restock/base.html" %}
+{% load static %}
+
+{% block additional_head %}
+    {{ block.super }}
+    <script src="{% static 'scripts/stock_manager.js' %}"></script>
+    <script src="{% static 'scripts/restock.js' %}"></script>
+    <script>
+        updatePriceUrl = "{% url 'restock:update_purchase_price' %}";
+        updateOrderCountUrl = "{% url 'restock:update_order_count' %}";
+        updateCommentUrl = "{% url 'restock:set_order_comment' %}";
+    </script>
+{% endblock additional_head %}
+
+{% block content %}
+    <h1>Restock List</h1>
+
+    {% include "restock/restock_list_display.html" %}
+{% endblock content %}
+
+{% block script %}
+
+    <script>
+
+        $(document).ready(function(){
+            reorderCounts = JSON.parse(document.getElementById('reorderCounts').textContent);
+            reorderComments = JSON.parse(document.getElementById('reorderComments').textContent);
+            enablePurchasePrice();
+            enableOrderCount();
+            enableOrderedButton();
+            setReorderCount();
+            setComments();
+            enableComment();
+            stock_level_widget_manager.get_stock_levels();
+        });
+    
+    </script>
+
+{% endblock script %}

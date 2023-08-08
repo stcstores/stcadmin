@@ -19,11 +19,11 @@
                         <div class="sku">{{ product.sku }}</div>
                         <div class="name">{{ product.product_range.name }}</div>
                         <div>
+                            <span>{{ product.supplier_sku }}&nbsp;</span>
                             {% for value in product.variation_values %}<span>{{ value }}&nbsp;</span>{% endfor %}
                         </div>
                     </td>
                     <td>
-                        <div class="sku">{{ product.supplier_sku }}</div>
                         <div class="sku">{{ product.barcode }}</div>
                     </td>
                     <td>
@@ -40,22 +40,31 @@
                         </span>
                     </td>
                     <td>
-                        <input type="text"
-                               value="0"
-                               size="2"
-                               class="order_count_input"
-                               id="order_count_input_{{ product.id }}"
-                               data-product_id="{{ product.id }}"
-                               onclick="this.select()">
-                        <span class="order_count_status" id="order_count_status_{{ product.id }}">
-                            <i class="fa-solid fa-check"></i>
-                        </span>
+                        <div>
+                            <input type="text"
+                                   value="0"
+                                   size="2"
+                                   class="order_count_input"
+                                   id="order_count_input_{{ product.id }}"
+                                   data-product_id="{{ product.id }}"
+                                   onclick="this.select()">
+                            <span class="order_count_status" id="order_count_status_{{ product.id }}">
+                                <i class="fa-solid fa-check"></i>
+                            </span>
+                        </div>
+                        <div>
+                            {% if product.last_reorder %}
+                                <small>Ordered {{ product.last_reorder.count }} on {{ product.last_reorder.closed_at.date }}</small>
+                            {% else %}
+                                &nbsp;
+                            {% endif %}
+                        </div>
                     </td>
                     <td>
                         <div>{% include "inventory/update_stock.html" %}</div>
                         <div>
                             <small>
-                                {% if product.fba_order_count > 0 %}<p>{{ product.fba_order_count }} Current FBA Order</p>{% endif %}
+                                {% if product.fba_order_count > 0 %}{{ product.fba_order_count }} Current FBA Order{% endif %}
                             </small>
                         </div>
                     </td>
@@ -63,7 +72,7 @@
                         <textarea name="comment"
                                   id="comment_{{ product.id }}"
                                   class="comment_input"
-                                  cols="30"
+                                  cols="20"
                                   rows="1"
                                   data-product_id="{{ product.id }}"></textarea>
                         <span class="comment_status" id="comment_status_{{ product.id }}">
