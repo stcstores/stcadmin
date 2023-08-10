@@ -1,124 +1,171 @@
 {% extends "fba/base.html" %}
 
 {% block content %}
-    <div class="price_calculator_container">
-        <div class="price_calculator">
+    <div class="container">
+        <h3 class="display-3 mb-5">FBA Shipping Calculator</h3>
+        <div class="row">
+            <div class="col-6">
 
-            <p>
-                <label for="country">Country</label>
-                <select name="country" id="country">
-                    {% for country in countries %}<option value="{{ country.id }}">{{ country }}</option>{% endfor %}
-                </select>
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="country">Country</span>
+                    <select name="country" id="country" class="form-select">
+                        {% for country in countries %}<option value="{{ country.id }}">{{ country }}</option>{% endfor %}
+                    </select>
+                </div>
 
-            <p>
-                <label for="selling_price">Selling Price</label>
-                <input type="number" step="1" name="selling_price" id="selling_price">
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="selling_price">Selling Price</span>
+                    <input class="form-control"
+                           type="number"
+                           step="1"
+                           name="selling_price"
+                           id="selling_price">
+                </div>
 
-            <p>
-                <label for="stock_level">Stock Level</label>
-                <input type="number" step="1" name="stock_level" id="stock_level">
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="stock_level">Stock Level</span>
+                    <input class="form-control"
+                           type="number"
+                           step="1"
+                           name="stock_level"
+                           id="stock_level">
+                </div>
 
-            <p>
-                <label for="quantity">Quantity</label>
-                <input type="number" step="1" name="quantity" id="quantity">
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="quantity">Quantity</span>
+                    <input class="form-control"
+                           type="number"
+                           step="1"
+                           name="quantity"
+                           id="quantity">
+                </div>
 
-            <p>
-                <label for="weight">Weight</label>
-                <input type="number" step="1" name="weight" id="weight">
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="weight">Weight</span>
+                    <input class="form-control" type="number" step="1" name="weight" id="weight">
+                </div>
 
-            <p>
-                <label for="purchase_price">Purchase Price</label>
-                <span>£</span>
-                <input type="number" step="0.01" name="purchase_price" id="purchase_price">
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="purchase_price">Purchase Price</span>
+                    <span class="input-group-text">£</span>
+                    <input class="form-control"
+                           type="number"
+                           step="0.01"
+                           name="purchase_price"
+                           id="purchase_price">
+                </div>
 
-            <p>
-                <label for="fba_fee">FBA Fee</label>
-                <input type="number" step="0.01" name="fba_fee" id="fba_fee">
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="fba_fee">FBA Fee</span>
+                    <input class="form-control"
+                           type="number"
+                           step="0.01"
+                           name="fba_fee"
+                           id="fba_fee">
+                </div>
 
-            <p>
-                <label for="zero_rated">Zero Rated</label>
-                <input type="checkbox" name="zero_rated" id="zero_rated">
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="zero_rated">Zero Rated</span>
+                    <div class="input-group-text">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="zero_rated"
+                               id="zero_rated">
+                    </div>
+                </div>
 
-        </div>
+            </div>
 
-        <div class="price_calculator_results">
+            <div class="col-6">
 
-            <p>
-                <label for="purchase_price_foreign">Purchase Price</label>
-                <span class="currency_symbol"></span>
-                <input type="number"
-                       step="0.01"
-                       name="purchase_price_foreign"
-                       id="purchase_price_foreign"
-                       readonly>
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="purchase_price_foreign">Purchase Price</span>
+                    <span class="currency_symbol input-group-text"></span>
+                    <input class="form-control"
+                           type="number"
+                           step="0.01"
+                           name="purchase_price_foreign"
+                           id="purchase_price_foreign"
+                           readonly>
+                </div>
 
-            <p>
-                <label for="channel_fee">Channel Fee</label>
-                <span class="currency"></span>
-                <input type="number"
-                       step="0.01"
-                       name="channel_fee"
-                       id="channel_fee"
-                       readonly>
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="channel_fee">Channel Fee</span>
+                    <input class="form-control"
+                           type="number"
+                           step="0.01"
+                           name="channel_fee"
+                           id="channel_fee"
+                           readonly>
+                </div>
 
-            <p>
-                <label for="vat">VAT</label>
-                <span class="currency_symbol"></span>
-                <input type="number" step="0.01" name="vat" id="vat" readonly>
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="vat">VAT</span>
+                    <span class="currency_symbol input-group-text"></span>
+                    <input class="form-control"
+                           type="number"
+                           step="0.01"
+                           name="vat"
+                           id="vat"
+                           readonly>
+                </div>
 
-            <p>
-                <label for="profit">Profit £</label>
-                <input type="number" step="0.01" name="profit" id="profit" readonly>
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="profit">Profit</span>
+                    <span class="input-group-text">£</span>
+                    <input class="form-control"
+                           type="number"
+                           step="0.01"
+                           name="profit"
+                           id="profit"
+                           readonly>
+                </div>
 
-            <p>
-                <label for="percentage">Profit Percentage</label>
-                <span>%</span>
-                <input type="number" step="0.01" name="percentage" id="percentage" readonly>
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="percentage">Profit Percentage</span>
+                    <span class="input-group-text">%</span>
+                    <input class="form-control"
+                           type="number"
+                           step="0.01"
+                           name="percentage"
+                           id="percentage"
+                           readonly>
+                </div>
 
-            <p>
-                <label for="postage_to_fba">Total Postage</label>
-                <span>£</span>
-                <input type="number"
-                       step="0.01"
-                       name="postage_to_fba"
-                       id="postage_to_fba"
-                       readonly>
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="postage_to_fba">Total Postage</span>
+                    <span class="input-group-text">£</span>
+                    <input class="form-control"
+                           type="number"
+                           step="0.01"
+                           name="postage_to_fba"
+                           id="postage_to_fba"
+                           readonly>
+                </div>
 
-            <p>
-                <label for="postage_per_item">Postage Per Item</label>
-                <span>£</span>
-                <input type="number"
-                       step="0.01"
-                       name="postage_per_item"
-                       id="postage_per_item"
-                       readonly>
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="postage_per_item">Postage Per Item</span>
+                    <span class="input-group-text">£</span>
+                    <input class="form-control"
+                           type="number"
+                           step="0.01"
+                           name="postage_per_item"
+                           id="postage_per_item"
+                           readonly>
+                </div>
 
-            <p>
-                <label for="max_quantity_no_stock">Maximum Sendable</label>
-                <input type="number"
-                       class="max_quantity_no_stock"
-                       id="max_quantity_no_stock"
-                       readonly>
-            </p>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" for="max_quantity_no_stock">Maximum Sendable</span>
+                    <input class="form-control"
+                           type="number"
+                           class="max_quantity_no_stock"
+                           id="max_quantity_no_stock"
+                           readonly>
+                </div>
 
+            </div>
         </div>
     </div>
-
 {% endblock content %}
 
 {% block script %}

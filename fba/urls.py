@@ -160,16 +160,6 @@ urlpatterns = [
         name="delete_shipment",
     ),
     path(
-        "shipments/add_order_to_shipment/<int:fba_order_pk>/",
-        views.AddFBAOrderToShipment.as_view(),
-        name="add_fba_order_to_shipment",
-    ),
-    path(
-        "shipments/add_order_packages_to_shipment/<int:fba_order_pk>/<int:shipment_pk>/",
-        views.AddFBAOrderPackages.as_view(),
-        name="add_order_packages_to_shipment",
-    ),
-    path(
         "shipments/historic_shipments/",
         views.HistoricShipments.as_view(),
         name="historic_shipments",

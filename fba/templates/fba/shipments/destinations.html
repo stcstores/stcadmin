@@ -1,28 +1,30 @@
-{% extends 'fba/base.html' %}
+{% extends "fba/base.html" %}
 
-{% block content %}{{ block.super }}
+{% block content %}
+    {{ block.super }}
 
-<h1>FBA Shipment Destinations</h1>
+    <div class="container">
+        <h3 class="display-3 mb-5">FBA Shipment Destinations</h3>
 
-<a href="{% url 'fba:create_shipment_destination' %}">
-    <button>Create New Destination</button>
-</a>
+        <div class="mb-3">
+            <a href="{% url 'fba:create_shipment_destination' %}"
+               class="btn btn-primary">Create New Destination</a>
+        </div>
 
-<table>
-    {% for destination in destinations %}
-    <tr>
-        <td>{{ destination.name }}</td>
-        <td>
-            <a href="{% url 'fba:update_shipment_destination' destination.pk %}">
-                <button>Edit Destination</button>
-            </a>
-        </td>
-        <td>
-            <a href="{% url 'fba:remove_destination' destination.pk %}">
-                <button>Remove Destination</button>
-            </a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-{% endblock %}
+        <div>
+            {% for destination in destinations %}
+                <div class="row mb-1">
+                    <div class="col-3">{{ destination.name }}</div>
+                    <div class="col-3">
+                        <a href="{% url 'fba:update_shipment_destination' destination.pk %}"
+                           class="btn btn-primary btn-sm">Edit Destination</a>
+                        <a href="{% url 'fba:remove_destination' destination.pk %}"
+                           class="btn btn-danger btn-sm">Remove Destination</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+{% endblock content %}

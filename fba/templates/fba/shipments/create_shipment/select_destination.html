@@ -1,26 +1,23 @@
-{% extends 'fba/base.html' %}
+{% extends "fba/base.html" %}
 
-{% block content %}{{ block.super }}
+{% block content %}
+    {{ block.super }}
 
-{% if fba_order %}
-<a href="{% url 'fba:create_shipment_create_destination' fba_order.pk%}">Add New Destination Address</a>
-{% else %}
-<a href="{% url 'fba:create_shipment_create_destination' %}">Add New Destination Address</a>
-{% endif %}
-<br>
-<table>
-    {% for destination in destinations %}
-    <tr>
-        <td>{{ destination }}</td>
-        <td>
-            {% if fba_order %}<a href="{% url 'fba:create_shipment' destination.pk fba_order.pk %}">
-                {% else %}<a href="{% url 'fba:create_shipment' destination.pk %}">
-                    {% endif %}
-                    <button>Select</button>
-                </a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+    <div class="container">
+        <h3 class="display-3 mb-3">Create Shipment</h3>
+        <h6 class="display-6 mb-5">Select Destination</h6>
 
-{% endblock %}
+        <div class="mb-3">
+            <a href="{% url 'fba:create_shipment_create_destination' %}"
+               class="btn btn-primary">Add New Destination Address</a>
+        </div>
+ 
+        <div class="list-group col-4">
+            {% for destination in destinations %}
+                <a href="{% url 'fba:create_shipment' destination.pk %}"
+                   class="list-group-item">{{ destination }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock content %}

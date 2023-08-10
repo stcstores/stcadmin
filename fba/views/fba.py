@@ -217,7 +217,13 @@ class FBAOrderUpdate(FBAUserMixin, UpdateView):
     def get_context_data(self, **kwargs):
         """Return template context."""
         context = super().get_context_data(**kwargs)
-        context["product"] = get_object_or_404(BaseProduct, sku=self.object.product_SKU)
+        product = get_object_or_404(BaseProduct, sku=self.object.product_SKU)
+        try:
+            stock_level = StockManager.get_stock_level(product)
+        except Exception:
+            stock_level = 0
+        context["stock_level"] = stock_level
+        context["product"] = product
         return context
 
     def get_success_url(self):

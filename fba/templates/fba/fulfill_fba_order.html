@@ -1,99 +1,141 @@
-{% extends 'fba/base.html' %}
+{% extends "fba/base.html" %}
 
-{% block content %}{{ block.super }}
+{% block content %}
+    {{ block.super }}
 
-<h1>Fulfill FBA Order</h1>
+    <div class="container">
+        <h3 class="display-3 mb-3">Fulfill FBA Order</h3>
 
+        <span>{{ form.instance.region.flag }}</span>
+        <div class="fs-5 font-monospace user-select-all">{{ form.instance.product_SKU }}</div>
+        <div class="fs-3 mb-5 user-select-all">{{ form.instance.product_name }}</div>
 
-<h3>
-    <span class="sku">{{ form.instance.product_SKU }}</span> - 
-    <span class="name">{{ form.instance.product_name }}</span>
-</h3>
-<h3>ASIN: <span class="sku">{{ form.instance.product_asin }}</span></h3>
-<h2>Supplier: {{ form.instance.product_supplier }}</h2>
-{% if form.instance.product_is_multipack %}
-<h1 class="error">MULTIPACK ITEM Update stock manually</h1>
-{% endif %}
-{% if form.instance.closed_at %}<h2>CLOSED: {{ form.instance.closed_at }}</h2>{% endif %}
+        <div class="m-2">
+            <div>
+                ASIN: <span class="font-monospace user-select-all">{{ form.instance.product_asin }}</span>
+            </div>
+            <div>Supplier: {{ form.instance.product_supplier }}</div>
+            {% if form.instance.product_is_multipack %}<div class="error">MULTIPACK ITEM Update stock manually</div>{% endif %}
+            {% if form.instance.closed_at %}<div>CLOSED: {{ form.instance.closed_at }}</div>{% endif %}
+ 
+            {% if form.instance.is_combinable %}<div class="text-success">Combinable</div>{% endif %}
+            {% if form.instance.is_fragile is True %}<div class="text-danger">FRAGILE</div>{% endif %}
+            {% if form.instance.small_and_light is True %}<div class="text-danger">SMALL AND LIGHT</div>{% endif %}
+        </div>
+        <div class="m-2">
+            <a href="{% url 'fba:order_printout' form.instance.pk %}"
+               target="_blank"
+               class="print_button btn btn-primary">
+                {% if form.instance.printed is False %}
+                    Print
+                {% else %}
+                    Reprint
+                {% endif %}
+            </a>
+            {% if form.instance.printed is True %}
+                <a href="{% url 'fba:unmark_printed' form.instance.id %}?next={{ request.path }}"
+                   class="btn btn-primary">Unmark printed</a>
+            {% endif %}
 
-{% if form.instance.is_combinable %}<p class="success">Combinable</p>{% endif %}
-{% if form.instance.is_fragile is True %}
-<h1 class="error">FRAGILE</h1>
-{% endif %}
-{% if form.instance.small_and_light is True %}
-<h3 class="error">SMALL AND LIGHT</h3>
-{% endif %}
-
-<a href="{% url 'fba:order_printout' form.instance.pk %}" target="_blank">
-    <button class="print_button">{% if form.instance.printed is False %}Print{% else %}Reprint{% endif %}</button></a>
-{% if form.instance.printed is True %}
-&nbsp;
-<a href="{% url 'fba:unmark_printed' form.instance.id %}?next={{ request.path }}">
-    <button>Unmark printed</button></a>
-{% endif %}
-{% if form.instance.closed_at %}
-
-{% endif %}
-
-<img src="{{ form.instance.product_image_url }}" alt="" height="200">
-
-<div class="fba_order_form_container">
-    <div class="order_details">
-        <p>
-            <label for="country">Country</label>
-            <input type="text" name="country" value="{{ form.instance.region.name }}" disabled>
-        </p>
-        <p>
-            <label for="product_weight">Product Weight (g)</label>
-            <input type="text" name="product_weight" value="{{ form.instance.product_weight }}" size="5">
-        </p>
-        <p>
-            <label for="hs_code">HS Code</label>
-            <input type="text" name="hs_code" value="{{ form.instance.product_hs_code }}">
-        </p>
-        <p>
-            <label for="locations">Locations</label>
-            <input type="text" name="locations" value="{{ bays }}" disabled>
-        </p>
-        <p>
-            <label for="approximate_quantity">Approximate Qauantity</label>
-            <input type="number" name="approximate_quantity" value="{{ form.instance.aproximate_quantity }}" disabled>
-        </p>
-        <p>
-            <label for="weight_lb">Box Weight (lb)</label>
-            <input type="number" name="weight_lb" id="weight_lb" disabled>
-        </p>
-        <p>
-            <label for="selling_price">Selling Price {{ form.instance.region.currency.symbol }}</label>
-            <input type="text" name="selling_price" , id="selling_price" value="{{ selling_price }}" size="5" disabled>
-        </p>
+        </div>
+ 
+        <div class="row mt-3">
+            <div class="col-3">
+                <div class="fba_order_form_container">
+                    <div class="order_details p-3 border rounded">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="country">Country</span>
+                            <input class="form-control"
+                                   type="text"
+                                   name="country"
+                                   value="{{ form.instance.region.name }}"
+                                   disabled>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="product_weight">Product Weight (g)</span>
+                            <input class="form-control"
+                                   type="text"
+                                   name="product_weight"
+                                   value="{{ form.instance.product_weight }}"
+                                   size="5">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="hs_code">HS Code</span>
+                            <input class="form-control"
+                                   type="text"
+                                   name="hs_code"
+                                   value="{{ form.instance.product_hs_code }}">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="locations">Locations</span>
+                            <input class="form-control"
+                                   type="text"
+                                   name="locations"
+                                   value="{{ bays }}"
+                                   disabled>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="approximate_quantity">Approximate Qauantity</span>
+                            <input class="form-control"
+                                   type="number"
+                                   name="approximate_quantity"
+                                   value="{{ form.instance.aproximate_quantity }}"
+                                   disabled>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="weight_lb">Box Weight (lb)</span>
+                            <input class="form-control"
+                                   type="number"
+                                   name="weight_lb"
+                                   id="weight_lb"
+                                   disabled>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="selling_price">Selling Price {{ form.instance.region.currency.symbol }}</span>
+                            <input class="form-control"
+                                   type="text"
+                                   name="selling_price"
+                                   id="selling_price"
+                                   value="{{ selling_price }}"
+                                   size="5"
+                                   disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="fba_order_form p-3 bg-light rounded border">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {% include "home/bootstrap_input_group_form.html" %}
+                        {% if not form.instance.closed_at %}
+                            {% if form.instance.region.auto_close %}
+                                <button class="btn btn-primary form-control mb-3">Fulfill</button>
+                            {% else %}
+                                <button class="btn btn-primary form-control mb-3">Update</button>
+                                {% if form.instance.details_complete %}
+                                    <button class="btn btn-primary form-control mb-3" name="collection_booked">Collection Booked</button>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+            <div class="col">
+                <img src="{{ form.instance.product_image_url }}"
+                     class="img border rounded"
+                     alt=""
+                     height="200"
+                     width="">
+            </div>
+        </div>
     </div>
-    <div class="fba_order_form">
-        <form action="" method="POST">{% csrf_token %}
-            {{ form.as_p }}
-            {% if not form.instance.closed_at %}
-            {% if form.instance.region.auto_close %}
-            <button>Fulfill</button>
-            {% else %}
-            <button>Update</button>
-            {% if form.instance.details_complete %}
-            <button name="collection_booked">Collection Booked</button>
-            {% endif %}
-            {% endif %}
-            {% endif %}
-        </form>
-    </div>
-</div>
 
-{% if form.instance.status == form.instance.CLOSED %}
-{% include 'fba/fba_order_manage_shipments.html' with fba_order=form.instance %}
-{% endif %}
-
-{% endblock %}
+{% endblock content %}
 
 {% block script %}
 
-<script>
+    <script>
     function printExternal(url) {
         var printWindow = window.open(url, 'Print', 'left=200, top=200, width=950, height=500, toolbar=0, resizable=0');
         printWindow.addEventListener('load', function () {
@@ -116,5 +158,5 @@
         });
 
     });
-</script>
+    </script>
 {% endblock script %}

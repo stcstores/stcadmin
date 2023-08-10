@@ -24,7 +24,7 @@
                 <div class="col-6">
                     <form action="{% url 'home:login_user' %}" method="post">
                         {% csrf_token %}
-                        {% include "home/bootstrap_inline_form.html" %}
+                        {% include "home/bootstrap_input_group_form.html" %}
                         <input type="submit" class="btn btn-primary" value="Login">
                         <input type="hidden" name="next" value="{{ next }}" />
                     </form>

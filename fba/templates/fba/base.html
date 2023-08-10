@@ -1,11 +1,13 @@
 {% extends "home/base.html" %}
 {% load static %}
-{% block additional_head %}
-{{ block.super }}
-<link rel="stylesheet" href="{% static 'css/fba.css' %}">
-{% endblock %}
-{% block page_title %}FBA{% endblock %}
+
+{% block page_title %}
+    FBA
+{% endblock page_title %}
+
 {% block section_navigation %}
-{% include "fba/section_navigation.html" %}
-{% endblock %}
-{% block content %}{% endblock %}
+    {% include "fba/section_navigation.html" %}
+{% endblock section_navigation %}
+
+{% block content %}
+{% endblock content %}

@@ -20,7 +20,7 @@
         <form class="size_chart_form" method="post" id="size_form">
             {% csrf_token %}
             {{ formset.management_form }}
-            <table id="sizes" class="table table-secondary">
+            <table id="sizes" class="table table-light">
                 <thead class="table-primary">
                     <tr>
                         {% for field in formset.0.visible_fields %}<th>{{ field.label }}</th>{% endfor %}

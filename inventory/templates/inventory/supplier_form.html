@@ -4,7 +4,7 @@
     <h1 class="display-3 mb-5">Create Supplier</h1>
     <form method="post">
       {% csrf_token %}
-      {% include "home/bootstrap_inline_form.html" %}
+      {% include "home/bootstrap_input_group_form.html" %}
       <button class="btn btn-primary from-control">Save</button>
       <a href="{% url 'inventory:suppliers' %}"
          class="btn btn-primary from-control">Cancel</a>

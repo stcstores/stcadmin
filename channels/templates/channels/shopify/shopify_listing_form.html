@@ -42,7 +42,7 @@
   <div class="product_form">
     <form action="" method="POST" autocomplete="off">
       {% csrf_token %}
-      {% include "home/bootstrap_inline_form.html" %}
+      {% include "home/bootstrap_input_group_form.html" %}
       {{ formset.management_form }}
       <button type="submit" class="save_button">Save</button>
       <div class="variations">

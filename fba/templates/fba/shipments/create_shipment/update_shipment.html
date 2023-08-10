@@ -1,64 +1,98 @@
-{% extends 'fba/base.html' %}
+{% extends "fba/base.html" %}
 
 {% load fba_extras %}
 
-{% block content %}{{ block.super }}
+{% block content %}
+    {{ block.super }}
 
-<h1>Update Shipment {{ form.instance.order_number }} - {{ form.instance.description }}</h1>
+    <div class="container">
+        <h3 class="display-3 mb-3">Update Shipment</h3>
+        <h6 class="display-6 mb-5">
+            {{ form.instance.order_number }}
+            {% if form.instance.description %}- {{ form.instance.description }}{% endif %}
+        </h6>
 
-<form action="" method="POST">{% csrf_token %}
-    {{ form.as_p }}
-    <p>
-        Weight: {{ form.instance.weight_kg|floatformat:2 }}kg
-        &nbsp;
-        Value: {% format_price form.instance.value %}
-        &nbsp;
-        Item Count: {{ form.instance.item_count }}
-    </p>
-    <button type="submit">Save</button>
-    <button type="submit" name="new_package">Add Package</button>
+        <form action="" method="post">
+            {% csrf_token %}
+            {% include "home/bootstrap_inline_form.html" %}
+            <div class="row  col-6 mb-3">
+                <div class="col">
+                    Weight: <span class="fw-bold font-monospace user-select-all">{{ form.instance.weight_kg|floatformat:2 }}kg</span>
+                </div>
+                <div class="col">
+                    Value:
+                    <span class="fw-bold font-monospace user-select-all">{% format_price form.instance.value %}</span>
+                </div>
+                <div class="col">
+                    Item Count: <span class="fw-bold font-monospace user-select-all">{{ form.instance.item_count }}</span>
+                </div>
+            </div>
+ 
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                <button type="submit" name="new_package" class="btn btn-primary btn-sm">Add Package</button>
+            </div>
+ 
+            <div>
+                {% for package in form.instance.shipment_package.all %}
+                    <div class="mb-3 p-3 bg-light border rounded">
+                        <div>
+                            <span class="fw-bold">{{ package.package_number }}</span> - {{ package.description }}
+                        </div>
+                        <div class="row p-2">
+                            <div class="col">
+                                Dimensions: <span class="fw-bold font-monospace user-select-all">{{ package.length_cm }}x{{ package.width_cm }}x{{ package.height_cm }}cm</span>
+                            </div>
+                            <div class="col">
+                                Weight: <span class="fw-bold font-monospace user-select-all">{{ package.weight_kg|floatformat:2 }}kg</span>
+                            </div>
+                            <div class="col">
+                                Value:
+                                <span class="fw-bold font-monospace user-select-all">{% format_price package.value %}</span>
+                            </div>
+                            <div class="col">
+                                <button type="submit"
+                                        name="edit_package"
+                                        value="{{ package.pk }}"
+                                        class="btn btn-primary btn-sm">Edit Package</button>
+                                <button type="submit"
+                                        name="delete_package"
+                                        value="{{ package.pk }}"
+                                        class="btn btn-danger btn-sm">Delete Package</button>
+                            </div>
+                        </div>
+ 
+                        <div class="col-8">
+                            <table class="table table-light table-hover table-sm mb-3">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>SKU</th>
+                                        <th>Quantity</th>
+                                        <th>Weight (kg)</th>
+                                        <th>Value</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in package.shipment_item.all %}
+                                        <tr>
+                                            <td>{{ item.sku }}</td>
+                                            <td>{{ item.quantity }}</td>
+                                            <td>{{ item.weight_kg }}</td>
+                                            <td>{% format_price item.value %}</td>
+                                            <th>{{ item.short_description }}</th>
 
-
-    <div>
-        {% for package in form.instance.shipment_package.all %}
-        <div>
-            <hr>
-            <p>
-                <b>{{ package.package_number }}</b>
-                &nbsp;
-                Dimensions: {{ package.length_cm }}x{{ package.width_cm }}x{{ package.height_cm }}cm
-                &nbsp;
-                Weight: {{ package.weight_kg|floatformat:2 }}kg
-                &nbsp;
-                Value: {% format_price package.value %}
-                &nbsp;
-                <button type="submit" name="edit_package" value="{{ package.pk }}">Edit Package</button>
-                <button type="submit" name="delete_package" value="{{ package.pk }}">Delete Package</button>
-                {{ package.description }}
-            </p>
-            <table>
-                <tr>
-                    <th>SKU</th>
-                    <th>Quantity</th>
-                    <th>Weight (kg)</th>
-                    <th>Value</th>
-                    <th>Description</th>
-                </tr>
-                {% for item in package.shipment_item.all %}
-                <tr>
-                    <td>{{ item.sku }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.weight_kg }}</td>
-                    <td>{% format_price item.value %}</td>
-                    <th>{{ item.short_description }}</th>
-
-                </tr>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+ 
+                        </div>
+                    </div>
                 {% endfor %}
-            </table>
-        </div>
-        {% endfor %}
+            </div>
+            <hr>
+        </form>
     </div>
-    <hr>
-</form>
 
-{% endblock %}
+{% endblock content %}

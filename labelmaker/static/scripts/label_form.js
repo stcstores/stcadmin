@@ -113,7 +113,7 @@ var LabelSelectionTable = function(parent, data, form) {
         data: data,
         sizes: data.sizes,
         colours: data.colours,
-        table: $('<table id="label_selection_table" class="table table-secondary"></table>'),
+        table: $('<table id="label_selection_table" class="table table-light"></table>'),
     };
 
     self.thead = $('<thead class="table-primary"></thead>');

@@ -2,13 +2,12 @@
 {% load django_bootstrap5 %}
 
 {% bootstrap_form_errors form layout='inline' %}
-{% for field in form.visible_fields %}
-  <div class="mb-3">
-    {% bootstrap_field field wrapper_class='input-group' show_help=false label_class='input-group-text bg-primary text-light' %}
-    {% if field.required %}<span class="input-group-text">*</span>{% endif %}
-
-    {% if field.errors %}<span class="text-danger">{{ field.errors }}</span>{% endif %}
-    <span class="text-muted">{{ field.help_text }}</span>
-  </div>
-{% endfor %}
+<div class="row mb-3">
+  {% for field in form.visible_fields %}
+    <div class="col-3 mb-3">
+      {% bootstrap_field field wrapper_class='div' show_help=false label_class='span' %}
+      {% if field.errors %}<div class="invalid-feedback">{{ field.errors }}</div>{% endif %}
+    </div>
+  {% endfor %}
+</div>
 {% for field in form.hidden_fields %}{{ field }}{% endfor %}

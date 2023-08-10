@@ -1,43 +1,29 @@
-{% extends 'fba/base.html' %}
+{% extends "fba/base.html" %}
 
-{% block content %}{{ block.super }}
+{% block content %}
+    {{ block.super }}
 
-{% if form.instance.pk %}
-<h1>Update Package {{ form.instance.order_number }} - {{ form.instance.description }}</h1>
-{% else %}
-<h1>Create Package</h1>
-{% endif %}
-
-<form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-    <table>
-        {{ item_formset.management_form }}
-
-        {% for item_form in item_formset.forms %}
-        {% if forloop.first %}
-        <tr>
-            {% for field in item_form.visible_fields %}
-            <th>{{ field.label }}</th>
+    <div class="container">
+        <h3 class="display-3 mb-5">
+            {% if form.instance.pk %}
+                Update Package {{ form.instance.order_number }} - {{ form.instance.description }}
+            {% else %}
+                Create Package
+            {% endif %}
+        </h3>
+ 
+        <form method="post">
+            {% csrf_token %}
+ 
+            <div class="container">{% include "home/bootstrap_inline_form.html" %}</div>
+            <button type="submit" class="btn btn-primary form-control">Save</button>
+ 
+            {{ item_formset.management_form }}
+            {% for item_form in item_formset.forms %}
+                <div class="bg-light rounded mb-3 p-3 border">{% include "home/bootstrap_inline_form.html" with form=item_form %}</div>
             {% endfor %}
-        </tr>
-        {% endif %}
-        <tr>
-            {% for field in item_form.visible_fields %}
-            <td>{{ field }}</td>
-            {% endfor %}
-            <td>
-                {% for hidden in item_form.hidden_fields %}
-                {{ hidden }}
-                {% endfor %}
-                {{ item_form.errors.as_ul }}
-            </td>
-        </tr>
-        {% endfor %}
+            <button type="submit" class="btn btn-primary form-control">Save</button>
+        </form>
+    </div>
 
-
-    </table>
-    <button type="submit">Save</button>
-</form>
-
-{% endblock %}
+{% endblock content %}

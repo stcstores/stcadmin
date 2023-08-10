@@ -1,18 +1,23 @@
-{% extends 'fba/base.html' %}
+{% extends "fba/base.html" %}
 
-{% block content %}{{ block.super }}
+{% block content %}
+    {{ block.super }}
 
-<h1>
-    {% if form.instance %}
-    Update Shipment Destination
-    {% else %}
-    Create Shipment Destination
-    {% endif %}
-</h1>
+    <div class="container">
+        <h3 class="display-3 mb-5">
+            {% if form.instance.id %}
+                Update Shipment Destination
+            {% else %}
+                Create Shipment Destination
+            {% endif %}
+        </h3>
+        <div class="col-6">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% include "home/bootstrap_input_group_form.html" %}
+                <button typw="submit" class="btn btn-primary form-control">Save</button>
+            </form>
+        </div>
 
-<form action="" method="POST">{% csrf_token %}
-    {{ form.as_p }}
-    <button typw="submit">Save</button>
-</form>
-
-{% endblock %}
+    </div>
+{% endblock content %}

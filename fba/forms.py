@@ -448,6 +448,7 @@ class ItemForm(forms.ModelForm):
 
         model = models.FBAShipmentItem
         exclude = ()
+        widgets = {"description": forms.Textarea(attrs={"rows": 3})}
 
 
 PackageFormset = forms.inlineformset_factory(

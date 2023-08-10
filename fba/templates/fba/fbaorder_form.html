@@ -2,203 +2,248 @@
 
 {% block content %}
     {{ block.super }}
-
-    <h1>
-        {% if form.instance.id %}
-            Edit
-        {% elif to_repeat %}
-            Repeat
-        {% else %}
-            Create
-        {% endif %}
-        FBA Order
-    </h1>
-
-    <h2>
-        <span class="sku">{{ product.sku }}</span> - <span class="name">{{ product.full_name }}</span>
-    </h2>
-    <h3>Barcode: {{ product.barcode }}</h3>
-
-    {% if form.instance.id and form.instance.status != form.instance.ON_HOLD %}
-        <a href="{% url 'fba:fulfill_fba_order' form.instance.id %}">
-            {% if form.instance.status == form.instance.NOT_PROCESSED or form.instance.status == form.instance.AWAITING_BOOKING %}
-                <button>Fulfill Order</button>
+    <div class="container">
+        <h3 class="display-3 mb-3">
+            {% if form.instance.id %}
+                Edit
+            {% elif to_repeat %}
+                Repeat
             {% else %}
-                <button>Complete Order</button>
+                Create
             {% endif %}
-        </a>
-        <button class="prioritise" id="prioritise_{{ form.instance.pk }}">Prioritise</button>
-        <a href="{% url 'fba:repeat_order' form.instance.id %}">
-            <button>Repeat Order</button>
-        </a>
-        {% if form.instance.status != form.instance.FULFILLED %}
-            <a href="{% url 'fba:delete_order' form.instance.id %}">
-                <button class="error">DELETE ORDER</button>
-            </a>
-        {% elif form.instance.country.region.auto_close %}
-            <a href="{% url 'fba:shipping_price' form.instance.id %}">
-                <button>Add Shipping Price</button>
-            </a>
-        {% endif %}
-        {% if form.instance.tracking_number and form.instance.fulfillment_center %}
-            <a href="{% url 'fba:invoice' form.instance.pk %}">
-                <button>Invoice</button>
-            </a>
-        {% endif %}
-    {% endif %}
+            FBA Order
+        </h3>
  
-    {% if form.instance.id == none %}
-        <div>
-            <h3>{{ existing_order_count }} current FBA order{{ existing_order_count|pluralize }} for this product.</h3>
+        {% if form.instance.id %}<span>{{ form.instance.region.flag }}</span>{% endif %}
+        <div class="fs-5 font-monospace user-select-all">{{ product.sku }}</div>
+        <div class="fs-3 mb-5 user-select-all">{{ product.full_name }}</div>
+        <div class="m-2">
+            {% if form.instance.id %}
+                <div>
+                    ASIN: <span class="font-monospace user-select-all">{{ form.instance.product_asin }}</span>
+                </div>
+            {% endif %}
+            <div>
+                Barcode: <span class="font-monospace user-select-all">{{ product.barcode }}</span>
+            </div>
+            <div>Supplier: {{ product.supplier }}</div>
         </div>
-    {% endif %}
-
-    <img src="{% if form.instance.id %}{{ form.instance.product_image_url }}{% else %}{{ image_url }}{% endif %}"
-         alt=""
-         height="200">
-
-    <div class="fba_order_form_container">
-
-        <div class="price_calculator">
-
-            <p>
-                <label for="stock_level">Stock Level</label>
-                <input type="number"
-                       step="1"
-                       name="stock_level"
-                       id="stock_level"
-                       value="{{ stock_level }}"
-                       disabled>
-            </p>
-
-            <p>
-                <label for="weight">Weight</label>
-                <input type="number"
-                       step="1"
-                       name="weight"
-                       id="weight"
-                       value="{{ product.weight_grams }}"
-                       disabled>
-            </p>
-
-            <p>
-                <label for="purchase_price">Purchase Price</label>
-                <span class="currency_symbol"></span>
-                <input type="number"
-                       step="0.01"
-                       name="purchase_price"
-                       value="{{ product.purchase_price }}"
-                       id="purchase_price"
-                       disabled>
-            </p>
-
-            <p>
-                <label for="profit">Profit £</label>
-                <input type="number" step="0.01" name="profit" id="profit" disabled>
-            </p>
-
-            <p>
-                <label for="percentage">Profit Percentage</label>
-                <span>%</span>
-                <input type="number" step="0.01" name="percentage" id="percentage" disabled>
-            </p>
-
-            <p>
-                <label for="channel_fee">Channel Fee</label>
-                <span class="currency_symbol"></span>
-                <input type="number"
-                       step="0.01"
-                       name="channel_fee"
-                       id="channel_fee"
-                       disabled>
-            </p>
-
-            <p>
-                <label for="vat">VAT</label>
-                <span class="currency_symbol"></span>
-                <input type="number" step="0.01" name="vat" id="vat" disabled>
-            </p>
-
-            <p>
-                <label for="postage_to_fba">Total Postage</label>
-                <span>£</span>
-                <input type="number"
-                       step="0.01"
-                       name="postage_to_fba"
-                       id="postage_to_fba"
-                       disabled>
-            </p>
-
-            <p>
-                <label for="postage_per_item">Postage Per Item</label>
-                <span>£</span>
-                <input type="number"
-                       step="0.01"
-                       name="postage_per_item"
-                       id="postage_per_item"
-                       disabled>
-            </p>
-
-            <p>
-                <label for="max_quantity">Maximum Sendable</label>
-                <input type="number" class="max_quantity" id="max_quantity" disabled>
-            </p>
-
-            <p>
-                <label for="max_quantity_no_stock">Maximum Sendable (Ignoring Stock Level)</label>
-                <input type="number"
-                       class="max_quantity_no_stock"
-                       id="max_quantity_no_stock"
-                       disabled>
-            </p>
-
-        </div>
-
-        <div class="fba_order_form">
-            <form action="" method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                {% if form.instance.id %}
-                    <button>Update</button>
-                {% else %}
-                    <button>Create</button>
+        <div class="m-2">
+            {% if form.instance.id and form.instance.status != form.instance.ON_HOLD %}
+                <a href="{% url 'fba:fulfill_fba_order' form.instance.id %}"
+                   class="btn btn-primary">
+                    {% if form.instance.status == form.instance.NOT_PROCESSED or form.instance.status == form.instance.AWAITING_BOOKING %}
+                        Fulfill Order
+                    {% else %}
+                        Complete Order
+                    {% endif %}
+                </a>
+                <button class="prioritise btn btn-primary"
+                        id="prioritise_{{ form.instance.pk }}">Prioritise</button>
+                <a href="{% url 'fba:repeat_order' form.instance.id %}"
+                   class="btn btn-primary">Repeat Order</a>
+                {% if form.instance.status != form.instance.FULFILLED %}
+                    <a href="{% url 'fba:delete_order' form.instance.id %}"
+                       class="btn btn-danger">DELETE ORDER</a>
+                {% elif form.instance.country.region.auto_close %}
+                    <a href="{% url 'fba:shipping_price' form.instance.id %}"
+                       class="btn btn-primary">Add Shipping Price</a>
                 {% endif %}
-            </form>
+                {% if form.instance.tracking_number and form.instance.fulfillment_center %}
+                    <a href="{% url 'fba:invoice' form.instance.pk %}"
+                       class="btn btn-primary">Invoice</a>
+                {% endif %}
+            {% endif %}
         </div>
+        {% if form.instance.id == none %}
+            <div class="fs-4">
+                Current FBA Order{{ existing_order_count|pluralize }} for this Product: <span class="text-danger">{{ existing_order_count }}</span>
+            </div>
+        {% endif %}
+ 
+        <div class="row mt-3">
+ 
+            <div class="col-4">
+                <div class="fba_order_form_container">
 
+                    <div class="price_calculator p-3 border rounded">
+ 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="stock_level">Stock Level</span>
+                            <input class="form-control"
+                                   type="number"
+                                   step="1"
+                                   name="stock_level"
+                                   id="stock_level"
+                                   value="{{ stock_level }}"
+                                   disabled>
+                        </div>
+ 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="weight">Weight</span>
+                            <input class="form-control"
+                                   type="number"
+                                   step="1"
+                                   name="weight"
+                                   id="weight"
+                                   value="{{ product.weight_grams }}"
+                                   disabled>
+                        </div>
+ 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="purchase_price">Purchase Price</span>
+                            <span class="currency_symbol"></span>
+                            <input class="form-control"
+                                   type="number"
+                                   step="0.01"
+                                   name="purchase_price"
+                                   value="{{ product.purchase_price }}"
+                                   id="purchase_price"
+                                   disabled>
+                        </div>
+ 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="profit">Profit £</span>
+                            <input class="form-control"
+                                   type="number"
+                                   step="0.01"
+                                   name="profit"
+                                   id="profit"
+                                   disabled>
+                        </div>
+ 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="percentage">Profit Percentage</span>
+                            <input class="form-control"
+                                   type="number"
+                                   step="0.01"
+                                   name="percentage"
+                                   id="percentage"
+                                   disabled>
+                            <span class="input-group-text">%</span>
+                        </div>
+ 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="channel_fee">Channel Fee</span>
+                            <span class="currency_symbol input-group-text"></span>
+                            <input class="form-control"
+                                   type="number"
+                                   step="0.01"
+                                   name="channel_fee"
+                                   id="channel_fee"
+                                   disabled>
+                        </div>
+ 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="vat">VAT</span>
+                            <span class="currency_symbol input-group-text"></span>
+                            <input class="form-control"
+                                   type="number"
+                                   step="0.01"
+                                   name="vat"
+                                   id="vat"
+                                   disabled>
+                        </div>
+ 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="postage_to_fba">Total Postage</span>
+                            <span class="input-group-text">£</span>
+                            <input class="form-control"
+                                   type="number"
+                                   step="0.01"
+                                   name="postage_to_fba"
+                                   id="postage_to_fba"
+                                   disabled>
+                        </div>
+ 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="postage_per_item">Postage Per Item</span>
+                            <span class="input-group-text">£</span>
+                            <input class="form-control"
+                                   type="number"
+                                   step="0.01"
+                                   name="postage_per_item"
+                                   id="postage_per_item"
+                                   disabled>
+                        </div>
+ 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="max_quantity">Maximum Sendable</span>
+                            <input class="form-control"
+                                   type="number"
+                                   class="max_quantity"
+                                   id="max_quantity"
+                                   disabled>
+                        </div>
+ 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="max_quantity_no_stock">Sendable Ignoring Stock Level</span>
+                            <input class="form-control"
+                                   type="number"
+                                   class="max_quantity_no_stock"
+                                   id="max_quantity_no_stock"
+                                   disabled>
+                        </div>
+ 
+                    </div>
+                </div>
+            </div>
+ 
+            <div class="col-5">
+                <div class="fba_order_form p-3 bg-light rounded border">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {% include "home/bootstrap_input_group_form.html" %}
+                        <button class="btn btn-primary form-control">
+                            {% if form.instance.id %}
+                                Update
+                            {% else %}
+                                Create
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+ 
+            <div class="col">
+                <img src="{% if form.instance.id %}{{ form.instance.product_image_url }}{% else %}{{ image_url }}{% endif %}"
+                     alt=""
+                     height="200"
+                     width=""
+                     class="img border rounded">
+            </div>
+        </div>
+ 
         {% if to_repeat %}
             <div class="fba_order_form">
                 <form action="">
-                    <p>
-                        <label for="prev_aprox_quantity">Aproximate Quantity</label>
-                        <input type="text"
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" for="prev_aprox_quantity">Aproximate Quantity</span>
+                        <input class="form-control"
+                               type="text"
                                name="prev_aprox_quantity"
                                value="{{ to_repeat.aproximate_quantity }}"
                                size="5"
                                disabled>
-                    </p>
-                    <p>
-                        <label for="quantity_sent">Quantity Sent</label>
-                        <input type="text"
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" for="quantity_sent">Quantity Sent</span>
+                        <input class="form-control"
+                               type="text"
                                name="quantity_sent"
                                value="{% if to_repeat.quantity_sent %}{{ to_repeat.quantity_sent }}{% else %}Not yet sent{% endif %}"
                                disabled>
-                    </p>
-                    <p>
+                    </div>
+                    <div class="input-group mb-3">
                         <textarea disabled>
             {{ to_repeat.notes }}
             </textarea>
-                    </p>
+                    </div>
                 </form>
             </div>
         {% endif %}
 
     </div>
-
-    {% if form.instance.status == form.instance.CLOSED or form.instance.status == form.instance.FULFILLED %}
-        {% include "fba/fba_order_manage_shipments.html" with fba_order=form.instance %}
-    {% endif %}
-
 {% endblock content %}
 
 {% block script %}

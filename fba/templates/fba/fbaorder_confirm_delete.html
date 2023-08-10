@@ -1,8 +1,15 @@
-{% extends 'fba/base.html' %}
+{% extends "fba/base.html" %}
 
 {% block content %}
-<form method="post">{% csrf_token %}
-    <p>Are you sure you want to delete "{{ object }}"?</p>
-    <input type="submit" value="Confirm">
-</form>
+    <div class="container">
+        <h3 class="display-3 mb-5">Delete FBA Order</h3>
+        <span>{{ object.region.flag }}</span>
+        <div class="fs-5 font-monospace user-select-all">{{ object.product_SKU }}</div>
+        <div class="fs-3 mb-5 user-select-all">{{ object.product_name }}</div>
+        <form method="post">
+            {% csrf_token %}
+            <p>Are you sure you want to delete this FBA order?</p>
+            <input type="submit" value="Confirm" class="btn btn-primary">
+        </form>
+    </div>
 {% endblock content %}

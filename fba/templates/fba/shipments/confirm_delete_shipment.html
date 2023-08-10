@@ -1,10 +1,17 @@
-{% extends 'fba/base.html' %}
+{% extends "fba/base.html" %}
 
-{% block content %}{{ block.super }}
+{% block content %}
+    {{ block.super }}
+ 
+    <div class="container">
+        <h2 class="display-3 mb-5">Delete Shipment</h2>
+ 
+        <form method="post">
+            {% csrf_token %}
+            <p>Are you sure you want to delete "{{ object }}"?</p>
+            <input type="submit" value="Confirm" class="btn btn-danger">
+        </form>
+ 
+    </div>
 
-<form method="post">{% csrf_token %}
-    <p>Are you sure you want to delete "{{ object }}"?</p>
-    <input type="submit" value="Confirm">
-</form>
-
-{% endblock %}
+{% endblock content %}

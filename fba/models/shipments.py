@@ -296,13 +296,15 @@ class FBAShipmentItem(models.Model):
     package = models.ForeignKey(
         FBAShipmentPackage, related_name="shipment_item", on_delete=models.CASCADE
     )
-    sku = models.CharField(max_length=255)
+    sku = models.CharField(max_length=255, verbose_name="SKU")
     description = models.TextField()
     quantity = models.SmallIntegerField()
-    weight_kg = models.FloatField()
+    weight_kg = models.FloatField(verbose_name="Weight (kg)")
     value = models.SmallIntegerField(default=100)
-    country_of_origin = models.CharField(max_length=255, default="United Kingdom")
-    hr_code = models.CharField(max_length=255)
+    country_of_origin = models.CharField(
+        max_length=255, default="United Kingdom", verbose_name="Country of Origin"
+    )
+    hr_code = models.CharField(max_length=255, verbose_name="HR Code")
 
     class Meta:
         """Meta class for FBAShipmentItem."""

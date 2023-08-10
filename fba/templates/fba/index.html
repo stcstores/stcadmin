@@ -1,21 +1,18 @@
-{% extends 'fba/base.html' %}
+{% extends "fba/base.html" %}
 
 {% block content %}
 
+    <div class="container">
+        <h1 class="display-1 mb-5">FBA</h1>
 
-<div class="menu">
-    <a href="{% url 'fba:awaiting_fulfillment' %}">
-        <h3>Fulfill an FBA Order</h3>
-    </a>
-    <a href="{% url 'fba:select_product_for_order' %}">
-        <h3>Create an FBA Order</h3>
-    </a>
-    <a href="{% url 'fba:order_list' %}">
-        <h3>Manage FBA Orders</h3>
-    </a>
-    <a href="{% url 'fba:shipments' %}">
-        <h3>Manage Shipments</h3>
-    </a>
-</div>
+        <div class="list-group col-6">
+            <a class="list-group-item" href="{% url 'fba:awaiting_fulfillment' %}">Fulfill an FBA Order</a>
+            <a class="list-group-item"
+               href="{% url 'fba:select_product_for_order' %}">Create an FBA Order</a>
+            <a class="list-group-item" href="{% url 'fba:order_list' %}">Manage FBA Orders</a>
+            <a class="list-group-item" href="{% url 'fba:shipments' %}">Manage Shipments</a>
+        </div>
+ 
+    </div>
 
 {% endblock content %}

@@ -1,62 +1,65 @@
-{% extends 'fba/base.html' %}
+{% extends "fba/base.html" %}
 
-{% block content %}{{ block.super }}
+{% block content %}
+    {{ block.super }}
 
-<h1>FBA Shipments</h1>
-<br>
-<a href="{% url 'fba:shipment_destinations' %}">
-    <button>Manage Destination Addresses</button>
-</a>
-&nbsp;
-<a href="{% url 'fba:create_shipment_select_destination' %}">
-    <button>Create New Shipment Order</button>
-</a>
-&nbsp;
+    <div class="container">
+        <h3 class="display-3 mb-5">FBA Shipments</h3>
+ 
+        <div class="mb-5">
+            <a href="{% url 'fba:shipment_destinations' %}" class="btn btn-primary">Manage Destination Addresses</a>
+            <a href="{% url 'fba:create_shipment_select_destination' %}"
+               class="btn btn-primary">Create New Shipment Order</a>
+        </div>
 
-<br><br>
-<div>
-    <h3>Awaiting Shipment</h3>
-    {% if current_shipments %}
-    {% include "fba/shipments/shipment_table.html" with shipments=current_shipments %}
-    {% else %}
-    No current shipments
-    <a href="{% url 'fba:create_shipment_select_destination' %}">
-        <button>Create New Shipment Order</button>
-    </a>
-    {% endif %}
-</div>
-<br>
-<div>
-    <h3>Held Shipments</h3>
-    {% if held_shipments %}
-    {% include "fba/shipments/shipment_table.html" with shipments=held_shipments %}<br>
-    {% else %}
-    No shipments currently on hold
-    {% endif %}
-</div>
-<br>
-<div>
-    <h3>Previous Shipment Files</h3>
-    <table>
-        <tr>
-            <th>Export</th>
-            <th>Order Count</th>
-            <td colspan="2"></td>
-        </tr>
-        {% for export in previous_exports %}
-        <th>{{ export}}</th>
-        <td>{{ export.shipment_order.count }}</td>
-        <td><a href="{% url 'fba:download_shipment_file' export.pk %}">
-                <button>Recreate File</button>
-            </a>
-        </td>
-        <td><a href="{% url 'fba:download_address_file' export.pk %}">
-            <button>Download Address File</button>
-        </a>
-    </td>
-    </table>
-
-    <br>
-    {% endfor %}
-</div>
-{% endblock %}
+        <div class="mb-5">
+            <h3>Awaiting Shipment</h3>
+            {% if current_shipments %}
+                {% include "fba/shipments/shipment_table.html" with shipments=current_shipments %}
+            {% else %}
+                No current shipments
+                <a href="{% url 'fba:create_shipment_select_destination' %}"
+                   class="btn btn-primary">Create New Shipment Order</a>
+            {% endif %}
+        </div>
+        <div class="mb-5">
+            <h3>Held Shipments</h3>
+            {% if held_shipments %}
+                {% include "fba/shipments/shipment_table.html" with shipments=held_shipments %}
+                <br>
+            {% else %}
+                No shipments currently on hold
+            {% endif %}
+        </div>
+        <div class="mb-5">
+            <h3>Previous Shipment Files</h3>
+            <div class="col-6">
+                <table class="table table-light table-hover table-sm mb-3">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Export</th>
+                            <th>Order Count</th>
+                            <td colspan="2"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for export in previous_exports %}
+                            <tr>
+                                <th>{{ export }}</th>
+                                <td>{{ export.shipment_order.count }}</td>
+                                <td>
+                                    <a href="{% url 'fba:download_shipment_file' export.pk %}"
+                                       class="btn btn-primary btn-sm">Recreate File</a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'fba:download_address_file' export.pk %}"
+                                       class="btn btn-primary btn-sm">Download Address File</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

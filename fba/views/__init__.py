@@ -20,8 +20,6 @@ from .fba import (
     UnmarkPrinted,
 )
 from .shipping import (
-    AddFBAOrderPackages,
-    AddFBAOrderToShipment,
     CreateDestination,
     CreateFBAShipmentFile,
     CreatePackage,
@@ -61,8 +59,6 @@ __all__ = [
     "ShippingPrice",
     "TakeOffHold",
     "UnmarkPrinted",
-    "AddFBAOrderPackages",
-    "AddFBAOrderToShipment",
     "CreateDestination",
     "CreateFBAShipmentFile",
     "CreatePackage",

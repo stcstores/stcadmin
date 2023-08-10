@@ -1,45 +1,43 @@
-{% extends 'fba/base.html' %}
-
-{% block additional_head %}
-{{ block.super }}
-<style>
-    #tracking_number_form {
-        display: flex;
-        flex-direction: column;
-        width: 20em;
-    }
-
-    .tracking_number_input {
-        margin: 1em;
-    }
-</style>
-{% endblock additional_head %}
+{% extends "fba/base.html" %}
 
 {% block content %}
-
-<h3>
-    <span class="sku">{{ form.instance.product_SKU }}</span> - 
-    <span class="name">{{ form.instance.product_name }}</span>
-</h3>
-
-<form action="" method="POST" id="tracking_number_form">{% csrf_token %}
-    {{ form.as_p }}
-    <button id="save_button">Save</button>
-</form>
-
+    <div class="container">
+        <h3 class="display-3 mb-5">Edit Tracking Numbers</h3>
+        <span>{{ form.instance.region.flag }}</span>
+        <div class="fs-5 font-monospace user-select-all">{{ form.instance.product_SKU }}</div>
+        <div class="fs-3 mb-5 user-select-all">{{ form.instance.product_name }}</div>
+        <div class="m-2">
+            <div>
+                ASIN: <span class="font-monospace user-select-all">{{ form.instance.product_asin }}</span>
+            </div>
+            <div>
+                Barcode: <span class="font-monospace user-select-all">{{ form.instance.product_barcode }}</span>
+            </div>
+            <div>Supplier: {{ form.instance.product_supplier }}</div>
+        </div>
+        <div class="col-6 m-3">
+            <form action="" method="post" id="tracking_number_form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="mt-3">
+                    <button id="save_button" class="btn btn-primary form-control">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock content %}
 
 {% block script %}
 
-<script>
+    <script>
 
     var tracking_numbers = [{% for tracking_number in form.instance.tracking_numbers.all %}"{{ tracking_number }}",{% endfor %}];
 
-    var emptyInput = $("<input class='tracking_number_input'>");
+    var emptyInput = $("<input class='tracking_number_input form-control mb-1'>");
 
     function addInput() {
         var newInput = emptyInput.clone(true);
-        newInput.insertBefore($("#save_button"));
+        newInput.insertBefore($("#save_button").parent());
         newInput.change(updateInputs);
         return newInput;
     }
@@ -87,6 +85,6 @@
         })
     });
 
-</script>
+    </script>
 
 {% endblock script %}
