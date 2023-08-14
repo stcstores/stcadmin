@@ -8,3 +8,4 @@ per-file-ignores =
     */tests/*: D
     */migrations/*: D
     */factories.py: D
+    conftest.py: D

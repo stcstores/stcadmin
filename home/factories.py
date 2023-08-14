@@ -6,7 +6,6 @@ import datetime as dt
 import factory
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from factory import faker
 from factory.django import DjangoModelFactory
 
 from home import models
@@ -16,7 +15,7 @@ class GroupFactory(DjangoModelFactory):
     class Meta:
         model = Group
 
-    name = faker.Faker("text", max_nb_chars=20)
+    name = factory.Faker("text", max_nb_chars=20)
 
 
 class UserFactory(DjangoModelFactory):
@@ -32,13 +31,13 @@ class UserFactory(DjangoModelFactory):
     is_staff = False
     is_active = True
     is_superuser = False
-    last_login = faker.Faker(
+    last_login = factory.Faker(
         "date_time_this_decade",
         before_now=True,
         after_now=False,
         tzinfo=dt.timezone.utc,
     )
-    date_joined = faker.Faker(
+    date_joined = factory.Faker(
         "date_time_this_decade",
         before_now=True,
         after_now=False,
