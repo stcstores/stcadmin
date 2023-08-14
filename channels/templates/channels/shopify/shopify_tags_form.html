@@ -1,90 +1,95 @@
-{% extends 'channels/base.html' %}
+{% extends "channels/base.html" %}
 
 {% load static %}
 
-{% block additional_head %}{{ block.super }}
-<style>
-    
-    .tag_letter {
-        margin-bottom: 1em;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
+{% comment %} {% block additional_head %}
+    {{ block.super }}
+    <style>
+        .tag_letter {
+            margin-bottom: 1em;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
 
-    .tag_letter_header {
-        font-weight: bold;
-        font-size: 1.5em;
-    }
+        .tag_letter_header {
+            font-weight: bold;
+            font-size: 1.5em;
+        }
 
-    .tag {
-        margin: 0.25em;
-        padding: 0.25em;
-        border: 1px solid black;
-        border-radius: 0.25em;
-        cursor: pointer;
-    }
+        .tag {
+            margin: 0.25em;
+            padding: 0.25em;
+            border: 1px solid black;
+            border-radius: 0.25em;
+            cursor: pointer;
+        }
 
-    .tag.selected {
-        background: #9af569;
-    }
+        .tag.active {
+            background: #9af569;
+        }
 
-    #save_button {
-        width: 80%;
-        padding: 1em;
-        font-size: 1.25em;
-        font-weight: bold;
-    }
+        #save_button {
+            width: 80%;
+            padding: 1em;
+            font-size: 1.25em;
+            font-weight: bold;
+        }
 
-    #create_new_tag {
-        width: 25%;
-        padding: 0.25em;
-        font-weight: bold;
-        margin: 2em;
-    }
-
-</style>
-{% endblock %}
+        #create_new_tag {
+            width: 25%;
+            padding: 0.25em;
+            font-weight: bold;
+            margin: 2em;
+        }
+    </style>
+{% endblock additional_head %} {% endcomment %}
 
 {% block content %}
 
-<h1>Update Shopify Listing Tags</h1>
-<h2>{{ listing.product_range.sku }} - {{ listing.product_range.name }}</h2>
-<button id="create_new_tag">Create New Tag</button>
-<div class="tag_list">
-    {% for tag_letter, tags in tag_groups.items %}
-    <span class="tag_letter_header">{{ tag_letter|upper }}</span>
-    <div class="tag_letter">
-        {% for tag in tags %}
-        <div class="tag{% if tag in listing_tags %} selected{% endif %}" data-tag-id={{ tag.id }}>
-            {{ tag }}
+    <div class="container">
+ 
+        <h3 class="display-3 mb-3">Update Shopify Listing Tags</h3>
+        <div class="fs-5 font-monospace user-select-all">{{ listing.product_range.sku }}</div>
+        <div class="fs-3 mb-5 user-select-all">{{ listing.product_range.name }}</div>
+        <button id="create_new_tag" class="btn btn-primary">Create New Tag</button>
+        <div class="tag_list">
+            {% for tag_letter, tags in tag_groups.items %}
+                <div class="m-3 p-3">
+                    <div class="fw-bold fs-5">{{ tag_letter|upper }}</div>
+                    {% for tag in tags %}
+                        <div class="tag btn btn-light m-1 {% if tag in listing_tags %}active{% endif %}" data-tag-id={{ tag.id }}>
+                            {{ tag }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+        <button id="save_button" class="bnt btn-primary">Save</button>
+        <form action="" method="post" id="form" hidden>
+            {% csrf_token %}
+            {{ form }}
+        </form>
+
     </div>
-    {% endfor %}
-</div>
-<button id="save_button">Save</button>
-<form action="" method="POST" id="form" hidden>{% csrf_token %}
-{{ form }}
-</form>
 
 {% endblock content %}
 
 {% block script %}
-<script>
+    <script>
     function set_options() {
         $(".tag").each(function() {
             var tag_id = $(this).data('tag-id');
             var option = $("#{{ form.tags.auto_id }}").find('option[value="'+ tag_id +'"]');
-            option.prop("selected", $(this).hasClass("selected"));
+            option.prop("active", $(this).hasClass("active"));
         });
     }
 
     function toggle_tag() {
-        $(this).toggleClass("selected");
+        $(this).toggleClass("active");
         var tag_id = $(this).data('tag-id');
         var option = $("#{{ form.tags.auto_id }}").find('option[value="'+ tag_id +'"]');
-        option.prop("selected", $(this).hasClass("selected"));
+        option.prop("active", $(this).hasClass("active"));
     }
 
     $(document).ready(function() {
@@ -99,5 +104,5 @@
             $("#form").submit();
         });
     });
-</script>
+    </script>
 {% endblock script %}

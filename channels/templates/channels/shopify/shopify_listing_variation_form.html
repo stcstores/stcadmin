@@ -1,9 +1,5 @@
-<div class="variation">
-    <span class="sku">{{ product.sku }}</span>
-    <br>
-    {% for value in product.variation_values %}
-        <span class="sku">{{ value }}</span>
-        <br>
-    {% endfor %}
+<div class="col-3 border rounded bg-light m-2 p-2">
+    <div class="font-monospace user-select-all">{{ product.sku }}</div>
+    {% for value in product.variation_values %}<span class="me-3">{{ value }}</span>{% endfor %}
     {% include "home/bootstrap_input_group_form.html" with form=variation_form %}
 </div>

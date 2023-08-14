@@ -1,46 +1,42 @@
-{% extends 'channels/base.html' %}
-
-{% block additional_head %}
-<style>
-    .pagination {
-        margin: 1em;
-    }
-
-    .pagination button {
-        margin-left: 1em;
-    }
-
-    #shopify_listings tr {
-        background: #eee;
-    }
-
-    #shopify_listings tr:nth-child(odd){
-        background: #ddd;
-    }
-</style>
-{% endblock additional_head %}
+{% extends "channels/base.html" %}
 
 {% block content %}
 
-<form action="" method="GET">
-    {{ form.as_p }}
-    <button>Search</button>
-</form>
+    <div class="container">
+        <h3 class="display-3 mb-5">Shopify Products</h3>
 
-{% if object_list %}
-{% include 'channels/shopify/search_page_pagination.html' %}
-<table id="shopify_listings">
-{% for product_range in object_list %}
-{% include 'channels/shopify/search_page_result.html' %}
-{% endfor %}
-</table>
-{% include 'channels/shopify/search_page_pagination.html' %}
-{% endif %}
+        <div class="m-4">
+            <form action="" method="get">
+                {% include "home/bootstrap_inline_form.html" %}
+                <button type="submit" class="btn btn-primary form-control">Search</button>
+            </form>
+        </div>
+
+        {% if object_list %}
+            {% include "orders/pagination_navigation.html" %}
+            <table id="shopify_listings"
+                   class="table table-light table-hover table-sm mb-3">
+                <thead class="table-primary">
+                    <tr>
+                        <th>SKU</th>
+                        <th>Name</th>
+                        <th></th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                {% for product_range in object_list %}
+                    {% include "channels/shopify/search_page_result.html" %}
+                {% endfor %}
+            </table>
+            {% include "orders/pagination_navigation.html" %}
+        {% endif %}
+
+    </div>
 
 {% endblock content %}
 
 {% block script %}
-<script>
+    <script>
     function getListingActiveStatus(listingID) {
         $.ajax({
             url: "{% url 'channels:shopify_listing_active_status' %}",
@@ -77,5 +73,5 @@
             {% comment %} getListingActiveStatus(listingID); {% endcomment %}
         });
     });
-</script>
+    </script>
 {% endblock script %}

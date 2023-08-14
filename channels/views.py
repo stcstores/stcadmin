@@ -30,6 +30,28 @@ class Index(ChannelsUserMixin, TemplateView):
     template_name = "channels/index.html"
 
 
+class ShopifyProducts(ChannelsUserMixin, ListView):
+    """View for product search page."""
+
+    template_name = "channels/shopify/search_page.html"
+    form_class = forms.ProductSearchForm
+    model = ProductRange
+    paginate_by = 50
+
+    def get_queryset(self):
+        """Return a queryset of product ranges filtered by the request's GET params."""
+        form = self.form_class(self.request.GET)
+        form.is_valid()
+        form.save()
+        return form.ranges
+
+    def get_context_data(self, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(**kwargs)
+        context["form"] = self.form_class(self.request.GET)
+        return context
+
+
 class ShopifyListing(ChannelsUserMixin, TemplateView):
     """View for Shopify listings."""
 
@@ -215,28 +237,6 @@ class UpdateShopifyTags(ChannelsUserMixin, UpdateView):
         return self.object.get_absolute_url()
 
 
-class ShopifyProducts(ChannelsUserMixin, ListView):
-    """View for product search page."""
-
-    template_name = "channels/shopify/search_page.html"
-    form_class = forms.ProductSearchForm
-    model = ProductRange
-    paginate_by = 50
-
-    def get_queryset(self):
-        """Return a queryset of product ranges filtered by the request's GET params."""
-        form = self.form_class(self.request.GET)
-        form.is_valid()
-        form.save()
-        return form.ranges
-
-    def get_context_data(self, **kwargs):
-        """Return context for the template."""
-        context = super().get_context_data(**kwargs)
-        context["form"] = self.form_class(self.request.GET)
-        return context
-
-
 @method_decorator(csrf_exempt, name="dispatch")
 class UploadShopifyListing(ChannelsUserMixin, View):
     """View to trigger updating or creating a Shopify listing."""
@@ -289,18 +289,6 @@ class ShopifyListingActiveStatus(ChannelsUserMixin, View):
         listing = get_object_or_404(models.shopify_models.ShopifyListing, id=listing_id)
         active_status = listing.listing_is_active()
         return JsonResponse({"listing_id": listing.id, "active": active_status})
-
-
-class ShopifyTagList(ChannelsUserMixin, TemplateView):
-    """View for showing a list of Shopify tags."""
-
-    template_name = "channels/shopify/shopify_tag_list.html"
-
-    def get_context_data(self, *args, **kwargs):
-        """Return context for the template."""
-        context = super().get_context_data(*args, **kwargs)
-        context["tags"] = models.shopify_models.ShopifyTag.objects.all()
-        return context
 
 
 class CreateShopifyTag(CreateView):

@@ -2,12 +2,11 @@
 {% load static %}
 
 {% block content %}
-<h1>Channels</h1>
-<div class="site_index">
-    <p>From here you can access:</p>
-     <ul class="app">
-        <li><a href="{% url 'channels:shopify_products' %}">Shopify Listings</a></li>
-        <p>Search and view Shopify listings.</p>
-    </ul>
-</div>
-{% endblock %}
+
+    <div class="container">
+        <h1 class="display-1 mb-5">Channels</h1>
+        <div class="list-group col-6">
+            <a class="list-group-item" href="{% url 'channels:shopify_products' %}">Shopify Listings</a>
+        </div>
+    </div>
+{% endblock content %}

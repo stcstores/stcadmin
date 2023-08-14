@@ -1,29 +1,19 @@
-{% extends 'channels/base.html' %}
+{% extends "channels/base.html" %}
 
 {% load static %}
 
-{% block additional_head %}
-    {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/inventory.css' %}">
-    <link rel="stylesheet" href="{% static 'css/product_page.css' %}">
-    <script src="{% static 'scripts/new_product.js' %}"></script>
-    {% include 'home/froala_head.html' %}
-    <style>
-        #form {
-            width: 50%;
-        }
-    </style>
-    {{ form.media.css }}
-{% endblock %}
-
 {% block content %}
 
-    <h1>Create a Shopify Tag</h1>
+    <div class="container">
+        <h3 class="display-3 mb-5">Create a Shopify Tag</h3>
 
-    <form action="" method="POST" id="form">
-        {% csrf_token %}
-        {% include "home/bootstrap_input_group_form.html" %}
-        <button type="submit" class="save_button">Save</button>
-    </form>
+        <div class="col-6">
+            <form action="" method="post" id="form">
+                {% csrf_token %}
+                {% include "home/bootstrap_input_group_form.html" %}
+                <button type="submit" class="btn btn-primary form-control">Save</button>
+            </form>
+        </div>
+    </div>
 
 {% endblock content %}

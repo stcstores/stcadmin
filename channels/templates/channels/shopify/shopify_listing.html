@@ -1,83 +1,46 @@
-{% extends 'channels/base.html' %}
+{% extends "channels/base.html" %}
 
 {% load static %}
 
-{% block additional_head %}
-<style>
-    #listing_status {
-        margin: 1em;
-        padding: 0.5em;
-        border-radius: 1em;
-        background: #ddd;
-        border: 2px solid #888;
-    }
-    #active_status {
-        margin: 1em;
-        padding: 0.5em;
-        border-radius: 1em;
-        border-style: solid;
-        border-width:2px;
-        background: #eee;
-    }
-    #active_status.active {
-        color: green;
-        border-color: green;
-    }
-    #active_status.missing {
-        color: red;
-        border-color: red;
-    }
-
-    #operation_status {
-        margin: 1em;
-        padding: 0.5em;
-        border-radius: 1em;
-        border-style: solid;
-        border-width:2px;
-        background: #eee;
-        color: black;
-    }
-
-    #operation_status.ongoing {
-        border-color: blue;
-    }
-
-    #operation_status.error {
-        border-color: red;
-    }
-
-    #operation_status.complete {
-        border-color: green;
-    }
-
-    #status_icon {
-        text-align: right;
-    }
-</style>
-{% endblock additional_head %}
-
 {% block content %}
-<h1>{{ listing.title }}</h1>
-<h3><span class="sku">{{ product_range.sku}}</span> - <span class="sku">{{ product_range.name }}</span></h3>
-<a href="{% url 'inventory:product_range' product_range.pk %}" target="_blank">
-    Go to product range
-</a>
 
-<div id="listing_status" class="listing_status">
-    <div id="active_status"></div>
-    <div id="operation_status"><i class="fa-solid fa-spinner fa-spin-pulse"></i></div>
-    <div class="status_icon"></div>
-</div>
+    <div class="container">
+        <h3 class="display-3 mb-3">Shopify Listing</h3>
+        <div class="fs-3 mb-2 user-select-all">{{ listing.title }}</div>
+        <div class="fs-5 font-monospace user-select-all">{{ product_range.sku }}</div>
+        <div class="fs-3 mb-5 user-select-all">{{ product_range.name }}</div>
+        <a href="{% url 'inventory:product_range' product_range.pk %}"
+           target="_blank">Go to product range</a>
 
-<button><a href="{% url 'channels:update_shopify_listing' listing.pk %}">Edit Listing</a></button>
-<button id="upload_listing_button" data-listing_pk="{{ listing.pk }}" disabled>
-    {% if listing.product_id %}Update Listing{% else %}Upload Listing{% endif %}
-</button>
+        <div id="listing_status" class="bg-light border rounded m-3">
+            <div id="active_status"></div>
+            <div id="operation_status">
+                <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+            </div>
+            <div class="status_icon"></div>
+        </div>
+
+ 
+        <a href="{% url 'channels:update_shopify_listing' listing.pk %}"
+           class="btn btn-primary">Edit Listing</a>
+ 
+        <button id="upload_listing_button"
+                class="btn btn-primary"
+                data-listing_pk="{{ listing.pk }}"
+                disabled>
+            {% if listing.product_id %}
+                Update Listing
+            {% else %}
+                Upload Listing
+            {% endif %}
+        </button>
+    </div>
+
 {% endblock content %}
 
 {% block script %}
 
-<script>
+    <script>
 
     function disableInputs() {
         $("#upload_listing_button").attr("disabled", true);
@@ -129,5 +92,5 @@
             });
         });
     });
-</script>
+    </script>
 {% endblock script %}
