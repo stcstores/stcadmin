@@ -1,79 +1,76 @@
 {% extends "inventory/product_editor/base.html" %}
 {% load static %}
 
-{% block content %}
-  {{ block.super }}
+{% block page_content %}
+ 
+  <div class="mb-3">
+    <a href="{% url 'inventory:edit_range_details' product_range.pk %}"
+       class="btn btn-primary">Edit Range details</a>
+  </div>
 
-  <div class="container">
-    <a href="{% url 'inventory:edit_range_details' product_range.pk %}">
-      <button class="btn btn-primary">Edit Range details</button>
-    </a>
-
-    <table class="table table-sm table-striped table-hover">
-      <tr class="table-secondary">
-        <th>SKU</th>
-        {% for option in product_range.variation_options %}<th class="name">{{ option }}</th>{% endfor %}
-        {% for option in product_range.listing_options %}<th class="listing_option">{{ option }}</th>{% endfor %}
-        <th colspan="3">
-          <a href="{% url 'inventory:edit_all_variations' product_range.pk %}">
-            <button class="btn btn-primary btn-sm">Edit All</button>
-          </a>
-        </th>
-        <th></th>
-      </tr>
-      {% for options, product in variations.items %}
-        <tr>
-          <th class="sku">
-            {% if product %}
-              {{ product.sku }}
-            {% else %}
-              -
+  <table class="table table-sm table-light table-hover">
+    <tr class="table-primary">
+      <th>SKU</th>
+      {% for option in product_range.variation_options %}<th class="name">{{ option }}</th>{% endfor %}
+      {% for option in product_range.listing_options %}<th class="listing_option">{{ option }}</th>{% endfor %}
+      <th>
+        <a href="{% url 'inventory:edit_all_variations' product_range.pk %}"
+           class="btn btn-primary btn-sm">Edit All</a>
+      </th>
+      <th>Initial Stock Level</th>
+      <th colspan="2">Status</th>
+    </tr>
+    {% for options, product in variations.items %}
+      <tr>
+        <td class="font-monospace user-select-all">
+          {% if product %}
+            {{ product.sku }}
+          {% else %}
+            -
+          {% endif %}
+        </td>
+        {% for option in options %}<td class="name">{{ option }}</td>{% endfor %}
+        {% if product %}
+          {% for option, value in product.listing_options.items %}<td class="listing_option name">{{ value }}</td>{% endfor %}
+        {% else %}
+          {% for option in product_range.listing_options %}<th class="listing_option name">-</th>{% endfor %}
+        {% endif %}
+        {% if product %}
+          <th>
+            <div class="buttons">
+              <a href="{% url 'inventory:edit_new_variation' product.pk %}"
+                 class="btn btn-primary btn-sm">Edit</a>
+            </div>
+          </th>
+          <th>
+            {% if product_range.status == product_range.CREATING %}
+              {% include "inventory/product_editor/set_initial_stock.html" %}
             {% endif %}
           </th>
-          {% for option in options %}<td class="name">{{ option }}</td>{% endfor %}
-          {% if product %}
-            {% for option, value in product.listing_options.items %}<td class="listing_option name">{{ value }}</td>{% endfor %}
+          {% if product.pre_existing %}
+            <td>Existing</td>
           {% else %}
-            {% for option in product_range.listing_options %}<th class="listing_option name">-</th>{% endfor %}
+            <td>New</td>
           {% endif %}
-          {% if product %}
-            <th>
-              <div class="buttons">
-                <a href="{% url 'inventory:edit_new_variation' product.pk %}">
-                  <button class="btn btn-primary btn-sm">Edit</button>
-                </a>
-              </div>
-            </th>
-            <th>
-              {% if product_range.status == product_range.CREATING %}
-                {% include "inventory/product_editor/set_initial_stock.html" %}
-              {% endif %}
-            </th>
-            {% if product.pre_existing %}
-              <td>Existing</td>
-            {% else %}
-              <td>New</td>
-            {% endif %}
-            {% if product.is_complete %}
-              <td class="positive">Complete</td>
-            {% else %}
-              <td class="error">Incomplete</td>
-            {% endif %}
+          {% if product.is_complete %}
+            <td class="positive">Complete</td>
           {% else %}
-            <td>Does not exist</td>
-            <td>-</td>
+            <td class="error">Incomplete</td>
           {% endif %}
-        </tr>
-      {% endfor %}
-    </table>
+        {% else %}
+          <td>Does not exist</td>
+          <td>-</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </table>
 
-    <a href="{% url 'inventory:complete_new_product' product_range.pk %}"
-       class="btn btn-primary">Complete Product</a>
-    <a id="discard_changes"
-       href="{% url 'inventory:discard_new_range' product_range.id %}"
-       class="btn btn-primary">Discard Product</a>
-  </div>
-{% endblock content %}
+  <a href="{% url 'inventory:complete_new_product' product_range.pk %}"
+     class="btn btn-primary">Complete Product</a>
+  <a id="discard_changes"
+     href="{% url 'inventory:discard_new_range' product_range.id %}"
+     class="btn btn-primary">Discard Product</a>
+{% endblock page_content %}
 
 {% block script %}
   {{ block.super }}

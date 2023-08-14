@@ -1,10 +1,13 @@
-<div class="text-center">
-  <button class="show_all btn btn-primary btn-sm">Show All Variations</button>
-  <button class="hide_all btn btn-primary btn-sm">Hide All Variations</button>
-</div>
+{% if object_list %}
 
-{% for product_range in object_list %}
-  <div class="product_search_results container text-start">
-    {% include "inventory/product_search/result_range.html" %}
+  <div class="text-center">
+    <button class="show_all btn btn-primary btn-sm">Show All Variations</button>
+    <button class="hide_all btn btn-primary btn-sm">Hide All Variations</button>
   </div>
-{% endfor %}
+
+  {% for product_range in object_list %}
+    <div class="product_search_results container text-start">
+      {% include "inventory/product_search/result_range.html" %}
+    </div>
+  {% endfor %}
+{% endif %}

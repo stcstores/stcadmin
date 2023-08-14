@@ -1,42 +1,37 @@
-<div class="order_type" id="urgent">
-    <div class="order_count" id="urgent_count">
-        <div class="name">Urgent:</div>
-        <div class="count">{{ urgent|length }}</div>
-        <div class="toggle" id="urgent_toggle">&#9658;</div>
+<div class="mb-4 p-3 border rounded bg-light text-danger fw-bold"
+     id="urgent">
+    <div id="urgent_count">
+        <span class="name">Urgent:</span>
+        <span class="count">{{ urgent|length }}</span>
+        <span class="toggle" id="urgent_toggle">►</span>
     </div>
     <div class="order_ids" id="urgent_ids">
-        {% for order_ID in urgent %}
-        <div class="order_id">{{ order_ID }}</div>
-        {% endfor %}
+        {% for order_ID in urgent %}<div class="fs-6 font-monospace user-select-all">{{ order_ID }}</div>{% endfor %}
     </div>
 </div>
-<div class="order_type" id="priority">
-    <div class="order_count" id="priority_count">
-        <div class="name">Priority:</div>
-        <div class="count">{{ priority|length }}</div>                
-        <div class="toggle" id="priority_toggle">&#9658;</div>
+<div class="mb-4 p-3 border rounded bg-light text-danger" id="priority">
+    <div id="priority_count">
+        <span class="name">Priority:</span>
+        <span class="count">{{ priority|length }}</span>
+        <span class="toggle" id="priority_toggle">►</span>
     </div>
     <div class="order_ids" id="priority_ids">
-        {% for order_ID in priority %}
-        <div class="order_id">{{ order_ID }}</div>
-        {% endfor %}
+        {% for order_ID in priority %}<div class="fs-6 font-monospace user-select-all">{{ order_ID }}</div>{% endfor %}
     </div>
 </div>
-<div class="order_type" id="non_priority">
-    <div class="order_count" id="non_priority_count">
-        <div class="name">Non-Priority:</div>
-        <div class="count">{{ non_priority|length }}</div>
-        <div class="toggle" id="non_priority_toggle">&#9658;</div>
+<div class="mb-4 p-3 border rounded bg-light" id="non_priority">
+    <div id="non_priority_count">
+        <span class="name">Non-Priority:</span>
+        <span class="count">{{ non_priority|length }}</span>
+        <span class="toggle" id="non_priority_toggle">►</span>
     </div>
     <div class="order_ids" id="non_priority_ids">
-        {% for order_ID in non_priority %}
-        <div class="order_id">{{ order_ID }}</div>
-        {% endfor %}
+        {% for order_ID in non_priority %}<div class="fs-6 font-monospace user-select-all">{{ order_ID }}</div>{% endfor %}
     </div>
 </div>
 <div class="order_type">
-    <div class="order_count">
-        <div class="name">Total:</div>
-        <div class="count">{{ total }}</div>
+    <div class="mb-4 p-3 border rounded bg-light">
+        <span class="name">Total:</span>
+        <span class="count">{{ total }}</span>
     </div>
 </div>

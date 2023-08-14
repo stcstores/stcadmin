@@ -4,16 +4,16 @@
   {{ block.super }}
   <div class="container">
     {% if products_exist %}
-      <div class="product_status success">All products exist in Linnworks.</div>
+      <div class="text-success">All products exist in Linnworks.</div>
     {% elif products_exist is None %}
       {% if product_range.is_end_of_line is False %}
-        <div class="product_status error">
-          <span class="heading">Error checking for product in Linnworks.</span>
+        <div class="text-danger">
+          <span class="fw-bold">Error checking for product in Linnworks.</span>
           This is likely due to a network error.
         </div>
       {% endif %}
     {% else %}
-      <div class="product_status warning">
+      <div class="text-warning">
         <span class="heading">This product cannot be found in Linnworks.</span>
         If it has recently been created or changed it is likely these changes have not yet been processed.
       </div>
@@ -28,7 +28,7 @@
     {% endif %}
 
     <div>
-      <h6 class="display-6 mb-3">
+      <h6 class="display-6 m-3">
         {% if product_range.has_variations %}
           Variations
         {% else %}
@@ -52,9 +52,8 @@
             <tr>
               <td class="font-monospace user-select-all">{{ product.sku }}</td>
               <td>
-                <a href="{% url 'inventory:product' product.pk %}">
-                  <button class="btn btn-primary">Edit</button>
-                </a>
+                <a href="{% url 'inventory:product' product.pk %}"
+                   class="btn btn-primary btn-sm">Edit</a>
               </td>
               {% for option, value in product.variation.items %}<td class="user-select-all">{{ value }}</td>{% endfor %}
               {% for option, value in product.listing_options.items %}<td class="user-select-all">{{ value }}</td>{% endfor %}

@@ -2,22 +2,7 @@
 {% load static %}
 {% load django_bootstrap5 %}
 
-{% block additional_head %}
-  {{ block.super }}
-  {{ block.super }}
-  <script src="{% static 'scripts/stock_manager.js' %}"></script>
-  <link rel="stylesheet"
-        href="{% static 'scripts/selectize/selectize.css' %}">
-  <script src="{% static 'scripts/selectize/selectize.js' %}"></script>
-  <link rel="stylesheet" href="{% static 'css/range_page.css' %}">
-  <style>
-      .select2-container {
-          min-width: 30em;
-      }
-  </style>
-{% endblock additional_head %}
-
-{% block content %}
+{% block page_content %}
   <div class="variation_selectors mb-3">
     <div class="container w-50">
       <div class="row mb-2">
@@ -59,74 +44,74 @@
     </ul>
   </div>
 
-  <div class="container">
  
 
-    {% for error in formset.non_field_errors %}{{ error }}{% endfor %}
-    <form action="" method="post">
-      {% csrf_token %}
-      {{ formset.management_form }}
+  {% for error in formset.non_field_errors %}{{ error }}{% endfor %}
+  <form action="" method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
 
-      <table class="variation_table table table-sm table-striped table-hover">
-        <tr class="table-primary">
-          <th>SKU</th>
-          {% for variation_field in variations %}<th>{{ variation_field }}</th>{% endfor %}
-          {% for variation_option in variation_options %}<th>{{ variation_option }}</th>{% endfor %}
-          <th>Supplier SKU</th>
-          {% for field in formset.0.visible_fields %}
-            <th class="field_cell {{ field.name }} col-5">{{ field.label }}</th>
-            <th class="field_cell {{ field.name }}"></th>
-          {% endfor %}
-        </tr>
-        <tr class="copyrow table-secondary">
-          <th></th>
-          {% for name in variations %}<th></th>{% endfor %}
-          {% for listing_option in formset.0.product.variable_options %}<th></th>{% endfor %}
-          <th></th>
-          {% for field in formset.0.visible_fields %}
-            <td class="field_cell {{ field.name }}">
-              {% bootstrap_field field wrapper_class='mb-1' show_help=false show_label='skip' %}
-            </td>
-          {% endfor %}
-          <td>
-            <button id="copybutton" type="button" class="btn btn-primary">Copy</button>
+    <table class="table table-sm table-light table-hover">
+      <tr class="table-primary">
+        <th>SKU</th>
+        {% for variation_field in variations %}<th>{{ variation_field }}</th>{% endfor %}
+        {% for variation_option in variation_options %}<th>{{ variation_option }}</th>{% endfor %}
+        <th>Supplier SKU</th>
+        {% for field in formset.0.visible_fields %}
+          <th class="field_cell {{ field.name }} col-5">{{ field.label }}</th>
+          <th class="field_cell {{ field.name }}"></th>
+        {% endfor %}
+      </tr>
+      <tr class="copyrow table-secondary">
+        <th></th>
+        {% for name in variations %}<th></th>{% endfor %}
+        {% for listing_option in formset.0.product.variable_options %}<th></th>{% endfor %}
+        <th></th>
+        {% for field in formset.0.visible_fields %}
+          <td class="field_cell {{ field.name }}">
+            {% bootstrap_field field wrapper_class='mb-1' show_help=false show_label='skip' %}
           </td>
-        </tr>
+        {% endfor %}
+        <td>
+          <button id="copybutton" type="button" class="btn btn-primary">Copy</button>
+        </td>
+      </tr>
 
-        <script>
+      <script>
       $(document).ready(function () {
         $('.copyrow input, .copyrow select').each(function () {
           $(this).removeAttr('name');
           $(this).removeAttr('id');
         });
       });
-        </script>
+      </script>
 
-        {% for form in formset %}
-          <tr class="product">
-            <th>{{ form.instance.sku }}</th>
-            {% for value in form.instance.variation_values %}<th class="option">{{ value }}</th>{% endfor %}
-            <td class="sku">{{ form.instance.supplier_sku }}</td>
-            {% for field in form.visible_fields %}
-              <td class="field_cell {{ field.name }}">{% bootstrap_field field show_help=false show_label=false %}</td>
-            {% endfor %}
-            {% for field in form.visible_fields %}
-              {% if field.errors %}<td class="error field_cell {{ field.name }}">{{ field.errors }}</td>{% endif %}
-            {% endfor %}
+      {% for form in formset %}
+        <tr class="product">
+          <td class="font-monospace user-select-all">{{ form.instance.sku }}</td>
+          {% for value in form.instance.variation_values %}
+            <th class="option">{{ value }}</th>
+          {% endfor %}
+          <td class="font-monospace user-select-all">{{ form.instance.supplier_sku }}</td>
+          {% for field in form.visible_fields %}
+            <td class="field_cell {{ field.name }}">{% bootstrap_field field show_help=false show_label=false %}</td>
+          {% endfor %}
+          {% for field in form.visible_fields %}
+            {% if field.errors %}<td class="error field_cell {{ field.name }}">{{ field.errors }}</td>{% endif %}
+          {% endfor %}
 
-            <td>
-              <input type="checkbox" class="copy_checkbox form-check-input">
-            </td>
-            {% for field in form.hidden_fields %}{{ field }}{% endfor %}
-          </tr>
-        {% endfor %}
-      </table>
-      <a href="{% url 'inventory:edit_new_product' product_range.pk %}"
-         class="btn btn-primary">Back</a>
-      <button class="btn btn-primary">Save</button>
-    </form>
-  </div>
-{% endblock content %}
+          <td>
+            <input type="checkbox" class="copy_checkbox form-check-input">
+          </td>
+          {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+    <a href="{% url 'inventory:edit_new_product' product_range.pk %}"
+       class="btn btn-primary">Back</a>
+    <button class="btn btn-primary">Save</button>
+  </form>
+{% endblock page_content %}
 
 {% block script %}
   {{ block.super }}
