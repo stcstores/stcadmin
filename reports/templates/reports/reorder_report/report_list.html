@@ -1,26 +1,34 @@
-{% if reports %}
-<table>
-    <tr>
-        <th>Created</th>
-        <th>Supplier</th>
-        <th>From</th>
-        <th>To</th>
-        <th>User</th>
-        <th>Rows</th>
-        <th></th>
-    </tr>
-    {% for report in reports %}
-    <tr>
-        <td>{{ report.created_at }}</td>
-        <td>{{ report.supplier }}</td>
-        <td>{{ report.date_from }}</td>
-        <td>{{ report.date_to }}</td>
-        <td>{{ report.user }}</td>
-        <td>{{ report.row_count }}</td>
-        <td><a href="{{ report.download_file.url }}">Download</a></td>
-    </tr>
-    {% endfor %}
-</table>
-{% else %}
-<h4>No reports have been created</h4>
-{% endif %}
+<div class="col-8">
+    {% if reports %}
+        <table class="table table-light table-hover table-sm mb-3">
+            <thead class="table-primary">
+                <tr>
+                    <th>Created</th>
+                    <th>Supplier</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>User</th>
+                    <th>Rows</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                    <tr>
+                        <td>{{ report.created_at }}</td>
+                        <td>{{ report.supplier }}</td>
+                        <td>{{ report.date_from }}</td>
+                        <td>{{ report.date_to }}</td>
+                        <td>{{ report.user }}</td>
+                        <td>{{ report.row_count }}</td>
+                        <td>
+                            <a href="{{ report.download_file.url }}">Download</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <span class="fs-4">No reports have been created</span>
+    {% endif %}
+</div>

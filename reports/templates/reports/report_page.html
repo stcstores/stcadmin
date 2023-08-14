@@ -1,30 +1,35 @@
-{% extends 'reports/base.html' %}
+{% extends "reports/base.html" %}
 
 {% block content %}
 
-<h1>{{ report_name}}</h1>
+    <div class="container">
+        <h3 class="display-3 mb-5">{{ report_name }}</h3>
 
-<div class="management">
-    <div class="create_report">
-    {% if form %}
-        <form method="POST" id="create_report_form">{% csrf_token %}
-            {{ form.as_p }}
-            <button id="create_form_button">Create Report</button>
-        </form>
-        {% else %}
-        <button id="create_form_button">Create Report</button>
-        {% endif %}
-    </div>
-    <div id="report_status">
-        <p>STATUS</p>
-    </div>
-</div>
+        <div class="management mb-3">
+            <div class="create_report">
+                {% if form %}
+                    <form method="post" id="create_report_form">
+                        {% csrf_token %}
+                        {% include "home/bootstrap_inline_form.html" %}
+                        <button id="create_form_button" type="submit" class="btn btn-primary">Create Report</button>
+                    </form>
+                {% else %}
+                    <button id="create_form_button" class="btn btn-primary">Create Report</button>
+                {% endif %}
+            </div>
+            <div id="report_status">
+                <p>STATUS</p>
+            </div>
+        </div>
 
-<div id="report_list"></div>
+        <div id="report_list"></div>
+
+    </div>
 {% endblock content %}
 
-{% block script %}{{ block.super }}
-<script>
+{% block script %}
+    {{ block.super }}
+    <script>
 
     function updateReportList() {
         $.ajax({
@@ -69,5 +74,5 @@
         updateStatus();
         setInterval(updateStatus, 5000);
     });
-</script>
+    </script>
 {% endblock script %}

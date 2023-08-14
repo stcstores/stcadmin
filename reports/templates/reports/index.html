@@ -3,10 +3,12 @@
 
 {% block content %}
 
-<h1>Reports</h1>
+    <div class="container">
+        <h1 class="display-1 mb-5">Reports</h1>
 
-<ul>
-    <li><a href="{% url 'reports:reorder_reports' %}">Reorder Reports</a></li>
-</ul>
+        <div class="list-group col-6">
+            <a class="list-group-item" href="{% url 'reports:reorder_reports' %}">Reorder Reports</a>
+        </div>
+    </div>
 
-{% endblock %}
+{% endblock content %}

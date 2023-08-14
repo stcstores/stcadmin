@@ -1,14 +1,14 @@
 {% load humanize %}
-{% if report_download %}
-    {% if report_download.status == report_download.COMPLETE %}
-        <p>Report created {{ report_download.completed_at | naturaltime }}</p>
-    {% elif report_download.status == report_download.IN_PROGRESS %}
-        <p>
+<div class="m-3">
+    {% if report_download %}
+        {% if report_download.status == report_download.COMPLETE %}
+            Report created {{ report_download.completed_at | naturaltime }}
+        {% elif report_download.status == report_download.IN_PROGRESS %}
             <i class="fa-solid fa-spinner fa-spin-pulse"></i> Requested {{ report_download.created_at | naturaltime }}
-        </p>
+        {% else %}
+            <span class="error">There was an error creating the report</span>
+        {% endif %}
     {% else %}
-        <p class="error">There was an error creating the report</p>
+        You have not created any reports
     {% endif %}
-{% else %}
-    <p>You have not created any reports</p>
-{% endif %}
+</div>
