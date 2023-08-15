@@ -5,17 +5,20 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('shipping', '0021_region_flag_if_not_delivered_by_days'),
-        ('price_calculator', '0013_alter_channelfee_fee_percentage'),
+        ("price_calculator", "0013_alter_channelfee_fee_percentage"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='channelfee',
-            name='country',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.PROTECT, related_name='channel_fees', to='shipping.country'),
+            model_name="channelfee",
+            name="country",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="channel_fees",
+                to="shipping.country",
+            ),
             preserve_default=False,
         ),
     ]

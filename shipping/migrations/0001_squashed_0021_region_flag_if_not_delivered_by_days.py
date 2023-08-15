@@ -5,30 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-    replaces = [
-        ("shipping", "0001_initial"),
-        ("shipping", "0002_auto_20200213_1259"),
-        ("shipping", "0003_auto_20200218_1150"),
-        ("shipping", "0004_auto_20200527_1129"),
-        ("shipping", "0005_auto_20200527_1417"),
-        ("shipping", "0006_country_region"),
-        ("shipping", "0007_remove_country_old_region"),
-        ("shipping", "0008_auto_20200527_1504"),
-        ("shipping", "0009_auto_20200602_1109"),
-        ("shipping", "0010_shippingrule_shipping_service"),
-        ("shipping", "0011_auto_20200611_1557"),
-        ("shipping", "0012_remove_shippingprice_price_type"),
-        ("shipping", "0013_auto_20200617_1255"),
-        ("shipping", "0014_vatrate"),
-        ("shipping", "0015_country_flag"),
-        ("shipping", "0016_auto_20210426_1006"),
-        ("shipping", "0017_auto_20210601_1017"),
-        ("shipping", "0018_auto_20210818_1110"),
-        ("shipping", "0019_alter_country_vat_required"),
-        ("shipping", "0020_auto_20210818_1133"),
-        ("shipping", "0021_region_flag_if_not_delivered_by_days"),
-    ]
-
     initial = True
 
     dependencies = []

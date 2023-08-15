@@ -5,9 +5,8 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ("shipping", "0001_initial"),
+        ("shipping", "0001_squashed_0021_region_flag_if_not_delivered_by_days"),
         ("price_calculator", "0005_destinationcountry_exchange_rate"),
     ]
 

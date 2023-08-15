@@ -5,107 +5,132 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('orders', '0028_rename_channel_order_id_order_external_reference_and_more'),
-        ('shipping', '0021_region_flag_if_not_delivered_by_days'),
+        ("orders", "0028_rename_channel_order_id_order_external_reference_and_more"),
+        ("shipping", "0001_squashed_0021_region_flag_if_not_delivered_by_days"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='courier',
-            name='courier_type',
+            model_name="courier",
+            name="courier_type",
         ),
         migrations.RemoveField(
-            model_name='courierservice',
-            name='courier',
+            model_name="courierservice",
+            name="courier",
         ),
         migrations.RemoveField(
-            model_name='couriertype',
-            name='provider',
+            model_name="couriertype",
+            name="provider",
         ),
         migrations.RemoveField(
-            model_name='shippingrule',
-            name='courier_service',
+            model_name="shippingrule",
+            name="courier_service",
         ),
         migrations.RemoveField(
-            model_name='shippingrule',
-            name='shipping_service',
+            model_name="shippingrule",
+            name="shipping_service",
         ),
         migrations.DeleteModel(
-            name='VATRate',
+            name="VATRate",
         ),
         migrations.AlterModelOptions(
-            name='country',
-            options={'ordering': ('name',), 'verbose_name': 'Country', 'verbose_name_plural': 'Countries'},
+            name="country",
+            options={
+                "ordering": ("name",),
+                "verbose_name": "Country",
+                "verbose_name_plural": "Countries",
+            },
         ),
         migrations.AlterModelOptions(
-            name='provider',
-            options={'ordering': ('-active', 'name'), 'verbose_name': 'Provider', 'verbose_name_plural': 'Providers'},
+            name="provider",
+            options={
+                "ordering": ("-active", "name"),
+                "verbose_name": "Provider",
+                "verbose_name_plural": "Providers",
+            },
         ),
         migrations.AlterModelOptions(
-            name='shippingprice',
-            options={'ordering': ('-active', 'shipping_service__name'), 'verbose_name': 'Shipping Price', 'verbose_name_plural': 'Shipping Prices'},
+            name="shippingprice",
+            options={
+                "ordering": ("-active", "shipping_service__name"),
+                "verbose_name": "Shipping Price",
+                "verbose_name_plural": "Shipping Prices",
+            },
         ),
         migrations.AlterModelOptions(
-            name='shippingservice',
-            options={'ordering': ('-active', 'name'), 'verbose_name': 'Shipping Service', 'verbose_name_plural': 'Shipping Services'},
+            name="shippingservice",
+            options={
+                "ordering": ("-active", "name"),
+                "verbose_name": "Shipping Service",
+                "verbose_name_plural": "Shipping Services",
+            },
         ),
         migrations.RenameField(
-            model_name='provider',
-            old_name='inactive',
-            new_name='active',
+            model_name="provider",
+            old_name="inactive",
+            new_name="active",
         ),
         migrations.RenameField(
-            model_name='shippingprice',
-            old_name='inactive',
-            new_name='active',
+            model_name="shippingprice",
+            old_name="inactive",
+            new_name="active",
         ),
         migrations.RemoveField(
-            model_name='country',
-            name='country_ID',
+            model_name="country",
+            name="country_ID",
         ),
         migrations.AddField(
-            model_name='shippingservice',
-            name='active',
+            model_name="shippingservice",
+            name="active",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='shippingservice',
-            name='full_name',
-            field=models.CharField(default='', max_length=255),
+            model_name="shippingservice",
+            name="full_name",
+            field=models.CharField(default="", max_length=255),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='shippingservice',
-            name='priority',
+            model_name="shippingservice",
+            name="priority",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='shippingservice',
-            name='provider',
-            field=models.ForeignKey(blank=True, limit_choices_to={'active': True}, null=True, on_delete=django.db.models.deletion.PROTECT, to='shipping.provider'),
+            model_name="shippingservice",
+            name="provider",
+            field=models.ForeignKey(
+                blank=True,
+                limit_choices_to={"active": True},
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="shipping.provider",
+            ),
         ),
         migrations.AlterField(
-            model_name='shippingprice',
-            name='shipping_service',
-            field=models.ForeignKey(limit_choices_to={'active': True}, on_delete=django.db.models.deletion.CASCADE, to='shipping.shippingservice'),
+            model_name="shippingprice",
+            name="shipping_service",
+            field=models.ForeignKey(
+                limit_choices_to={"active": True},
+                on_delete=django.db.models.deletion.CASCADE,
+                to="shipping.shippingservice",
+            ),
         ),
         migrations.AlterField(
-            model_name='shippingservice',
-            name='name',
+            model_name="shippingservice",
+            name="name",
             field=models.CharField(db_index=True, max_length=255, unique=True),
         ),
         migrations.DeleteModel(
-            name='Courier',
+            name="Courier",
         ),
         migrations.DeleteModel(
-            name='CourierService',
+            name="CourierService",
         ),
         migrations.DeleteModel(
-            name='CourierType',
+            name="CourierType",
         ),
         migrations.DeleteModel(
-            name='ShippingRule',
+            name="ShippingRule",
         ),
     ]

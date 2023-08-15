@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ("inventory", "0001_initial_squashed_0009_delete_productimage"),
         ("home", "0002_cloudcommerceuser"),
-        ("shipping", "0014_vatrate"),
+        ("shipping", "0001_squashed_0021_region_flag_if_not_delivered_by_days"),
         ("contenttypes", "0002_remove_content_type_name"),
     ]
 

@@ -6,11 +6,10 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ("shipping", "0014_vatrate"),
+        ("shipping", "0001_squashed_0021_region_flag_if_not_delivered_by_days"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
