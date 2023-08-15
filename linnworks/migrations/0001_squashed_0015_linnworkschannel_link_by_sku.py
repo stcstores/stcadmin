@@ -6,24 +6,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-    replaces = [
-        ("linnworks", "0001_initial"),
-        ("linnworks", "0002_linnworksconfig_channel_items_export_file_path_and_more"),
-        ("linnworks", "0003_initialstocklevel"),
-        ("linnworks", "0004_alter_initialstocklevel_options"),
-        ("linnworks", "0005_linnworkschannel_link_prime"),
-        ("linnworks", "0006_linnworkschannel_channel_and_more"),
-        ("linnworks", "0007_stocklevelexportupdate_and_more"),
-        ("linnworks", "0008_alter_stocklevelexportrecord_options"),
-        ("linnworks", "0009_linnworksorder"),
-        ("linnworks", "0010_alter_linnworksorder_options"),
-        ("linnworks", "0011_linnworkschannel_item_link_format_and_more"),
-        ("linnworks", "0012_linnworksconfig_last_image_update"),
-        ("linnworks", "0013_linnworksconfig_image_import_file_path"),
-        ("linnworks", "0014_linnworksshippingservice"),
-        ("linnworks", "0015_linnworkschannel_link_by_sku"),
-    ]
-
     initial = True
 
     dependencies = [
