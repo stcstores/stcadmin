@@ -92,7 +92,7 @@
  
                         <div class="input-group mb-3">
                             <span class="input-group-text" for="purchase_price">Purchase Price</span>
-                            <span class="currency_symbol"></span>
+                            <span class="currency_symbol input-group-text"></span>
                             <input class="form-control"
                                    type="number"
                                    step="0.01"
@@ -190,7 +190,7 @@
             </div>
  
             <div class="col-5">
-                <div class="fba_order_form p-3 bg-light rounded border">
+                <div class="fba_order_form p-3 rounded border">
                     <form action="" method="post">
                         {% csrf_token %}
                         {% include "home/bootstrap_input_group_form.html" %}

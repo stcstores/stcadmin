@@ -4,7 +4,7 @@
 {% bootstrap_form_errors form layout='inline' %}
 {% for field in form.visible_fields %}
   <div class="mb-3">
-    {% bootstrap_field field wrapper_class='input-group' show_help=false label_class='input-group-text bg-primary text-light' %}
+    {% bootstrap_field field wrapper_class='input-group' show_help=false label_class='input-group-text bg-light' %}
     {% if field.required %}<span class="input-group-text">*</span>{% endif %}
 
     {% if field.errors %}<span class="text-danger">{{ field.errors }}</span>{% endif %}
