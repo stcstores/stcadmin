@@ -5,16 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    replaces = [
-        ("price_calculator", "0001_initial"),
-        ("price_calculator", "0002_auto_20171120_1601"),
-        ("price_calculator", "0003_destinationcountry_currency_code"),
-        ("price_calculator", "0004_destinationcountry_min_channel_fee"),
-        ("price_calculator", "0005_shippingprice_disabled"),
-        ("price_calculator", "0006_auto_20180514_0933"),
-    ]
-
     dependencies = []
 
     operations = [

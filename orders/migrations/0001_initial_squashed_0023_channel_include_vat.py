@@ -6,36 +6,8 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    replaces = [
-        ("orders", "0001_initial"),
-        ("orders", "0002_remove_order_shipping_service"),
-        ("orders", "0003_order_courier_service"),
-        ("orders", "0004_order_can_process_order"),
-        ("orders", "0005_auto_20200312_1602"),
-        ("orders", "0006_auto_20200611_0952"),
-        ("orders", "0007_auto_20200611_1108"),
-        ("orders", "0008_auto_20200617_0955"),
-        ("orders", "0009_auto_20200618_1255"),
-        ("orders", "0010_auto_20200622_1354"),
-        ("orders", "0011_productsale_end_of_line"),
-        ("orders", "0012_auto_20200715_1225"),
-        ("orders", "0013_refund_notes"),
-        ("orders", "0014_auto_20200723_1216"),
-        ("orders", "0015_auto_20200723_1529"),
-        ("orders", "0016_delete_breakage"),
-        ("orders", "0017_refund_created_at"),
-        ("orders", "0018_lostinpostrefund_returned"),
-        ("orders", "0019_refund_is_partial"),
-        ("orders", "0020_auto_20210601_1017"),
-        ("orders", "0021_auto_20210602_1300"),
-        ("orders", "0022_channel_channel_fee"),
-        ("orders", "0023_channel_include_vat"),
-    ]
-
     dependencies = [
-        ("shipping", "0002_auto_20200213_1259"),
-        ("shipping", "0001_initial"),
-        ("inventory", "0005_delete_stcadminimage"),
+        ("inventory", "0001_initial_squashed_0009_delete_productimage"),
         ("home", "0002_cloudcommerceuser"),
         ("shipping", "0014_vatrate"),
         ("contenttypes", "0002_remove_content_type_name"),

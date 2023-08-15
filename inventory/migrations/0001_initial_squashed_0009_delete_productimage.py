@@ -7,19 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
-    replaces = [
-        ("inventory", "0001_initial"),
-        ("inventory", "0002_auto_20190911_1026"),
-        ("inventory", "0003_auto_20200123_1027"),
-        ("inventory", "0004_auto_20200218_1156"),
-        ("inventory", "0005_delete_stcadminimage"),
-        ("inventory", "0006_packagetype_description"),
-        ("inventory", "0007_auto_20210601_1017"),
-        ("inventory", "0008_productimage"),
-        ("inventory", "0009_delete_productimage"),
-    ]
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
