@@ -5,11 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-    replaces = [
-        ("linnworks", "0001_squashed_0015_linnworkschannel_link_by_sku"),
-        ("linnworks", "0016_alter_linnworksconfig_last_image_update"),
-    ]
-
     initial = True
 
     dependencies = [
