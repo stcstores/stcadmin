@@ -6,7 +6,10 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("orders", "0028_rename_channel_order_id_order_external_reference_and_more"),
+        (
+            "orders",
+            "0001_squashed_0028_rename_channel_order_id_order_external_reference_and_more",
+        ),
         ("shipping", "0001_squashed_0021_region_flag_if_not_delivered_by_days"),
     ]
 

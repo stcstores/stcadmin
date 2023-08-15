@@ -11,12 +11,14 @@ import stcadmin.settings
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("contenttypes", "0002_remove_content_type_name"),
         ("inventory", "0003_productimage"),
-        ("orders", "0026_remove_productsale_department"),
+        (
+            "orders",
+            "0001_squashed_0028_rename_channel_order_id_order_external_reference_and_more",
+        ),
     ]
 
     operations = [

@@ -5,21 +5,29 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('orders', '0027_remove_orderdetailsupdateerror_product_sale_and_more'),
-        ('linnworks', '0005_linnworkschannel_link_prime'),
+        (
+            "orders",
+            "0001_squashed_0028_rename_channel_order_id_order_external_reference_and_more",
+        ),
+        ("linnworks", "0005_linnworkschannel_link_prime"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='linnworkschannel',
-            name='channel',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='linnworks_channel', to='orders.channel'),
+            model_name="linnworkschannel",
+            name="channel",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="linnworks_channel",
+                to="orders.channel",
+            ),
         ),
         migrations.AddField(
-            model_name='linnworksconfig',
-            name='processed_orders_import_path',
+            model_name="linnworksconfig",
+            name="processed_orders_import_path",
             field=models.CharField(blank=True, max_length=250, null=True),
         ),
     ]

@@ -5,10 +5,12 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("shipping", "0022_remove_courier_courier_type_and_more"),
-        ("orders", "0028_rename_channel_order_id_order_external_reference_and_more"),
+        (
+            "orders",
+            "0001_squashed_0028_rename_channel_order_id_order_external_reference_and_more",
+        ),
     ]
 
     operations = [

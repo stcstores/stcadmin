@@ -5,15 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-    replaces = [
-        ("orders", "0001_initial_squashed_0023_channel_include_vat"),
-        ("orders", "0024_alter_refund_polymorphic_ctype"),
-        ("orders", "0025_alter_refund_created_at"),
-        ("orders", "0026_remove_productsale_department"),
-        ("orders", "0027_remove_orderdetailsupdateerror_product_sale_and_more"),
-        ("orders", "0028_rename_channel_order_id_order_external_reference_and_more"),
-    ]
-
     initial = True
 
     dependencies = [
