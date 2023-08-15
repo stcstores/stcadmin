@@ -5,27 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-    replaces = [
-        ("price_calculator", "0001_initial_squashed_0006_auto_20180514_0933"),
-        ("price_calculator", "0002_auto_20190116_1516"),
-        ("price_calculator", "0003_auto_20190212_1548"),
-        ("price_calculator", "0004_auto_20190212_1659"),
-        ("price_calculator", "0005_destinationcountry_exchange_rate"),
-        ("price_calculator", "0006_auto_20200128_0952"),
-        ("price_calculator", "0007_auto_20200528_1441"),
-        ("price_calculator", "0008_auto_20200602_1109"),
-        ("price_calculator", "0009_auto_20200602_1133"),
-        ("price_calculator", "0010_auto_20200609_1216"),
-        ("price_calculator", "0011_auto_20200610_1002"),
-        ("price_calculator", "0012_auto_20210601_1017"),
-        ("price_calculator", "0013_alter_channelfee_fee_percentage"),
-        ("price_calculator", "0014_channelfee_country"),
-        (
-            "price_calculator",
-            "0015_remove_shippingmethod_inactive_shippingmethod_active",
-        ),
-    ]
-
     initial = True
 
     dependencies = [
