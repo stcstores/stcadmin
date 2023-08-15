@@ -13,7 +13,7 @@
         </div>
 
         {% if object_list %}
-            {% include "orders/pagination_navigation.html" %}
+            {% include "home/pagination_navigation.html" %}
             <table id="shopify_listings"
                    class="table table-light table-hover table-sm mb-3">
                 <thead class="table-primary">
@@ -28,7 +28,7 @@
                     {% include "channels/shopify/search_page_result.html" %}
                 {% endfor %}
             </table>
-            {% include "orders/pagination_navigation.html" %}
+            {% include "home/pagination_navigation.html" %}
         {% endif %}
 
     </div>

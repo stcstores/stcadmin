@@ -15,7 +15,7 @@
             <div class="col bg-light rounded p-3" id="export"></div>
         </div>
         <div class="text-center">Showing {{ page_obj.object_list|length }} of {{ page_obj.paginator.count }} orders</div>
-        {% include "orders/pagination_navigation.html" %}
+        {% include "home/pagination_navigation.html" %}
         <table class="orders table table-sm table-hover mb-3">
             <thead class="table-primary">
                 <tr>
@@ -60,7 +60,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        {% include "orders/pagination_navigation.html" %}
+        {% include "home/pagination_navigation.html" %}
     </div>
 {% endblock content %}
 
