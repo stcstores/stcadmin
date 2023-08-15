@@ -46,7 +46,9 @@ def post_response(post_data, group_logged_in_client, url):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "inventory/product.html" in (t.name for t in get_response.templates)
+    assert "inventory/product_range/product.html" in (
+        t.name for t in get_response.templates
+    )
 
 
 @pytest.mark.django_db

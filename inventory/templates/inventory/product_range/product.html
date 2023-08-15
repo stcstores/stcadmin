@@ -1,0 +1,123 @@
+{% extends "inventory/base.html" %}
+{% load static %}
+
+{% block page_title %}
+  {{ product_range.name }}
+{% endblock page_title %}
+
+{% block content %}
+  {{ block.super }}
+  <div class="container">
+    <h3 class="display-3 mb-3">Edit Product</h3>
+    <div class="font-monospace user-select-all text-muted">{{ product.sku }}</div>
+    <div class="fs-4">{{ product.product_range.name }}</div>
+    <div>
+      {% for option, value in product.variation.items %}
+        <div class="d-inline-block m-2">
+          <span class="me-1">{{ option }}:</span><span class="fw-bold">{{ value }}</span>
+        </div>
+      {% endfor %}
+      <div class="d-inline-block m-2 font-monospace user-select-all">{{ product.supplier_sku }}</div>
+    </div>
+    <div class="mb-5">
+      <a href="{% url 'inventory:product_range' product_range.pk %}">
+        <i class="fa-solid fa-arrow-left"></i> Back to Product Range
+      </a>
+    </div>
+ 
+    <div class="row">
+
+      <div class="col-7">
+        <form action="" method="post" autocomplete="off" id="product_form">
+          {% csrf_token %}
+          {% include "home/bootstrap_input_group_form.html" %}
+          <button type="submit"
+                  id="save_button"
+                  class="btn btn-primary form-control"
+                  disabled>Save</button>
+        </form>
+      </div>
+
+      <div class="col-5">
+        <div class="bg-light border rounded p-3">
+          <span class="font-monospace user-select-all text-muted">{{ product_range.sku }}</span>
+          <h6 class="display-6 mb-3">{{ product_range.name }}</h6>
+          <table class="table table-sm table-hover" id="variation_table">
+            <thead class="table-primary">
+              <tr>
+                <th class="variation-selection">SKU</th>
+                {% for option in product_range.variation_options %}<th>{{ option }}</th>{% endfor %}
+                {% for option in product_range.listing_options %}<th class="listing_option">{{ option }}</th>{% endfor %}
+                <th>Supplier SKU</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for variation in product_range.products.variations %}
+                <tr class="variation-selection {% if product == variation %}table-primary{% else %}not_selected{% endif %}"
+                    data-href="{% url 'inventory:product' variation.pk %}">
+                  <td class="sku">{{ variation.sku }}</td>
+                  {% for option, value in variation.variation.items %}<td class="option name">{{ value }}</td>{% endfor %}
+                  {% for option, value in variation.listing_options.items %}
+                    <td class="option listing_option name">{{ value }}</td>
+                  {% endfor %}
+                  <td class="sku">{{ variation.supplier_sku }}</td>
+                  <td>
+                    {% if product != variation %}
+                      <a href="{% url 'inventory:product' variation.pk %}"
+                         class="btn btn-primary btn-sm">Edit</a>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block script %}
+  {{ block.super }}
+  <script>
+    var form_changed = false;
+    var price_selectors = ['#id_purchase_price', '#id_retail_price'];
+
+    function set_autoNumeric() {
+        $.each(price_selectors, function(index, value) {
+            $(value).attr({
+                type: "text"
+            });
+            new AutoNumeric($(value)[0]).british({
+                'unformatOnSubmit': true
+            });
+        });
+    }
+
+    function set_form_changed() {
+        form_changed = true;
+        $('#save_button').prop('disabled', false);
+    }
+
+    function set_form_changed_event_triggers() {
+        $('#product_form input, #product_form select').on('input', set_form_changed);
+        $('select').on('change', set_form_changed);
+    }
+
+    $(document).ready(function() {
+        set_autoNumeric();
+
+        $(document).ready(function() { // After selectize and autoNumeric
+            set_form_changed_event_triggers();
+            $(".product_form form").keydown(function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        });
+
+    });
+  </script>
+{% endblock script %}

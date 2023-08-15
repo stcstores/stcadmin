@@ -11,7 +11,7 @@ from .views import InventoryUserMixin
 class ProductView(InventoryUserMixin, UpdateView):
     """View for ProductForm."""
 
-    template_name = "inventory/product.html"
+    template_name = "inventory/product_range/product.html"
     model = models.Product
     form_class = forms.EditProductForm
 
