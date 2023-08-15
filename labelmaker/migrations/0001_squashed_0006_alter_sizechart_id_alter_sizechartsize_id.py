@@ -5,15 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-    replaces = [
-        ("labelmaker", "0001_initial_squashed_0003_auto_20180514_0933"),
-        ("labelmaker", "0002_auto_20191113_1228"),
-        ("labelmaker", "0003_auto_20191118_1547"),
-        ("labelmaker", "0004_auto_20210601_1017"),
-        ("labelmaker", "0005_auto_20220301_1107"),
-        ("labelmaker", "0006_alter_sizechart_id_alter_sizechartsize_id"),
-    ]
-
     initial = True
 
     dependencies = [

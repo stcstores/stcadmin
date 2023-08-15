@@ -5,13 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-    replaces = [
-        ("hardware", "0001_initial"),
-        ("hardware", "0002_computermaintainancejob"),
-        ("hardware", "0003_auto_20210527_1502"),
-        ("hardware", "0004_auto_20210601_1017"),
-    ]
-
     initial = True
 
     dependencies = []

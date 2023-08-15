@@ -5,12 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-    replaces = [
-        ("channels", "0001_initial"),
-        ("channels", "0002_alter_shopifytag_name"),
-        ("channels", "0003_shopifycollection_alter_shopifylisting_tags_and_more"),
-    ]
-
     initial = True
 
     dependencies = [
