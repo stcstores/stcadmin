@@ -74,7 +74,7 @@ def test_does_not_return_unrelated_product(product):
 
 
 @pytest.mark.django_db
-def test_does_not_return_eol_product(product_factory):
-    product = product_factory.create(is_end_of_line=True)
+def test_does_not_return_archived_product(product_factory):
+    product = product_factory.create(is_archived=True)
     form = ProductSearchForm({"search_term": product.sku})
     assert product not in form.get_queryset()

@@ -58,7 +58,7 @@ class ProductQueryset(PolymorphicQuerySet):
 
     def active(self):
         """Return a queryset of active products."""
-        return self.filter(is_end_of_line=False)
+        return self.filter(is_archived=False)
 
 
 class ProductManager(PolymorphicManager):
@@ -74,11 +74,7 @@ class ProductManager(PolymorphicManager):
         "barcode",
     )
 
-    def get_queryset(self):
-        """Sort queryset by range order."""
-        return super().get_queryset().order_by("range_order")
-
-    def text_search(self, search_term, end_of_line=None):
+    def text_search(self, search_term, archived=None):
         """
         Text search for product models.
 
@@ -98,10 +94,10 @@ class ProductManager(PolymorphicManager):
             .filter(search=search_term)
             .select_related("product_range")
         )
-        if end_of_line is True:
-            qs = qs.filter(is_end_of_line=True, product_range__is_end_of_line=True)
-        elif end_of_line is False:
-            qs = qs.exclude(is_end_of_line=True, product_range__is_end_of_line=True)
+        if archived is True:
+            qs = qs.filter(is_archived=True)
+        elif archived is False:
+            qs = qs.exclude(is_archived=True)
         return qs
 
 
@@ -162,6 +158,8 @@ class BaseProduct(PolymorphicModel):
     depth = models.PositiveSmallIntegerField(default=0, verbose_name="Depth (cm)")
 
     is_end_of_line = models.BooleanField(default=False, verbose_name="Is EOL")
+    is_archived = models.BooleanField(default=False, verbose_name="Is Archived")
+
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True, editable=False)
     range_order = models.PositiveSmallIntegerField(default=0)
@@ -183,10 +181,7 @@ class BaseProduct(PolymorphicModel):
             models.Index(fields=["barcode"]),
             models.Index(fields=["supplier_barcode"]),
         ]
-        ordering = (
-            "product_range",
-            "range_order",
-        )
+        ordering = ("product_range", "is_archived", "is_end_of_line", "range_order")
         base_manager_name = "objects"
 
     def __str__(self):
@@ -257,6 +252,27 @@ class BaseProduct(PolymorphicModel):
         if image_link is not None:
             return image_link.image
         return None
+
+    @transaction.atomic
+    def set_end_of_line(self):
+        """Set the product and any combination or multipack products containing it as EOL."""
+        MultipackProduct.objects.filter(base_product=self).update(is_end_of_line=True)
+        CombinationProduct.objects.filter(products=self).update(is_end_of_line=True)
+        self.is_end_of_line = True
+        self.save()
+
+    @transaction.atomic
+    def set_archived(self):
+        """Set the product and any combination or multipack products containing it as archived."""
+        MultipackProduct.objects.filter(base_product=self).update(
+            is_archived=True, is_end_of_line=True
+        )
+        CombinationProduct.objects.filter(products=self).update(
+            is_archived=True, is_end_of_line=True
+        )
+        self.is_archived = True
+        self.is_end_of_line = True
+        self.save()
 
 
 class Product(BaseProduct):

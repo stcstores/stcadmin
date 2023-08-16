@@ -56,6 +56,5 @@ class ProductSearchView(InventoryUserMixin, ListView):
     def get_initial(self):
         """Return the initial values for the product search form."""
         initial = {}
-        initial["end_of_line"] = self.form_class.END_OF_LINE_DEFAULT
-        initial["show_hidden"] = False
+        initial["archived"] = self.form_class.ARCHIVED_DEFAULT
         return initial

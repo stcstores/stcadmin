@@ -12,6 +12,46 @@ from django.utils import timezone
 from .barcode import Barcode
 
 
+class ProductRangeQueryset(models.QuerySet):
+    """Custom quryset for product ranges."""
+
+    def active(self):
+        """Return a queryset of non-archived product ranges."""
+        return self.annotate(
+            active_product_count=models.Count(
+                "products",
+                filter=models.Q(products__is_archived=False),
+                distinct=True,
+            ),
+        ).filter(active_product_count__gte=1)
+
+    def archived(self):
+        """Return a queryset of archvied product ranges."""
+        return self.annotate(
+            active_product_count=models.Count(
+                "products",
+                filter=models.Q(products__is_archived=False),
+                distinct=True,
+            ),
+        ).filter(active_product_count=0)
+
+    def end_of_line(self):
+        """Return a queryset of end of line product ranges."""
+        return (
+            self.active()
+            .annotate(
+                active_product_count=models.Count(
+                    "products",
+                    filter=models.Q(
+                        products__is_end_of_line=False, products__is_archived=False
+                    ),
+                    distinct=True,
+                ),
+            )
+            .filter(active_product_count=0)
+        )
+
+
 class ProductRangeManager(models.Manager):
     """Manager for complete products."""
 
@@ -56,8 +96,8 @@ class ProductRange(models.Model):
         models.CharField(max_length=255), blank=True, null=True, size=5
     )
 
-    is_end_of_line = models.BooleanField(default=False)
-    hidden = models.BooleanField(default=False)
+    # is_end_of_line = models.BooleanField(default=False)
+    # hidden = models.BooleanField(default=False)
     managed_by = models.ForeignKey(
         get_user_model(), on_delete=models.PROTECT, related_name="product_ranges"
     )
@@ -71,9 +111,9 @@ class ProductRange(models.Model):
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
 
-    objects = models.Manager()
-    ranges = ProductRangeManager()
-    creating = CreatingProductRangeManager()
+    objects = models.Manager.from_queryset(ProductRangeQueryset)()
+    ranges = ProductRangeManager.from_queryset(ProductRangeQueryset)()
+    creating = CreatingProductRangeManager.from_queryset(ProductRangeQueryset)()
 
     class Meta:
         """Meta class for Product Ranges."""
@@ -163,3 +203,11 @@ class ProductRange(models.Model):
             .order_by()
             .distinct()
         )
+
+    def is_archived(self):
+        """Return True if the range is archived, otherwise False."""
+        return ProductRange.ranges.archived().filter(pk=self.pk).exists()
+
+    def is_end_of_line(self):
+        """Return True if the range is end of line, otherwise False."""
+        return ProductRange.ranges.end_of_line().filter(pk=self.pk).exists()

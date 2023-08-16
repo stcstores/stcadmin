@@ -15,6 +15,11 @@
                             <h5 class="mb-3">
                                 <span class="card-subtitle text-muted user-select-all font-monospace me-2">{{ product.sku }}</span>
                                 <span class="sku card-title user-select-all">{{ product.name_extensions|join:" - " }}</span>
+                                {% if product.is_archived %}
+                                    <span class="badge bg-secondary">Archived</span>
+                                {% elif product.is_end_of_line %}
+                                    <span class="badge bg-danger">End of Line</span>
+                                {% endif %}
                             </h5>
                             <div class="container">
                                 <div class="row">

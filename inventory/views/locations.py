@@ -42,11 +42,11 @@ class LocationFormView(InventoryUserMixin, FormView):
         context = super().get_context_data(*args, **kwargs)
         context["product_range"] = self.product_range
         context["formset"] = context["form"]
-        products = self.product_range.products.variations()
+        products = self.product_range.products.variations().active()
         for i, form in enumerate(context["formset"]):
             form.product = self.products[i]
-        if not self.product_range.is_end_of_line:
-            product_skus = products.filter(is_end_of_line=False).values_list(
+        if not self.product_range.is_archived():
+            product_skus = products.filter(is_archived=False).values_list(
                 "sku", flat=True
             )
             try:

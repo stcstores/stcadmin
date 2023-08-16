@@ -32,7 +32,10 @@
           {% for form in formset %}
             {% with form.product as product %}
               <tr>
-                <td class="font-monospace user-select-all">{{ product.sku }}</td>
+                <td class="font-monospace user-select-all">
+                  {{ product.sku }}
+                  {% if product.is_end_of_line %}<span class="badge bg-danger">End of Line</span>{% endif %}
+                </td>
                 {% for option, value in product.variation.items %}<td>{{ value }}</td>{% endfor %}
                 <td class="font-monospace user-select-all">{{ product.supplier_sku }}</td>
                 {% for field in form %}
@@ -52,13 +55,9 @@
               </tr>
             {% endwith %}
           {% endfor %}
-          <tr>
-            <td>
-              <button type="submit" class="save_button btn btn-primary">Save</button>
-            </td>
-          </tr>
         </tbody>
       </table>
+      <button type="submit" class="save_button btn btn-primary form-control">Save</button>
     </form>
   </div>
 

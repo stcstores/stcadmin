@@ -197,10 +197,11 @@ class RangePriceCalculatorView(BasePriceCalculatorView):
 
     def get_context_data(self, *args, **kwargs):
         """Get context data for template."""
-        context_data = super().get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         product_range = get_object_or_404(ProductRange, pk=self.kwargs.get("range_pk"))
-        context_data["product_range"] = product_range
-        return context_data
+        context["product_range"] = product_range
+        context["products"] = context["product_range"].products.variations().active()
+        return context
 
 
 class PriceCalculator(BasePriceCalculatorView):

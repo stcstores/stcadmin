@@ -39,35 +39,42 @@
         <thead class="table-primary">
           <tr>
             <th>SKU</th>
-            <th></th>
             {% for option in product_range.variation_options %}<th>{{ option }}</th>{% endfor %}
             {% for option in product_range.listing_options %}<th>{{ option }}</th>{% endfor %}
             <th>Supplier SKU</th>
+            <th colspan="2">
+              {% if product.is_end_of_line is False %}<a href="" class="btn btn-danger btn-sm">Set Range End of Line</a>{% endif %}
+            </th>
             <th>Barcode</th>
             <th>Stock Level</th>
           </tr>
         </thead>
         <tbody>
           {% for product in product_range.products.variations %}
-            <tr>
+            <tr class="{% if product.is_archived %}table-secondary text-muted{% elif product.is_end_of_line %}table-secondary{% endif %}">
               <td class="font-monospace user-select-all">{{ product.sku }}</td>
-              <td>
-                <a href="{% url 'inventory:product' product.pk %}"
-                   class="btn btn-primary btn-sm">Edit</a>
-              </td>
               {% for option, value in product.variation.items %}<td class="user-select-all">{{ value }}</td>{% endfor %}
               {% for option, value in product.listing_options.items %}<td class="user-select-all">{{ value }}</td>{% endfor %}
               <td class="font-monospace user-select-all">{{ product.supplier_sku }}</td>
-              <td class="font-monospace user-select-all">{{ product.barcode }}</td>
               <td>
-                {% if product_range.is_end_of_line or product.is_end_of_line %}
-                  <span class="text-danger">Stock levels are not available for EOL products</span>
-                {% elif products_exist is not True %}
-                  <span class="text-danger">Stock level is not available</span>
-                {% else %}
-                  {% include "inventory/update_stock.html" %}
+                {% if product.is_archived %}
+                  <span class="badge bg-secondary">Archived</span>
+                {% elif product.is_end_of_line %}
+                  <span class="badge bg-danger">End Of Line</span>
                 {% endif %}
               </td>
+              <td>
+                {% if product.is_archived == False %}
+                  <a href="{% url 'inventory:product' product.pk %}"
+                     class="btn btn-primary btn-sm">Edit</a>
+                  {% if product.is_end_of_line == False %}
+                    <a href="{% url 'inventory:set_product_eol' product.pk %}"
+                       class="btn btn-danger btn-sm">EOL</a>
+                  {% endif %}
+                {% endif %}
+              </td>
+              <td class="font-monospace user-select-all">{{ product.barcode }}</td>
+              <td>{% include "inventory/update_stock.html" %}</td>
             </tr>
           {% endfor %}
         </tbody>

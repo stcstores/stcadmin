@@ -6,13 +6,14 @@
           <th>SKU</th>
           <th>Supplier SKU</th>
           {% for option in product.variable_options %}<th>{{ option }}</th>{% endfor %}
+          <th></th>
           <th>Stock Level</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
       {% endif %}
-      <tr>
+      <tr class="{% if product.is_archived %}table-secondary text-muted{% elif product.is_end_of_line %}table-secondary{% endif %}">
         <td class="font-monospace sku">
           <span class="user-select-all">{{ product.sku }}</span>
         </td>
@@ -20,7 +21,14 @@
           <span class="user-select-all">{{ product.supplier_sku }}</span>
         </td>
         {% for option, value in product.variation.items %}<td class="name">{{ value }}</td>{% endfor %}
-        {% if product.is_end_of_line is False and product.product_range.is_end_of_line is False %}
+        <td>
+          {% if product.is_archived %}
+            <span class="badge bg-secondary">Archived</span>
+          {% elif product.is_end_of_line %}
+            <span class="badge bg-danger">End Of Line</span>
+          {% endif %}
+        </td>
+        {% if product.is_archived is False %}
           <td class="search_result_stock_level load_stock"
               id="search_result_stock_level_{{ product.pk }}">
             <i class="fa-solid fa-spinner fa-spin"></i>
@@ -29,9 +37,11 @@
           <td>-</td>
         {% endif %}
         <td>
-          <a href="{% url 'inventory:product' product.pk %}">
-            <button class="btn btn-sm btn-primary">Edit</button>
-          </a>
+          {% if product.is_archived == False %}
+            <a href="{% url 'inventory:product' product.pk %}">
+              <button class="btn btn-sm btn-primary">Edit</button>
+            </a>
+          {% endif %}
         </td>
       </tr>
     {% endfor %}

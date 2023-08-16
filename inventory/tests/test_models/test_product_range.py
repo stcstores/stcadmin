@@ -89,26 +89,6 @@ def test_has_bullet_points_attribute(product_range):
 
 
 @pytest.mark.django_db
-def test_has_is_end_of_line_attribute(product_range):
-    assert isinstance(product_range.is_end_of_line, bool)
-
-
-@pytest.mark.django_db
-def test_is_end_of_line_defaults_false(new_product_range):
-    assert new_product_range.is_end_of_line is False
-
-
-@pytest.mark.django_db
-def test_has_hidden_attribute(product_range):
-    assert isinstance(product_range.hidden, bool)
-
-
-@pytest.mark.django_db
-def test_hidden_defaults_false(new_product_range):
-    assert new_product_range.hidden is False
-
-
-@pytest.mark.django_db
 def test_has_managed_by_attribute(product_range):
     assert isinstance(product_range.managed_by, get_user_model())
 

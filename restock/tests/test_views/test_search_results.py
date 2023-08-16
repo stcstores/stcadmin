@@ -114,9 +114,9 @@ def test_does_not_return_errored_products(
 
 
 @pytest.mark.django_db
-def test_does_not_return_EOL_products(
+def test_does_not_return_archived_products(
     product_factory, url, search_text, group_logged_in_client
 ):
-    product_factory.create(sku=search_text, is_end_of_line=True)
+    product_factory.create(sku=search_text, is_archived=True)
     response = group_logged_in_client.get(url, {"product_search": search_text})
     assert response.context["suppliers"] == {}
