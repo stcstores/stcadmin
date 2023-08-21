@@ -38,6 +38,7 @@
         <div class="row">
           <div class="col-6">
             <h3>Select Variations</h3>
+            <button class="btn btn-primary btn-sm mb-3" id="select_all">All</button>
             <button class="btn btn-primary btn-sm mb-3" id="select_none">None</button>
             {% for option, variation_values in options.items %}
               <div class="d-flex justify-content-start">
@@ -310,6 +311,12 @@
     $('#select_none').click(function () {
       var checkboxes = $('.selected input:checkbox');
       checkboxes.prop('checked', false);
+      $('.selected input:checkbox').change();
+    });
+
+    $('#select_all').click(function () {
+      var checkboxes = $('.selected input:checkbox');
+      checkboxes.prop('checked', true);
       $('.selected input:checkbox').change();
     });
 
