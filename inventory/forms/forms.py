@@ -4,7 +4,6 @@
 import json
 
 from django import forms
-from django.contrib.postgres.forms import SplitArrayField
 
 from inventory import models
 from inventory.forms import fields as inventory_fields
@@ -24,30 +23,11 @@ class BaseRangeForm(forms.ModelForm):
         """Meta for RangeForm."""
 
         model = models.ProductRange
-        exclude = ["hidden", "status", "images"]
+        exclude = ["hidden", "status", "images", "search_terms", "bullet_points"]
         field_classes = {
             "name": inventory_fields.Title,
             "description": inventory_fields.Description,
         }
-
-    search_terms = SplitArrayField(
-        forms.CharField(widget=ListWidget()),
-        size=5,
-        required=False,
-        remove_trailing_nulls=True,
-    )
-    bullet_points = SplitArrayField(
-        forms.CharField(widget=ListWidget()),
-        size=5,
-        required=False,
-        remove_trailing_nulls=True,
-    )
-
-    def __init__(self, *args, **kwargs):
-        """Set field HTML classes."""
-        super().__init__(*args, **kwargs)
-        self.fields["search_terms"].widget.attrs.update({"class": "form-control"})
-        self.fields["bullet_points"].widget.attrs.update({"class": "form-control"})
 
 
 class CreateRangeForm(BaseRangeForm):
