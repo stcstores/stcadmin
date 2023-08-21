@@ -6,7 +6,7 @@
     {% if products_exist %}
       <div class="text-success">All products exist in Linnworks.</div>
     {% elif products_exist is None %}
-      {% if product_range.is_end_of_line is False %}
+      {% if product_range.is_active %}
         <div class="text-danger">
           <span class="fw-bold">Error checking for product in Linnworks.</span>
           This is likely due to a network error.
@@ -43,7 +43,10 @@
             {% for option in product_range.listing_options %}<th>{{ option }}</th>{% endfor %}
             <th>Supplier SKU</th>
             <th colspan="2">
-              {% if product.is_end_of_line is False %}<a href="" class="btn btn-danger btn-sm">Set Range End of Line</a>{% endif %}
+              {% if product.is_active %}
+                <a href="{% url 'inventory:set_product_range_eol' product_range.pk %}"
+                   class="btn btn-danger btn-sm">Set Range End of Line</a>
+              {% endif %}
             </th>
             <th>Barcode</th>
             <th>Stock Level</th>

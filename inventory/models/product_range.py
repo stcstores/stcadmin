@@ -211,3 +211,11 @@ class ProductRange(models.Model):
     def is_end_of_line(self):
         """Return True if the range is end of line, otherwise False."""
         return ProductRange.ranges.end_of_line().filter(pk=self.pk).exists()
+
+    def is_active(self):
+        """Return True if the product range is neither EOL or archvied, otherwise False."""
+        if self.is_archived():
+            return False
+        if self.is_end_of_line():
+            return False
+        return True
