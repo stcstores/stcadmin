@@ -9,37 +9,45 @@
 {% block content %}
   {{ block.super }}
   <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="input-group mb-3">
+          <span class="input-group-text">Country</span>
+          <select name="country" id="country" class="form-select">
+            {% for country in countries %}<option value="{{ country.id }}">{{ country }}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
 
-    <div class="input-group mb-3">
-      <span class="input-group-text">Country</span>
-      <select name="country" id="country" class="form-select">
-        {% for country in countries %}<option value="{{ country.id }}">{{ country }}</option>{% endfor %}
-      </select>
-    </div>
-
-    <div class="input-group mb-3">
-      <span class="input-group-text">Channel</span>
-      <select name="channel" id="channel" class="form-select">
-        <option value="">Generic</option>
-        {% for channel in channels %}<option value="{{ channel }}">{{ channel }}</option>{% endfor %}
-      </select>
-    </div>
+      <div class="col">
+        <div class="input-group mb-3">
+          <span class="input-group-text">Channel</span>
+          <select name="channel" id="channel" class="form-select">
+            <option value="">Generic</option>
+            {% for channel in channels %}<option value="{{ channel }}">{{ channel }}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
  
-    <div class="input-group mb-3">
-      <span class="input-group-text">Channel Fee</span>
-      {% for country in countries %}
-        <select name="channel_fee"
-                id="channel_fee_input_{{ country.id }}"
-                size="5"
-                class="channel_fee_input form-select"
-                multiple>
-          {% for fee in channel_fees %}
-            {% if fee.country == country %}
-              <option value="{{ fee.fee_percentage }}">{{ fee.name }}: {{ fee.fee_percentage }}</option>
-            {% endif %}
+      <div class="col">
+        <div class="input-group mb-3">
+          <span class="input-group-text">Channel Fee</span>
+          {% for country in countries %}
+            <select name="channel_fee"
+                    id="channel_fee_input_{{ country.id }}"
+                    size="5"
+                    class="channel_fee_input form-select"
+                    multiple>
+              {% for fee in channel_fees %}
+                {% if fee.country == country %}
+                  <option value="{{ fee.fee_percentage }}">{{ fee.name }}: {{ fee.fee_percentage }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
           {% endfor %}
-        </select>
-      {% endfor %}
+        </div>
+      </div>
+ 
     </div>
   </div>
 
@@ -65,9 +73,9 @@
             <div class="row mb-3">
  
               <div class="input-group col">
-                <span class="input-group-text">Price (GBP)</span>
-                <span class="input-group-text">£</span>
-                <input class="currency_input form-control"
+                <span class="input-group-text border-secondary">Price (GBP)</span>
+                <span class="input-group-text border-secondary">£</span>
+                <input class="currency_input form-control border-secondary"
                        id="{{ product.id }}_sale_price"
                        value="15.50"
                        size="2">

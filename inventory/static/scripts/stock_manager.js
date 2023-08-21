@@ -1,9 +1,9 @@
 var getting_stock_level_icon_class = "fa-solid fa-spinner fa-spin";
-var setting_stock_level_icon_class = "fa-solid fa-spinner fa-spin warning";
-var get_stock_level_success_icon_class = "fa-solid fa-check";
-var set_stock_level_success_icon_class = "fa-solid fa-square-check success";
-var get_stock_level_error_icon_class = "fa-solid fa-square-exclamation warning";
-var set_stock_level_error_icon_class = "fa-solid fa-triangle-exclamation error";
+var setting_stock_level_icon_class = "fa-solid fa-spinner fa-spin text-warning";
+var get_stock_level_success_icon_class = "fa-solid fa-check text-light";
+var set_stock_level_success_icon_class = "fa-solid fa-check text-success";
+var get_stock_level_error_icon_class = "fa-solid fa-square-exclamation text-warning";
+var set_stock_level_error_icon_class = "fa-solid fa-triangle-exclamation text-error";
 
 var refresh_icon_available_class =
   "fa-solid fa-arrows-rotate refresh_button available";
