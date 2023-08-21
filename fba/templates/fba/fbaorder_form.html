@@ -56,9 +56,7 @@
             {% endif %}
         </div>
         {% if form.instance.id == none %}
-            <div class="fs-4">
-                Current FBA Order{{ existing_order_count|pluralize }} for this Product: <span class="text-danger">{{ existing_order_count }}</span>
-            </div>
+            <div class="badge bg-danger fs-4">Current FBA Orders for this Product: {{ existing_order_count }}</div>
         {% endif %}
  
         <div class="row mt-3">
