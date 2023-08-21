@@ -17,7 +17,14 @@
                 {% for product in products %}
                     <tr>
                         <td>
-                            <div class="font-monospace user-select-all text-muted fs-6">{{ product.sku }}</div>
+                            <div>
+                                <span class="font-monospace user-select-all text-muted fs-6 me-3">{{ product.sku }}</span>
+                                {% if product.is_archived %}
+                                    <span class="badge bg-secondary">Archived</span>
+                                {% elif product.is_end_of_line %}
+                                    <span class="badge bg-danger">End Of Line</span>
+                                {% endif %}
+                            </div>
                             <div class="user-select-all fs-5">{{ product.product_range.name }}</div>
                             <div class="fs-6">
                                 <span class="me-2 font-monospace user-select-all">{{ product.supplier_sku }}</span>
@@ -44,7 +51,7 @@
                             <input type="text"
                                    value="0"
                                    size="2"
-                                   class="order_count_input form-control"
+                                   class="order_count_input form-control {% if product.is_end_of_line %}border-danger{% endif %}"
                                    id="order_count_input_{{ product.id }}"
                                    data-product_id="{{ product.id }}"
                                    onclick="this.select()">
