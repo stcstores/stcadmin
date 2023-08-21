@@ -15,20 +15,6 @@ def product_option_value_field(variation_option):
     return fields.ProductOptionValueField(variation_option=variation_option)
 
 
-@pytest.mark.parametrize(
-    "input,expected",
-    (
-        ("word", "word"),
-        ("word ", "word"),
-        ("word&nbsp;word", "word word"),
-        ("word  word", "word word"),
-        ("word\nword", "word\nword"),
-    ),
-)
-def test_description_field_clean_method(input, expected):
-    assert fields.Description().clean(input) == expected
-
-
 @pytest.mark.django_db
 def test_product_optino_value_field_sets_variation_options(
     product_option_value_field, variation_option

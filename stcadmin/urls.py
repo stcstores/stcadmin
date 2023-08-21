@@ -14,6 +14,7 @@ app_name = "stcadmin"
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("select2/", include("django_select2.urls")),
+    path("summernote/", include("django_summernote.urls")),
     path("labelmaker/", include("labelmaker.urls", namespace="labelmaker")),
     path("inventory/", include("inventory.urls", namespace="inventory")),
     path(

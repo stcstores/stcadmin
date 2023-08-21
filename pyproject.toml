@@ -41,6 +41,7 @@ linnapi = {git = "https://github.com/stcstores/linnapi.git", rev = "main"}
 shopify_api_py = {git = "https://github.com/stcstores/shopify_api_py.git", rev = "main"}
 requests-html = "^0.10.0"
 django-bootstrap5 = "^23.1"
+django-summernote = "^0.8.20.0"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=6.2.4"

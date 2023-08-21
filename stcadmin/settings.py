@@ -138,6 +138,7 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "django_bootstrap5",
     "django_select2",
+    "django_summernote",
     "storages",
     "adminsortable2",
     "easy_thumbnails",
@@ -354,6 +355,31 @@ LOGIN_REDIRECT_URL = "home:index"
 CELERY_BROKER_URL = get_config("CELERY_BROKER_URL")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
+
+SUMMERNOTE_THEME = "bs5"
+
+SUMMERNOTE_CONFIG = {
+    "iframe": False,
+    "width": "100%",
+    "toolbar": [
+        [
+            "font",
+            [
+                "bold",
+                "underline",
+                "italic",
+                "strikethrough",
+                "superscript",
+                "subscript",
+                "clear",
+            ],
+        ],
+        ["para", ["ul", "ol", "hr"]],
+        ["table", ["table"]],
+        ["view", ["fullscreen", "codeview"]],
+        ["undo", ["undo", "redo"]],
+    ],
+}
 
 
 class ProductImageStorage(S3Boto3Storage):

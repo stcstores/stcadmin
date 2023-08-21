@@ -3,9 +3,9 @@
 from django import forms
 from django.db.models import Count
 from django.forms.models import inlineformset_factory
+from django_summernote.widgets import SummernoteInplaceWidget
 
 from channels import models
-from inventory.forms.fields import Description
 from inventory.models import BaseProduct, ProductRange
 
 
@@ -17,9 +17,9 @@ class ShopifyListingForm(forms.ModelForm):
 
         model = models.shopify_models.ShopifyListing
         exclude = ("product_id", "collections", "tags")
-        field_classes = {"description": Description}
         widgets = {
             "product_range": forms.HiddenInput(),
+            "description": SummernoteInplaceWidget,
         }
 
 
