@@ -1,4 +1,4 @@
-<div class="product_search_result_range row border p-3 mt-3 bg-light rounded {% if range.end_of_line or range.hidden %}end_of_line{% endif %}">
+<div class="product_search_result_range row border p-3 mt-3 rounded {% if product_range.is_archived %}bg-secondary text-light{% else %}bg-light{% endif %}">
   <div class="range_details col-6">
     <div class="identification">
       <div class="fs-6 font-monospace sku">
@@ -6,7 +6,7 @@
       </div>
       <div class="btn-group">
         <a href="{% url 'inventory:product_range' product_range.pk %}"
-           class="btn {% if product_range.is_end_of_line %}btn-secondary{% else %}btn-primary{% endif %}"
+           class="btn btn-primary"
            role="button">{{ product_range.name }}</a>
         <button type="button"
                 class="btn btn-primary dropdown-toggle dropdown-toggle-split"
@@ -50,7 +50,11 @@
     </div>
   </div>
   <div class="col-1 range_status">
-    {% if product_range.is_end_of_line %}<span class="badge bg-danger">End of Line</span>{% endif %}
+    {% if product_range.is_archived %}
+      <span class="badge bg-dark">Archived</span>
+    {% elif product_range.is_end_of_line %}
+      <span class="badge bg-danger">End of Line</span>
+    {% endif %}
   </div>
   <div class="product_details col-5">
     <div class="product">

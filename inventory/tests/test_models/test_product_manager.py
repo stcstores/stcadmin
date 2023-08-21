@@ -119,14 +119,14 @@ def test_variations_filter_returns_combination_product(combination_product):
 
 
 @pytest.mark.django_db
-def test_active_returns_not_end_of_line_products(product_factory):
-    product = product_factory.create(is_end_of_line=False)
+def test_active_returns_not_archived_products(product_factory):
+    product = product_factory.create(is_archived=False)
     assert product in models.BaseProduct.objects.active()
 
 
 @pytest.mark.django_db
-def test_active_does_not_return_end_of_line_products(product_factory):
-    product = product_factory.create(is_end_of_line=True)
+def test_active_does_not_return_archived_products(product_factory):
+    product = product_factory.create(is_archived=True)
     assert product not in models.BaseProduct.objects.active()
 
 
@@ -162,7 +162,7 @@ def test_text_search_matches_on_barcode(product):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "arg,eol,included",
+    "arg,archived,included",
     (
         (None, False, True),
         (None, True, True),
@@ -172,9 +172,7 @@ def test_text_search_matches_on_barcode(product):
         (False, True, False),
     ),
 )
-def test_end_of_line_filter(arg, eol, included, product_factory):
-    product = product_factory.create(
-        is_end_of_line=eol, product_range__is_end_of_line=eol
-    )
-    qs = models.BaseProduct.objects.text_search(product.sku, end_of_line=arg)
+def test_archived_filter(arg, archived, included, product_factory):
+    product = product_factory.create(is_archived=archived)
+    qs = models.BaseProduct.objects.text_search(product.sku, archived=arg)
     assert (product in qs) is included

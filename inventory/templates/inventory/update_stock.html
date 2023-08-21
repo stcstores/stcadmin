@@ -1,10 +1,9 @@
-{% if product.is_end_of_line or product.product_range.is_end_of_line %}
-  <small>Stock level is not available for EOL products</small>
+{% if product.is_archived %}
+  <span class="badge bg-secondary">Archived</span>
 {% else %}
 
   <div class="product_stock_level bg-light rounded d-flex flex-row align-items-center text-center justify-content-center">
     <div class="stock_level_type_container available_container text-success">
-      <span class="stock_level_header fs-6">Available</span>
       <div class="stock_level_update_widget d-flex flex-row align-items-center">
         <input id="available_stock_{{ product.pk }}"
                class="stock_level_field form-control text-success"
@@ -27,18 +26,16 @@
         </div>
       </div>
     </div>
-    <div class="stock_level_type_container total_stock_container text-muted m-2">
+    <div class="stock_level_type_container total_stock_container text-muted m-1">
       <i class="fa-solid fa-plus"></i>
     </div>
     <div class="stock_level_type_container in_orders_container text-danger">
+      <span id="in_orders_{{ product.pk }}" class="stock_in_orders">
+        <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
+      </span>
       <span class="stock_level_header">In Orders</span>
-      <div>
-        <span id="in_orders_{{ product.pk }}" class="stock_in_orders">
-          <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
-        </span>
-      </div>
     </div>
-    <div class="button_container d-flex flex-column m-3">
+    <div class="button_container d-flex flex-column m-1">
       <i class="fa-solid fa-arrows-rotate refresh_button locked"
          id="refresh_button_{{ product.pk }}"
          title="Refresh stock levels from Linnworks"></i>

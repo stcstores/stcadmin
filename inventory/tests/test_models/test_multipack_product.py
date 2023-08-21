@@ -183,6 +183,16 @@ def test_is_end_of_line_defaults_to_false(new_multipack_product):
 
 
 @pytest.mark.django_db
+def test_has_is_archived_attribute(multipack_product):
+    assert isinstance(multipack_product.is_archived, bool)
+
+
+@pytest.mark.django_db
+def test_is_archived_defaults_to_false(new_multipack_product):
+    assert new_multipack_product.is_archived is False
+
+
+@pytest.mark.django_db
 def test_has_created_at_attribute(multipack_product):
     assert isinstance(multipack_product.created_at, dt.datetime)
 

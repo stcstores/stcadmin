@@ -31,10 +31,14 @@ class ImageFormView(InventoryUserMixin, FormView):
         self.product_range = get_object_or_404(
             models.ProductRange, pk=self.kwargs.get("range_pk")
         )
-        self.products = self.product_range.products.variations().prefetch_related(
-            "images",
-            "variation_option_values",
-            "variation_option_values__variation_option",
+        self.products = (
+            self.product_range.products.variations()
+            .active()
+            .prefetch_related(
+                "images",
+                "variation_option_values",
+                "variation_option_values__variation_option",
+            )
         )
 
     def get_variation_options(self):

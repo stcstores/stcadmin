@@ -99,8 +99,6 @@ class ProductRangeFactory(DjangoModelFactory):
     description = factory.Faker("paragraph")
     search_terms = [f"Term {i}" for i in range(5)]
     bullet_points = [f"Bullet {i}" for i in range(5)]
-    is_end_of_line = False
-    hidden = False
     managed_by = factory.SubFactory(UserFactory)
     created_at = factory.Faker(
         "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
@@ -128,6 +126,7 @@ class BaseProductFactory(DjangoModelFactory):
     height = factory.Faker("pyint", min_value=10, max_value=1000)
     depth = factory.Faker("pyint", min_value=10, max_value=1000)
     is_end_of_line = False
+    is_archived = False
     range_order = 0
     created_at = factory.Faker(
         "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc

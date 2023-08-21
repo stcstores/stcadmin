@@ -4,8 +4,6 @@
 {% block additional_head %}
   {{ block.super }}
   <script src="{% static 'scripts/price_calculator.js' %}"></script>
-  {% comment %} <link rel="stylesheet" href="{% static 'css/price_calculator.css' %}"> {% endcomment %}
-  {% comment %} <link rel="stylesheet" href="{% static 'css/input-add-on.css' %}"> {% endcomment %}
 {% endblock additional_head %}
 
 {% block content %}
@@ -46,23 +44,23 @@
   </div>
 
   <div class="container">
-    {% for product in product_range.products.variations.variations %}
+    {% for product in products %}
       <div class="card mb-3 bg-light" id="product_{{ product.id }}">
         <div class="card-body">
+          <span class="font-monospace user-select-all fs-5 text-muted">{{ product.sku }}</span>
+          {% if product.is_end_of_line %}<span class="badge bg-danger">End of Line</span>{% endif %}
           <h6 class="card-title fs-3">
-            <span class="font-monospace user-select-all">{{ product.sku }}</span>
-            <span class="font-monospace">-</span>
             <span class="user-select-all">{{ product.name }}</span>
           </h6>
-          <div class="card-subtitle">
+          <div class="card-subtitle mb-2">
             <span class="font-monospace user-select-all fs-4 fw-bold">{{ product.supplier_sku }}</span>
             {% for key, value in product.variation.items %}<span class="ms-3">{{ key }}: {{ value }}</span>{% endfor %}
             {% if product.listing_options %}
               {% for key, value in product.listing_options.items %}
                 <span class="option ms-3">{{ key }}</span>: <span>{{ value }}</span>
               {% endfor %}
-            </div>
-          {% endif %}
+            {% endif %}
+          </div>
           <div class="container">
             <div class="row mb-3">
  
@@ -93,13 +91,10 @@
                   </div>
                 </div>
               </div>
-
- 
- 
             </div>
 
             <div class="row mb-3">
-
+ 
               <div class="col-sm-4">
                 <div class="card">
                   <div class="card-body">
@@ -197,8 +192,8 @@
           </div>
         </div>
       </div>
-    </div>
-  {% endfor %}
+    {% endfor %}
+  </div>
 
 {% endblock content %}
 
@@ -221,7 +216,7 @@
     }
     $(vat_rates).each(function () {
       
-      {% for product in product_range.products.variations %}
+      {% for product in products %}
       
       var country_vat_rate = country_vat[$("#country").val()];
       if (country_vat_rate !== null) {
@@ -337,7 +332,7 @@
       var channel_fee_input = $('#channel_fee_input_' + country);
       channel_fee_input.show();
       
-      {% for product in product_range.products.variations %}
+      {% for product in products %}
       
       calcs['{{ product.id}}'].set_channel_fee_percentage(channel_fee_input.val());
       get_postage_price(
@@ -355,7 +350,7 @@
     });
     $('#channel').change(function () {
       
-      {% for product in product_range.products.variations %}
+      {% for product in products %}
       
       get_postage_price(
         calcs['{{ product.id}}'],
@@ -371,7 +366,7 @@
       
     });
     
-    {% for product in product_range.products.variations %}
+    {% for product in products %}
     
     calcs['{{ product.id}}'].set_sale_price(
       $('#{{ product.id }}_sale_price').val());

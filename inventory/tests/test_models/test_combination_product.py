@@ -183,6 +183,16 @@ def test_is_end_of_line_defaults_to_false(new_combination_product):
 
 
 @pytest.mark.django_db
+def test_has_is_archived_attribute(combination_product):
+    assert isinstance(combination_product.is_archived, bool)
+
+
+@pytest.mark.django_db
+def test_is_archvied_defaults_to_false(new_combination_product):
+    assert new_combination_product.is_archived is False
+
+
+@pytest.mark.django_db
 def test_has_created_at_attribute(combination_product):
     assert isinstance(combination_product.created_at, dt.datetime)
 

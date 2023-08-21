@@ -29,7 +29,7 @@ class BaseProductAdmin(admin.ModelAdmin):
 
     exclude_fields = ()
     list_display = ("sku", "product_range")
-    list_filter = ("product_range__status", "product_range__is_end_of_line")
+    list_filter = ("product_range__status",)
     search_fields = ("sku", "product_range__sku", "product_range__name")
     autocomplete_fields = ("product_range", "package_type")
     list_select_related = ("product_range", "package_type")
@@ -64,7 +64,7 @@ class CombinationProductAdmin(admin.ModelAdmin):
 
     exclude_fields = ()
     list_display = ("sku", "product_range")
-    list_filter = ("product_range__status", "product_range__is_end_of_line")
+    list_filter = ("product_range__status",)
     search_fields = ("sku", "product_range__sku", "product_range__name")
     autocomplete_fields = ("product_range", "package_type")
     list_select_related = ("product_range", "package_type")
@@ -135,7 +135,7 @@ class MultipackProductAdmin(admin.ModelAdmin):
 
     exclude_fields = ()
     list_display = ("sku", "product_range", "base_product", "quantity")
-    list_filter = ("product_range__status", "product_range__is_end_of_line")
+    list_filter = ("product_range__status",)
     search_fields = (
         "sku",
         "product_range__sku",
@@ -175,10 +175,9 @@ class ProductAdmin(admin.ModelAdmin):
         "full_name",
         "created_at",
         "modified_at",
-        "is_end_of_line",
         "range_order",
     )
-    list_filter = ("is_end_of_line",)
+    list_filter = ("is_end_of_line", "is_archived")
     search_fields = (
         "sku",
         "product_range__name",
@@ -241,15 +240,13 @@ class ProductRangeAdmin(admin.ModelAdmin):
         "__str__",
         "sku",
         "name",
-        "is_end_of_line",
-        "hidden",
         "status",
         "created_at",
         "modified_at",
     )
-    list_editable = ("sku", "name", "is_end_of_line", "hidden", "status")
+    list_editable = ("sku", "name", "status")
     search_fields = ("sku", "name")
-    list_filter = ("is_end_of_line", "hidden", "status")
+    list_filter = ("status",)
     date_hierarchy = "created_at"
 
 

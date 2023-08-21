@@ -85,6 +85,8 @@ class BaseProductForm(forms.ModelForm):
             "gender",
             "range_order",
             "images",
+            "is_archived",
+            "is_end_of_line",
         )
         field_classes = {
             "brand": inventory_fields.Brand,

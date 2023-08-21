@@ -1,7 +1,10 @@
 """View for Product page."""
 from django.contrib import messages
-from django.urls import reverse_lazy
-from django.views.generic.edit import UpdateView
+from django.db import transaction
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.urls import reverse, reverse_lazy
+from django.views.generic.edit import DeleteView, UpdateView
 
 from inventory import forms, models
 
@@ -33,3 +36,47 @@ class ProductView(InventoryUserMixin, UpdateView):
         context_data["product"] = form.instance
         context_data["product_range"] = form.instance.product_range
         return context_data
+
+
+class SetProductEndOfLine(InventoryUserMixin, DeleteView):
+    """View for setting products as end of line."""
+
+    template_name = "inventory/product_range/confirm_eol_product.html"
+
+    def get_object(self):
+        """Return the product to set EOL."""
+        return get_object_or_404(models.Product, pk=self.kwargs["pk"])
+
+    def form_valid(self, form):
+        """Set product end of line."""
+        success_url = self.get_success_url()
+        self.object.set_end_of_line()
+        return HttpResponseRedirect(success_url)
+
+    def get_success_url(self):
+        """Return the url to redirect to after form submission."""
+        return reverse(
+            "inventory:product_range", kwargs={"range_pk": self.object.product_range.pk}
+        )
+
+
+class SetProductRangeEndOfLine(InventoryUserMixin, DeleteView):
+    """View for setting products as end of line."""
+
+    template_name = "inventory/product_range/confirm_eol_product_range.html"
+
+    def get_object(self):
+        """Return the product to set EOL."""
+        return get_object_or_404(models.ProductRange, pk=self.kwargs["pk"])
+
+    def form_valid(self, form):
+        """Set product end of line."""
+        success_url = self.get_success_url()
+        with transaction.atomic():
+            for product in self.object.products.all():
+                product.set_end_of_line()
+        return HttpResponseRedirect(success_url)
+
+    def get_success_url(self):
+        """Return the url to redirect to after form submission."""
+        return reverse("inventory:product_range", kwargs={"range_pk": self.object.pk})

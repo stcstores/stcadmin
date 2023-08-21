@@ -80,8 +80,4 @@ def test_returns_get_response_for_invaild_post(get_response):
 
 
 def test_get_initial_adds_end_of_line(initial):
-    assert initial["end_of_line"] == "exclude_eol"
-
-
-def test_get_initial_adds_show_hidden(initial):
-    assert initial["show_hidden"] is False
+    assert initial["archived"] == "exclude_archived"

@@ -27,8 +27,8 @@ class ProductRangeView(InventoryUserMixin, TemplateView):
         context_data["product_range"] = self.product_range
         products = self.product_range.products.variations()
         context_data["products"] = products
-        if not self.product_range.is_end_of_line:
-            product_skus = products.filter(is_end_of_line=False).values_list(
+        if not self.product_range.is_archived():
+            product_skus = products.filter(is_archived=False).values_list(
                 "sku", flat=True
             )
             try:
