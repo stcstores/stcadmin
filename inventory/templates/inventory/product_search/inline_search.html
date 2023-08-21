@@ -4,11 +4,11 @@
       placeholder="Search Inventory..."
       aria-label="Search"
       action="{% url 'inventory:product_search' %}"
-      method="post">
-  {% csrf_token %}
-  <input type="search"
-         name="search_term"
-         class="form-control form-control-dark text-bg-dark"
-         placeholder="Search Inventory..."
-         aria-label="Search">
+      method="get">
+    {% csrf_token %}
+    <input type="search"
+           name="search_term"
+           class="form-control form-control-dark text-bg-dark"
+           placeholder="Search Inventory..."
+           aria-label="Search">
 </form>
