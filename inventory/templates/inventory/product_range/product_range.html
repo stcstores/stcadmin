@@ -43,7 +43,7 @@
             {% for option in product_range.listing_options %}<th>{{ option }}</th>{% endfor %}
             <th>Supplier SKU</th>
             <th colspan="2">
-              {% if product.is_active %}
+              {% if product_range.is_active %}
                 <a href="{% url 'inventory:set_product_range_eol' product_range.pk %}"
                    class="btn btn-danger btn-sm">Set Range End of Line</a>
               {% endif %}
