@@ -290,8 +290,6 @@ class LinnworksProductImportFile(BaseImportFile):
         row[cls.VARIATION_SKU] = product_range.sku
         row[cls.VARIATION_GROUP_NAME] = product_range.name
         row[cls.ARCHIVED] = "YES" if product_range.is_archived() else "NO"
-        row[cls.AMAZON_BULLETS] = "|".join(product_range.bullet_points)
-        row[cls.AMAZON_SEARCH_TERMS] = "|".join(product_range.search_terms)
         row[cls.DATE_CREATED] = product_range.created_at.isoformat()
         return row
 
