@@ -350,8 +350,6 @@ class LinnworksProductImportFile(BaseImportFile):
         row[cls.MANUFACTURER] = product.manufacturer.name
         row[cls.BRAND] = product.brand.name
         row[cls.DATE_CREATED] = product.created_at.isoformat()
-        row[cls.AMAZON_BULLETS] = "|".join(product.product_range.bullet_points)
-        row[cls.AMAZON_SEARCH_TERMS] = "|".join(product.product_range.search_terms)
         row[cls.PRODUCT_TYPE] = product.product_range.name
         product_attributes = product.attributes()
         if missing_attributes := set(product_attributes.keys()) - set(cls.header):
