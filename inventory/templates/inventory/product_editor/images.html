@@ -1,0 +1,22 @@
+{% extends "inventory/product_editor/base.html" %}
+
+{% load static %}
+
+{% block additional_head %}
+    {{ block.super }}
+    {% include "inventory/images/setup.html" %}
+{% endblock additional_head %}
+
+{% block content %}
+    {{ block.super }}
+    <div class="container">
+        {% include "inventory/images/range_images.html" %}
+ 
+        {% if products|length > 1 %}
+            {% include "inventory/images/variation_images.html" %}
+        {% endif %}
+
+        <a href="{% url 'inventory:edit_new_product' product_range.pk %}"
+           class="btn btn-primary form-control">Continue</a>
+    </div>
+{% endblock content %}

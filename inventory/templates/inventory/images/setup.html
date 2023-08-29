@@ -1,0 +1,14 @@
+{% load static %}
+
+<script>
+    var productImagesURL = "{% url 'inventory:product_images' %}";
+    var rangeImgesURL = "{% url 'inventory:product_range_images' %}";
+    var deleteRangeImageURL = "{% url 'inventory:delete_range_image' %}";
+    var deleteProductImageURL = "{% url 'inventory:delete_product_image' %}";
+    var setRangeImageOrderURL = "{% url 'inventory:set_range_image_order' %}";
+    var setProductImageOrderURL = "{% url 'inventory:set_product_image_order' %}";
+    var productIdsFieldId = "{{ form.product_ids.auto_id }}";
+    var imagesFieldId = "{{ form.images.auto_id }}";
+    var rangeId = {{ product_range.id }};
+</script>
+<script src="{% static 'scripts/image_editor.js' %}"></script>

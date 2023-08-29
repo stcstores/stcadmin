@@ -114,9 +114,7 @@ class CreateInitialVariation(CreateView):
         """Return URL to redirect to after successful form submission."""
         range_pk = self.object.product_range.pk
         if self.object.polymorphic_ctype.model_class() == models.Product:
-            return reverse_lazy(
-                "inventory:edit_new_product", kwargs={"range_pk": range_pk}
-            )
+            return reverse_lazy("inventory:add_images", kwargs={"range_pk": range_pk})
         else:
             return reverse_lazy(
                 "inventory:setup_variations", kwargs={"range_pk": range_pk}
@@ -209,7 +207,7 @@ class EditAllVariations(InventoryUserMixin, FormView):
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
         return reverse_lazy(
-            "inventory:edit_new_product", kwargs={"range_pk": self.product_range.pk}
+            "inventory:add_images", kwargs={"range_pk": self.product_range.pk}
         )
 
 

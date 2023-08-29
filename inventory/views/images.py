@@ -20,17 +20,14 @@ from inventory.forms import ImagesForm
 from .views import InventoryUserMixin
 
 
-class ImageFormView(InventoryUserMixin, FormView):
+class BaseImageFormView(InventoryUserMixin, FormView):
     """View for ImagesForm."""
 
-    template_name = "inventory/product_range/images/image_page.html"
     form_class = ImagesForm
 
     def get_products(self):
         """Retrive product details from Cloud Commerce."""
-        self.product_range = get_object_or_404(
-            models.ProductRange, pk=self.kwargs.get("range_pk")
-        )
+        self.product_range = self.get_range()
         self.products = (
             self.product_range.products.variations()
             .active()
@@ -83,10 +80,44 @@ class ImageFormView(InventoryUserMixin, FormView):
             )
         return super().form_valid(form)
 
+
+class ImageFormView(BaseImageFormView):
+    """View for editing images of product ranges."""
+
+    template_name = "inventory/product_range/images.html"
+
+    def get_range(self):
+        """Return the product range to edit."""
+        return get_object_or_404(
+            models.ProductRange,
+            pk=self.kwargs.get("range_pk"),
+            status=models.ProductRange.COMPLETE,
+        )
+
     def get_success_url(self):
         """Return URL to redirect to after successful form submission."""
         return reverse_lazy(
             "inventory:images", kwargs={"range_pk": self.product_range.pk}
+        )
+
+
+class ProductEditorImageFormView(BaseImageFormView):
+    """View for adding images to new product ranges."""
+
+    template_name = "inventory/product_editor/images.html"
+
+    def get_range(self):
+        """Return the product range to edit."""
+        return get_object_or_404(
+            models.ProductRange,
+            pk=self.kwargs.get("range_pk"),
+            status=models.ProductRange.CREATING,
+        )
+
+    def get_success_url(self):
+        """Return URL to redirect to after successful form submission."""
+        return reverse_lazy(
+            "inventory:add_images", kwargs={"range_pk": self.product_range.pk}
         )
 
 
@@ -155,7 +186,7 @@ class DeleteProductRangeImage(DeleteImage):
 class ProductImages(InventoryUserMixin, TemplateView):
     """Manage images for a product."""
 
-    template_name = "inventory/product_range/images/image_row.html"
+    template_name = "inventory/images/image_row.html"
 
     def post(self, *args, **kwargs):
         """Respond to POST requests."""
@@ -177,7 +208,7 @@ class ProductImages(InventoryUserMixin, TemplateView):
 class ProductRangeImages(InventoryUserMixin, TemplateView):
     """Manage images for a product range."""
 
-    template_name = "inventory/product_range/images/image_row.html"
+    template_name = "inventory/images/image_row.html"
 
     def post(self, *args, **kwargs):
         """Respond to POST requests."""
@@ -207,6 +238,13 @@ class AddRangeImage(View):
         models.ProductRangeImageLink.objects.add_images(
             product_range=product_range, uploaded_images=images
         )
-        return HttpResponseRedirect(
-            reverse_lazy("inventory:images", kwargs={"range_pk": product_range.pk})
-        )
+        if product_range.status == product_range.CREATING:
+            return HttpResponseRedirect(
+                reverse_lazy(
+                    "inventory:add_images", kwargs={"range_pk": product_range.pk}
+                )
+            )
+        else:
+            return HttpResponseRedirect(
+                reverse_lazy("inventory:images", kwargs={"range_pk": product_range.pk})
+            )

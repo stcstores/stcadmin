@@ -106,5 +106,5 @@ def test_success_redirect(mock_form_class, group_logged_in_client, url, product_
     response = group_logged_in_client.post(url, {})
     assert response.status_code == 302
     assert response["location"] == reverse(
-        "inventory:edit_new_product", kwargs={"range_pk": product_range.pk}
+        "inventory:add_images", kwargs={"range_pk": product_range.pk}
     )

@@ -160,6 +160,11 @@ product_editor_patterns = [
         name="edit_all_variations",
     ),
     path(
+        "add_images/<int:range_pk>/",
+        views.images.ProductEditorImageFormView.as_view(),
+        name="add_images",
+    ),
+    path(
         "discard_new_range/<int:range_pk>/",
         views.DiscardNewRange.as_view(),
         name="discard_new_range",
