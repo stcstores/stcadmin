@@ -4,6 +4,7 @@
 import json
 
 from django import forms
+from django_summernote.widgets import SummernoteInplaceWidget
 
 from inventory import models
 from inventory.forms import fields as inventory_fields
@@ -24,10 +25,8 @@ class BaseRangeForm(forms.ModelForm):
 
         model = models.ProductRange
         exclude = ["hidden", "status", "images", "search_terms", "bullet_points"]
-        field_classes = {
-            "name": inventory_fields.Title,
-            "description": inventory_fields.Description,
-        }
+        field_classes = {"name": inventory_fields.Title}
+        widgets = {"description": SummernoteInplaceWidget}
 
 
 class CreateRangeForm(BaseRangeForm):
@@ -36,8 +35,7 @@ class CreateRangeForm(BaseRangeForm):
     class Meta(BaseRangeForm.Meta):
         """Meta for CreateRangeForm."""
 
-        exclude = BaseRangeForm.Meta.exclude + ["is_end_of_line"]
-        widgets = {"managed_by": forms.HiddenInput}
+        widgets = BaseRangeForm.Meta.widgets | {"managed_by": forms.HiddenInput}
 
     sku = forms.CharField(required=False, widget=forms.HiddenInput)
 
@@ -50,7 +48,7 @@ class EditRangeForm(BaseRangeForm):
 
         exclude = BaseRangeForm.Meta.exclude + ["sku"]
 
-    field_order = ("name", "description", "managed_by", "is_end_of_line")
+    field_order = ("name", "description", "managed_by")
 
 
 class BaseProductForm(forms.ModelForm):

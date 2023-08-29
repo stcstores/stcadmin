@@ -1,7 +1,5 @@
 """Fields for use with forms for creating and editing products."""
 
-import re
-
 from django import forms
 
 from inventory import models
@@ -65,24 +63,6 @@ class Title(fieldtypes.TextField):
     placeholder = "Title"
     allowed_characters = ["%", "'"]
     size = 60
-
-
-class Description(fieldtypes.TextareaField):
-    """Field for editing product descriptions."""
-
-    required = False
-    label = "Description"
-    name = "description"
-    html_class = "froala"
-    placeholder = "Description. Will default to title if left blank"
-    disallowed_characters = ["~"]
-
-    def clean(self, value):
-        """Remove invalid characters."""
-        value = super().clean(value)
-        value = value.replace("&nbsp;", " ")  # Remove Non breaking spaces
-        value = re.sub(" +", " ", value)  # Remove multiple space characters
-        return value
 
 
 class ProductOptionValueField(fieldtypes.SelectizeField):
