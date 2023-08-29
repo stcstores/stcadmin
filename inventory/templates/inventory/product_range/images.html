@@ -1,0 +1,23 @@
+{% extends "inventory/product_range/product_range_base.html" %}
+
+{% load static %}
+
+{% block page_title %}
+  Product Images
+{% endblock page_title %}
+
+{% block additional_head %}
+  {{ block.super }}
+  {% include "inventory/images/setup.html" %}
+{% endblock additional_head %}
+
+{% block content %}
+  {{ block.super }}
+  <div class="container">
+    {% include "inventory/images/range_images.html" %}
+ 
+    {% if products|length > 1 %}
+      {% include "inventory/images/variation_images.html" %}
+    {% endif %}
+  </div>
+{% endblock content %}
