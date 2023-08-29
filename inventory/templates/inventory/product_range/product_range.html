@@ -13,7 +13,7 @@
         </div>
       {% endif %}
     {% else %}
-      <div class="text-warning">
+      <div class="text-danger">
         <span class="heading">This product cannot be found in Linnworks.</span>
         If it has recently been created or changed it is likely these changes have not yet been processed.
       </div>
@@ -77,7 +77,13 @@
                 {% endif %}
               </td>
               <td class="font-monospace user-select-all">{{ product.barcode }}</td>
-              <td>{% include "inventory/update_stock.html" %}</td>
+              <td>
+                {% if products_exist %}
+                  {% include "inventory/update_stock.html" %}
+                {% else %}
+                  <span class="text-danger">Could not find product on Linnworks</span>
+                {% endif %}
+              </td>
             </tr>
           {% endfor %}
         </tbody>
