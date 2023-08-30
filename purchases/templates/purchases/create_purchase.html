@@ -10,7 +10,7 @@
                 <form action="" method="post">
                     {% csrf_token %}
                     {% include "home/bootstrap_input_group_form.html" %}
-                    <button class="btn btn-primary">Create</button>
+                    <button id="submit" class="btn btn-primary form-control disabled">Create</button>
                 </form>
             </div>
             <div class="col-3">
@@ -19,6 +19,9 @@
                 </p>
                 <p>
                     <span class="fs-5">To Pay for each:</span> <span class="fs-4 fw-bold">£{{ to_pay|floatformat:2 }}</span>
+                </p>
+                <p>
+                    <span class="fs-5">Stock Level:</span> <span id="stock_level" class="fs-4 fw-bold">{{ stock_level }}</span>
                 </p>
             </div>
             <div class="col-6">
@@ -30,3 +33,33 @@
         </div>
     </div>
 {% endblock content %}
+
+{% block script %}
+    {{ block.super }}
+    <script>
+    function getStockLevel() {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'fba:get_stock_levels' %}",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify({ order_ids: [{{ product.id }}] }),
+            success: function (response) {
+                var stockLevel = response[{{ product.id }}]['available'];
+              $("#stock_level").html(stockLevel);
+              $("#{{ form.quantity.auto_id }}").attr("max", stockLevel);
+              $("#{{ form.quantity.auto_id }}").attr("min", 1);
+              $("#submit").removeClass("disabled");
+            },
+            error: function (response) {
+              
+            },
+          });
+    }
+
+    $(document).ready(function() {
+        getStockLevel();
+    });
+
+    </script>
+{% endblock script %}
