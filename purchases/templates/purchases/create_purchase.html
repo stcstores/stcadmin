@@ -40,16 +40,16 @@
     function getStockLevel() {
         $.ajax({
             type: "POST",
-            url: "{% url 'fba:get_stock_levels' %}",
-            contentType: "application/json",
-            dataType: "json",
-            data: JSON.stringify({ order_ids: [{{ product.id }}] }),
+            url: "{% url 'linnworks:get_stock_levels' %}",
+            data: JSON.stringify({ product_ids: [{{ product.id }}] }),
             success: function (response) {
                 var stockLevel = response[{{ product.id }}]['available'];
               $("#stock_level").html(stockLevel);
               $("#{{ form.quantity.auto_id }}").attr("max", stockLevel);
               $("#{{ form.quantity.auto_id }}").attr("min", 1);
-              $("#submit").removeClass("disabled");
+              if (stockLevel > 0 ) {
+                  $("#submit").removeClass("disabled");
+              }
             },
             error: function (response) {
               

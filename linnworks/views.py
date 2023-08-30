@@ -18,7 +18,6 @@ from linnworks.models import StockManager
 @csrf_exempt
 def get_stock_levels(request):
     """Return the stock level for a product."""
-    output = {}
     request_data = json.loads(request.body)
     product_ids = request_data["product_ids"]
     products = BaseProduct.objects.filter(pk__in=product_ids)
