@@ -2,8 +2,10 @@ var getting_stock_level_icon_class = "fa-solid fa-spinner fa-spin";
 var setting_stock_level_icon_class = "fa-solid fa-spinner fa-spin text-warning";
 var get_stock_level_success_icon_class = "fa-solid fa-check text-light";
 var set_stock_level_success_icon_class = "fa-solid fa-check text-success";
-var get_stock_level_error_icon_class = "fa-solid fa-square-exclamation text-warning";
-var set_stock_level_error_icon_class = "fa-solid fa-triangle-exclamation text-error";
+var get_stock_level_error_icon_class =
+  "fa-solid fa-square-exclamation text-warning";
+var set_stock_level_error_icon_class =
+  "fa-solid fa-triangle-exclamation text-error";
 
 var refresh_icon_available_class =
   "fa-solid fa-arrows-rotate refresh_button available";
@@ -16,7 +18,6 @@ class StockLevelWidget {
   constructor(product_id) {
     this.product_id = product_id;
     this.stock_level_field = $("#available_stock_" + product_id);
-    this.total_stock_field = $("#total_stock_" + product_id);
     this.in_orders_field = $("#in_orders_" + product_id);
     this.status_icon = $("#stock_level_status_" + product_id);
     this.update_button = $("#stock_level_update_button_" + product_id);
@@ -30,7 +31,6 @@ class StockLevelWidget {
 
   refresh() {
     this.write_stock_level("");
-    this.write_total_stock("");
     this.write_in_orders("");
     this.set_status_icon(getting_stock_level_icon_class);
     this.set_refresh_in_progress();
@@ -45,13 +45,8 @@ class StockLevelWidget {
     this.in_orders_field.text(stock_level);
   }
 
-  write_total_stock(stock_level) {
-    this.total_stock_field.text(stock_level);
-  }
-
   set_error_getting_stock_level() {
     this.write_stock_level("");
-    this.write_total_stock("");
     this.write_in_orders("");
     this.set_status_icon(get_stock_level_error_icon_class);
   }
@@ -74,11 +69,14 @@ class StockLevelWidget {
     this.set_refresh_available();
     this.set_refresh_available();
     this.enable_update_field();
+    this.stock_level_field.trigger("stockLevelChange", [
+      this.product_id,
+      new_stock_level,
+    ]);
   }
 
   display_stock_level_update_error() {
     this.write_stock_level("");
-    this.write_total_stock("");
     this.write_in_orders("");
     this.set_status_icon(set_stock_level_error_icon_class);
     this.set_refresh_available();
@@ -86,11 +84,14 @@ class StockLevelWidget {
 
   display_loaded_stock_level(stock_level_info) {
     this.write_stock_level(stock_level_info["available"]);
-    this.write_total_stock(stock_level_info["stock_level"]);
     this.write_in_orders(stock_level_info["in_orders"]);
     this.set_status_icon(get_stock_level_success_icon_class);
     this.enable_update_field();
     this.set_refresh_available();
+    this.stock_level_field.trigger("stockLevelChange", [
+      this.product_id,
+      stock_level_info["available"],
+    ]);
   }
 
   set_status_icon(icon_css) {
@@ -110,7 +111,9 @@ class StockLevelWidget {
   }
 
   enable_update_field() {
-    this.stock_level_field.attr("disabled", false);
+    if (!this.stock_level_field.is("[readonly]")) {
+      this.stock_level_field.attr("disabled", false);
+    }
   }
 
   set_refresh_available() {
@@ -192,7 +195,6 @@ let stock_level_widget_manager = {
         },
       ],
     };
-    console.log(request_data);
     $.ajax({
       type: "POST",
       url: update_stock_url,

@@ -29,3 +29,20 @@
     </div>
  
 {% endblock content %}
+
+{% block script %}
+    {{ block.super }}
+    <script>
+        $(document).ready(function() {
+            $(".stock_level_field").on("stockLevelChange",function(field, productId, stockLevel) {
+                var button = $("#create_purchase_button_" + productId);
+                var row = $("#purchase_row_" + productId);
+                if (stockLevel > 0) {
+                    row.addClass("bg-light");
+                } else {
+                    row.addClass("bg-secondary");
+                }
+            });
+        });
+    </script>
+{% endblock script %}
