@@ -53,6 +53,9 @@ class PurchaseExport(models.Model):
         verbose_name_plural = "Purchase Exports"
         ordering = ("-export_date",)
 
+    def __str__(self):
+        return f"Purchase Report {self.export_date}"
+
     def generate_report(self):
         """Return a .csv report as io.StringIO."""
         return PurchaseExportReport.generate_report_text(self)
