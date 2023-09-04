@@ -33,6 +33,9 @@ class PurchaseExportFactory(DjangoModelFactory):
     export_date = factory.Faker(
         "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
     )
+    created_at = factory.Faker(
+        "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
+    )
     report_sent = True
 
 

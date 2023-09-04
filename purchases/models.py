@@ -1,6 +1,7 @@
 """Models for the Purhcases app."""
 
 import csv
+import datetime as dt
 from io import StringIO
 
 from django.conf import settings
@@ -33,7 +34,7 @@ class PurchaseExportManager(models.Manager):
     def new_export(self):
         """Create a new purchase export."""
         purchases = Purchase.objects.filter(export__isnull=True)
-        export = self.create()
+        export = self.create(export_date=timezone.now() - dt.timedelta(days=1))
         purchases.update(export=export)
         return export
 
@@ -42,6 +43,7 @@ class PurchaseExport(models.Model):
     """Model for purchase exports."""
 
     export_date = models.DateField(default=timezone.now, unique=True)
+    created_at = models.DateTimeField(default=timezone.now)
     report_sent = models.BooleanField(default=False)
 
     objects = PurchaseExportManager()

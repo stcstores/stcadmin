@@ -4,6 +4,7 @@ from unittest import mock
 import pytest
 from django.conf import settings
 from django.db.utils import IntegrityError
+from django.utils import timezone
 
 from purchases import models
 
@@ -49,6 +50,11 @@ def test_purchase_export_has_export_date_attribute(purchase_export):
 
 
 @pytest.mark.django_db
+def test_purchase_export_has_date_created_attribute(purchase_export):
+    assert isinstance(purchase_export.created_at, dt.datetime)
+
+
+@pytest.mark.django_db
 def test_new_export_creates_empty_export():
     export = models.PurchaseExport.objects.new_export()
     assert export.purchases.count() == 0
@@ -89,6 +95,12 @@ def test_new_export_does_not_add_exported_purchases(
     purchase = purchase_factory.create(export=old_export)
     export = models.PurchaseExport.objects.new_export()
     assert purchase not in export.purchases.all()
+
+
+@pytest.mark.django_db
+def test_new_export_sets_export_date_yesterday():
+    export = models.PurchaseExport.objects.new_export()
+    assert export.export_date.date() == (timezone.now() - dt.timedelta(days=1)).date()
 
 
 @pytest.mark.django_db
