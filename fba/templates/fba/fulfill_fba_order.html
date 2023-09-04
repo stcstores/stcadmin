@@ -20,7 +20,6 @@
  
             {% if form.instance.is_combinable %}<div class="text-success">Combinable</div>{% endif %}
             {% if form.instance.is_fragile is True %}<div class="text-danger">FRAGILE</div>{% endif %}
-            {% if form.instance.small_and_light is True %}<div class="text-danger">SMALL AND LIGHT</div>{% endif %}
         </div>
         <div class="m-2">
             <a href="{% url 'fba:order_printout' form.instance.pk %}"

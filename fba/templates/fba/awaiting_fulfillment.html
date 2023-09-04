@@ -40,7 +40,6 @@
                                 <small class="font-monospace user-select-all me-3">{{ order.product_SKU }}</small>
                                 {% if order.is_fragile %}<div class="badge bg-danger me-3">Fragile</div>{% endif %}
                                 {% if order.is_combinable %}<div class="badge bg-success me-3">Combinable</div>{% endif %}
-                                {% if order.small_and_light %}<div class="badge bg-info me-3">Small and Light</div>{% endif %}
                             </div>
                             <div>
                                 <small class="user-select-all">{{ order.product_name }}</small>

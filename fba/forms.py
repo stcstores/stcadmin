@@ -76,6 +76,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "update_stock_level_when_complete",
             "status",
             "quantity_sent",
+            "small_and_light",
         ]
         widgets = {
             "product_SKU": forms.HiddenInput(),
@@ -102,7 +103,6 @@ class CreateFBAOrderForm(forms.ModelForm):
         "selling_price",
         "FBA_fee",
         "aproximate_quantity",
-        "small_and_light",
         "tracking_number",
         "is_combinable",
         "on_hold",

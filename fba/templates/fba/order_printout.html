@@ -102,7 +102,10 @@
             <h3>ASIN: {{ order.product_asin }}</h3>
             <h2>
                 {{ order.region.name }}
-                <img src="{{ order.region.default_country.country.flag.url }}" height="64">
+                <img src="{{ order.region.default_country.country.flag.url }}"
+                     height="64"
+                     width=""
+                     alt="">
             </h2>
             <h2>
                 {% if order.is_combinable %}&nbsp;COMBINABLE{% endif %}
@@ -140,16 +143,12 @@
                     <th>Purchase Price</th>
                     <td>{{ order.region.currency.symbol }}{{ order.product_purchase_price }}</td>
                 </tr>
-                {% if order.small_and_light is True %}
-                    <tr>
-                        <td colspan="2">SMALL AND LIGHT</td>
-                    </tr>
-                {% endif %}
             </table>
             <img src="{{ order.product_image_url }}"
                  class="product_img"
                  alt=""
-                 height="200">
+                 height="200"
+                 width="">
         </div>
         <div class="notes">Notes: {{ order.notes }}</div>
         <div class="inputs">

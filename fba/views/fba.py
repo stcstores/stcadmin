@@ -183,7 +183,6 @@ class RepeatFBAOrder(FBAOrderCreate):
         initial["country"] = self.to_repeat.region.default_country
         initial["selling_price"] = self.to_repeat.selling_price
         initial["FBA_fee"] = self.to_repeat.FBA_fee
-        initial["small_and_light"] = self.to_repeat.small_and_light
         return initial
 
     def get_context_data(self, **kwargs):
