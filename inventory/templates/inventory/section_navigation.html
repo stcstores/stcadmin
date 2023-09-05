@@ -1,39 +1,40 @@
-<header class="p-3 text-bg-secondary">
-  <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-    <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-      <li>
-        <a class="nav-link px-2 text-white"
-           href="{% url 'inventory:product_search' %}">Product Search</a>
-      </li>
-      <li>
-        <a class="nav-link px-2 text-white"
-           href="{% url 'inventory:start_new_product' %}">New Product</a>
-      </li>
-      <li>
-        <a class="nav-link px-2 text-white"
-           href="{% url 'inventory:continue' %}">Continue Creating Product</a>
-      </li>
-      <li>
-        <a class="nav-link px-2 text-white"
-           href="{% url 'price_calculator:price_calculator' %}">Price Calculator</a>
-      </li>
-      <li>
-        <a class="nav-link px-2 text-white"
-           href="{% url 'inventory:sku_generator' %}">SKU Generator</a>
-      </li>
-      <li>
-        <a class="nav-link px-2 text-white"
-           href="{% url 'inventory:suppliers' %}">Suppliers</a>
-      </li>
-      <li>
-        <a class="nav-link px-2 text-white"
-           href="{% url 'linnworks:stock_value' %}">Stock Value</a>
-      </li>
-      <li>
-        <a class="nav-link px-2 text-white"
-           href="{% url 'inventory:bay_search' %}">Bay Search</a>
-      </li>
-    </ul>
-    {% include "inventory/product_search/inline_search.html" %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light text-light">
+  <div class="container-fluid">
+    <a href="{% url 'inventory:product_search' %}" class="navbar-brand">Inventory</a>
+    <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#sectionNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="sectionNavbar">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'inventory:product_search' %}">Product Search</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'inventory:start_new_product' %}">New Product</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'inventory:continue' %}">Continue Creating Product</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'price_calculator:price_calculator' %}">Price Calculator</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'inventory:sku_generator' %}">SKU Generator</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'inventory:suppliers' %}">Suppliers</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'linnworks:stock_value' %}">Stock Value</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'inventory:bay_search' %}">Bay Search</a>
+        </li>
+      </ul>
+    </div>
   </div>
-</header>
+  <div class="my-3 my-md-0">{% include "inventory/product_search/inline_search.html" %}</div>
+</nav>

@@ -4,19 +4,23 @@
 {% block page_content %}
   {{ block.super }}
   <div class="container">
-    <div class="col-6">
+    <div class="col-lg-6">
       <form action="" method="post" autocomplete="off">
         {% csrf_token %}
         {% include "home/bootstrap_input_group_form.html" %}
-        <button type="submit"
-                class="btn btn-primary"
-                name="product_type"
-                value="{{ form.SINGLE }}">Save Single Product</button>
-        <button type="submit"
-                class="btn btn-primary"
-                name="product_type"
-                value="{{ form.VARIATION }}">Create Variations</button>
-      </form>
+        <div class="row my-2">
+          <button type="submit"
+                  class="btn btn-primary form-control"
+                  name="product_type"
+                  value="{{ form.SINGLE }}">Save Single Product</button>
+        </div>
+        <div class="row my-2">
+          <button type="submit"
+                  class="btn btn-primary form-control"
+                  name="product_type"
+                  value="{{ form.VARIATION }}">Create Variations</button>
+        </form>
+      </div>
     </div>
   </div>
 {% endblock page_content %}

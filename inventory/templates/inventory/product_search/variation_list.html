@@ -1,49 +1,60 @@
-<table class="table table-light table-hover table-sm mt-3">
+ 
+<div class="container-fluid">
   {% for product in products %}
-    {% if forloop.first %}
-      <thead class="table-primary">
-        <tr>
-          <th>SKU</th>
-          <th>Supplier SKU</th>
-          {% for option in product.variable_options %}<th>{{ option }}</th>{% endfor %}
-          <th></th>
-          <th>Stock Level</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-      {% endif %}
-      <tr class="{% if product.is_archived %}table-secondary text-muted{% elif product.is_end_of_line %}table-secondary{% endif %}">
-        <td class="font-monospace sku">
-          <span class="user-select-all">{{ product.sku }}</span>
-        </td>
-        <td class="font-monospace sku">
-          <span class="user-select-all">{{ product.supplier_sku }}</span>
-        </td>
-        {% for option, value in product.variation.items %}<td class="name">{{ value }}</td>{% endfor %}
-        <td>
+    <div class="row mt-3 mt-lg-1 p1 bg-white text-dark">
+
+      <div class="col-lg my-1">
+        <div>
+          <span class="font-monospace user-select-all me-2">{{ product.sku }}</span>
           {% if product.is_archived %}
             <span class="badge bg-secondary">Archived</span>
           {% elif product.is_end_of_line %}
             <span class="badge bg-danger">End Of Line</span>
           {% endif %}
-        </td>
+        </div>
+        <div>
+          {% for option, value in product.variation.items %}
+            <span class="me-2">
+              <span class="text-muted">{{ option }}:&nbsp;</span><span class="fw-bold">{{ value }}</span>
+            </span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="col-lg-3 my-1">
+        <div>
+          <span class="text-muted">Supplier SKU:&nbsp;</span>
+          <span class="font-monospace user-select-all">{{ product.supplier_sku }}</span>
+        </div>
+        <div>
+          <span class="text-muted">Barcode:&nbsp;</span>
+          <span class="font-monospace user-select-all">{{ product.barcode }}</span>
+        </div>
+      </div>
+
+      <div class="col-lg-2 my-1">
+        {% with product.bays as bays %}
+          {% if bays %}<span class="text-muted">Bays:&nbsp;</span>{% endif %}
+          {% for bay in bays %}<span class="me-1 font-monospace user-select-all">{{ bay }}</span>{% endfor %}
+        {% endwith %}
+      </div>
+ 
+      <div class="col-lg-2 my-1">
         {% if product.is_archived is False %}
-          <td class="search_result_stock_level load_stock"
-              id="search_result_stock_level_{{ product.pk }}">
+          <span class="search_result_stock_level load_stock"
+                id="search_result_stock_level_{{ product.pk }}">
             <i class="fa-solid fa-spinner fa-spin"></i>
-          </td>
-        {% else %}
-          <td>-</td>
+          </span>
         {% endif %}
-        <td>
-          {% if product.is_archived == False %}
-            <a href="{% url 'inventory:product' product.pk %}">
-              <button class="btn btn-sm btn-primary">Edit</button>
-            </a>
-          {% endif %}
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+      </div>
+
+      <div class="col-lg-1">
+        {% if product.is_archived == False %}
+          <a href="{% url 'inventory:product' product.pk %}"
+             class="btn btn-sm btn-primary">Edit</a>
+        {% endif %}
+      </div>
+
+    </div>
+  {% endfor %}
+</div>

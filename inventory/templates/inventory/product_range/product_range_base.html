@@ -13,7 +13,7 @@
 {% block content %}
   <div class="container mb-3">
     <div class="range_header row mb-3">
-      <div class="range_details col-9">
+      <div class="range_details col-md-9">
         <span class="font-monospace sku user-select-all text-muted fs-6 me-2">{{ product_range.sku }}</span>
         {% if product_range.is_archived %}
           <span class="badge bg-secondary">Archived</span>
@@ -27,56 +27,53 @@
         <div>Created: {{ product_range.created_at }}</div>
       </div>
     </div>
-    <div>
-      {% with request.get_full_path as current_url %}
-        <ul class="nav nav-tabs justify-content-center">
- 
-          {% url 'inventory:product_range' product_range.pk as url %}
-          <li class="nav-item">
-            <a class="nav-link{% if current_url == url %} active{% endif %}"
-               href="{{ url }}">Range</a>
-          </li>
+    <nav class="navbar navbar-expand-lg navbar-light border-bottom border-secondary">
+      <div class="container-fluid">
+        <a href="{% url 'inventory:product_range' product_range.pk %}"
+           class="navbar-brand text-primary">Range</a>
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#rangeNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="rangeNavbar">
+          <ul class="nav flex-column flex-lg-row justify-content-center">
 
-          {% url 'inventory:descriptions' product_range.pk as url %}
-          <li class="nav-item">
-            <a class="nav-link{% if current_url == url %} active{% endif %}"
-               href="{{ url }}">Description</a>
-          </li>
-
-          {% if product_range.has_variations %}
-            {% url 'inventory:product_order' product_range.pk as url %}
             <li class="nav-item">
-              <a class="nav-link{% if current_url == url %} active{% endif %}"
-                 href="{{ url }}">Variation Order</a>
+              <a class="nav-link"
+                 href="{% url 'inventory:descriptions' product_range.pk %}">Description</a>
             </li>
-          {% endif %}
 
-          {% url 'inventory:locations' product_range.pk as url %}
-          <li class="nav-item">
-            <a class="nav-link{% if current_url == url %} active{% endif %}"
-               href="{{ url }}">Location</a>
-          </li>
+            {% if product_range.has_variations %}
+              <li class="nav-item">
+                <a class="nav-link"
+                   href="{% url 'inventory:product_order' product_range.pk %}">Variation Order</a>
+              </li>
+            {% endif %}
 
-          {% url 'inventory:images' product_range.pk as url %}
-          <li class="nav-item">
-            <a class="nav-link{% if current_url == url %} active{% endif %}"
-               href="{{ url }}">Images</a>
-          </li>
+            <li class="nav-item">
+              <a class="nav-link"
+                 href="{% url 'inventory:locations' product_range.pk %}">Location</a>
+            </li>
 
-          {% url 'price_calculator:range_price_calculator' product_range.pk as url %}
-          <li class="nav-item">
-            <a class="nav-link{% if current_url == url %} active{% endif %}"
-               href="{{ url }}">Range Price Calculator</a>
-          </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'inventory:images' product_range.pk %}">Images</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link"
+                 href="{% url 'price_calculator:range_price_calculator' product_range.pk %}">Range Price Calculator</a>
+            </li>
  
-          {% url 'inventory:channel_links' product_range.pk as url %}
-          <li class="nav-item">
-            <a class="nav-link{% if current_url == url %} active{% endif %}"
-               href="{{ url }}">Channel Links</a>
-          </li>
  
-        </ul>
-      {% endwith %}
-    </div>
+            <li class="nav-item">
+              <a class="nav-link"
+                 href="{% url 'inventory:channel_links' product_range.pk %}">Channel Links</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
   </div>
 {% endblock content %}

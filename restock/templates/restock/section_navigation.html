@@ -1,13 +1,21 @@
-<header class="p-3 text-bg-secondary">
-    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-            <li>
-                <a class="nav-link px-2 text-white" href="{% url 'restock:restock' %}">Search Products</a>
-            </li>
-            <li>
-                <a class="nav-link px-2 text-white"
-                   href="{% url 'restock:restock_list' %}">Restock List</a>
-            </li>
-        </ul>
+<nav class="navbar navbar-expand-lg bg-light text-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'restock:restock' %}">Restock</a>
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#sectionNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="sectionNavbar">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'restock:restock' %}">Search Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'restock:restock_list' %}">Restock List</a>
+                </li>
+            </ul>
+        </div>
     </div>
-</header>
+</nav>

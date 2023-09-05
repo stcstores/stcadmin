@@ -1,28 +1,31 @@
-<header class="p-3 text-bg-secondary">
-    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-            <li>
-                <a class="nav-link px-2 text-white fw-bold fs-4 navbar-brand"
-                   href="{% url 'orders:index' %}">Orders</a>
-            </li>
-            <li>
-                <a class="nav-link px-2 text-white" href="{% url 'orders:order_list' %}">Order List</a>
-            </li>
-            <li>
-                <a class="nav-link px-2 text-white" href="{% url 'orders:charts' %}">Charts</a>
-            </li>
-            <li>
-                <a class="nav-link px-2 text-white"
-                   href="{% url 'orders:undispatched_orders' %}">Undispatched Orders</a>
-            </li>
+<nav class="navbar navbar-expand-lg bg-light text-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'orders:index' %}">Orders</a>
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#sectionNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="sectionNavbar">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'orders:order_list' %}">Order List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'orders:charts' %}">Charts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'orders:undispatched_orders' %}">Undispatched Orders</a>
+                </li>
 
-            <li>
-                <a class="nav-link px-2 text-white" href="{% url 'orders:pack_count' %}">Pack Count</a>
-            </li>
-            <li>
-                <a class="nav-link px-2 text-white"
-                   href="{% url 'orders:packing_mistakes' %}">Packing Mistakes</a>
-            </li>
-        </ul>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'orders:pack_count' %}">Pack Count</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'orders:packing_mistakes' %}">Packing Mistakes</a>
+                </li>
+            </ul>
+        </div>
     </div>
-</header>
+</nav>

@@ -3,21 +3,23 @@
 {% block content %}
   {{ block.super }}
   <div class="container">
-    {% if products_exist %}
-      <div class="text-success">All products exist in Linnworks.</div>
-    {% elif products_exist is None %}
-      {% if product_range.is_active %}
+    <div class="text-center text-md-start m-3">
+      {% if products_exist %}
+        <div class="text-success">All products exist in Linnworks.</div>
+      {% elif products_exist is None %}
+        {% if product_range.is_active %}
+          <div class="text-danger">
+            <span class="fw-bold">Error checking for product in Linnworks.</span>
+            This is likely due to a network error.
+          </div>
+        {% endif %}
+      {% else %}
         <div class="text-danger">
-          <span class="fw-bold">Error checking for product in Linnworks.</span>
-          This is likely due to a network error.
+          <span class="heading">This product cannot be found in Linnworks.</span>
+          If it has recently been created or changed it is likely these changes have not yet been processed.
         </div>
       {% endif %}
-    {% else %}
-      <div class="text-danger">
-        <span class="heading">This product cannot be found in Linnworks.</span>
-        If it has recently been created or changed it is likely these changes have not yet been processed.
-      </div>
-    {% endif %}
+    </div>
 
     {% if product.is_end_of_line is False %}
       <div class="buttons">
@@ -26,68 +28,92 @@
         </a>
       </div>
     {% endif %}
-
-    <div>
-      <h6 class="display-6 m-3">
-        {% if product_range.has_variations %}
-          Variations
-        {% else %}
-          Single Product
-        {% endif %}
-      </h6>
-      <table class="table table-hover table-sm mt-3">
-        <thead class="table-primary">
-          <tr>
-            <th>SKU</th>
-            {% for option in product_range.variation_options %}<th>{{ option }}</th>{% endfor %}
-            {% for option in product_range.listing_options %}<th>{{ option }}</th>{% endfor %}
-            <th>Supplier SKU</th>
-            <th colspan="2">
-              {% if product_range.is_active %}
-                <a href="{% url 'inventory:set_product_range_eol' product_range.pk %}"
-                   class="btn btn-danger btn-sm">Set Range End of Line</a>
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-md-6 order-md-1 order-2 text-md-start text-center">
+          <h6 class="display-6 m-3">
+            {% if product_range.has_variations %}
+              Variations
+            {% else %}
+              Single Product
+            {% endif %}
+          </h6>
+        </div>
+        <div class="col order-md-2 order-1 text-md-end text-center">
+          {% if product_range.is_active %}
+            <a href="{% url 'inventory:set_product_range_eol' product_range.pk %}"
+               class="btn btn-danger btn-sm">Set Range End of Line</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+ 
+    <div class="container-fluid">
+      {% for product in product_range.products.variations %}
+        <div class="row mt-3 mt-lg-1 p-1 bg-light">
+ 
+          <div class="col-lg my-1">
+            <div>
+              <span class="font-monospace user-select-all me-2">{{ product.sku }}</span>
+              {% if product.is_archived %}
+                <span class="badge bg-secondary">Archived</span>
+              {% elif product.is_end_of_line %}
+                <span class="badge bg-danger">End Of Line</span>
               {% endif %}
-            </th>
-            <th>Barcode</th>
-            <th>Stock Level</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for product in product_range.products.variations %}
-            <tr class="{% if product.is_archived %}table-secondary text-muted{% elif product.is_end_of_line %}table-secondary{% endif %}">
-              <td class="font-monospace user-select-all">{{ product.sku }}</td>
-              {% for option, value in product.variation.items %}<td class="user-select-all">{{ value }}</td>{% endfor %}
-              {% for option, value in product.listing_options.items %}<td class="user-select-all">{{ value }}</td>{% endfor %}
-              <td class="font-monospace user-select-all">{{ product.supplier_sku }}</td>
-              <td>
-                {% if product.is_archived %}
-                  <span class="badge bg-secondary">Archived</span>
-                {% elif product.is_end_of_line %}
-                  <span class="badge bg-danger">End Of Line</span>
+            </div>
+            <div>
+              {% for option, value in product.variation.items %}
+                <span class="me-2">
+                  <span class="text-muted">{{ option }}:&nbsp;</span><span class="fw-bold">{{ value }}</span>
+                </span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="col-lg-3 my-1">
+            <div>
+              <span class="text-muted">Supplier SKU:&nbsp;</span>
+              <span class="font-monospace user-select-all">{{ product.supplier_sku }}</span>
+            </div>
+            <div>
+              <span class="text-muted">Barcode:&nbsp;</span>
+              <span class="font-monospace user-select-all">{{ product.barcode }}</span>
+            </div>
+          </div>
+
+          <div class="col-lg-2 my-1">
+            {% with product.bays as bays %}
+              {% if bays %}<span class="text-muted">Bays:&nbsp;</span>{% endif %}
+              {% for bay in bays %}<span class="me-1 font-monospace user-select-all">{{ bay }}</span>{% endfor %}
+            {% endwith %}
+          </div>
+
+          <div class="col-lg-2 my-1">
+            <div class="btn-group">
+              {% if product.is_archived == False %}
+                <a href="{% url 'inventory:product' product.pk %}"
+                   class="btn btn-primary">Edit</a>
+                {% if product.is_end_of_line == False %}
+                  <a href="{% url 'inventory:set_product_eol' product.pk %}"
+                     class="btn btn-danger">EOL</a>
                 {% endif %}
-              </td>
-              <td>
-                {% if product.is_archived == False %}
-                  <a href="{% url 'inventory:product' product.pk %}"
-                     class="btn btn-primary btn-sm">Edit</a>
-                  {% if product.is_end_of_line == False %}
-                    <a href="{% url 'inventory:set_product_eol' product.pk %}"
-                       class="btn btn-danger btn-sm">EOL</a>
-                  {% endif %}
-                {% endif %}
-              </td>
-              <td class="font-monospace user-select-all">{{ product.barcode }}</td>
-              <td>
-                {% if products_exist %}
-                  {% include "inventory/update_stock.html" %}
-                {% else %}
-                  <span class="text-danger">Could not find product on Linnworks</span>
-                {% endif %}
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="col-lg-2">
+            {% if product.is_archived %}
+ 
+            {% elif products_exist %}
+              {% include "inventory/update_stock.html" %}
+            {% else %}
+              <span class="text-danger">Could not find product on Linnworks</span>
+            {% endif %}
+          </div>
+ 
+        </div>
+      {% endfor %}
+
     </div>
   </div>
 {% endblock content %}

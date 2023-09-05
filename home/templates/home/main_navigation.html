@@ -2,65 +2,70 @@
 {% load stcadmin_extras %}
 
 {% block main_navigation %}
-  <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start"
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark"
        id="main_navigation">
-    <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0 fs-5">
-      <li>
-        <a class="nav-link px-2 text-white navbar-brand"
-           href="{% url 'home:index' %}">
-          <img src="{% static "images/logo.png" %}" alt="Home" width="50" height="50">
-        </a>
-      </li>
-      {% user_groups user as groups %}
-      {% if "inventory" in groups %}
-        <li>
-          <a class="nav-link px-2 text-white"
-             href="{% url 'inventory:product_search' %}">Inventory</a>
-        </li>
-      {% endif %}
-      {% if "orders" in groups %}
-        <li>
-          <a class="nav-link px-2 text-white" href="{% url 'orders:index' %}">Orders</a>
-        </li>
-      {% endif %}
-      {% if 'labelmaker' in groups %}
-        <li>
-          <a class="nav-link px-2 text-white" href="{% url 'labelmaker:index' %}">Labelmaker</a>
-        </li>
-      {% endif %}
-      {% if 'fba' in groups %}
-        <li>
-          <a class="nav-link px-2 text-white" href="{% url 'fba:index' %}">FBA</a>
-        </li>
-      {% endif %}
-      {% if 'purchases' in groups %}
-        <li>
-          <a class="nav-link px-2 text-white"
-             href="{% url 'purchases:product_search' %}">Purchases</a>
-        </li>
-      {% endif %}
-      {% if 'channels' in groups %}
-        <li>
-          <a class="nav-link px-2 text-white" href="{% url 'channels:index' %}">Channels</a>
-        </li>
-      {% endif %}
-      {% if 'restock' in groups %}
-        <li>
-          <a class="nav-link px-2 text-white" href="{% url 'restock:restock' %}">Restock</a>
-        </li>
-      {% endif %}
-      {% if 'reports' in groups %}
-        <li>
-          <a class="nav-link px-2 text-white" href="{% url 'reports:index' %}">Reports</a>
-        </li>
-      {% endif %}
-      {% if 'admin' in groups %}
-        <li>
-          <a class="nav-link px-2 text-white" href={% url 'admin:index' %}>Admin</a>
-        </li>
-      {% endif %}
-    </ul>
-    <div class="text-end text-white">
+    <div class="container-fluid">
+      <a href="{% url 'home:index' %}" class="navbar-brand">
+        <img src="{% static "images/logo.png" %}" alt="Home" width="50" height="50">
+      </a>
+      <button class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#mainnavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainnavbar">
+        <ul class="navbar-nav me-auto">
+          {% user_groups user as groups %}
+          {% if "inventory" in groups %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'inventory:product_search' %}">Inventory</a>
+            </li>
+          {% endif %}
+          {% if "orders" in groups %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'orders:index' %}">Orders</a>
+            </li>
+          {% endif %}
+          {% if 'labelmaker' in groups %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'labelmaker:index' %}">Labelmaker</a>
+            </li>
+          {% endif %}
+          {% if 'fba' in groups %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'fba:index' %}">FBA</a>
+            </li>
+          {% endif %}
+          {% if 'purchases' in groups %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'purchases:product_search' %}">Purchases</a>
+            </li>
+          {% endif %}
+          {% if 'channels' in groups %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'channels:index' %}">Channels</a>
+            </li>
+          {% endif %}
+          {% if 'restock' in groups %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'restock:restock' %}">Restock</a>
+            </li>
+          {% endif %}
+          {% if 'reports' in groups %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'reports:index' %}">Reports</a>
+            </li>
+          {% endif %}
+          {% if 'admin' in groups %}
+            <li class="nav-item">
+              <a class="nav-link" href={% url 'admin:index' %}>Admin</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+    <div class="text-end text-white m-3 m-md-3">
       <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle"
                 type="button"
@@ -76,5 +81,6 @@
         </ul>
       </div>
     </div>
-  </div>
+ 
+  </nav>
 {% endblock main_navigation %}

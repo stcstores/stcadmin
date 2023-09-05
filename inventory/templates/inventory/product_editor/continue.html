@@ -20,7 +20,7 @@
     <div class="row">
       <h2>Other User's in progress products</h2>
       {% for user, product_ranges in others_product_ranges.items %}
-        <div class="col-6">
+        <div class="col-lg-6">
           <ul class="list-group mb-3">
             <li class="list-group-item bg-light">{{ user.first_name }} {{ user.last_name }}</li>
             {% for product_range in product_ranges %}

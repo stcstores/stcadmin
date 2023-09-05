@@ -362,18 +362,8 @@ SUMMERNOTE_CONFIG = {
     "iframe": False,
     "width": "100%",
     "toolbar": [
-        [
-            "font",
-            [
-                "bold",
-                "underline",
-                "italic",
-                "strikethrough",
-                "superscript",
-                "subscript",
-                "clear",
-            ],
-        ],
+        ["font", ["bold", "underline", "italic", "strikethrough"]],
+        ["text", ["superscript", "subscript", "clear"]],
         ["para", ["ul", "ol", "hr"]],
         ["table", ["table"]],
         ["view", ["fullscreen", "codeview"]],
