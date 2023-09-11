@@ -90,9 +90,11 @@ class RestockList(RestockUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return context for the template."""
         context = super().get_context_data(*args, **kwargs)
-        supplier_ids = models.Reorder.objects.values_list(
-            "product__supplier", flat=True
-        ).distinct()
+        supplier_ids = (
+            models.Reorder.objects.open()
+            .values_list("product__supplier", flat=True)
+            .distinct()
+        )
         context["suppliers"] = Supplier.objects.filter(pk__in=supplier_ids)
         return context
 
