@@ -26,6 +26,7 @@ class Staff(models.Model):
     first_name = models.CharField(max_length=50)
     second_name = models.CharField(max_length=50)
     email_address = models.EmailField(blank=True, null=True)
+    fba_packer = models.BooleanField(default=False)
     hidden = models.BooleanField(default=False)
 
     objects = models.Manager()

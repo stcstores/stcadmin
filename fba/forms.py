@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.utils.timezone import make_aware
 
 from fba import models
+from home.models import Staff
 from inventory.models import BaseProduct, ProductRange
 
 
@@ -264,6 +265,12 @@ class FulfillFBAOrderForm(forms.ModelForm):
         self.fields["box_weight"].required = True
         self.fields["quantity_sent"].required = True
         self.fields["fulfilled_by"].required = True
+        if self.instance.fulfilled_by is None:
+            self.fields["fulfilled_by"].queryset = Staff.unhidden.filter(
+                fba_packer=True
+            )
+        else:
+            self.fields["fulfilled_by"].queryset = Staff.objects.filter(fba_packer=True)
 
     class Meta:
         """Meta class for FulfillFBAOrderForm."""
