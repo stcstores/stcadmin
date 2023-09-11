@@ -263,7 +263,7 @@ class FulfillFBAOrderForm(forms.ModelForm):
         self.fields["box_weight"].widget.attrs["max"] = max_weight
         self.fields["box_weight"].required = True
         self.fields["quantity_sent"].required = True
-        self.fields["fulfilled_by"].required = True
+        # self.fields["fulfilled_by"].required = True
 
     class Meta:
         """Meta class for FulfillFBAOrderForm."""
@@ -272,7 +272,7 @@ class FulfillFBAOrderForm(forms.ModelForm):
         fields = [
             "box_weight",
             "quantity_sent",
-            "fulfilled_by",
+            # "fulfilled_by",
             "update_stock_level_when_complete",
             "notes",
         ]

@@ -71,7 +71,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "quantity_sent",
         "box_weight",
         "closed_at",
-        "fulfilled_by",
+        # "fulfilled_by",
         "notes",
         "priority",
     ]
@@ -98,7 +98,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "quantity_sent",
         "box_weight",
         "priority",
-        "fulfilled_by",
+        # "fulfilled_by",
     ]
 
     search_fields = [

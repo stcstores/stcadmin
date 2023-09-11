@@ -2,7 +2,6 @@
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
@@ -163,9 +162,6 @@ class FBAOrder(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    fulfilled_by = models.ForeignKey(
-        User, on_delete=models.PROTECT, blank=True, null=True
-    )
     tmp_fulfilled_by = models.ForeignKey(
         Staff,
         on_delete=models.PROTECT,
