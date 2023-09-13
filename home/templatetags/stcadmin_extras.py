@@ -1,7 +1,6 @@
 """Template tags for STCAdmin."""
 
 from django import template
-from django.conf import settings
 
 register = template.Library()
 
@@ -11,12 +10,6 @@ def user_groups(user):
     """Return a list of names of groups to which user belongs."""
     groups = user.groups.values_list("name", flat=True)
     return groups
-
-
-@register.simple_tag
-def scayt_customer_id():
-    """Return the SCAYT customer ID."""
-    return settings.SCAYT_CUSTOMER_ID
 
 
 @register.filter

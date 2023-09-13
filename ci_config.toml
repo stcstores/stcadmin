@@ -10,8 +10,6 @@ EMAIL_HOST_PASSWORD = "EMAIL_PASSWORD"
 EMAIL_PORT = "587"
 EMAIL_USE_TLS = true
 
-SCAYT_CUSTOMER_ID_TOKEN = "SCAYT_TOKEN"
-
 DATABASE_HOST = "localhost"
 DATABASE_NAME = "stcadmin"
 DATABASE_USER = "postgres"
@@ -19,16 +17,12 @@ DATABASE_PASSWORD = "postgres"
 DATABASE_PORT = "5432"
 TEST_DATABASE_NAME = "stcadmin_test"
 
-CC_IMAGE_URL = "https://images.testserver.com/"
-
 CELERY_BROKER_URL = "amqp://localhost//"
-
-SCURRI_USERNAME = "SCURRI_USERNAME"
-SCURRI_PASSWORD = "SCURRI_PASSWORD"
 
 BUCKET_DOMAIN = "fake_bucket.com"
 BUCKET_ACCESS_KEY = "AAAA"
 BUCKET_SECRET_KEY = "BBBB"
+PRODUCT_IMAGE_BUCKET="product-images-test.stcstores"
 
 SHOPIFY_SHOP_URL = "fake.myshopify.com"
 SHOPIFY_API_VERSION = "2021-10"
