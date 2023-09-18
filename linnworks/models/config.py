@@ -32,6 +32,7 @@ class LinnworksConfig(SingletonModel):
         max_length=250, blank=True, null=True
     )
     last_image_update = models.DateTimeField()
+    weight_compensation = models.PositiveIntegerField(default=20)
 
     class Meta:
         """Meta class for the LinnworksConfig model."""
