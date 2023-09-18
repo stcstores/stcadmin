@@ -3,34 +3,32 @@
 {% block content %}
     <div class="container">
         <h3 class="display-3 mb-5">Purchase Reports</h3>
-
  
-
-        <div class="col-6">
+        <div class="col-lg-6">
             {% include "home/pagination_navigation.html" %}
-            <table class="table table-hover table-sm mt-3">
-                <thead class="table-primary">
-                    <th>Date</th>
-                    <th>Purchase Count</th>
-                    <th></th>
-                </thead>
-                <tbody>
-                    {% for purchase_export in object_list %}
+            <div class="container-fluid">
+                {% for purchase_export in object_list %}
+                    <div class="row bg-light rounded">
                         {% with purchase_export.purchases.count as purchase_count %}
-                            <tr>
-                                <td class="fs-4 fw-bold">{{ purchase_export.export_date|date:"F Y" }}</td>
-                                <td class="fs-4">{{ purchase_count }}</td>
-                                <td>
-                                    {% if purchase_count > 0 %}
-                                        <a href="{% url 'purchases:download_purchase_report' purchase_export.pk %}"
-                                           class="btn btn-primary">Download</a>
-                                    {% endif %}
-                                </td>
-                            </tr>
+ 
+                            <div class="col-4 my-1 fs-5 fw-bold">{{ purchase_export.export_date|date:"F Y" }}</div>
+ 
+                            <div class="col-4 my-1">
+                                <span class="text-muted">Purchases:&nbsp;</span>
+                                <span class="fs-4 fw-bold">{{ purchase_count }}</span>
+                            </div>
+ 
+                            <div class="col-4 my-1">
+                                {% if purchase_count > 0 %}
+                                    <a href="{% url 'purchases:download_purchase_report' purchase_export.pk %}"
+                                       class="btn btn-primary">Download</a>
+                                {% endif %}
+                            </div>
+ 
                         {% endwith %}
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </div>
+                {% endfor %}
+            </div>
 
             {% include "home/pagination_navigation.html" %}
         </div>

@@ -4,7 +4,7 @@
 {% bootstrap_form_errors form layout='inline' %}
 <div class="row mb-3">
   {% for field in form.visible_fields %}
-    <div class="col-{% if col_width %}{{ col_width }}{% else %}3{% endif %} mb-3">
+    <div class="col-md-{% if col_width %}{{ col_width }}{% else %}3{% endif %} mb-3">
       {% bootstrap_field field wrapper_class='div' show_help=false label_class='span' %}
       {% if field.errors %}<div class="invalid-feedback">{{ field.errors }}</div>{% endif %}
     </div>

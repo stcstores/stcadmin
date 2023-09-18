@@ -2,14 +2,15 @@
   <span class="badge bg-secondary">Archived</span>
 {% else %}
 
-  <div class="product_stock_level bg-light rounded d-flex flex-row align-items-center text-center justify-content-center">
+  <div class="product_stock_level bg-light rounded d-flex flex-row align-items-center text-center">
     <div class="stock_level_type_container available_container text-success">
       <div class="stock_level_update_widget d-flex flex-row align-items-center">
         <input id="available_stock_{{ product.pk }}"
                class="stock_level_field form-control text-success bg-white"
+               style="min-width: 4em"
                data-productId="{{ product.pk }}"
                type="text"
-               size="1"
+               size="3"
                value="0"
                autocomplete="off"
                disabled
@@ -35,7 +36,7 @@
       <span id="in_orders_{{ product.pk }}" class="stock_in_orders">
         <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
       </span>
-      <span class="stock_level_header">In Orders</span>
+      <span class="stock_level_header">In&nbsp;Orders</span>
     </div>
     <div class="button_container d-flex flex-column m-1">
       <i class="fa-solid fa-arrows-rotate refresh_button locked"

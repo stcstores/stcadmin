@@ -21,11 +21,11 @@
             <div class="content">
                 <h1 class="display-1 text-start mb-5">STC Admin</h1>
                 {% for message in message %}<p class="message">{{ message }}</p>{% endfor %}
-                <div class="col-6">
+                <div class="col-lg-6">
                     <form action="{% url 'home:login_user' %}" method="post">
                         {% csrf_token %}
                         {% include "home/bootstrap_input_group_form.html" %}
-                        <input type="submit" class="btn btn-primary" value="Login">
+                        <input type="submit" class="btn btn-primary form-control" value="Login">
                         <input type="hidden" name="next" value="{{ next }}" />
                     </form>
                 </div>

@@ -253,6 +253,10 @@ class BaseProduct(PolymorphicModel):
             return image_link.image
         return None
 
+    def bays(self):
+        """Return a list of bays containing the product."""
+        return [link.bay for link in self.product_bay_links.all()]
+
     @transaction.atomic
     def set_end_of_line(self):
         """Set the product and any combination or multipack products containing it as EOL."""

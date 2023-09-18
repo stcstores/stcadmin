@@ -34,7 +34,7 @@
 
     <body>
         <div class="main">
-            <header class="p-3 text-bg-dark">
+            <header>
                 {% include "home/main_navigation.html" %}
             </header>
             {% block section_navigation %}
@@ -42,7 +42,7 @@
  
             {% include "home/messages.html" %}
  
-            <div class="container-fluid p-4 text-start">
+            <div class="container-fluid p-md-4 text-start">
                 {% block content %}
                 {% endblock content %}
             </div>

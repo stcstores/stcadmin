@@ -1,75 +1,73 @@
-<div class="product_search_result_range row border p-2 mt-3 rounded {% if product_range.is_archived %}bg-secondary text-light{% else %}bg-light{% endif %}">
-  <div class="range_details col-6">
-    <div class="identification">
-      <div class="btn-group">
-        <a href="{% url 'inventory:product_range' product_range.pk %}"
-           class="btn btn-link"
-           role="button">{{ product_range.name }}</a>
-        <button type="button"
-                class="btn btn-link dropdown-toggle dropdown-toggle-split"
-                data-bs-toggle="dropdown"
-                aria-expanded="false">
-          <span class="visually-hidden">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu">
-          <li>
-            <a class="dropdown-item"
-               href="{% url 'inventory:descriptions' product_range.pk %}"
-               target="_blank">Edit Range</a>
-          </li>
-          <li>
-            <a class="dropdown-item"
-               href="{% url 'inventory:images' product_range.pk %}"
-               target="_blank">Edit Images</a>
-          </li>
-          <li>
-            <a class="dropdown-item"
-               href="{% url 'inventory:locations' product_range.pk %}"
-               target="_blank">Bays</a>
-          </li>
-          <li>
-            <a class="dropdown-item"
-               href="{% url 'price_calculator:range_price_calculator' product_range.pk %}"
-               target="_blank">Price Calculator</a>
-          </li>
-          <li>
-            <hr class="dropdown-divider">
-          </li>
-          <li>
-            {% if product_range.is_end_of_line %}
-              <button class="dropdown-item text-danger EOL_range"
-                      type="button"
-                      id="EOL_{{ product_range.pk }}">End of Line</button>
-            {% endif %}
-          </li>
-        </ul>
-      </div>
+<div class="product_search_result_range row border p-md-2 mt-3 rounded {% if product_range.is_archived %}bg-secondary text-light{% else %}bg-light{% endif %}">
+  <div class="row">
+    <div class="range_details col-md-6 order-2 order-md-1">
+      <a href="{% url 'inventory:product_range' product_range.pk %}"
+         class="{% if product_range.is_archived %}text-light{% endif %}"
+         role="button">{{ product_range.name }}</a>
+      <button type="button"
+              class="btn btn-link dropdown-toggle dropdown-toggle-split {% if product_range.is_archived %}text-light{% endif %}"
+              data-bs-toggle="dropdown"
+              aria-expanded="false">
+        <span class="visually-hidden">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu">
+        <li>
+          <a class="dropdown-item"
+             href="{% url 'inventory:descriptions' product_range.pk %}"
+             target="_blank">Edit Range</a>
+        </li>
+        <li>
+          <a class="dropdown-item"
+             href="{% url 'inventory:images' product_range.pk %}"
+             target="_blank">Edit Images</a>
+        </li>
+        <li>
+          <a class="dropdown-item"
+             href="{% url 'inventory:locations' product_range.pk %}"
+             target="_blank">Bays</a>
+        </li>
+        <li>
+          <a class="dropdown-item"
+             href="{% url 'price_calculator:range_price_calculator' product_range.pk %}"
+             target="_blank">Price Calculator</a>
+        </li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+        <li>
+          {% if product_range.is_end_of_line %}
+            <button class="dropdown-item text-danger EOL_range"
+                    type="button"
+                    id="EOL_{{ product_range.pk }}">End of Line</button>
+          {% endif %}
+        </li>
+      </ul>
     </div>
-  </div>
-  <div class="col-1 range_status">
-    {% if product_range.is_archived %}
-      <span class="badge bg-dark">Archived</span>
-    {% elif product_range.is_end_of_line %}
-      <span class="badge bg-danger">End of Line</span>
-    {% endif %}
-  </div>
-  <div class="product_details col-3">
-    <div class="product">
-      <button class="collapse_variations btn btn-link btn-sm"
+    <div class="col-md-1 order-3 order-md-2 range_status">
+      {% if product_range.is_archived %}
+        <span class="badge bg-dark">Archived</span>
+      {% elif product_range.is_end_of_line %}
+        <span class="badge bg-danger">End of Line</span>
+      {% endif %}
+    </div>
+    <div class="product_details col-md-3 order-4 order-md-3">
+      <button class="collapse_variations btn btn-link btn-sm {% if product_range.is_archived %}text-light{% endif %}"
               id="collapse_{{ product_range.pk }}">Hide {{ product_range.variation_count }} Variations ▲</button>
       <div class="collapsed" id="collapsed_{{ product_range.pk }}">
-        <button class="expand_variations btn btn-link btn-sm"
+        <button class="expand_variations btn btn-link btn-sm {% if product_range.is_archived %}text-light{% endif %}"
                 id="expand_{{ product_range.pk }}">Show {{ product_range.variation_count }} Variations ▼</button>
       </div>
     </div>
+    <div class="col-md-2 order-1 order-md-4">
+      <span class="font-monospace user-select-all text-muted">{{ product_range.sku }}</span>
+    </div>
   </div>
-  <div class="col-2">
-    <span class="font-monospace user-select-all text-muted">{{ product_range.sku }}</span>
-  </div>
-  <div class="col-12 expanded"
-       id="expanded_{{ product_range.pk }}"
-       data-link="{% url 'inventory:variation_list' product_range.id %}"
-       style="display: none">
-    <div class="variation_info"></div>
+  <div class="row">
+    <div class="col-md-12 expanded"
+         id="expanded_{{ product_range.pk }}"
+         data-link="{% url 'inventory:variation_list' product_range.id %}"
+         style="display: none">
+      <div class="variation_info"></div>
+    </div>
   </div>
 </div>

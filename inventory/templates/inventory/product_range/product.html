@@ -27,7 +27,7 @@
  
     <div class="row">
 
-      <div class="col-7">
+      <div class="col-lg-7 mb-3">
         <form action="" method="post" autocomplete="off" id="product_form">
           {% csrf_token %}
           {% include "home/bootstrap_input_group_form.html" %}
@@ -38,44 +38,71 @@
         </form>
       </div>
 
-      <div class="col-5">
-        <div class="bg-light border rounded p-3">
+      <div class="col-lg-5">
+        <div class="row">
           <span class="font-monospace user-select-all text-muted">{{ product_range.sku }}</span>
           <h6 class="display-6 mb-3">{{ product_range.name }}</h6>
-          <table class="table table-sm table-hover" id="variation_table">
-            <thead class="table-primary">
-              <tr>
-                <th class="variation-selection">SKU</th>
-                {% for option in product_range.variation_options %}<th>{{ option }}</th>{% endfor %}
-                {% for option in product_range.listing_options %}<th class="listing_option">{{ option }}</th>{% endfor %}
-                <th>Supplier SKU</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for variation in product_range.products.variations %}
-                <tr class="variation-selection {% if product == variation %}table-primary{% else %}not_selected{% endif %}"
-                    data-href="{% url 'inventory:product' variation.pk %}">
-                  <td class="sku">{{ variation.sku }}</td>
-                  {% for option, value in variation.variation.items %}<td class="option name">{{ value }}</td>{% endfor %}
-                  {% for option, value in variation.listing_options.items %}
-                    <td class="option listing_option name">{{ value }}</td>
-                  {% endfor %}
-                  <td class="sku">{{ variation.supplier_sku }}</td>
-                  <td>
-                    {% if product != variation %}
-                      <a href="{% url 'inventory:product' variation.pk %}"
-                         class="btn btn-primary btn-sm">Edit</a>
-                    {% endif %}
-                  </td>
-                </tr>
+        </div>
+        {% for variation in product_range.products.variations %}
+          <div class="row rounded mb-2 border border-2 {% if variation == product %}border-primary{% else %}border-light{% endif %}">
+ 
+            <div class="col-lg mb-2">
+              <div>
+                <span class="font-monospace user-select-all">{{ variation.sku }}</span>
+              </div>
+              <div>
+                <span class="font-monospace user-select-all">{{ variation.supplier_sku }}</span>
+              </div>
+            </div>
+
+            <div class="col-lg-5 mb-2">
+              {% for option, value in variation.variation.items %}
+                <span class="me-2"><span class="text-muted">{{ option }}:&nbsp;</span><span class="fw-bold">{{ value }}</span></span>
               {% endfor %}
-            </tbody>
-          </table>
+            </div>
+
+            <div class="col-lg-3">
+              {% if variation != product %}
+                <a href="{% url 'inventory:product' variation.pk %}"
+                   class="edit_variation btn btn-primary btn-sm">Edit</a>
+                <a href="{% url 'inventory:product' variation.pk %}"
+                   class="edit_variation_check btn btn-primary btn-sm"
+                   data-bs-toggle="modal"
+                   data-bs-target="#saveChangesModal"
+                   hidden>Edit</a>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade"
+       id="saveChangesModal"
+       tabindex="-1"
+       aria-labelledby="saveChanges"
+       aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Save Changes</h5>
+          <button type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"></button>
+        </div>
+        <div class="modal-body">Changes to the product have not been saved. Do you want to save them?</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button"
+                  class="btn btn-primary"
+                  onclick="$('#save_button').click();">Save changes</button>
         </div>
       </div>
     </div>
   </div>
+
 {% endblock content %}
 
 {% block script %}
@@ -97,7 +124,10 @@
 
     function set_form_changed() {
         form_changed = true;
+        console.log("Form Changed");
         $('#save_button').prop('disabled', false);
+        $(".edit_variation").prop("hidden", true);
+        $(".edit_variation_check").prop("hidden", false);
     }
 
     function set_form_changed_event_triggers() {

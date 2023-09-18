@@ -8,38 +8,41 @@
         <h6 class="display-6 mb-5">{{ purchaser }}</h6>
  
         {% if purchases %}
-            <table class="table table-hover table-sm mt-3">
-                <thead class="table-primary">
-                    <tr>
-                        <th>Date</th>
-                        <th>SKU</th>
-                        <th>Product</th>
-                        <th>Quantity</th>
-                        <th>To Pay</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for purchase in purchases %}
-                        <tr>
-                            <td>{{ purchase.created_at }}</td>
-                            <td>{{ purchase.product.sku }}</td>
-                            <td>{{ purchase.product.full_name }}</td>
-                            <td>{{ purchase.quantity }}</td>
-                            <td class="fs-5">£{{ purchase.to_pay|floatformat:2 }}</td>
-                            <td>
-                                <a href="{% url 'purchases:update_purchase' purchase.id %}"
-                                   class="btn btn-primary btn-sm">Edit</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    <tr>
-                        <td colspan="4"></td>
-                        <th class="fs-4 fw-bold">£{{ total_to_pay|floatformat:2 }}</th>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="container-fluid">
+                {% for purchase in purchases %}
+                    <div class="row my-3 bg-light rounded">
+
+                        <div class="col-lg-2 my-1">{{ purchase.created_at }}</div>
+ 
+                        <div class="col-lg my-1">
+                            <div>
+                                <span class="font-monospace user-select-all text-muted">{{ purchase.product.sku }}</span>
+                            </div>
+                            <div>
+                                <span class="user-select-all">{{ purchase.product.full_name }}</span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 my-1">
+                            <span class="text-muted">Quantity:&nbsp;</span>
+                            <span class="font-monospace user-select-all fw-bold">{{ purchase.quantity }}</span>
+                        </div>
+
+                        <div class="col-lg-1 my-1 fs-5">£{{ purchase.to_pay|floatformat:2 }}</div>
+
+                        <div class="col-lg-1 my-1">
+                            <a href="{% url 'purchases:update_purchase' purchase.id %}"
+                               class="btn btn-primary btn-sm">Edit</a>
+                        </div>
+
+                    </div>
+                {% endfor %}
+                <div class="row bg-light rounded">
+                    <div class="col-lg-9"></div>
+                    <div class="col-lg-1">Total:</div>
+                    <div class="col-lg-1 fs-4 fw-bold mb-3">£{{ total_to_pay|floatformat:2 }}</div>
+                </div>
+            </div>
         {% else %}
             <p>{{ purchaser }} has no current purchases</p>
         {% endif %}
