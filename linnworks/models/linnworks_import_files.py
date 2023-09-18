@@ -330,7 +330,9 @@ class LinnworksProductImportFile(BaseImportFile):
         row[cls.SHORT_DESCRIPTION] = product.product_range.description
         row[cls.BARCODE_NUMBER] = product.barcode
         row[cls.TAX_RATE] = int(product.vat_rate.percentage * 100)
-        row[cls.WEIGHT] = product.weight_grams
+        row[cls.WEIGHT] = (
+            product.weight_grams + LinnworksConfig.get_solo().weight_compensation
+        )
         row[cls.WIDTH] = cls.convert_dimension(product.width)
         row[cls.HEIGHT] = cls.convert_dimension(product.height)
         row[cls.DEPTH] = cls.convert_dimension(product.depth)
