@@ -2,12 +2,12 @@
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 
+from home.models import Staff
 from inventory.models import BaseProduct
 from linnworks.models import StockManager
 from shipping.models import Country, Currency
@@ -163,7 +163,11 @@ class FBAOrder(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     fulfilled_by = models.ForeignKey(
-        User, on_delete=models.PROTECT, blank=True, null=True
+        Staff,
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        related_name="fulfilled_fba_orders",
     )
     closed_at = models.DateTimeField(blank=True, null=True)
     region = models.ForeignKey(FBARegion, on_delete=models.CASCADE, blank=True)

@@ -19,11 +19,11 @@ models.FieldDoesNotExist = FieldDoesNotExist  # Compatibility for django-polymor
 
 CI_ENVIRONMENT = "CI" in os.environ
 
-SOURCE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-BASE_DIR = os.path.dirname(SOURCE_DIR)
-CONFIG_DIR = os.path.join(BASE_DIR, "config")
+SOURCE_DIR = Path(__file__).parent.parent.absolute()
+BASE_DIR = SOURCE_DIR.parent
+CONFIG_DIR = BASE_DIR / "config"
 
-CONFIG_PATH = os.path.join(CONFIG_DIR, "config.toml")
+CONFIG_PATH = CONFIG_DIR / "config.toml"
 
 try:
     with open(CONFIG_PATH, "r") as config_file:
@@ -43,7 +43,7 @@ def get_config(key):
 
 # Secret Key
 try:
-    secret_key_path = os.path.join(CONFIG_DIR, "secret_key.toml")
+    secret_key_path = CONFIG_DIR / "secret_key.toml"
     with open(secret_key_path, "r") as secret_key_file:
         SECRET_KEY = toml.load(secret_key_file)["SECRET_KEY"]
 except Exception:
@@ -89,11 +89,6 @@ EMAIL_PORT = get_config("EMAIL_PORT")
 EMAIL_USE_TLS = get_config("EMAIL_USE_TLS")
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
-SCAYT_CUSTOMER_ID = get_config("SCAYT_CUSTOMER_ID_TOKEN")
-
-SCURRI_USERNAME = get_config("SCURRI_USERNAME")
-SCURRI_PASSWORD = get_config("SCURRI_PASSWORD")
 
 BUCKET_DOMAIN = get_config("BUCKET_DOMAIN")
 BUCKET_ACCESS_KEY = get_config("BUCKET_ACCESS_KEY")
@@ -184,7 +179,7 @@ ROOT_URLCONF = "stcadmin.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(SOURCE_DIR, "templates")],
+        "DIRS": [SOURCE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -198,7 +193,7 @@ TEMPLATES = [
     }
 ]
 
-STATICFILES_DIRS = [os.path.join(SOURCE_DIR, "stcadmin", "static")]
+STATICFILES_DIRS = [SOURCE_DIR / "stcadmin" / "static"]
 
 WSGI_APPLICATION = "stcadmin.wsgi.application"
 
@@ -249,7 +244,7 @@ LOGGING = {
         },
         "order_profit_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(BASE_DIR, "logs", "order_profit.log"),
+            "filename": BASE_DIR / "logs" / "order_profit.log",
             "maxBytes": 1_048_576,
             "backupCount": 2,
             "formatter": "default_formatter",
@@ -257,7 +252,7 @@ LOGGING = {
         },
         "error_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(BASE_DIR, "logs", "stcadmin_error.log"),
+            "filename": BASE_DIR / "logs" / "stcadmin_error.log",
             "maxBytes": 1_048_576,
             "backupCount": 2,
             "level": "ERROR",
@@ -266,7 +261,7 @@ LOGGING = {
         },
         "profit_loss_error_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(BASE_DIR, "logs", "profit_loss_error.log"),
+            "filename": BASE_DIR / "logs" / "profit_loss_error.log",
             "maxBytes": 1_048_576,
             "backupCount": 2,
             "level": "ERROR",
@@ -333,7 +328,7 @@ class ManifestStaticFilesStorageForgiving(ManifestStaticFilesStorage):
 
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = BASE_DIR / "static"
 
 STORAGES = {
     "default": {
@@ -345,9 +340,9 @@ STORAGES = {
 }
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = BASE_DIR / "media"
 
-DOCS_ROOT = os.path.join(SOURCE_DIR, "docs", "build", "html")
+DOCS_ROOT = SOURCE_DIR / "docs" / "build" / "html"
 
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "home:index"
@@ -375,7 +370,7 @@ SUMMERNOTE_CONFIG = {
 class ProductImageStorage(S3Boto3Storage):
     """Storage class for product images."""
 
-    bucket_name = "product-images.stcstores"
+    bucket_name = get_config("PRODUCT_IMAGE_BUCKET")
     default_acl = "public-read"
     file_overwrite = True
     querystring_auth = False

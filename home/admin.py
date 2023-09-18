@@ -15,10 +15,11 @@ class StaffAdmin(admin.ModelAdmin):
         "second_name",
         "stcadmin_user",
         "email_address",
+        "fba_packer",
         "hidden",
     )
     list_display_links = ("full_name",)
-    list_editable = ("stcadmin_user", "email_address", "hidden")
+    list_editable = ("stcadmin_user", "email_address", "fba_packer", "hidden")
     search_fields = (
         "stcadmin_user__username" "first_name",
         "second_name",
