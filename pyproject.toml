@@ -54,7 +54,7 @@ isort = ">=5.10.1"
 factory_boy = ">=3.2.0"
 pytest_factoryboy = ">=2.1.0"
 pytest-celery = ">=0.0.0"
-djlint = "^1.23.3"
+djlint = "^1.33.0"
 
 [build-system]
 requires = ["poetry-core"]
