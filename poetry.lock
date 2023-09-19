@@ -810,13 +810,13 @@ dev = ["django-dummy-plug", "pytest", "pytest-django"]
 
 [[package]]
 name = "djlint"
-version = "1.32.1"
+version = "1.33.0"
 description = "HTML Template Linter and Formatter"
 optional = false
 python-versions = ">=3.8.0,<4.0.0"
 files = [
-    {file = "djlint-1.32.1-py3-none-any.whl", hash = "sha256:8aaec6776376cfd41f3e742ed9f5e3c46dc7c6cd7646abf9e99860fb1ec9f19a"},
-    {file = "djlint-1.32.1.tar.gz", hash = "sha256:c1e2141acf1547d244af7ef8abd15fbbae2abcc7a03e2bf31f8a491de69a6c72"},
+    {file = "djlint-1.33.0-py3-none-any.whl", hash = "sha256:aaf7bcbcfe937de5ff52747b573a8c78146b739d058dc817350640206aa477cc"},
+    {file = "djlint-1.33.0.tar.gz", hash = "sha256:427e1d0b1cf2dc1922808d27d5a1078369d0c05b0fd2267f0bef06e9049bf3cf"},
 ]
 
 [package.dependencies]
@@ -2781,4 +2781,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<4.0"
-content-hash = "6a7d66b79a7b1c91f61b9da18c4c46433fcb7f291a1cb1b4a1a8371a8766f195"
+content-hash = "d2fd2e45cb8b5ce5ddeb58b455e22e5558af61552f1574402ca93f6d33f3ddda"
