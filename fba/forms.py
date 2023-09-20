@@ -81,14 +81,9 @@ class CreateFBAOrderForm(forms.ModelForm):
         ]
         widgets = {
             "product": forms.HiddenInput(),
-            "product_SKU": forms.HiddenInput(),
-            "product_name": forms.HiddenInput(),
             "product_weight": forms.HiddenInput(),
             "product_hs_code": forms.HiddenInput(),
-            "product_image_url": forms.HiddenInput(),
-            "product_supplier": forms.HiddenInput(),
             "product_purchase_price": forms.HiddenInput(),
-            "product_barcode": forms.HiddenInput(),
             "region": forms.HiddenInput(),
             "tracking_number": forms.HiddenInput(),
             "product_is_multipack": forms.HiddenInput(),
@@ -163,8 +158,8 @@ class FBAOrderFilter(forms.Form):
     sort_by = forms.ChoiceField(
         choices=(
             ("-created_at", "Date Created"),
-            ("product_SKU", "SKU"),
-            ("product_name", "Name"),
+            ("product__sku", "SKU"),
+            ("product__product_range__name", "Name"),
             ("-closed_at", "Date Fulfilled"),
             ("fulfilled_by__first_name", "Fulfilled By"),
             ("status", "Status"),
@@ -178,9 +173,9 @@ class FBAOrderFilter(forms.Form):
         self.fields["supplier"].choices = [
             (name, name)
             for name in models.FBAOrder.objects.values_list(
-                "product_supplier", flat=True
+                "product__supplier", flat=True
             )
-            .order_by("product_supplier")
+            .order_by("product__supplier")
             .distinct()
         ]
         self.fields["country"].empty_label = "All"
@@ -218,7 +213,7 @@ class FBAOrderFilter(forms.Form):
             "closed_at__lte": data.get("fulfilled_to"),
             "status": data.get("status"),
             "region__name": data.get("country"),
-            "product_supplier": data.get("supplier"),
+            "product__supplier": data.get("supplier"),
         }
         return {
             key: value
@@ -238,15 +233,23 @@ class FBAOrderFilter(forms.Form):
             qs = self.text_search(search_text, qs)
         if closed := self.cleaned_data.get("closed"):
             qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
-        qs = qs.select_related("region__default_country__country")
+        qs = qs.select_related(
+            "region__default_country__country",
+            "product",
+            "product__supplier",
+            "product__product_range",
+        ).prefetch_related(
+            "tracking_numbers",
+            "product__variation_option_values",
+        )
         return qs
 
     def text_search(self, search_text, qs):
         """Filter the queryset based on search text."""
         qs = qs.filter(
             Q(
-                Q(product_SKU__icontains=search_text)
-                | Q(product_name__icontains=search_text)
+                Q(product__sku__icontains=search_text)
+                | Q(product__product_range__name__icontains=search_text)
                 | Q(tracking_numbers__tracking_number=search_text)
                 | Q(product_asin__icontains=search_text)
             )
@@ -299,7 +302,7 @@ class ShippingPriceForm(forms.ModelForm):
             max_digits=7, decimal_places=2
         )
         self.fields["product_SKU"].widget = forms.HiddenInput()
-        self.initial["product_SKU"] = self.fba_order.product_SKU
+        self.initial["product_SKU"] = self.fba_order.product.sku
         self.fields = {key: value for key, value in reversed(list(self.fields.items()))}
 
     class Meta:
@@ -333,8 +336,8 @@ class OnHoldOrderFilter(forms.Form):
     sort_by = forms.ChoiceField(
         choices=(
             ("created_at", "Date Created"),
-            ("product_SKU", "SKU"),
-            ("product_name", "Name"),
+            ("product__sku", "SKU"),
+            ("product__product_range__sku", "Name"),
         ),
         required=False,
     )
@@ -347,8 +350,8 @@ class OnHoldOrderFilter(forms.Form):
             for name in models.FBAOrder.objects.filter(
                 on_hold=True, closed_at__isnull=True
             )
-            .values_list("product_supplier", flat=True)
-            .order_by("product_supplier")
+            .values_list("product__supplier", flat=True)
+            .order_by("product__supplier")
             .distinct()
         ]
 
@@ -370,7 +373,7 @@ class OnHoldOrderFilter(forms.Form):
             "created_at__gte": data.get("created_from"),
             "created_at__lte": data.get("created_to"),
             "region__name": data.get("country"),
-            "product_supplier": data.get("supplier"),
+            "product__supplier": data.get("supplier"),
             "on_hold": True,
             "closed_at__isnull": True,
         }
@@ -392,16 +395,24 @@ class OnHoldOrderFilter(forms.Form):
             qs = self.text_search(search_text, qs)
         if closed := self.cleaned_data.get("closed"):
             qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
-        qs = qs.select_related("region__default_country__country")
+        qs = qs = qs.select_related(
+            "region__default_country__country",
+            "product",
+            "product__supplier",
+            "product__product_range",
+        ).prefetch_related(
+            "tracking_numbers",
+            "product__variation_option_values",
+        )
         return qs
 
     def text_search(self, search_text, qs):
         """Filter the queryset based on search text."""
         qs = qs.filter(
             Q(
-                Q(product_SKU__icontains=search_text)
+                Q(product__sku__icontains=search_text)
                 | Q(product_asin__icontains=search_text)
-                | Q(product_name__icontains=search_text)
+                | Q(product__product_range__name__icontains=search_text)
             )
         )
         return qs

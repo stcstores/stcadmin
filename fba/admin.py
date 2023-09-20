@@ -56,12 +56,10 @@ class FBAOrderAdmin(admin.ModelAdmin):
 
     fields = [
         "region",
-        "product_SKU",
-        "product_name",
+        "product",
         "product_weight",
         "product_hs_code",
         "product_asin",
-        "product_image_url",
         "product_purchase_price",
         "FBA_fee",
         "selling_price",
@@ -84,8 +82,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "modified_at",
         "notes",
         "closed_at",
-        "product_SKU",
-        "product_name",
+        "product",
         "product_weight",
         "product_hs_code",
         "product_asin",
@@ -102,8 +99,8 @@ class FBAOrderAdmin(admin.ModelAdmin):
     ]
 
     search_fields = [
-        "product_SKU",
-        "product_name",
+        "product__sku",
+        "product__product_range__name",
         "product_asin",
     ]
 

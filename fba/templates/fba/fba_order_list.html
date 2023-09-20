@@ -34,7 +34,7 @@
                     <tr>
                         <td>
                             <div>
-                                <small class="font-monospace user-select-all me-3">{{ order.product_SKU }}</small>
+                                <small class="font-monospace user-select-all me-3">{{ order.product.sku }}</small>
                                 {% if order.status == order.ON_HOLD %}<div class="badge bg-danger me-3">On Hold</div>{% endif %}
                                 {% if order.is_fragile %}<div class="badge bg-danger me-3">Fragile</div>{% endif %}
                                 {% if order.is_combinable %}<div class="badge bg-success me-3">Combinable</div>{% endif %}
@@ -42,16 +42,16 @@
                             <div>
                                 <small class="user-select-all">
                                     {% if order.closed_at == None %}
-                                        <a href="{% url 'fba:update_fba_order' order.id %}">{{ order.product_name }}</a>
+                                        <a href="{% url 'fba:update_fba_order' order.id %}">{{ order.product.full_name }}</a>
                                     {% else %}
-                                        {{ order.product_name }}
+                                        {{ order.product.full_name }}
                                     {% endif %}
                                 </small>
                             </div>
                         </td>
                         <td>
                             <div>
-                                <small>{{ order.product_supplier }}</small>
+                                <small>{{ order.product.supplier }}</small>
                             </div>
                             <div>
                                 <small>ASIN:&nbsp;<span class="font-monospace user-select-all">{{ order.product_asin }}</span></small>

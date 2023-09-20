@@ -204,7 +204,7 @@
             </div>
  
             <div class="col">
-                <img src="{% if form.instance.id %}{{ form.instance.product_image_url }}{% else %}{{ image_url }}{% endif %}"
+                <img src="{% if form.instance.id %}{{ form.instance.product.get_primary_image.image_file.url }}{% else %}{{ image_url }}{% endif %}"
                      alt=""
                      height="200"
                      width=""

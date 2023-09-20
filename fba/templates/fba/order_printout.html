@@ -1,5 +1,5 @@
 <head>
-    <title>FBA Order - {{ order.product_SKU }}</title>
+    <title>FBA Order - {{ order.product.sku }}</title>
     <style>
         @media print {
             body {
@@ -94,11 +94,11 @@
 </head>
 
 <body>
-    <h1>FBA Order - {{ order.product_SKU }}</h1>
+    <h1>FBA Order - {{ order.product.sku }}</h1>
     <div class="header">
         <div class="order_info">
-            <h2>{{ order.product_name }}</h2>
-            <h3>Barcode: {{ order.product_barcode }}</h3>
+            <h2>{{ order.product.full_name }}</h2>
+            <h3>Barcode: {{ order.product.barcode }}</h3>
             <h3>ASIN: {{ order.product_asin }}</h3>
             <h2>
                 {{ order.region.name }}
@@ -144,7 +144,7 @@
                     <td>{{ order.region.currency.symbol }}{{ order.product_purchase_price }}</td>
                 </tr>
             </table>
-            <img src="{{ order.product_image_url }}"
+            <img src="{{ order.product.get_primary_image.image_file.url }}"
                  class="product_img"
                  alt=""
                  height="200"
