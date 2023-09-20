@@ -171,6 +171,13 @@ class FBAOrder(models.Model):
     )
     closed_at = models.DateTimeField(blank=True, null=True)
     region = models.ForeignKey(FBARegion, on_delete=models.CASCADE, blank=True)
+    product = models.ForeignKey(
+        BaseProduct,
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        related_name="fba_orders",
+    )
     product_SKU = models.CharField(max_length=20)
     product_name = models.CharField(max_length=255)
     product_weight = models.PositiveIntegerField()

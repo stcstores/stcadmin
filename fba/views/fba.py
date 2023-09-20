@@ -70,6 +70,7 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
     def get_initial(self, *args, **kwargs):
         """Return initial values for the form."""
         initial = super().get_initial(*args, **kwargs)
+        initial["product"] = self.product
         initial["product_SKU"] = self.product.sku
         initial["product_name"] = self.product.full_name
         initial["product_weight"] = self.product.weight_grams
@@ -153,6 +154,7 @@ class RepeatFBAOrder(FBAOrderCreate):
         else:
             aprox_quantity = self.to_repeat.aproximate_quantity
         self.repeated_order = models.FBAOrder(
+            product=self.to_repeat.product,
             product_SKU=self.to_repeat.product_SKU,
             product_name=self.to_repeat.product_name,
             product_weight=self.product.weight_grams,

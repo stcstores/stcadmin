@@ -80,6 +80,7 @@ class CreateFBAOrderForm(forms.ModelForm):
             "small_and_light",
         ]
         widgets = {
+            "product": forms.HiddenInput(),
             "product_SKU": forms.HiddenInput(),
             "product_name": forms.HiddenInput(),
             "product_weight": forms.HiddenInput(),
