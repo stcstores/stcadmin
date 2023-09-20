@@ -345,7 +345,7 @@ class LinnworksProductImportFile(BaseImportFile):
         row[cls.SUPPLIER_NAME] = product.supplier.name
         row[cls.SUPPLIER_PURCHASE_PRICE] = product.purchase_price
         row[cls.BIN_RACK] = cls._get_bin_rack(product)
-        row[cls.ARCHIVED] = "YES" if product.is_end_of_line else "NO"
+        row[cls.ARCHIVED] = "YES" if product.is_archived else "NO"
         row[cls.IS_VARIATION_GROUP] = "NO"
         row[cls.VARIATION_SKU] = product.product_range.sku
         row[cls.HS_CODE] = product.hs_code

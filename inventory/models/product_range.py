@@ -95,9 +95,6 @@ class ProductRange(models.Model):
     bullet_points = ArrayField(
         models.CharField(max_length=255), blank=True, null=True, size=5
     )
-
-    # is_end_of_line = models.BooleanField(default=False)
-    # hidden = models.BooleanField(default=False)
     managed_by = models.ForeignKey(
         get_user_model(), on_delete=models.PROTECT, related_name="product_ranges"
     )
