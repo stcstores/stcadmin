@@ -7,14 +7,14 @@
         <h3 class="display-3 mb-3">Fulfill FBA Order</h3>
 
         <span>{{ form.instance.region.flag }}</span>
-        <div class="fs-5 font-monospace user-select-all">{{ form.instance.product_SKU }}</div>
-        <div class="fs-3 mb-5 user-select-all">{{ form.instance.product_name }}</div>
+        <div class="fs-5 font-monospace user-select-all">{{ form.instance.product.sku }}</div>
+        <div class="fs-3 mb-5 user-select-all">{{ form.instance.product.full_name }}</div>
 
         <div class="m-2">
             <div>
                 ASIN: <span class="font-monospace user-select-all fs-4">{{ form.instance.product_asin }}</span>
             </div>
-            <div>Supplier: {{ form.instance.product_supplier }}</div>
+            <div>Supplier: {{ form.instance.product.supplier }}</div>
             {% if form.instance.product_is_multipack %}<div class="error">MULTIPACK ITEM Update stock manually</div>{% endif %}
             {% if form.instance.closed_at %}<div>CLOSED: {{ form.instance.closed_at }}</div>{% endif %}
  
@@ -121,7 +121,7 @@
                 </div>
             </div>
             <div class="col">
-                <img src="{{ form.instance.product_image_url }}"
+                <img src="{{ form.instance.product.get_primary_image.image_file.url }}"
                      class="img border rounded"
                      alt=""
                      height="200"

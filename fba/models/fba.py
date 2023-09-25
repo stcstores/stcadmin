@@ -178,16 +178,11 @@ class FBAOrder(models.Model):
         null=True,
         related_name="fba_orders",
     )
-    product_SKU = models.CharField(max_length=20)
-    product_name = models.CharField(max_length=255)
     product_weight = models.PositiveIntegerField()
     product_hs_code = models.CharField(max_length=255)
     product_asin = models.CharField(max_length=24)
-    product_image_url = models.URLField(blank=True)
-    product_supplier = models.CharField(max_length=255, blank=True)
     product_purchase_price = models.CharField(max_length=10)
     product_is_multipack = models.BooleanField(default=False)
-    product_barcode = models.CharField(max_length=20, blank=True, null=True)
     selling_price = models.PositiveIntegerField()
     FBA_fee = models.PositiveIntegerField()
     aproximate_quantity = models.PositiveIntegerField()
@@ -225,7 +220,7 @@ class FBAOrder(models.Model):
         ordering = ["priority"]
 
     def __str__(self):
-        return f"{self.product_SKU} - {self.created_at.strftime('%Y-%m-%d')}"
+        return f"{self.product.sku} - {self.created_at.strftime('%Y-%m-%d')}"
 
     def save(self, *args, **kwargs):
         """Update the status field."""
@@ -274,30 +269,29 @@ class FBAOrder(models.Model):
             return (
                 messages.WARNING,
                 (
-                    f"Set to skip stock update, the stock level for {self.product_SKU}"
+                    f"Set to skip stock update, the stock level for {self.product.sku}"
                     " is unchanged."
                 ),
             )
         try:
-            product = BaseProduct.objects.get(sku=self.product_SKU)
-            stock_level = StockManager.get_stock_level(product)
+            stock_level = StockManager.get_stock_level(self.product)
             new_stock_level = stock_level - self.quantity_sent
             change_source = f"Updated by FBA order pk={self.pk}"
             StockManager.set_stock_level(
-                product=product,
+                product=self.product,
                 user=user,
                 new_stock_level=new_stock_level,
                 change_source=change_source,
             )
             return messages.SUCCESS, (
-                f"Changed stock level for {self.product_SKU} from {stock_level} "
+                f"Changed stock level for {self.product.sku} from {stock_level} "
                 f"to {new_stock_level}"
             )
         except Exception:
             return (
                 messages.ERROR,
                 (
-                    f"Stock Level failed to update for {self.product_SKU}, "
+                    f"Stock Level failed to update for {self.product.sku}, "
                     "please check stock level."
                 ),
             )

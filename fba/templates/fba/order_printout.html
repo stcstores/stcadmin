@@ -1,5 +1,5 @@
 <head>
-    <title>FBA Order - {{ order.product_SKU }}</title>
+    <title>FBA Order - {{ order.product.sku }}</title>
     <style>
         @media print {
             body {
@@ -90,29 +90,42 @@
             margin: 1em;
             padding: 1em;
         }
+
+        .bold {
+            font-weight: bold;
+        }
     </style>
 </head>
 
 <body>
-    <h1>FBA Order - {{ order.product_SKU }}</h1>
+    <h1>FBA Order - {{ order.product.sku }}</h1>
     <div class="header">
         <div class="order_info">
-            <h2>{{ order.product_name }}</h2>
-            <h3>Barcode: {{ order.product_barcode }}</h3>
+            <h2>{{ order.product.product_range.name }}</h2>
+            <div>
+                <span>Supplier SKU:&nbsp;<span class="bold">{{ order.product.supplier_sku }}</span></span>
+                {% for option, value in order.product.variation.items %}
+                    <span>{{ option }}:&nbsp;<span class="bold">{{ value }}</span></span>
+                {% endfor %}
+            </div>
+            {% if order.product.supplier_sku %}
+                <h3 class="text-muted">Supplier SKU:&nbsp;{{ order.product.supplier_sku }}</h3>
+            {% endif %}
+            <h3>Barcode: {{ order.product.barcode }}</h3>
             <h3>ASIN: {{ order.product_asin }}</h3>
-            <h2>
-                {{ order.region.name }}
-                <img src="{{ order.region.default_country.country.flag.url }}"
-                     height="64"
-                     width=""
-                     alt="">
-            </h2>
             <h2>
                 {% if order.is_combinable %}&nbsp;COMBINABLE{% endif %}
                 {% if order.is_fragile %}&nbsp;FRAGILE, NO LABELS NEEDED{% endif %}
                 {% if order.product_is_multipack %}&nbsp;MULTIPACK ITEM - UPDATE STOCK MANUALLY{% endif %}
             </h2>
         </div>
+        <h2>
+            {{ order.region.name }}
+            <img src="{{ order.region.default_country.country.flag.url }}"
+                 height="64"
+                 width=""
+                 alt="">
+        </h2>
         <div class="stock">
             <h3>Stock Level: {{ stock_level }}</h3>
             <h3>Pending Stock: {{ pending_stock }}</h3>
@@ -144,7 +157,7 @@
                     <td>{{ order.region.currency.symbol }}{{ order.product_purchase_price }}</td>
                 </tr>
             </table>
-            <img src="{{ order.product_image_url }}"
+            <img src="{{ order.product.get_primary_image.image_file.url }}"
                  class="product_img"
                  alt=""
                  height="200"

@@ -16,7 +16,19 @@
  
         {% if form.instance.id %}<span>{{ form.instance.region.flag }}</span>{% endif %}
         <div class="fs-5 font-monospace user-select-all">{{ product.sku }}</div>
-        <div class="fs-3 mb-5 user-select-all">{{ product.full_name }}</div>
+        <div class="fs-3 user-select-all">{{ product.product_range.name }}</div>
+        <div class="mb-5">
+            {% if product.supplier_sku %}
+                <span class="me-2">
+                    <span class="text-muted">Supplier SKU:&nbsp;</span><span class="fw-bold">{{ product.supplier_sku }}</span>
+                </span>
+            {% endif %}
+            {% for option, value in product.variation.items %}
+                <span class="me-2">
+                    <span class="text-muted">{{ option }}:&nbsp;</span><span class="fw-bold">{{ value }}</span>
+                </span>
+            {% endfor %}
+        </div>
         <div class="m-2">
             {% if form.instance.id %}
                 <div>
@@ -167,18 +179,16 @@
  
                         <div class="input-group mb-3">
                             <span class="input-group-text" for="max_quantity">Maximum Sendable</span>
-                            <input class="form-control"
+                            <input class="form-control max_quantity"
                                    type="number"
-                                   class="max_quantity"
                                    id="max_quantity"
                                    disabled>
                         </div>
  
                         <div class="input-group mb-3">
                             <span class="input-group-text" for="max_quantity_no_stock">Sendable Ignoring Stock Level</span>
-                            <input class="form-control"
+                            <input class="form-control max_quantity_no_stock"
                                    type="number"
-                                   class="max_quantity_no_stock"
                                    id="max_quantity_no_stock"
                                    disabled>
                         </div>
@@ -204,7 +214,7 @@
             </div>
  
             <div class="col">
-                <img src="{% if form.instance.id %}{{ form.instance.product_image_url }}{% else %}{{ image_url }}{% endif %}"
+                <img src="{% if form.instance.id %}{{ form.instance.product.get_primary_image.image_file.url }}{% else %}{{ image_url }}{% endif %}"
                      alt=""
                      height="200"
                      width=""

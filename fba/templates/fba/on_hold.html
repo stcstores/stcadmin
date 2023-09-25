@@ -34,7 +34,7 @@
                     <tr class="order">
                         <td>
                             <div>
-                                <small class="font-monospace user-select-all me-3">{{ order.product_SKU }}</small>
+                                <small class="font-monospace user-select-all me-3">{{ order.product.sku }}</small>
                                 {% if order.status == order.ON_HOLD %}<div class="badge bg-danger me-3">On Hold</div>{% endif %}
                                 {% if order.is_fragile %}<div class="badge bg-danger me-3">Fragile</div>{% endif %}
                                 {% if order.is_combinable %}<div class="badge bg-success me-3">Combinable</div>{% endif %}
@@ -42,16 +42,28 @@
                             <div>
                                 <small class="user-select-all">
                                     {% if order.closed_at == None %}
-                                        <a href="{% url 'fba:update_fba_order' order.id %}">{{ order.product_name }}</a>
+                                        <a href="{% url 'fba:update_fba_order' order.id %}">{{ order.product.product_range.name }}</a>
                                     {% else %}
-                                        {{ order.product_name }}
+                                        {{ order.product.full_name }}
                                     {% endif %}
                                 </small>
+                            </div>
+                            <div>
+                                {% if order.product.supplier_sku %}
+                                    <small class="me-2">
+                                        <span class="text-muted">Supplier SKU:&nbsp;</span><span class="fw-bold">{{ order.product.supplier_sku }}</span>
+                                    </small>
+                                {% endif %}
+                                {% for option, value in order.product.variation.items %}
+                                    <small class="me-2">
+                                        <span class="text-muted">{{ option }}:&nbsp;</span><span class="fw-bold">{{ value }}</span>
+                                    </small>
+                                {% endfor %}
                             </div>
                         </td>
                         <td>
                             <div>
-                                <small>{{ order.product_supplier }}</small>
+                                <small>{{ order.product.supplier }}</small>
                             </div>
                             <div>
                                 <small>ASIN:&nbsp;<span class="font-monospace user-select-all">{{ order.product_asin }}</span></small>
@@ -104,7 +116,7 @@
                             <a href="{% url 'fba:repeat_order' order.pk %}"
                                class="btn btn-primary btn-sm mb-1">Repeat</a>
                         </td>
-                        <td class="product_sku" hidden>{{ order.product_SKU }}</td>
+                        <td class="product_sku" hidden>{{ order.product.sku }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

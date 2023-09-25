@@ -71,14 +71,9 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
         """Return initial values for the form."""
         initial = super().get_initial(*args, **kwargs)
         initial["product"] = self.product
-        initial["product_SKU"] = self.product.sku
-        initial["product_name"] = self.product.full_name
         initial["product_weight"] = self.product.weight_grams
         initial["product_hs_code"] = self.product.hs_code
-        initial["product_image_url"] = self.get_image_url()
-        initial["product_supplier"] = self.product.supplier.name
         initial["product_purchase_price"] = self.product.purchase_price
-        initial["product_barcode"] = self.product.barcode
         initial["product_is_multipack"] = isinstance(
             self.product, MultipackProduct
         ) or isinstance(self.product, CombinationProduct)
@@ -105,9 +100,11 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
         except Exception:
             stock_level = 0
         context["stock_level"] = stock_level
-        context["image_url"] = context["form"].initial["product_image_url"]
+        context["image_url"] = (
+            context["form"].initial["product"].get_primary_image().image_file.url
+        )
         context["existing_order_count"] = (
-            models.FBAOrder.objects.filter(product_SKU=self.product.sku)
+            models.FBAOrder.objects.filter(product=self.product)
             .exclude(status=models.FBAOrder.FULFILLED)
             .count()
         )
@@ -123,7 +120,7 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
         messages.add_message(
             self.request,
             messages.SUCCESS,
-            f"Created new FBA order for product {self.object.product_SKU}.",
+            f"Created new FBA order for product {self.object.product.sku}.",
         )
 
 
@@ -155,13 +152,9 @@ class RepeatFBAOrder(FBAOrderCreate):
             aprox_quantity = self.to_repeat.aproximate_quantity
         self.repeated_order = models.FBAOrder(
             product=self.to_repeat.product,
-            product_SKU=self.to_repeat.product_SKU,
-            product_name=self.to_repeat.product_name,
-            product_weight=self.product.weight_grams,
-            product_hs_code=self.product.hs_code,
+            product_weight=self.to_repeat.product.weight_grams,
+            product_hs_code=self.to_repeat.product.hs_code,
             product_asin=self.to_repeat.product_asin,
-            product_image_url=self.to_repeat.product_image_url,
-            product_supplier=self.to_repeat.product_supplier,
             product_purchase_price=self.to_repeat.product_purchase_price,
             product_is_multipack=self.to_repeat.product_is_multipack,
             region=self.to_repeat.region,
@@ -176,7 +169,6 @@ class RepeatFBAOrder(FBAOrderCreate):
     def get_product(self):
         """Return the product included in the order."""
         self.to_repeat = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
-        self.product = get_object_or_404(BaseProduct, sku=self.to_repeat.product_SKU)
 
     def get_initial(self):
         """Return initial form values."""
@@ -218,13 +210,12 @@ class FBAOrderUpdate(FBAUserMixin, UpdateView):
     def get_context_data(self, **kwargs):
         """Return template context."""
         context = super().get_context_data(**kwargs)
-        product = get_object_or_404(BaseProduct, sku=self.object.product_SKU)
         try:
-            stock_level = StockManager.get_stock_level(product)
+            stock_level = StockManager.get_stock_level(self.object.product)
         except Exception:
             stock_level = 0
         context["stock_level"] = stock_level
-        context["product"] = product
+        context["product"] = self.object.product
         return context
 
     def get_success_url(self):
@@ -329,8 +320,18 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
         region_name = self.request.GET.get("region")
         if region_name is not None and region_name != "":
             filter_kwargs["region__name"] = region_name
-        return self.model.awaiting_fulfillment.filter(**filter_kwargs).prefetch_related(
-            "region"
+        return (
+            self.model.awaiting_fulfillment.filter(**filter_kwargs)
+            .select_related(
+                "region__default_country__country",
+                "product",
+                "product__supplier",
+                "product__product_range",
+            )
+            .prefetch_related(
+                "tracking_numbers",
+                "product__variation_option_values",
+            )
         )
 
     def get_context_data(self, *args, **kwargs):
@@ -429,12 +430,6 @@ class FBAPriceCalculator(FBAUserMixin, View):
     def get_postage_per_item(self):
         """Return the caclulated price per item to post to FBA."""
         postage_per_item = None
-        # if not self.country.region.auto_close:
-        #     try:
-        #         record = models.FBAShippingPrice.objects.get(product_SKU=self.sku)
-        #         self.postage_per_item_gbp = record.price_per_item / 100
-        #     except models.FBAShippingPrice.DoesNotExist:
-        #         pass
         if postage_per_item is None:
             self.postage_per_item_gbp = round(self.postage_gbp / int(self.quantity), 2)
         self.postage_per_item_local = round(
@@ -482,7 +477,7 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
         """Add the bay list to the context."""
         context = super().get_context_data(*args, **kwargs)
         order = context["form"].instance
-        sku = order.product_SKU
+        sku = order.product.sku
         bays = (
             ProductBayLink.objects.filter(product__sku=sku)
             .select_related("bay")
@@ -524,7 +519,7 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
         messages.add_message(
             self.request,
             messages.SUCCESS,
-            f"FBA order fulfilled for product {self.object.product_SKU}.",
+            f"FBA order fulfilled for product {self.object.product.sku}.",
         )
 
     def close_order(self):
@@ -533,7 +528,7 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
         messages.add_message(
             self.request,
             messages.SUCCESS,
-            f"FBA order closed for product {self.object.product_SKU}.",
+            f"FBA order closed for product {self.object.product.sku}.",
         )
 
     def update_stock(self):
@@ -551,7 +546,7 @@ class FBAOrderPrintout(FBAUserMixin, TemplateView):
         """Return context for the template."""
         context = super().get_context_data(**kwargs)
         order = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
-        product = get_object_or_404(BaseProduct, sku=order.product_SKU)
+        product = get_object_or_404(BaseProduct, sku=order.product.sku)
         context["order"] = order
         context["product"] = product
         try:
@@ -615,7 +610,7 @@ class ShippingPrice(FBAUserMixin, FormView):
         )
         try:
             kwargs["instance"] = models.FBAShippingPrice.objects.get(
-                product_SKU=kwargs["fba_order"].product_SKU
+                product_SKU=kwargs["fba_order"].product.sku
             )
         except models.FBAShippingPrice.DoesNotExist:
             pass
@@ -665,12 +660,12 @@ class GetStockLevels(FBAUserMixin, View):
         """Get stock levels for FBA orders."""
         order_ids = json.loads(self.request.body)["order_ids"]
         orders = models.FBAOrder.objects.filter(pk__in=order_ids)
-        product_skus = orders.values_list("product_SKU", flat=True)
-        products = BaseProduct.objects.filter(sku__in=product_skus)
+        product_ids = orders.values_list("product", flat=True)
+        products = BaseProduct.objects.filter(id__in=product_ids)
         stock_levels = StockManager.get_stock_levels(products)
         output = {}
         for order in orders:
-            stock_level = stock_levels[order.product_SKU]
+            stock_level = stock_levels[order.product.sku]
             output[order.pk] = {
                 "available": stock_level.available,
                 "in_orders": stock_level.in_orders,

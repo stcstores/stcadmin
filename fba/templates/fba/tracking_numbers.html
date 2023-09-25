@@ -4,16 +4,16 @@
     <div class="container">
         <h3 class="display-3 mb-5">Edit Tracking Numbers</h3>
         <span>{{ form.instance.region.flag }}</span>
-        <div class="fs-5 font-monospace user-select-all">{{ form.instance.product_SKU }}</div>
-        <div class="fs-3 mb-5 user-select-all">{{ form.instance.product_name }}</div>
+        <div class="fs-5 font-monospace user-select-all">{{ form.instance.product.sku }}</div>
+        <div class="fs-3 mb-5 user-select-all">{{ form.instance.product.full_name }}</div>
         <div class="m-2">
             <div>
                 ASIN: <span class="font-monospace user-select-all">{{ form.instance.product_asin }}</span>
             </div>
             <div>
-                Barcode: <span class="font-monospace user-select-all">{{ form.instance.product_barcode }}</span>
+                Barcode: <span class="font-monospace user-select-all">{{ form.instance.product.barcode }}</span>
             </div>
-            <div>Supplier: {{ form.instance.product_supplier }}</div>
+            <div>Supplier: {{ form.instance.product.supplier }}</div>
         </div>
         <div class="col-6 m-3">
             <form action="" method="post" id="tracking_number_form">
