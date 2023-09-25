@@ -42,11 +42,23 @@
                             <div>
                                 <small class="user-select-all">
                                     {% if order.closed_at == None %}
-                                        <a href="{% url 'fba:update_fba_order' order.id %}">{{ order.product.full_name }}</a>
+                                        <a href="{% url 'fba:update_fba_order' order.id %}">{{ order.product.product_range.name }}</a>
                                     {% else %}
                                         {{ order.product.full_name }}
                                     {% endif %}
                                 </small>
+                            </div>
+                            <div>
+                                {% if order.product.supplier_sku %}
+                                    <small class="me-2">
+                                        <span class="text-muted">Supplier SKU:&nbsp;</span><span class="fw-bold">{{ order.product.supplier_sku }}</span>
+                                    </small>
+                                {% endif %}
+                                {% for option, value in order.product.variation.items %}
+                                    <small class="me-2">
+                                        <span class="text-muted">{{ option }}:&nbsp;</span><span class="fw-bold">{{ value }}</span>
+                                    </small>
+                                {% endfor %}
                             </div>
                         </td>
                         <td>
