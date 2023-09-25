@@ -3,6 +3,7 @@
 
 from django.conf import settings
 from django.db import models
+from django.db.models import F, Sum
 from solo.models import SingletonModel
 
 from .fba import FBAOrder
@@ -200,9 +201,13 @@ class FBAShipmentOrder(models.Model):
 
     def weight_kg(self):
         """Return the total weight of the shipment."""
-        return self.shipment_package.aggregate(models.Sum("shipment_item__weight_kg"))[
-            "shipment_item__weight_kg__sum"
-        ]
+        return (
+            self.shipment_package.all()
+            .annotate(
+                weight=(F("shipment_item__weight_kg") * F("shipment_item__quantity"))
+            )
+            .aggregate(total_weight=Sum("weight"))["total_weight"]
+        )
 
     def value(self):
         """Return the total value of the shipment."""
@@ -273,7 +278,11 @@ class FBAShipmentPackage(models.Model):
 
     def weight_kg(self):
         """Return the total weight of the package."""
-        return self.shipment_item.aggregate(weight=models.Sum("weight_kg"))["weight"]
+        return (
+            self.shipment_item.all()
+            .annotate(weight=(F("weight_kg") * F("quantity")))
+            .aggregate(total_weight=Sum("weight"))["total_weight"]
+        )
 
     def value(self):
         """Return the total value of the package."""
