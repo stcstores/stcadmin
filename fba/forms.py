@@ -10,7 +10,7 @@ from django.utils.timezone import make_aware
 
 from fba import models
 from home.models import Staff
-from inventory.models import BaseProduct, ProductRange
+from inventory.models import BaseProduct, ProductRange, Supplier
 
 
 class SelectFBAOrderProduct(forms.Form):
@@ -170,13 +170,14 @@ class FBAOrderFilter(forms.Form):
     def __init__(self, *args, **kwargs):
         """Add supplier choices."""
         super().__init__(*args, **kwargs)
-        self.fields["supplier"].choices = [
-            (name, name)
-            for name in models.FBAOrder.objects.values_list(
-                "product__supplier", flat=True
-            )
-            .order_by("product__supplier")
+        supplier_ids = (
+            models.FBAOrder.objects.exclude(status=models.FBAOrder.FULFILLED)
+            .values_list("product__supplier", flat=True)
             .distinct()
+        )
+        suppliers = Supplier.objects.filter(id__in=supplier_ids).order_by("name")
+        self.fields["supplier"].choices = [("", "")] + [
+            (supplier.id, supplier.name) for supplier in suppliers
         ]
         self.fields["country"].empty_label = "All"
 
