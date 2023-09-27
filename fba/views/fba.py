@@ -171,7 +171,7 @@ class RepeatFBAOrder(FBAOrderCreate):
         """Return initial form values."""
         initial = super().get_initial()
         initial["region"] = self.to_repeat.region
-        initial["country"] = self.to_repeat.region.default_country
+        initial["country"] = self.to_repeat.region.country
         initial["selling_price"] = self.to_repeat.selling_price
         initial["FBA_fee"] = self.to_repeat.FBA_fee
         return initial
@@ -201,7 +201,7 @@ class FBAOrderUpdate(FBAUserMixin, UpdateView):
     def get_initial(self):
         """Return initial values for the form."""
         initial = super().get_initial()
-        initial["country"] = self.object.region.default_country
+        initial["country"] = self.object.region.country
         return initial
 
     def get_context_data(self, **kwargs):
@@ -320,7 +320,7 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
         return (
             self.model.awaiting_fulfillment.filter(**filter_kwargs)
             .select_related(
-                "region__default_country__country",
+                "region__ountry",
                 "product",
                 "product__supplier",
                 "product__product_range",
@@ -334,9 +334,7 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
         context = super().get_context_data(*args, **kwargs)
-        context["regions"] = models.FBARegion.objects.all().prefetch_related(
-            "default_country__country"
-        )
+        context["regions"] = models.FBARegion.objects.all().prefetch_related("country")
         context["page_range"] = self.get_page_range(context["paginator"])
         context["selected_region"] = self.request.GET.get("region")
         return context
