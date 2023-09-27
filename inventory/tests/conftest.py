@@ -3,7 +3,10 @@ from pathlib import Path
 import pytest
 import pytest_factoryboy
 
+from fba.factories import FBAOrderFactory
 from inventory import factories
+
+pytest_factoryboy.register(FBAOrderFactory)
 
 pytest_factoryboy.register(factories.UserFactory)
 pytest_factoryboy.register(factories.BarcodeFactory)

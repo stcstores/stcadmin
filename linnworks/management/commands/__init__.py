@@ -1,1 +1,1 @@
-"""Inventory management commands."""
+"""Linnworks management commands."""
