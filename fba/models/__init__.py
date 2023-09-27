@@ -1,6 +1,6 @@
 """Models for the fba app."""
 
-from .fba import FBACountry, FBAOrder, FBARegion, FBAShippingPrice, FBATrackingNumber
+from .fba import FBAOrder, FBARegion, FBAShippingPrice, FBATrackingNumber
 from .shipments import (
     FBAShipmentDestination,
     FBAShipmentExport,
@@ -12,7 +12,6 @@ from .shipments import (
 )
 
 __all__ = [
-    "FBACountry",
     "FBAOrder",
     "FBARegion",
     "FBAShippingPrice",
