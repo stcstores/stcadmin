@@ -84,14 +84,11 @@ class CreateFBAOrderForm(forms.ModelForm):
             "product_weight": forms.HiddenInput(),
             "product_hs_code": forms.HiddenInput(),
             "product_purchase_price": forms.HiddenInput(),
-            "region": forms.HiddenInput(),
             "tracking_number": forms.HiddenInput(),
             "product_is_multipack": forms.HiddenInput(),
             "selling_price": CurrencyWidget,
             "FBA_fee": CurrencyWidget,
         }
-
-    country = forms.ModelChoiceField(models.FBACountry.objects.all())
 
     field_order = [
         "region",
@@ -106,13 +103,6 @@ class CreateFBAOrderForm(forms.ModelForm):
         "is_fragile",
         "notes",
     ]
-
-    def clean(self):
-        """Add region to cleaned data."""
-        cleaned_data = super().clean()
-        country = cleaned_data["country"]
-        cleaned_data["region"] = country.region
-        return cleaned_data
 
 
 class FBAOrderFilter(forms.Form):

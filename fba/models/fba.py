@@ -100,26 +100,6 @@ class FBARegion(models.Model):
             return calculated_postage_price
 
 
-class FBACountry(models.Model):
-    """Model for countries in which FBA items are sold."""
-
-    region = models.ForeignKey(
-        FBARegion, on_delete=models.CASCADE, related_name="fba_regions"
-    )
-    country = models.ForeignKey(
-        Country, on_delete=models.CASCADE, related_name="fba_countries"
-    )
-
-    class Meta:
-        """Meta class for FBACountry."""
-
-        verbose_name = "FBA Country"
-        verbose_name_plural = "FBA Countries"
-
-    def __str__(self):
-        return self.country.name
-
-
 class AwaitingFulfillmentManager(models.Manager):
     """Model manager for FBA orders awaiting fulfillment."""
 
