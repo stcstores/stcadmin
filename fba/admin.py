@@ -41,15 +41,6 @@ class FBARegionAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(models.FBACountry)
-class FBACountryAdmin(admin.ModelAdmin):
-    """Model admin for the FBACountry model."""
-
-    fields = ["region", "country"]
-    list_display = ["__str__", "region", "country"]
-    list_editable = ["region", "country"]
-
-
 @admin.register(models.FBAOrder)
 class FBAOrderAdmin(admin.ModelAdmin):
     """Model admin for the FBAOrder models."""
