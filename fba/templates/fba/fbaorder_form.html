@@ -214,11 +214,15 @@
             </div>
  
             <div class="col">
-                <img src="{% if form.instance.id %}{{ form.instance.product.get_primary_image.image_file.url }}{% else %}{{ image_url }}{% endif %}"
-                     alt=""
-                     height="200"
-                     width=""
-                     class="img border rounded">
+                {% with product.get_primary_image as product_image %}
+                    {% if product_image %}
+                        <img src="{{ product_image.image_file.url }}"
+                             alt=""
+                             height="200"
+                             width=""
+                             class="img border rounded">
+                    {% endif %}
+                {% endwith %}
             </div>
         </div>
  

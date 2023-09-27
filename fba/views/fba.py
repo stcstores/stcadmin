@@ -100,9 +100,6 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
         except Exception:
             stock_level = 0
         context["stock_level"] = stock_level
-        context["image_url"] = (
-            context["form"].initial["product"].get_primary_image().image_file.url
-        )
         context["existing_order_count"] = (
             models.FBAOrder.objects.filter(product=self.product)
             .exclude(status=models.FBAOrder.FULFILLED)
