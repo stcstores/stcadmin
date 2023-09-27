@@ -320,7 +320,7 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
         return (
             self.model.awaiting_fulfillment.filter(**filter_kwargs)
             .select_related(
-                "region__ountry",
+                "region__country",
                 "product",
                 "product__supplier",
                 "product__product_range",
