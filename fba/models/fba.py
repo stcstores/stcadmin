@@ -22,8 +22,7 @@ class FBARegion(models.Model):
     unit_choices = ((METRIC, "Metric"), (IMPERIAL, "Imperial"))
 
     name = models.CharField(max_length=255)
-    country = models.ForeignKey(Country, on_delete=models.PROTECT, null=True)
-    default_country = models.ForeignKey("FBACountry", on_delete=models.CASCADE)
+    country = models.ForeignKey(Country, on_delete=models.PROTECT)
     postage_price = models.PositiveIntegerField(blank=True, null=True)
     postage_per_kg = models.PositiveIntegerField(default=0)
     postage_overhead_g = models.PositiveBigIntegerField(default=0)
@@ -49,7 +48,7 @@ class FBARegion(models.Model):
 
     def flag(self):
         """Return an image tag with the countries flag."""
-        country = self.default_country.country
+        country = self.country
         return mark_safe(
             f'<img src="{country.flag.url}" height="20" '
             f'width="20" alt="{country.ISO_code}">'
