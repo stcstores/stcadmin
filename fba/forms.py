@@ -235,7 +235,7 @@ class FBAOrderFilter(forms.Form):
         if closed := self.cleaned_data.get("closed"):
             qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
         qs = qs.select_related(
-            "region__default_country__country",
+            "region__country",
             "product",
             "product__supplier",
             "product__product_range",
@@ -397,7 +397,7 @@ class OnHoldOrderFilter(forms.Form):
         if closed := self.cleaned_data.get("closed"):
             qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
         qs = qs = qs.select_related(
-            "region__default_country__country",
+            "region__country",
             "product",
             "product__supplier",
             "product__product_range",

@@ -13,7 +13,7 @@ class FBARegionAdmin(admin.ModelAdmin):
     exclude = ()
     list_display = [
         "name",
-        "default_country",
+        "country",
         "postage_price",
         "postage_per_kg",
         "postage_overhead_g",
@@ -28,7 +28,7 @@ class FBARegionAdmin(admin.ModelAdmin):
         "position",
     ]
     list_editable = [
-        "default_country",
+        "country",
         "postage_price",
         "max_weight",
         "max_size",

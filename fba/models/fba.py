@@ -22,6 +22,7 @@ class FBARegion(models.Model):
     unit_choices = ((METRIC, "Metric"), (IMPERIAL, "Imperial"))
 
     name = models.CharField(max_length=255)
+    country = models.ForeignKey(Country, on_delete=models.PROTECT, null=True)
     default_country = models.ForeignKey("FBACountry", on_delete=models.CASCADE)
     postage_price = models.PositiveIntegerField(blank=True, null=True)
     postage_per_kg = models.PositiveIntegerField(default=0)
