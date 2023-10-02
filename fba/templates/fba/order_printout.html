@@ -1,5 +1,5 @@
 <head>
-    <title>FBA Order - {{ order.product.sku }}</title>
+    <title>FBA Order {{ order.id }} - {{ order.product.sku }}</title>
     <style>
         @media print {
             body {
@@ -19,7 +19,7 @@
             display: inline-block;
         }
 
-        table {
+        .fields {
             margin: 0.5em;
             padding: 0.25em;
             border-spacing: 15px;
@@ -50,12 +50,11 @@
         .picking {
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
+            justify-content: space-around;
         }
 
         .fields,
-        .warehouses,
-        .stock {
+        .warehouses {
             border: black 3px solid;
             border-radius: 1em;
         }
@@ -65,7 +64,7 @@
             padding: 0.5em;
             border: 3px solid black;
             border-radius: 2em;
-            font-size: 1.5em;
+            font-size: 1.25em;
         }
 
         .checkbox {
@@ -81,87 +80,118 @@
         .header {
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
-        }
-
-        .stock {
-            display: flex;
-            flex-direction: column;
-            margin: 1em;
-            padding: 1em;
+            justify-content: space-around;
         }
 
         .bold {
             font-weight: bold;
         }
+
+        .variation_option {
+            font-size: 1.5em;
+            margin-left: 0.25em;
+            margin-right: 0.25em;
+        }
+
+        .variation_details {
+            margin-bottom: 1em;
+        }
+
+        .order_info table td {
+            font-size: 1.25em;
+            padding: 0.125em;
+        }
     </style>
 </head>
 
 <body>
-    <h1>FBA Order - {{ order.product.sku }}</h1>
-    <div class="header">
-        <div class="order_info">
-            <h2>{{ order.product.product_range.name }}</h2>
-            <div>
-                <span>Supplier SKU:&nbsp;<span class="bold">{{ order.product.supplier_sku }}</span></span>
-                {% for option, value in order.product.variation.items %}
-                    <span>{{ option }}:&nbsp;<span class="bold">{{ value }}</span></span>
-                {% endfor %}
-            </div>
-            {% if order.product.supplier_sku %}
-                <h3 class="text-muted">Supplier SKU:&nbsp;{{ order.product.supplier_sku }}</h3>
+    <h2>{{ order.product.product_range.name }}</h2>
+    <div class="variation_details">
+        {% for option, value in order.product.variation.items %}
+            {% if option == "Quantity" %}
+                <h2>
+                    {{ option }}:&nbsp;<span class="bold">{{ value }}</span>
+                </h2>
+            {% else %}
+                <span class="variation_option">{{ option }}:&nbsp;<span class="bold">{{ value }}</span></span>
             {% endif %}
-            <h3>Barcode: {{ order.product.barcode }}</h3>
-            <h3>ASIN: {{ order.product_asin }}</h3>
-            <h2>
-                {% if order.is_combinable %}&nbsp;COMBINABLE{% endif %}
-                {% if order.is_fragile %}&nbsp;FRAGILE, NO LABELS NEEDED{% endif %}
-                {% if order.product_is_multipack %}&nbsp;MULTIPACK ITEM - UPDATE STOCK MANUALLY{% endif %}
-            </h2>
+        {% endfor %}
+    </div>
+    <div class="header">
+        <div>
+            <h1>{{ order.region.name }}</h1>
         </div>
-        <h2>
-            {{ order.region.name }}
-            <img src="{{ order.region.country.country.flag.url }}"
-                 height="64"
-                 width=""
-                 alt="">
-        </h2>
-        <div class="stock">
-            <h3>Stock Level: {{ stock_level }}</h3>
-            <h3>Pending Stock: {{ pending_stock }}</h3>
+        <div class="order_info">
+            <table>
+                <tr>
+                    <td>Barcode</td>
+                    <td class="bold">{{ order.product.barcode }}</td>
+                </tr>
+                <tr>
+                    <td>ASIN</td>
+                    <td class="bold">{{ order.product_asin }}</td>
+                </tr>
+                {% if order.product.supplier_sku %}
+                    <tr>
+                        <td>Supplier SKU</td>
+                        <td class="bold">{{ order.product.supplier_sku }}</td>
+                    </tr>
+                {% endif %}
+            </table>
+ 
         </div>
+        <div>
+            <table>
+                <tr>
+                    <td>Stock Level</td>
+                    <td class="bold">{{ stock_level }}</td>
+                </tr>
+                <tr>
+                    <td>Pending Stock</td>
+                    <td class="bold">{{ pending_stock }}</td>
+                </tr>
+            </table>
+        </div>
+ 
     </div>
     <div id="fba_order_form">
         <div class="picking">
             <table id="info">
                 <tr>
-                    <th>Locations</th>
-                    <td>
+                    <td>Locations</td>
+                    <td class="bold">
                         {% for bay in bays %}<div class="location">{{ bay }}</div>{% endfor %}
                     </td>
                 </tr>
                 <tr>
-                    <th>Product Weight (g)</th>
-                    <td>{{ order.product_weight }}</td>
+                    <td>Product Weight (g)</td>
+                    <td class="bold">{{ order.product_weight }}</td>
                 </tr>
                 <tr>
-                    <th>HS Code</th>
-                    <td>{{ order.product_hs_code }}</td>
+                    <td>HS Code</td>
+                    <td class="bold">{{ order.product_hs_code }}</td>
                 </tr>
                 <tr>
-                    <th>Aproximate Quantity</th>
-                    <td>{{ order.aproximate_quantity }}</td>
+                    <td>Aproximate Quantity</td>
+                    <td class="bold">{{ order.aproximate_quantity }}</td>
                 </tr>
                 <tr>
-                    <th>Purchase Price</th>
-                    <td>{{ order.region.currency.symbol }}{{ order.product_purchase_price }}</td>
+                    <td>Purchase Price</td>
+                    <td class="bold">{{ order.region.currency.symbol }}{{ order.product_purchase_price }}</td>
                 </tr>
             </table>
-            <img src="{{ order.product.get_primary_image.image_file.url }}"
+ 
+            <div>
+                {% if order.is_combinable %}<h2>COMBINABLE</h2>{% endif %}
+                {% if order.is_fragile %}<h2>FRAGILE, NO LABELS NEEDED</h2>{% endif %}
+                {% if order.product_is_multipack %}<h2>MULTIPACK ITEM - UPDATE STOCK MANUALLY</h2>{% endif %}
+            </div>
+ 
+            <img src="{{ order.product.get_primary_image.square_image.url }}"
                  class="product_img"
                  alt=""
-                 height="200"
-                 width="">
+                 height="180"
+                 width="180">
         </div>
         <div class="notes">Notes: {{ order.notes }}</div>
         <div class="inputs">
