@@ -5,7 +5,7 @@ from datetime import datetime
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.utils.timezone import make_aware
 
 from fba import models
@@ -147,9 +147,7 @@ class FBAOrderFilter(forms.Form):
         widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
     )
     fulfilled_by = forms.ModelChoiceField(
-        Staff.objects.annotate(fba_order_count=Count("fulfilled_fba_orders")).filter(
-            fba_order_count__gte=1
-        ),
+        Staff.objects.filter(fba_packer=True, hidden=False).order_by("first_name"),
         required=False,
     )
     country = forms.ModelChoiceField(models.FBARegion.objects.all(), required=False)
