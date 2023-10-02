@@ -8,8 +8,8 @@
 
                 <div class="input-group mb-3">
                     <span class="input-group-text" for="country">Country</span>
-                    <select name="country" id="country" class="form-select">
-                        {% for country in countries %}<option value="{{ country.id }}">{{ country }}</option>{% endfor %}
+                    <select name="region" id="region" class="form-select">
+                        {% for region in regions %}<option value="{{ region.id }}">{{ region }}</option>{% endfor %}
                     </select>
                 </div>
 
@@ -156,9 +156,8 @@
 
                 <div class="input-group mb-3">
                     <span class="input-group-text" for="max_quantity_no_stock">Maximum Sendable</span>
-                    <input class="form-control"
+                    <input class="form-control max_quantity_no_stock"
                            type="number"
-                           class="max_quantity_no_stock"
                            id="max_quantity_no_stock"
                            readonly>
                 </div>
@@ -175,7 +174,7 @@
         var data = {
             "zero_rated": $("#zero_rated").is(':checked'),
             "selling_price": $("#selling_price").val(),
-            "country": $("#country").val(),
+            "region": $("#region").val(),
             "purchase_price": $("#purchase_price").val(),
             "quantity": $("#quantity").val(),
             "fba_fee": $("#fba_fee").val(),

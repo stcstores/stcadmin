@@ -266,7 +266,7 @@
             "sku": "{{ product.sku }}",
             "zero_rated": ("{% if product.vat_rate.percentage == 0 %}true{% else %}false{% endif %}") === "true",
             "selling_price": $("#{{ form.selling_price.auto_id }}").val(),
-            "country": $("#{{ form.country.auto_id }}").val(),
+            "region": $("#{{ form.region.auto_id }}").val(),
             "purchase_price": parseFloat("{{ product.purchase_price }}"),
             "quantity": $("#{{ form.aproximate_quantity.auto_id }}").val(),
             "fba_fee": $("#{{ form.FBA_fee.auto_id }}").val(),

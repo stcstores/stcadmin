@@ -171,7 +171,6 @@ class RepeatFBAOrder(FBAOrderCreate):
         """Return initial form values."""
         initial = super().get_initial()
         initial["region"] = self.to_repeat.region
-        initial["country"] = self.to_repeat.region.country
         initial["selling_price"] = self.to_repeat.selling_price
         initial["FBA_fee"] = self.to_repeat.FBA_fee
         return initial
@@ -334,7 +333,9 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
         context = super().get_context_data(*args, **kwargs)
-        context["regions"] = models.FBARegion.objects.all().prefetch_related("country")
+        context["regions"] = models.FBARegion.objects.filter(
+            active=True
+        ).prefetch_related("country")
         context["page_range"] = self.get_page_range(context["paginator"])
         context["selected_region"] = self.request.GET.get("region")
         return context
@@ -369,18 +370,19 @@ class FBAPriceCalculator(FBAUserMixin, View):
             response["max_quantity_no_stock"] = max_quantity_no_stock
             return JsonResponse(response)
         except Exception:
+            raise
             return HttpResponseBadRequest()
 
     def parse_request(self):
         """Get request parameters from POST."""
         post_data = self.request.POST
         self.selling_price = float(post_data.get("selling_price"))
-        self.country_id = int(post_data.get("country"))
+        self.country_id = int(post_data.get("region"))
         self.purchase_price = float(post_data.get("purchase_price"))
         self.fba_fee = float(post_data.get("fba_fee"))
-        country_id = int(post_data.get("country"))
-        self.country = models.FBACountry.objects.get(id=country_id)
-        self.exchange_rate = float(self.country.country.currency.exchange_rate())
+        region_id = int(post_data.get("region"))
+        self.region = models.FBARegion.objects.get(id=region_id)
+        self.exchange_rate = float(self.region.country.currency.exchange_rate())
         self.product_weight = int(post_data.get("weight"))
         self.stock_level = int(post_data.get("stock_level"))
         self.zero_rated = post_data.get("zero_rated") == "true"
@@ -398,14 +400,14 @@ class FBAPriceCalculator(FBAUserMixin, View):
 
     def get_currency_symbol(self):
         """Return the currency symbol."""
-        return self.country.country.currency.symbol
+        return self.region.country.currency.symbol
 
     def get_vat(self):
         """Return the caclulated VAT."""
-        if self.country.country.vat_is_required() == self.country.country.VAT_NEVER:
+        if self.region.country.vat_is_required() == self.region.country.VAT_NEVER:
             return 0.0
         elif (
-            self.country.country.vat_is_required() != self.country.country.VAT_ALWAYS
+            self.region.country.vat_is_required() != self.region.country.VAT_ALWAYS
             and self.zero_rated
         ):
             return 0.0
@@ -418,7 +420,8 @@ class FBAPriceCalculator(FBAUserMixin, View):
         """Return the caclulated price to post to FBA."""
         shipped_weight = self.product_weight * self.quantity
         self.postage_gbp = round(
-            float(self.country.region.calculate_shipping(shipped_weight)) / 100.0, 2
+            float(self.region.calculate_shipping(shipped_weight)) / 100.0,
+            2,
         )
         self.postage_local = round(self.postage_gbp / self.exchange_rate, 2)
 
@@ -457,7 +460,7 @@ class FBAPriceCalculator(FBAUserMixin, View):
 
     def get_max_quantity(self):
         """Return the maximum number of the product that can be sent."""
-        max_quantity = (self.country.region.max_weight * 1000) // self.product_weight
+        max_quantity = (self.region.max_weight * 1000) // self.product_weight
         return min((max_quantity, self.stock_level)), max_quantity
 
 
@@ -677,5 +680,5 @@ class ShippingCalculator(FBAUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Return context for the template."""
         context = super().get_context_data(*args, **kwargs)
-        context["countries"] = models.FBACountry.objects.all()
+        context["regions"] = models.FBARegion.objects.filter(active=True)
         return context
