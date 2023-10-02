@@ -128,7 +128,7 @@
                             <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
                         </td>
                         <td id="closed_at_{{ order.id }}">
-                            <div>{{ order.fulfilled_by.staff_member.full_name }}</div>
+                            <div>{{ order.fulfilled_by.full_name }}</div>
                             <div>
                                 <small class="font-monospace">{{ order.closed_at|date:"Y-m-d H:i" }}</small>
                             </div>
@@ -149,7 +149,7 @@
                                         id="prioritise_{{ order.pk }}">Prioritise</button>
                             {% else %}
                                 {% if order.region.auto_close %}
-                                    <span class="text-danger me-3">CLOSED</span>
+                                    <span class="badge bg-danger me-3">CLOSED</span>
                                 {% else %}
                                     <a href="{% url 'fba:shipping_price' order.pk %}"
                                        class="btn btn-primary btn-sm mb-1">Set Price</a>

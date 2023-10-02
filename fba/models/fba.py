@@ -35,6 +35,7 @@ class FBARegion(models.Model):
     warehouse_required = models.BooleanField(default=False)
     expiry_date_required = models.BooleanField(default=False)
     position = models.PositiveSmallIntegerField(default=9999)
+    active = models.BooleanField(default=True)
 
     class Meta:
         """Meta class for FBARegion."""

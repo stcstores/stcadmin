@@ -5,7 +5,7 @@ from datetime import datetime
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.utils.timezone import make_aware
 
 from fba import models
@@ -92,7 +92,6 @@ class CreateFBAOrderForm(forms.ModelForm):
 
     field_order = [
         "region",
-        "country",
         "product_asin",
         "selling_price",
         "FBA_fee",
@@ -103,6 +102,14 @@ class CreateFBAOrderForm(forms.ModelForm):
         "is_fragile",
         "notes",
     ]
+
+    def __init__(self, *args, **kwargs):
+        """Form for managing FBA orders."""
+        super().__init__(*args, **kwargs)
+        if not self.instance.id:
+            self.fields["region"].queryset = models.FBARegion.objects.filter(
+                active=True
+            )
 
 
 class FBAOrderFilter(forms.Form):
@@ -138,6 +145,12 @@ class FBAOrderFilter(forms.Form):
     fulfilled_to = forms.DateField(
         required=False,
         widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
+    )
+    fulfilled_by = forms.ModelChoiceField(
+        Staff.objects.annotate(fba_order_count=Count("fulfilled_fba_orders")).filter(
+            fba_order_count__gte=1
+        ),
+        required=False,
     )
     country = forms.ModelChoiceField(models.FBARegion.objects.all(), required=False)
     supplier = forms.ChoiceField(choices=[], required=False)
@@ -205,6 +218,7 @@ class FBAOrderFilter(forms.Form):
             "status": data.get("status"),
             "region__name": data.get("country"),
             "product__supplier": data.get("supplier"),
+            "fulfilled_by": data.get("fulfilled_by"),
         }
         return {
             key: value

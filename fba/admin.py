@@ -13,6 +13,7 @@ class FBARegionAdmin(admin.ModelAdmin):
     exclude = ()
     list_display = [
         "name",
+        "active",
         "country",
         "postage_price",
         "postage_per_kg",
@@ -29,6 +30,7 @@ class FBARegionAdmin(admin.ModelAdmin):
     ]
     list_editable = [
         "country",
+        "active",
         "postage_price",
         "max_weight",
         "max_size",
@@ -39,6 +41,8 @@ class FBARegionAdmin(admin.ModelAdmin):
         "expiry_date_required",
         "position",
     ]
+
+    list_filter = ("active",)
 
 
 @admin.register(models.FBAOrder)
