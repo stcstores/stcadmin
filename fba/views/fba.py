@@ -336,9 +336,11 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
                     Q(product__sku__icontains=search_text)
                     | Q(product__product_range__name__icontains=search_text)
                     | Q(product_asin__icontains=search_text)
-                    | Q(product__barcode=search_text)
-                    | Q(product__sku=search_text)
-                    | Q(product__product_range__sku=search_text)
+                    | Q(product__barcode__iexact=search_text)
+                    | Q(product__sku__iexact=search_text)
+                    | Q(product__product_range__sku__iexact=search_text)
+                    | Q(product__supplier_sku__iexact=search_text)
+                    | Q(id__iexact=search_text)
                 )
             )
         return qs
@@ -350,7 +352,8 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
             active=True
         ).prefetch_related("country")
         context["page_range"] = self.get_page_range(context["paginator"])
-        context["selected_region"] = self.request.GET.get("region")
+        if region := self.request.GET.get("region"):
+            context["selected_region"] = int(region)
         return context
 
     def get_page_range(self, paginator):

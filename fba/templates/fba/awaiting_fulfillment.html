@@ -18,12 +18,12 @@
                         <button class="btn btn-primary">Search</button>
                     </div>
                     <div class="col-lg-5">
-                        <a class="region_select btn btn-primary btn-sm mb-1 {% if selected_region is none %}active{% endif %}"
-                           href="?{% query_transform region="" %}"
+                        <a href="?{% query_transform region="" page="" %}"
+                           class="btn btn-primary btn-sm{% if request.GET.region %}{% else %} active{% endif %}"
                            value="">All</a>
                         {% for region in regions %}
-                            <a href="?{% query_transform region=region.id %}"
-                               class="region_select btn btn-primary btn-sm mb-1 {% if region.name == selected_region %}active{% endif %}"
+                            <a href="?{% query_transform region=region.id page="" %}"
+                               class="btn btn-primary btn-sm{% if selected_region == region.id %} active{% endif %}"
                                name="region">{{ region.flag }} {{ region.name }}</a>
                         {% endfor %}
                     </div>
