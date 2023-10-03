@@ -1,4 +1,5 @@
 {% extends "fba/base.html" %}
+{% load stcadmin_extras %}
 
 {% block content %}
     <div class="container">
@@ -6,17 +7,27 @@
 
         <div class="filter mb-3 text-center">
             <form action="" class="region_filter" method="get">
-                <button class="region_select btn btn-primary btn-sm mb-1"
-                        name="region"
-                        value="">All</button>
-                {% for region in regions %}
-                    <button class="region_select btn btn-primary btn-sm mb-1"
-                            name="region"
-                            value="{{ region.name }}"
-                            {% if region.name == selected_region %}disabled{% endif %}>
-                        {{ region.flag }} {{ region.name }}
-                    </button>
-                {% endfor %}
+                <div class="row justify-content-center mb-3">
+                    <div class="col-lg-4">
+                        <input type="text"
+                               name="search_term"
+                               class="form-control"
+                               value="{{ request.GET.search_term }}">
+                    </div>
+                    <div class="col-lg-1">
+                        <button class="btn btn-primary">Search</button>
+                    </div>
+                    <div class="col-lg-5">
+                        <a class="region_select btn btn-primary btn-sm mb-1 {% if selected_region is none %}active{% endif %}"
+                           href="?{% query_transform region="" %}"
+                           value="">All</a>
+                        {% for region in regions %}
+                            <a href="?{% query_transform region=region.id %}"
+                               class="region_select btn btn-primary btn-sm mb-1 {% if region.name == selected_region %}active{% endif %}"
+                               name="region">{{ region.flag }} {{ region.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
             </form>
         </div>
 

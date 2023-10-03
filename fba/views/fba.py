@@ -5,6 +5,7 @@ import json
 
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, reverse
 from django.utils import timezone
@@ -313,10 +314,9 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
     def get_queryset(self):
         """Return a queryset of orders awaiting fulillment."""
         filter_kwargs = {}
-        region_name = self.request.GET.get("region")
-        if region_name is not None and region_name != "":
-            filter_kwargs["region__name"] = region_name
-        return (
+        if region_id := self.request.GET.get("region"):
+            filter_kwargs["region__id"] = region_id
+        qs = (
             self.model.awaiting_fulfillment.filter(**filter_kwargs)
             .select_related(
                 "region__country",
@@ -329,6 +329,19 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
                 "product__variation_option_values",
             )
         )
+        if search_text := self.request.GET.get("search_term"):
+            search_text = search_text.strip()
+            qs = qs.filter(
+                Q(
+                    Q(product__sku__icontains=search_text)
+                    | Q(product__product_range__name__icontains=search_text)
+                    | Q(product_asin__icontains=search_text)
+                    | Q(product__barcode=search_text)
+                    | Q(product__sku=search_text)
+                    | Q(product__product_range__sku=search_text)
+                )
+            )
+        return qs
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
