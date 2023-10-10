@@ -316,6 +316,8 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
         filter_kwargs = {}
         if region_id := self.request.GET.get("region"):
             filter_kwargs["region__id"] = region_id
+        if status := self.request.GET.get("status"):
+            filter_kwargs["status"] = status
         qs = (
             self.model.awaiting_fulfillment.filter(**filter_kwargs)
             .select_related(

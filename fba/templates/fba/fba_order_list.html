@@ -93,6 +93,7 @@
                                 <small class="badge bg-{% if order.status == order.FULFILLED or order.status == order.AWAITING_BOOKING %}success{% elif order.status == order.PRINTED %}primary{% elif order.status == order.ON_HOLD %}danger{% else %}dark{% endif %}">
                                     {{ order.status }}
                                 </small>
+                                {% if order.is_prioritised %}<div class="badge bg-danger me-3">Prioritised</div>{% endif %}
                             </div>
                         </td>
                         <td class="tracking_number">

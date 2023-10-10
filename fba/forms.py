@@ -156,6 +156,7 @@ class FBAOrderFilter(forms.Form):
         choices=(("", ""), (CLOSED, "Closed"), (NOT_CLOSED, "Not Closed")),
         required=False,
     )
+    prioritised = forms.BooleanField(required=False)
     sort_by = forms.ChoiceField(
         choices=(
             ("-created_at", "Date Created"),
@@ -236,6 +237,10 @@ class FBAOrderFilter(forms.Form):
             qs = self.text_search(search_text, qs)
         if closed := self.cleaned_data.get("closed"):
             qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
+        if self.cleaned_data.get("prioritised"):
+            qs = qs.exclude(status=models.FBAOrder.FULFILLED).filter(
+                priority__lt=models.FBAOrder.MAX_PRIORITY
+            )
         qs = qs.select_related(
             "region__country",
             "product",

@@ -139,6 +139,7 @@ class FBAOrder(models.Model):
     PRINTED = "Printed"
     NOT_PROCESSED = "Not Processed"
     ON_HOLD = "On Hold"
+
     MAX_PRIORITY = 999
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -203,6 +204,10 @@ class FBAOrder(models.Model):
     def __str__(self):
         return f"{self.product.sku} - {self.created_at.strftime('%Y-%m-%d')}"
 
+    def is_prioritised(self):
+        """Return True if the order has been prioritised, otherwise False."""
+        return self.priority < self.MAX_PRIORITY
+
     def save(self, *args, **kwargs):
         """Update the status field."""
         self.status = self.get_status()
@@ -232,13 +237,14 @@ class FBAOrder(models.Model):
     def close(self):
         """Mark the order closed."""
         self.closed_at = timezone.now()
+        self.priority = self.MAX_PRIORITY
         self.save()
 
     def prioritise(self):
         """Mark the order as top priority."""
-        FBAOrder.objects.filter(priority__lt=self.MAX_PRIORITY).update(
-            priority=models.F("priority") + 1
-        )
+        FBAOrder.objects.filter(priority__lt=self.MAX_PRIORITY).exclude(
+            status=self.FULFILLED
+        ).update(priority=models.F("priority") + 1)
         self.priority = 1
         self.save()
 

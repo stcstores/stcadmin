@@ -182,6 +182,7 @@
             </table>
  
             <div>
+                {% if order.is_prioritised %}<h2>PRIORITISED</h2>{% endif %}
                 {% if order.is_combinable %}<h2>COMBINABLE</h2>{% endif %}
                 {% if order.is_fragile %}<h2>FRAGILE, NO LABELS NEEDED</h2>{% endif %}
                 {% if order.product_is_multipack %}<h2>MULTIPACK ITEM - UPDATE STOCK MANUALLY</h2>{% endif %}
