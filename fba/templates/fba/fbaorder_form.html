@@ -44,7 +44,7 @@
             {% if form.instance.id and form.instance.status != form.instance.ON_HOLD %}
                 <a href="{% url 'fba:fulfill_fba_order' form.instance.id %}"
                    class="btn btn-primary">
-                    {% if form.instance.status == form.instance.NOT_PROCESSED or form.instance.status == form.instance.AWAITING_BOOKING %}
+                    {% if form.instance.status == form.instance.NOT_PROCESSED or form.instance.status == form.instance.READY %}
                         Fulfill Order
                     {% else %}
                         Complete Order

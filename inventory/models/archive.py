@@ -19,12 +19,8 @@ class Archiver:
                 open_fba_orders=Count(
                     "fba_orders",
                     filter=Q(
-                        fba_orders__status__in=(
-                            "Awaiting Collection Booking",
-                            "Printed",
-                            "Not Processed",
-                            "On Hold",
-                        )
+                        Q(fba_orders__on_hold=True)
+                        | Q(fba_orders__closed_at__isnull=True)
                     ),
                 )
             )

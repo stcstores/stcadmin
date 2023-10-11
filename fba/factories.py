@@ -69,23 +69,6 @@ class FBAOrderFactory(DjangoModelFactory):
         None,
     )
     region = factory.SubFactory(FBARegionFactory)
-    status = factory.LazyAttribute(
-        lambda o: models.FBAOrder.FULFILLED
-        if o.fulfilled
-        else (
-            models.FBAOrder.AWAITING_BOOKING
-            if o.awaiting_booking
-            else (
-                models.FBAOrder.printed
-                if o.printed
-                else (
-                    models.FBAOrder.ON_HOLD
-                    if o.on_hold
-                    else models.FBAOrder.NOT_PROCESSED
-                )
-            )
-        )
-    )
     product = factory.SubFactory(ProductFactory)
     product_weight = factory.Faker("pyint", min_value=0, max_value=5000)
     product_asin = factory.Faker("pystr", min_chars=14, max_chars=14)

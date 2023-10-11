@@ -1,6 +1,7 @@
 """Models for the fba app."""
 
-from .fba import FBAOrder, FBARegion, FBAShippingPrice, FBATrackingNumber
+from .fba import FBARegion, FBAShippingPrice, FBATrackingNumber
+from .fba_order import FBAOrder
 from .shipments import (
     FBAShipmentDestination,
     FBAShipmentExport,

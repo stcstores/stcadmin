@@ -71,7 +71,6 @@ class FBAOrderAdmin(admin.ModelAdmin):
 
     list_display = [
         "__str__",
-        "status",
         "region",
         "created_at",
         "modified_at",
@@ -101,7 +100,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
 
     date_hierarchy = "created_at"
 
-    list_filter = ["region", "status"]
+    list_filter = ["region"]
 
 
 @admin.register(models.FBAShippingPrice)
