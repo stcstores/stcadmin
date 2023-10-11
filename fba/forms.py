@@ -124,7 +124,7 @@ class FBAOrderFilter(forms.Form):
             ("", ""),
             (models.FBAOrder.NOT_PROCESSED, models.FBAOrder.NOT_PROCESSED),
             (models.FBAOrder.PRINTED, models.FBAOrder.PRINTED),
-            (models.FBAOrder.AWAITING_BOOKING, models.FBAOrder.AWAITING_BOOKING),
+            (models.FBAOrder.READY, models.FBAOrder.READY),
             (models.FBAOrder.FULFILLED, models.FBAOrder.FULFILLED),
             (models.FBAOrder.ON_HOLD, models.FBAOrder.ON_HOLD),
         ),
@@ -353,14 +353,15 @@ class OnHoldOrderFilter(forms.Form):
     def __init__(self, *args, **kwargs):
         """Add supplier choices."""
         super().__init__(*args, **kwargs)
-        self.fields["supplier"].choices = [("", "")] + [
-            (name, name)
-            for name in models.FBAOrder.objects.filter(
-                on_hold=True, closed_at__isnull=True
-            )
+        supplier_ids = (
+            models.FBAOrder.objects.on_hold()
             .values_list("product__supplier", flat=True)
             .order_by("product__supplier")
             .distinct()
+        )
+        suppliers = Supplier.objects.filter(id__in=supplier_ids)
+        self.fields["supplier"].choices = [("", "")] + [
+            (supplier.id, supplier.name) for supplier in suppliers
         ]
 
     def clean_created_from(self):

@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import F, Sum
 from solo.models import SingletonModel
 
-from .fba import FBAOrder
+from .fba_order import FBAOrder
 from .shipment_files import UPSAddressFile, UPSShipmentFile
 
 

@@ -90,7 +90,7 @@
                         <td id="status_{{ order.id }}">
                             <div>{{ order.region.flag }}</div>
                             <div>
-                                <small class="badge bg-{% if order.status == order.FULFILLED or order.status == order.AWAITING_BOOKING %}success{% elif order.status == order.PRINTED %}primary{% elif order.status == order.ON_HOLD %}danger{% else %}dark{% endif %}">
+                                <small class="badge bg-{% if order.status == order.FULFILLED or order.status == order.READY %}success{% elif order.status == order.PRINTED %}primary{% elif order.status == order.ON_HOLD %}danger{% else %}dark{% endif %}">
                                     {{ order.status }}
                                 </small>
                             </div>

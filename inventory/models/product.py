@@ -109,7 +109,7 @@ class ProductManager(PolymorphicManager):
                 "fba_orders",
                 filter=models.Q(
                     fba_orders__status__in=(
-                        FBAOrder.AWAITING_BOOKING,
+                        FBAOrder.READY,
                         FBAOrder.PRINTED,
                         FBAOrder.NOT_PROCESSED,
                         FBAOrder.ON_HOLD,

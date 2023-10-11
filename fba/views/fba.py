@@ -319,7 +319,9 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
         if status := self.request.GET.get("status"):
             filter_kwargs["status"] = status
         qs = (
-            self.model.awaiting_fulfillment.filter(**filter_kwargs)
+            self.model.objects.awaiting_fulfillment()
+            .order_by_priority()
+            .filter(**filter_kwargs)
             .select_related(
                 "region__country",
                 "product",
@@ -356,6 +358,11 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
         context["page_range"] = self.get_page_range(context["paginator"])
         if region := self.request.GET.get("region"):
             context["selected_region"] = int(region)
+        context["statuses"] = [
+            models.FBAOrder.READY,
+            models.FBAOrder.PRINTED,
+            models.FBAOrder.NOT_PROCESSED,
+        ]
         return context
 
     def get_page_range(self, paginator):
