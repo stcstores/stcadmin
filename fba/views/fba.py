@@ -388,7 +388,6 @@ class FBAPriceCalculator(FBAUserMixin, View):
             response["max_quantity_no_stock"] = max_quantity_no_stock
             return JsonResponse(response)
         except Exception:
-            raise
             return HttpResponseBadRequest()
 
     def parse_request(self):

@@ -123,14 +123,6 @@ class AwaitingFulfillmentManager(models.Manager):
         )
 
 
-class ActiveFulfillmentCenter(models.Manager):
-    """Manager for active fulfillment centers."""
-
-    def get_queryset(self):
-        """Return a queryset of active fulfillment centers."""
-        return super().get_queryset().filter(inactive=False)
-
-
 class FBAOrder(models.Model):
     """Model for FBA orders."""
 
