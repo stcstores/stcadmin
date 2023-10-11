@@ -166,7 +166,6 @@ class FBAOrder(models.Model):
     is_fragile = models.BooleanField(default=False)
 
     objects = FBAOrderManager()
-    # awaiting_fulfillment = AwaitingFulfillmentManager()
 
     class Meta:
         """Meta class for FBAOrder."""
@@ -200,6 +199,15 @@ class FBAOrder(models.Model):
         self.priority = self.MAX_PRIORITY
         self.on_hold = False
         self.save()
+
+    def details_complete(self):
+        """Return True if all fields required to complete the order are filled."""
+        return all(
+            (
+                self.box_weight is not None,
+                self.quantity_sent is not None,
+            )
+        )
 
     def prioritise(self):
         """Mark the order as top priority."""
