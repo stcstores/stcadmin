@@ -100,37 +100,6 @@ class ProductManager(PolymorphicManager):
             qs = qs.exclude(is_archived=True)
         return qs
 
-    def _get_archivable_products(self):
-        from fba.models import FBAOrder
-        from linnworks.models import StockManager
-
-        products = self.filter(is_end_of_line=True, is_archived=False).annotate(
-            open_fba_orders=models.Count(
-                "fba_orders",
-                filter=models.Q(
-                    fba_orders__status__in=(
-                        FBAOrder.READY,
-                        FBAOrder.PRINTED,
-                        FBAOrder.NOT_PROCESSED,
-                        FBAOrder.ON_HOLD,
-                    )
-                ),
-            )
-        )
-        chunks = [products[i : i + 100] for i in range(0, products.count(), 100)]
-        to_archive = []
-        for chunk in chunks:
-            chunk_stock_levels = StockManager.get_stock_levels(chunk)
-            for product in chunk:
-                if chunk_stock_levels[product.sku].available == 0:
-                    to_archive.append(product)
-        return to_archive
-
-    def update_archived_products(self):
-        """Set archivable products as archived."""
-        for product in self._get_archivable_products():
-            product.set_archived()
-
 
 class BaseProduct(PolymorphicModel):
     """Base model for products."""
