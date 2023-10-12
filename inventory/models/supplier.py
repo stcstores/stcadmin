@@ -6,13 +6,52 @@ from django.urls import reverse
 from django.utils import timezone
 
 
+class SupplierQueryset(models.QuerySet):
+    """Queryset for the Supplier model."""
+
+    def active(self):
+        """Return a queryset of suppliers that are active and not blacklisted."""
+        return self.filter(active=True, blacklisted=False)
+
+    def inactive(self):
+        """Return a queryset of suppliers that are not active or blacklisted."""
+        return self.filter(active=False, blacklisted=False)
+
+    def blacklisted(self):
+        """Return a queryset of suppliers that have been blacklisted."""
+        return self.filter(blacklisted=True)
+
+
+class SupplierManager(models.Manager):
+    """Model manager for the Supplier model."""
+
+    def get_queryset(self):
+        """Return a supplier queryset."""
+        return SupplierQueryset(self.model, using=self._db)
+
+    def active(self):
+        """Return a queryset of suppliers that are active and not blacklisted."""
+        return self.get_queryset().active()
+
+    def inactive(self):
+        """Return a queryset of suppliers that are not active or blacklisted."""
+        return self.get_queryset().inactive()
+
+    def blacklisted(self):
+        """Return a queryset of suppliers that have been blacklisted."""
+        return self.get_queryset().blacklisted()
+
+
 class Supplier(models.Model):
     """Model for suppliers."""
 
     name = models.CharField(max_length=50, unique=True, db_index=True)
     active = models.BooleanField(default=True)
+    blacklisted = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
+
+    objects = SupplierManager()
 
     class Meta:
         """Meta class for Supplier."""

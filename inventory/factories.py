@@ -70,6 +70,7 @@ class SupplierFactory(DjangoModelFactory):
 
     name = factory.Faker("text", max_nb_chars=50)
     active = True
+    blacklisted = False
 
 
 class SupplierContactFactory(DjangoModelFactory):

@@ -18,8 +18,8 @@ class Suppliers(InventoryUserMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         """Add suppliers to the template context."""
         context = super().get_context_data(*args, **kwargs)
-        context["active_suppliers"] = models.Supplier.objects.filter(active=True)
-        context["inactive_suppliers"] = models.Supplier.objects.filter(active=False)
+        context["active_suppliers"] = models.Supplier.objects.active()
+        context["inactive_suppliers"] = models.Supplier.objects.inactive()
         return context
 
 

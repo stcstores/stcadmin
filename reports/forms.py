@@ -11,7 +11,7 @@ from inventory.models import Supplier
 class ReorderReportForm(forms.Form):
     """Form for creating reorder reports."""
 
-    supplier = forms.ModelChoiceField(queryset=Supplier.objects.filter(active=True))
+    supplier = forms.ModelChoiceField(queryset=Supplier.objects.active())
     date_from = forms.DateField(widget=forms.DateInput(attrs={"class": "datepicker"}))
     date_to = forms.DateField(widget=forms.DateInput(attrs={"class": "datepicker"}))
 
