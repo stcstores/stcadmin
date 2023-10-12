@@ -195,3 +195,16 @@ class ImagesForm(forms.Form):
             pk__in=product_ids
         ).prefetch_related("images")
         return cleaned_data
+
+
+class AddSupplierToBlacklistForm(forms.Form):
+    """Form for adding blacklisted suppliers."""
+
+    name = forms.CharField()
+
+    def save(self):
+        """Set an existing supplier as blacklisted or create a new one."""
+        self.instance, _ = models.Supplier.objects.update_or_create(
+            name=self.cleaned_data["name"], defaults={"blacklisted": True}
+        )
+        return self.instance

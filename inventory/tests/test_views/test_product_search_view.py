@@ -66,12 +66,6 @@ def test_form_in_get_context(get_response):
 
 
 @pytest.mark.django_db
-def test_form_in_post_context(get_response):
-    form = get_response.context["form"]
-    assert isinstance(form, forms.ProductSearchForm)
-
-
-@pytest.mark.django_db
 def test_returns_get_response_for_invaild_post(get_response):
     assert get_response.status_code == 200
     assert "inventory/product_search/search_page.html" in (

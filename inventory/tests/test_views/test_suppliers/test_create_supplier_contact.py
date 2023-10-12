@@ -12,7 +12,8 @@ def supplier(supplier_factory):
 @pytest.fixture
 def url(supplier):
     return reverse(
-        "inventory:create_supplier_contact", kwargs={"supplier_pk": supplier.pk}
+        "inventory:create_supplier_contact",
+        kwargs={"supplier_pk": supplier.pk},
     )
 
 
@@ -39,7 +40,7 @@ def post_response(group_logged_in_client, url, post_data):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "inventory/suppliercontact_form.html" in (
+    assert "inventory/suppliers/suppliercontact_form.html" in (
         t.name for t in get_response.templates
     )
 

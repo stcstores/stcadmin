@@ -9,15 +9,25 @@
  
     <h3 class="display-3 mb-5">
       {{ supplier.name }}
-      {% if supplier.active == False %}<span class="badge bg-danger rounded-pill fs-5">Inactive</span>{% endif %}
+      {% if supplier.active == False %}<span class="badge bg-warning rounded-pill fs-5">Inactive</span>{% endif %}
+      {% if supplier.ablacklisted %}<span class="badge bg-danger rounded-pill fs-5">Blacklisted</span>{% endif %}
     </h3>
     <div class="mb-3">
-      {% if supplier.active %}
-        <a href="{% url 'inventory:toggle_supplier_active' supplier.id %}"
-           class="btn btn-warning">Set Inactive</a>
+      {% if supplier.blacklisted %}
+        <a href="{% url "inventory:remove_blacklisted_supplier" supplier.id %}"
+           class="btn btn-warning">Remove from Blacklist</a>
+        <a href="{% url "inventory:activate_blacklisted_supplier" supplier.id %}"
+           class="btn btn-warning">Remove from Blaklist and Mark Active</a>
       {% else %}
-        <a href="{% url 'inventory:toggle_supplier_active' supplier.id %}"
-           class="btn btn-danger btn">Reactivate Supplier</a>
+        {% if supplier.active %}
+          <a href="{% url 'inventory:toggle_supplier_active' supplier.id %}"
+             class="btn btn-warning">Set Inactive</a>
+        {% else %}
+          <a href="{% url 'inventory:toggle_supplier_active' supplier.id %}"
+             class="btn btn-warning btn">Reactivate Supplier</a>
+        {% endif %}
+        <a href="{% url "inventory:blacklist_supplier" supplier.id %}"
+           class="btn btn-danger">Blacklist</a>
       {% endif %}
     </div>
     <h3 class="display-5">Contacts</h3>
