@@ -56,7 +56,7 @@ class MultipleBayWidget(BootstrapSelect2Mixin, ModelSelect2MultipleWidget):
 class AdditionalSuppliersWidget(ModelSelect2MultipleWidget):
     """Widget for selecting additional_suppliers."""
 
-    queryset = models.Supplier.objects.filter(active=True)
+    queryset = models.Supplier.objects.active()
     search_fields = ["name__icontains"]
 
 

@@ -8,7 +8,7 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.base import TemplateView, View
+from django.views.generic import TemplateView, View
 
 from fba.models import FBAOrder
 from home.views import UserInGroupMixin

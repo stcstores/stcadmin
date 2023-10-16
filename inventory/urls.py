@@ -105,6 +105,26 @@ inventory_urlpatterns = [
         name="add_range_image",
     ),
     path("bay_search", views.BaySearch.as_view(), name="bay_search"),
+    path(
+        "supplier_blacklist/add",
+        views.suppliers.AddSupplierToBlacklist.as_view(),
+        name="add_supplier_to_blacklist",
+    ),
+    path(
+        "supplier_blacklist/remove/<int:pk>",
+        views.suppliers.RemoveBlacklistedSupplier.as_view(),
+        name="remove_blacklisted_supplier",
+    ),
+    path(
+        "supplier_blacklist/activate/<int:pk>",
+        views.suppliers.ActivateBlacklistedSupplier.as_view(),
+        name="activate_blacklisted_supplier",
+    ),
+    path(
+        "blacklist_supplier/<int:pk>",
+        views.suppliers.BlacklistSupplier.as_view(),
+        name="blacklist_supplier",
+    ),
 ]
 
 api_urlpatterns = [

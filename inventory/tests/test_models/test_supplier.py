@@ -13,6 +13,21 @@ def supplier(supplier_factory):
 
 
 @pytest.fixture
+def inactive_supplier(supplier_factory):
+    return supplier_factory.create(active=False)
+
+
+@pytest.fixture
+def blacklisted_supplier(supplier_factory):
+    return supplier_factory.create(blacklisted=True)
+
+
+@pytest.fixture
+def inactive_blacklisted_supplier(supplier_factory):
+    return supplier_factory.create(active=False, blacklisted=True)
+
+
+@pytest.fixture
 def new_supplier():
     supplier = models.Supplier(name="New Supplier")
     supplier.save()
@@ -54,3 +69,36 @@ def test_str_method(supplier):
 def test_get_absolute_url_method(supplier):
     assert isinstance(supplier.get_absolute_url(), str)
     assert len(supplier.get_absolute_url()) > 0
+
+
+@pytest.mark.django_db
+def test_active_filter(
+    supplier, inactive_supplier, blacklisted_supplier, inactive_blacklisted_supplier
+):
+    qs = models.Supplier.objects.active()
+    assert qs.contains(supplier)
+    assert not qs.contains(inactive_supplier)
+    assert not qs.contains(blacklisted_supplier)
+    assert not qs.contains(inactive_blacklisted_supplier)
+
+
+@pytest.mark.django_db
+def test_inactive_filter(
+    supplier, inactive_supplier, blacklisted_supplier, inactive_blacklisted_supplier
+):
+    qs = models.Supplier.objects.inactive()
+    assert not qs.contains(supplier)
+    assert qs.contains(inactive_supplier)
+    assert not qs.contains(blacklisted_supplier)
+    assert not qs.contains(inactive_blacklisted_supplier)
+
+
+@pytest.mark.django_db
+def test_blacklisted_filter(
+    supplier, inactive_supplier, blacklisted_supplier, inactive_blacklisted_supplier
+):
+    qs = models.Supplier.objects.blacklisted()
+    assert not qs.contains(supplier)
+    assert not qs.contains(inactive_supplier)
+    assert qs.contains(blacklisted_supplier)
+    assert qs.contains(inactive_blacklisted_supplier)

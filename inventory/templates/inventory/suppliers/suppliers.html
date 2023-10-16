@@ -4,10 +4,14 @@
     <h3 class="display-3 mb-5">Suppliers</h3>
     <div class="mb-3">
       <a href="{% url 'inventory:create_supplier' %}" class="btn btn-primary">Create New Supplier</a>
+      <a href="{% url "inventory:add_supplier_to_blacklist" %}"
+         class="btn btn-danger">Add to Blacklist</a>
     </div>
+ 
     <div>
+ 
       <div class="row">
-        <div class="col">
+        <div class="col-lg-4">
           <h3>Active Suppliers</h3>
           <ul class="list-group">
             {% for supplier in active_suppliers %}
@@ -20,7 +24,7 @@
           </ul>
         </div>
 
-        <div class="col">
+        <div class="col-lg-4">
           <h3>Inactive Suppliers</h3>
           <ul class="list-group">
             {% for supplier in inactive_suppliers %}
@@ -32,6 +36,18 @@
             {% endfor %}
           </ul>
         </div>
+
+        <div class="col-lg-4">
+          <h3>Blacklisted Suppliers</h3>
+          <ul class="list-group">
+            {% for supplier in blacklisted_suppliers %}
+              <li class="list-group-item d-flex justify-content-between alight-items-start">
+                <a href="{% url "inventory:supplier" supplier.id %}">{{ supplier.name }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
       </div>
     </div>
   </div>

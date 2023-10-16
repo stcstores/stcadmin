@@ -1,0 +1,31 @@
+{% extends "inventory/base.html" %}
+
+{% block content %}
+
+    <div class="container">
+        <h3 class="display-3 mb-5">Add Supplier to Blacklist</h3>
+
+        <div class="col-lg-6">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% include "home/bootstrap_inline_form.html" %}
+                <button class="btn btn-primary form-control">Save</button>
+            </form>
+        </div>
+    </div>
+    <datalist id="suppliers">
+        {% for supplier in suppliers %}<option value="{{ supplier }}"></option>{% endfor %}
+    </datalist>
+
+{% endblock content %}
+
+{% block script %}
+
+    <script>
+    $(document).ready(function() {
+        var field = $("#{{ form.name.auto_id }}");
+        field.attr("list", "suppliers")
+    });
+    </script>
+
+{% endblock script %}

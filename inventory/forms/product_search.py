@@ -28,7 +28,7 @@ class ProductSearchForm(forms.Form):
         label="Archived",
     )
     supplier = forms.ModelChoiceField(
-        queryset=models.Supplier.objects.filter(active=True), required=False
+        queryset=models.Supplier.objects.active(), required=False
     )
 
     def get_queryset(self):

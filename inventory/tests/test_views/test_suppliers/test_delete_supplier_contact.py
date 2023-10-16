@@ -12,7 +12,8 @@ def supplier_contact(supplier_contact_factory):
 @pytest.fixture
 def url(supplier_contact):
     return reverse(
-        "inventory:delete_supplier_contact", kwargs={"pk": supplier_contact.pk}
+        "inventory:delete_supplier_contact",
+        kwargs={"pk": supplier_contact.pk},
     )
 
 
@@ -33,7 +34,7 @@ def post_response(group_logged_in_client, url, post_data):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "inventory/suppliercontact_confirm_delete.html" in (
+    assert "inventory/suppliers/suppliercontact_confirm_delete.html" in (
         t.name for t in get_response.templates
     )
 
