@@ -39,9 +39,9 @@ class RestockView(RestockUserMixin, TemplateView):
 
 def add_details_to_product(product):
     """Add fba order count and last reorder to product objects."""
-    product.fba_order_count = FBAOrder.awaiting_fulfillment.filter(
-        product=product
-    ).count()
+    product.fba_order_count = (
+        FBAOrder.objects.awaiting_fulfillment().filter(product=product).count()
+    )
     product.last_reorder = models.Reorder.objects.last_reorder(product)
 
 
