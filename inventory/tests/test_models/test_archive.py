@@ -131,4 +131,4 @@ def test_archivable_products_set_archive_method_is_called(mock_get_archivable_pr
     mock_get_archivable_products.return_value = products
     Archiver.archive_products()
     for product in products:
-        product.set_archived.called_once_with()
+        product.set_archived.assert_called_once_with()

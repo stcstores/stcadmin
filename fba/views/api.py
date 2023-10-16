@@ -47,7 +47,7 @@ class CurrentShipments(BaseShippingAPIView):
             "user": str(shipment.user),
             "package_count": shipment.shipment_package.count(),
             "weight": round(weight, 2) if weight else "N/A",
-            "value": f"£{shipment.value()/100:.2f}" if value else "N/A",
+            "value": f"£{shipment.value() / 100:.2f}" if value else "N/A",
         }
 
     def post(self, request, *args, **kwargs):
