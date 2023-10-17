@@ -143,7 +143,7 @@ class RepeatFBAOrder(FBAOrderCreate):
 
     def duplicate_order(self):
         """Create a duplicate of an FBA order."""
-        stock_level = StockManager.get_stock_level(product=self.product)
+        stock_level = StockManager.get_stock_level(product=self.to_repeat.product)
         if (quantity_sent := self.to_repeat.quantity_sent) is not None:
             aprox_quantity = min((quantity_sent, stock_level))
         else:
