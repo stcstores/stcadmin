@@ -150,7 +150,7 @@ class TestProductBayHistorySetProductBaysMethod:
         models.ProductBayHistory.objects.set_product_bays(
             user=user, product=product, bays=[]
         )
-        assert mock_remove_product_from_bay.has_calls(
+        mock_remove_product_from_bay.assert_has_calls(
             (call(user=user, product=product, bay=link.bay) for link in links)
         )
 
@@ -163,6 +163,6 @@ class TestProductBayHistorySetProductBaysMethod:
         models.ProductBayHistory.objects.set_product_bays(
             user=user, product=product, bays=bays
         )
-        assert mock_add_product_to_bay.has_calls(
+        mock_add_product_to_bay.assert_has_calls(
             (call(user=user, product=product, bay=bay) for bay in bays)
         )
