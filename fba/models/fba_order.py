@@ -45,6 +45,14 @@ class FBAOrderQueryset(models.QuerySet):
         """Return a queryset of orders that are unfulfilled."""
         return self.exclude(status=FBAOrder.FULFILLED)
 
+    def prioritised(self):
+        """Return a queryset of orders that are prioritised."""
+        return self.filter(priority__lt=FBAOrder.MAX_PRIORITY)
+
+    def unprioritised(self):
+        """Return a queryset of orders that are not prioritised."""
+        return self.exclude(priority__lt=FBAOrder.MAX_PRIORITY)
+
     def order_by_priority(self):
         """Return a queryset of orders awaiting fulfullment ordered by status and priority."""
         return (
@@ -113,6 +121,14 @@ class FBAOrderManager(models.Manager):
     def order_by_priority(self):
         """Return a queryset of orders awaiting fulfullment ordered by status and priority."""
         return self.get_queryset().order_by_priority()
+
+    def prioritised(self):
+        """Return a queryset of orders that are prioritised."""
+        return self.get_queryset().prioritised()
+
+    def unprioritised(self):
+        """Return a queryset of orders that are not prioritised."""
+        return self.get_queryset().unprioritised()
 
 
 class FBAOrder(models.Model):

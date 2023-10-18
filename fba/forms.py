@@ -118,6 +118,9 @@ class FBAOrderFilter(forms.Form):
     CLOSED = "closed"
     NOT_CLOSED = "not_closed"
 
+    PRIORITISED = "prioritised"
+    UNPRIORITISED = "unprioritised"
+
     search = forms.CharField(required=False)
     status = forms.ChoiceField(
         choices=(
@@ -153,10 +156,17 @@ class FBAOrderFilter(forms.Form):
     country = forms.ModelChoiceField(models.FBARegion.objects.all(), required=False)
     supplier = forms.ChoiceField(choices=[], required=False)
     closed = forms.ChoiceField(
-        choices=(("", ""), (CLOSED, "Closed"), (NOT_CLOSED, "Not Closed")),
+        choices=(("", "---------"), (CLOSED, "Closed"), (NOT_CLOSED, "Not Closed")),
         required=False,
     )
-    prioritised = forms.BooleanField(required=False)
+    prioritised = forms.ChoiceField(
+        choices=(
+            ("", "---------"),
+            (PRIORITISED, "Prioritised"),
+            (UNPRIORITISED, "Unprioritised"),
+        ),
+        required=False,
+    )
     sort_by = forms.ChoiceField(
         choices=(
             ("-created_at", "Date Created"),
@@ -178,7 +188,7 @@ class FBAOrderFilter(forms.Form):
             .distinct()
         )
         suppliers = Supplier.objects.filter(id__in=supplier_ids).order_by("name")
-        self.fields["supplier"].choices = [("", "")] + [
+        self.fields["supplier"].choices = [("", "---------")] + [
             (supplier.id, supplier.name) for supplier in suppliers
         ]
         self.fields["country"].empty_label = "All"
@@ -206,6 +216,15 @@ class FBAOrderFilter(forms.Form):
         date = self.cleaned_data["fulfilled_to"]
         if date is not None:
             return make_aware(datetime.combine(date, datetime.max.time()))
+
+    def clean_prioritised(self):
+        """Return the priorised filter value."""
+        prioritised = self.cleaned_data["prioritised"]
+        if prioritised == self.PRIORITISED:
+            return True
+        if prioritised == self.UNPRIORITISED:
+            return False
+        return None
 
     def query_kwargs(self, data):
         """Return a dict of filter kwargs."""
@@ -237,10 +256,8 @@ class FBAOrderFilter(forms.Form):
             qs = self.text_search(search_text, qs)
         if closed := self.cleaned_data.get("closed"):
             qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
-        if self.cleaned_data.get("prioritised"):
-            qs = qs.exclude(status=models.FBAOrder.FULFILLED).filter(
-                priority__lt=models.FBAOrder.MAX_PRIORITY
-            )
+
+        qs = self.filter_priority(qs)
         qs = qs.select_related(
             "region__country",
             "product",
@@ -263,6 +280,16 @@ class FBAOrderFilter(forms.Form):
             )
         )
         return qs
+
+    def filter_priority(self, qs):
+        """Return qs filtered by priority."""
+        prioritised = self.cleaned_data.get("prioritised")
+        if prioritised is True:
+            return qs.prioritised()
+        if prioritised is False:
+            return qs.unprioritised()
+        else:
+            return qs
 
 
 class FulfillFBAOrderForm(forms.ModelForm):
