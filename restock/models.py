@@ -1,6 +1,8 @@
 """Models for the restock app."""
+from django.contrib.postgres.search import TrigramWordDistance
 from django.core import validators
 from django.db import models, transaction
+from django.urls import reverse
 from django.utils import timezone
 
 from inventory.models import BaseProduct
@@ -87,3 +89,41 @@ class Reorder(models.Model):
         """Mark the reorder as closed."""
         self.closed_at = timezone.now()
         self.save()
+
+
+class BlacklistedBrandManager(models.Manager):
+    """Model manager for the BlacklistedBrand model."""
+
+    def fuzzy_search(self, search_term):
+        """Return a fuzzy matched search against the name field."""
+        return (
+            self.get_queryset()
+            .annotate(distance=TrigramWordDistance(search_term, "name"))
+            .filter(distance__lte=0.7)
+            .order_by("distance")
+        )
+
+
+class BlacklistedBrand(models.Model):
+    """Model for blacklisted brands."""
+
+    name = models.CharField(max_length=255)
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    objects = BlacklistedBrandManager()
+
+    class Meta:
+        """Meta class for the BlacklistedBrand model."""
+
+        verbose_name = "Blacklisted Brand"
+        verbose_name_plural = "Blacklisted Brands"
+        ordering = ("name",)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        """Return the absolute url of the object."""
+        return reverse("restock:update_blacklisted_brand", kwargs={"pk": self.id})

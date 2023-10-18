@@ -6,9 +6,17 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView, View
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    ListView,
+    TemplateView,
+    UpdateView,
+    View,
+)
 
 from fba.models import FBAOrder
 from home.views import UserInGroupMixin
@@ -191,3 +199,40 @@ class SetOrderComment(RestockUserMixin, View):
         comment = self.request.POST["comment"]
         product = get_object_or_404(BaseProduct, id=product_id)
         return models.Reorder.objects.set_comment(product, comment)
+
+
+class BrandBlacklist(RestockUserMixin, ListView):
+    """View for displaying the list of blacklisted brands."""
+
+    model = models.BlacklistedBrand
+    template_name = "restock/blacklistedbrand_list.html"
+
+    def get_queryset(self, *args, **kwargs):
+        """Perform fuzzy search if search text is in GET."""
+        if search_text := self.request.GET.get("search_text"):
+            return self.model.objects.fuzzy_search(search_text)
+        else:
+            return super().get_queryset()
+
+
+class CreateBlacklistedBrand(RestockUserMixin, CreateView):
+    """View for creating blacklisted brands."""
+
+    model = models.BlacklistedBrand
+    fields = ("name", "comment")
+    success_url = reverse_lazy("restock:brand_blacklist")
+
+
+class UpdateBlacklistedBrand(RestockUserMixin, UpdateView):
+    """View for updating blacklisted brands."""
+
+    model = models.BlacklistedBrand
+    fields = ("name", "comment")
+    success_url = reverse_lazy("restock:brand_blacklist")
+
+
+class DeleteBlacklistedBrand(RestockUserMixin, DeleteView):
+    """View for deleting blacklisted brands."""
+
+    model = models.BlacklistedBrand
+    success_url = reverse_lazy("restock:brand_blacklist")

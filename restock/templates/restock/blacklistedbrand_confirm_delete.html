@@ -1,0 +1,16 @@
+{% extends "restock/base.html" %}
+
+{% block content %}
+
+    <div class="container">
+        <h3 class="display-3 mb-5">Delete Blacklisted Brand</h3>
+ 
+        <form method="post">
+            {% csrf_token %}
+            <p>Are you sure you want to delete brand "{{ object.name }}" from the blacklist?</p>
+            <input type="submit" value="Confirm" class="btn btn-primary">
+        </form>
+ 
+    </div>
+
+{% endblock content %}

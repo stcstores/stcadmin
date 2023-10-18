@@ -1,0 +1,39 @@
+{% extends "restock/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h3 class="display-3 mb-5">Brand Blacklist</h3>
+        <div class="mb-3">
+            <a href="{% url "restock:create_blacklisted_brand" %}"
+               class="btn btn-primary">Add to Brand Blacklist</a>
+        </div>
+ 
+        <form action="" method="get">
+            <div class="row mb-5">
+                <div class="col-lg-6">
+                    <input type="text" class="form-control" name="search_text">
+                </div>
+                <div class="col-lg-1">
+                    <button class="btn btn-primary form-control">Search</button>
+                </div>
+            </div>
+        </form>
+ 
+        <div class="container">
+            {% for brand in object_list %}
+                <div class="row mb-2 bg-light rounded">
+                    <div class="col-lg-3">{{ brand.name }}</div>
+                    <div class="col-lg-4">{{ brand.comment }}</div>
+                    <div class="col-lg-2">
+                        <a href="{% url "restock:delete_blacklisted_brand" brand.pk %}"
+                           class="btn btn-danger">Remove</a>
+                        <a href="{% url "restock:update_blacklisted_brand" brand.pk %}"
+                           class="btn btn-primary">Edit</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+{% endblock content %}
