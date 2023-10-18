@@ -1,0 +1,24 @@
+{% extends "restock/base.html" %}
+
+{% block content %}
+
+    <div class="container">
+        <h3 class="display-3 mb-5">
+            {% if form.instance.id %}
+                Update
+            {% else %}
+                Create
+            {% endif %}
+            Blacklisted Brand
+        </h3>
+
+        <div class="col-lg-6">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% include "home/bootstrap_input_group_form.html" %}
+                <button class="btn btn-primary form-control">Save</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock content %}

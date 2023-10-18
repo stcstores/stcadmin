@@ -32,4 +32,20 @@ urlpatterns = [
     path(
         "set_order_comment", views.SetOrderComment.as_view(), name="set_order_comment"
     ),
+    path("brand_blacklist", views.BrandBlacklist.as_view(), name="brand_blacklist"),
+    path(
+        "create_blacklisted_brand",
+        views.CreateBlacklistedBrand.as_view(),
+        name="create_blacklisted_brand",
+    ),
+    path(
+        "update_blacklisted_brand/<int:pk>",
+        views.UpdateBlacklistedBrand.as_view(),
+        name="update_blacklisted_brand",
+    ),
+    path(
+        "delete_blacklisted_brand/<int:pk>",
+        views.DeleteBlacklistedBrand.as_view(),
+        name="delete_blacklisted_brand",
+    ),
 ]

@@ -27,3 +27,17 @@ class ReorderFactory(factory.django.DjangoModelFactory):
         factory.Faker("date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc),
         None,
     )
+
+
+class BlacklistedBrandFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.BlacklistedBrand
+
+    name = factory.Faker("company")
+    comment = factory.Faker("text", max_nb_chars=100)
+    created_at = factory.Faker(
+        "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
+    )
+    modified_at = factory.Faker(
+        "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
+    )
