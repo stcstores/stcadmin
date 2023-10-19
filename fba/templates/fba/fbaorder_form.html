@@ -16,7 +16,15 @@
  
         {% if form.instance.id %}<span>{{ form.instance.region.flag }}</span>{% endif %}
         <div class="fs-5 font-monospace user-select-all">{{ product.sku }}</div>
-        <div class="fs-3 user-select-all">{{ product.product_range.name }}</div>
+        <div class="fs-3">
+            <span class="user-select-all">{{ product.product_range.name }}</span>
+            {% if product.is_archived %}
+                <span class="badge bg-secondary">Archived</span>
+            {% elif product.is_end_of_line %}
+                <span class="badge bg-danger">End of Line</span>
+            {% endif %}
+        </div>
+ 
         <div class="mb-5">
             {% if product.supplier_sku %}
                 <span class="me-2">
