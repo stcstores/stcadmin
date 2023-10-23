@@ -21,7 +21,7 @@ from django.views.generic import (
 from fba.models import FBAOrder
 from home.views import UserInGroupMixin
 from inventory.models import BaseProduct, Supplier
-from restock import models
+from restock import forms, models
 
 
 class RestockUserMixin(UserInGroupMixin):
@@ -74,8 +74,7 @@ class SearchResults(RestockUserMixin, TemplateView):
 
     def get_products(self, search_text):
         """Return products matching the search string."""
-        search_terms = [_.strip() for _ in search_text.split()]
-        search_terms = [_ for _ in search_terms if _]
+        search_terms = [_.strip() for _ in search_text.split() if _.strip()]
         return (
             BaseProduct.objects.complete()
             .active()
@@ -236,3 +235,11 @@ class DeleteBlacklistedBrand(RestockUserMixin, DeleteView):
 
     model = models.BlacklistedBrand
     success_url = reverse_lazy("restock:brand_blacklist")
+
+
+class UpdateLastOrderedDate(RestockUserMixin, UpdateView):
+    """View for updating the last order date of suppliers."""
+
+    model = Supplier
+    form_class = forms.UpdateSuplierOrderDateForm
+    template_name = "restock/update_supplier_last_ordered.html"

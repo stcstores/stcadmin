@@ -48,6 +48,8 @@ class Supplier(models.Model):
     name = models.CharField(max_length=50, unique=True, db_index=True)
     active = models.BooleanField(default=True)
     blacklisted = models.BooleanField(default=False)
+    last_ordered_from = models.DateField(blank=True, null=True)
+
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True)
 

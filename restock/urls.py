@@ -48,4 +48,9 @@ urlpatterns = [
         views.DeleteBlacklistedBrand.as_view(),
         name="delete_blacklisted_brand",
     ),
+    path(
+        "update_supplier_last_order_date/<int:pk>",
+        views.UpdateLastOrderedDate.as_view(),
+        name="update_supplier_last_order_date",
+    ),
 ]
