@@ -13,6 +13,13 @@
             {% endif %}
             FBA Order
         </h3>
+        <div class="fs-3">
+            {% with order=form.instance %}
+                <span class="badge bg-{% if order.status == order.READY %}success{% elif order.status == order.PRINTED %}primary{% elif order.status == order.ON_HOLD or order.status == order.STOPPED %}danger{% else %}dark{% endif %}">
+                    {{ order.status }}
+                </span>
+            {% endwith %}
+        </div>
  
         {% if form.instance.id %}<span>{{ form.instance.region.flag }}</span>{% endif %}
         <div class="fs-5 font-monospace user-select-all">{{ product.sku }}</div>
@@ -77,6 +84,21 @@
         </div>
         {% if form.instance.id == none %}
             <div class="badge bg-danger fs-4">Current FBA Orders for this Product: {{ existing_order_count }}</div>
+        {% endif %}
+
+        {% if form.instance.status == form.instance.STOPPED %}
+            <div class="p-2 mb-3 bg-light rounded border border-1 border-danger col-lg-9">
+                <div>
+                    <span class="me-2">Stopped at:</span><span>{{ form.instance.stopped_at }}</span>
+                </div>
+                <div>
+                    <span class="me-2">Stopped until:</span><span>{{ form.instance.stopped_until }}</span>
+                </div>
+                <div>
+                    <span class="me-2">Reason:</span>
+                </div>
+                <div class="ms-5">{{ form.instance.stopped_reason }}</div>
+            </div>
         {% endif %}
  
         <div class="row mt-3">

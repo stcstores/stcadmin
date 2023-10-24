@@ -127,6 +127,10 @@
                                 <a class="btn btn-danger btn-sm mb-1"
                                    href="{% url 'fba:unmark_printed' order.id %}?next={{ request.path }}">Unprinted</a>
                             {% endif %}
+                            {% if order.status == order.PRINTED or order.status == order.READY %}
+                                <a href="{% url "fba:stop_fba_order" order.pk %}"
+                                   class="btn btn-danger btn-sm mb-1">Stop</a>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

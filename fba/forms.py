@@ -130,6 +130,7 @@ class FBAOrderFilter(forms.Form):
             (models.FBAOrder.READY, models.FBAOrder.READY),
             (models.FBAOrder.FULFILLED, models.FBAOrder.FULFILLED),
             (models.FBAOrder.ON_HOLD, models.FBAOrder.ON_HOLD),
+            (models.FBAOrder.STOPPED, models.FBAOrder.STOPPED),
         ),
         required=False,
     )
@@ -454,6 +455,97 @@ class OnHoldOrderFilter(forms.Form):
         return qs
 
 
+class StoppedOrderFilter(forms.Form):
+    """Form for filtering the FBA order list."""
+
+    search = forms.CharField(required=False)
+    stopped_from = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
+    )
+    stopped_to = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"class": "datepicker", "size": "6"}),
+    )
+    country = forms.ModelChoiceField(models.FBARegion.objects.all(), required=False)
+    supplier = forms.ChoiceField(choices=[], required=False)
+
+    def __init__(self, *args, **kwargs):
+        """Add supplier choices."""
+        super().__init__(*args, **kwargs)
+        supplier_ids = (
+            models.FBAOrder.objects.stopped()
+            .values_list("product__supplier", flat=True)
+            .order_by("product__supplier")
+            .distinct()
+        )
+        suppliers = Supplier.objects.filter(id__in=supplier_ids)
+        self.fields["supplier"].choices = [("", "")] + [
+            (supplier.id, supplier.name) for supplier in suppliers
+        ]
+
+    def clean_stopped_from(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["stopped_from"]
+        if date is not None:
+            return make_aware(datetime.combine(date, datetime.min.time()))
+
+    def clean_stopped_to(self):
+        """Return a timezone aware datetime object from the submitted date."""
+        date = self.cleaned_data["stopped_to"]
+        if date is not None:
+            return make_aware(datetime.combine(date, datetime.max.time()))
+
+    def query_kwargs(self, data):
+        """Return a dict of filter kwargs."""
+        kwargs = {
+            "stopped_at__gte": data.get("stopped_from"),
+            "stopped_at__lte": data.get("stopped_to"),
+            "region__name": data.get("country"),
+            "product__supplier": data.get("supplier"),
+            "closed_at__isnull": True,
+        }
+        return {
+            key: value
+            for key, value in kwargs.items()
+            if value is not None and value != ""
+        }
+
+    def get_queryset(self):
+        """Return a queryset of orders based on the submitted data."""
+        kwargs = self.query_kwargs(self.cleaned_data)
+        qs = models.FBAOrder.objects.stopped().filter(**kwargs)
+        if search_text := self.cleaned_data["search"]:
+            qs = self.text_search(search_text, qs)
+        if closed := self.cleaned_data.get("closed"):
+            qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
+        qs = qs = (
+            qs.select_related(
+                "region__country",
+                "product",
+                "product__supplier",
+                "product__product_range",
+            )
+            .prefetch_related(
+                "tracking_numbers",
+                "product__variation_option_values",
+            )
+            .order_by("stopped_until")
+        )
+        return qs
+
+    def text_search(self, search_text, qs):
+        """Filter the queryset based on search text."""
+        qs = qs.filter(
+            Q(
+                Q(product__sku__icontains=search_text)
+                | Q(product_asin__icontains=search_text)
+                | Q(product__product_range__name__icontains=search_text)
+            )
+        )
+        return qs
+
+
 class ShipmentDestinationForm(forms.ModelForm):
     """Model form for fba.models.FBAShipmentDestination."""
 
@@ -637,3 +729,20 @@ class FBAShipmentFilter(forms.Form):
                 )
             )
         return qs
+
+
+class StopFBAOrderForm(forms.ModelForm):
+    """Form for marking FBA Orders as stopped."""
+
+    class Meta:
+        """Meta class for StopFBAOrderForm."""
+
+        model = models.FBAOrder
+        fields = {"is_stopped", "stopped_at", "stopped_reason", "stopped_until"}
+        widgets = {
+            "is_stopped": forms.HiddenInput(),
+            "stopped_at": forms.HiddenInput(),
+            "stopped_until": forms.DateInput(
+                attrs={"class": "datepicker", "size": "6"}
+            ),
+        }

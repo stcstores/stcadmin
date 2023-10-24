@@ -30,6 +30,7 @@ urlpatterns = [
         name="awaiting_fulfillment",
     ),
     path("on_hold/", views.OnHold.as_view(), name="on_hold"),
+    path("stopped", views.fba.StoppedFBAOrders.as_view(), name="stopped"),
     path(
         "price_calculator/", views.FBAPriceCalculator.as_view(), name="price_calculator"
     ),
@@ -47,6 +48,16 @@ urlpatterns = [
         "unmark_printed/<int:pk>/", views.UnmarkPrinted.as_view(), name="unmark_printed"
     ),
     path("delete_order/<int:pk>/", views.DeleteFBAOrder.as_view(), name="delete_order"),
+    path(
+        "stop_fba_order/<int:pk>",
+        views.fba.StopFBAOrder.as_view(),
+        name="stop_fba_order",
+    ),
+    path(
+        "unstop_fba_order/<int:pk>",
+        views.fba.UnstopFBAOrder.as_view(),
+        name="unstop_fba_order",
+    ),
     path("repeat_order/<int:pk>/", views.RepeatFBAOrder.as_view(), name="repeat_order"),
     path(
         "shipping_price/<int:pk>/", views.ShippingPrice.as_view(), name="shipping_price"

@@ -90,7 +90,7 @@
                         <td id="status_{{ order.id }}">
                             <div>{{ order.region.flag }}</div>
                             <div>
-                                <small class="badge bg-{% if order.status == order.FULFILLED or order.status == order.READY %}success{% elif order.status == order.PRINTED %}primary{% elif order.status == order.ON_HOLD %}danger{% else %}dark{% endif %}">
+                                <small class="badge bg-{% if order.status == order.FULFILLED or order.status == order.READY %}success{% elif order.status == order.PRINTED %}primary{% elif order.status == order.ON_HOLD or order.status == order.STOPPED %}danger{% else %}dark{% endif %}">
                                     {{ order.status }}
                                 </small>
                                 {% if order.is_prioritised %}<div class="badge bg-danger me-3">Prioritised</div>{% endif %}
@@ -136,7 +136,10 @@
                         </td>
                         <td class="text-end">
                             {% if order.closed_at == None %}
-                                {% if order.status != order.ON_HOLD %}
+                                {% if order.status == order.STOPPED %}
+                                    <a href="{% url "fba:unstop_fba_order" order.pk %}"
+                                       class="btn btn-warning btn-sm mb-1">UnStop</a>
+                                {% elif order.status != order.ON_HOLD %}
                                     <a href="{% url 'fba:fulfill_fba_order' order.id %}"
                                        class="btn btn-success btn-sm mb-1">Fulfill</a>
                                 {% endif %}

@@ -291,6 +291,41 @@ class OnHold(FBAUserMixin, ListView):
             return list(range(1, 11)) + [paginator.num_pages]
 
 
+class StoppedFBAOrders(FBAUserMixin, ListView):
+    """Display a filterable list of orders."""
+
+    template_name = "fba/stopped.html"
+    model = models.FBAOrder
+    paginate_by = 50
+    orphans = 3
+    form_class = forms.StoppedOrderFilter
+
+    def get(self, *args, **kwargs):
+        """Instanciate the form."""
+        self.form = self.form_class(self.request.GET)
+        return super().get(*args, **kwargs)
+
+    def get_queryset(self):
+        """Return a queryset of orders based on GET data."""
+        if self.form.is_valid():
+            return self.form.get_queryset()
+        return []
+
+    def get_context_data(self, *args, **kwargs):
+        """Return the template context."""
+        context = super().get_context_data(*args, **kwargs)
+        context["page_range"] = self.get_page_range(context["paginator"])
+        context["form"] = self.form
+        return context
+
+    def get_page_range(self, paginator):
+        """Return a list of pages to link to."""
+        if paginator.num_pages < 11:
+            return list(range(1, paginator.num_pages + 1))
+        else:
+            return list(range(1, 11)) + [paginator.num_pages]
+
+
 class TakeOffHold(View):
     """View for takeing order off hold."""
 
@@ -616,6 +651,36 @@ class DeleteFBAOrder(FBAUserMixin, DeleteView):
     def get_success_url(self):
         """Return the URL to redirect to after a succesfull deletion."""
         return reverse("fba:order_list")
+
+
+class StopFBAOrder(FBAUserMixin, UpdateView):
+    """View for marking FBA Orders as stopped."""
+
+    model = models.FBAOrder
+    form_class = forms.StopFBAOrderForm
+    template_name = "fba/stop_fba_order_form.html"
+
+    def get_initial(self):
+        """Return initial values for the form."""
+        initial = super().get_initial()
+        initial["is_stopped"] = True
+        initial["stopped_at"] = timezone.now().strftime("%d/%m/%Y")
+        return initial
+
+    def get_success_url(self):
+        """Return URL to redirect to after successful update."""
+        return reverse("fba:update_fba_order", args=[self.object.pk])
+
+
+class UnstopFBAOrder(FBAUserMixin, RedirectView):
+    """Unmark an FBA Order as stopped."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Unmark an FBA Order as stopped."""
+        order = get_object_or_404(models.FBAOrder, id=self.kwargs["pk"])
+        order.is_stopped = False
+        order.save()
+        return reverse("fba:update_fba_order", args=[order.pk])
 
 
 class ShippingPrice(FBAUserMixin, FormView):

@@ -4,7 +4,7 @@
 {% block content %}
 
     <div class="container">
-        <h3 class="display-3 mb-5">On Hold</h3>
+        <h3 class="display-3 mb-5">Stopped</h3>
 
         <div class="mb-3">
             <form action="" method="get" id="filter">
@@ -71,11 +71,15 @@
                         </td>
                         <td>
                             <div>
-                                <small class="font-monospace">{{ order.created_at|date:"Y-m-d" }}</small>
+                                <small class="me-2">Created:</small><small class="font-monospace">{{ order.created_at|date:"Y-m-d" }}</small>
                             </div>
                             <div>
-                                <small class="font-monospace">{{ order.created_at|date:"H:i" }}</small>
+                                <small class="me-2">Stopped:</small><small class="font-monospace">{{ order.stopped_at|date:"Y-m-d" }}</small>
                             </div>
+                            <div>
+                                <small class="me-2">Until:</small><small class="font-monospace">{{ order.stopped_until|date:"Y-m-d" }}</small>
+                            </div>
+ 
                         </td>
                         <td>
                             <div>
@@ -105,18 +109,24 @@
                             <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
                         </td>
                         <td>
-                            <button class="take_off_hold btn btn-primary btn-sm mb-1"
-                                    name="{{ order.id }}">Take off Hold</button>
+                            <a href="{% url "fba:unstop_fba_order" order.pk %}"
+                               target="_blank"
+                               class="btn btn-warning btn-sm mb-1"
+                               name="{{ order.id }}">UnStop</a>
                             {% if order.status != order.FULFILLED %}
                                 <a href="{% url 'fba:delete_order' order.pk %}"
                                    class="btn btn-danger btn-sm mb-1">Delete</a>
                             {% endif %}
                             <a href="{% url 'fba:update_fba_order' order.pk %}"
                                class="btn btn-primary btn-sm mb-1">View</a>
-                            <a href="{% url 'fba:repeat_order' order.pk %}"
-                               class="btn btn-primary btn-sm mb-1">Repeat</a>
                         </td>
                         <td class="product_sku" hidden>{{ order.product.sku }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="9">{{ order.stopped_reason }}</td>
+                    </tr>
+                    <tr>
+                        <td class="bg-white" colspan="9"></td>
                     </tr>
                 {% endfor %}
             </tbody>
