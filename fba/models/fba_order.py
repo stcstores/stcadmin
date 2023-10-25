@@ -21,6 +21,10 @@ class FBAOrderQueryset(models.QuerySet):
         """Return a queryset of on hold orders."""
         return self.filter(status=FBAOrder.ON_HOLD)
 
+    def stopped(self):
+        """Return a queryset of stopped orders."""
+        return self.filter(status=FBAOrder.STOPPED)
+
     def fulfilled(self):
         """Return a queryset of fulfilled orders."""
         return self.filter(status=FBAOrder.FULFILLED)
@@ -39,7 +43,9 @@ class FBAOrderQueryset(models.QuerySet):
 
     def awaiting_fulfillment(self):
         """Return a queryset of orders that are waiting to be fulfilled."""
-        return self.exclude(status__in=(FBAOrder.FULFILLED, FBAOrder.ON_HOLD))
+        return self.exclude(
+            status__in=(FBAOrder.FULFILLED, FBAOrder.ON_HOLD, FBAOrder.STOPPED)
+        )
 
     def unfulfilled(self):
         """Return a queryset of orders that are unfulfilled."""
@@ -78,6 +84,7 @@ class FBAOrderManager(models.Manager):
         return FBAOrderQueryset(self.model, using=self._db).annotate(
             status=Case(
                 When(closed_at__isnull=False, then=Value(FBAOrder.FULFILLED)),
+                When(is_stopped=True, then=Value(FBAOrder.STOPPED)),
                 When(on_hold=True, then=Value(FBAOrder.ON_HOLD)),
                 When(
                     box_weight__isnull=False,
@@ -93,6 +100,10 @@ class FBAOrderManager(models.Manager):
     def on_hold(self):
         """Return a queryset of on hold orders."""
         return self.get_queryset().on_hold()
+
+    def stopped(self):
+        """Return a queryset of stopped orders."""
+        return self.get_queryset().stopped()
 
     def fulfilled(self):
         """Return a queryset of fulfilled orders."""
@@ -139,6 +150,7 @@ class FBAOrder(models.Model):
     PRINTED = "Printed"
     NOT_PROCESSED = "Not Processed"
     ON_HOLD = "On Hold"
+    STOPPED = "Stopped"
 
     MAX_PRIORITY = 999
 
@@ -180,6 +192,10 @@ class FBAOrder(models.Model):
     update_stock_level_when_complete = models.BooleanField(default=True)
     is_combinable = models.BooleanField(default=False)
     is_fragile = models.BooleanField(default=False)
+    is_stopped = models.BooleanField(default=False)
+    stopped_reason = models.TextField(blank=True, null=True)
+    stopped_at = models.DateField(blank=True, null=True)
+    stopped_until = models.DateField(blank=True, null=True)
 
     objects = FBAOrderManager()
 
