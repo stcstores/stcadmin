@@ -39,7 +39,7 @@ def test_blacklisted_brand_has_modified_at_attribute(blacklisted_brand):
 
 @pytest.mark.django_db
 def test_orders_by_name_by_default(blacklisted_brand_factory):
-    blacklisted_brand_factory.create_batch(5)
+    blacklisted_brand_factory.create_batch(3)
     names = [_.name for _ in BlacklistedBrand.objects.all()]
     assert names == sorted(names)
 

@@ -154,7 +154,7 @@ class FBAOrder(models.Model):
 
     MAX_PRIORITY = 999
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(auto_now=True)
     fulfilled_by = models.ForeignKey(
         Staff,
@@ -230,6 +230,7 @@ class FBAOrder(models.Model):
         self.closed_at = timezone.now()
         self.priority = self.MAX_PRIORITY
         self.on_hold = False
+        self.stopped = False
         self.save()
 
     def details_complete(self):

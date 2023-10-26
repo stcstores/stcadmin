@@ -38,7 +38,7 @@ def test_get_product_queryset_does_not_return_product_with_not_processed_fba_ord
     product_factory, fba_order_factory
 ):
     product = product_factory.create(is_end_of_line=True, is_archived=False)
-    fba_order_factory.create(product=product, not_processed=True)
+    fba_order_factory.create(product=product, status_not_processed=True)
     qs = Archiver.get_product_queryset()
     assert product not in qs
 
@@ -48,7 +48,7 @@ def test_get_product_queryset_does_not_return_product_with_on_hold_fba_order(
     product_factory, fba_order_factory
 ):
     product = product_factory.create(is_end_of_line=True, is_archived=False)
-    fba_order_factory.create(product=product, on_hold=True)
+    fba_order_factory.create(product=product, status_on_hold=True)
     qs = Archiver.get_product_queryset()
     assert product not in qs
 
@@ -58,7 +58,7 @@ def test_get_product_queryset_does_not_return_product_with_awaiting_collection_b
     product_factory, fba_order_factory
 ):
     product = product_factory.create(is_end_of_line=True, is_archived=False)
-    fba_order_factory.create(product=product, awaiting_booking=True)
+    fba_order_factory.create(product=product, status_ready=True)
     qs = Archiver.get_product_queryset()
     assert product not in qs
 
@@ -68,7 +68,7 @@ def test_get_product_queryset_does_not_return_product_with_printed_fba_order(
     product_factory, fba_order_factory
 ):
     product = product_factory.create(is_end_of_line=True, is_archived=False)
-    fba_order_factory.create(product=product, printed=True)
+    fba_order_factory.create(product=product, status_printed=True)
     qs = Archiver.get_product_queryset()
     assert product not in qs
 
@@ -78,7 +78,7 @@ def test_get_product_queryset_returns_product_with_fulfilled_fba_order(
     product_factory, fba_order_factory
 ):
     product = product_factory.create(is_end_of_line=True, is_archived=False)
-    fba_order_factory.create(product=product, fulfilled=True)
+    fba_order_factory.create(product=product, status_fulfilled=True)
     qs = Archiver.get_product_queryset()
     assert product in qs
 
