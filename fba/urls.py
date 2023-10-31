@@ -32,7 +32,9 @@ urlpatterns = [
     path("on_hold/", views.OnHold.as_view(), name="on_hold"),
     path("stopped", views.fba.StoppedFBAOrders.as_view(), name="stopped"),
     path(
-        "price_calculator/", views.FBAPriceCalculator.as_view(), name="price_calculator"
+        "price_calculator/",
+        views.FBAPriceCalculatorView.as_view(),
+        name="price_calculator",
     ),
     path(
         "fulfill_fba_order/<int:pk>/",
@@ -59,9 +61,6 @@ urlpatterns = [
         name="unstop_fba_order",
     ),
     path("repeat_order/<int:pk>/", views.RepeatFBAOrder.as_view(), name="repeat_order"),
-    path(
-        "shipping_price/<int:pk>/", views.ShippingPrice.as_view(), name="shipping_price"
-    ),
     path(
         "edit_tracking_numbers/<int:pk>/",
         views.EditTrackingNumbers.as_view(),
@@ -101,29 +100,14 @@ urlpatterns = [
         name="remove_destination",
     ),
     path(
-        "shipments/create_shipment/select_destination/<int:fba_order_pk>/",
-        views.CreateShipment_SelectDestination.as_view(),
-        name="create_shipment_select_destination",
-    ),
-    path(
         "shipments/create_shipment/select_destination",
         views.CreateShipment_SelectDestination.as_view(),
         name="create_shipment_select_destination",
     ),
     path(
-        "shipments/create_shipment/create_destination/<int:fba_order_pk>/",
-        views.CreateShipment_CreateDestination.as_view(),
-        name="create_shipment_create_destination",
-    ),
-    path(
         "shipments/create_shipment/create_destination",
         views.CreateShipment_CreateDestination.as_view(),
         name="create_shipment_create_destination",
-    ),
-    path(
-        "shipments/create_shipment/<int:destination_pk>/<int:fba_order_pk>/",
-        views.CreateShipment.as_view(),
-        name="create_shipment",
     ),
     path(
         "shipments/create_shipment/<int:destination_pk>/",

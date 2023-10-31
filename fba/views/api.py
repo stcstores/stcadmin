@@ -37,17 +37,15 @@ class CurrentShipments(BaseShippingAPIView):
 
     def shipment_data(self, shipment):
         """Return information about current shipments as a dict."""
-        weight = shipment.weight_kg()
-        value = shipment.value()
         return {
             "id": shipment.id,
-            "order_number": shipment.order_number(),
-            "description": shipment.description(),
+            "order_number": shipment.order_number,
+            "description": shipment.description,
             "destination": shipment.destination.name,
             "user": str(shipment.user),
             "package_count": shipment.shipment_package.count(),
-            "weight": round(weight, 2) if weight else "N/A",
-            "value": f"£{shipment.value() / 100:.2f}" if value else "N/A",
+            "weight": round(shipment.weight_kg, 2) if shipment.weight_kg else "N/A",
+            "value": f"£{shipment.value / 100:.2f}" if shipment.value else "N/A",
         }
 
     def post(self, request, *args, **kwargs):
@@ -71,13 +69,22 @@ class ShipmentExports(BaseShippingAPIView):
         """Return information about shipment exports as a dict."""
         return {
             "id": export.id,
-            "order_numbers": export.order_numbers(),
-            "description": export.description(),
-            "destinations": export.destinations(),
-            "shipment_count": export.shipment_count(),
-            "package_count": export.package_count(),
+            "order_numbers": "\n".join(export.order_numbers()),
+            "description": "\n".join(self._export_description(export)),
+            "destinations": "\n".join(export.destinations()),
+            "shipment_count": export.shipment_count,
+            "package_count": export.package_count,
             "created_at": export.created_at.strftime("%d %b %Y %H:%M"),
         }
+
+    @staticmethod
+    def _export_description(export):
+        descriptions = []
+        for shipment in export.shipment_order.all():
+            for package in shipment.shipment_package.all():
+                for item in package.shipment_item.all():
+                    descriptions.append(item.description)
+        return [_[:20] for _ in descriptions]
 
     def post(self, request, *args, **kwargs):
         """Return information about recent shipment exports."""

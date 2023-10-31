@@ -3,10 +3,11 @@
 
 from django.conf import settings
 from django.db import models
-from django.db.models import F, Sum
+from django.db.models import Case, Count, F, Sum, Value, When
+from django.db.models.functions import Concat, Left, Length
+from django.utils import timezone
 from solo.models import SingletonModel
 
-from .fba_order import FBAOrder
 from .shipment_files import UPSAddressFile, UPSShipmentFile
 
 
@@ -14,12 +15,12 @@ def shortened_description(desc, max_length=30):
     """Return a shortened description."""
     if desc is None:
         return ""
-    return desc[:max_length] + "..." if len(desc) > max_length else desc
+    return desc[: max_length - 3] + "..." if len(desc) > max_length else desc
 
 
 def shortened_description_list(descriptions, max_length=30):
     """Return a shortened description from a list of descriptions."""
-    descriptions = list(set(descriptions))
+    descriptions = sorted(set(descriptions))
     if len(descriptions) == 0:
         return ""
     description_text = shortened_description(descriptions[0], max_length=max_length)
@@ -55,7 +56,7 @@ class FBAShipmentDestination(models.Model):
 
     name = models.CharField(max_length=255, unique=True)
     recipient_name = models.CharField(max_length=255, default="STC FBA")
-    contact_telephone = models.CharField(max_length=20, null=True)
+    contact_telephone = models.CharField(max_length=50, null=True)
     address_line_1 = models.CharField(max_length=255)
     address_line_2 = models.CharField(max_length=255, blank=True)
     address_line_3 = models.CharField(max_length=255, blank=True)
@@ -84,57 +85,17 @@ class FBAShipmentDestination(models.Model):
         return self.name
 
 
-class FBAShipmentExport(models.Model):
-    """Model for FBA Shipment exports."""
+class FBAShipmentExportManager(models.Manager):
+    """Model manager for the FBAShipment Export model."""
 
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        """Meta class for FBAShipmentExport."""
-
-        verbose_name = "FBA Shipment Export"
-        verbose_name_plural = "FBA Shipment Exports"
-        ordering = ("-created_at",)
-
-    def __str__(self):
-        return f"FBA Shipment Export {self.created_at.strftime('%Y-%m-%d')}"
-
-    def generate_export_file(self):
-        """Return an FBA Shipment .csv."""
-        return UPSShipmentFile().create(self)
-
-    def generate_address_file(self):
-        """Return a UPS Address .csv."""
-        return UPSAddressFile.create(self)
-
-    def description(self):
-        """Return a description of the shipments contained in the export."""
-        return "\n".join(
-            [shipment.description() for shipment in self.shipment_order.all()]
-        )
-
-    def order_numbers(self):
-        """Return the order numbers of the shipments contained in the export."""
-        return "\n".join(
-            [shipment.order_number() for shipment in self.shipment_order.all()]
-        )
-
-    def destinations(self):
-        """Return the destinations of the shipments contained in the export."""
-        return "\n".join(
-            [shipment.destination.name for shipment in self.shipment_order.all()]
-        )
-
-    def shipment_count(self):
-        """Return the number of shipments contained in the export."""
-        return self.shipment_order.count()
-
-    def package_count(self):
-        """Return the number of packages in the export."""
-        return sum(
-            (
-                shipment.shipment_package.count()
-                for shipment in self.shipment_order.all()
+    def get_queryset(self):
+        """Annotate queryset."""
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                shipment_count=Count("shipment_order", distinct=True),
+                package_count=Count("shipment_order__shipment_package", distinct=True),
             )
         )
 
@@ -158,8 +119,65 @@ class FBAShipmentMethod(models.Model):
         return self.name
 
 
+class FBAShipmentExport(models.Model):
+    """Model for FBA Shipment exports."""
+
+    created_at = models.DateTimeField(default=timezone.now)
+
+    objects = FBAShipmentExportManager()
+
+    class Meta:
+        """Meta class for FBAShipmentExport."""
+
+        verbose_name = "FBA Shipment Export"
+        verbose_name_plural = "FBA Shipment Exports"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"FBA Shipment Export {self.created_at.strftime('%Y-%m-%d')}"
+
+    def generate_export_file(self):
+        """Return an FBA Shipment .csv."""
+        return UPSShipmentFile().create(self)
+
+    def generate_address_file(self):
+        """Return a UPS Address .csv."""
+        return UPSAddressFile.create(self)
+
+    def order_numbers(self):
+        """Return the order numbers of the shipments contained in the export."""
+        numbers = []
+        for shipment in self.shipment_order.all():
+            numbers.append(shipment.order_number)
+        return sorted(numbers)
+
+    def destinations(self):
+        """Return the destinations of the shipments contained in the export."""
+        return self.shipment_order.values_list(
+            "destination__name", flat=True
+        ).distinct()
+
+
 class FBAShipmentOrderManager(models.Manager):
-    """Manager for FBA Shipment Orders."""
+    """Model Manager for the FBAShipmentOrder model."""
+
+    def get_queryset(self):
+        """Annotate queryset."""
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                weight_kg=Sum(
+                    F("shipment_package__shipment_item__weight_kg")
+                    * F("shipment_package__shipment_item__quantity")
+                ),
+                value=Sum(
+                    F("shipment_package__shipment_item__value")
+                    * F("shipment_package__shipment_item__quantity")
+                ),
+                item_count=Sum("shipment_package__shipment_item__quantity"),
+            )
+        )
 
 
 class FBAShipmentOrder(models.Model):
@@ -191,36 +209,15 @@ class FBAShipmentOrder(models.Model):
         verbose_name = "FBA Shipment Order"
         verbose_name_plural = "FBA Shipment Orders"
 
-    def order_number(self):
-        """Return a generated order number for the order."""
-        number = str(self.pk).zfill(5)
-        return f"STC_FBA_{number}"
-
     def __str__(self):
-        return f"FBA Shipment Order {self.order_number()}"
+        return f"FBA Shipment Order {self.order_number}"
 
-    def weight_kg(self):
-        """Return the total weight of the shipment."""
-        return (
-            self.shipment_package.all()
-            .annotate(
-                weight=(F("shipment_item__weight_kg") * F("shipment_item__quantity"))
-            )
-            .aggregate(total_weight=Sum("weight"))["total_weight"]
-        )
+    @property
+    def order_number(self):
+        """Return the order's order number."""
+        return f"STC_FBA_{str(self.pk).zfill(5)}"
 
-    def value(self):
-        """Return the total value of the shipment."""
-        return self.shipment_package.aggregate(models.Sum("shipment_item__value"))[
-            "shipment_item__value__sum"
-        ]
-
-    def item_count(self):
-        """Return the total number of items in the shipment."""
-        return self.shipment_package.aggregate(models.Sum("shipment_item__quantity"))[
-            "shipment_item__quantity__sum"
-        ]
-
+    @property
     def description(self, max_length=30):
         """Return a text description of the shipment."""
         descriptions = self.shipment_package.values_list(
@@ -228,7 +225,8 @@ class FBAShipmentOrder(models.Model):
         )
         return shortened_description_list(descriptions, max_length=max_length)
 
-    def is_shipable(self):
+    @property
+    def is_shippable(self):
         """Return True if shipment is ready for completion, otherwise False."""
         return all(
             (
@@ -246,22 +244,34 @@ class FBAShipmentOrder(models.Model):
         return export
 
 
+class FBAShipmentPackageManager(models.Manager):
+    """Model Manager for the FBAShipmentPackage model."""
+
+    def get_queryset(self):
+        """Annotate queryset."""
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                value=Sum(F("shipment_item__value") * F("shipment_item__quantity")),
+                weight_kg=Sum(
+                    F("shipment_item__weight_kg") * F("shipment_item__quantity")
+                ),
+            )
+        )
+
+
 class FBAShipmentPackage(models.Model):
     """Model for FBA Shipment packages."""
 
     shipment_order = models.ForeignKey(
         FBAShipmentOrder, related_name="shipment_package", on_delete=models.CASCADE
     )
-    fba_order = models.ForeignKey(
-        FBAOrder,
-        related_name="shipment_package",
-        on_delete=models.PROTECT,
-        blank=True,
-        null=True,
-    )
-    length_cm = models.SmallIntegerField()
-    width_cm = models.SmallIntegerField()
-    height_cm = models.SmallIntegerField()
+    length_cm = models.PositiveIntegerField()
+    width_cm = models.PositiveIntegerField()
+    height_cm = models.PositiveIntegerField()
+
+    objects = FBAShipmentPackageManager()
 
     class Meta:
         """Meta class for FBAShipmentPackage."""
@@ -270,33 +280,39 @@ class FBAShipmentPackage(models.Model):
         verbose_name_plural = "FBA Shipment Packages"
 
     def __str__(self):
-        return f"{self.shipment_order} - {self.package_number()}"
+        return f"{self.shipment_order} - {self.package_number}"
 
+    @property
     def package_number(self):
-        """Return a package number for the package."""
-        return f"{self.shipment_order.order_number()}_{self.pk}"
-
-    def weight_kg(self):
-        """Return the total weight of the package."""
-        return (
-            self.shipment_item.all()
-            .annotate(weight=(F("weight_kg") * F("quantity")))
-            .aggregate(total_weight=Sum("weight"))["total_weight"]
-        )
-
-    def value(self):
-        """Return the total value of the package."""
-        return self.shipment_item.aggregate(value=models.Sum("value"))["value"]
+        """Return the package's package number."""
+        return f"STC_FBA_{str(self.shipment_order.pk).zfill(5)}_{self.pk}"
 
     def description(self, max_length=30):
         """Return a description string for the package."""
         descriptions = self.shipment_item.values_list("description", flat=True)
         return shortened_description_list(descriptions, max_length=max_length)
 
-    def customs_declaration(self, max_length=35):
-        """Return a customs delcaration string."""
-        descriptions = self.shipment_item.values_list("description", flat=True)
-        return ", ".join(descriptions)[:max_length]
+
+class FBAShipmentItemManager(models.Manager):
+    """Model manager for the FBAShipmentItem model."""
+
+    def get_queryset(self):
+        """Annotate queryset."""
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                description_length=Length("description"),
+                short_description=Case(
+                    When(
+                        description_length__gte=33,
+                        then=Concat(Left(F("description"), 30), Value("...")),
+                    ),
+                    default=F("description"),
+                    output_field=models.CharField(),
+                ),
+            )
+        )
 
 
 class FBAShipmentItem(models.Model):
@@ -307,13 +323,15 @@ class FBAShipmentItem(models.Model):
     )
     sku = models.CharField(max_length=255, verbose_name="SKU")
     description = models.TextField()
-    quantity = models.SmallIntegerField()
+    quantity = models.PositiveIntegerField()
     weight_kg = models.FloatField(verbose_name="Weight (kg)")
-    value = models.SmallIntegerField(default=100)
+    value = models.PositiveIntegerField(default=100)
     country_of_origin = models.CharField(
         max_length=255, default="United Kingdom", verbose_name="Country of Origin"
     )
     hr_code = models.CharField(max_length=255, verbose_name="HR Code")
+
+    objects = FBAShipmentItemManager()
 
     class Meta:
         """Meta class for FBAShipmentItem."""
@@ -322,8 +340,7 @@ class FBAShipmentItem(models.Model):
         verbose_name_plural = "FBA Shipment Items"
 
     def __str__(self):
-        return f"{self.package.shipment_order} package {self.package.package_number()} - {self.sku}"
-
-    def short_description(self, max_length=30):
-        """Return a shortended description."""
-        return shortened_description(self.description, max_length=max_length)
+        return (
+            f"{self.package.shipment_order} package {self.package.package_number}"
+            f" - {self.sku}"
+        )

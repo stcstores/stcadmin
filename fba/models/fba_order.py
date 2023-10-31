@@ -1,7 +1,5 @@
 """FBAOrder model."""
 
-from django.conf import settings
-from django.contrib import messages
 from django.db import models
 from django.db.models import Case, Value, When
 from django.shortcuts import reverse
@@ -9,9 +7,6 @@ from django.utils import timezone
 
 from home.models import Staff
 from inventory.models import BaseProduct
-from linnworks.models import StockManager
-
-from .fba import FBATrackingNumber
 
 
 class FBAOrderQueryset(models.QuerySet):
@@ -29,7 +24,7 @@ class FBAOrderQueryset(models.QuerySet):
         """Return a queryset of fulfilled orders."""
         return self.filter(status=FBAOrder.FULFILLED)
 
-    def awaiting_booking(self):
+    def ready(self):
         """Return a queryset of orders awaiting booking."""
         return self.filter(status=FBAOrder.READY)
 
@@ -84,8 +79,8 @@ class FBAOrderManager(models.Manager):
         return FBAOrderQueryset(self.model, using=self._db).annotate(
             status=Case(
                 When(closed_at__isnull=False, then=Value(FBAOrder.FULFILLED)),
-                When(is_stopped=True, then=Value(FBAOrder.STOPPED)),
                 When(on_hold=True, then=Value(FBAOrder.ON_HOLD)),
+                When(is_stopped=True, then=Value(FBAOrder.STOPPED)),
                 When(
                     box_weight__isnull=False,
                     quantity_sent__isnull=False,
@@ -109,9 +104,9 @@ class FBAOrderManager(models.Manager):
         """Return a queryset of fulfilled orders."""
         return self.get_queryset().fulfilled()
 
-    def awaiting_booking(self):
+    def ready(self):
         """Return a queryset of orders awaiting booking."""
-        return self.get_queryset().awaiting_booking()
+        return self.get_queryset().ready()
 
     def printed(self):
         """Return a queryset of printed orders."""
@@ -235,12 +230,7 @@ class FBAOrder(models.Model):
 
     def details_complete(self):
         """Return True if all fields required to complete the order are filled."""
-        return all(
-            (
-                self.box_weight is not None,
-                self.quantity_sent is not None,
-            )
-        )
+        return all((self.box_weight is not None, self.quantity_sent is not None))
 
     def prioritise(self):
         """Mark the order as top priority."""
@@ -250,49 +240,29 @@ class FBAOrder(models.Model):
         self.priority = 1
         self.save()
 
-    def update_stock_level(self, user):
-        """Update the product's stock level in Cloud Commerce."""
-        if settings.DEBUG is True:
-            return messages.WARNING, "Stock update skipped: DEBUG mode"
-        if self.update_stock_level_when_complete is False:
-            return (
-                messages.WARNING,
-                (
-                    f"Set to skip stock update, the stock level for {self.product.sku}"
-                    " is unchanged."
-                ),
-            )
-        try:
-            stock_level = StockManager.get_stock_level(self.product)
-            new_stock_level = stock_level - self.quantity_sent
-            change_source = f"Updated by FBA order pk={self.pk}"
-            StockManager.set_stock_level(
-                product=self.product,
-                user=user,
-                new_stock_level=new_stock_level,
-                change_source=change_source,
-            )
-            return messages.SUCCESS, (
-                f"Changed stock level for {self.product.sku} from {stock_level} "
-                f"to {new_stock_level}"
-            )
-        except Exception:
-            return (
-                messages.ERROR,
-                (
-                    f"Stock Level failed to update for {self.product.sku}, "
-                    "please check stock level."
-                ),
-            )
-
-    def update_tracking_numbers(self, *tracking_numbers):
-        """Update order tracking numbers."""
-        for tracking_number in self.tracking_numbers.all():
-            if tracking_number.tracking_number not in tracking_numbers:
-                tracking_number.delete()
-        for tracking_number in tracking_numbers:
-            FBATrackingNumber.objects.get_or_create(
-                fba_order=self, tracking_number=tracking_number
-            )
-        if len(tracking_numbers) > 0 and self.status == self.READY:
-            self.close()
+    def duplicate(self, stock_level=None):
+        """Create a new order the same as this one."""
+        if (
+            quantity_sent := self.quantity_sent
+        ) is not None and stock_level is not None:
+            aprox_quantity = min((quantity_sent, stock_level))
+        else:
+            aprox_quantity = self.aproximate_quantity
+        duplicate_order = FBAOrder(
+            product=self.product,
+            product_weight=self.product.weight_grams,
+            product_hs_code=self.product.hs_code,
+            product_asin=self.product_asin,
+            product_purchase_price=self.product_purchase_price,
+            product_is_multipack=self.product_is_multipack,
+            region=self.region,
+            selling_price=self.selling_price,
+            FBA_fee=self.FBA_fee,
+            aproximate_quantity=aprox_quantity,
+            small_and_light=self.small_and_light,
+            is_fragile=self.is_fragile,
+            update_stock_level_when_complete=self.update_stock_level_when_complete,
+            is_combinable=self.is_combinable,
+        )
+        duplicate_order.save()
+        return duplicate_order

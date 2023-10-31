@@ -54,8 +54,7 @@ class UPSAddressFile:
     @classmethod
     def _create_rows(cls, shipment_export):
         shipments = shipment_export.shipment_order.all()
-        rows = [cls._create_address_row(shipment) for shipment in shipments]
-        return rows
+        return [cls._create_address_row(shipment) for shipment in shipments]
 
     @classmethod
     def _create_address_row(cls, shipment):
@@ -75,14 +74,14 @@ class UPSAddressFile:
             cls.BILL_TRANSPORT_TO: "SHP",
             cls.BILL_DUTY_AND_TAX: "REC",
             cls.NUMBER_OF_PACKAGES: shipment.shipment_package.count(),
-            cls.ACTUAL_WEIGHT: shipment.weight_kg(),
+            cls.ACTUAL_WEIGHT: str(round(shipment.weight_kg, 2)),
             cls.PACKAGE_TYPE: "Package",
             cls.SERVICETYPE: "SV",
-            cls.ORDER_NUMBER: shipment.order_number(),
+            cls.ORDER_NUMBER: str(shipment.order_number),
             cls.CURRENCY_CODE: "GBP",
             cls.RATECARD_REFERENCE: "WI-STC001",
         }
-        return [row_data.get(col) for col in cls.HEADER]
+        return [row_data[col] for col in cls.HEADER]
 
     @classmethod
     def create(cls, shipment_export):

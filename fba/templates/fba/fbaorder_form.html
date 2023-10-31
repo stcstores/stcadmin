@@ -79,9 +79,6 @@
                 {% if form.instance.status != form.instance.FULFILLED %}
                     <a href="{% url 'fba:delete_order' form.instance.id %}"
                        class="btn btn-danger">DELETE ORDER</a>
-                {% elif form.instance.country.region.auto_close %}
-                    <a href="{% url 'fba:shipping_price' form.instance.id %}"
-                       class="btn btn-primary">Add Shipping Price</a>
                 {% endif %}
                 {% if form.instance.tracking_number and form.instance.fulfillment_center %}
                     <a href="{% url 'fba:invoice' form.instance.pk %}"

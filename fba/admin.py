@@ -103,15 +103,6 @@ class FBAOrderAdmin(admin.ModelAdmin):
     list_filter = ["region"]
 
 
-@admin.register(models.FBAShippingPrice)
-class FBAShippingPriceAdmin(admin.ModelAdmin):
-    """Model admin for the FBAShippingPrice model."""
-
-    fields = ["product_SKU", "price_per_item"]
-    list_display = ["__str__", "product_SKU", "price_per_item", "added"]
-    list_editable = ["product_SKU", "price_per_item"]
-
-
 @admin.register(models.FBAShipmentDestination)
 class FBAShipmentDestinationAdmin(admin.ModelAdmin):
     """Model admin for the FBAShipmentDestination model."""
@@ -207,20 +198,16 @@ class FBAShipmentPackageAdmin(admin.ModelAdmin):
 
     fields = (
         "shipment_order",
-        "fba_order",
         "length_cm",
         "width_cm",
         "height_cm",
-        "weight_kg",
     )
     list_display = (
         "__str__",
         "shipment_order",
-        "fba_order",
         "length_cm",
         "width_cm",
         "height_cm",
-        "weight_kg",
     )
     list_editable = (
         "length_cm",
