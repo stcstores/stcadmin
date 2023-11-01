@@ -18,8 +18,16 @@
 
         {% for supplier in suppliers %}
             <div class="list-group col-6">
-                <a href="{% url 'restock:supplier_restock_list' supplier.pk %}"
-                   class="list-group-item">{{ supplier }}</a>
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col">
+                            <a href="{% url 'restock:supplier_restock_list' supplier.pk %}">{{ supplier }}</a>
+                        </div>
+                        <div class="col text-muted">
+                            {% if supplier.last_ordered_from %}{{ supplier.last_ordered_from }}{% endif %}
+                        </div>
+                    </div>
+                </li>
             </div>
         {% endfor %}
     </div>
