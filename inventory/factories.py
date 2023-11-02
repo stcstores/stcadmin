@@ -147,6 +147,7 @@ class ProductFactory(BaseProductFactory):
     weight_grams = 500
     hs_code = "2315641"
     vat_rate = factory.SubFactory(VATRateFactory)
+    is_flammable = False
 
 
 class InitialVariationFactory(ProductFactory):

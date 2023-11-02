@@ -424,3 +424,15 @@ def test_purchase_price_grams_property(
     assert combination_product.purchase_price == sum(
         (link.product.purchase_price for link in links)
     )
+
+
+@pytest.mark.django_db
+def test_is_flammable_property(combination_product, combination_product_link_factory):
+    combination_product_link_factory.create(
+        combination_product=combination_product, product__is_flammable=False
+    )
+    assert combination_product.is_flammable is False
+    combination_product_link_factory.create(
+        combination_product=combination_product, product__is_flammable=True
+    )
+    assert combination_product.is_flammable is True

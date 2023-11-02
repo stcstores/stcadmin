@@ -379,3 +379,15 @@ def test_product_bay_links_property(multipack_product):
         multipack_product.product_bay_links
         == multipack_product.base_product.product_bay_links
     )
+
+
+@pytest.mark.django_db
+def test_is_flammable_property(multipack_product_factory):
+    non_flammable_product = multipack_product_factory.create(
+        base_product__is_flammable=False
+    )
+    assert non_flammable_product.is_flammable is False
+    flammable_product = multipack_product_factory.create(
+        base_product__is_flammable=True
+    )
+    assert flammable_product.is_flammable is True

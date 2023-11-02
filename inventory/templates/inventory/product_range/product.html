@@ -19,6 +19,14 @@
       {% endfor %}
       <div class="d-inline-block m-2 font-monospace user-select-all">{{ product.supplier_sku }}</div>
     </div>
+    <div class="fs-4 mb-3">
+      {% if product.is_archived %}
+        <span class="badge bg-secondary">Archived</span>
+      {% elif product.is_end_of_line %}
+        <span class="badge bg-danger">End Of Line</span>
+      {% endif %}
+      {% if product.is_flammable %}<span class="badge bg-danger">Flammable</span>{% endif %}
+    </div>
     <div class="mb-5">
       <a href="{% url 'inventory:product_range' product_range.pk %}">
         <i class="fa-solid fa-arrow-left"></i> Back to Product Range

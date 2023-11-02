@@ -14,15 +14,22 @@
             FBA Order
         </h3>
         <div class="fs-3">
-            {% with order=form.instance %}
-                <span class="badge bg-{% if order.status == order.READY %}success{% elif order.status == order.PRINTED %}primary{% elif order.status == order.ON_HOLD or order.status == order.STOPPED %}danger{% else %}dark{% endif %}">
-                    {{ order.status }}
-                </span>
-            {% endwith %}
+            {% if form.instance.pk %}
+                {% with order=form.instance %}
+                    <span class="badge bg-{% if order.status == order.READY %}success{% elif order.status == order.PRINTED %}primary{% elif order.status == order.ON_HOLD or order.status == order.STOPPED %}danger{% else %}dark{% endif %}">
+                        {{ order.status }}
+                    </span>
+                {% endwith %}
+            {% endif %}
+            {% if product.is_flammable %}<span class="badge bg-danger">Flammable</span>{% endif %}
         </div>
  
         {% if form.instance.id %}<span>{{ form.instance.region.flag }}</span>{% endif %}
-        <div class="fs-5 font-monospace user-select-all">{{ product.sku }}</div>
+        <div>
+            <span class="fs-5 font-monospace user-select-all align-bottom">{{ product.sku }}</span><a href="{% url "inventory:product" product.pk %}"
+   target="_blank"
+   class="btn btn-primary btn-sm ms-5">Edit</a>
+        </div>
         <div class="fs-3">
             <span class="user-select-all">{{ product.product_range.name }}</span>
             {% if product.is_archived %}

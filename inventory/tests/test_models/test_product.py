@@ -306,6 +306,16 @@ def test_hs_code_cannot_be_null(product_factory):
 
 
 @pytest.mark.django_db
+def test_has_is_flammable_attribute(product):
+    assert isinstance(product.is_flammable, bool)
+
+
+@pytest.mark.django_db
+def test_is_flammable_defaults_to_false(new_product):
+    assert new_product.is_flammable is False
+
+
+@pytest.mark.django_db
 def test_name_method(product):
     assert product.name() == product.product_range.name
 
