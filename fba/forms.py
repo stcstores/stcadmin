@@ -261,10 +261,10 @@ class FBAOrderFilter(forms.Form):
         qs = self.filter_priority(qs)
         qs = qs.select_related(
             "region__country",
+        ).prefetch_related(
             "product",
             "product__supplier",
             "product__product_range",
-        ).prefetch_related(
             "tracking_numbers",
             "product__variation_option_values",
         )
@@ -434,10 +434,10 @@ class OnHoldOrderFilter(forms.Form):
             qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
         qs = qs = qs.select_related(
             "region__country",
+        ).prefetch_related(
             "product",
             "product__supplier",
             "product__product_range",
-        ).prefetch_related(
             "tracking_numbers",
             "product__variation_option_values",
         )
@@ -522,11 +522,11 @@ class StoppedOrderFilter(forms.Form):
         qs = qs = (
             qs.select_related(
                 "region__country",
+            )
+            .prefetch_related(
                 "product",
                 "product__supplier",
                 "product__product_range",
-            )
-            .prefetch_related(
                 "tracking_numbers",
                 "product__variation_option_values",
             )

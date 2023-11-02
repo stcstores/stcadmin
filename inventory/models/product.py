@@ -304,6 +304,8 @@ class Product(BaseProduct):
 
     hs_code = models.CharField(max_length=50, verbose_name="HS Code")
 
+    is_flammable = models.BooleanField(default=False, verbose_name="Is Flammable")
+
     class Meta:
         """Meta class for Products."""
 
@@ -405,6 +407,11 @@ class MultipackProduct(BaseProduct):
         """Return a queryset of linked product bays."""
         return self.base_product.product_bay_links
 
+    @property
+    def is_flammable(self):
+        """Return True if the multipack is flammable, else False."""
+        return self.base_product.is_flammable
+
 
 class CombinationProductLink(models.Model):
     """Model for linking combination products."""
@@ -489,6 +496,11 @@ class CombinationProduct(BaseProduct):
     def purchase_price(self):
         """Return the combined product purchase_price."""
         return sum((self.products.all().values_list("purchase_price", flat=True)))
+
+    @property
+    def is_flammable(self):
+        """Return True if the combination product is flammable, else False."""
+        return self.products.filter(is_flammable=True).exists()
 
 
 def generate_sku():

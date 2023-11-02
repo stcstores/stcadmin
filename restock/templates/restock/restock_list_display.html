@@ -37,6 +37,7 @@
                                 {% elif product.is_end_of_line %}
                                     <span class="badge bg-danger">End Of Line</span>
                                 {% endif %}
+                                {% if product.is_flammable %}<span class="badge bg-danger">Flammable</span>{% endif %}
                             </div>
                             <div class="user-select-all fs-5">{{ product.product_range.name }}</div>
                             <div class="fs-6">

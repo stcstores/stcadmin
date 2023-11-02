@@ -91,6 +91,8 @@ class BaseProductForm(forms.ModelForm):
         "height",
         "depth",
         "retail_price",
+        "bays",
+        "is_flammable",
     )
 
 

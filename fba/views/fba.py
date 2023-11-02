@@ -359,11 +359,11 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
             .filter(**filter_kwargs)
             .select_related(
                 "region__country",
+            )
+            .prefetch_related(
                 "product",
                 "product__supplier",
                 "product__product_range",
-            )
-            .prefetch_related(
                 "tracking_numbers",
                 "product__variation_option_values",
             )
