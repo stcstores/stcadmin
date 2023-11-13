@@ -114,7 +114,7 @@
                         {% csrf_token %}
                         {% include "home/bootstrap_input_group_form.html" %}
                         {% if not form.instance.closed_at %}
-                            {% if form.instance.region.auto_close %}
+                            {% if form.instance.region.auto_close or not form.instance.details_complete %}
                                 <button class="btn btn-primary form-control mb-3">Fulfill</button>
                             {% else %}
                                 <button class="btn btn-primary form-control mb-3">Update</button>

@@ -553,17 +553,17 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
 
     def form_valid(self, form):
         """Save the user fulfilling the order."""
+        object_before_update = get_object_or_404(self.model, pk=self.object.pk)
+        order_was_complete = object_before_update.details_complete()
         return_value = super().form_valid(form)
         form.save()
-        if form.instance.details_complete():
-            collection_booked = "collection_booked" in self.request.POST
+        order_is_complete = form.instance.details_complete()
+        if order_is_complete and not order_was_complete:
             if self.object.region.auto_close:
                 self.close_order()
-                self.fulfill_order()
-            elif collection_booked:
-                self.close_order()
-            else:
-                self.fulfill_order()
+            self.fulfill_order()
+        elif order_is_complete and "collection_booked" in self.request.POST:
+            self.close_order()
         return return_value
 
     def get_success_url(self):
