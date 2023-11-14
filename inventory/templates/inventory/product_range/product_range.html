@@ -83,10 +83,16 @@
           </div>
 
           <div class="col-lg-2 my-1">
-            {% with product.bays as bays %}
-              {% if bays %}<span class="text-muted">Bays:&nbsp;</span>{% endif %}
-              {% for bay in bays %}<span class="me-1 font-monospace user-select-all">{{ bay }}</span>{% endfor %}
-            {% endwith %}
+            <div>
+              {% with product.bays as bays %}
+                {% if bays %}<span class="text-muted">Bays:&nbsp;</span>{% endif %}
+                {% for bay in bays %}<span class="me-1 font-monospace user-select-all">{{ bay }}</span>{% endfor %}
+              {% endwith %}
+            </div>
+            <div>
+              <span class="text-muted">HS Code:&nbsp;</span>
+              <span class="font-monospace user-select-all">{{ product.hs_code }}</span>
+            </div>
           </div>
 
           <div class="col-lg-2 my-1">
