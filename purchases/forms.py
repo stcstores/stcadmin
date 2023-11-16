@@ -48,7 +48,7 @@ class CreatePurchaseForm(forms.Form):
     def save(self):
         """Create a new purchase."""
         product = BaseProduct.objects.get(pk=self.cleaned_data["product_id"])
-        self.instance = models.Purchase.objects.new_purchase(
+        self.instance = models.ProductPurchase.objects.new_purchase(
             purchased_by=self.cleaned_data["purchaser"],
             product=product,
             quantity=self.cleaned_data["quantity"],
@@ -66,6 +66,38 @@ class CreatePurchaseForm(forms.Form):
                 user=self.instance.purchased_by.stcadmin_user,
                 new_stock_level=new_stock_level,
                 change_source="Staff purchase by {{ purchase.purchased_by }}",
+            )
+        except Exception as e:
+            logger = logging.getLogger("django")
+            logger.exception(e)
+            raise
+        else:
+            return updated_stock_level
+
+
+class UpdatePurchaseForm(forms.ModelForm):
+    """Form for updating purchases."""
+
+    class Meta:
+        """Meta class for UpdatePurchaseForm."""
+
+        model = models.ProductPurchase
+        fields = ["quantity"]
+
+    def update_stock_level(self):
+        """Update the stock level of a product to reflect the created purchase."""
+        previous_quantity = self.initial["quantity"]
+        quantity_change = previous_quantity - self.instance.quantity
+        try:
+            current_stock_level = StockManager.get_stock_level(self.instance.product)
+            new_stock_level = current_stock_level + quantity_change
+            if new_stock_level < 0:
+                raise Exception("Cannot set stock level below zero.")
+            updated_stock_level = StockManager.set_stock_level(
+                product=self.instance.product,
+                user=self.instance.purchased_by.stcadmin_user,
+                new_stock_level=new_stock_level,
+                change_source=f"Staff purchase update by {self.instance.purchased_by}",
             )
         except Exception as e:
             logger = logging.getLogger("django")

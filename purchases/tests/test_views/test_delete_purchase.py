@@ -1,17 +1,17 @@
 import pytest
 from django.urls import reverse
 
-from purchases.models import Purchase
+from purchases.models import ProductPurchase
 
 
 @pytest.fixture
-def purchase(purchase_factory):
-    return purchase_factory.create(export=None)
+def purchase(product_purchase_factory):
+    return product_purchase_factory.create(export=None)
 
 
 @pytest.fixture
-def completed_purchase(purchase_factory):
-    return purchase_factory.create()
+def completed_purchase(product_purchase_factory):
+    return product_purchase_factory.create()
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def post_response(group_logged_in_client, url):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "purchases/purchase_confirm_delete.html" in (
+    assert "purchases/productpurchase_confirm_delete.html" in (
         t.name for t in get_response.templates
     )
 
@@ -48,7 +48,7 @@ def test_form_in_context(get_response):
 
 @pytest.mark.django_db
 def test_contact_is_deleted(purchase, post_response):
-    assert Purchase.objects.filter(pk=purchase.pk).exists() is False
+    assert ProductPurchase.objects.filter(pk=purchase.pk).exists() is False
 
 
 @pytest.mark.django_db

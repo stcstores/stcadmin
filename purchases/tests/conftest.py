@@ -5,5 +5,5 @@ from purchases import factories
 pytest_factoryboy.register(factories.ProductFactory)
 pytest_factoryboy.register(factories.StaffFactory)
 pytest_factoryboy.register(factories.PurchaseSettingsFactory)
-pytest_factoryboy.register(factories.PurchaseFactory)
+pytest_factoryboy.register(factories.ProductPurchaseFactory)
 pytest_factoryboy.register(factories.PurchaseExportFactory)

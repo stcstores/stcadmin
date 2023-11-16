@@ -8,18 +8,20 @@ def staff(staff_factory):
 
 
 @pytest.fixture
-def staff_with_no_purchase(staff_factory, purchase_factory):
+def staff_with_no_purchase(staff_factory, product_purchase_factory):
     staff_member = staff_factory.create()
-    purchase_factory.create(purchased_by=staff_member)
+    product_purchase_factory.create(purchased_by=staff_member)
     return staff_member
 
 
 @pytest.fixture
-def purchases(staff, purchase_factory):
+def purchases(staff, product_purchase_factory):
     purchases = []
     for staff_member in staff:
         purchases.append(
-            purchase_factory.create_batch(3, purchased_by=staff_member, export=None)
+            product_purchase_factory.create_batch(
+                3, purchased_by=staff_member, export=None
+            )
         )
     return purchases
 

@@ -16,9 +16,9 @@ def staff(staff_factory):
 
 
 @pytest.fixture
-def staff_purchases(staff, export, purchase_factory):
+def staff_purchases(staff, export, product_purchase_factory):
     return {
-        staff_member: purchase_factory.create_batch(
+        staff_member: product_purchase_factory.create_batch(
             3, purchased_by=staff_member, export=export
         )
         for staff_member in staff
@@ -38,8 +38,8 @@ def test_header():
 
 
 @pytest.mark.django_db
-def test_get_purchase_row(purchase_factory):
-    purchase = purchase_factory.create()
+def test_get_purchase_row(product_purchase_factory):
+    purchase = product_purchase_factory.create()
     data = PurchaseExportReport._get_purchase_row(purchase)
     assert data == [
         str(purchase.purchased_by),

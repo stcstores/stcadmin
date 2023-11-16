@@ -39,19 +39,16 @@ class PurchaseExportFactory(DjangoModelFactory):
     report_sent = True
 
 
-class PurchaseFactory(DjangoModelFactory):
-    """Factory for purchases.Purchase."""
+class BasePurchaseFactory(DjangoModelFactory):
+    """Factory for purchases.BasePurchase."""
 
     class Meta:
-        """Meta class for PurchaseFactory."""
+        """Meta class for BasePurchaseFactory."""
 
-        model = models.Purchase
+        model = models.BasePurchase
 
     purchased_by = factory.SubFactory(StaffFactory)
-    product = factory.SubFactory(ProductFactory)
     quantity = factory.Faker("pyint", min_value=1, max_value=10)
-    time_of_purchase_item_price = factory.Faker("pyint", min_value=100, max_value=1000)
-    time_of_purchase_charge = Decimal("1.30")
     export = factory.SubFactory(PurchaseExportFactory)
     created_at = factory.Faker(
         "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
@@ -59,3 +56,16 @@ class PurchaseFactory(DjangoModelFactory):
     modified_at = factory.Faker(
         "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
     )
+
+
+class ProductPurchaseFactory(BasePurchaseFactory):
+    """Factory for purchases.ProductPurchase."""
+
+    class Meta:
+        """Meta class for ProductPurchaseFactory."""
+
+        model = models.ProductPurchase
+
+    product = factory.SubFactory(ProductFactory)
+    time_of_purchase_item_price = factory.Faker("pyint", min_value=100, max_value=1000)
+    time_of_purchase_charge = Decimal("1.30")
