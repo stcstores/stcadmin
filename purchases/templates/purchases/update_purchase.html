@@ -18,7 +18,7 @@
             </div>
 
             <div class="col-lg-2">
-                <a href="{% url 'purchases:delete_purchase' purchase.pk %}">
+                <a href="{% url 'purchases:delete_purchase' form.instance.pk %}">
                     <button class="btn btn-danger">Cancel Purchase</button>
                 </a>
             </div>

@@ -2,17 +2,15 @@
 branch = True
 relative_files = True
 omit =
-  *apps.py,
-  *migrations/*,
-  *settings*,
-  *tests/*,
-  *urls.py,
-  *wsgi.py,
+  */apps.py,
+  */migrations/*,
+  */settings*,
+  */tests/*,
+  */urls.py,
+  */wsgi.py,
   manage.py
   stcadmin/celery.py
 
 [html]
 directory = ./htmlcov
-skip_covered = True
-skip_empty = True
 show_contexts = True

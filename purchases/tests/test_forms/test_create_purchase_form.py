@@ -22,13 +22,13 @@ def form_data(purchaser, product):
 
 @pytest.fixture
 def mock_purchase_model():
-    with mock.patch("purchases.forms.models.Purchase") as mock_purchase_model:
+    with mock.patch("purchases.forms.models.ProductPurchase") as mock_purchase_model:
         yield mock_purchase_model
 
 
 @pytest.fixture
-def purchase(purchase_factory):
-    return purchase_factory.build()
+def purchase(product_purchase_factory):
+    return product_purchase_factory.build()
 
 
 @pytest.fixture

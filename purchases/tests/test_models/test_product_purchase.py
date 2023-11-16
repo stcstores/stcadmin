@@ -30,15 +30,17 @@ def quantity():
 
 
 @pytest.fixture
-def purchase(purchase_factory, purchased_by, product):
-    purchase = purchase_factory.create(product=product, purchased_by=purchased_by)
+def purchase(product_purchase_factory, purchased_by, product):
+    purchase = product_purchase_factory.create(
+        product=product, purchased_by=purchased_by
+    )
     purchase.full_clean()
     return purchase
 
 
 @pytest.fixture
 def new_purchase(purchase_settings, purchased_by, product, quantity):
-    return models.Purchase.objects.new_purchase(
+    return models.ProductPurchase.objects.new_purchase(
         purchased_by=purchased_by, product=product, quantity=quantity
     )
 
@@ -114,8 +116,8 @@ def test_new_purchase_does_not_set_export(purchase_settings, new_purchase):
 
 
 @pytest.mark.django_db
-def test_to_pay_method(purchase_factory):
-    purchase = purchase_factory.create(
+def test_to_pay_method(product_purchase_factory):
+    purchase = product_purchase_factory.create(
         quantity=2, time_of_purchase_item_price=500, time_of_purchase_charge=1.30
     )
     assert purchase.to_pay() == 1300
@@ -126,14 +128,14 @@ def test_cannot_create_purchase_with_zero_quantity(
     purchase_settings, purchased_by, product
 ):
     with pytest.raises(ValidationError):
-        models.Purchase.objects.new_purchase(
+        models.ProductPurchase.objects.new_purchase(
             purchased_by=purchased_by, product=product, quantity=0
         )
 
 
 @pytest.mark.django_db
-def test_str_method(purchase_factory):
-    purchase = purchase_factory.create(
+def test_str_method(product_purchase_factory):
+    purchase = product_purchase_factory.create(
         product__sku="AAA-AAA-AAA",
         purchased_by__first_name="Joe",
         purchased_by__second_name="Man",

@@ -15,8 +15,8 @@ def purchase_settings(purchase_settings_factory):
 
 
 @pytest.fixture
-def purchases(purchase_factory):
-    return purchase_factory.create_batch(3, export=None)
+def purchases(product_purchase_factory):
+    return product_purchase_factory.create_batch(3, export=None)
 
 
 @pytest.fixture
@@ -32,8 +32,8 @@ def new_purchase_export():
 
 
 @pytest.fixture
-def purchases_on_export(purchase_factory, purchase_export):
-    return purchase_factory.create_batch(3, export=purchase_export)
+def purchases_on_export(product_purchase_factory, purchase_export):
+    return product_purchase_factory.create_batch(3, export=purchase_export)
 
 
 @pytest.fixture
@@ -72,27 +72,32 @@ def test_purchase_export_report_sent_defaults_to_false(purchases, new_purchase_e
 
 @pytest.mark.django_db
 def test_purchase_exports_cannot_be_created_with_matching_dates(
-    purchases, purchase_factory
+    purchases, product_purchase_factory
 ):
     models.PurchaseExport.objects.new_export()
-    purchase_factory.create(export=None)
+    product_purchase_factory.create(export=None)
     with pytest.raises(IntegrityError):
         models.PurchaseExport.objects.new_export()
 
 
 @pytest.mark.django_db
-def test_new_export_adds_unexported_purchases(purchase_factory):
-    purchase = purchase_factory.create(export=None)
+def test_str_method(purchase_export):
+    assert str(purchase_export) == f"Purchase Report {purchase_export.export_date}"
+
+
+@pytest.mark.django_db
+def test_new_export_adds_unexported_purchases(product_purchase_factory):
+    purchase = product_purchase_factory.create(export=None)
     export = models.PurchaseExport.objects.new_export()
     assert purchase in export.purchases.all()
 
 
 @pytest.mark.django_db
 def test_new_export_does_not_add_exported_purchases(
-    purchase_export_factory, old_export, purchase_factory
+    purchase_export_factory, old_export, product_purchase_factory
 ):
-    purchase_factory.create(export=None)
-    purchase = purchase_factory.create(export=old_export)
+    product_purchase_factory.create(export=None)
+    purchase = product_purchase_factory.create(export=old_export)
     export = models.PurchaseExport.objects.new_export()
     assert purchase not in export.purchases.all()
 

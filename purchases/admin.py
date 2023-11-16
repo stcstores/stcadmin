@@ -20,7 +20,7 @@ class PurchaseExportAdmin(admin.ModelAdmin):
     exclude = ()
 
 
-@admin.register(models.Purchase)
+@admin.register(models.ProductPurchase)
 class PurchaseAdmin(admin.ModelAdmin):
     """Admin for the Purchase model."""
 

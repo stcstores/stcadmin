@@ -9,6 +9,8 @@ from django.core.mail import EmailMessage
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.utils import timezone
+from polymorphic.managers import PolymorphicManager
+from polymorphic.models import PolymorphicModel
 from solo.models import SingletonModel
 
 from home.models import Staff
@@ -33,7 +35,7 @@ class PurchaseExportManager(models.Manager):
     @transaction.atomic
     def new_export(self):
         """Create a new purchase export."""
-        purchases = Purchase.objects.filter(export__isnull=True)
+        purchases = BasePurchase.objects.filter(export__isnull=True)
         export = self.create(export_date=timezone.now() - dt.timedelta(days=1))
         purchases.update(export=export)
         return export
@@ -88,7 +90,25 @@ class PurchaseExport(models.Model):
         message.send()
 
 
-class PurchaseManager(models.Manager):
+class BasePurchase(PolymorphicModel):
+    """Base model for purchases."""
+
+    purchased_by = models.ForeignKey(
+        Staff, on_delete=models.CASCADE, related_name="purchases"
+    )
+    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    export = models.ForeignKey(
+        PurchaseExport,
+        on_delete=models.PROTECT,
+        related_name="purchases",
+        blank=True,
+        null=True,
+    )
+    created_at = models.DateTimeField(default=timezone.now)
+    modified_at = models.DateTimeField(auto_now=True)
+
+
+class ProductPurchaseManager(PolymorphicManager):
     """Manager for the Purchase model."""
 
     def new_purchase(self, purchased_by, product, quantity):
@@ -105,29 +125,17 @@ class PurchaseManager(models.Manager):
         return purchase
 
 
-class Purchase(models.Model):
-    """Model for purchases."""
+class ProductPurchase(BasePurchase):
+    """Model for product purchases."""
 
-    purchased_by = models.ForeignKey(
-        Staff, on_delete=models.CASCADE, related_name="purchases"
-    )
     product = models.ForeignKey(
         BaseProduct, on_delete=models.PROTECT, related_name="staff_purchases"
     )
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+
     time_of_purchase_item_price = models.DecimalField(decimal_places=2, max_digits=8)
     time_of_purchase_charge = models.DecimalField(max_digits=4, decimal_places=2)
-    export = models.ForeignKey(
-        PurchaseExport,
-        on_delete=models.PROTECT,
-        related_name="purchases",
-        blank=True,
-        null=True,
-    )
-    created_at = models.DateTimeField(default=timezone.now)
-    modified_at = models.DateTimeField(auto_now=True)
 
-    objects = PurchaseManager()
+    objects = ProductPurchaseManager()
 
     class Meta:
         """Meta class for Purchase."""

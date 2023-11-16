@@ -8,23 +8,23 @@ def purchaser(staff_factory):
 
 
 @pytest.fixture
-def new_purchases(purchase_factory, purchaser):
-    return purchase_factory.create_batch(3, purchased_by=purchaser, export=None)
+def new_purchases(product_purchase_factory, purchaser):
+    return product_purchase_factory.create_batch(3, purchased_by=purchaser, export=None)
 
 
 @pytest.fixture
-def old_purchase(purchase_factory, purchaser):
-    return purchase_factory.create(purchased_by=purchaser)
+def old_purchase(product_purchase_factory, purchaser):
+    return product_purchase_factory.create(purchased_by=purchaser)
 
 
 @pytest.fixture
-def other_users_new_purchase(purchase_factory):
-    return purchase_factory.create(export=None)
+def other_users_new_purchase(product_purchase_factory):
+    return product_purchase_factory.create(export=None)
 
 
 @pytest.fixture
-def other_users_old_purchase(purchase_factory):
-    return purchase_factory.create()
+def other_users_old_purchase(product_purchase_factory):
+    return product_purchase_factory.create()
 
 
 @pytest.fixture

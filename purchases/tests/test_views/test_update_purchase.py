@@ -1,3 +1,5 @@
+from unittest import mock
+
 import pytest
 from django.urls import reverse
 
@@ -13,13 +15,13 @@ def new_quantity():
 
 
 @pytest.fixture
-def purchase(purchase_factory, old_quantity):
-    return purchase_factory.create(quantity=old_quantity, export=None)
+def purchase(product_purchase_factory, old_quantity):
+    return product_purchase_factory.create(quantity=old_quantity, export=None)
 
 
 @pytest.fixture
-def completed_purchase(purchase_factory):
-    return purchase_factory.create()
+def completed_purchase(product_purchase_factory):
+    return product_purchase_factory.create()
 
 
 @pytest.fixture
@@ -35,6 +37,14 @@ def completed_purchase_url(completed_purchase):
 @pytest.fixture
 def form_data(new_quantity):
     return {"quantity": new_quantity}
+
+
+@pytest.fixture
+def mock_update_stock_level():
+    with mock.patch(
+        "purchases.views.UpdatePurchase.update_stock_level"
+    ) as mock_update_stock_level:
+        yield mock_update_stock_level
 
 
 @pytest.fixture
@@ -59,13 +69,22 @@ def test_get_initial(old_quantity, get_response):
 
 
 @pytest.mark.django_db
-def test_post_updates_purchase(purchase, new_quantity, post_response):
+def test_post_updates_purchase(
+    mock_update_stock_level, purchase, new_quantity, post_response
+):
     purchase.refresh_from_db()
     assert purchase.quantity == new_quantity
 
 
 @pytest.mark.django_db
-def test_success_url(purchase, post_response):
+def test_post_calls_update_stock_level(
+    mock_update_stock_level, purchase, post_response
+):
+    mock_update_stock_level.assert_called_once()
+
+
+@pytest.mark.django_db
+def test_success_url(mock_update_stock_level, purchase, post_response):
     assert post_response["location"] == reverse(
         "purchases:manage_user_purchases", kwargs={"staff_pk": purchase.purchased_by.id}
     )
@@ -81,7 +100,7 @@ def test_get_request_for_completed_purchase_returns_404(
 
 @pytest.mark.django_db
 def test_post_request_for_completed_purchase_returns_404(
-    group_logged_in_client, form_data, completed_purchase_url
+    mock_update_stock_level, group_logged_in_client, form_data, completed_purchase_url
 ):
     response = group_logged_in_client.post(completed_purchase_url, form_data)
     assert response.status_code == 404
