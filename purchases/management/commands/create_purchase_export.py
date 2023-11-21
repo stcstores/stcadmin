@@ -15,7 +15,7 @@ class Command(BaseCommand):
     help = """Create and email a monthly staff purchase report."""
 
     def handle(self, *args, **options):
-        """Create a linnworks channel linking file."""
+        """Create a purchase report file."""
         try:
             export = PurchaseExport.objects.new_export()
         except Exception as e:

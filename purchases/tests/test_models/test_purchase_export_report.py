@@ -28,6 +28,7 @@ def staff_purchases(staff, export, product_purchase_factory):
 def test_header():
     assert PurchaseExportReport.header == [
         "Purchased By",
+        "Type",
         "SKU",
         "Product",
         "Quantity",
@@ -38,17 +39,50 @@ def test_header():
 
 
 @pytest.mark.django_db
-def test_get_purchase_row(product_purchase_factory):
+def test_get_purchase_row_with_product_purchase(product_purchase_factory):
     purchase = product_purchase_factory.create()
     data = PurchaseExportReport._get_purchase_row(purchase)
     assert data == [
         str(purchase.purchased_by),
+        purchase.purchase_type,
         purchase.product.sku,
-        purchase.product.full_name,
+        purchase.description,
         purchase.quantity,
         str(purchase.created_at.date()),
-        str(purchase.time_of_purchase_item_price),
-        str(purchase.to_pay()),
+        f"{purchase.item_price:.2f}",
+        f"{purchase.to_pay():.2f}",
+    ]
+
+
+@pytest.mark.django_db
+def test_get_purchase_row_with_shipping_purchase(shipping_purchase_factory):
+    purchase = shipping_purchase_factory.create()
+    data = PurchaseExportReport._get_purchase_row(purchase)
+    assert data == [
+        str(purchase.purchased_by),
+        purchase.purchase_type,
+        "",
+        purchase.description,
+        purchase.quantity,
+        str(purchase.created_at.date()),
+        f"{purchase.item_price:.2f}",
+        f"{purchase.to_pay():.2f}",
+    ]
+
+
+@pytest.mark.django_db
+def test_get_purchase_row_with_other_purchase(other_purchase_factory):
+    purchase = other_purchase_factory.create()
+    data = PurchaseExportReport._get_purchase_row(purchase)
+    assert data == [
+        str(purchase.purchased_by),
+        purchase.purchase_type,
+        "",
+        purchase.description,
+        purchase.quantity,
+        str(purchase.created_at.date()),
+        f"{purchase.item_price:.2f}",
+        f"{purchase.to_pay():.2f}",
     ]
 
 

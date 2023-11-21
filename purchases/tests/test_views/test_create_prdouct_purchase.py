@@ -25,7 +25,9 @@ def product(product_factory):
 
 @pytest.fixture
 def url(staff, purchase_settings, product):
-    return reverse("purchases:create_purchase", kwargs={"product_pk": product.id})
+    return reverse(
+        "purchases:create_product_purchase", kwargs={"product_pk": product.id}
+    )
 
 
 @pytest.fixture
@@ -40,7 +42,7 @@ def mock_form():
 
 @pytest.fixture
 def mock_get_form(mock_form):
-    with mock.patch("purchases.views.CreatePurchase.get_form") as mock_get_form:
+    with mock.patch("purchases.views.CreateProductPurchase.get_form") as mock_get_form:
         mock_get_form.return_value = mock_form
         yield mock_get_form
 
@@ -57,7 +59,9 @@ def post_response(mock_get_form, group_logged_in_client, url, form_data):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "purchases/create_purchase.html" in (t.name for t in get_response.templates)
+    assert "purchases/create_product_purchase.html" in (
+        t.name for t in get_response.templates
+    )
 
 
 @pytest.mark.django_db
@@ -111,4 +115,4 @@ def test_sets_error_message(
 
 @pytest.mark.django_db
 def test_success_url(post_response):
-    assert post_response["location"] == reverse("purchases:product_search")
+    assert post_response["location"] == reverse("purchases:index")

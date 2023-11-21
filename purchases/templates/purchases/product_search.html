@@ -35,7 +35,7 @@
     <script>
         $(document).ready(function() {
             $(".stock_level_field").on("stockLevelChange",function(field, productId, stockLevel) {
-                var button = $("#create_purchase_button_" + productId);
+                var button = $("#create_product_purchase_button_" + productId);
                 if (stockLevel > 0) {
                     button.removeClass("disabled");
                 } else {

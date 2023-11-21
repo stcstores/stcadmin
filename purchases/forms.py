@@ -9,6 +9,7 @@ from home.models import Staff
 from inventory.models import BaseProduct
 from linnworks.models import StockManager
 from purchases import models
+from shipping.models import Country
 
 
 class ProductSearchForm(forms.Form):
@@ -38,15 +39,15 @@ class ProductSearchForm(forms.Form):
         raise Exception("Form is invalid")
 
 
-class CreatePurchaseForm(forms.Form):
-    """Form for creating purchases."""
+class CreateProductPurchaseForm(forms.Form):
+    """Form for creating product purchases."""
 
     purchaser = forms.ModelChoiceField(queryset=Staff.unhidden.all())
     product_id = forms.IntegerField(widget=forms.HiddenInput())
     quantity = forms.IntegerField()
 
     def save(self):
-        """Create a new purchase."""
+        """Create a new product purchase."""
         product = BaseProduct.objects.get(pk=self.cleaned_data["product_id"])
         self.instance = models.ProductPurchase.objects.new_purchase(
             purchased_by=self.cleaned_data["purchaser"],
@@ -75,11 +76,54 @@ class CreatePurchaseForm(forms.Form):
             return updated_stock_level
 
 
-class UpdatePurchaseForm(forms.ModelForm):
-    """Form for updating purchases."""
+class CreateShippingPurchaseForm(forms.Form):
+    """Form for creating shipping purchases."""
+
+    purchaser = forms.ModelChoiceField(queryset=Staff.unhidden.all())
+    quantity = forms.IntegerField()
+    weight = forms.IntegerField()
+    country = forms.ModelChoiceField(
+        queryset=Country.objects.all(),
+        widget=forms.HiddenInput(),
+    )
+    shipping_service = forms.ModelChoiceField(
+        queryset=models.PurchasableShippingService.objects.shipping_services()
+    )
+
+    def save(self):
+        """Create a shipping purchase."""
+        self.instance = models.ShippingPurchase.objects.new_purchase(
+            weight=self.cleaned_data["weight"],
+            purchased_by=self.cleaned_data["purchaser"],
+            shipping_service=self.cleaned_data["shipping_service"],
+            country=self.cleaned_data["country"],
+            quantity=self.cleaned_data["quantity"],
+        )
+
+
+class CreateOtherPurchaseForm(forms.Form):
+    """Form for creating other purchases."""
+
+    purchaser = forms.ModelChoiceField(queryset=Staff.unhidden.all())
+    quantity = forms.IntegerField()
+    description = forms.CharField(widget=forms.Textarea())
+    price = forms.DecimalField()
+
+    def save(self):
+        """Create a other product purchase."""
+        self.instance = models.OtherPurchase.objects.new_purchase(
+            purchased_by=self.cleaned_data["purchaser"],
+            quantity=self.cleaned_data["quantity"],
+            description=self.cleaned_data["description"],
+            price=self.cleaned_data["price"],
+        )
+
+
+class UpdateProductPurchaseForm(forms.ModelForm):
+    """Form for updating product purchases."""
 
     class Meta:
-        """Meta class for UpdatePurchaseForm."""
+        """Meta class for UpdateProductPurchaseForm."""
 
         model = models.ProductPurchase
         fields = ["quantity"]

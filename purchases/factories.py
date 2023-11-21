@@ -8,14 +8,11 @@ from factory.django import DjangoModelFactory
 from home.factories import StaffFactory
 from inventory.factories import ProductFactory
 from purchases import models
+from shipping.factories import ShippingPriceFactory, ShippingServiceFactory
 
 
 class PurchaseSettingsFactory(DjangoModelFactory):
-    """Factory for purchases.PurchaseSettings."""
-
     class Meta:
-        """Meta class PurchaseSettingsFactory."""
-
         model = models.PurchaseSettings
 
     purchase_charge = Decimal("1.30")
@@ -23,11 +20,7 @@ class PurchaseSettingsFactory(DjangoModelFactory):
 
 
 class PurchaseExportFactory(DjangoModelFactory):
-    """Factory for purchases.PurchaseExport."""
-
     class Meta:
-        """Meta class for PurchaseExportFactory."""
-
         model = models.PurchaseExport
 
     export_date = factory.Faker(
@@ -39,12 +32,15 @@ class PurchaseExportFactory(DjangoModelFactory):
     report_sent = True
 
 
-class BasePurchaseFactory(DjangoModelFactory):
-    """Factory for purchases.BasePurchase."""
-
+class PurchasableShippingServiceFactory(DjangoModelFactory):
     class Meta:
-        """Meta class for BasePurchaseFactory."""
+        model = models.PurchasableShippingService
 
+    shipping_service = factory.SubFactory(ShippingServiceFactory)
+
+
+class BasePurchaseFactory(DjangoModelFactory):
+    class Meta:
         model = models.BasePurchase
 
     purchased_by = factory.SubFactory(StaffFactory)
@@ -59,13 +55,34 @@ class BasePurchaseFactory(DjangoModelFactory):
 
 
 class ProductPurchaseFactory(BasePurchaseFactory):
-    """Factory for purchases.ProductPurchase."""
-
     class Meta:
-        """Meta class for ProductPurchaseFactory."""
-
         model = models.ProductPurchase
 
     product = factory.SubFactory(ProductFactory)
-    time_of_purchase_item_price = factory.Faker("pyint", min_value=100, max_value=1000)
-    time_of_purchase_charge = Decimal("1.30")
+    time_of_purchase_item_price = factory.Faker(
+        "pydecimal", right_digits=2, positive=True, max_value=500, min_value=1
+    )
+    time_of_purchase_charge = factory.Faker(
+        "pydecimal", right_digits=2, positive=True, max_value=500, min_value=1
+    )
+
+
+class ShippingPurchaseFactory(BasePurchaseFactory):
+    class Meta:
+        model = models.ShippingPurchase
+
+    shipping_service = factory.SubFactory(ShippingPriceFactory)
+    weight_grams = factory.Faker("pyint", min_value=50, max_value=2000)
+    time_of_purchase_price = factory.Faker(
+        "pydecimal", right_digits=2, positive=True, max_value=500, min_value=1
+    )
+
+
+class OtherPurchaseFactory(BasePurchaseFactory):
+    class Meta:
+        model = models.OtherPurchase
+
+    description = factory.Faker("sentence")
+    price = factory.Faker(
+        "pydecimal", right_digits=2, positive=True, max_value=500, min_value=1
+    )
