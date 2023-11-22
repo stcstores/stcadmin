@@ -12,12 +12,19 @@ from home.models import Staff
 from home.views import UserInGroupMixin
 from inventory.models import BaseProduct
 from purchases import forms, models
+from shipping.models import Country
 
 
 class PurchasesUserMixin(UserInGroupMixin):
     """Mixin to validate user in in purchases group."""
 
     groups = ["purchases", "purchase_manager"]
+
+
+class Index(PurchasesUserMixin, TemplateView):
+    """View for the purchases index page."""
+
+    template_name = "purchases/index.html"
 
 
 class ProductSearch(PurchasesUserMixin, ListView):
@@ -41,12 +48,12 @@ class ProductSearch(PurchasesUserMixin, ListView):
         return context
 
 
-class CreatePurchase(PurchasesUserMixin, FormView):
-    """View for creating new purchases."""
+class CreateProductPurchase(PurchasesUserMixin, FormView):
+    """View for creating new product purchases."""
 
-    form_class = forms.CreatePurchaseForm
-    template_name = "purchases/create_purchase.html"
-    success_url = reverse_lazy("purchases:product_search")
+    form_class = forms.CreateProductPurchaseForm
+    template_name = "purchases/create_product_purchase.html"
+    success_url = reverse_lazy("purchases:index")
 
     def get_initial(self):
         """Return initial values for the form."""
@@ -75,7 +82,9 @@ class CreatePurchase(PurchasesUserMixin, FormView):
         """Update product stock level."""
         if settings.DEBUG is True:
             messages.add_message(
-                self.request, messages.WARNING, "DEBUG: Stock Update Skipped"
+                self.request,
+                messages.WARNING,
+                "Purchase created. DEBUG: Stock Update Skipped",
             )
         else:
             try:
@@ -84,7 +93,7 @@ class CreatePurchase(PurchasesUserMixin, FormView):
                 messages.add_message(
                     self.request,
                     messages.ERROR,
-                    f"Failed to reduce stock level by {form.instance.quantity} for "
+                    f"Purchase created. Failed to reduce stock level by {form.instance.quantity} for "
                     f"{form.instance.product.sku} - {form.instance.product.full_name}",
                 )
             else:
@@ -95,12 +104,53 @@ class CreatePurchase(PurchasesUserMixin, FormView):
                 )
 
 
-class UpdatePurchase(PurchasesUserMixin, UpdateView):
-    """View for updating purchases."""
+class CreateShippingPurchase(PurchasesUserMixin, FormView):
+    """View for creating new shipping purchases."""
+
+    form_class = forms.CreateShippingPurchaseForm
+    template_name = "purchases/create_shipping_purchase.html"
+    success_url = reverse_lazy("purchases:index")
+
+    def get_initial(self):
+        """Return initial values for the form."""
+        initial = super().get_initial()
+        initial["purchaser"] = self.request.user.staff_member.id
+        initial["country"] = Country.objects.get(name="United Kingdom")
+        return initial
+
+    def form_valid(self, form):
+        """Create a new purchase."""
+        form.save()
+        messages.add_message(self.request, messages.SUCCESS, "Purchase created.")
+        return super().form_valid(form)
+
+
+class CreateOtherPurchase(PurchasesUserMixin, FormView):
+    """View for creating new other purchases."""
+
+    form_class = forms.CreateOtherPurchaseForm
+    template_name = "purchases/create_other_purchase.html"
+    success_url = reverse_lazy("purchases:index")
+
+    def get_initial(self):
+        """Return initial values for the form."""
+        initial = super().get_initial()
+        initial["purchaser"] = self.request.user.staff_member.id
+        return initial
+
+    def form_valid(self, form):
+        """Create a new purchase."""
+        form.save()
+        messages.add_message(self.request, messages.SUCCESS, "Purchase created.")
+        return super().form_valid(form)
+
+
+class UpdateProductPurchase(PurchasesUserMixin, UpdateView):
+    """View for updating product purchases."""
 
     model = models.ProductPurchase
-    form_class = forms.UpdatePurchaseForm
-    template_name = "purchases/update_purchase.html"
+    form_class = forms.UpdateProductPurchaseForm
+    template_name = "purchases/update_product_purchase.html"
     queryset = models.ProductPurchase.objects.filter(export__isnull=True)
 
     def form_valid(self, form):
@@ -140,6 +190,38 @@ class UpdatePurchase(PurchasesUserMixin, UpdateView):
         )
 
 
+class UpdateShippingPurchase(PurchasesUserMixin, UpdateView):
+    """View for updating shipping purchases."""
+
+    model = models.ShippingPurchase
+    fields = ["quantity"]
+    template_name = "purchases/update_shipping_purchase.html"
+    queryset = models.ShippingPurchase.objects.filter(export__isnull=True)
+
+    def get_success_url(self):
+        """Return the success URL."""
+        return reverse(
+            "purchases:manage_user_purchases",
+            kwargs={"staff_pk": self.object.purchased_by.pk},
+        )
+
+
+class UpdateOtherPurchase(PurchasesUserMixin, UpdateView):
+    """View for updating other purchases."""
+
+    model = models.OtherPurchase
+    fields = ["description", "quantity", "price"]
+    template_name = "purchases/update_other_purchase.html"
+    queryset = models.OtherPurchase.objects.filter(export__isnull=True)
+
+    def get_success_url(self):
+        """Return the success URL."""
+        return reverse(
+            "purchases:manage_user_purchases",
+            kwargs={"staff_pk": self.object.purchased_by.pk},
+        )
+
+
 class ManagePurchases(PurchasesUserMixin, TemplateView):
     """View for managing purchases."""
 
@@ -149,7 +231,7 @@ class ManagePurchases(PurchasesUserMixin, TemplateView):
         """Return context for the template."""
         context = super().get_context_data(*args, **kwargs)
         staff_ids = (
-            models.ProductPurchase.objects.filter(export__isnull=True)
+            models.BasePurchase.objects.filter(export__isnull=True)
             .values_list("purchased_by", flat=True)
             .distinct()
         )
@@ -167,7 +249,7 @@ class ManageUserPurchases(PurchasesUserMixin, TemplateView):
         context = super().get_context_data(*args, **kwargs)
         purchaser = get_object_or_404(Staff, pk=self.kwargs["staff_pk"])
         context["purchaser"] = purchaser
-        context["purchases"] = models.ProductPurchase.objects.filter(
+        context["purchases"] = models.BasePurchase.objects.filter(
             purchased_by=purchaser, export__isnull=True
         ).order_by("-created_at")
         context["total_to_pay"] = round(
@@ -179,8 +261,9 @@ class ManageUserPurchases(PurchasesUserMixin, TemplateView):
 class DeletePurchase(PurchasesUserMixin, DeleteView):
     """View for deleting purchases."""
 
-    model = models.ProductPurchase
-    queryset = models.ProductPurchase.objects.filter(export__isnull=True)
+    model = models.BasePurchase
+    queryset = models.BasePurchase.objects.filter(export__isnull=True)
+    template_name = "purchases/purchase_confirm_delete.html"
     success_url = reverse_lazy("purchases:manage_purchases")
 
 

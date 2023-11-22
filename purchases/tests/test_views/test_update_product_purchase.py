@@ -26,12 +26,14 @@ def completed_purchase(product_purchase_factory):
 
 @pytest.fixture
 def new_purchase_url(purchase):
-    return reverse("purchases:update_purchase", kwargs={"pk": purchase.id})
+    return reverse("purchases:update_product_purchase", kwargs={"pk": purchase.id})
 
 
 @pytest.fixture
 def completed_purchase_url(completed_purchase):
-    return reverse("purchases:update_purchase", kwargs={"pk": completed_purchase.id})
+    return reverse(
+        "purchases:update_product_purchase", kwargs={"pk": completed_purchase.id}
+    )
 
 
 @pytest.fixture
@@ -42,7 +44,7 @@ def form_data(new_quantity):
 @pytest.fixture
 def mock_update_stock_level():
     with mock.patch(
-        "purchases.views.UpdatePurchase.update_stock_level"
+        "purchases.views.UpdateProductPurchase.update_stock_level"
     ) as mock_update_stock_level:
         yield mock_update_stock_level
 
@@ -59,7 +61,9 @@ def post_response(group_logged_in_client, new_purchase_url, form_data):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "purchases/update_purchase.html" in (t.name for t in get_response.templates)
+    assert "purchases/update_product_purchase.html" in (
+        t.name for t in get_response.templates
+    )
 
 
 @pytest.mark.django_db

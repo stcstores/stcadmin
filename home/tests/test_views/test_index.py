@@ -77,7 +77,7 @@ def test_links_to_external_links(get_html, external_link_factory):
         ("orders", "orders:index", "Orders"),
         ("labelmaker", "labelmaker:index", "Labelmaker"),
         ("fba", "fba:index", "FBA"),
-        ("purchases", "purchases:product_search", "Purchases"),
+        ("purchases", "purchases:index", "Purchases"),
         ("channels", "channels:index", "Channels"),
         ("reports", "reports:index", "Reports"),
         ("admin", "admin:index", "Admin"),

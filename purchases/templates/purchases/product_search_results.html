@@ -19,9 +19,9 @@
                      width="75">
             </div>
             <div class="col-lg-2">
-                <a href="{% url 'purchases:create_purchase' product.pk %}"
-                   class="create_purchase_button btn btn-primary disabled"
-                   id="create_purchase_button_{{ product.pk }}">Purchase</a>
+                <a href="{% url 'purchases:create_product_purchase' product.pk %}"
+                   class="create_product_purchase_button btn btn-primary disabled"
+                   id="create_product_purchase_button_{{ product.pk }}">Purchase</a>
             </div>
             <div class="col-lg-3">
                 {% with updatable=False %}

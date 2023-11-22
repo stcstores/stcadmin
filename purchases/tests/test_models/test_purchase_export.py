@@ -15,8 +15,16 @@ def purchase_settings(purchase_settings_factory):
 
 
 @pytest.fixture
-def purchases(product_purchase_factory):
-    return product_purchase_factory.create_batch(3, export=None)
+def purchases(
+    product_purchase_factory,
+    shipping_purchase_factory,
+    other_purchase_factory,
+):
+    return [
+        product_purchase_factory.create(export=None),
+        shipping_purchase_factory.create(export=None),
+        other_purchase_factory.create(export=None),
+    ]
 
 
 @pytest.fixture

@@ -1,0 +1,14 @@
+{% extends "purchases/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="display-1 mb-5">Purchases</h1>
+        <div class="list-group col-lg-6">
+            <a href="{% url "purchases:product_search" %}" class="list-group-item">Purchase from Stock</a>
+            <a href="{% url "purchases:create_shipping_purchase" %}"
+               class="list-group-item">Purchase Shipping</a>
+            <a href="{% url "purchases:create_other_purchase" %}"
+               class="list-group-item">Purchase Other</a>
+        </div>
+    </div>
+{% endblock content %}

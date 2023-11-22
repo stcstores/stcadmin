@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from purchases.forms import CreatePurchaseForm
+from purchases.forms import CreateProductPurchaseForm
 
 
 @pytest.fixture
@@ -33,53 +33,53 @@ def purchase(product_purchase_factory):
 
 @pytest.fixture
 def saved_form(purchase):
-    form = CreatePurchaseForm()
+    form = CreateProductPurchaseForm()
     form.instance = purchase
     return form
 
 
 def test_has_purchaser_field():
-    assert "purchaser" in CreatePurchaseForm().fields
+    assert "purchaser" in CreateProductPurchaseForm().fields
 
 
 def test_has_product_field():
-    assert "product_id" in CreatePurchaseForm().fields
+    assert "product_id" in CreateProductPurchaseForm().fields
 
 
 def test_has_quantity_field():
-    assert "quantity" in CreatePurchaseForm().fields
+    assert "quantity" in CreateProductPurchaseForm().fields
 
 
 @pytest.mark.django_db
 def test_form_validation(form_data):
-    form = CreatePurchaseForm(form_data)
+    form = CreateProductPurchaseForm(form_data)
     assert form.is_valid()
 
 
 @pytest.mark.django_db
 def test_purchaser_in_cleaned_data(purchaser, form_data):
-    form = CreatePurchaseForm(form_data)
+    form = CreateProductPurchaseForm(form_data)
     form.is_valid()
     assert form.cleaned_data["purchaser"] == purchaser
 
 
 @pytest.mark.django_db
 def test_product_in_cleaned_data(product, form_data):
-    form = CreatePurchaseForm(form_data)
+    form = CreateProductPurchaseForm(form_data)
     form.is_valid()
     assert form.cleaned_data["product_id"] == product.pk
 
 
 @pytest.mark.django_db
 def test_quantity_in_cleaned_data(form_data):
-    form = CreatePurchaseForm(form_data)
+    form = CreateProductPurchaseForm(form_data)
     form.is_valid()
     assert form.cleaned_data["quantity"] == form_data["quantity"]
 
 
 @pytest.mark.django_db
 def test_save_calls_new_purchase(mock_purchase_model, form_data, purchaser, product):
-    form = CreatePurchaseForm(form_data)
+    form = CreateProductPurchaseForm(form_data)
     form.is_valid()
     form.save()
     mock_purchase_model.objects.new_purchase.assert_called_once_with(
@@ -89,7 +89,7 @@ def test_save_calls_new_purchase(mock_purchase_model, form_data, purchaser, prod
 
 @pytest.mark.django_db
 def test_save_sets_purchase_to_instance_attribute(mock_purchase_model, form_data):
-    form = CreatePurchaseForm(form_data)
+    form = CreateProductPurchaseForm(form_data)
     form.is_valid()
     form.save()
     assert form.instance == mock_purchase_model.objects.new_purchase.return_value

@@ -14,12 +14,14 @@
 
                         <div class="col-lg-2 my-1">{{ purchase.created_at }}</div>
  
+                        <div class="col-lg-1 my-1">{{ purchase.purchase_type }}</div>
+ 
                         <div class="col-lg my-1">
                             <div>
                                 <span class="font-monospace user-select-all text-muted">{{ purchase.product.sku }}</span>
                             </div>
                             <div>
-                                <span class="user-select-all">{{ purchase.product.full_name }}</span>
+                                <span class="user-select-all">{{ purchase.description }}</span>
                             </div>
                         </div>
 
@@ -31,8 +33,7 @@
                         <div class="col-lg-1 my-1 fs-5">£{{ purchase.to_pay|floatformat:2 }}</div>
 
                         <div class="col-lg-1 my-1">
-                            <a href="{% url 'purchases:update_purchase' purchase.id %}"
-                               class="btn btn-primary btn-sm">Edit</a>
+                            <a href="{{ purchase.get_absolute_url }}" class="btn btn-primary btn-sm">Edit</a>
                         </div>
 
                     </div>

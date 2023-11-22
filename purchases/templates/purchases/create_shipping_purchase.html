@@ -1,0 +1,14 @@
+{% extends "purchases/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h3 class="display-3 mb-5">Create Shipping Purchase</h3>
+        <div class="col-lg-6">
+            <form action="" method="post">
+                {% csrf_token %}
+                {% include "home/bootstrap_input_group_form.html" %}
+                <button id="submit" class="btn btn-primary form-control">Create</button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
