@@ -3,14 +3,14 @@
 import datetime
 import json
 
+from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import get_object_or_404, redirect, reverse
+from django.shortcuts import get_object_or_404, reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, TemplateView, View
 from django.views.generic.base import RedirectView
@@ -23,8 +23,6 @@ from inventory.models import (
     CombinationProduct,
     MultipackProduct,
     ProductBayLink,
-    ProductImageLink,
-    ProductRangeImageLink,
 )
 from linnworks.models import StockManager
 
@@ -45,7 +43,7 @@ class SelectFBAOrderProduct(FBAUserMixin, FormView):
     """View for selecting a product for and FBA order."""
 
     template_name = "fba/select_order_product.html"
-    form_class = forms.SelectFBAOrderProduct
+    form_class = forms.SelectFBAOrderProductForm
 
     def form_valid(self, form):
         """Find the product's ID."""
@@ -60,53 +58,42 @@ class SelectFBAOrderProduct(FBAUserMixin, FormView):
 class FBAOrderCreate(FBAUserMixin, CreateView):
     """View for creating FBA orders."""
 
-    form_class = forms.CreateFBAOrderForm
+    form_class = forms.FBAOrderForm
     template_name = "fba/fbaorder_form.html"
-
-    def dispatch(self, *args, **kwargs):
-        """Return kwargs for the form."""
-        self.product = get_object_or_404(BaseProduct, pk=self.kwargs["product_id"])
-        return super(CreateView, self).dispatch(*args, **kwargs)
 
     def get_initial(self, *args, **kwargs):
         """Return initial values for the form."""
         initial = super().get_initial(*args, **kwargs)
-        initial["product"] = self.product
-        initial["product_weight"] = self.product.weight_grams
-        initial["product_hs_code"] = self.product.hs_code
-        initial["product_purchase_price"] = self.product.purchase_price
+        product = get_object_or_404(BaseProduct, pk=self.kwargs["product_id"])
+        initial["product"] = product
+        initial["product_weight"] = product.weight_grams
+        initial["product_hs_code"] = product.hs_code
+        initial["product_purchase_price"] = product.purchase_price
         initial["product_is_multipack"] = isinstance(
-            self.product, MultipackProduct
-        ) or isinstance(self.product, CombinationProduct)
+            product, MultipackProduct
+        ) or isinstance(product, CombinationProduct)
         return initial
-
-    def get_image_url(self):
-        """Return the URL of the product's image."""
-        image_link = ProductImageLink.objects.filter(product=self.product).first()
-        if image_link is None:
-            image_link = ProductRangeImageLink.objects.filter(
-                product_range=self.product.product_range
-            ).first()
-        if image_link is None:
-            return ""
-        else:
-            return mark_safe(image_link.image.square_image.url)
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
         context = super().get_context_data(*args, **kwargs)
-        context["product"] = self.product
-        try:
-            stock_level = StockManager.get_stock_level(self.product)
-        except Exception:
-            stock_level = 0
-        context["stock_level"] = stock_level
+        product = get_object_or_404(BaseProduct, pk=self.kwargs["product_id"])
+        context["product"] = product
+        context["stock_level"] = self.get_stock_level(product)
         context["existing_order_count"] = (
-            models.FBAOrder.objects.filter(product=self.product)
+            models.FBAOrder.objects.filter(product=product)
             .exclude(status=models.FBAOrder.FULFILLED)
             .count()
         )
         return context
+
+    @staticmethod
+    def get_stock_level(product):
+        """Return the product's stock level."""
+        try:
+            return StockManager.get_stock_level(product)
+        except Exception:
+            return 0
 
     def get_success_url(self):
         """Redirect to the order's update page."""
@@ -122,79 +109,10 @@ class FBAOrderCreate(FBAUserMixin, CreateView):
         )
 
 
-class RepeatFBAOrder(FBAOrderCreate):
-    """View for creating repeated FBA orders."""
-
-    MAX_DUPLICATE_AGE = datetime.timedelta(days=30)
-
-    def dispatch(self, *args, **kwargs):
-        """Return kwargs for the form."""
-        self.get_product()
-        return super(CreateView, self).dispatch(*args, **kwargs)
-
-    def get(self, *args, **kwargs):
-        """Duplicate the order if it is recent, otherwise use repeat order form."""
-        order_age = timezone.now() - self.to_repeat.created_at
-        if order_age < self.MAX_DUPLICATE_AGE:
-            self.duplicate_order()
-            return redirect(reverse("fba:order_list"))
-        else:
-            return super().get(*args, **kwargs)
-
-    def duplicate_order(self):
-        """Create a duplicate of an FBA order."""
-        stock_level = StockManager.get_stock_level(product=self.to_repeat.product)
-        if (quantity_sent := self.to_repeat.quantity_sent) is not None:
-            aprox_quantity = min((quantity_sent, stock_level))
-        else:
-            aprox_quantity = self.to_repeat.aproximate_quantity
-        self.repeated_order = models.FBAOrder(
-            product=self.to_repeat.product,
-            product_weight=self.to_repeat.product.weight_grams,
-            product_hs_code=self.to_repeat.product.hs_code,
-            product_asin=self.to_repeat.product_asin,
-            product_purchase_price=self.to_repeat.product_purchase_price,
-            product_is_multipack=self.to_repeat.product_is_multipack,
-            region=self.to_repeat.region,
-            selling_price=self.to_repeat.selling_price,
-            FBA_fee=self.to_repeat.FBA_fee,
-            aproximate_quantity=aprox_quantity,
-            small_and_light=self.to_repeat.small_and_light,
-            is_fragile=self.to_repeat.is_fragile,
-        )
-        self.repeated_order.save()
-
-    def get_product(self):
-        """Return the product included in the order."""
-        self.to_repeat = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
-
-    def get_initial(self):
-        """Return initial form values."""
-        initial = super().get_initial()
-        initial["region"] = self.to_repeat.region
-        initial["selling_price"] = self.to_repeat.selling_price
-        initial["FBA_fee"] = self.to_repeat.FBA_fee
-        return initial
-
-    def get_context_data(self, **kwargs):
-        """Return template context."""
-        context = super().get_context_data(**kwargs)
-        context["to_repeat"] = self.to_repeat
-        return context
-
-    def set_success_message(self):
-        """Set a success message."""
-        messages.add_message(
-            self.request,
-            messages.SUCCESS,
-            f"Repeated FBA order {self.to_repeat}.",
-        )
-
-
 class FBAOrderUpdate(FBAUserMixin, UpdateView):
     """View for updating FBA orders."""
 
-    form_class = forms.CreateFBAOrderForm
+    form_class = forms.FBAOrderForm
     model = models.FBAOrder
     template_name = "fba/fbaorder_form.html"
 
@@ -207,18 +125,59 @@ class FBAOrderUpdate(FBAUserMixin, UpdateView):
     def get_context_data(self, **kwargs):
         """Return template context."""
         context = super().get_context_data(**kwargs)
-        try:
-            stock_level = StockManager.get_stock_level(self.object.product)
-        except Exception:
-            stock_level = 0
-        context["stock_level"] = stock_level
+        context["stock_level"] = self.get_stock_level(self.object.product)
         context["product"] = self.object.product
         return context
+
+    @staticmethod
+    def get_stock_level(product):
+        """Return the product's stock level."""
+        try:
+            return StockManager.get_stock_level(product)
+        except Exception:
+            return 0
 
     def get_success_url(self):
         """Redirect to the order's update page."""
         messages.add_message(self.request, messages.SUCCESS, "FBA order updated.")
         return self.object.get_absolute_url()
+
+
+class RepeatFBAOrder(FBAUserMixin, RedirectView):
+    """View for creating repeated FBA orders."""
+
+    MAX_DUPLICATE_AGE = datetime.timedelta(days=30)
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Duplicate the order if it is recent, otherwise use repeat order form."""
+        order = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
+        if timezone.now() - order.created_at < self.MAX_DUPLICATE_AGE:
+            self.duplicate_order(order)
+            self.set_success_message(order)
+        else:
+            self.set_error_message(order)
+        return reverse("fba:order_list")
+
+    def duplicate_order(self, order):
+        """Create a duplicate of an FBA order."""
+        stock_level = StockManager.get_stock_level(product=order.product)
+        order.duplicate(stock_level=stock_level)
+
+    def set_success_message(self, order):
+        """Set a success message."""
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            f"Repeated FBA order {order}.",
+        )
+
+    def set_error_message(self, order):
+        """Set an error message."""
+        messages.add_message(
+            self.request,
+            messages.ERROR,
+            f"FBA order {order} is too old to be repeated.",
+        )
 
 
 class OrderList(FBAUserMixin, ListView):
@@ -326,7 +285,7 @@ class StoppedFBAOrders(FBAUserMixin, ListView):
             return list(range(1, 11)) + [paginator.num_pages]
 
 
-class TakeOffHold(View):
+class TakeOffHold(FBAUserMixin, View):
     """View for takeing order off hold."""
 
     def get(self, *args, **kwargs):
@@ -372,11 +331,10 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
             search_text = search_text.strip()
             qs = qs.filter(
                 Q(
-                    Q(product__sku__icontains=search_text)
+                    Q(product__sku__iexact=search_text)
                     | Q(product__product_range__name__icontains=search_text)
                     | Q(product_asin__icontains=search_text)
                     | Q(product__barcode__iexact=search_text)
-                    | Q(product__sku__iexact=search_text)
                     | Q(product__product_range__sku__iexact=search_text)
                     | Q(product__supplier_sku__iexact=search_text)
                     | Q(id__iexact=search_text)
@@ -409,118 +367,28 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class FBAPriceCalculator(FBAUserMixin, View):
+class FBAPriceCalculatorView(FBAUserMixin, View):
     """View for calculating FBA profit margins."""
 
     def post(self, *args, **kwargs):
         """Return FBA profit margin calculations."""
         try:
-            self.parse_request()
-            response = {}
-            response["channel_fee"] = self.get_channel_fee()
-            response["currency_symbol"] = self.get_currency_symbol()
-            response["vat"] = self.get_vat()
-            response["postage_to_fba"] = self.postage_gbp
-            response["postage_per_item"] = self.postage_per_item_gbp
-            response["profit"] = round(self.get_profit() * self.exchange_rate, 2)
-            response["percentage"] = self.get_percentage()
-            response["purchase_price"] = self.get_purchase_price()
-            max_quantity, max_quantity_no_stock = self.get_max_quantity()
-            response["max_quantity"] = max_quantity
-            response["max_quantity_no_stock"] = max_quantity_no_stock
-            return JsonResponse(response)
+            calculator = models.FBAPriceCalculator(
+                selling_price=float(self.request.POST.get("selling_price")),
+                region=get_object_or_404(
+                    models.FBARegion, pk=int(self.request.POST.get("region"))
+                ),
+                purchase_price=float(self.request.POST.get("purchase_price")),
+                fba_fee=float(self.request.POST.get("fba_fee")),
+                product_weight=int(self.request.POST.get("weight")),
+                stock_level=int(self.request.POST.get("stock_level")),
+                zero_rated=self.request.POST.get("zero_rated") is True,
+                quantity=int(self.request.POST.get("quantity")),
+            )
+            calculator.calculate()
+            return JsonResponse(calculator.to_dict(), safe=False)
         except Exception:
             return HttpResponseBadRequest()
-
-    def parse_request(self):
-        """Get request parameters from POST."""
-        post_data = self.request.POST
-        self.selling_price = float(post_data.get("selling_price"))
-        self.country_id = int(post_data.get("region"))
-        self.purchase_price = float(post_data.get("purchase_price"))
-        self.fba_fee = float(post_data.get("fba_fee"))
-        region_id = int(post_data.get("region"))
-        self.region = models.FBARegion.objects.get(id=region_id)
-        self.exchange_rate = float(self.region.country.currency.exchange_rate())
-        self.product_weight = int(post_data.get("weight"))
-        self.stock_level = int(post_data.get("stock_level"))
-        self.zero_rated = post_data.get("zero_rated") == "true"
-        try:
-            self.quantity = int(post_data.get("quantity"))
-        except ValueError:
-            self.quantity, _ = self.get_max_quantity()
-        self.get_postage_to_fba()
-        self.get_profit()
-
-    def get_channel_fee(self):
-        """Return the caclulated channel fee."""
-        channel_fee = self.selling_price * 0.15
-        return round(channel_fee, 2)
-
-    def get_currency_symbol(self):
-        """Return the currency symbol."""
-        return self.region.country.currency.symbol
-
-    def get_vat(self):
-        """Return the caclulated VAT."""
-        if self.region.country.vat_is_required() == self.region.country.VAT_NEVER:
-            return 0.0
-        elif (
-            self.region.country.vat_is_required() != self.region.country.VAT_ALWAYS
-            and self.zero_rated
-        ):
-            return 0.0
-        else:
-            vat = self.selling_price / 6
-            vat = round(vat, 2)
-        return vat
-
-    def get_postage_to_fba(self):
-        """Return the caclulated price to post to FBA."""
-        shipped_weight = self.product_weight * self.quantity
-        self.postage_gbp = round(
-            float(self.region.calculate_shipping(shipped_weight)) / 100.0,
-            2,
-        )
-        self.postage_local = round(self.postage_gbp / self.exchange_rate, 2)
-
-    def get_postage_per_item(self):
-        """Return the caclulated price per item to post to FBA."""
-        postage_per_item = None
-        if postage_per_item is None:
-            self.postage_per_item_gbp = round(self.postage_gbp / int(self.quantity), 2)
-        self.postage_per_item_local = round(
-            self.postage_per_item_gbp / self.exchange_rate, 2
-        )
-
-    def get_profit(self):
-        """Return the calculated per item profit."""
-        self.get_postage_per_item()
-        profit = self.selling_price - sum(
-            [
-                self.postage_per_item_local,
-                self.get_channel_fee(),
-                self.get_vat(),
-                self.get_purchase_price(),
-                self.fba_fee,
-            ]
-        )
-        return profit
-
-    def get_percentage(self):
-        """Return the percentage fo the sale price that is profit."""
-        percentage = (self.get_profit() / self.selling_price) * 100
-        return round(percentage, 2)
-
-    def get_purchase_price(self):
-        """Return the purchase price in local currency."""
-        purchase_price = self.purchase_price / self.exchange_rate
-        return round(purchase_price, 2)
-
-    def get_max_quantity(self):
-        """Return the maximum number of the product that can be sent."""
-        max_quantity = (self.region.max_weight * 1000) // self.product_weight
-        return min((max_quantity, self.stock_level)), max_quantity
 
 
 class FulfillFBAOrder(FBAUserMixin, UpdateView):
@@ -545,9 +413,6 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
         context["bays"] = ", ".join([bay for bay in bays])
         context["selling_price"] = "{:.2f}".format(
             order.selling_price / 100,
-        )
-        context["shipment_packages"] = models.FBAShipmentPackage.objects.filter(
-            fba_order=context["form"].instance
         )
         return context
 
@@ -590,8 +455,51 @@ class FulfillFBAOrder(FBAUserMixin, UpdateView):
 
     def update_stock(self):
         """Complete and close the order."""
-        message_type, text = self.object.update_stock_level(user=self.request.user)
-        messages.add_message(self.request, message_type, text)
+        if settings.DEBUG is True:
+            messages.add_message(
+                self.request, messages.WARNING, "Stock update skipped: DEBUG mode."
+            )
+        elif self.object.update_stock_level_when_complete is False:
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                (
+                    "Set to skip stock update, the stock level for "
+                    f"{self.object.product.sku} is unchanged."
+                ),
+            )
+        else:
+            try:
+                stock_level, new_stock_level = self._update_stock()
+                messages.add_message(
+                    self.request,
+                    messages.SUCCESS,
+                    (
+                        f"Changed stock level for {self.object.product.sku} from {stock_level} "
+                        f"to {new_stock_level}"
+                    ),
+                )
+            except Exception:
+                messages.add_message(
+                    self.request,
+                    messages.ERROR,
+                    (
+                        f"Stock Level failed to update for {self.object.product.sku}, "
+                        "please check stock level."
+                    ),
+                )
+
+    def _update_stock(self):
+        stock_level = StockManager.get_stock_level(self.object.product)
+        new_stock_level = stock_level - self.object.quantity_sent
+        change_source = f"Updated by FBA order pk={self.object.pk}"
+        StockManager.set_stock_level(
+            product=self.object.product,
+            user=self.request.user,
+            new_stock_level=new_stock_level,
+            change_source=change_source,
+        )
+        return stock_level, new_stock_level
 
 
 class FBAOrderPrintout(FBAUserMixin, TemplateView):
@@ -603,11 +511,10 @@ class FBAOrderPrintout(FBAUserMixin, TemplateView):
         """Return context for the template."""
         context = super().get_context_data(**kwargs)
         order = get_object_or_404(models.FBAOrder, pk=self.kwargs.get("pk"))
-        product = get_object_or_404(BaseProduct, sku=order.product.sku)
         context["order"] = order
-        context["product"] = product
+        context["product"] = order.product
         try:
-            stock_level_info = StockManager.stock_level_info(product.sku)
+            stock_level_info = StockManager.stock_level_info(order.product.sku)
         except Exception:
             context["stock_level"] = "ERROR"
             context["pending_stock"] = "ERROR"
@@ -615,7 +522,7 @@ class FBAOrderPrintout(FBAUserMixin, TemplateView):
             context["stock_level"] = stock_level_info.stock_level
             context["pending_stock"] = stock_level_info.in_orders
         context["bays"] = (
-            product.product_bay_links.select_related("bay")
+            order.product.product_bay_links.select_related("bay")
             .order_by()
             .distinct()
             .values_list("bay__name", flat=True)
@@ -683,37 +590,6 @@ class UnstopFBAOrder(FBAUserMixin, RedirectView):
         return reverse("fba:update_fba_order", args=[order.pk])
 
 
-class ShippingPrice(FBAUserMixin, FormView):
-    """View for adding correct shipping prices."""
-
-    form_class = forms.ShippingPriceForm
-    template_name = "fba/shipping_price.html"
-
-    def get_form_kwargs(self, *args, **kwargs):
-        """Add the FBA order to the form kwargs."""
-        kwargs = super().get_form_kwargs(*args, **kwargs)
-        kwargs["fba_order"] = get_object_or_404(
-            models.FBAOrder, id=self.kwargs.get("pk")
-        )
-        try:
-            kwargs["instance"] = models.FBAShippingPrice.objects.get(
-                product_SKU=kwargs["fba_order"].product.sku
-            )
-        except models.FBAShippingPrice.DoesNotExist:
-            pass
-        return kwargs
-
-    def form_valid(self, form):
-        """Get the FBA Order from the form."""
-        self.fba_order = form.fba_order
-        form.save()
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        """Return the url to redirect to on successful submission."""
-        return self.fba_order.get_absolute_url()
-
-
 class PrioritiseOrder(FBAUserMixin, View):
     """View for prioritising FBA orders."""
 
@@ -747,7 +623,7 @@ class GetStockLevels(FBAUserMixin, View):
         """Get stock levels for FBA orders."""
         order_ids = json.loads(self.request.body)["order_ids"]
         orders = models.FBAOrder.objects.filter(pk__in=order_ids)
-        product_ids = orders.values_list("product", flat=True)
+        product_ids = list(orders.values_list("product", flat=True))
         products = BaseProduct.objects.filter(id__in=product_ids)
         stock_levels = StockManager.get_stock_levels(products)
         output = {}

@@ -59,6 +59,7 @@ class CountryFactory(factory.django.DjangoModelFactory):
     currency = factory.SubFactory(CurrencyFactory)
     vat_required = "As Region"
     default_vat_rate = None
+    flag = factory.django.ImageField(width=20, height=20)
 
 
 class ProviderFactory(factory.django.DjangoModelFactory):

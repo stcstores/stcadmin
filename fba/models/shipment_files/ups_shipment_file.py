@@ -42,37 +42,35 @@ class UPSShipmentFile:
     @classmethod
     def _create_rows(cls, shipment_export):
         rows = []
-        items = []
         for order in shipment_export.shipment_order.all():
             for package in order.shipment_package.all():
                 for item in package.shipment_item.all():
-                    items.append(item)
                     row_data = cls._create_row_data(
                         shipment_order=order, package=package, item=item
                     )
                     row = [row_data[header] for header in cls.HEADER]
                     rows.append(row)
-        cls._add_totals(rows, shipment_export)
+        rows.append(cls._get_total_row(shipment_export))
         return rows
 
     @classmethod
-    def _add_totals(cls, rows, shipment_export):
+    def _get_total_row(cls, shipment_export):
         total_weight = cls._calculate_total_weight(shipment_export)
         formatted_value = round(total_weight, 3)
         new_row = [None for _ in cls.HEADER]
         new_row[cls.HEADER.index(cls.PACKAGE_ITEM_WEIGHT)] = formatted_value
-        rows.append(new_row)
+        return new_row
 
     @classmethod
     def _calculate_total_weight(cls, shipment_export):
-        values = [order.weight_kg() for order in shipment_export.shipment_order.all()]
+        values = [order.weight_kg for order in shipment_export.shipment_order.all()]
         return sum(values)
 
     @classmethod
     def _create_row_data(cls, shipment_order, package, item):
         row_data = {
-            cls.ORDER_NUMBER: shipment_order.order_number(),
-            cls.PACKAGE_NUMBER: package.package_number(),
+            cls.ORDER_NUMBER: shipment_order.order_number,
+            cls.PACKAGE_NUMBER: package.package_number,
             cls.PACKAGE_LENGTH: package.length_cm,
             cls.PACKAGE_WIDTH: package.width_cm,
             cls.PACKAGE_HEIGHT: package.height_cm,

@@ -6,7 +6,7 @@ import factory
 from factory.django import DjangoModelFactory
 
 from fba import models
-from home.factories import StaffFactory
+from home.factories import StaffFactory, UserFactory
 from inventory.factories import ProductFactory
 from shipping.factories import CountryFactory, CurrencyFactory
 
@@ -20,11 +20,12 @@ class FBARegionFactory(DjangoModelFactory):
     postage_price = factory.Faker("pyint", max_value=5000, min_value=0)
     postage_per_kg = factory.Faker("pyint", max_value=500, min_value=0)
     postage_overhead_g = factory.Faker("pyint", max_value=500, min_value=0)
+    min_shipping_cost = factory.Faker("pyint", max_value=500, min_value=0)
     max_weight = factory.Faker("pyint", max_value=2000, min_value=0)
     max_size = factory.Faker("pyfloat", positive=True, right_digits=2)
     fulfillment_unit = models.FBARegion.METRIC
     currency = factory.SubFactory(CurrencyFactory)
-    warehouse_required = True
+    warehouse_required = False
     expiry_date_required = False
     position = 9999
     auto_close = False
@@ -35,6 +36,12 @@ class FBAOrderFactory(DjangoModelFactory):
     class Meta:
         model = models.FBAOrder
 
+    created_at = factory.Faker(
+        "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
+    )
+    modified_at = factory.Faker(
+        "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
+    )
     fulfilled_by = None
     closed_at = None
     region = factory.SubFactory(FBARegionFactory)
@@ -145,3 +152,90 @@ class FBAOrderFactory(DjangoModelFactory):
                 "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
             ),
         )
+
+
+class FBATrackingNumberFactory(DjangoModelFactory):
+    class Meta:
+        model = models.FBATrackingNumber
+
+    fba_order = factory.SubFactory(FBAOrderFactory, status_fulfilled=True)
+    tracking_number = factory.Faker("pystr", min_chars=12, max_chars=25)
+
+
+class ShipmentConfigFactory(DjangoModelFactory):
+    class Meta:
+        model = models.ShipmentConfig
+
+    token = factory.Faker("pystr", min_chars=128, max_chars=128)
+
+
+class FBAShipmentDestinationFactory(DjangoModelFactory):
+    class Meta:
+        model = models.FBAShipmentDestination
+
+    name = factory.Faker("name")
+    recipient_name = factory.Faker("name")
+    contact_telephone = factory.Faker("phone_number")
+    address_line_1 = factory.Faker("street_address")
+    address_line_2 = factory.Faker("street_name")
+    address_line_3 = factory.Faker("street_name")
+    city = factory.Faker("city")
+    state = factory.Faker("state")
+    country = factory.Faker("country")
+    country_iso = factory.Faker("country_code")
+    postcode = factory.Faker("postcode")
+    is_enabled = True
+
+
+class FBAShipmentExportFactory(DjangoModelFactory):
+    class Meta:
+        model = models.FBAShipmentExport
+
+    created_at = factory.Faker(
+        "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
+    )
+
+
+class FBAShipmentMethodFactory(DjangoModelFactory):
+    class Meta:
+        model = models.FBAShipmentMethod
+
+    name = factory.Faker("name")
+    identifier = factory.Faker("name")
+    priority = 0
+    is_enabled = True
+
+
+class FBAShipmentOrderFactory(DjangoModelFactory):
+    class Meta:
+        model = models.FBAShipmentOrder
+
+    export = factory.SubFactory(FBAShipmentExportFactory)
+    destination = factory.SubFactory(FBAShipmentDestinationFactory)
+    shipment_method = factory.SubFactory(FBAShipmentMethodFactory)
+    user = factory.SubFactory(UserFactory)
+    is_on_hold = False
+
+
+class FBAShipmentPackageFactory(DjangoModelFactory):
+    class Meta:
+        model = models.FBAShipmentPackage
+
+    shipment_order = factory.SubFactory(FBAShipmentOrderFactory)
+    length_cm = factory.Faker("pyint", min_value=1, max_value=200)
+    width_cm = factory.Faker("pyint", min_value=1, max_value=200)
+    height_cm = factory.Faker("pyint", min_value=1, max_value=200)
+
+
+class FBAShipmentItemFactory(DjangoModelFactory):
+    class Meta:
+        model = models.FBAShipmentItem
+
+    package = factory.SubFactory(FBAShipmentPackageFactory)
+    sku = factory.Faker("pystr", min_chars=9, max_chars=9)
+    description = factory.Faker("sentence")
+    quantity = factory.Faker("pyint", min_value=1, max_value=500)
+    weight_kg = factory.Faker("pyfloat", positive=True, max_value=50, right_digits=2)
+    value = 100
+    country_of_origin = "United Kingdom"
+    hr_code = factory.Faker("pystr", min_chars=25, max_chars=25)

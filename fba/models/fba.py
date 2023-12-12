@@ -42,10 +42,9 @@ class FBARegion(models.Model):
 
     def flag(self):
         """Return an image tag with the countries flag."""
-        country = self.country
         return mark_safe(
-            f'<img src="{country.flag.url}" height="20" '
-            f'width="20" alt="{country.ISO_code}">'
+            f'<img src="{self.country.flag.url}" height="20" '
+            f'width="20" alt="{self.country.ISO_code}">'
         )
 
     def size_unit(self):
@@ -94,6 +93,27 @@ class FBARegion(models.Model):
             return calculated_postage_price
 
 
+class FBATrackingNumberManager(models.Manager):
+    """Manager for the FBATrackingNumber model."""
+
+    def update_tracking_numbers(self, fba_order, *tracking_numbers):
+        """
+        Update the tracking numbers for an FBAOrder instance.
+
+        Args:
+            fba_order (fba.models.FBAOrder): The FBAOrder instance to update.
+            *tracking_numbers (str): The updated list of tracking numbers.
+        """
+        self.filter(fba_order=fba_order).exclude(
+            tracking_number__in=tracking_numbers
+        ).delete()
+        existing_tracking_numbers = set(
+            self.filter(fba_order=fba_order).values_list("tracking_number", flat=True)
+        )
+        for tracking_number in set(tracking_numbers) - existing_tracking_numbers:
+            self.create(fba_order=fba_order, tracking_number=tracking_number)
+
+
 class FBATrackingNumber(models.Model):
     """Model for FBA tracking numbers."""
 
@@ -101,6 +121,8 @@ class FBATrackingNumber(models.Model):
         "FBAOrder", on_delete=models.CASCADE, related_name="tracking_numbers"
     )
     tracking_number = models.CharField(max_length=255, blank=False)
+
+    objects = FBATrackingNumberManager()
 
     class Meta:
         """Meta class for FBATrackingNumber."""
@@ -110,20 +132,3 @@ class FBATrackingNumber(models.Model):
 
     def __str__(self):
         return self.tracking_number
-
-
-class FBAShippingPrice(models.Model):
-    """Model for prices to send items to FBA."""
-
-    added = models.DateTimeField(auto_now_add=True)
-    product_SKU = models.CharField(max_length=20, unique=True)
-    price_per_item = models.PositiveIntegerField()
-
-    class Meta:
-        """Meta class for FBAShippingPrice."""
-
-        verbose_name = "FBA Shipping Price"
-        verbose_name_plural = "FBA Shipping Prices"
-
-    def __str__(self):
-        return f"Shipping Price: {self.product_SKU}"

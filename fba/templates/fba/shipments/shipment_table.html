@@ -20,7 +20,7 @@
                 <td>{{ shipment.destination }}</td>
                 <td>{{ shipment.user }}</td>
                 <td>{{ shipment.shipment_package.count }}</td>
-                <td>{{ shipment.weight_kg }}</td>
+                <td>{{ shipment.weight_kg|floatformat:2 }}</td>
                 <td>{% format_price shipment.value %}</td>
                 <th>{{ shipment.order_number }}</th>
                 <td>
@@ -42,7 +42,7 @@
                        class="btn btn-danger btn-sm">Delete</a>
                 </td>
                 <td>
-                    {% if shipment.is_shipable %}
+                    {% if shipment.is_shippable %}
                         <a href="{% url 'fba:create_shipment_file' shipment.pk %}"
                            class="btn btn-primary btn-sm create_shipment_button">Create Shipment File</a>
                     {% endif %}

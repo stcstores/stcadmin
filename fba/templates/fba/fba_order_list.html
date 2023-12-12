@@ -156,8 +156,6 @@
                                 {% if order.region.auto_close %}
                                     <span class="badge bg-danger me-3">CLOSED</span>
                                 {% else %}
-                                    <a href="{% url 'fba:shipping_price' order.pk %}"
-                                       class="btn btn-primary btn-sm mb-1">Set Price</a>
                                     {% if order.tracking_number and order.fulfillment_center %}
                                         <a href="{% url 'fba:invoice' order.pk %}"
                                            class="btn btn-primary btn-sm mb-1">Invoice</a>

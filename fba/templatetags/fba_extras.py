@@ -10,10 +10,10 @@ register = template.Library()
 def format_price(price):
     """Return integer pence as formated string."""
     if price is None:
-        return mark_safe('<span class="negative">&mdash;</span>')
+        return mark_safe('<span class="text-danger">&mdash;</span>')
     elif price < 0:
-        html_class = "negative"
+        html_class = "text-danger"
     else:
-        html_class = "neutral"
+        html_class = "text-dark"
     string = '<span class="{html_class}">&pound;{price:.2f}</span>'
     return mark_safe(string.format(html_class=html_class, price=float(price / 100)))

@@ -1,7 +1,8 @@
 """Models for the fba app."""
 
-from .fba import FBARegion, FBAShippingPrice, FBATrackingNumber
+from .fba import FBARegion, FBATrackingNumber
 from .fba_order import FBAOrder
+from .price_calculator import FBAPriceCalculator
 from .shipments import (
     FBAShipmentDestination,
     FBAShipmentExport,
@@ -13,9 +14,9 @@ from .shipments import (
 )
 
 __all__ = [
+    "FBAPriceCalculator",
     "FBAOrder",
     "FBARegion",
-    "FBAShippingPrice",
     "FBAShipmentDestination",
     "FBAShipmentExport",
     "FBAShipmentItem",

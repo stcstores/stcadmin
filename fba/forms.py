@@ -13,7 +13,7 @@ from home.models import Staff
 from inventory.models import BaseProduct, ProductRange, Supplier
 
 
-class SelectFBAOrderProduct(forms.Form):
+class SelectFBAOrderProductForm(forms.Form):
     """Form for selecting a product for an FBA order."""
 
     product_SKU = forms.CharField()
@@ -57,11 +57,11 @@ class CurrencyField(forms.FloatField):
         return int(float(value) * 100)
 
 
-class CreateFBAOrderForm(forms.ModelForm):
+class FBAOrderForm(forms.ModelForm):
     """Form for creating FBA orders."""
 
     class Meta:
-        """Meta class for CreateFBAOrderForm."""
+        """Meta class for FBAOrderForm."""
 
         field_classes = {
             "selling_price": CurrencyField,
@@ -78,6 +78,11 @@ class CreateFBAOrderForm(forms.ModelForm):
             "status",
             "quantity_sent",
             "small_and_light",
+            "created_at",
+            "is_stopped",
+            "stopped_at",
+            "stopped_until",
+            "stopped_reason",
         ]
         widgets = {
             "product": forms.HiddenInput(),
@@ -194,29 +199,34 @@ class FBAOrderFilter(forms.Form):
         ]
         self.fields["country"].empty_label = "All"
 
+    @staticmethod
+    def clean_date(date, time):
+        """Return date as a timezone aware datetime."""
+        if date is None:
+            return None
+        return make_aware(datetime.combine(date, time))
+
     def clean_created_from(self):
         """Return a timezone aware datetime object from the submitted date."""
-        date = self.cleaned_data["created_from"]
-        if date is not None:
-            return make_aware(datetime.combine(date, datetime.min.time()))
+        return self.clean_date(
+            self.cleaned_data.get("created_from"), datetime.min.time()
+        )
 
     def clean_created_to(self):
         """Return a timezone aware datetime object from the submitted date."""
-        date = self.cleaned_data["created_to"]
-        if date is not None:
-            return make_aware(datetime.combine(date, datetime.max.time()))
+        return self.clean_date(self.cleaned_data.get("created_to"), datetime.max.time())
 
     def clean_fulfilled_from(self):
         """Return a timezone aware datetime object from the submitted date."""
-        date = self.cleaned_data["fulfilled_from"]
-        if date is not None:
-            return make_aware(datetime.combine(date, datetime.min.time()))
+        return self.clean_date(
+            self.cleaned_data.get("fulfilled_from"), datetime.min.time()
+        )
 
     def clean_fulfilled_to(self):
         """Return a timezone aware datetime object from the submitted date."""
-        date = self.cleaned_data["fulfilled_to"]
-        if date is not None:
-            return make_aware(datetime.combine(date, datetime.max.time()))
+        return self.clean_date(
+            self.cleaned_data.get("fulfilled_to"), datetime.max.time()
+        )
 
     def clean_prioritised(self):
         """Return the priorised filter value."""
@@ -249,11 +259,11 @@ class FBAOrderFilter(forms.Form):
         """Return a queryset of orders based on the submitted data."""
         kwargs = self.query_kwargs(self.cleaned_data)
         qs = models.FBAOrder.objects.filter(**kwargs)
-        if sort_by := self.cleaned_data["sort_by"]:
+        if sort_by := self.cleaned_data.get("sort_by"):
             qs = qs.order_by(sort_by)
         else:
             qs = qs.order_by("-created_at")
-        if search_text := self.cleaned_data["search"]:
+        if search_text := self.cleaned_data.get("search"):
             qs = self.text_search(search_text, qs)
         if closed := self.cleaned_data.get("closed"):
             qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
@@ -325,34 +335,8 @@ class FulfillFBAOrderForm(forms.ModelForm):
         ]
 
 
-class ShippingPriceForm(forms.ModelForm):
-    """Form for setting corrected shipping prices."""
-
-    def __init__(self, *args, **kwargs):
-        """Set fields."""
-        self.fba_order = kwargs.pop("fba_order")
-        super().__init__(*args, **kwargs)
-        self.fields["price_per_item"].widget = CurrencyWidget()
-        self.fields["price_per_item"].to_python = lambda x: int(float(x) * 100)
-        self.fields["shipping_price"] = forms.DecimalField(
-            max_digits=7, decimal_places=2
-        )
-        self.fields["product_SKU"].widget = forms.HiddenInput()
-        self.initial["product_SKU"] = self.fba_order.product.sku
-        self.fields = {key: value for key, value in reversed(list(self.fields.items()))}
-
-    class Meta:
-        """Meta class for ShippingPriceForm."""
-
-        model = models.FBAShippingPrice
-        fields = ["price_per_item", "product_SKU"]
-
-
 class OnHoldOrderFilter(forms.Form):
     """Form for filtering the FBA order list."""
-
-    CLOSED = "closed"
-    NOT_CLOSED = "not_closed"
 
     search = forms.CharField(required=False)
     created_from = forms.DateField(
@@ -365,10 +349,6 @@ class OnHoldOrderFilter(forms.Form):
     )
     country = forms.ModelChoiceField(models.FBARegion.objects.all(), required=False)
     supplier = forms.ChoiceField(choices=[], required=False)
-    closed = forms.ChoiceField(
-        choices=(("", ""), (CLOSED, "Closed"), (NOT_CLOSED, "Not Closed")),
-        required=False,
-    )
     sort_by = forms.ChoiceField(
         choices=(
             ("created_at", "Date Created"),
@@ -388,7 +368,7 @@ class OnHoldOrderFilter(forms.Form):
             .distinct()
         )
         suppliers = Supplier.objects.filter(id__in=supplier_ids)
-        self.fields["supplier"].choices = [("", "")] + [
+        self.fields["supplier"].choices = [("", "---------")] + [
             (supplier.id, supplier.name) for supplier in suppliers
         ]
 
@@ -430,8 +410,6 @@ class OnHoldOrderFilter(forms.Form):
             qs = qs.order_by("-created_at")
         if search_text := self.cleaned_data["search"]:
             qs = self.text_search(search_text, qs)
-        if closed := self.cleaned_data.get("closed"):
-            qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
         qs = qs = qs.select_related(
             "region__country",
         ).prefetch_related(
@@ -448,8 +426,8 @@ class OnHoldOrderFilter(forms.Form):
         qs = qs.filter(
             Q(
                 Q(product__sku__icontains=search_text)
-                | Q(product_asin__icontains=search_text)
                 | Q(product__product_range__name__icontains=search_text)
+                | Q(product_asin__icontains=search_text)
             )
         )
         return qs
@@ -480,7 +458,7 @@ class StoppedOrderFilter(forms.Form):
             .distinct()
         )
         suppliers = Supplier.objects.filter(id__in=supplier_ids)
-        self.fields["supplier"].choices = [("", "")] + [
+        self.fields["supplier"].choices = [("", "---------")] + [
             (supplier.id, supplier.name) for supplier in suppliers
         ]
 
@@ -517,8 +495,6 @@ class StoppedOrderFilter(forms.Form):
         qs = models.FBAOrder.objects.stopped().filter(**kwargs)
         if search_text := self.cleaned_data["search"]:
             qs = self.text_search(search_text, qs)
-        if closed := self.cleaned_data.get("closed"):
-            qs = qs.filter(closed_at__isnull=(closed == self.NOT_CLOSED))
         qs = qs = (
             qs.select_related(
                 "region__country",
@@ -539,8 +515,8 @@ class StoppedOrderFilter(forms.Form):
         qs = qs.filter(
             Q(
                 Q(product__sku__icontains=search_text)
-                | Q(product_asin__icontains=search_text)
                 | Q(product__product_range__name__icontains=search_text)
+                | Q(product_asin__icontains=search_text)
             )
         )
         return qs
@@ -576,7 +552,6 @@ class PackageForm(forms.ModelForm):
         exclude = ()
 
         widgets = {
-            "fba_order": forms.HiddenInput(),
             "shipment_order": forms.HiddenInput(),
         }
 
@@ -647,15 +622,16 @@ class TrackingNumbersForm(forms.ModelForm):
 
     def save(self):
         """Update FBA Order tracking numbers."""
-        self.instance.update_tracking_numbers(*self.cleaned_data["tracking_numbers"])
+        models.FBATrackingNumber.objects.update_tracking_numbers(
+            self.instance, *self.cleaned_data["tracking_numbers"]
+        )
+        if self.instance.tracking_numbers.count() > 0:
+            self.instance.close()
         return super().save()
 
 
 class FBAShipmentFilter(forms.Form):
     """Form for filtering the FBA order list."""
-
-    CLOSED = "closed"
-    NOT_CLOSED = "not_closed"
 
     search = forms.CharField(required=False)
     completed_from = forms.DateField(
