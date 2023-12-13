@@ -12,7 +12,7 @@
 
 {% block content %}
   <div class="container mb-3">
-    <div class="range_header row mb-3">
+    <div class="range_header row mb-2">
       <div class="range_details col-md-9">
         <span class="font-monospace sku user-select-all text-muted fs-6 me-2">{{ product_range.sku }}</span>
         {% if product_range.is_archived %}
@@ -20,7 +20,7 @@
         {% elif product_range.is_end_of_line %}
           <span class="badge bg-danger">End of Line</span>
         {% endif %}
-        <h5 class="display-5 user-select-all">{{ product_range.name }}</h5>
+        <h6 class="display-6 user-select-all">{{ product_range.name }}</h6>
       </div>
       <div class="col">
         <div>Managed By: {{ product_range.managed_by.get_full_name }}</div>

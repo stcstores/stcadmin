@@ -3,53 +3,34 @@
 {% block content %}
   {{ block.super }}
   <div class="container">
-    <div class="text-center text-md-start m-3">
-      {% if products_exist %}
-        <div class="text-success">All products exist in Linnworks.</div>
-      {% elif products_exist is None %}
-        {% if product_range.is_active %}
+    <div class="row">
+      <div class="text-center text-md-start col-lg-10">
+        {% if products_exist %}
+          <div class="text-success">All products exist in Linnworks.</div>
+        {% elif products_exist is None %}
+          {% if product_range.is_active %}
+            <div class="text-danger">
+              <span class="fw-bold">Error checking for product in Linnworks.</span>
+              This is likely due to a network error.
+            </div>
+          {% endif %}
+        {% else %}
           <div class="text-danger">
-            <span class="fw-bold">Error checking for product in Linnworks.</span>
-            This is likely due to a network error.
+            <span class="heading">This product cannot be found in Linnworks.</span>
+            If it has recently been created or changed it is likely these changes have not yet been processed.
           </div>
         {% endif %}
-      {% else %}
-        <div class="text-danger">
-          <span class="heading">This product cannot be found in Linnworks.</span>
-          If it has recently been created or changed it is likely these changes have not yet been processed.
-        </div>
-      {% endif %}
-    </div>
-
-    {% if product.is_end_of_line is False %}
-      <div class="buttons">
-        <a href="" class="button_link">
-          <button>End-of-Line Range</button>
-        </a>
       </div>
-    {% endif %}
-    <div class="container-fluid">
-      <div class="row align-items-center">
-        <div class="col-md-6 order-md-1 order-2 text-md-start text-center">
-          <h6 class="display-6 m-3">
-            {% if product_range.has_variations %}
-              Variations
-            {% else %}
-              Single Product
-            {% endif %}
-          </h6>
-        </div>
-        <div class="col order-md-2 order-1 text-md-end text-center">
-          {% if product_range.is_active %}
-            <a href="{% url 'inventory:set_product_range_eol' product_range.pk %}"
-               class="btn btn-danger btn-sm">Set Range End of Line</a>
-          {% endif %}
-        </div>
+      <div class="col text-md-end text-center col-lg-2">
+        {% if product_range.is_active %}
+          <a href="{% url 'inventory:set_product_range_eol' product_range.pk %}"
+             class="btn btn-danger btn-sm">Set Range End of Line</a>
+        {% endif %}
       </div>
     </div>
  
     <div class="container-fluid">
-      {% for product in product_range.products.variations %}
+      {% for product in products %}
         <div class="row mt-3 mt-lg-1 p-1 bg-light">
  
           <div class="col-lg my-1">
@@ -73,36 +54,44 @@
 
           <div class="col-lg-3 my-1">
             <div>
-              <span class="text-muted">Supplier SKU:&nbsp;</span>
+              <span class="text-muted me-2">Supplier SKU:</span>
               <span class="font-monospace user-select-all">{{ product.supplier_sku }}</span>
             </div>
             <div>
-              <span class="text-muted">Barcode:&nbsp;</span>
+              <span class="text-muted me-2">Barcode:</span>
               <span class="font-monospace user-select-all">{{ product.barcode }}</span>
+            </div>
+            <div>
+              <span class="text-muted me-2">Supplier:</span>
+              <span class="font-monospace user-select-all">{{ product.supplier }}</span>
             </div>
           </div>
 
-          <div class="col-lg-2 my-1">
+          <div class="col-lg-3 my-1">
             <div>
               {% with product.bays as bays %}
-                {% if bays %}<span class="text-muted">Bays:&nbsp;</span>{% endif %}
+                {% if bays %}<span class="text-muted me-2">Bays:</span>{% endif %}
                 {% for bay in bays %}<span class="me-1 font-monospace user-select-all">{{ bay }}</span>{% endfor %}
               {% endwith %}
             </div>
             <div>
-              <span class="text-muted">HS Code:&nbsp;</span>
+              <span class="text-muted me-2">HS Code:</span>
               <span class="font-monospace user-select-all">{{ product.hs_code }}</span>
+            </div>
+            <div>
+              <span class="text-muted me-2">Purchase Price</span>
+              <span class="font-monospace user-select-all">£{{ product.purchase_price }}</span>
             </div>
           </div>
 
-          <div class="col-lg-2 my-1">
+          <div class="col-lg-1 my-1">
             <div class="btn-group">
               {% if product.is_archived == False %}
                 <a href="{% url 'inventory:product' product.pk %}"
-                   class="btn btn-primary">Edit</a>
+                   class="btn btn-primary btn-sm">Edit</a>
                 {% if product.is_end_of_line == False %}
                   <a href="{% url 'inventory:set_product_eol' product.pk %}"
-                     class="btn btn-danger">EOL</a>
+                     class="btn btn-danger btn-sm">EOL</a>
                 {% endif %}
               {% endif %}
             </div>

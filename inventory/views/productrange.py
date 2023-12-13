@@ -25,7 +25,7 @@ class ProductRangeView(InventoryUserMixin, TemplateView):
         """Get template context data."""
         context_data = super().get_context_data(*args, **kwargs)
         context_data["product_range"] = self.product_range
-        products = self.product_range.products.variations()
+        products = self.product_range.products.variations().select_related("supplier")
         context_data["products"] = products
         if not self.product_range.is_archived():
             product_skus = products.filter(is_archived=False).values_list(
