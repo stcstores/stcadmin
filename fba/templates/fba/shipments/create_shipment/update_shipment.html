@@ -24,6 +24,9 @@
                     <span class="fw-bold font-monospace user-select-all">{% format_price form.instance.value %}</span>
                 </div>
                 <div class="col">
+                    Package Count: <span class="fw-bold font-monospace user-select-all">{{ form.instance.shipment_package.count }}</span>
+                </div>
+                <div class="col">
                     Item Count: <span class="fw-bold font-monospace user-select-all">{{ form.instance.item_count }}</span>
                 </div>
             </div>
