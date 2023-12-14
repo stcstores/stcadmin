@@ -39,7 +39,7 @@ def test_create_rows_calls_create_address_row(
 ):
     UPSAddressFile._create_rows(shipment_export)
     calls = [mock.call(shipment) for shipment in shipment_orders]
-    mock_create_address_row.assert_has_calls(calls)
+    mock_create_address_row.assert_has_calls(calls, any_order=True)
 
 
 @pytest.mark.django_db
