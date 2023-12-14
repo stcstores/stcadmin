@@ -40,9 +40,9 @@ def post_response(url, group_logged_in_client, post_data):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "restock/update_supplier_last_ordered.html" in (
+    assert "restock/update_supplier_last_ordered.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 @pytest.mark.django_db

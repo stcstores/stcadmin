@@ -43,7 +43,7 @@ def get_response(group_logged_in_client, url):
 
 
 def test_uses_template(get_response):
-    assert "fba/order_printout.html" in (t.name for t in get_response.templates)
+    assert "fba/order_printout.html" in [t.name for t in get_response.templates]
 
 
 def test_status_code(get_response):

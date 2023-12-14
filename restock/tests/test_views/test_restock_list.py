@@ -24,7 +24,7 @@ def get_response(url, group_logged_in_client):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "restock/restock_list.html" in (t.name for t in get_response.templates)
+    assert "restock/restock_list.html" in [t.name for t in get_response.templates]
 
 
 @pytest.mark.django_db

@@ -47,9 +47,9 @@ def test_request_without_group(logged_in_client, url):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "fba/shipments/create_shipment/update_shipment.html" in (
+    assert "fba/shipments/create_shipment/update_shipment.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 @pytest.mark.django_db

@@ -48,9 +48,9 @@ def test_description_view_context_contains_product_range(get_response, product_r
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "inventory/product_range/descriptions.html" in (
+    assert "inventory/product_range/descriptions.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 @pytest.mark.django_db

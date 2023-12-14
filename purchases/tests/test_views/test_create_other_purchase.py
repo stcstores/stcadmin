@@ -47,9 +47,9 @@ def post_response(mock_get_form, group_logged_in_client, url, form_data):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "purchases/create_other_purchase.html" in (
+    assert "purchases/create_other_purchase.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 @pytest.mark.django_db

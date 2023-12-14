@@ -47,16 +47,16 @@ def initial():
 
 @pytest.mark.django_db
 def test_uses_template_for_get_request(get_response):
-    assert "inventory/product_search/search_page.html" in (
+    assert "inventory/product_search/search_page.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 @pytest.mark.django_db
 def test_uses_template_for_post_request(get_response):
-    assert "inventory/product_search/search_page.html" in (
+    assert "inventory/product_search/search_page.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 @pytest.mark.django_db
@@ -68,9 +68,9 @@ def test_form_in_get_context(get_response):
 @pytest.mark.django_db
 def test_returns_get_response_for_invaild_post(get_response):
     assert get_response.status_code == 200
-    assert "inventory/product_search/search_page.html" in (
+    assert "inventory/product_search/search_page.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 def test_get_initial_adds_end_of_line(initial):

@@ -41,9 +41,9 @@ def post_response(group_logged_in_client, url):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "fba/fbaorder_confirm_delete.html" in (
+    assert "fba/fbaorder_confirm_delete.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 def test_status_code(get_response):

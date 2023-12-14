@@ -27,7 +27,7 @@ def get_response_with_bay(bay, group_logged_in_client, url):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "inventory/bay_search.html" in (t.name for t in get_response.templates)
+    assert "inventory/bay_search.html" in [t.name for t in get_response.templates]
 
 
 @pytest.mark.django_db

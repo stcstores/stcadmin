@@ -32,9 +32,9 @@ def mock_stock_manager():
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "inventory/product_range/product_range.html" in (
+    assert "inventory/product_range/product_range.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 @pytest.mark.django_db

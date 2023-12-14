@@ -65,9 +65,9 @@ def post_response(group_logged_in_client, url):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "purchases/purchase_confirm_delete.html" in (
+    assert "purchases/purchase_confirm_delete.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 @pytest.mark.django_db

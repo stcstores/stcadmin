@@ -43,7 +43,7 @@ def get_response(group_logged_in_client, url):
 
 
 def test_uses_template(get_response):
-    assert "fba/fbaorder_form.html" in (t.name for t in get_response.templates)
+    assert "fba/fbaorder_form.html" in [t.name for t in get_response.templates]
 
 
 def test_status_code(get_response):
@@ -132,3 +132,8 @@ def test_adds_message(group_logged_in_client, url, form_data):
     message = list(response.context["messages"])[0]
     assert message.message == "FBA order updated."
     assert message.level == messages.SUCCESS
+
+
+def test_invalid_data(group_logged_in_client, url, form_data_with_invalid_item):
+    response = group_logged_in_client.post(url, form_data_with_invalid_item)
+    assert response.status_code == 200

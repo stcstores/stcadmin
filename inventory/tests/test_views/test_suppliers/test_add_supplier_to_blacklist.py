@@ -54,9 +54,9 @@ def post_response(group_logged_in_client, url, name):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "inventory/suppliers/add_blacklisted_supplier.html" in (
+    assert "inventory/suppliers/add_blacklisted_supplier.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 @pytest.mark.django_db

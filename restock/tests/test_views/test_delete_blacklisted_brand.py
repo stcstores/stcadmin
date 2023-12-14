@@ -34,9 +34,9 @@ def post_response(group_logged_in_client, url, post_data):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "restock/blacklistedbrand_confirm_delete.html" in (
+    assert "restock/blacklistedbrand_confirm_delete.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 @pytest.mark.django_db

@@ -29,7 +29,7 @@ def get_response(group_logged_in_client, url):
 
 
 def test_uses_template(get_response):
-    assert "fba/select_order_product.html" in (t.name for t in get_response.templates)
+    assert "fba/select_order_product.html" in [t.name for t in get_response.templates]
 
 
 def test_status_code(get_response):
@@ -50,8 +50,8 @@ def form_data(product):
 
 
 @pytest.fixture
-def form_data_with_invalid_item(form_data):
-    form_data["product_SKU"] = ""
+def form_data_with_invalid_sku(form_data):
+    form_data["product_SKU"] = "999-999-999"
     return form_data
 
 
@@ -63,3 +63,8 @@ def post_response(group_logged_in_client, url, form_data):
 def test_redirect(post_response, product):
     assert post_response.status_code == 302
     assert post_response["Location"] == reverse("fba:create_order", args=[product.pk])
+
+
+def test_invalid_sku(group_logged_in_client, url, form_data_with_invalid_sku):
+    response = group_logged_in_client.post(url, form_data_with_invalid_sku)
+    assert response.status_code == 200

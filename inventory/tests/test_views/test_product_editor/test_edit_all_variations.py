@@ -65,9 +65,9 @@ def test_uses_product_formset():
 
 @pytest.mark.django_db
 def test_uses_template(mock_form_class, get_response):
-    assert "inventory/product_editor/edit_all_variations.html" in (
+    assert "inventory/product_editor/edit_all_variations.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 @pytest.mark.django_db

@@ -79,9 +79,9 @@ def post_response(group_logged_in_client, new_purchase_url, form_data):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "purchases/update_other_purchase.html" in (
+    assert "purchases/update_other_purchase.html" in [
         t.name for t in get_response.templates
-    )
+    ]
 
 
 @pytest.mark.django_db

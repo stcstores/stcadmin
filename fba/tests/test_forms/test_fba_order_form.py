@@ -38,11 +38,6 @@ def form_data(region, product):
     }
 
 
-@pytest.fixture
-def form(form_data):
-    return FBAOrderForm(form_data)
-
-
 @pytest.mark.django_db
 def test_region_queryset_filters_active_without_instance(fba_region_factory):
     region = fba_region_factory.create(active=False)

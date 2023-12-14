@@ -39,11 +39,6 @@ def shipment(fba_shipment_order_factory, fba_shipment_item_factory, export):
     return shipment
 
 
-@pytest.fixture
-def post_response(shipment_config, group_logged_in_client, url, form_data):
-    return group_logged_in_client.post(url, form_data)
-
-
 @pytest.mark.django_db
 def test_request_from_user_not_in_group(shipment_config, url, logged_in_client):
     response = logged_in_client.post(url)

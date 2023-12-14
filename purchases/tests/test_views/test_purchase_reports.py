@@ -21,7 +21,7 @@ def get_response(group_logged_in_client, url):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "purchases/purchase_reports.html" in (t.name for t in get_response.templates)
+    assert "purchases/purchase_reports.html" in [t.name for t in get_response.templates]
 
 
 @pytest.mark.django_db

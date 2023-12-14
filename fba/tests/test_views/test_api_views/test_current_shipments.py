@@ -35,11 +35,6 @@ def items(fba_shipment_item_factory, shipment):
     return fba_shipment_item_factory.create_batch(3, package__shipment_order=shipment)
 
 
-@pytest.fixture
-def post_response(shipment_config, group_logged_in_client, url, form_data):
-    return group_logged_in_client.post(url, form_data)
-
-
 @pytest.mark.django_db
 def test_request_from_user_not_in_group(shipment_config, url, logged_in_client):
     response = logged_in_client.post(url)

@@ -33,7 +33,7 @@ def get_response_with_search(group_logged_in_client, url, form_data):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "purchases/product_search.html" in (t.name for t in get_response.templates)
+    assert "purchases/product_search.html" in [t.name for t in get_response.templates]
 
 
 @pytest.mark.django_db
