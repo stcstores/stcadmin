@@ -209,9 +209,10 @@ class BasePackageFormView:
     def form_valid(self, form):
         """Save shipment and packages if the form is valid."""
         item_formset = self.get_item_formset()
+        if not item_formset.is_valid():
+            return self.form_invalid(form)
         with transaction.atomic():
             self.object = form.save()
-            item_formset.is_valid()
             item_formset.instance = self.object
             item_formset.save()
         return super().form_valid(form)

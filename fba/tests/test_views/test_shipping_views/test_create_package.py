@@ -74,8 +74,21 @@ def form_data(shipment_order):
 
 
 @pytest.fixture
+def form_data_incomplete(form_data):
+    form_data["height_cm"] = ""
+    return form_data
+
+
+@pytest.fixture
 def form_data_with_invalid_item(form_data):
     form_data["shipment_item-0-weight_kg"] = "invalid"
+    return form_data
+
+
+@pytest.fixture
+def form_data_with_incomplete_item(form_data):
+    form_data["shipment_item-0-hr_code"] = ""
+    return form_data
 
 
 @pytest.fixture
@@ -117,8 +130,23 @@ def test_sets_message(group_logged_in_client, url, form_data, shipment_order):
     assert message.level == messages.SUCCESS
 
 
+def test_incomplete_form(group_logged_in_client, url, form_data_incomplete):
+    response = group_logged_in_client.post(url, form_data_incomplete)
+    assert response.status_code == 200
+    assert response.context["form"].errors
+
+
 @pytest.mark.django_db
 def test_invalid_item_form(group_logged_in_client, url, form_data_with_invalid_item):
     response = group_logged_in_client.post(url, form_data_with_invalid_item)
     assert response.status_code == 200
-    assert response.context["form"].errors
+    assert response.context["item_formset"].errors
+
+
+@pytest.mark.django_db
+def test_incomplete_item_form(
+    group_logged_in_client, url, form_data_with_incomplete_item
+):
+    response = group_logged_in_client.post(url, form_data_with_incomplete_item)
+    assert response.status_code == 200
+    assert response.context["item_formset"].errors
