@@ -15,8 +15,7 @@ def test_password():
 def create_user(db, django_user_model, test_password):
     def make_user(**kwargs):
         kwargs["password"] = test_password
-        if "username" not in kwargs:
-            kwargs["username"] = str(uuid.uuid4())
+        kwargs["username"] = str(uuid.uuid4())
         return django_user_model.objects.create_user(**kwargs)
 
     return make_user
@@ -44,11 +43,3 @@ def valid_get_request(group_logged_in_client):
         return group_logged_in_client.get(url)
 
     return _valid_get_request
-
-
-@pytest.fixture
-def valid_post_request(group_logged_in_client):
-    def _valid_post_request(*args, **kwargs):
-        return group_logged_in_client.post(*args, **kwargs)
-
-    return _valid_post_request

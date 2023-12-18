@@ -38,7 +38,7 @@ def test_sets_country(new_shipping_price, country):
     assert new_shipping_price.country == country
 
 
-@pytest.fixture
+@pytest.mark.django_db
 def test_sets_region(new_shipping_price):
     assert new_shipping_price.region is None
 

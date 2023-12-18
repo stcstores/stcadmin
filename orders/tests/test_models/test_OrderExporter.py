@@ -1,6 +1,4 @@
-import csv
 import datetime as dt
-import io
 from unittest.mock import Mock
 
 import pytest
@@ -20,16 +18,6 @@ def undispatched_order(order_factory, product_sale_factory):
     order = order_factory.create(dispatched_at=None)
     product_sale_factory.create(order=order)
     return order
-
-
-@pytest.fixture
-def export_rows():
-    def _export_rows(response):
-        return list(
-            csv.reader(io.StringIO(response.content.decode("utf8")), delimiter=",")
-        )
-
-    return _export_rows
 
 
 @pytest.fixture

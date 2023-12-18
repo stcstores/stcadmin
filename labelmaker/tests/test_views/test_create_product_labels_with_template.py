@@ -42,14 +42,6 @@ def html(page_text):
     return HTML(html=page_text)
 
 
-@pytest.fixture
-def get_html(get_page_text):
-    def _get_html():
-        return HTML(html=get_page_text())
-
-    return _get_html
-
-
 @pytest.mark.django_db
 def test_cannot_access_logged_out(logged_out_client, url):
     assert logged_out_client.get(url).status_code == 302

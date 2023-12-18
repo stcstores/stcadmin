@@ -13,12 +13,6 @@ def url(path):
 
 
 @pytest.fixture
-def page_text(valid_client, url):
-    response = valid_client.get(url)
-    return response.content.decode("utf8")
-
-
-@pytest.fixture
 def post_data():
     return {"label_text": "Label Text"}
 

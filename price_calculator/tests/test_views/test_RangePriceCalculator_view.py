@@ -23,11 +23,6 @@ def valid_get_response(valid_get_request, url):
 
 
 @pytest.fixture
-def valid_get_response_content(valid_get_response):
-    return valid_get_response.content.decode("utf8")
-
-
-@pytest.fixture
 def countries(country_factory):
     return [country_factory.create() for _ in range(3)]
 

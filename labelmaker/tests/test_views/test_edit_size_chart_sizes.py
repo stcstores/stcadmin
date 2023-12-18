@@ -45,14 +45,6 @@ def html(page_text):
 
 
 @pytest.fixture
-def get_html(get_page_text):
-    def _get_html():
-        return HTML(html=get_page_text())
-
-    return _get_html
-
-
-@pytest.fixture
 def post_data(size_chart, size_chart_sizes):
     return {
         "sizechartsize_set-TOTAL_FORMS": "3",

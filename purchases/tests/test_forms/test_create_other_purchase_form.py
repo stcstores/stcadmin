@@ -37,18 +37,6 @@ def mock_purchase_model():
         yield mock_purchase_model
 
 
-@pytest.fixture
-def purchase(other_purchase_factory):
-    return other_purchase_factory.build()
-
-
-@pytest.fixture
-def saved_form(purchase):
-    form = CreateOtherPurchaseForm()
-    form.instance = purchase
-    return form
-
-
 def test_has_purchaser_field():
     assert "purchaser" in CreateOtherPurchaseForm().fields
 

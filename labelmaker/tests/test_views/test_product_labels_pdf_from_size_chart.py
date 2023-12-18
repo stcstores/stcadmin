@@ -29,12 +29,6 @@ def url(path, size_chart, size_chart_sizes):
 
 
 @pytest.fixture
-def page_text(valid_client, url):
-    response = valid_client.get(url)
-    return response.content.decode("utf8")
-
-
-@pytest.fixture
 def post_data(size_chart_sizes):
     return {
         "product_code": "TV001",

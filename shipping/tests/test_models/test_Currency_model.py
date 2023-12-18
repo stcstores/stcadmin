@@ -18,11 +18,6 @@ def code():
 
 
 @pytest.fixture
-def exchange_rate():
-    return 1.275
-
-
-@pytest.fixture
 def new_currency(name, code):
     currency = models.Currency(name=name, code=code)
     currency.save()

@@ -366,19 +366,6 @@ def test_urgent(mock_urgent_since, kwargs, returned, order_factory):
     assert (order in queryset) == returned
 
 
-@pytest.fixture
-def shipping_price(country, shipping_price_factory):
-    return shipping_price_factory.create(country=country)
-
-
-@pytest.fixture
-def order_without_shipping_price(country, order_factory):
-    return order_factory.create(
-        country=country,
-        calculated_shipping_price=None,
-    )
-
-
 @pytest.mark.django_db
 def test_channel_fee_paid(order_factory):
     order = order_factory.create(channel__channel_fee=25, total_paid_GBP=2000)
@@ -399,14 +386,6 @@ def test_item_count(order_factory, product_sale_factory):
     product_sale_factory.create(order=order, quantity=1)
     product_sale_factory.create(order=order, quantity=3)
     assert order.item_count() == 4
-
-
-@pytest.fixture
-def mock_set_calculated_shipping_price():
-    with patch(
-        "orders.models.order.Order._set_calculated_shipping_price"
-    ) as mock_set_calculated_shipping_price:
-        yield mock_set_calculated_shipping_price
 
 
 @pytest.mark.django_db
@@ -437,31 +416,31 @@ def test_set_calculated_shipping_price(order_factory):
     assert order.calculated_shipping_price == shipping_price
 
 
-# @pytest.mark.django_db
-# def test_profit(order_factory, product_sale_factory):
-#     order = order_factory.create(total_paid_GBP=3500, calculated_shipping_price=500)
-#     product_sale_factory.create(
-#         order=order, purchase_price=550, price=550, quantity=1, vat=20
-#     )
-#     product_sale_factory.create(
-#         order=order, purchase_price=550, price=550, quantity=2, vat=20
-#     )
-#     product_sale_factory.create(
-#         order=order, purchase_price=550, price=550, quantity=1, vat=0
-#     )
-#     assert order.profit() == 186
+@pytest.mark.django_db
+def test_profit(order_factory, product_sale_factory):
+    order = order_factory.create(total_paid_GBP=3500, calculated_shipping_price=500)
+    product_sale_factory.create(
+        order=order, purchase_price=550, item_price=550, quantity=1, tax=20
+    )
+    product_sale_factory.create(
+        order=order, purchase_price=550, item_price=550, quantity=2, tax=20
+    )
+    product_sale_factory.create(
+        order=order, purchase_price=550, item_price=550, quantity=1, tax=0
+    )
+    assert order.profit() == -1272
 
 
-# @pytest.mark.django_db
-# def test_profit_percentage(order_factory, product_sale_factory):
-#     order = order_factory.create(total_paid_GBP=3500, calculated_shipping_price=500)
-#     product_sale_factory.create(
-#         order=order, purchase_price=550, price=550, quantity=1, vat=20
-#     )
-#     product_sale_factory.create(
-#         order=order, purchase_price=550, price=550, quantity=2, vat=20
-#     )
-#     product_sale_factory.create(
-#         order=order, purchase_price=550, price=550, quantity=1, vat=0
-#     )
-#     assert order.profit_percentage() == 5
+@pytest.mark.django_db
+def test_profit_percentage(order_factory, product_sale_factory):
+    order = order_factory.create(total_paid_GBP=3500, calculated_shipping_price=500)
+    product_sale_factory.create(
+        order=order, purchase_price=550, item_price=550, quantity=1, tax=20
+    )
+    product_sale_factory.create(
+        order=order, purchase_price=550, item_price=550, quantity=2, tax=20
+    )
+    product_sale_factory.create(
+        order=order, purchase_price=550, item_price=550, quantity=1, tax=0
+    )
+    assert order.profit_percentage() == -36

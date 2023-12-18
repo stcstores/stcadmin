@@ -1,4 +1,3 @@
-from decimal import Decimal
 from unittest import mock
 
 import pytest
@@ -9,11 +8,6 @@ from purchases.forms import CreateShippingPurchaseForm
 @pytest.fixture
 def purchaser(staff_factory):
     return staff_factory.create()
-
-
-@pytest.fixture
-def price():
-    return Decimal("34.32")
 
 
 @pytest.fixture

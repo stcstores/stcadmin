@@ -27,11 +27,6 @@ def post_data(blacklisted_brand):
     }
 
 
-@pytest.fixture
-def post_response(group_logged_in_client, url, post_data):
-    return group_logged_in_client.post(url, post_data)
-
-
 @pytest.mark.django_db
 def test_uses_template(get_response):
     assert "restock/blacklistedbrand_form.html" in [

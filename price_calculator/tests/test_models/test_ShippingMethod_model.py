@@ -19,41 +19,6 @@ def shipping_service(shipping_service_factory):
 
 
 @pytest.fixture
-def product_type():
-    return models.ProductType.objects.create()
-
-
-@pytest.fixture
-def channel(channel_factory):
-    return channel_factory.create()
-
-
-@pytest.fixture
-def min_weight():
-    return 100
-
-
-@pytest.fixture
-def max_weight():
-    return 1000
-
-
-@pytest.fixture
-def min_price():
-    return 570
-
-
-@pytest.fixture
-def max_price():
-    return 41000
-
-
-@pytest.fixture
-def vat_rate(vat_rate_factory):
-    return vat_rate_factory.create()
-
-
-@pytest.fixture
 def new_shipping_method(name, country, shipping_service):
     shipping_method = models.ShippingMethod(
         name=name, country=country, shipping_service=shipping_service
@@ -98,21 +63,21 @@ def test_sets_active(new_shipping_method):
 
 
 @pytest.mark.django_db
-def can_set_product_type(new_shipping_method, product_type):
+def test_can_set_product_type(new_shipping_method, product_type):
     new_shipping_method.product_type.set([product_type])
     assert list(new_shipping_method.product_type.all()) == [product_type]
 
 
 @pytest.mark.django_db
-def can_set_channel_type(new_shipping_method, channel):
+def test_can_set_channel_type(new_shipping_method, channel):
     new_shipping_method.channel.set([channel])
     assert list(new_shipping_method.channel.all()) == [channel]
 
 
 @pytest.mark.django_db
-def can_set_VAT_rate(new_shipping_method, vat_rate):
-    new_shipping_method.vat_rate.set([vat_rate])
-    assert list(new_shipping_method.vat_rate.all()) == [vat_rate]
+def test_can_set_VAT_rate(new_shipping_method, vat_rate):
+    new_shipping_method.vat_rates.set([vat_rate])
+    assert list(new_shipping_method.vat_rates.all()) == [vat_rate]
 
 
 @pytest.mark.django_db

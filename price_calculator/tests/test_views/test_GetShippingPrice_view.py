@@ -84,11 +84,6 @@ def shipping_method(
 
 
 @pytest.fixture
-def valid_get_response(valid_get_request, url):
-    return valid_get_request(url)
-
-
-@pytest.fixture
 def valid_post_response(valid_post_request, url, form_data):
     return valid_post_request(url, form_data)
 
@@ -96,21 +91,6 @@ def valid_post_response(valid_post_request, url, form_data):
 @pytest.fixture
 def valid_post_response_content(valid_post_response):
     return json.loads(valid_post_response.content.decode("utf8"))
-
-
-@pytest.fixture
-def countries(country_factory):
-    return [country_factory.create() for _ in range(3)]
-
-
-@pytest.fixture
-def product_types(product_type_factory):
-    return [product_type_factory.create() for _ in range(3)]
-
-
-@pytest.fixture
-def channel_fees(channel_fee_factory):
-    return [channel_fee_factory.create() for _ in range(3)]
 
 
 @pytest.fixture
