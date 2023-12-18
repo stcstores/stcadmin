@@ -110,4 +110,4 @@ def test_redirects(user, url, test_password, valid_client, new_password):
 @pytest.mark.django_db
 def test_uses_template(valid_client, url):
     response = valid_client.get(url)
-    assert "home/change_password.html" in (t.name for t in response.templates)
+    assert "home/change_password.html" in [t.name for t in response.templates]

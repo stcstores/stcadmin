@@ -15,18 +15,6 @@ def product_range(product_range_factory):
 
 
 @pytest.fixture
-def new_product_range(user_factory):
-    product_range = models.ProductRange(
-        status=models.ProductRange.COMPLETE,
-        sku="RNG_AAA-BBB-CCC",
-        name="New Product Range",
-        managed_by=user_factory.create(),
-    )
-    product_range.save()
-    return product_range
-
-
-@pytest.fixture
 def variation_range(
     variation_option_factory,
     variation_option_value_factory,

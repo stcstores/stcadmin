@@ -28,16 +28,6 @@ def get_response(group_logged_in_client, url):
     return group_logged_in_client.get(url)
 
 
-@pytest.fixture
-def post_data():
-    return {}
-
-
-@pytest.fixture
-def post_response(post_data, group_logged_in_client, url):
-    return group_logged_in_client.post(url, post_data)
-
-
 @pytest.fixture(autouse=True)
 def mock_stock_manager():
     with mock.patch("inventory.views.locations.StockManager") as mock_stock_manager:

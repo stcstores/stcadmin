@@ -26,4 +26,4 @@ def test_content_type(response):
 
 
 def test_uses_template(response):
-    assert "home/robots.txt" in (t.name for t in response.templates)
+    assert "home/robots.txt" in [t.name for t in response.templates]

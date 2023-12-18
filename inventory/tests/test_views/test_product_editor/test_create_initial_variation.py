@@ -45,11 +45,6 @@ def mock_form(product_range):
         yield mock_form
 
 
-@pytest.fixture
-def post_response(post_data, group_logged_in_client, url):
-    return group_logged_in_client.post(url, post_data)
-
-
 @pytest.mark.django_db
 def test_uses_template(get_response):
     assert "inventory/product_editor/create_initial_variation.html" in [

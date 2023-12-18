@@ -110,6 +110,6 @@ def test_variation_list_uses_template(product_range, products, group_logged_in_c
             "inventory:variation_list", kwargs={"product_range_pk": product_range.pk}
         )
     )
-    assert "inventory/product_search/variation_list.html" in (
+    assert "inventory/product_search/variation_list.html" in [
         t.name for t in response.templates
-    )
+    ]

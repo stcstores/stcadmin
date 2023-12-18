@@ -5,11 +5,6 @@ from inventory.models import ProductRange
 
 
 @pytest.fixture
-def product_range(user, product_range_factory):
-    return product_range_factory.create(status=ProductRange.CREATING, managed_by=user)
-
-
-@pytest.fixture
 def url():
     def make_url(product_range_id):
         return reverse(

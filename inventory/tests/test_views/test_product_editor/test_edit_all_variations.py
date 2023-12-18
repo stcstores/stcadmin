@@ -53,11 +53,6 @@ def mock_form_class(mock_formset):
         yield mock_form_class
 
 
-@pytest.fixture
-def post_response(post_data, group_logged_in_client, url):
-    return group_logged_in_client.post(url, post_data)
-
-
 def test_uses_product_formset():
     form_class = EditAllVariations().get_form_class()
     assert form_class == forms.ProductFormset

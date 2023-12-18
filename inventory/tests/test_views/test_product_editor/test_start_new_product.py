@@ -34,11 +34,6 @@ def mock_form(created_product_id):
 
 
 @pytest.fixture
-def post_response(post_data, group_logged_in_client, url):
-    return group_logged_in_client.post(url, post_data)
-
-
-@pytest.fixture
 def mock_new_range_sku():
     with mock.patch(
         "inventory.views.product_editor.models.new_range_sku"

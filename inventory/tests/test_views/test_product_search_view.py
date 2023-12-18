@@ -1,5 +1,3 @@
-from unittest import mock
-
 import pytest
 from django.urls import reverse
 
@@ -10,24 +8,6 @@ from inventory.views import ProductSearchView
 @pytest.fixture
 def url(product_range):
     return reverse("inventory:product_search")
-
-
-@pytest.fixture
-def mock_form():
-    mock_form = mock.MagicMock()
-    mock_form.is_valid = mock.Mock(return_value=True)
-    return mock_form
-
-
-@pytest.fixture
-def mock_form_class(mock_form):
-    with mock.patch(
-        "inventory.views.views.ProductSearchView.get_form_class",
-    ) as mock_get_form_class:
-        mock_form_class = mock.Mock()
-        mock_form_class.return_value = mock_form
-        mock_get_form_class.return_value = mock_form_class
-        yield mock_form_class
 
 
 @pytest.fixture

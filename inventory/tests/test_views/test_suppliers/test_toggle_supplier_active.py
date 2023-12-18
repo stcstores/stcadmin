@@ -17,7 +17,7 @@ def get_response(group_logged_in_client, url):
     return group_logged_in_client.get(url)
 
 
-@pytest.fixture
+@pytest.mark.django_db
 def test_active_supplier_is_set_inactive(supplier, group_logged_in_client, url):
     supplier.active = True
     supplier.save()
@@ -26,7 +26,7 @@ def test_active_supplier_is_set_inactive(supplier, group_logged_in_client, url):
     assert supplier.active is False
 
 
-@pytest.fixture
+@pytest.mark.django_db
 def test_inactive_supplier_is_set_active(supplier, group_logged_in_client, url):
     supplier.active = False
     supplier.save()

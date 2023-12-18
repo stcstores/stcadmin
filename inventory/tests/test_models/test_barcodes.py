@@ -7,27 +7,8 @@ from inventory.models import Barcode
 
 
 @pytest.fixture
-def barcode(barcode_factory):
-    barcode = barcode_factory.create()
-    barcode.full_clean()
-    return barcode
-
-
-@pytest.fixture
 def user(user_factory):
     return user_factory.create()
-
-
-@pytest.fixture
-def barcodes(barcode_factory):
-    return [barcode_factory.create() for i in range(50)]
-
-
-@pytest.fixture
-def new_barcode():
-    barcode = Barcode(barcode="8114165461")
-    barcode.save()
-    return barcode
 
 
 def test_barcode_barcode_attribute(barcode_factory):
