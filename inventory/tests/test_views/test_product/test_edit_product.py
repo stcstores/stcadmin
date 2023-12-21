@@ -19,7 +19,7 @@ def product(product_range, product_factory):
 
 @pytest.fixture
 def url(product):
-    return reverse("inventory:product", kwargs={"pk": product.pk})
+    return reverse("inventory:edit_product", kwargs={"pk": product.pk})
 
 
 @pytest.fixture
@@ -30,7 +30,7 @@ def get_response(group_logged_in_client, url):
 @pytest.fixture
 def mock_form(product):
     with mock.patch(
-        "inventory.views.product.ProductView.get_form_class",
+        "inventory.views.product.EditProduct.get_form_class",
     ) as mock_get_form_class:
         mock_form = mock.Mock()
         mock_form.is_valid = mock.Mock(return_value=True)
@@ -41,7 +41,7 @@ def mock_form(product):
 
 @pytest.mark.django_db
 def test_uses_template(get_response):
-    assert "inventory/product_range/product.html" in [
+    assert "inventory/product_range/edit_product.html" in [
         t.name for t in get_response.templates
     ]
 

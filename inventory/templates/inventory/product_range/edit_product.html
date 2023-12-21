@@ -71,9 +71,9 @@
 
             <div class="col-lg-3">
               {% if variation != product %}
-                <a href="{% url 'inventory:product' variation.pk %}"
+                <a href="{% url 'inventory:edit_product' variation.pk %}"
                    class="edit_variation btn btn-primary btn-sm">Edit</a>
-                <a href="{% url 'inventory:product' variation.pk %}"
+                <a href="{% url 'inventory:edit_product' variation.pk %}"
                    class="edit_variation_check btn btn-primary btn-sm"
                    data-bs-toggle="modal"
                    data-bs-target="#saveChangesModal"

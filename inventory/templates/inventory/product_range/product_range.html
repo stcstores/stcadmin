@@ -61,10 +61,6 @@
               <span class="text-muted me-2">Barcode:</span>
               <span class="font-monospace user-select-all">{{ product.barcode }}</span>
             </div>
-            <div>
-              <span class="text-muted me-2">Supplier:</span>
-              <span class="font-monospace user-select-all">{{ product.supplier }}</span>
-            </div>
           </div>
 
           <div class="col-lg-3 my-1">
@@ -74,27 +70,19 @@
                 {% for bay in bays %}<span class="me-1 font-monospace user-select-all">{{ bay }}</span>{% endfor %}
               {% endwith %}
             </div>
-            <div>
-              <span class="text-muted me-2">HS Code:</span>
-              <span class="font-monospace user-select-all">{{ product.hs_code }}</span>
-            </div>
-            <div>
-              <span class="text-muted me-2">Purchase Price</span>
-              <span class="font-monospace user-select-all">£{{ product.purchase_price }}</span>
-            </div>
           </div>
 
-          <div class="col-lg-1 my-1">
-            <div class="btn-group">
-              {% if product.is_archived == False %}
-                <a href="{% url 'inventory:product' product.pk %}"
-                   class="btn btn-primary btn-sm">Edit</a>
-                {% if product.is_end_of_line == False %}
-                  <a href="{% url 'inventory:set_product_eol' product.pk %}"
-                     class="btn btn-danger btn-sm">EOL</a>
-                {% endif %}
+          <div class="col-lg-2 my-1">
+            <a href="{% url "inventory:view_product" product.pk %}"
+               class="btn btn-primary btn-sm">View</a>
+            {% if product.is_archived == False %}
+              <a href="{% url 'inventory:edit_product' product.pk %}"
+                 class="btn btn-primary btn-sm">Edit</a>
+              {% if product.is_end_of_line == False %}
+                <a href="{% url 'inventory:set_product_eol' product.pk %}"
+                   class="btn btn-danger btn-sm">EOL</a>
               {% endif %}
-            </div>
+            {% endif %}
           </div>
 
           <div class="col-lg-2">

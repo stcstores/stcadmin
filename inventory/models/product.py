@@ -189,7 +189,7 @@ class BaseProduct(PolymorphicModel):
 
     def get_absolute_url(self):
         """Return the absolute url of the object."""
-        return reverse("inventory:product", kwargs={"pk": self.pk})
+        return reverse("inventory:edit_product", kwargs={"pk": self.pk})
 
     @property
     def full_name(self):

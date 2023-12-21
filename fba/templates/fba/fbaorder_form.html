@@ -26,7 +26,7 @@
  
         {% if form.instance.id %}<span>{{ form.instance.region.flag }}</span>{% endif %}
         <div>
-            <span class="fs-5 font-monospace user-select-all align-bottom">{{ product.sku }}</span><a href="{% url "inventory:product" product.pk %}"
+            <span class="fs-5 font-monospace user-select-all align-bottom">{{ product.sku }}</span><a href="{% url "inventory:edit_product" product.pk %}"
    target="_blank"
    class="btn btn-primary btn-sm ms-5">Edit</a>
         </div>

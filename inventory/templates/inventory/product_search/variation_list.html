@@ -49,9 +49,11 @@
         {% endif %}
       </div>
 
-      <div class="col-lg-1">
+      <div class="col-lg-2">
+        <a href="{% url "inventory:view_product" product.pk %}"
+           class="btn btn-sm btn-primary">View</a>
         {% if product.is_archived == False %}
-          <a href="{% url 'inventory:product' product.pk %}"
+          <a href="{% url 'inventory:edit_product' product.pk %}"
              class="btn btn-sm btn-primary">Edit</a>
         {% endif %}
       </div>

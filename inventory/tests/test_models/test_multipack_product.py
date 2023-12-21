@@ -3,6 +3,7 @@ from decimal import Decimal
 
 import pytest
 from django.db.utils import IntegrityError
+from django.urls import reverse
 
 from inventory import models
 
@@ -297,9 +298,8 @@ def test_range_sku_property(multipack_product):
 
 @pytest.mark.django_db
 def test_get_absolute_url_method(multipack_product):
-    assert (
-        multipack_product.get_absolute_url()
-        == f"/inventory/product/{multipack_product.pk}/"
+    assert multipack_product.get_absolute_url() == reverse(
+        "inventory:edit_product", args=[multipack_product.pk]
     )
 
 

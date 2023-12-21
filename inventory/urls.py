@@ -17,7 +17,16 @@ inventory_urlpatterns = [
         "locations/<int:range_pk>/", views.LocationFormView.as_view(), name="locations"
     ),
     path("images/<int:range_pk>/", views.ImageFormView.as_view(), name="images"),
-    path("product/<int:pk>/", views.ProductView.as_view(), name="product"),
+    path(
+        "edit_product/<int:pk>/",
+        views.product.EditProduct.as_view(),
+        name="edit_product",
+    ),
+    path(
+        "view_product/<int:pk>",
+        views.product.ViewProduct.as_view(),
+        name="view_product",
+    ),
     path(
         "set_product_eol/<int:pk>",
         views.product.SetProductEndOfLine.as_view(),

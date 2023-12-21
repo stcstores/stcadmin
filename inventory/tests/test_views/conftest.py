@@ -24,3 +24,9 @@ def group_logged_in_client(client, user, test_password):
     group.user_set.add(user)
     client.login(username=user.username, password=test_password)
     return client
+
+
+@pytest.fixture
+def logged_in_client(client, user, test_password):
+    client.login(username=user.username, password=test_password)
+    return client

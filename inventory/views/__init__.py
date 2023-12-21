@@ -9,7 +9,7 @@ from .api import (
 from .descriptions import DescriptionsView
 from .images import ImageFormView
 from .locations import BaySearch, LocationFormView
-from .product import ProductView
+from .product import EditProduct, ViewProduct
 from .product_editor import (
     CompleteNewProduct,
     Continue,
@@ -47,7 +47,8 @@ __all__ = [
     "DescriptionsView",
     "ImageFormView",
     "LocationFormView",
-    "ProductView",
+    "EditProduct",
+    "ViewProduct",
     "Continue",
     "CreateInitialVariation",
     "DiscardNewRange",
