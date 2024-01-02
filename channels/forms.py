@@ -85,8 +85,8 @@ class ProductSearchForm(forms.Form):
 
     def save(self):
         """Search for product ranges matching the search parameters."""
-        products = self._filter_products(self._query_products())
-        range_queryset = self._filter_ranges(self._query_ranges(products))
+        products = self._query_products()
+        range_queryset = self._filter_listed(self._query_ranges(products))
         self.ranges = range_queryset.order_by("name").annotate(
             variation_count=Count("products")
         )
@@ -98,7 +98,7 @@ class ProductSearchForm(forms.Form):
         else:
             qs = BaseProduct.objects.all()
         qs = qs.variations().active()
-        qs = qs.variations().select_related("product_range", "supplier")
+        qs = qs.select_related("product_range", "supplier")
         qs = qs.prefetch_related(
             "variation_option_values",
             "variation_option_values__variation_option",
@@ -113,13 +113,6 @@ class ProductSearchForm(forms.Form):
         return ProductRange.ranges.filter(
             pk__in=range_pks, status=ProductRange.COMPLETE
         )
-
-    def _filter_ranges(self, ranges):
-        ranges = self._filter_listed(ranges)
-        return ranges
-
-    def _filter_products(self, products):
-        return products
 
     def _filter_listed(self, ranges):
         listed = self.cleaned_data.get("listed")

@@ -11,6 +11,9 @@ class ShopifyManager:
 
     REQUEST_PAUSE = 0.51
 
+    ACTIVE = "active"
+    DRAFT = "draft"
+
     @classmethod
     def product_exists(cls, product_id):
         """Return True if product_id is an existant product ID on Shopify, otherwise False.
@@ -27,16 +30,6 @@ class ShopifyManager:
             return False
         else:
             return True
-
-    @classmethod
-    def update_stock(cls):
-        """Update Shopify product stock level and status."""
-        stock_levels = cls._get_stock_levels()
-        location_id = cls._get_location_id()
-        products = cls._get_products()
-        cls._update_stock_levels(
-            products=products, location_id=location_id, stock_levels=stock_levels
-        )
 
     @classmethod
     @shopify_api_py.shopify_api_session
@@ -126,10 +119,10 @@ class ShopifyManager:
     @classmethod
     def _update_product_status(cls, product):
         total_stock = sum([variant.inventory_quantity for variant in product.variants])
-        if total_stock == 0 and product.status == "active":
-            cls._set_product_status(product, "draft")
-        elif total_stock > 0 and product.status == "draft":
-            cls._set_product_status(product, "active")
+        if total_stock == 0 and product.status == cls.ACTIVE:
+            cls._set_product_status(product, cls.DRAFT)
+        elif total_stock > 0 and product.status == cls.DRAFT:
+            cls._set_product_status(product, cls.ACTIVE)
 
     @classmethod
     def _set_product_status(cls, product, status):
@@ -140,13 +133,13 @@ class ShopifyManager:
     @classmethod
     @shopify_api_py.shopify_api_session
     def _hide_product(cls, product):
-        product.status = "draft"
+        product.status = cls.DRAFT
         product.save()
 
     @classmethod
     @shopify_api_py.shopify_api_session
     def _unhide_product(cls, product):
-        product.status = "active"
+        product.status = cls.ACTIVE
         product.published_at = product.updated_at
         product.save()
 
@@ -179,4 +172,4 @@ class ShopifyStockManager:
 
     @staticmethod
     def _product_is_hidden(product):
-        return product.status == "draft"
+        return product.status == ShopifyManager.DRAFT
