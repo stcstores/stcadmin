@@ -19,6 +19,11 @@
             <div class="row mb-3 p-1 bg-light rounded">
                 <div class="col-2">
                     <span class="font-monospace user-select-all">{{ product.sku }}</span>
+                    {% if product.is_archived %}
+                        <span class="badge bg-secondary">Archived</span>
+                    {% elif product.is_end_of_line %}
+                        <span class="badge bg-danger">End Of Line</span>
+                    {% endif %}
                 </div>
                 <div class="col-3">
                     <span class="name">{{ product.full_name }}</span>

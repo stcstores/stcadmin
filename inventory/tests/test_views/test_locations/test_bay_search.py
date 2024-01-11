@@ -65,3 +65,18 @@ def test_get_other_bays(bay, bay_factory, product_factory, product_bay_link_fact
     product_bay_link_factory.create(product=product, bay=other_bay)
     returned_value = BaySearch().get_other_bays(product, bay)
     assert returned_value == [other_bay]
+
+
+@pytest.mark.django_db
+def test_ignores_archived_products(
+    group_logged_in_client,
+    url,
+    bay,
+    bay_factory,
+    product_factory,
+    product_bay_link_factory,
+):
+    product = product_factory.create(is_archived=True)
+    product_bay_link_factory.create(product=product, bay=bay)
+    response = group_logged_in_client.get(url, {"bay": bay.id})
+    assert response.context["products"] == []

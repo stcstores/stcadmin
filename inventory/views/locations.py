@@ -77,7 +77,9 @@ class BaySearch(InventoryUserMixin, TemplateView):
             product_ids = bay.product_bay_links.all().values_list("product", flat=True)
             context["products"] = [
                 (product, self.get_other_bays(product, bay))
-                for product in models.BaseProduct.objects.filter(id__in=product_ids)
+                for product in models.BaseProduct.objects.active().filter(
+                    id__in=product_ids
+                )
             ]
 
         else:
