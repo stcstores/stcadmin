@@ -56,13 +56,17 @@ def add_details_to_product(product):
 class SearchResults(RestockUserMixin, TemplateView):
     """View for restock page search results."""
 
+    RESULT_LIMIT = 150
+
     template_name = "restock/restock_list_display.html"
 
     def get_context_data(self, *args, **kwargs):
         """Return context for the template."""
         context = super().get_context_data(*args, **kwargs)
         search_text = self.request.GET["product_search"]
-        products = self.get_products(search_text)
+        products, context["result_count"] = self.get_products(search_text)
+        context["result_limit"] = self.RESULT_LIMIT
+        products = products[: self.RESULT_LIMIT]
         context["suppliers"] = sort_products_by_supplier(products)
         reorders = models.Reorder.objects.filter(product__in=products).open()
         context["reorder_counts"] = {}
@@ -75,7 +79,7 @@ class SearchResults(RestockUserMixin, TemplateView):
     def get_products(self, search_text):
         """Return products matching the search string."""
         search_terms = [_.strip() for _ in search_text.split() if _.strip()]
-        return (
+        qs = (
             BaseProduct.objects.complete()
             .active()
             .filter(
@@ -87,6 +91,7 @@ class SearchResults(RestockUserMixin, TemplateView):
             .select_related("supplier")
             .order_by("supplier__name")
         )
+        return qs[: self.RESULT_LIMIT], qs.count()
 
 
 class RestockList(RestockUserMixin, TemplateView):

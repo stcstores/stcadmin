@@ -1,3 +1,9 @@
+{% if result_count > result_limit %}
+    <span class="text-danger fs-5">Showing first {{ result_limit }} products of {{ result_count }}</span>
+{% else %}
+    <span class="fs-5">Showing {{ result_count }} products</span>
+{% endif %}
+
 {% for supplier, products in suppliers.items %}
     <div class="result mt-5">
         <h4>{{ supplier.name }}</h4>
