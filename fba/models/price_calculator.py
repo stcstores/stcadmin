@@ -73,6 +73,7 @@ class FBAPriceCalculator:
             selling_price=self.selling_price,
             zero_rated=self.zero_rated,
         )
+        print(self.vat)
         self.channel_fee = self.selling_price * self.CHANNEL_FEE
         self.purchase_price_local = self.purchase_price / self.exchange_rate
         self.postage_per_item_gbp = self.postage_gbp / int(self.quantity)

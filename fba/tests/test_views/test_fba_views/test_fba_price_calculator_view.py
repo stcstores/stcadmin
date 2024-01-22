@@ -92,6 +92,23 @@ def test_calculator_instanciated(
     )
 
 
+def test_calculator_instanciated_with_zero_rated_true(
+    mock_price_calculator, region, url, group_logged_in_client, form_data
+):
+    form_data["zero_rated"] = "true"
+    group_logged_in_client.post(url, form_data)
+    mock_price_calculator.assert_called_once_with(
+        selling_price=float(form_data["selling_price"]),
+        region=region,
+        purchase_price=float(form_data["purchase_price"]),
+        fba_fee=float(form_data["fba_fee"]),
+        product_weight=int(form_data["weight"]),
+        stock_level=int(form_data["stock_level"]),
+        zero_rated=True,
+        quantity=int(form_data["quantity"]),
+    )
+
+
 def test_caluclator_calculate_method_called(post_response, mock_price_calculator):
     mock_price_calculator.return_value.calculate.assert_called_once_with()
 
