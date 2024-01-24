@@ -58,7 +58,9 @@ class ShopifyCollectionManager(models.Manager):
         """Update the ShopifyCollection model objects to match Shopify."""
         collections = ShopifyManager.get_collections()
         for collection in collections:
-            self.update_or_create(collection_id=collection.id, name=collection.title)
+            self.update_or_create(
+                collection_id=collection.id, defaults={"name": collection.title}
+            )
         collection_ids = (collection.id for collection in collections)
         self.exclude(collection_id__in=collection_ids).delete()
 
@@ -158,14 +160,14 @@ class ShopifyVariation(models.Model):
     variant_id = models.PositiveBigIntegerField(blank=True, null=True)
     inventory_item_id = models.PositiveBigIntegerField(blank=True, null=True)
 
-    def __str__(self):
-        return self.product.sku
-
     class Meta:
         """Meta class for the ShopifyVariation model."""
 
         verbose_name = "Shopify Variation"
         verbose_name_plural = "Shopify Variations"
+
+    def __str__(self):
+        return self.product.sku
 
 
 class ShopifyUpdateManager(models.Manager):
@@ -191,7 +193,6 @@ class ShopifyUpdate(models.Model):
 
     CREATE_PRODUCT = "Create Product"
     UPDATE_PRODUCT = "Update Product"
-    RETRIEVE_PRODUCT = "Retrieve Product"
 
     listing = models.ForeignKey(
         ShopifyListing, on_delete=models.CASCADE, related_name="update_records"
@@ -201,10 +202,9 @@ class ShopifyUpdate(models.Model):
         choices=(
             (CREATE_PRODUCT, CREATE_PRODUCT),
             (UPDATE_PRODUCT, UPDATE_PRODUCT),
-            (RETRIEVE_PRODUCT, RETRIEVE_PRODUCT),
         ),
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
     completed_at = models.DateTimeField(blank=True, null=True)
     error = models.BooleanField(default=False)
 
@@ -251,6 +251,16 @@ class ShopifyListingManager:
             tags=[tag.name for tag in shopify_listing_object.tags.all()],
             vendor=product_range.products.variations().first().brand.name,
         )
+        cls._create_variations(
+            shopify_listing_object=shopify_listing_object,
+            shopify_product=shopify_product,
+        )
+        cls._set_customs_information(shopify_product)
+        cls._set_listing_images(shopify_product, product_range)
+        cls._set_collections(shopify_product, shopify_listing_object)
+
+    @classmethod
+    def _create_variations(cls, shopify_listing_object, shopify_product):
         with transaction.atomic():
             shopify_listing_object.product_id = shopify_product.id
             shopify_listing_object.save()
@@ -266,9 +276,6 @@ class ShopifyListingManager:
                 shopify_variation_object.variant_id = variant.id
                 shopify_variation_object.inventory_item_id = variant.inventory_item_id
                 shopify_variation_object.save()
-        cls._set_customs_information(shopify_product)
-        cls._set_listing_images(shopify_product, product_range)
-        cls._set_collections(shopify_product, shopify_listing_object)
 
     @classmethod
     @session.shopify_api_session
@@ -279,21 +286,19 @@ class ShopifyListingManager:
             shopify_listing_object (channels.models.shopify_models.ShopifyListing): The
                 ShopifyListing object representing the product to update.
         """
-        shopify_product = cls._get_shopify_product(shopify_listing_object.product_id)
-        cls._set_product_details(
-            product=shopify_product, listing=shopify_listing_object
-        )
-        shopify_product.images = []
-        shopify_product.save()
-        for variant in shopify_product.variants:
+        product = cls._get_shopify_product(shopify_listing_object.product_id)
+        cls._set_product_details(product=product, listing=shopify_listing_object)
+        product.images = []
+        product.save()
+        for variant in product.variants:
             variation = shopify_listing_object.variations.get(product__sku=variant.sku)
             cls._set_variant_details(variant=variant, variation=variation)
             variant.save()
         cls._set_listing_images(
-            shopify_product=shopify_product,
+            shopify_product=product,
             product_range=shopify_listing_object.product_range,
         )
-        cls._update_collections(shopify_product, shopify_listing_object)
+        cls._update_collections(product, shopify_listing_object)
 
     @staticmethod
     def _get_shopify_product(product_id):
@@ -310,7 +315,7 @@ class ShopifyListingManager:
             return products.create_options(variation_matrix)
 
     @staticmethod
-    def _get_variants(shopify_listing_object, options=None):
+    def _get_variants(shopify_listing_object, options):
         variants = []
         for variation_object in shopify_listing_object.variations.all():
             product = variation_object.product
@@ -358,24 +363,8 @@ class ShopifyListingManager:
 
     @classmethod
     def _set_listing_images(cls, shopify_product, product_range):
-        images = [
-            image_link.image
-            for image_link in ProductRangeImageLink.objects.filter(
-                product_range=product_range
-            )
-        ]
-        variant_images = defaultdict(list)
-        for variant in shopify_product.variants:
-            product = BaseProduct.objects.get(sku=variant.sku)
-            product_images = [
-                image_link.image
-                for image_link in ProductImageLink.objects.filter(product=product)
-            ]
-            if len(product_images) > 0:
-                variant_images[product_images[0]].append(variant.id)
-            images.extend(product_images[1:])
-        images = cls.de_duplicate_images(
-            [image for image in images if image not in variant_images.keys()]
+        images, variant_images = cls._get_listing_images(
+            shopify_product=shopify_product, product_range=product_range
         )
         for image in images:
             products.add_product_image(
@@ -387,6 +376,37 @@ class ShopifyListingManager:
                 image_url=variant_image.square_image.url,
                 variant_ids=variant_ids,
             )
+
+    @classmethod
+    def _get_listing_images(cls, shopify_product, product_range):
+        images = cls._get_product_range_images(product_range)
+        variant_images = defaultdict(list)
+        for variant in shopify_product.variants:
+            product_images = cls._get_product_images(variant)
+            if len(product_images) > 0:
+                variant_images[product_images[0]].append(variant.id)
+            images.extend(product_images[1:])
+        images = cls.de_duplicate_images(
+            [image for image in images if image not in variant_images.keys()]
+        )
+        return images, variant_images
+
+    @staticmethod
+    def _get_product_range_images(product_range):
+        return [
+            image_link.image
+            for image_link in ProductRangeImageLink.objects.filter(
+                product_range=product_range
+            )
+        ]
+
+    @staticmethod
+    def _get_product_images(variant):
+        product = BaseProduct.objects.get(sku=variant.sku)
+        return [
+            image_link.image
+            for image_link in ProductImageLink.objects.filter(product=product)
+        ]
 
     @staticmethod
     def de_duplicate_images(image_list):

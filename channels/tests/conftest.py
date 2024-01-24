@@ -1,0 +1,14 @@
+import pytest_factoryboy
+
+from channels import factories
+from inventory.factories import ProductFactory, ProductRangeFactory
+
+pytest_factoryboy.register(factories.ShopifyConfigFactory)
+pytest_factoryboy.register(factories.ShopifyTagFactory)
+pytest_factoryboy.register(factories.ShopifyCollectionFactory)
+pytest_factoryboy.register(factories.ShopifyListingFactory)
+pytest_factoryboy.register(factories.ShopifyVariationFactory)
+pytest_factoryboy.register(factories.ShopifyUpdateFactory)
+
+pytest_factoryboy.register(ProductRangeFactory)
+pytest_factoryboy.register(ProductFactory)

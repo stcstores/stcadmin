@@ -37,6 +37,7 @@ class ShopifyProducts(ChannelsUserMixin, ListView):
     form_class = forms.ProductSearchForm
     model = ProductRange
     paginate_by = 50
+    orphans = 3
 
     def get_queryset(self):
         """Return a queryset of product ranges filtered by the request's GET params."""
@@ -89,7 +90,7 @@ class CreateShopifyListing(ChannelsUserMixin, CreateView):
         self.object = form.save()
         formset.instance = self.object
         formset.save()
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form, formset):
         """Return the rendered template with form errors."""
@@ -221,12 +222,16 @@ class UpdateShopifyTags(ChannelsUserMixin, UpdateView):
         context = super().get_context_data(*args, **kwargs)
         context["listing"] = self.object
         context["listing_tags"] = context["listing"].tags.all()
+        context["tag_groups"] = self.get_tag_groups()
+        return context
+
+    def get_tag_groups(self):
+        """Return tags by first letter."""
         all_tags = models.shopify_models.ShopifyTag.objects.all()
         tag_groups = defaultdict(list)
         for tag in all_tags:
-            tag_groups[tag.name[0]].append(tag)
-        context["tag_groups"] = dict(tag_groups)
-        return context
+            tag_groups[tag.name[0].upper()].append(tag)
+        return dict(tag_groups)
 
     def get_success_url(self):
         """Return redirect URL."""
@@ -291,7 +296,7 @@ class ShopifyListingActiveStatus(ChannelsUserMixin, View):
         return JsonResponse({"listing_id": listing.id, "active": active_status})
 
 
-class CreateShopifyTag(CreateView):
+class CreateShopifyTag(ChannelsUserMixin, CreateView):
     """View for creating new Shopify tags."""
 
     model = models.shopify_models.ShopifyTag
