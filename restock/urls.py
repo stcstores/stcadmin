@@ -32,6 +32,11 @@ urlpatterns = [
     path(
         "set_order_comment", views.SetOrderComment.as_view(), name="set_order_comment"
     ),
+    path(
+        "set_supplier_comment",
+        views.SetSupplierComment.as_view(),
+        name="set_supplier_comment",
+    ),
     path("brand_blacklist", views.BrandBlacklist.as_view(), name="brand_blacklist"),
     path(
         "create_blacklisted_brand",

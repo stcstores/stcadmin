@@ -205,6 +205,29 @@ class SetOrderComment(RestockUserMixin, View):
         return models.Reorder.objects.set_comment(product, comment)
 
 
+@method_decorator(csrf_exempt, name="dispatch")
+class SetSupplierComment(RestockUserMixin, View):
+    """View for setting supplier re-order comments."""
+
+    def post(self, *args, **kwargs):
+        """Update re-order comment."""
+        try:
+            comment = self.update_supplier_comment()
+        except Exception:
+            return HttpResponseBadRequest()
+        else:
+            return JsonResponse({"comment": comment})
+
+    def update_supplier_comment(self):
+        """Update re-order comment."""
+        supplier_id = self.request.POST["supplier_id"]
+        comment = self.request.POST["comment"]
+        supplier = get_object_or_404(Supplier, id=supplier_id)
+        supplier.restock_comment = comment
+        supplier.save()
+        return supplier.restock_comment
+
+
 class BrandBlacklist(RestockUserMixin, ListView):
     """View for displaying the list of blacklisted brands."""
 

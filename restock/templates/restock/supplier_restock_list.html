@@ -9,6 +9,7 @@
         updatePriceUrl = "{% url 'restock:update_purchase_price' %}";
         updateOrderCountUrl = "{% url 'restock:update_order_count' %}";
         updateCommentUrl = "{% url 'restock:set_order_comment' %}";
+        updateSupplierCommentUrl = "{% url 'restock:set_supplier_comment' %}";
     </script>
 {% endblock additional_head %}
 
@@ -31,6 +32,7 @@
             setReorderCount();
             setComments();
             enableComment();
+            enableSupplierComment();
             stock_level_widget_manager.get_stock_levels();
         });
     

@@ -71,6 +71,10 @@ class SupplierFactory(DjangoModelFactory):
     name = factory.Faker("text", max_nb_chars=50)
     active = True
     blacklisted = False
+    last_ordered_from = factory.Faker(
+        "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
+    )
+    restock_comment = factory.Faker("paragraph")
 
 
 class SupplierContactFactory(DjangoModelFactory):

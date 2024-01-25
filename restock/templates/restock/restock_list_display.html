@@ -7,18 +7,32 @@
 {% for supplier, products in suppliers.items %}
     <div class="result mt-5">
         <h4>{{ supplier.name }}</h4>
-        <div>
-            <span class="me-3">Last Ordered:</span>
-            <span class="me-3">
-                {% if supplier.last_ordered_from %}
-                    {{ supplier.last_ordered_from }}
-                {% else %}
-                    Never
-                {% endif %}
-            </span>
-            <a href="{% url "restock:update_supplier_last_order_date" supplier.id %}"
-               target="_blank"
-               class="btn btn-primary btn-sm">Update</a>
+        <div class="row">
+            <div class="col">
+                <span class="me-3">Last Ordered:</span>
+                <span class="me-3">
+                    {% if supplier.last_ordered_from %}
+                        {{ supplier.last_ordered_from }}
+                    {% else %}
+                        Never
+                    {% endif %}
+                </span>
+                <a href="{% url "restock:update_supplier_last_order_date" supplier.id %}"
+                   target="_blank"
+                   class="btn btn-primary btn-sm">Update</a>
+            </div>
+            <div class="col">
+                <textarea name="supplierComment"
+                          id="suplier_comment_{{ supplier.id }}"
+                          class="supplier_comment_input"
+                          cols="30"
+                          rows="1"
+                          data-supplier_id="{{ supplier.id }}">{{ supplier.restock_comment }}</textarea>
+                <span class="supplier_comment_status"
+                      id="suppliier_comment_status_{{ supplier.id }}">
+                    <i class="fa-solid fa-check"></i>
+                </span>
+            </div>
         </div>
         <table class="table table-hover table-sm mt-3">
             <thead class="table-primary">

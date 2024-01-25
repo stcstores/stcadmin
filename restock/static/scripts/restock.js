@@ -46,7 +46,13 @@ function enableComment() {
         updateComment(productId, comment);
     });
 }
-
+function enableSupplierComment() {
+    $('.supplier_comment_input').change(function() {
+        var supplierId = $(this).data('supplier_id');
+        var comment = $(this).val();
+        updateSupplierComment(supplierId, comment);
+    });
+}
 function enableOrderedButton() {
     $('.ordered_button').click(function() {
         var productId = $(this).data('product_id');
@@ -101,6 +107,24 @@ function updateComment(productId, comment) {
         data: {"product_id": productId, "comment": comment},
         success: function(response) {
             $("#comment_" + productId).val(response['comment'])
+            status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
+            status.html('<i class="fa-solid fa-square-check success"></i>');
+        },
+        error: function(response) {
+            status.html('<i class="fa-solid fa-triangle-exclamation error"></i>');
+        }
+    });
+}
+
+function updateSupplierComment(supplierId, comment) {
+    var status = $('#supplier_comment_status' + supplierId);
+    status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
+    $.ajax({
+        url: updateSupplierCommentUrl,
+        type: "POST",
+        data: {"supplier_id": supplierId, "comment": comment},
+        success: function(response) {
+            $("#suplier_comment_" + supplierId).val(response['comment'])
             status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
             status.html('<i class="fa-solid fa-square-check success"></i>');
         },

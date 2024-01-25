@@ -51,6 +51,26 @@ def test_active_attribute_defaults_to_true(new_supplier):
 
 
 @pytest.mark.django_db
+def test_has_last_ordered_from_attribute(supplier):
+    assert isinstance(supplier.last_ordered_from, dt.date)
+
+
+@pytest.mark.django_db
+def test_last_ordered_from_attribute_defaults_to_none(new_supplier):
+    assert new_supplier.last_ordered_from is None
+
+
+@pytest.mark.django_db
+def test_has_restock_comment(supplier):
+    assert isinstance(supplier.restock_comment, str)
+
+
+@pytest.mark.django_db
+def test_restock_comment_defaults_to_empty_string(new_supplier):
+    assert new_supplier.restock_comment == ""
+
+
+@pytest.mark.django_db
 def test_has_created_at_attribute(supplier):
     assert isinstance(supplier.created_at, dt.datetime)
 
