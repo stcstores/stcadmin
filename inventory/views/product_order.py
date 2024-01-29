@@ -1,4 +1,5 @@
 """View for setting the order of products in a range."""
+
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy

@@ -1,6 +1,5 @@
 """Views for handeling Product Images."""
 
-
 import json
 from collections import defaultdict
 

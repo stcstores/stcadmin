@@ -3,6 +3,7 @@ Barcode model.
 
 Stores barcodes for use with new products.
 """
+
 from django.contrib.auth import get_user_model
 from django.db import models, transaction
 from django.utils import timezone

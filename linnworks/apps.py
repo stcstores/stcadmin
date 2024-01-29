@@ -1,4 +1,5 @@
 """Config for the linnworks app."""
+
 from django.apps import AppConfig
 
 

@@ -1,4 +1,5 @@
 """Factories for the Purchases app."""
+
 import datetime as dt
 from decimal import Decimal
 

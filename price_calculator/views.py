@@ -1,6 +1,5 @@
 """Views for price_calculator."""
 
-
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator

@@ -1,6 +1,5 @@
 """Forms for inventory app."""
 
-
 import json
 
 from django import forms

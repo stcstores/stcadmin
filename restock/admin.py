@@ -1,4 +1,5 @@
 """Model Admin for the restock app."""
+
 from django.contrib import admin
 
 from restock import models

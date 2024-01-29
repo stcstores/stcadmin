@@ -1,6 +1,5 @@
 """Models for storing prouct bays."""
 
-
 from django.contrib.auth import get_user_model
 from django.db import models, transaction
 from django.utils import timezone

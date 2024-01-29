@@ -1,6 +1,5 @@
 """Model factories for the home app."""
 
-
 import datetime as dt
 
 import factory

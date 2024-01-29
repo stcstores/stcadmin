@@ -1,4 +1,5 @@
 """Views for inventory app."""
+
 from .api import (
     GetNewRangeSKUView,
     GetNewSKUView,

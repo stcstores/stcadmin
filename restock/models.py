@@ -1,4 +1,5 @@
 """Models for the restock app."""
+
 from django.contrib.postgres.search import TrigramWordDistance
 from django.core import validators
 from django.db import models, transaction
