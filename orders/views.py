@@ -1,4 +1,5 @@
 """Views for the Orders app."""
+
 from datetime import timedelta
 
 from django.contrib import messages

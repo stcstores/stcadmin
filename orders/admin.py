@@ -1,4 +1,5 @@
 """Model admin for the orders app."""
+
 from django.contrib import admin
 
 from orders import models

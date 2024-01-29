@@ -1,4 +1,5 @@
 """Views for the labelmaker app."""
+
 import json
 
 import labeler

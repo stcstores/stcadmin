@@ -1,4 +1,5 @@
 """Config for the orders app."""
+
 from django.apps import AppConfig
 
 

@@ -1,6 +1,5 @@
 """Views for AJAX requests."""
 
-
 from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View

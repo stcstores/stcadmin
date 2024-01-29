@@ -198,9 +198,9 @@ class UpdateShopifyCollections(ChannelsUserMixin, UpdateView):
         context = super().get_context_data(*args, **kwargs)
         context["listing"] = self.object
         context["listing_collections"] = context["listing"].collections.all()
-        context[
-            "all_collections"
-        ] = models.shopify_models.ShopifyCollection.objects.all()
+        context["all_collections"] = (
+            models.shopify_models.ShopifyCollection.objects.all()
+        )
         return context
 
     def get_success_url(self):

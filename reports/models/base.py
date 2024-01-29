@@ -1,4 +1,5 @@
 """Base models for reports."""
+
 import csv
 import io
 
