@@ -17,7 +17,7 @@
         <h3 class="display-3 mb-5">Restock List</h3>
 
         {% for supplier in suppliers %}
-            <div class="list-group col-6">
+            <div class="list-group col-8">
                 <li class="list-group-item">
                     <div class="row">
                         <div class="col">
@@ -26,6 +26,7 @@
                         <div class="col text-muted">
                             {% if supplier.last_ordered_from %}{{ supplier.last_ordered_from }}{% endif %}
                         </div>
+                        <div class="col">{{ supplier.restock_comment }}</div>
                     </div>
                 </li>
             </div>
