@@ -1,0 +1,16 @@
+import pytest_factoryboy
+
+from hardware import factories
+
+pytest_factoryboy.register(factories.OperatingSystemFactory)
+pytest_factoryboy.register(factories.OperatingSystemInstallFactory)
+pytest_factoryboy.register(factories.CpuSocketFactory)
+pytest_factoryboy.register(factories.CpuFactory)
+pytest_factoryboy.register(factories.GpuFactory)
+pytest_factoryboy.register(factories.MotherboardFactory)
+pytest_factoryboy.register(factories.HardwareUseFactory)
+pytest_factoryboy.register(factories.StorageLocationFactory)
+pytest_factoryboy.register(factories.ComputerFactory)
+pytest_factoryboy.register(factories.PrinterFactory)
+pytest_factoryboy.register(factories.NameFactory)
+pytest_factoryboy.register(factories.ComputerMaintainanceJobFactory)

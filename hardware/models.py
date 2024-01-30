@@ -6,7 +6,9 @@ from django.db import models
 
 INTEL = "Intel"
 AMD = "AMD"
-CPU_MANUFACTURERS = ((INTEL, "Intel"), (AMD, "AMD"))
+NVIDIA = "NVIDIA"
+CPU_MANUFACTURERS = ((INTEL, "Intel"), (AMD, AMD))
+GPU_MANUFACTURERS = ((INTEL, "Intel"), (AMD, AMD), (NVIDIA, NVIDIA))
 
 
 class OperatingSystem(models.Model):
@@ -89,7 +91,7 @@ class Cpu(models.Model):
 class Gpu(models.Model):
     """Model for GPUs."""
 
-    manufacturer = models.CharField(max_length=50, choices=CPU_MANUFACTURERS)
+    manufacturer = models.CharField(max_length=50, choices=GPU_MANUFACTURERS)
     model = models.CharField(max_length=255)
     clock_speed = models.FloatField()
     year = models.SmallIntegerField()
