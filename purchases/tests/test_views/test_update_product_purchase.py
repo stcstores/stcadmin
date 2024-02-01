@@ -1,6 +1,8 @@
 from unittest import mock
 
 import pytest
+from django.contrib import messages
+from django.test.utils import override_settings
 from django.urls import reverse
 
 
@@ -108,3 +110,47 @@ def test_post_request_for_completed_purchase_returns_404(
 ):
     response = group_logged_in_client.post(completed_purchase_url, form_data)
     assert response.status_code == 404
+
+
+@pytest.fixture
+def mock_form():
+    return mock.Mock()
+
+
+@pytest.fixture
+def mock_get_form(mock_form):
+    with mock.patch("purchases.views.UpdateProductPurchase.get_form") as mock_get_form:
+        mock_get_form.return_value = mock_form
+        yield mock_get_form
+
+
+@pytest.mark.django_db
+def test_sets_success_message(
+    group_logged_in_client, mock_get_form, mock_form, new_purchase_url, form_data
+):
+    response = group_logged_in_client.post(new_purchase_url, form_data, follow=True)
+    message = list(response.context["messages"])[0]
+    assert message.level == messages.SUCCESS
+    mock_form.update_stock_level.assert_called_once_with()
+
+
+@pytest.mark.django_db
+@override_settings(DEBUG=True)
+def test_sets_debug_message(
+    group_logged_in_client, mock_get_form, mock_form, new_purchase_url, form_data
+):
+    response = group_logged_in_client.post(new_purchase_url, form_data, follow=True)
+    message = list(response.context["messages"])[0]
+    assert message.level == messages.WARNING
+    mock_form.update_stock_level.assert_not_called()
+
+
+@pytest.mark.django_db
+def test_sets_error_message(
+    group_logged_in_client, mock_get_form, mock_form, new_purchase_url, form_data
+):
+    mock_form.update_stock_level.side_effect = Exception
+    response = group_logged_in_client.post(new_purchase_url, form_data, follow=True)
+    message = list(response.context["messages"])[0]
+    assert message.level == messages.ERROR
+    mock_form.update_stock_level.assert_called_once_with()
