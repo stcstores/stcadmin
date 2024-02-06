@@ -47,7 +47,7 @@ class FBAPriceCalculator:
             "vat": round(self.vat, 2),
             "postage_to_fba": round(self.postage_gbp, 2),
             "postage_per_item": round(self.postage_per_item_gbp, 2),
-            "profit": round(self.profit_local, 2),
+            "profit": round(self.profit_gbp, 2),
             "percentage": round(self.percentage, 2),
             "purchase_price": round(self.purchase_price_local, 2),
             "max_quantity": self.max_quantity,
@@ -73,7 +73,6 @@ class FBAPriceCalculator:
             selling_price=self.selling_price,
             zero_rated=self.zero_rated,
         )
-        print(self.vat)
         self.channel_fee = self.selling_price * self.CHANNEL_FEE
         self.purchase_price_local = self.purchase_price / self.exchange_rate
         self.postage_per_item_gbp = self.postage_gbp / int(self.quantity)
@@ -86,7 +85,7 @@ class FBAPriceCalculator:
             purchase_price_local=self.purchase_price_local,
             fba_fee=self.fba_fee,
         )
-        self.profit_local = self.profit / self.exchange_rate
+        self.profit_gbp = self.profit * self.exchange_rate
         self.percentage = (self.profit / self.selling_price) * 100
 
     @staticmethod

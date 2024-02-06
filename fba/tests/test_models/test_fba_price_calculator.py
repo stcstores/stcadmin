@@ -248,8 +248,8 @@ def test_has_profit_attribute(
     assert calculated_calculator.profit == profit
 
 
-def test_has_profit_local_attribute(calculated_calculator, profit, exchange_rate):
-    assert calculated_calculator.profit_local == profit / exchange_rate
+def test_has_profit_gbp_attribute(calculated_calculator, profit, exchange_rate):
+    assert calculated_calculator.profit_gbp == profit * exchange_rate
 
 
 def test_percentage(calculated_calculator, profit, selling_price):
@@ -263,7 +263,7 @@ def test_to_dict_method(calculated_calculator):
         "vat": round(calculated_calculator.vat, 2),
         "postage_to_fba": round(calculated_calculator.postage_gbp, 2),
         "postage_per_item": round(calculated_calculator.postage_per_item_gbp, 2),
-        "profit": round(calculated_calculator.profit_local, 2),
+        "profit": round(calculated_calculator.profit_gbp, 2),
         "percentage": round(calculated_calculator.percentage, 2),
         "purchase_price": round(calculated_calculator.purchase_price_local, 2),
         "max_quantity": calculated_calculator.max_quantity,
