@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 from django.urls import reverse
+from django.utils.timezone import now
 
 from fba.forms import FBAOrderFilter
 from fba.models import FBAOrder
@@ -100,8 +101,8 @@ def test_get_page_range_with_high_page_count():
 
 
 def test_filters(fba_order_factory, group_logged_in_client, url):
-    expected_order = fba_order_factory.create()
-    unexpected_order = fba_order_factory.create()
+    expected_order = fba_order_factory.create(created_at=now())
+    unexpected_order = fba_order_factory.create(created_at=now())
     params = {"supplier": expected_order.product.supplier.id}
     response = group_logged_in_client.get(url, params)
     assert response.context["object_list"].contains(expected_order)

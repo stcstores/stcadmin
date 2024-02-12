@@ -1,12 +1,13 @@
 """Forms for the FBA app."""
 
+import datetime as dt
 import json
 from datetime import datetime
 
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import Q
-from django.utils.timezone import make_aware
+from django.utils.timezone import make_aware, now
 
 from fba import models
 from home.models import Staff
@@ -188,8 +189,9 @@ class FBAOrderFilter(forms.Form):
     def __init__(self, *args, **kwargs):
         """Add supplier choices."""
         super().__init__(*args, **kwargs)
+        cutoff_date = now() - dt.timedelta(days=360)
         supplier_ids = (
-            models.FBAOrder.objects.exclude(status=models.FBAOrder.FULFILLED)
+            models.FBAOrder.objects.filter(created_at__gte=cutoff_date)
             .values_list("product__supplier", flat=True)
             .distinct()
         )

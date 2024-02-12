@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 from django.db.models import Q
-from django.utils.timezone import make_aware
+from django.utils.timezone import make_aware, now
 
 from fba.forms import FBAOrderFilter
 
@@ -27,6 +27,15 @@ def test_supplier_filter(fba_order_factory, supplier_factory):
     assert choices[0] == ("", "---------")
     assert (order.product.supplier.pk, order.product.supplier.name) in choices
     assert (other_supplier.pk, other_supplier.name) not in choices
+
+
+@pytest.mark.django_db
+def test_supplier_filter_ignores_suppliers_from_old_orders(fba_order_factory):
+    order = fba_order_factory.create(created_at=now() - dt.timedelta(days=370))
+    form = FBAOrderFilter()
+    choices = form.fields["supplier"].choices
+    assert choices[0] == ("", "---------")
+    assert (order.product.supplier.pk, order.product.supplier.name) not in choices
 
 
 @pytest.mark.django_db
