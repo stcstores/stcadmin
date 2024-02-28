@@ -48,11 +48,11 @@ class FBAOrderQueryset(models.QuerySet):
 
     def prioritised(self):
         """Return a queryset of orders that are prioritised."""
-        return self.filter(priority_temp=True)
+        return self.filter(priority=True)
 
     def unprioritised(self):
         """Return a queryset of orders that are not prioritised."""
-        return self.filter(priority_temp=False)
+        return self.filter(priority=False)
 
     def order_by_priority(self):
         """Return a queryset of orders awaiting fulfullment ordered by status and priority."""
@@ -67,7 +67,7 @@ class FBAOrderQueryset(models.QuerySet):
                     output_field=models.IntegerField(),
                 )
             )
-            .order_by("custom_order", "-priority_temp", "created_at")
+            .order_by("custom_order", "-priority", "created_at")
         )
 
 
@@ -180,7 +180,7 @@ class FBAOrder(models.Model):
         max_digits=5, decimal_places=2, blank=True, null=True
     )
     notes = models.TextField(blank=True)
-    priority_temp = models.BooleanField(default=False)
+    priority = models.BooleanField(default=False)
     printed = models.BooleanField(default=False)
     small_and_light = models.BooleanField(default=False)
     on_hold = models.BooleanField(default=False)
@@ -199,14 +199,14 @@ class FBAOrder(models.Model):
 
         verbose_name = "FBA Order"
         verbose_name_plural = "FBA Orders"
-        ordering = ["-priority_temp"]
+        ordering = ["-priority"]
 
     def __str__(self):
         return f"{self.product.sku} - {self.created_at.strftime('%Y-%m-%d')}"
 
     def is_prioritised(self):
         """Return True if the order has been prioritised, otherwise False."""
-        return self.priority_temp is True
+        return self.priority is True
 
     def is_closed(self):
         """Return True if the order is closed, otherwise False."""
@@ -223,7 +223,7 @@ class FBAOrder(models.Model):
     def close(self):
         """Mark the order closed."""
         self.closed_at = timezone.now()
-        self.priority_temp = False
+        self.priority = False
         self.on_hold = False
         self.stopped = False
         self.save()
@@ -234,7 +234,7 @@ class FBAOrder(models.Model):
 
     def prioritise(self):
         """Mark the order as priority."""
-        self.priority_temp = True
+        self.priority = True
         self.save()
 
     def duplicate(self, stock_level=None):
