@@ -66,7 +66,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "closed_at",
         "fulfilled_by",
         "notes",
-        "priority",
+        "priority_temp",
     ]
 
     list_display = [
@@ -88,7 +88,7 @@ class FBAOrderAdmin(admin.ModelAdmin):
         "aproximate_quantity",
         "quantity_sent",
         "box_weight",
-        "priority",
+        "priority_temp",
         "fulfilled_by",
     ]
 

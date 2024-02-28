@@ -57,7 +57,7 @@ class FBAOrderFactory(DjangoModelFactory):
     quantity_sent = None
     box_weight = None
     notes = factory.Faker("sentence")
-    priority = models.FBAOrder.MAX_PRIORITY
+    priority_temp = False
     printed = False
     small_and_light = False
     on_hold = False

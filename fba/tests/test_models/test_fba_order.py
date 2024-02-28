@@ -125,7 +125,7 @@ def test_not_processed_fba_order_notes_attribute(not_processed_fba_order):
 
 @pytest.mark.django_db
 def test_not_processed_fba_order_priority_attribute(not_processed_fba_order):
-    assert not_processed_fba_order.priority == models.FBAOrder.MAX_PRIORITY
+    assert not_processed_fba_order.priority_temp is False
 
 
 @pytest.mark.django_db
@@ -541,11 +541,9 @@ def test_str_method(fba_order_factory):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    "priority,expected", ((models.FBAOrder.MAX_PRIORITY, False), (998, True), (1, True))
-)
+@pytest.mark.parametrize("priority,expected", ((False, False), (True, True)))
 def test_is_prioritised_method(priority, expected, fba_order_factory):
-    order = fba_order_factory.create(priority=priority)
+    order = fba_order_factory.create(priority_temp=priority)
     assert order.is_prioritised() == expected
 
 
@@ -577,7 +575,7 @@ def test_close_method(ready_fba_order):
     ready_fba_order.close()
     ready_fba_order.refresh_from_db()
     assert isinstance(ready_fba_order.closed_at, dt.datetime)
-    assert ready_fba_order.priority == models.FBAOrder.MAX_PRIORITY
+    assert ready_fba_order.priority_temp is False
     assert ready_fba_order.on_hold is False
     assert ready_fba_order.is_stopped is False
 
@@ -599,15 +597,9 @@ def test_details_complete(box_weight, quantity_sent, expected, fba_order_factory
 
 @pytest.mark.django_db
 def test_prioritise(fba_order_factory):
-    orders = fba_order_factory.create_batch(3, status_not_processed=True)
-    orders[0].prioritise()
-    assert orders[0].priority == 1
-    orders[1].prioritise()
-    for order in orders:
-        order.refresh_from_db()
-    assert orders[1].priority == 1
-    assert orders[0].priority == 2
-    assert orders[2].priority == models.FBAOrder.MAX_PRIORITY
+    order = fba_order_factory.create(status_not_processed=True)
+    order.prioritise()
+    assert order.priority_temp is True
 
 
 @pytest.mark.django_db
@@ -639,7 +631,7 @@ def test_duplicate(fulfilled_fba_order):
     assert duplicate.quantity_sent is None
     assert duplicate.box_weight is None
     assert duplicate.notes == ""
-    assert duplicate.priority == models.FBAOrder.MAX_PRIORITY
+    assert duplicate.priority_temp is False
     assert duplicate.printed is False
     assert duplicate.on_hold is False
     assert duplicate.is_stopped is False
@@ -782,14 +774,12 @@ def test_queryset_unfulfilled_method(
 
 @pytest.fixture
 def prioritised_fba_order(fba_order_factory):
-    return fba_order_factory.create(status_not_processed=True, priority=1)
+    return fba_order_factory.create(status_not_processed=True, priority_temp=True)
 
 
 @pytest.fixture
 def unprioritised_fba_order(fba_order_factory):
-    return fba_order_factory.create(
-        status_not_processed=True, priority=models.FBAOrder.MAX_PRIORITY
-    )
+    return fba_order_factory.create(status_not_processed=True, priority_temp=False)
 
 
 @pytest.mark.django_db

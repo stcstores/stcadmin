@@ -314,7 +314,6 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
             filter_kwargs["status"] = status
         qs = (
             self.model.objects.awaiting_fulfillment()
-            .order_by_priority()
             .filter(**filter_kwargs)
             .select_related(
                 "region__country",
@@ -340,7 +339,7 @@ class Awaitingfulfillment(FBAUserMixin, ListView):
                     | Q(id__iexact=search_text)
                 )
             )
-        return qs
+        return qs.order_by_priority()
 
     def get_context_data(self, *args, **kwargs):
         """Return the template context."""
