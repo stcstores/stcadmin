@@ -37,4 +37,4 @@ def test_content(get_response):
 @pytest.mark.django_db
 def test_prioritised_order(order, get_response):
     order.refresh_from_db()
-    assert order.priority != order.MAX_PRIORITY
+    assert order.is_prioritised() is True
