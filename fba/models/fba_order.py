@@ -181,6 +181,7 @@ class FBAOrder(models.Model):
     )
     notes = models.TextField(blank=True)
     priority = models.PositiveIntegerField(default=MAX_PRIORITY)
+    priority_temp = models.BooleanField(default=False)
     printed = models.BooleanField(default=False)
     small_and_light = models.BooleanField(default=False)
     on_hold = models.BooleanField(default=False)
