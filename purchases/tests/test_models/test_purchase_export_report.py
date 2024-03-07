@@ -104,6 +104,7 @@ def test_export_data(staff, staff_purchases):
             str(round(sum((_.to_pay() for _ in staff_purchases[staff[0]])), 2)),
         ],
         [],
+        PurchaseExportReport.header,
         PurchaseExportReport._get_purchase_row(staff_purchases[staff[1]][0]),
         PurchaseExportReport._get_purchase_row(staff_purchases[staff[1]][1]),
         PurchaseExportReport._get_purchase_row(staff_purchases[staff[1]][2]),
@@ -117,6 +118,7 @@ def test_export_data(staff, staff_purchases):
             str(round(sum((_.to_pay() for _ in staff_purchases[staff[1]])), 2)),
         ],
         [],
+        PurchaseExportReport.header,
         PurchaseExportReport._get_purchase_row(staff_purchases[staff[2]][0]),
         PurchaseExportReport._get_purchase_row(staff_purchases[staff[2]][1]),
         PurchaseExportReport._get_purchase_row(staff_purchases[staff[2]][2]),
@@ -139,7 +141,7 @@ def test_generate_report_text_returns_string_io(export):
 
 
 @pytest.mark.django_db
-def test_report_starts_with_header(export):
+def test_report_starts_with_header(export, staff_purchases):
     expected = ",".join(PurchaseExportReport.header)
     text = PurchaseExportReport().generate_report_text(export).getvalue()
     assert text.startswith(expected)

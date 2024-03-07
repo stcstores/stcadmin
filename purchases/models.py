@@ -359,8 +359,9 @@ class PurchaseExportReport:
 
     @staticmethod
     def _get_report_data(staff_purchases):
-        rows = [PurchaseExportReport.header]
+        rows = []
         for purchases in staff_purchases.values():
+            rows.append(PurchaseExportReport.header)
             for purchase in purchases:
                 rows.append(PurchaseExportReport._get_purchase_row(purchase))
             rows.append(
