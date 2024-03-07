@@ -20,7 +20,7 @@ def date():
 
 @pytest.mark.django_db
 def test_supplier_filter(fba_order_factory, supplier_factory):
-    order = fba_order_factory.create()
+    order = fba_order_factory.create(created_at=now())
     other_supplier = supplier_factory.create()
     form = FBAOrderFilter()
     choices = form.fields["supplier"].choices
