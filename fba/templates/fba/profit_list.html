@@ -1,0 +1,31 @@
+{% extends "fba/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h3 class="display-3 mb-5">Profit List</h3>
+        <table class="table table-striped">
+            {% for product, fees in profit_calculations.items %}
+                {% for calculation in fees %}
+                    <tr {% if forloop.first %}class="table-group-divider"{% endif %}>
+                        <th>
+                            {% if forloop.first %}
+                                <div>
+                                    <a href="{% url "fba:product_profit" calculation.product.pk %}"
+                                       target="_blank">{{ calculation.product.sku }}</a>
+                                </div>
+                            {% endif %}
+                        </th>
+                        <td>{{ calculation.asin }}</td>
+                        <td>{{ calculation.region.flag }}</td>
+                        <th class="text-end {% if calculation.profit <= 0 %}text-danger{% else %}text-success{% endif %}">
+                            {{ calculation.profit_gbp }}
+                        </th>
+                        <td>
+                            {% if forloop.first %}{{ calculation.product.full_name }}{% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </table>
+    </div>
+{% endblock content %}

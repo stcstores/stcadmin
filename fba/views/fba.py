@@ -2,6 +2,7 @@
 
 import datetime
 import json
+from collections import defaultdict
 
 from django.conf import settings
 from django.contrib import messages
@@ -645,4 +646,46 @@ class ShippingCalculator(FBAUserMixin, TemplateView):
         """Return context for the template."""
         context = super().get_context_data(*args, **kwargs)
         context["regions"] = models.FBARegion.objects.filter(active=True)
+        return context
+
+
+class FBAProductProfit(FBAUserMixin, TemplateView):
+    """View for FBA product profit calculations."""
+
+    template_name = "fba/profit.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        product = get_object_or_404(BaseProduct, pk=self.kwargs["pk"])
+        context["product"] = product
+        context["profit_calculations"] = models.FBAProfit.objects.current().filter(
+            product=product
+        )
+        return context
+
+
+class FBAProfitList(FBAUserMixin, TemplateView):
+    """View for listing all FBA product profit calculations."""
+
+    template_name = "fba/profit_list.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["profit_calculations"] = defaultdict(list)
+        fees = (
+            models.FBAProfit.objects.current()
+            .order_by("product")
+            .select_related(
+                "product",
+                "product__product_range",
+                "region",
+                "region__country",
+                "last_order",
+            )
+        )
+        for fee in fees:
+            context["profit_calculations"][fee.product].append(fee)
+        context["profit_calculations"] = dict(context["profit_calculations"])
         return context

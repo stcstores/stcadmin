@@ -43,6 +43,7 @@ file-exchange = {git = "https://github.com/stcstores/django-file_exchange.git", 
 linnapi = {git = "https://github.com/stcstores/linnapi.git", rev = "main"}
 shopify_api_py = {git = "https://github.com/stcstores/shopify_api_py.git", rev = "main"}
 setuptools = ">=68.2.2"
+amapi = {git = "https://github.com/stcstores/amapi.git", rev = "main"}
 
 [tool.poetry.dev-dependencies]
 pytest = ">=6.2.4"

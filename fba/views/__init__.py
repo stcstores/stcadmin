@@ -1,4 +1,5 @@
 """Views for the fba app."""
+
 from . import api
 from .fba import (
     Awaitingfulfillment,
@@ -8,6 +9,8 @@ from .fba import (
     FBAOrderPrintout,
     FBAOrderUpdate,
     FBAPriceCalculatorView,
+    FBAProductProfit,
+    FBAProfitList,
     FulfillFBAOrder,
     Index,
     OnHold,
@@ -48,6 +51,8 @@ __all__ = [
     "FBAOrderPrintout",
     "FBAOrderUpdate",
     "FBAPriceCalculatorView",
+    "FBAProductProfit",
+    "FBAProfitList",
     "FulfillFBAOrder",
     "Index",
     "OnHold",

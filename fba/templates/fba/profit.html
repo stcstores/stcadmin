@@ -1,0 +1,101 @@
+{% extends "fba/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h3 class="display-3 mb-5">Profit</h3>
+        <div class="fs-3">
+            <div>
+                <span class="fs-5 font-monospace user-select-all align-bottom">{{ product.sku }}</span>
+                <a href="{% url "inventory:edit_product" product.pk %}"
+                   target="_blank"
+                   class="btn btn-primary btn-sm ms-5">Edit</a>
+            </div>
+            <div class="fs-3">
+                <span class="user-select-all">{{ product.product_range.name }}</span>
+                {% if product.is_archived %}
+                    <span class="badge bg-secondary">Archived</span>
+                {% elif product.is_end_of_line %}
+                    <span class="badge bg-danger">End of Line</span>
+                {% endif %}
+            </div>
+ 
+            <div class="mb-5">
+                {% if product.supplier_sku %}
+                    <span class="me-2">
+                        <span class="text-muted">Supplier SKU:&nbsp;</span><span class="fw-bold">{{ product.supplier_sku }}</span>
+                    </span>
+                {% endif %}
+                {% for option, value in product.variation.items %}
+                    <span class="me-2">
+                        <span class="text-muted">{{ option }}:&nbsp;</span><span class="fw-bold">{{ value }}</span>
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            {% for profit_calculation in profit_calculations %}
+                <div class="col-3 mb-3">
+                    <div class="text-muted">{{ profit_calculation.import_record.import_date }}</div>
+                    <h6 class="display-6">
+                        {{ profit_calculation.region.flag }}
+                        <span class="fs-4 font-monospace user-select-all me-1">{{ profit_calculation.asin }}</span>
+                    </h6>
+                    <table class="table table-light table-hover table-sm mb-3">
+                        <tr>
+                            <th>Sale Price</th>
+                            <td>{{ profit_calculation.sale_price_gbp }}</td>
+                            <td>{{ profit_calculation.sale_price_local }}</td>
+                        </tr>
+                        <tr>
+                            <th>Referal Fee</th>
+                            <td>{{ profit_calculation.referral_fee_gbp }}</td>
+                            <td>{{ profit_calculation.referral_fee_local }}</td>
+                        </tr>
+                        <tr>
+                            <th>Closing Fee</th>
+                            <td>{{ profit_calculation.closing_fee_gbp }}</td>
+                            <td>{{ profit_calculation.closing_fee_local }}</td>
+                        </tr>
+                        <tr>
+                            <th>Sale Price</th>
+                            <td>{{ profit_calculation.sale_price_gbp }}</td>
+                            <td>{{ profit_calculation.sale_price_local }}</td>
+                        </tr>
+                        <tr>
+                            <th>Handling Fee</th>
+                            <td>{{ profit_calculation.handling_fee_gbp }}</td>
+                            <td>{{ profit_calculation.handling_fee_local }}</td>
+                        </tr>
+                        <tr>
+                            <th>Placement Fee</th>
+                            <td>{{ profit_calculation.placement_fee_gbp }}</td>
+                            <td>{{ profit_calculation.placement_fee_local }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Fee</th>
+                            <td>{{ profit_calculation.total_fee_gbp }}</td>
+                            <td>{{ profit_calculation.total_fee_local }}</td>
+                        </tr>
+                        <tr>
+                            <th>Purchase Price</th>
+                            <td>{{ profit_calculation.purchase_price_gbp }}</td>
+                            <td>{{ profit_calculation.purchase_price_local }}</td>
+                        </tr>
+                        <tr>
+                            <th>Shipping Price</th>
+                            <td>{{ profit_calculation.shipping_price_gbp }}</td>
+                            <td>{{ profit_calculation.shipping_price_local }}</td>
+                        </tr>
+                        <tr>
+                            <th>Profit</th>
+                            <th class="{% if profit_calculation.profit <= 0 %}text-danger{% else %}text-success{% endif %}">
+                                {{ profit_calculation.profit_gbp }}
+                            </th>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}
