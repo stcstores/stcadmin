@@ -60,7 +60,10 @@
             <div>
                 Barcode: <span class="font-monospace user-select-all">{{ product.barcode }}</span>
             </div>
-            <div>Supplier: {{ product.supplier }}</div>
+            <div>
+                Supplier: <span class="fw-bold me-3">{{ product.supplier }}</span>
+                {% for supplier in product.additional_suppliers.all %}<span class="me-3">{{ supplier }}</span>{% endfor %}
+            </div>
         </div>
         <div class="m-2">
             {% if form.instance.id and form.instance.status != form.instance.ON_HOLD %}
