@@ -145,6 +145,17 @@
                                    id="purchase_price"
                                    disabled>
                         </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" for="placement_fee">Placement Fee</span>
+                            <span class="currency_symbol input-group-text"></span>
+                            <input class="form-control"
+                                   type="number"
+                                   step="0.01"
+                                   name="placement_fee"
+                                   id="placement_fee"
+                                   disabled>
+                        </div>
  
                         <div class="input-group mb-3">
                             <span class="input-group-text" for="profit">Profit £</span>
@@ -321,6 +332,7 @@
                 $("#vat").val(result["vat"]);
                 $("#postage_to_fba").val(result["postage_to_fba"]);
                 $("#postage_per_item").val(result["postage_per_item"]);
+                $("#placement_fee").val(result["placement_fee"]);
                 $("#profit").val(result["profit"]);
                 $("#percentage").val(result["percentage"]);
                 $("#max_quantity").val(result["max_quantity"]);

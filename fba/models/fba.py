@@ -22,6 +22,7 @@ class FBARegion(models.Model):
     min_shipping_cost = models.PositiveBigIntegerField(blank=True, null=True)
     max_weight = models.PositiveIntegerField(blank=True, null=True)
     max_size = models.FloatField(blank=True, null=True)
+    placement_fee = models.PositiveIntegerField(default=0)
     fulfillment_unit = models.CharField(choices=unit_choices, max_length=1)
     auto_close = models.BooleanField()
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)

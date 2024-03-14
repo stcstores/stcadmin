@@ -40,6 +40,11 @@ def test_has_postage_overhead_g_attribute(fba_region):
 
 
 @pytest.mark.django_db
+def test_has_placement_fee_attribute(fba_region):
+    assert isinstance(fba_region.placement_fee, int)
+
+
+@pytest.mark.django_db
 def test_has_min_shipping_cost_attribute(fba_region):
     assert isinstance(fba_region.min_shipping_cost, int)
 

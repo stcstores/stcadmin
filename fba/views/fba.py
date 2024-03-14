@@ -371,7 +371,6 @@ class FBAPriceCalculatorView(FBAUserMixin, View):
 
     def post(self, *args, **kwargs):
         """Return FBA profit margin calculations."""
-        print(self.request.POST.get("zero_rated"))
         try:
             calculator = models.FBAPriceCalculator(
                 selling_price=float(self.request.POST.get("selling_price")),

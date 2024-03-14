@@ -30,6 +30,7 @@ def region(exchange_rate, currency_symbol):
     region = mock.Mock()
     region.country.currency.symbol = currency_symbol
     region.country.currency.exchange_rate.return_value = exchange_rate
+    region.placement_fee = 30
     return region
 
 
@@ -160,6 +161,10 @@ def test_has_exchange_rate_attribute(calculated_calculator, exchange_rate):
     assert calculated_calculator.exchange_rate == float(exchange_rate)
 
 
+def test_has_placement_fee_attribute(calculated_calculator, region):
+    assert calculated_calculator.placement_fee == region.placement_fee / 100
+
+
 def test_has_max_quantity_attribute(
     calculated_calculator, max_quantity, region, product_weight, stock_level
 ):
@@ -241,6 +246,7 @@ def test_has_profit_attribute(
         selling_price=selling_price,
         postage_per_item_local=(postage_gbp / quantity) / exchange_rate,
         channel_fee=selling_price * calculated_calculator.CHANNEL_FEE,
+        placement_fee=calculated_calculator.placement_fee,
         vat=vat,
         purchase_price_local=purchase_price / exchange_rate,
         fba_fee=fba_fee,
@@ -258,14 +264,15 @@ def test_percentage(calculated_calculator, profit, selling_price):
 
 def test_to_dict_method(calculated_calculator):
     assert calculated_calculator.to_dict() == {
-        "channel_fee": round(calculated_calculator.channel_fee, 2),
+        "channel_fee": f"{calculated_calculator.channel_fee:.2f}",
         "currency_symbol": calculated_calculator.region.country.currency.symbol,
-        "vat": round(calculated_calculator.vat, 2),
-        "postage_to_fba": round(calculated_calculator.postage_gbp, 2),
-        "postage_per_item": round(calculated_calculator.postage_per_item_gbp, 2),
-        "profit": round(calculated_calculator.profit_gbp, 2),
-        "percentage": round(calculated_calculator.percentage, 2),
-        "purchase_price": round(calculated_calculator.purchase_price_local, 2),
+        "vat": f"{calculated_calculator.vat:.2f}",
+        "placement_fee": f"{calculated_calculator.placement_fee:.2f}",
+        "postage_to_fba": f"{calculated_calculator.postage_gbp:.2f}",
+        "postage_per_item": f"{calculated_calculator.postage_per_item_gbp:.2f}",
+        "profit": f"{calculated_calculator.profit_gbp:.2f}",
+        "percentage": f"{calculated_calculator.percentage:.2f}",
+        "purchase_price": f"{calculated_calculator.purchase_price_local:.2f}",
         "max_quantity": calculated_calculator.max_quantity,
         "max_quantity_no_stock": calculated_calculator.max_quantity_no_stock,
     }
@@ -308,6 +315,7 @@ def test_calculate_profit():
     selling_price = 35.0
     postage_per_item_local = 5.0
     channel_fee = 5.0
+    placement_fee = 0.3
     vat = 5.0
     purchase_price_local = 5.0
     fba_fee = 5.0
@@ -316,11 +324,12 @@ def test_calculate_profit():
             selling_price=selling_price,
             postage_per_item_local=postage_per_item_local,
             channel_fee=channel_fee,
+            placement_fee=placement_fee,
             vat=vat,
             purchase_price_local=purchase_price_local,
             fba_fee=fba_fee,
         )
-        == 10.0
+        == 9.7
     )
 
 

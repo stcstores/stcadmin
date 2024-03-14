@@ -21,6 +21,7 @@ class FBARegionFactory(DjangoModelFactory):
     postage_per_kg = factory.Faker("pyint", max_value=500, min_value=0)
     postage_overhead_g = factory.Faker("pyint", max_value=500, min_value=0)
     min_shipping_cost = factory.Faker("pyint", max_value=500, min_value=0)
+    placement_fee = 30
     max_weight = factory.Faker("pyint", max_value=2000, min_value=0)
     max_size = factory.Faker("pyfloat", positive=True, right_digits=2)
     fulfillment_unit = models.FBARegion.METRIC

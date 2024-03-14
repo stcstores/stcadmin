@@ -42,14 +42,15 @@ class FBAPriceCalculator:
     def to_dict(self):
         """Return FBA profit margin calculations."""
         return {
-            "channel_fee": round(self.channel_fee, 2),
+            "channel_fee": f"{self.channel_fee:.2f}",
             "currency_symbol": self.region.country.currency.symbol,
-            "vat": round(self.vat, 2),
-            "postage_to_fba": round(self.postage_gbp, 2),
-            "postage_per_item": round(self.postage_per_item_gbp, 2),
-            "profit": round(self.profit_gbp, 2),
-            "percentage": round(self.percentage, 2),
-            "purchase_price": round(self.purchase_price_local, 2),
+            "vat": f"{self.vat:.2f}",
+            "placement_fee": f"{self.placement_fee:.2f}",
+            "postage_to_fba": f"{self.postage_gbp:.2f}",
+            "postage_per_item": f"{self.postage_per_item_gbp:.2f}",
+            "profit": f"{self.profit_gbp:.2f}",
+            "percentage": f"{self.percentage:.2f}",
+            "purchase_price": f"{self.purchase_price_local:.2f}",
             "max_quantity": self.max_quantity,
             "max_quantity_no_stock": self.max_quantity_no_stock,
         }
@@ -73,6 +74,7 @@ class FBAPriceCalculator:
             selling_price=self.selling_price,
             zero_rated=self.zero_rated,
         )
+        self.placement_fee = self.region.placement_fee / 100
         self.channel_fee = self.selling_price * self.CHANNEL_FEE
         self.purchase_price_local = self.purchase_price / self.exchange_rate
         self.postage_per_item_gbp = self.postage_gbp / int(self.quantity)
@@ -81,6 +83,7 @@ class FBAPriceCalculator:
             selling_price=self.selling_price,
             postage_per_item_local=self.postage_per_item_local,
             channel_fee=self.channel_fee,
+            placement_fee=self.placement_fee,
             vat=self.vat,
             purchase_price_local=self.purchase_price_local,
             fba_fee=self.fba_fee,
@@ -109,6 +112,7 @@ class FBAPriceCalculator:
         selling_price,
         postage_per_item_local,
         channel_fee,
+        placement_fee,
         vat,
         purchase_price_local,
         fba_fee,
@@ -121,6 +125,7 @@ class FBAPriceCalculator:
                 vat,
                 purchase_price_local,
                 fba_fee,
+                placement_fee,
             )
         )
         return selling_price - costs
