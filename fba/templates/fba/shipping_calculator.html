@@ -111,6 +111,17 @@
                 </div>
 
                 <div class="input-group mb-3">
+                    <span class="input-group-text" for="placement_fee">Placement Fee</span>
+                    <span class="currency_symbol input-group-text"></span>
+                    <input class="form-control"
+                           type="number"
+                           step="0.01"
+                           name="placement_fee"
+                           id="placement_fee"
+                           readonly>
+                </div>
+
+                <div class="input-group mb-3">
                     <span class="input-group-text" for="profit">Profit</span>
                     <span class="input-group-text">£</span>
                     <input class="form-control"
@@ -199,6 +210,7 @@
                 $("#percentage").val(result["percentage"]);
                 $("span.currency_symbol").text(result["currency_symbol"]);
                 $("#max_quantity_no_stock").val(result["max_quantity_no_stock"]);
+                $("#placement_fee").val(result["placement_fee"]);
             }
         })
     }
@@ -217,7 +229,7 @@
             }
         });
 
-        $("#country").change(function () {
+        $("#region").change(function () {
             $("#quantity").val("");
             refresh_calculator();
         });
