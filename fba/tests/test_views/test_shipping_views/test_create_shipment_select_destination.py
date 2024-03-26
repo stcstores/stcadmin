@@ -1,9 +1,12 @@
-from unittest import mock
-
 import pytest
 from django.urls import reverse
 
-from fba.views.shipping import CreateShipment_SelectDestination
+from fba import forms
+
+
+@pytest.fixture
+def destination(fba_shipment_destination_factory):
+    return fba_shipment_destination_factory.create()
 
 
 @pytest.fixture
@@ -33,18 +36,17 @@ def test_request_without_group(logged_in_client, url):
     assert logged_in_client.get(url).status_code == 403
 
 
-@pytest.fixture
-def mock_shipment_destinaion_model():
-    with mock.patch("fba.views.shipping.models.FBAShipmentDestination") as m:
-        yield m
+def test_form_in_context(get_response):
+    context = get_response.context
+    assert isinstance(context["form"], forms.FBAShipmentDestinationForm)
 
 
-def test_destinations_in_context(mock_shipment_destinaion_model):
-    context = CreateShipment_SelectDestination().get_context_data()
-    mock_shipment_destinaion_model.objects.filter.assert_called_once_with(
-        is_enabled=True
-    )
-    assert (
-        context["destinations"]
-        == mock_shipment_destinaion_model.objects.filter.return_value
-    )
+def test_redirect(group_logged_in_client, url, destination):
+    response = group_logged_in_client.post(url, {"destination": destination.id})
+    assert response.status_code == 302
+    assert response["Location"] == reverse("fba:create_shipment", args=[destination.pk])
+
+
+def test_invalid_submission(group_logged_in_client, url):
+    response = group_logged_in_client.post(url, {})
+    assert response.status_code == 200

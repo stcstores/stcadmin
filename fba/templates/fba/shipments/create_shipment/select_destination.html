@@ -1,5 +1,17 @@
 {% extends "fba/base.html" %}
 
+{% block additional_head %}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/css/selectize.default.min.css"
+          integrity="sha512-pTaEn+6gF1IeWv3W1+7X7eM60TFu/agjgoHmYhAfLEU8Phuf6JKiiE8YmsNC0aCgQv4192s4Vai8YZ6VNM6vyQ=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+            integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+{% endblock additional_head %}
+
 {% block content %}
     {{ block.super }}
 
@@ -11,12 +23,13 @@
             <a href="{% url 'fba:create_shipment_create_destination' %}"
                class="btn btn-primary">Add New Destination Address</a>
         </div>
- 
-        <div class="list-group col-4">
-            {% for destination in destinations %}
-                <a href="{% url 'fba:create_shipment' destination.pk %}"
-                   class="list-group-item">{{ destination }}</a>
-            {% endfor %}
+
+        <div class="col-4">
+            <form action="" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="form-control btn btn-primary">Continue</button>
+            </form>
         </div>
     </div>
 

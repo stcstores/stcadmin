@@ -4,8 +4,8 @@ from django.contrib import messages
 from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
-from django.views.generic import ListView, TemplateView, View
+from django.urls import reverse, reverse_lazy
+from django.views.generic import FormView, ListView, TemplateView, View
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
@@ -117,18 +117,23 @@ class DownloadUPSAddressFile(FBAUserMixin, RedirectView):
         return response
 
 
-class CreateShipment_SelectDestination(FBAUserMixin, TemplateView):
+class CreateShipment_SelectDestination(FBAUserMixin, FormView):
     """View for selecting destinations for new shipments."""
 
     template_name = "fba/shipments/create_shipment/select_destination.html"
+    form_class = forms.FBAShipmentDestinationForm
 
-    def get_context_data(self, **kwargs):
-        """Return context data for the template."""
-        context = super().get_context_data(**kwargs)
-        context["destinations"] = models.FBAShipmentDestination.objects.filter(
-            is_enabled=True
-        )
-        return context
+    def form_valid(self, form):
+        """Get the selected destination from the form."""
+        destination = form.cleaned_data["destination"]
+        if not destination:
+            return super().form_invalid(form)
+        self.destination = destination
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the URL of the create shipment page."""
+        return reverse("fba:create_shipment", args=[self.destination.id])
 
 
 class CreateShipment_CreateDestination(CreateDestination):

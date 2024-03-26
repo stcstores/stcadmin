@@ -11,6 +11,7 @@ from django.utils.timezone import make_aware, now
 
 from fba import models
 from home.models import Staff
+from inventory.forms.fieldtypes import SelectizeModelChoiceField
 from inventory.models import BaseProduct, ProductRange, Supplier
 
 
@@ -728,3 +729,16 @@ class StopFBAOrderForm(forms.ModelForm):
                 attrs={"class": "datepicker", "size": "6"}
             ),
         }
+
+
+class FBAShipmentDestinationForm(forms.Form):
+    """Form for selecting shipment destinations."""
+
+    class DestinationField(SelectizeModelChoiceField):
+        """Field for selecting shipment destinations."""
+
+        def get_queryset(self):
+            """Return a queryset of shipment destinations."""
+            return models.FBAShipmentDestination.objects.filter(is_enabled=True)
+
+    destination = DestinationField()
