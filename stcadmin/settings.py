@@ -7,6 +7,7 @@ from pathlib import Path
 from tempfile import SpooledTemporaryFile
 
 import toml
+from amapi.session import AmapiSessionUK, AmapiSessionUS
 from django.contrib.staticfiles.storage import ManifestStaticFilesStorage
 from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
 from django.db import models
@@ -102,6 +103,14 @@ LINNAPI_APPLICATION_ID = get_config("LINNAPI_APPLICATION_ID")
 LINNAPI_APPLICATION_SECRET = get_config("LINNAPI_APPLICATION_SECRET")
 LINNAPI_APPLICATION_TOKEN = get_config("LINNAPI_APPLICATION_TOKEN")
 
+AMAZON_UK_REFRESH_TOKEN = get_config("AMAZON_UK_REFRESH_TOKEN")
+AMAZON_UK_LWA_APP_ID = get_config("AMAZON_UK_LWA_APP_ID")
+AMAZON_UK_LWA_CLIENT_SECRET = get_config("AMAZON_UK_LWA_CLIENT_SECRET")
+
+AMAZON_US_REFRESH_TOKEN = get_config("AMAZON_US_REFRESH_TOKEN")
+AMAZON_US_LWA_APP_ID = get_config("AMAZON_US_LWA_APP_ID")
+AMAZON_US_LWA_CLIENT_SECRET = get_config("AMAZON_US_LWA_CLIENT_SECRET")
+
 AWS_S3_ACCESS_KEY_ID = BUCKET_ACCESS_KEY
 AWS_S3_SECRET_ACCESS_KEY = BUCKET_SECRET_KEY
 AWS_S3_ENDPOINT_URL = f"https://{BUCKET_DOMAIN}"
@@ -118,6 +127,17 @@ LinnworksAPISession.set_login(
     application_token=LINNAPI_APPLICATION_TOKEN,
 )
 
+AmapiSessionUK.set_login(
+    refresh_token=AMAZON_UK_REFRESH_TOKEN,
+    app_id=AMAZON_UK_LWA_APP_ID,
+    client_secret=AMAZON_UK_LWA_CLIENT_SECRET,
+)
+
+AmapiSessionUS.set_login(
+    refresh_token=AMAZON_US_REFRESH_TOKEN,
+    app_id=AMAZON_US_LWA_APP_ID,
+    client_secret=AMAZON_US_LWA_CLIENT_SECRET,
+)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

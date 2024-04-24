@@ -259,6 +259,20 @@ class FBAShipmentItemAdmin(admin.ModelAdmin):
 
 @admin.register(models.ShipmentConfig)
 class ShipmentConfigAdmin(SingletonModelAdmin):
-    """Model admin for the LinnworksConfig model."""
+    """Model admin for the ShipmentConfig model."""
+
+    exclude_fields = ()
+
+
+@admin.register(models.FBAProfit)
+class FBAProfitAdmin(admin.ModelAdmin):
+    """Model admin for the FBAProfitAdmin model."""
+
+    exclude_fields = ()
+
+
+@admin.register(models.FBAProfitFile)
+class FBAProfitFileAdmin(admin.ModelAdmin):
+    """Model admin for the FBAProfitFile model."""
 
     exclude_fields = ()

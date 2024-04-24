@@ -73,6 +73,12 @@ urlpatterns = [
         views.fba.ShippingCalculator.as_view(),
         name="shipping_calculator",
     ),
+    path("profit_list", views.FBAProfitList.as_view(), name="profit_list"),
+    path(
+        "product_profit/<int:pk>",
+        views.FBAProductProfit.as_view(),
+        name="product_profit",
+    ),
     path("shipments", views.Shipments.as_view(), name="shipments"),
     path(
         "shipments/destinations",

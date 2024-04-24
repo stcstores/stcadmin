@@ -240,3 +240,34 @@ class FBAShipmentItemFactory(DjangoModelFactory):
     value = 100
     country_of_origin = "United Kingdom"
     hr_code = factory.Faker("pystr", min_chars=25, max_chars=25)
+
+
+class FBAProfitFileFactory(DjangoModelFactory):
+    class Meta:
+        model = models.FBAProfitFile
+
+    import_date = factory.Faker(
+        "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
+    )
+
+
+class FBAProfitFactory(DjangoModelFactory):
+    class Meta:
+        model = models.FBAProfit
+
+    import_record = factory.SubFactory(FBAProfitFileFactory)
+    product = factory.SubFactory(ProductFactory)
+    region = factory.SubFactory(FBARegionFactory)
+    last_order = factory.SubFactory(FBAOrderFactory)
+    exchange_rate = 0.85
+    channel_sku = "AAA_BBB_CCC_FBA"
+    asin = "907083405"
+    listing_name = factory.Faker("name")
+    sale_price = factory.Faker("pyint", min_value=1, max_value=200)
+    referral_fee = factory.Faker("pyint", min_value=1, max_value=200)
+    closing_fee = factory.Faker("pyint", min_value=1, max_value=200)
+    handling_fee = factory.Faker("pyint", min_value=1, max_value=200)
+    placement_fee = factory.Faker("pyint", min_value=1, max_value=200)
+    purchase_price = factory.Faker("pyint", min_value=1, max_value=200)
+    shipping_price = factory.Faker("pyint", min_value=1, max_value=200)
+    profit = factory.Faker("pyint", min_value=-200, max_value=200)
