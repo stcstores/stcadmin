@@ -1,3 +1,5 @@
+import datetime as dt
+
 import pytest
 from django.contrib.auth import get_user_model
 
@@ -40,6 +42,16 @@ def test_has_user_attribute(shipment_order):
 @pytest.mark.django_db
 def test_has_is_on_hold_attribute(shipment_order):
     assert shipment_order.is_on_hold is False
+
+
+@pytest.mark.django_db
+def test_has_is_at_risk_attribute(shipment_order):
+    assert shipment_order.at_risk is False
+
+
+@pytest.mark.django_db
+def test_has_planned_shipment_date_attribute(shipment_order):
+    assert isinstance(shipment_order.planned_shipment_date, dt.datetime)
 
 
 # Test Methods

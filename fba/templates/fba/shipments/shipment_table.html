@@ -10,19 +10,23 @@
             <th>Weight (kg)</th>
             <th>Value</th>
             <th>Order Number</th>
+            <th>Ship Date</th>
             <td colspan="4"></td>
         </tr>
     </thead>
     <tbody>
         {% for shipment in shipments %}
-            <tr>
-                <th {% if shipment.is_on_hold %}class="error"{% endif %}>{{ shipment.description }}</th>
+            <tr {% if shipment.is_on_hold %}class="text-muted"{% endif %}>
+                <th {% if shipment.at_risk %}class="bg-danger text-light"{% endif %}>{{ shipment.description }}</th>
                 <td>{{ shipment.destination }}</td>
                 <td>{{ shipment.user }}</td>
                 <td>{{ shipment.shipment_package.count }}</td>
                 <td>{{ shipment.weight_kg|floatformat:2 }}</td>
                 <td>{% format_price shipment.value %}</td>
                 <th>{{ shipment.order_number }}</th>
+                <td>
+                    {% if shipment.planned_shipment_date %}{{ shipment.planned_shipment_date }}{% endif %}
+                </td>
                 <td>
                     <a href="{% url 'fba:update_shipment' shipment.pk %}"
                        class="btn btn-primary btn-sm">Edit</a>
