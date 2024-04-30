@@ -1,6 +1,5 @@
 """Models for managing FBA shipments."""
 
-
 from django.conf import settings
 from django.db import models
 from django.db.models import Case, Count, F, Sum, Value, When
@@ -200,6 +199,8 @@ class FBAShipmentOrder(models.Model):
         related_name="fba_shipments",
     )
     is_on_hold = models.BooleanField(default=False)
+    planned_shipment_date = models.DateField(blank=True, null=True)
+    at_risk = models.BooleanField(default=False)
 
     objects = FBAShipmentOrderManager()
 

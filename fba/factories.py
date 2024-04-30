@@ -216,6 +216,10 @@ class FBAShipmentOrderFactory(DjangoModelFactory):
     shipment_method = factory.SubFactory(FBAShipmentMethodFactory)
     user = factory.SubFactory(UserFactory)
     is_on_hold = False
+    at_risk = False
+    planned_shipment_date = factory.Faker(
+        "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
+    )
 
 
 class FBAShipmentPackageFactory(DjangoModelFactory):

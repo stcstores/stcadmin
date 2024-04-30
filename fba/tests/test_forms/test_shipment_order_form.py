@@ -25,6 +25,8 @@ def form_data(destination, shipment_method, user):
         "destination": destination.id,
         "shipment_method": shipment_method.id,
         "user": user.id,
+        "at_risk": "on",
+        "planned_shipment_date": "2024-05-04",
     }
 
 
@@ -34,6 +36,8 @@ def test_fields():
         "destination",
         "shipment_method",
         "user",
+        "planned_shipment_date",
+        "at_risk",
     ]
 
 

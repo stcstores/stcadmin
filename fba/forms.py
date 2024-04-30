@@ -548,6 +548,12 @@ class ShipmentOrderForm(forms.ModelForm):
         model = models.FBAShipmentOrder
         exclude = ("is_on_hold", "export")
 
+        widgets = {
+            "planned_shipment_date": forms.DateInput(
+                attrs={"class": "datepicker", "size": "6"}
+            )
+        }
+
 
 class PackageForm(forms.ModelForm):
     """Model form for fba.models.FBAShipmentPackage."""
