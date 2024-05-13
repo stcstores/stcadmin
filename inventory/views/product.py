@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
-from django.views.generic.edit import DeleteView, UpdateView
+from django.views.generic.edit import FormView, UpdateView
 
 from inventory import forms, models
 
@@ -54,19 +54,24 @@ class ViewProduct(InventoryUserMixin, TemplateView):
         return context
 
 
-class SetProductEndOfLine(InventoryUserMixin, DeleteView):
+class SetProductEndOfLine(InventoryUserMixin, FormView):
     """View for setting products as end of line."""
 
-    template_name = "inventory/product_range/confirm_eol_product.html"
+    form_class = forms.EndOfLineReasonForm
+    template_name = "inventory/product_range/eol_product.html"
 
-    def get_object(self):
+    def get_context_data(self, *args, **kwargs):
         """Return the product to set EOL."""
-        return get_object_or_404(models.Product, pk=self.kwargs["pk"])
+        context = super().get_context_data(*args, **kwargs)
+        context["product"] = get_object_or_404(models.Product, pk=self.kwargs["pk"])
+        return context
 
     def form_valid(self, form):
         """Set product end of line."""
+        self.object = get_object_or_404(models.Product, pk=self.kwargs["pk"])
         success_url = self.get_success_url()
-        self.object.set_end_of_line()
+        reason = form.cleaned_data["end_of_line_reason"]
+        self.object.set_end_of_line(reason=reason)
         return HttpResponseRedirect(success_url)
 
     def get_success_url(self):
@@ -76,21 +81,28 @@ class SetProductEndOfLine(InventoryUserMixin, DeleteView):
         )
 
 
-class SetProductRangeEndOfLine(InventoryUserMixin, DeleteView):
-    """View for setting products as end of line."""
+class SetProductRangeEndOfLine(InventoryUserMixin, FormView):
+    """View for setting product ranges as end of line."""
 
-    template_name = "inventory/product_range/confirm_eol_product_range.html"
+    form_class = forms.EndOfLineReasonForm
+    template_name = "inventory/product_range/eol_product_range.html"
 
-    def get_object(self):
+    def get_context_data(self, *args, **kwargs):
         """Return the product to set EOL."""
-        return get_object_or_404(models.ProductRange, pk=self.kwargs["pk"])
+        context = super().get_context_data(*args, **kwargs)
+        context["product_range"] = get_object_or_404(
+            models.ProductRange, pk=self.kwargs["pk"]
+        )
+        return context
 
     def form_valid(self, form):
         """Set product end of line."""
+        self.object = get_object_or_404(models.ProductRange, pk=self.kwargs["pk"])
         success_url = self.get_success_url()
+        reason = form.cleaned_data["end_of_line_reason"]
         with transaction.atomic():
             for product in self.object.products.all():
-                product.set_end_of_line()
+                product.set_end_of_line(reason=reason)
         return HttpResponseRedirect(success_url)
 
     def get_success_url(self):

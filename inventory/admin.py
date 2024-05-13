@@ -23,6 +23,15 @@ class BarcodeAdmin(admin.ModelAdmin):
     list_filter = ("available", "used_by")
 
 
+@admin.register(models.EndOfLineReason)
+class EndOfLineReasonAdmin(admin.ModelAdmin):
+    """Model admin for the EndOfLineReason model."""
+
+    exclude_fields = ()
+    list_display = ("__str__", "name", "short_name")
+    list_editable = ("name", "short_name")
+
+
 @admin.register(models.BaseProduct)
 class BaseProductAdmin(admin.ModelAdmin):
     """Model admin for the BaseProduct model."""

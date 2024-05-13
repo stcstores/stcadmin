@@ -24,7 +24,9 @@
             <div class="col-lg my-1">
               <div>
                 <span class="font-monospace user-select-all">{{ product.sku }}</span>
-                {% if product.is_end_of_line %}<span class="badge bg-danger">End of Line</span>{% endif %}
+                {% if product.is_end_of_line %}
+                  <span class="badge bg-danger">End Of Line: {{ product.end_of_line_reason.short }}</span>
+                {% endif %}
               </div>
               <div>
                 {% for option, value in product.variation.items %}

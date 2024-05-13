@@ -59,6 +59,7 @@ class BaseProductForm(forms.ModelForm):
         model = models.Product
         exclude = (
             "is_end_of_line",
+            "end_of_line_reason",
             "gender",
             "range_order",
             "images",
@@ -209,3 +210,11 @@ class AddSupplierToBlacklistForm(forms.Form):
             name=self.cleaned_data["name"], defaults={"blacklisted": True}
         )
         return self.instance
+
+
+class EndOfLineReasonForm(forms.Form):
+    """Form for setting products as end of line."""
+
+    end_of_line_reason = forms.ModelChoiceField(
+        models.EndOfLineReason.objects.all(), required=True
+    )

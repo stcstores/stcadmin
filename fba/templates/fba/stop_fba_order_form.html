@@ -11,7 +11,7 @@
             {% if form.instance.product.is_archived %}
                 <span class="badge bg-secondary">Archived</span>
             {% elif form.instance.product.is_end_of_line %}
-                <span class="badge bg-danger">End of Line</span>
+                <span class="badge bg-danger">End Of Line: {{ orm.instance.product.end_of_line_reason.short }}</span>
             {% endif %}
         </div>
         {{ form.errors }}

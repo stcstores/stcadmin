@@ -28,6 +28,28 @@ from .supplier import Supplier
 UNIQUE_SKU_ATTEMPTS = 100
 
 
+class EndOfLineReason(models.Model):
+    """Model for reasons a product has been marked end of line."""
+
+    name = models.CharField(max_length=255, unique=True, db_index=True)
+    short_name = models.CharField(max_length=20, blank=True, null=True)
+
+    class Meta:
+        """Meta class for EndOfLineReason."""
+
+        verbose_name = "End of Line Reason"
+        verbose_name_plural = "End of Line Reasons"
+
+    def __str__(self):
+        return self.name
+
+    def short(self):
+        """Return short_name if it is not None, else name."""
+        if self.short_name:
+            return self.short_name
+        return self.name
+
+
 class ProductQueryset(PolymorphicQuerySet):
     """Custom queryset for products."""
 
@@ -159,6 +181,13 @@ class BaseProduct(PolymorphicModel):
 
     is_end_of_line = models.BooleanField(default=False, verbose_name="Is EOL")
     is_archived = models.BooleanField(default=False, verbose_name="Is Archived")
+    end_of_line_reason = models.ForeignKey(
+        EndOfLineReason,
+        on_delete=models.PROTECT,
+        related_name="products",
+        blank=True,
+        null=True,
+    )
 
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     modified_at = models.DateTimeField(auto_now=True, editable=False)
@@ -258,11 +287,16 @@ class BaseProduct(PolymorphicModel):
         return [link.bay for link in self.product_bay_links.all()]
 
     @transaction.atomic
-    def set_end_of_line(self):
+    def set_end_of_line(self, reason):
         """Set the product and any combination or multipack products containing it as EOL."""
-        MultipackProduct.objects.filter(base_product=self).update(is_end_of_line=True)
-        CombinationProduct.objects.filter(products=self).update(is_end_of_line=True)
+        MultipackProduct.objects.filter(base_product=self).update(
+            is_end_of_line=True, end_of_line_reason=reason
+        )
+        CombinationProduct.objects.filter(products=self).update(
+            is_end_of_line=True, end_of_line_reason=reason
+        )
         self.is_end_of_line = True
+        self.end_of_line_reason = reason
         self.save()
 
     @transaction.atomic

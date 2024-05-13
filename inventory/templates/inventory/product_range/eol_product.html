@@ -14,12 +14,15 @@
             <div class="d-inline-block m-2 font-monospace user-select-all">{{ product.supplier_sku }}</div>
         </div>
 
-        <form method="post">
-            {% csrf_token %}
-            <p>Are you sure you want mark this product End of Line?</p>
-            <input type="submit" value="Confirm" class="btn btn-danger">
-            <a href="{% url 'inventory:product_range' product.product_range.pk %}"
-               class="btn btn-primary">Cancel</a>
-        </form>
+        <div class="col-6">
+            <form method="post">
+                {% csrf_token %}
+                <p>Are you sure you want mark this product End of Line?</p>
+                {% include "home/bootstrap_input_group_form.html" %}
+                <input type="submit" value="Confirm" class="btn btn-danger">
+                <a href="{% url 'inventory:product_range' product.product_range.pk %}"
+                   class="btn btn-primary">Cancel</a>
+            </form>
+        </div>
     </div>
 {% endblock content %}

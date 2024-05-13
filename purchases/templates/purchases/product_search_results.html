@@ -8,7 +8,9 @@
             <div class="col-lg-5">
                 <p class="font-monospace user-select-all text-muted fs-6 p-0 m-0">
                     {{ product.sku }}
-                    {% if product.is_end_of_line %}<span class="badge bg-danger">End of Line</span>{% endif %}
+                    {% if product.is_end_of_line %}
+                        <span class="badge bg-danger">End Of Line: {{ product.end_of_line_reason.short }}</span>
+                    {% endif %}
                 </p>
                 <p>{{ product.full_name }}</p>
             </div>

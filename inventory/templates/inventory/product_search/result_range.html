@@ -47,7 +47,7 @@
       {% if product_range.is_archived %}
         <span class="badge bg-dark">Archived</span>
       {% elif product_range.is_end_of_line %}
-        <span class="badge bg-danger">End of Line</span>
+        <span class="badge bg-danger">End Of Line: {{ product.end_of_line_reason.short }}</span>
       {% endif %}
     </div>
     <div class="product_details col-md-3 order-4 order-md-3">
