@@ -96,7 +96,6 @@ def form_data(fba_order):
         "aproximate_quantity": 328,
         "is_combinable": False,
         "on_hold": False,
-        "is_fragile": False,
         "notes": "Long produce matter.",
         "product": fba_order.product.pk,
         "product_weight": 2325,

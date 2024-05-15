@@ -95,6 +95,13 @@ class BaseProductForm(forms.ModelForm):
         "is_flammable",
     )
 
+    def __init__(self, *args, **kwargs):
+        """Set packing requirements field size attribute."""
+        super().__init__(*args, **kwargs)
+        self.fields["packing_requirements"].widget.attrs.update(
+            {"size": models.PackingRequirement.objects.count()}
+        )
+
 
 class InitialVariationForm(BaseProductForm):
     """Form for setting initial product attributes."""
@@ -107,7 +114,10 @@ class InitialVariationForm(BaseProductForm):
 
         model = models.InitialVariation
         widgets = {"product_range": forms.HiddenInput, "sku": forms.HiddenInput}
-        exclude = BaseProductForm.Meta.exclude + ("bays", "additional_suppliers")
+        exclude = BaseProductForm.Meta.exclude + (
+            "bays",
+            "additional_suppliers",
+        )
 
     sku = forms.CharField(required=False, widget=forms.HiddenInput)
 

@@ -186,7 +186,6 @@ class FBAOrder(models.Model):
     on_hold = models.BooleanField(default=False)
     update_stock_level_when_complete = models.BooleanField(default=True)
     is_combinable = models.BooleanField(default=False)
-    is_fragile = models.BooleanField(default=False)
     is_stopped = models.BooleanField(default=False)
     stopped_reason = models.TextField(blank=True, null=True)
     stopped_at = models.DateField(blank=True, null=True)
@@ -257,7 +256,6 @@ class FBAOrder(models.Model):
             FBA_fee=self.FBA_fee,
             aproximate_quantity=aprox_quantity,
             small_and_light=self.small_and_light,
-            is_fragile=self.is_fragile,
             update_stock_level_when_complete=self.update_stock_level_when_complete,
             is_combinable=self.is_combinable,
         )

@@ -106,7 +106,6 @@ class FBAOrderForm(forms.ModelForm):
         "tracking_number",
         "is_combinable",
         "on_hold",
-        "is_fragile",
         "notes",
     ]
 

@@ -35,7 +35,7 @@
             {% if product.is_archived %}
                 <span class="badge bg-secondary">Archived</span>
             {% elif product.is_end_of_line %}
-                <span class="badge bg-danger">End Of Line</span>
+                <span class="badge bg-danger">End Of Line: {{ product.end_of_line_reason.short }}</span>
             {% endif %}
         </div>
  
@@ -51,18 +51,27 @@
                 </span>
             {% endfor %}
         </div>
-        <div class="m-2">
-            {% if form.instance.id %}
+        <div class="m-2 row">
+            <div class="col-4">
+                {% if form.instance.id %}
+                    <div>
+                        ASIN: <span class="font-monospace user-select-all">{{ form.instance.product_asin }}</span>
+                    </div>
+                {% endif %}
                 <div>
-                    ASIN: <span class="font-monospace user-select-all">{{ form.instance.product_asin }}</span>
+                    Barcode: <span class="font-monospace user-select-all">{{ product.barcode }}</span>
                 </div>
-            {% endif %}
-            <div>
-                Barcode: <span class="font-monospace user-select-all">{{ product.barcode }}</span>
+                <div>
+                    Supplier: <span class="fw-bold me-3">{{ product.supplier }}</span>
+                    {% for supplier in product.additional_suppliers.all %}<span class="me-3">{{ supplier }}</span>{% endfor %}
+                </div>
             </div>
-            <div>
-                Supplier: <span class="fw-bold me-3">{{ product.supplier }}</span>
-                {% for supplier in product.additional_suppliers.all %}<span class="me-3">{{ supplier }}</span>{% endfor %}
+            <div class="col-4 fs-5">
+                {% for requirement in product.packing_requirements.all %}
+                    <span class="badge bg-primary">{{ requirement }}</span>
+                {% empty %}
+                    <span class="badge bg-danger">No Packing Requirements Selected</span>
+                {% endfor %}
             </div>
         </div>
         <div class="m-2">

@@ -18,6 +18,7 @@ from .product_attribute import (
     Brand,
     Manufacturer,
     PackageType,
+    PackingRequirement,
     VariationOptionValue,
     VATRate,
 )
@@ -195,6 +196,10 @@ class BaseProduct(PolymorphicModel):
 
     images = models.ManyToManyField(
         ProductImage, through=ProductImageLink, related_name="image_products"
+    )
+
+    packing_requirements = models.ManyToManyField(
+        PackingRequirement, related_name="products"
     )
 
     objects = ProductManager.from_queryset(ProductQueryset)()
@@ -376,8 +381,10 @@ class InitialVariation(Product):
         product_kwargs["sku"] = new_product_sku()
         del product_kwargs["images"]
         del product_kwargs["additional_suppliers"]
+        del product_kwargs["packing_requirements"]
         product = Product(**product_kwargs)
         product.save()
+        product.packing_requirements.set(self.packing_requirements.all())
         for option, value in variation.items():
             variation_option = apps.get_model(
                 "inventory", "VariationOption"

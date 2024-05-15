@@ -28,7 +28,6 @@ def form_data(region, product):
         "aproximate_quantity": 328,
         "is_combinable": False,
         "on_hold": False,
-        "is_fragile": False,
         "notes": "Long produce matter.",
         "product": product,
         "product_weight": 2325,

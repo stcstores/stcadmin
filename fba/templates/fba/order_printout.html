@@ -27,7 +27,7 @@
             font-size: 1.25em;
         }
 
-        .info th {
+        #info th {
             text-align: right;
         }
 
@@ -101,6 +101,19 @@
             font-size: 1.25em;
             padding: 0.125em;
         }
+
+        .packing_requirements {
+            padding: 0.1em;
+            border: black 3px solid;
+            border-radius: 1em;
+            text-align: center;
+            margin: 0.5em;
+        }
+
+        .packing_requirements p {
+            font-weight: bold;
+            font-size: 1.25em;
+        }
     </style>
 </head>
 
@@ -131,12 +144,6 @@
                     <td>ASIN</td>
                     <td class="bold">{{ order.product_asin }}</td>
                 </tr>
-                {% if order.product.supplier_sku %}
-                    <tr>
-                        <td>Supplier SKU</td>
-                        <td class="bold">{{ order.product.supplier_sku }}</td>
-                    </tr>
-                {% endif %}
             </table>
  
         </div>
@@ -156,35 +163,35 @@
     </div>
     <div id="fba_order_form">
         <div class="picking">
-            <table id="info">
-                <tr>
-                    <td>Locations</td>
-                    <td class="bold">
-                        {% for bay in bays %}<div class="location">{{ bay }}</div>{% endfor %}
-                    </td>
-                </tr>
-                <tr>
-                    <td>Product Weight (g)</td>
-                    <td class="bold">{{ order.product_weight }}</td>
-                </tr>
-                <tr>
-                    <td>HS Code</td>
-                    <td class="bold">{{ order.product_hs_code }}</td>
-                </tr>
-                <tr>
-                    <td>Aproximate Quantity</td>
-                    <td class="bold">{{ order.aproximate_quantity }}</td>
-                </tr>
-                <tr>
-                    <td>Purchase Price</td>
-                    <td class="bold">{{ order.region.currency.symbol }}{{ order.product_purchase_price }}</td>
-                </tr>
-            </table>
+            <div>
+                <table id="info">
+                    <tr>
+                        <td>Locations</td>
+                        <td class="bold">
+                            {% for bay in bays %}<div class="location">{{ bay }}</div>{% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>HS Code</td>
+                        <td class="bold">{{ order.product_hs_code }}</td>
+                    </tr>
+                    <tr>
+                        <td>Aproximate Quantity</td>
+                        <td class="bold">{{ order.aproximate_quantity }}</td>
+                    </tr>
+                </table>
+                <div class="packing_requirements">
+                    {% for requirement in product.packing_requirements.all %}
+                        <p>{{ requirement }}</p>
+                    {% empty %}
+                        <p>No Packing Requirements Selected</p>
+                    {% endfor %}
+                </div>
+            </div>
  
             <div>
                 {% if order.is_prioritised %}<h2>PRIORITISED</h2>{% endif %}
                 {% if order.is_combinable %}<h2>COMBINABLE</h2>{% endif %}
-                {% if order.is_fragile %}<h2>FRAGILE, NO LABELS NEEDED</h2>{% endif %}
                 {% if order.product_is_multipack %}<h2>MULTIPACK ITEM - UPDATE STOCK MANUALLY</h2>{% endif %}
             </div>
  

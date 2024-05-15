@@ -347,3 +347,12 @@ class VariationOptionValueAdmin(admin.ModelAdmin):
     list_filter = ("variation_option",)
     autocomplete_fields = ("product", "variation_option")
     list_select_related = ("product", "variation_option")
+
+
+@admin.register(models.PackingRequirement)
+class PackingRequirementAdmin(SortableAdminMixin, admin.ModelAdmin):
+    """Model admin for the PackingRequirement model."""
+
+    exclude_fields = ()
+    list_display = ("__str__", "name")
+    list_editable = ("name",)

@@ -156,11 +156,6 @@ def test_not_processed_fba_order_is_combinable_attribute(not_processed_fba_order
 
 
 @pytest.mark.django_db
-def test_not_processed_fba_order_is_fragile_attribute(not_processed_fba_order):
-    assert not_processed_fba_order.is_fragile is False
-
-
-@pytest.mark.django_db
 def test_not_processed_fba_order_is_stopped_attribute(not_processed_fba_order):
     assert not_processed_fba_order.is_stopped is False
 
@@ -619,7 +614,6 @@ def test_duplicate(fulfilled_fba_order):
     assert duplicate.FBA_fee == fulfilled_fba_order.FBA_fee
     assert duplicate.aproximate_quantity == fulfilled_fba_order.aproximate_quantity
     assert duplicate.small_and_light == fulfilled_fba_order.small_and_light
-    assert duplicate.is_fragile == fulfilled_fba_order.is_fragile
     assert (
         duplicate.update_stock_level_when_complete
         == fulfilled_fba_order.update_stock_level_when_complete

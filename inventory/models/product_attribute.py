@@ -189,3 +189,20 @@ class VATRate(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class PackingRequirement(models.Model):
+    """Model for packing requirements."""
+
+    name = models.CharField(max_length=255, unique=True, db_index=True)
+    ordering = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        """Meta class for packing requirements."""
+
+        verbose_name = "Packing Requirement"
+        verbose_name_plural = "Packing Requirements"
+        ordering = ["ordering"]
+
+    def __str__(self):
+        return self.name

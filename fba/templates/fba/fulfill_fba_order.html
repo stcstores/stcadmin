@@ -14,17 +14,25 @@
         </div>
         <div class="fs-3 mb-5 user-select-all">{{ form.instance.product.full_name }}</div>
 
-        <div class="m-2">
-            <div>
-                ASIN: <span class="font-monospace user-select-all fs-4">{{ form.instance.product_asin }}</span>
+        <div class="m-2 row">
+            <div class="col-4">
+                <div>
+                    ASIN: <span class="font-monospace user-select-all fs-4">{{ form.instance.product_asin }}</span>
+                </div>
+                <div>Supplier: {{ form.instance.product.supplier }}</div>
+                {% if form.instance.product_is_multipack %}<div class="error">MULTIPACK ITEM Update stock manually</div>{% endif %}
+                {% if form.instance.closed_at %}<div>CLOSED: {{ form.instance.closed_at }}</div>{% endif %}
+                <div class="fs-4">
+                    {% if form.instance.is_combinable %}<span class="badge bg-success me-3">Combinable</span>{% endif %}
+                    {% if form.instance.product.is_flammable is True %}<span class="badge bg-danger me-3">Flammable</span>{% endif %}
+                </div>
             </div>
-            <div>Supplier: {{ form.instance.product.supplier }}</div>
-            {% if form.instance.product_is_multipack %}<div class="error">MULTIPACK ITEM Update stock manually</div>{% endif %}
-            {% if form.instance.closed_at %}<div>CLOSED: {{ form.instance.closed_at }}</div>{% endif %}
-            <div class="fs-4">
-                {% if form.instance.is_combinable %}<span class="badge bg-success me-3">Combinable</span>{% endif %}
-                {% if form.instance.is_fragile is True %}<span class="badge bg-danger me-3">Fragile</span>{% endif %}
-                {% if form.instance.product.is_flammable is True %}<span class="badge bg-danger me-3">Flammable</span>{% endif %}
+            <div class="col-4 fs-5">
+                {% for requirement in form.instance.product.packing_requirements.all %}
+                    <span class="badge bg-primary">{{ requirement }}</span>
+                {% empty %}
+                    <span class="badge bg-danger">No Packing Requirements Selected</span>
+                {% endfor %}
             </div>
         </div>
         <div class="m-2">

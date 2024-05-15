@@ -64,7 +64,6 @@ class FBAOrderFactory(DjangoModelFactory):
     on_hold = False
     update_stock_level_when_complete = True
     is_combinable = False
-    is_fragile = False
     is_stopped = False
     stopped_at = None
     stopped_until = None
