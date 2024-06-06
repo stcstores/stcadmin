@@ -157,28 +157,6 @@ class FBAShipmentExport(models.Model):
         ).distinct()
 
 
-class FBAShipmentOrderManager(models.Manager):
-    """Model Manager for the FBAShipmentOrder model."""
-
-    def get_queryset(self):
-        """Annotate queryset."""
-        return (
-            super()
-            .get_queryset()
-            .annotate(
-                weight_kg=Sum(
-                    F("shipment_package__shipment_item__weight_kg")
-                    * F("shipment_package__shipment_item__quantity")
-                ),
-                value=Sum(
-                    F("shipment_package__shipment_item__value")
-                    * F("shipment_package__shipment_item__quantity")
-                ),
-                item_count=Sum("shipment_package__shipment_item__quantity"),
-            )
-        )
-
-
 class FBAShipmentOrder(models.Model):
     """View for FBA Shipment orders."""
 
@@ -201,8 +179,6 @@ class FBAShipmentOrder(models.Model):
     is_on_hold = models.BooleanField(default=False)
     planned_shipment_date = models.DateField(blank=True, null=True)
     at_risk = models.BooleanField(default=False)
-
-    objects = FBAShipmentOrderManager()
 
     class Meta:
         """Meta class for FBAShipmentOrder."""
@@ -236,6 +212,31 @@ class FBAShipmentOrder(models.Model):
                 self.shipment_package.count() > 0,
             )
         )
+
+    def items(self):
+        """Return a queryset of items in this shipment."""
+        return FBAShipmentItem.objects.filter(package__shipment_order=self)
+
+    @property
+    def item_count(self):
+        """Return the number of items in this shipment."""
+        return self.items().aggregate(Sum("quantity"))["quantity__sum"]
+
+    @property
+    def weight_kg(self):
+        """Return the total calculated weight of the shipment."""
+        weight = 0
+        for item in self.items():
+            weight += item.weight_kg * item.quantity
+        return round(weight, 2)
+
+    @property
+    def value(self):
+        """Return the total calculated value of the shipment."""
+        value = 0
+        for item in self.items():
+            value += item.value * item.quantity
+        return value
 
     def close_shipment_order(self):
         """Create a shipment export for this order."""
