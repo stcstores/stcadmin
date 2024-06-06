@@ -175,6 +175,11 @@ def test_not_processed_fba_order_stopped_until_attribute(not_processed_fba_order
     assert not_processed_fba_order.stopped_until is None
 
 
+@pytest.mark.django_db
+def test_not_processed_fba_order_no_stickers_attribute(not_processed_fba_order):
+    assert not_processed_fba_order.no_stickers is False
+
+
 # Test Ready FBA Order
 
 

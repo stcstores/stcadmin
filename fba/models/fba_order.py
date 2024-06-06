@@ -191,6 +191,8 @@ class FBAOrder(models.Model):
     stopped_at = models.DateField(blank=True, null=True)
     stopped_until = models.DateField(blank=True, null=True)
 
+    no_stickers = models.BooleanField(default=False)
+
     objects = FBAOrderManager()
 
     class Meta:

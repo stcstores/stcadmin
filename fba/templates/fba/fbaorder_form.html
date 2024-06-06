@@ -22,6 +22,7 @@
                 {% endwith %}
             {% endif %}
             {% if product.is_flammable %}<span class="badge bg-danger">Flammable</span>{% endif %}
+            {% if form.instance.no_stickers %}<span class="badge bg-primary">No Stickers</span>{% endif %}
         </div>
  
         {% if form.instance.id %}<span>{{ form.instance.region.flag }}</span>{% endif %}

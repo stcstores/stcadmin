@@ -193,6 +193,7 @@
                 {% if order.is_prioritised %}<h2>PRIORITISED</h2>{% endif %}
                 {% if order.is_combinable %}<h2>COMBINABLE</h2>{% endif %}
                 {% if order.product_is_multipack %}<h2>MULTIPACK ITEM - UPDATE STOCK MANUALLY</h2>{% endif %}
+                {% if order.no_stickers %}<h2>NO STICKERS</h2>{% endif %}
             </div>
  
             <img src="{{ order.product.get_primary_image.square_image.url }}"
