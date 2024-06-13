@@ -263,3 +263,7 @@ class FBAOrder(models.Model):
         )
         duplicate_order.save()
         return duplicate_order
+
+    def value(self):
+        """Return an aproximation of the order's value."""
+        return self.product.purchase_price * self.aproximate_quantity

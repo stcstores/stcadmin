@@ -813,6 +813,16 @@ def test_queryset_order_by_priority_method(
     ]
 
 
+@pytest.mark.django_db
+def test_value_method(fba_order_factory):
+    order = fba_order_factory(
+        status_not_processed=True,
+        aproximate_quantity=10,
+        product__purchase_price=Decimal("5.12"),
+    )
+    assert order.value() == Decimal("51.20")
+
+
 # Test Manager Methods
 
 
