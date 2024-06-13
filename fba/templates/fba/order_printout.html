@@ -179,6 +179,10 @@
                         <td>Aproximate Quantity</td>
                         <td class="bold">{{ order.aproximate_quantity }}</td>
                     </tr>
+                    <tr>
+                        <td>Aproximate Value</td>
+                        <td class="bold">{{ order.value }}</td>
+                    </tr>
                 </table>
                 <div class="packing_requirements">
                     {% for requirement in product.packing_requirements.all %}

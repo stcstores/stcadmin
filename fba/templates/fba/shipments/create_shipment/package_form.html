@@ -27,3 +27,39 @@
     </div>
 
 {% endblock content %}
+
+{% block script %}
+    <script>
+
+        function getPurchasePrice(sku, target) {
+            $.ajax({
+                method: "POST",
+                url: "{% url "fba:purchase_price_by_sku" %}",
+                data: {sku: sku},
+                success: function(result) {
+                    $(target).val(result['purchase_price']);
+                }
+            });
+        }
+
+        function getFields() {
+            return {
+                {% for form in item_formset %}"#{{ form.sku.auto_id }}": "#{{ form.value.auto_id }}",{% endfor %}
+            };
+        }
+
+        function setGetPurchasePrice() {
+            $.each(fields, function(skuId, valueId) {
+                var skuField = $(skuId);
+                skuField.change(function() {
+                    getPurchasePrice(skuField.val(), $(valueId));
+                });
+            });
+        }
+
+        $(document).ready(function() {
+            fields = getFields();
+            setGetPurchasePrice();
+        });
+    </script>
+{% endblock script %}

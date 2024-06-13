@@ -193,4 +193,9 @@ urlpatterns = [
         views.api.CloseShipment.as_view(),
         name="api_close_shipment",
     ),
+    path(
+        "api/purchase_price_by_sku",
+        views.api.PurchasePriceBySku.as_view(),
+        name="purchase_price_by_sku",
+    ),
 ]
