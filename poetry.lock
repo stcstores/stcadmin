@@ -1646,6 +1646,26 @@ files = [
 ]
 
 [[package]]
+name = "parcelhubapi"
+version = "0.0.1"
+description = "Parcelhub API integration"
+optional = false
+python-versions = "^3.12"
+files = []
+develop = false
+
+[package.dependencies]
+lxml = ">=5.1.0"
+requests = ">=2.31.0"
+toml = ">=0.10.2"
+
+[package.source]
+type = "git"
+url = "https://github.com/stcstores/parcelhubapi.git"
+reference = "main"
+resolved_reference = "1386972a961c59bcfa8aafb7139a09839247123b"
+
+[[package]]
 name = "parse"
 version = "1.20.2"
 description = "parse() is the opposite of format()"
@@ -3108,4 +3128,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12,<4.0"
-content-hash = "40bd90ddaed454a048c076f9eab566fea094ccf4e5d0cc0ed040c80ee018a83f"
+content-hash = "a56efd286d09897d0f9fec9bbbdfd48c74220a50bfd2a9ce7a3017c206cffa24"
