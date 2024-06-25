@@ -1663,7 +1663,7 @@ toml = ">=0.10.2"
 type = "git"
 url = "https://github.com/stcstores/parcelhubapi.git"
 reference = "main"
-resolved_reference = "1386972a961c59bcfa8aafb7139a09839247123b"
+resolved_reference = "01b34a5f80c3e0d5f5737a0e9b16f765f2659eda"
 
 [[package]]
 name = "parse"

@@ -276,3 +276,10 @@ class FBAProfitFileAdmin(admin.ModelAdmin):
     """Model admin for the FBAProfitFile model."""
 
     exclude_fields = ()
+
+
+@admin.register(models.ParcelhubAPIConfig)
+class ParcelhubAPIConfigAdmin(SingletonModelAdmin):
+    """Model admin for the ParcelhubAPIConfig model."""
+
+    exclude_fields = ()
