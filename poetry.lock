@@ -850,13 +850,13 @@ test = ["pytest", "pytest-cov", "pytest-django", "selenium"]
 
 [[package]]
 name = "django-solo"
-version = "2.2.0"
+version = "2.3.0"
 description = "Django Solo helps working with singletons"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django-solo-2.2.0.tar.gz", hash = "sha256:056a280816097b144c24129125b6d98a568e8e48c30402a16ce324ce2eb61237"},
-    {file = "django_solo-2.2.0-py3-none-any.whl", hash = "sha256:81ad30a412d36f8bdbe5622df06d6051e4264344222858c919e990d339e677e8"},
+    {file = "django_solo-2.3.0-py3-none-any.whl", hash = "sha256:8069319fc9a3dc1080dc47b134d42526bf71749127eca1bf94bd7eb831c02fb2"},
+    {file = "django_solo-2.3.0.tar.gz", hash = "sha256:e82ee8b0aeccb97c401dc722bf01f665c93484c880e929f2a0ea53f5cbf2bf61"},
 ]
 
 [package.dependencies]
