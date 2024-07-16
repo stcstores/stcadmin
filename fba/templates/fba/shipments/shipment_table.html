@@ -46,9 +46,11 @@
                        class="btn btn-danger btn-sm">Delete</a>
                 </td>
                 <td>
-                    {% if shipment.is_shippable %}
-                        <a href="{% url 'fba:create_shipment_file' shipment.pk %}"
-                           class="btn btn-primary btn-sm create_shipment_button">Create Shipment File</a>
+                    {% if shipment.filing_error %}
+                        <span class="text-danger">Error Filing: {{ shipment.filing_error }}</span>
+                    {% elif shipment.is_shippable %}
+                        <a href="{% url 'fba:file_parcelhub_shipment' shipment.pk %}"
+                           class="btn btn-primary btn-sm create_shipment_button">File Shipment</a>
                     {% endif %}
                 </td>
             </tr>

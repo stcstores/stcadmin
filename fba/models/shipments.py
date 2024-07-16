@@ -179,6 +179,7 @@ class FBAShipmentOrder(models.Model):
     is_on_hold = models.BooleanField(default=False)
     planned_shipment_date = models.DateField(blank=True, null=True)
     at_risk = models.BooleanField(default=False)
+    filing_error = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         """Meta class for FBAShipmentOrder."""

@@ -8,8 +8,6 @@
  
         <div class="mb-5">
             <a href="{% url 'fba:shipment_destinations' %}" class="btn btn-primary">Manage Destination Addresses</a>
-            <a href="{% url 'fba:create_shipment_select_destination' %}"
-               class="btn btn-primary">Create New Shipment Order</a>
         </div>
 
         <div class="mb-5">
@@ -32,29 +30,31 @@
             {% endif %}
         </div>
         <div class="mb-5">
-            <h3>Previous Shipment Files</h3>
-            <div class="col-6">
+            <h3>Previous Shipments</h3>
+            <div class="mb-5">
                 <table class="table table-light table-hover table-sm mb-3">
                     <thead class="table-primary">
                         <tr>
-                            <th>Export</th>
-                            <th>Order Count</th>
+                            <th>Shipment Order</th>
+                            <th>Destination</th>
+                            <th>User</th>
+                            <th>Package Count</th>
+                            <th>Order Number</th>
+                            <th>Tracking Number</th>
+                            <th>Filed At</th>
                             <td colspan="2"></td>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for export in previous_exports %}
+                        {% for shipment in previous_shipments %}
                             <tr>
-                                <th>{{ export }}</th>
-                                <td>{{ export.shipment_order.count }}</td>
-                                <td>
-                                    <a href="{% url 'fba:download_shipment_file' export.pk %}"
-                                       class="btn btn-primary btn-sm">Recreate File</a>
-                                </td>
-                                <td>
-                                    <a href="{% url 'fba:download_address_file' export.pk %}"
-                                       class="btn btn-primary btn-sm">Download Address File</a>
-                                </td>
+                                <th>{{ shipment.shipment_order.description }}</th>
+                                <th>{{ shipment.shipment_order.destination }}</th>
+                                <th>{{ shipment.shipment_order.user }}</th>
+                                <th>{{ shipment.shipment_order.shipment_package.count }}</th>
+                                <th>{{ shipment.shipment_order.order_number }}</th>
+                                <th>{{ shipment.courier_tracking_number }}</th>
+                                <th>{{ shipment.created_at }}</th>
                             </tr>
                         {% endfor %}
                     </tbody>

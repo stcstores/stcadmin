@@ -43,14 +43,20 @@ def mock_shipment_order_model():
         yield m
 
 
-def test_previous_exports_in_context(
-    mock_shipment_export_model, mock_shipment_order_model
+@pytest.fixture
+def mock_parcelhub_shipment_model():
+    with mock.patch("fba.views.shipping.models.ParcelhubShipment") as m:
+        yield m
+
+
+def test_previous_shipments_in_context(
+    mock_shipment_export_model, mock_parcelhub_shipment_model
 ):
     context = Shipments().get_context_data()
-    mock_shipment_export_model.objects.all.assert_called_once_with()
+    mock_parcelhub_shipment_model.objects.all.assert_called_once_with()
     assert (
-        context["previous_exports"]
-        == mock_shipment_export_model.objects.all.return_value[:50]
+        context["previous_shipments"]
+        == mock_parcelhub_shipment_model.objects.all.return_value[:50]
     )
 
 
@@ -59,7 +65,7 @@ def test_current_shipments_in_context(
 ):
     context = Shipments().get_context_data()
     mock_shipment_order_model.objects.filter.assert_called_once_with(
-        export__isnull=True
+        export__isnull=True, parcelhub_shipment__isnull=True
     )
     mock_shipment_order_model.objects.filter.return_value.filter.assert_any_call(
         is_on_hold=False
@@ -75,7 +81,7 @@ def test_held_shipments_in_context(
 ):
     context = Shipments().get_context_data()
     mock_shipment_order_model.objects.filter.assert_called_once_with(
-        export__isnull=True
+        export__isnull=True, parcelhub_shipment__isnull=True
     )
     mock_shipment_order_model.objects.filter.return_value.filter.assert_called_with(
         is_on_hold=True

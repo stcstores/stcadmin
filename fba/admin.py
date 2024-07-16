@@ -283,3 +283,10 @@ class ParcelhubAPIConfigAdmin(SingletonModelAdmin):
     """Model admin for the ParcelhubAPIConfig model."""
 
     exclude_fields = ()
+
+
+@admin.register(models.ParcelhubShipment)
+class ParcelhubShipmentAdmin(admin.ModelAdmin):
+    """Model admin for the ParcelhubShipment model."""
+
+    exclude_fields = ()
