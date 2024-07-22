@@ -171,6 +171,11 @@ urlpatterns = [
         name="file_parcelhub_shipment",
     ),
     path(
+        "shipments/file_parcelhub_shipment_status/<int:pk>",
+        views.shipping.FileParcelhubShipmentStatus.as_view(),
+        name="parcelhub_shipment_status",
+    ),
+    path(
         "get_stock_levels/", views.fba.GetStockLevels.as_view(), name="get_stock_levels"
     ),
     path(

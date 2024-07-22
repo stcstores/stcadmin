@@ -214,3 +214,64 @@ class ParcelhubShipment(models.Model):
 
     def __str__(self):
         return f"{self.shipment_order.order_number} - {self.courier_tracking_number}"
+
+
+class ParcelhubShipmentFiling(models.Model):
+    """Model for attemps to file Parcelhub shipments."""
+
+    shipment_order = shipment_order = models.ForeignKey(
+        "FBAShipmentOrder",
+        on_delete=models.PROTECT,
+        related_name="parcelhub_shipment_filings",
+    )
+    started_at = models.DateTimeField(default=timezone.now, editable=False)
+    completed_at = models.DateTimeField(blank=True, null=True)
+    error_message = models.TextField(blank=True, null=True)
+    shipment = models.OneToOneField(
+        ParcelhubShipment,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="shipment_filings",
+    )
+
+    class Meta:
+        """Meta class for ParcelhubShipmentFiling."""
+
+        verbose_name = "Parcelhub Shipment Filing"
+        verbose_name_plural = "Parcelhub Shipment Filings"
+        ordering = ("-started_at",)
+
+    class ParcelhubShipmentFilingManager(models.Manager):
+        """Manager for ParcelhubShipmentFiling."""
+
+        def create_filing(self, shipment_order):
+            """Create a new filing object."""
+            return self.create(shipment_order=shipment_order)
+
+    objects = ParcelhubShipmentFilingManager()
+
+    def __str__(self):
+        return f"Parcelhub Filing: {self.shipment_order.order_number} - {self.status()}"
+
+    def status(self):
+        """Return a string descriptin the status of the filing."""
+        if self.error_message:
+            return "ERROR"
+        elif self.shipment is not None and self.completed_at is not None:
+            return "COMPLETE"
+        elif self.completed_at is None:
+            return "IN PROGRESS"
+        raise ValueError("Invalid Parcelhub shipment fileing status")
+
+    def set_error(self, error_message):
+        """Set the filing as complete with error."""
+        self.completed_at = timezone.now()
+        self.error_message = error_message
+        self.save()
+
+    def set_complete(self, shipment):
+        """Set the filing as complete without error."""
+        self.completed_at = timezone.now()
+        self.shipment = shipment
+        self.save()

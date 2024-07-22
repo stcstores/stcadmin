@@ -1,0 +1,23 @@
+{% extends "fba/base.html" %}
+
+{% block content %}
+    <div class="col-lg-6 p-2 border border-5 rounded border-{% if filing.error_message %}danger{% elif filing.completed_at %}success{% endif %}">
+        <div>Shipment: {{ filing.shipment_order.order_number }}</div>
+        <div>Started: {{ filing.started_at }}</div>
+        <div>Completed: {{ filing.completed_at }}</div>
+        <div>Error: {{ filing.error_message }}</div>
+        <div>Tracking Number: {{ filing.shipment.courier_tracking_number }}</div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+
+    <script>
+        $(document).ready(function() {
+            setTimeout(function() {
+                location.reload();
+            }, 5000);
+        });
+    </script>
+
+{% endblock script %}

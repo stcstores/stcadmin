@@ -290,3 +290,10 @@ class ParcelhubShipmentAdmin(admin.ModelAdmin):
     """Model admin for the ParcelhubShipment model."""
 
     exclude_fields = ()
+
+
+@admin.register(models.ParcelhubShipmentFiling)
+class ParcelhubShipmentFilingAdmin(admin.ModelAdmin):
+    """Model admin for the ParcelhubShipmentFiling model."""
+
+    exclude_fields = ()

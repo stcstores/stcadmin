@@ -5,12 +5,11 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.utils import timezone
 from django.views.generic import FormView, ListView, TemplateView, View
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from fba import forms, models
+from fba import forms, models, tasks
 
 from .fba import FBAUserMixin
 
@@ -359,10 +358,21 @@ class FileParcelhubShipment(FBAUserMixin, RedirectView):
         shipment_order = get_object_or_404(
             models.FBAShipmentOrder, pk=self.kwargs["pk"]
         )
-        try:
-            models.ParcelhubShipment.objects.create_shipment(shipment_order)
-        except Exception:
-            shipment_order.filing_error = timezone.now()
-            shipment_order.save()
-            raise
-        return reverse("fba:shipments")
+        filing = models.ParcelhubShipmentFiling.objects.create_filing(shipment_order)
+        tasks.file_parcelhub_shipment.delay(filing.pk)
+        return reverse("fba:parcelhub_shipment_status", args=[filing.pk])
+
+
+class FileParcelhubShipmentStatus(FBAUserMixin, TemplateView):
+    """View for displaying the status of an inprogress Parcelhub filing."""
+
+    template_name = "fba/shipments/parcelhub_shipment_status.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        filing = get_object_or_404(
+            models.ParcelhubShipmentFiling, pk=self.kwargs.get("pk")
+        )
+        context["filing"] = filing
+        return context
