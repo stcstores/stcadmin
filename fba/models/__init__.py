@@ -2,6 +2,7 @@
 
 from .fba import FBARegion, FBATrackingNumber
 from .fba_order import FBAOrder
+from .parcelhub import ParcelhubAPIConfig, ParcelhubShipment, ParcelhubShipmentFiling
 from .price_calculator import FBAPriceCalculator
 from .profit import FBAProfit, FBAProfitFile
 from .shipments import (
@@ -17,6 +18,9 @@ from .shipments import (
 __all__ = [
     "FBAPriceCalculator",
     "FBAOrder",
+    "ParcelhubAPIConfig",
+    "ParcelhubShipment",
+    "ParcelhubShipmentFiling",
     "FBARegion",
     "FBAProfit",
     "FBAProfitFile",

@@ -545,7 +545,7 @@ class ShipmentOrderForm(forms.ModelForm):
         """Meta class for fba.forms.ShipmentOrderForm."""
 
         model = models.FBAShipmentOrder
-        exclude = ("is_on_hold", "export")
+        exclude = ("is_on_hold", "export", "filing_error")
 
         widgets = {
             "planned_shipment_date": forms.DateInput(

@@ -7,6 +7,7 @@ from django.db.models.functions import Concat, Left, Length
 from django.utils import timezone
 from solo.models import SingletonModel
 
+from .parcelhub import ParcelhubShipmentFiling
 from .shipment_files import UPSAddressFile, UPSShipmentFile
 
 
@@ -244,6 +245,12 @@ class FBAShipmentOrder(models.Model):
         self.export = export
         self.save()
         return export
+
+    def filing(self):
+        """Return the most recent filing record for this shipment if one exists, else None."""
+        return ParcelhubShipmentFiling.objects.filter(shipment_order=self).latest(
+            "started_at"
+        )
 
 
 class FBAShipmentPackageManager(models.Manager):

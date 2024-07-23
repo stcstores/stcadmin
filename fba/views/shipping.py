@@ -9,7 +9,7 @@ from django.views.generic import FormView, ListView, TemplateView, View
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from fba import forms, models
+from fba import forms, models, tasks
 
 from .fba import FBAUserMixin
 
@@ -22,12 +22,12 @@ class Shipments(FBAUserMixin, TemplateView):
     def get_context_data(self, **kwargs):
         """Return context data for the template."""
         context = super().get_context_data(**kwargs)
-        context["previous_exports"] = models.FBAShipmentExport.objects.all()[:50]
-        unexported_shipments = models.FBAShipmentOrder.objects.filter(
-            export__isnull=True
+        unfiled_shipments = models.FBAShipmentOrder.objects.filter(
+            export__isnull=True, parcelhub_shipment__isnull=True
         )
-        context["current_shipments"] = unexported_shipments.filter(is_on_hold=False)
-        context["held_shipments"] = unexported_shipments.filter(is_on_hold=True)
+        context["current_shipments"] = unfiled_shipments.filter(is_on_hold=False)
+        context["held_shipments"] = unfiled_shipments.filter(is_on_hold=True)
+        context["previous_shipments"] = models.ParcelhubShipment.objects.all()[:50]
         return context
 
 
@@ -348,3 +348,31 @@ class HistoricShipments(FBAUserMixin, ListView):
             return list(range(1, paginator.num_pages + 1))
         else:
             return list(range(1, 11)) + [paginator.num_pages]
+
+
+class FileParcelhubShipment(FBAUserMixin, RedirectView):
+    """View for filing Parcelhub shipments."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """File a Parcelhub shipment."""
+        shipment_order = get_object_or_404(
+            models.FBAShipmentOrder, pk=self.kwargs["pk"]
+        )
+        filing = models.ParcelhubShipmentFiling.objects.create_filing(shipment_order)
+        tasks.file_parcelhub_shipment.delay(filing.pk)
+        return reverse("fba:parcelhub_shipment_status", args=[filing.pk])
+
+
+class FileParcelhubShipmentStatus(FBAUserMixin, TemplateView):
+    """View for displaying the status of an inprogress Parcelhub filing."""
+
+    template_name = "fba/shipments/parcelhub_shipment_status.html"
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        filing = get_object_or_404(
+            models.ParcelhubShipmentFiling, pk=self.kwargs.get("pk")
+        )
+        context["filing"] = filing
+        return context
