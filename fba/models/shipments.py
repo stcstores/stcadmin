@@ -8,7 +8,6 @@ from django.utils import timezone
 from solo.models import SingletonModel
 
 from .parcelhub import ParcelhubShipmentFiling
-from .shipment_files import UPSAddressFile, UPSShipmentFile
 
 
 def shortened_description(desc, max_length=30):
@@ -135,27 +134,6 @@ class FBAShipmentExport(models.Model):
 
     def __str__(self):
         return f"FBA Shipment Export {self.created_at.strftime('%Y-%m-%d')}"
-
-    def generate_export_file(self):
-        """Return an FBA Shipment .csv."""
-        return UPSShipmentFile().create(self)
-
-    def generate_address_file(self):
-        """Return a UPS Address .csv."""
-        return UPSAddressFile.create(self)
-
-    def order_numbers(self):
-        """Return the order numbers of the shipments contained in the export."""
-        numbers = []
-        for shipment in self.shipment_order.all():
-            numbers.append(shipment.order_number)
-        return sorted(numbers)
-
-    def destinations(self):
-        """Return the destinations of the shipments contained in the export."""
-        return self.shipment_order.values_list(
-            "destination__name", flat=True
-        ).distinct()
 
 
 class FBAShipmentOrder(models.Model):

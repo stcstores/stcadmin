@@ -677,10 +677,10 @@ class FBAShipmentFilter(forms.Form):
     def query_kwargs(self, data):
         """Return a dict of filter kwargs."""
         kwargs = {
-            "created_at__gte": data.get("completed_from"),
-            "created_at__lte": data.get("completed_to"),
-            "shipment_order__destination": data.get("destination"),
-            "shipment_order__user": data.get("user"),
+            "parcelhub_shipment__created_at__gte": data.get("completed_from"),
+            "parcelhub_shipment__created_at__lte": data.get("completed_to"),
+            "destination": data.get("destination"),
+            "user": data.get("user"),
         }
         return {
             key: value
@@ -691,28 +691,30 @@ class FBAShipmentFilter(forms.Form):
     def get_queryset(self):
         """Return a queryset of orders based on the submitted data."""
         kwargs = self.query_kwargs(self.cleaned_data)
-        qs = models.FBAShipmentExport.objects.filter(**kwargs).order_by("-created_at")
+        qs = (
+            models.FBAShipmentOrder.objects.filter(parcelhub_shipment__isnull=False)
+            .filter(**kwargs)
+            .order_by("-parcelhub_shipment__created_at")
+        )
         if search_text := self.cleaned_data["search"]:
             qs = self.text_search(search_text, qs)
         qs = qs.prefetch_related(
-            "shipment_order",
-            "shipment_order__shipment_package",
-            "shipment_order__shipment_package__shipment_item",
+            "parcelhub_shipment",
+            "shipment_package",
+            "shipment_package__shipment_item",
         )
         return qs.distinct()
 
     def text_search(self, search_text, qs):
         """Filter the queryset based on search text."""
         if search_text.startswith("STC_FBA_"):
-            qs = qs.filter(shipment_order__id=int(search_text[8:]))
+            qs = qs.filter(id=int(search_text[8:]))
         else:
             qs = qs.filter(
                 Q(
-                    Q(
-                        shipment_order__shipment_package__shipment_item__sku__icontains=search_text
-                    )
+                    Q(shipment_package__shipment_item__sku__icontains=search_text)
                     | Q(
-                        shipment_order__shipment_package__shipment_item__description__icontains=search_text
+                        shipment_package__shipment_item__description__icontains=search_text
                     )
                 )
             )

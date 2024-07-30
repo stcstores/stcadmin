@@ -4,7 +4,7 @@ import pytest
 from django.urls import reverse
 
 from fba.forms import FBAShipmentFilter
-from fba.models import FBAShipmentExport
+from fba.models import FBAShipmentOrder
 from fba.views.shipping import HistoricShipments
 
 
@@ -13,7 +13,7 @@ def test_template_name_attribute():
 
 
 def test_model_attribute():
-    assert HistoricShipments.model == FBAShipmentExport
+    assert HistoricShipments.model == FBAShipmentOrder
 
 
 def test_paginate_by_attribute():
@@ -26,6 +26,13 @@ def test_orphans_attribute():
 
 def test_form_class_attribute():
     assert HistoricShipments.form_class == FBAShipmentFilter
+
+
+@pytest.fixture
+def order(parcelhub_shipment_factory, fba_shipment_order_factory):
+    order = fba_shipment_order_factory.create()
+    parcelhub_shipment_factory.create(shipment_order=order)
+    return order
 
 
 @pytest.fixture
@@ -75,12 +82,9 @@ def test_invalid_form_submission(group_logged_in_client, url):
 
 
 @pytest.mark.django_db
-def test_object_list_in_context_not_empty(
-    group_logged_in_client, url, fba_shipment_export_factory
-):
-    export = fba_shipment_export_factory.create()
+def test_object_list_in_context_not_empty(order, group_logged_in_client, url):
     response = group_logged_in_client.get(url)
-    assert export in response.context["object_list"]
+    assert order in response.context["object_list"]
 
 
 def test_get_page_range_with_low_page_count():
@@ -106,10 +110,14 @@ def test_get_page_range_with_high_page_count():
 
 
 @pytest.mark.django_db
-def test_filters(fba_shipment_order_factory, group_logged_in_client, url):
+def test_filters(
+    fba_shipment_order_factory, parcelhub_shipment_factory, group_logged_in_client, url
+):
     expected_order = fba_shipment_order_factory.create()
     unexpected_order = fba_shipment_order_factory.create()
+    parcelhub_shipment_factory.create(shipment_order=expected_order)
+    parcelhub_shipment_factory.create(shipment_order=unexpected_order)
     params = {"destination": expected_order.destination.id}
     response = group_logged_in_client.get(url, params)
-    assert response.context["object_list"].contains(expected_order.export)
-    assert response.context["object_list"].contains(unexpected_order.export) is False
+    assert response.context["object_list"].contains(expected_order)
+    assert response.context["object_list"].contains(unexpected_order) is False
