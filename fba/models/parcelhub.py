@@ -221,7 +221,7 @@ class ParcelhubShipmentFiling(models.Model):
 
     shipment_order = shipment_order = models.ForeignKey(
         "FBAShipmentOrder",
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="parcelhub_shipment_filings",
     )
     started_at = models.DateTimeField(default=timezone.now, editable=False)
