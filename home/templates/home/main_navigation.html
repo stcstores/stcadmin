@@ -76,7 +76,10 @@
             <a class="dropdown-item" href="{% url 'home:user' %}">User Details</a>
           </li>
           <li>
-            <a class="dropdown-item" href="{% url 'home:logout_user' %}">Logout</a>
+            <form action="{% url 'home:logout_user' %}" method="post">
+              {% csrf_token %}
+              <button class="dropdown-item" type="submit">Logout</button>
+            </form>
           </li>
         </ul>
       </div>
