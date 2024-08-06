@@ -19,28 +19,29 @@
         <table class="table table-light table-hover table-sm mb-3">
             <thead class="table-primary">
                 <tr>
-                    <th>Export</th>
-                    <th>Order Numbers</th>
+                    <th>Shipment Order</th>
+                    <th>Destination</th>
+                    <th>User</th>
                     <th>Package Count</th>
-                    <th>Destinations</th>
-                    <td colspan="2"></td>
+                    <th>Weight (kg)</th>
+                    <th>Value</th>
+                    <th>Order Number</th>
+                    <th>Shipped Date</th>
                 </tr>
             </thead>
             <tbody>
-                {% for export in object_list %}
+                {% for shipment in object_list %}
                     <tr>
-                        <th>{{ export }}</th>
-                        <td>{{ export.order_numbers }}</td>
-                        <td>{{ export.package_count }}</td>
-                        <td>{{ export.destinations }}</td>
+                        <th>{{ shipment.description }}</th>
+                        <td>{{ shipment.destination }}</td>
+                        <td>{{ shipment.user }}</td>
+                        <td>{{ shipment.shipment_package.count }}</td>
+                        <td>{{ shipment.weight_kg|floatformat:2 }}</td>
+                        <td>{% format_price shipment.value %}</td>
                         <td>
-                            <a href="{% url 'fba:download_shipment_file' export.pk %}"
-                               class="btn btn-primary btn-sm">Recreate File</a>
+                            <span class="user-select-all">{{ shipment.order_number }}</span>
                         </td>
-                        <td>
-                            <a href="{% url 'fba:download_address_file' export.pk %}"
-                               class="btn btn-primary btn-sm">Download Address File</a>
-                        </td>
+                        <td>{{ shipment.parcelhub_shipment.created_at }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

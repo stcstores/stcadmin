@@ -2,10 +2,9 @@
 
 from django.contrib import messages
 from django.db import transaction
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView, ListView, TemplateView, View
+from django.views.generic import FormView, ListView, TemplateView
 from django.views.generic.base import RedirectView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
@@ -89,32 +88,6 @@ class CreateFBAShipmentFile(FBAUserMixin, RedirectView):
         )
         shipment.close_shipment_order()
         return reverse_lazy("fba:shipments")
-
-
-class DownloadFBAShipmentFile(FBAUserMixin, View):
-    """View for generating FBA Shipment files."""
-
-    def get(self, *args, **kwargs):
-        """Return an ITD shipment file download."""
-        export = get_object_or_404(models.FBAShipmentExport, pk=self.kwargs["pk"])
-        contents = export.generate_export_file()
-        response = HttpResponse(contents, content_type="text/csv")
-        filename = f"FBA_Shipment_File_{export.created_at.strftime('%Y-%m-%d')}.csv"
-        response["Content-Disposition"] = f"attachment; filename={filename}"
-        return response
-
-
-class DownloadUPSAddressFile(FBAUserMixin, RedirectView):
-    """View for generating FBA UPS address files."""
-
-    def get(self, *args, **kwargs):
-        """Return an ITD shipment file download."""
-        export = get_object_or_404(models.FBAShipmentExport, pk=self.kwargs["pk"])
-        contents = export.generate_address_file()
-        response = HttpResponse(contents, content_type="text/csv")
-        filename = "FBA_Shipment_ADDRESS.csv"
-        response["Content-Disposition"] = f"attachment; filename={filename}"
-        return response
 
 
 class CreateShipment_SelectDestination(FBAUserMixin, FormView):
@@ -319,7 +292,7 @@ class HistoricShipments(FBAUserMixin, ListView):
     """Display a filterable list of orders."""
 
     template_name = "fba/shipments/historic_shipments.html"
-    model = models.FBAShipmentExport
+    model = models.FBAShipmentOrder
     paginate_by = 50
     orphans = 3
     form_class = forms.FBAShipmentFilter

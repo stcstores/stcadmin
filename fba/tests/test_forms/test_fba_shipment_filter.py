@@ -9,11 +9,6 @@ from fba.forms import FBAShipmentFilter
 
 
 @pytest.fixture
-def export(fba_shipment_export_factory):
-    return fba_shipment_export_factory.create()
-
-
-@pytest.fixture
 def destination(fba_shipment_destination_factory):
     return fba_shipment_destination_factory.create()
 
@@ -24,10 +19,10 @@ def user(user_factory):
 
 
 @pytest.fixture
-def order(fba_shipment_order_factory, export, user, destination):
-    return fba_shipment_order_factory.create(
-        export=export, user=user, destination=destination
-    )
+def order(parcelhub_shipment_factory, fba_shipment_order_factory, user, destination):
+    order = fba_shipment_order_factory.create(user=user, destination=destination)
+    parcelhub_shipment_factory.create(shipment_order=order)
+    return order
 
 
 @pytest.fixture
@@ -67,10 +62,10 @@ def test_query_kwargs():
         "user": "D",
     }
     assert FBAShipmentFilter().query_kwargs(data) == {
-        "created_at__gte": "A",
-        "created_at__lte": "B",
-        "shipment_order__destination": "C",
-        "shipment_order__user": "D",
+        "parcelhub_shipment__created_at__gte": "A",
+        "parcelhub_shipment__created_at__lte": "B",
+        "destination": "C",
+        "user": "D",
     }
 
 
@@ -80,49 +75,53 @@ def test_text_search():
     FBAShipmentFilter().text_search(search_text, qs)
     qs.filter.assert_called_once_with(
         Q(
-            Q(
-                shipment_order__shipment_package__shipment_item__sku__icontains=search_text
-            )
-            | Q(
-                shipment_order__shipment_package__shipment_item__description__icontains=search_text
-            )
+            Q(shipment_package__shipment_item__sku__icontains=search_text)
+            | Q(shipment_package__shipment_item__description__icontains=search_text)
         )
     )
 
 
-def test_search_with_shiopment_id():
+def test_search_with_shipment_id():
     search_text = "STC_FBA_456"
     qs = mock.Mock()
     FBAShipmentFilter().text_search(search_text, qs)
-    qs.filter.assert_called_once_with(shipment_order__id=456)
+    qs.filter.assert_called_once_with(id=456)
 
 
 @pytest.mark.django_db
-def test_search_by_item_sku(export, item):
+def test_filters_unfiled_shipments(fba_shipment_order_factory):
+    order = fba_shipment_order_factory.create()
+    form = FBAShipmentFilter({})
+    assert form.is_valid()
+    assert form.get_queryset().contains(order) is False
+
+
+@pytest.mark.django_db
+def test_search_by_item_sku(order, item):
     form = FBAShipmentFilter({"search": item.sku})
     assert form.is_valid()
-    assert form.get_queryset().contains(export)
+    assert form.get_queryset().contains(order)
 
 
 @pytest.mark.django_db
-def test_search_by_item_description(export, item):
+def test_search_by_item_description(order, item):
     form = FBAShipmentFilter({"search": item.description})
     assert form.is_valid()
-    assert form.get_queryset().contains(export)
+    assert form.get_queryset().contains(order)
 
 
 @pytest.mark.django_db
-def test_search_by_destination(export, order, destination):
+def test_search_by_destination(order, destination):
     form = FBAShipmentFilter({"destination": destination.id})
     assert form.is_valid()
-    assert form.get_queryset().contains(export)
+    assert form.get_queryset().contains(order)
 
 
 @pytest.mark.django_db
-def test_search_by_user(export, order, user):
+def test_search_by_user(order, user):
     form = FBAShipmentFilter({"user": user.id})
     assert form.is_valid()
-    assert form.get_queryset().contains(export)
+    assert form.get_queryset().contains(order)
 
 
 @pytest.mark.django_db
@@ -130,4 +129,4 @@ def test_orders_by_completed_at_by_default():
     form = FBAShipmentFilter({})
     assert form.is_valid()
     qs = form.get_queryset()
-    assert 'ORDER BY "fba_fbashipmentexport"."created_at" DESC' in str(qs.query)
+    assert 'ORDER BY "fba_parcelhubshipment"."created_at" DESC' in str(qs.query)

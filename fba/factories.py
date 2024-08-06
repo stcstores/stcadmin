@@ -274,3 +274,16 @@ class FBAProfitFactory(DjangoModelFactory):
     purchase_price = factory.Faker("pyint", min_value=1, max_value=200)
     shipping_price = factory.Faker("pyint", min_value=1, max_value=200)
     profit = factory.Faker("pyint", min_value=-200, max_value=200)
+
+
+class ParcelhubShipmentFactory(DjangoModelFactory):
+    class Meta:
+        model = models.ParcelhubShipment
+
+    shipment_order = factory.SubFactory(FBAShipmentOrderFactory)
+    shipment_id = factory.Faker("pystr", min_chars=25, max_chars=25)
+    courier_tracking_number = factory.Faker("pystr", min_chars=25, max_chars=25)
+    parcelhub_tracking_number = factory.Faker("pystr", min_chars=25, max_chars=25)
+    created_at = factory.Faker(
+        "date_time_this_decade", before_now=True, tzinfo=dt.timezone.utc
+    )
