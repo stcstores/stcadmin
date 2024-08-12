@@ -48,6 +48,8 @@
                 <td>
                     {% if shipment.filing %}
                         <span class="text-danger">Error Filing: {{ shipment.filing.completed_at }}</span>
+                        <a href="{% url "fba:clear_parcelhub_filing_error" shipment.pk %}"
+                           class="btn btn-primary btn-sm clear_error_link">Clear Error</a>
                     {% elif shipment.is_shippable %}
                         <a href="{% url 'fba:file_parcelhub_shipment' shipment.pk %}"
                            class="btn btn-primary btn-sm create_shipment_button">File Shipment</a>

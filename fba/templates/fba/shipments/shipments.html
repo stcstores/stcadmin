@@ -65,3 +65,13 @@
         </div>
     </div>
 {% endblock content %}
+
+{% block script %}
+    <script>
+        $(document).ready(function() {
+            $(".clear_error_link").click(function(e){
+                return window.confirm("Problem Fixed? Removed from manifest?");
+            });
+        });
+    </script>
+{% endblock script %}

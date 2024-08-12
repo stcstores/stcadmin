@@ -249,6 +249,12 @@ class ParcelhubShipmentFiling(models.Model):
             """Create a new filing object."""
             return self.create(shipment_order=shipment_order)
 
+        def clear_errors(self, shipment_order):
+            """Clear errors for shipment_order."""
+            self.filter(shipment_order=shipment_order).filter(
+                shipment__isnull=True, error_message__isnull=False
+            ).delete()
+
     objects = ParcelhubShipmentFilingManager()
 
     def __str__(self):

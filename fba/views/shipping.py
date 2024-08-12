@@ -349,3 +349,15 @@ class FileParcelhubShipmentStatus(FBAUserMixin, TemplateView):
         )
         context["filing"] = filing
         return context
+
+
+class ClearParclhubFilingError(FBAUserMixin, RedirectView):
+    """Clear an error state from a Parcelhub API shipment."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Clear an error state from a Parcelhub API shipment."""
+        shipment_order = get_object_or_404(
+            models.FBAShipmentOrder, pk=self.kwargs["pk"]
+        )
+        models.ParcelhubShipmentFiling.objects.clear_errors(shipment_order)
+        return reverse("fba:shipments")

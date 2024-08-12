@@ -169,6 +169,11 @@ urlpatterns = [
         "get_stock_levels/", views.fba.GetStockLevels.as_view(), name="get_stock_levels"
     ),
     path(
+        "shipments/clear_parcelhub_filing_error/<int:pk>",
+        views.shipping.ClearParclhubFilingError.as_view(),
+        name="clear_parcelhub_filing_error",
+    ),
+    path(
         "api/purchase_price_by_sku",
         views.api.PurchasePriceBySku.as_view(),
         name="purchase_price_by_sku",
