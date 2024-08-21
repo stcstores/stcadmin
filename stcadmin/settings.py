@@ -390,6 +390,8 @@ SUMMERNOTE_CONFIG = {
     ],
 }
 
+THUMBNAIL_DEFAULT_STORAGE_ALIAS = "default"
+
 
 class ProductImageStorage(S3Boto3Storage):
     """Storage class for product images."""
