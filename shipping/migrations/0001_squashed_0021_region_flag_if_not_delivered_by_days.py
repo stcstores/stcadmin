@@ -394,7 +394,7 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="shippingprice",
             constraint=models.CheckConstraint(
-                check=models.Q(
+                condition=models.Q(
                     models.Q(("country__isnull", False), ("region__isnull", True)),
                     models.Q(("country__isnull", True), ("region__isnull", False)),
                     _connector="OR",

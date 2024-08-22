@@ -250,7 +250,7 @@ class ShippingPrice(models.Model):
         constraints = [
             models.CheckConstraint(
                 name="shipping_price_has_country_or_region",
-                check=(
+                condition=(
                     models.Q(country__isnull=False, region__isnull=True)
                     | models.Q(country__isnull=True, region__isnull=False)
                 ),
