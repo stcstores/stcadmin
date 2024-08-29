@@ -182,6 +182,7 @@ INSTALLED_APPS = [
     "hardware",
     "linnworks",
     "restock",
+    "hours",
     "debug_toolbar",
 ]
 

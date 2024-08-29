@@ -28,6 +28,7 @@ class Staff(models.Model):
     email_address = models.EmailField(blank=True, null=True)
     fba_packer = models.BooleanField(default=False)
     hidden = models.BooleanField(default=False)
+    can_clock_in = models.BooleanField(default=False)
 
     objects = models.Manager()
     unhidden = UnHidden()
