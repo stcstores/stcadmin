@@ -49,7 +49,7 @@ class Hours(UserCanClockInMixin, TemplateView):
             for day in (
                 _
                 for _ in calendar.itermonthdates(month.year, month.month)
-                if _.month == month.month
+                if _.month == month.month and _ <= now.date()
             ):
                 days[month][day] = list(
                     itertools.batched(

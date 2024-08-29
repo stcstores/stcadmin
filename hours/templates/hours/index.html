@@ -5,16 +5,29 @@
 
     <h3 class="display-3 mb-5">Hours for {{ request.user.staff_member.full_name }}</h3>
 
-    <div class="row">
-        <div class="col-md-10">
+    <div class="row m-1">
+        <div class="col-lg-2 order-lg-2 p-2 text-center rounded {% if latest_time.direction == "In" %}bg-success{% else %}bg-danger{% endif %}">
+            <h6 class="display-6">Clocked {{ latest_time.direction }} {{ latest_time.timestamp|timesince }} ago</h6>
+            <span class="fs-4">{{ latest_time.timestamp|date:"D jS F Y H:i" }}</span>
+            <div class="m-3">
+                <a href="{% url "hours:clock" %}" class="btn btn-primary btn-lg">Clock
+                    {% if latest_time.direction == "In" %}
+                        Out
+                    {% else %}
+                        In
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-10">
             {% for month, days in times.items %}
-                <div class="row mb-3">
+                <div class="row mb-3 m-1">
                     <h4 class="display-4">{{ month|date:"F Y" }}</h4>
                     {% now "Ym" as this_month %}
                     {% for day, times in days.items %}
                         {% now "Ymd" as today %}
-                        <div class="col-1 m-1 mx-1 py-1 text-light rounded {% if day|date:"Ymd" == today %}bg-success{% elif day|date:"Ymd" > today or day.weekday == 5 or day.weekday == 6 %}bg-secondary{% else %}bg-primary{% endif %}">
-                            <h6>
+                        <div class="col-lg-1 col-5 m-1 mx-lg-1 py-1 text-light rounded {% if day|date:"Ymd" == today %}bg-success{% elif day|date:"Ymd" > today or day.weekday == 5 or day.weekday == 6 %}bg-secondary{% else %}bg-primary{% endif %}">
+                            <h6 class="text-nowrap">
                                 {{ day|date:"D jS" }}
                                 {% if day|date:"Ym" == this_month  and day|date:"Ymd" <= today %}
                                     <span class="fs-6"><a href="" class="badge bg-info badge-sm">
@@ -37,18 +50,6 @@
                     {% endfor %}
                 </div>
             {% endfor %}
-        </div>
-        <div class="col-md-2 p-2 text-center rounded {% if latest_time.direction == "In" %}bg-success{% else %}bg-danger{% endif %}">
-            <h6 class="display-6">Clocked {{ latest_time.direction }} {{ latest_time.timestamp|timesince }} ago</h6>
-            <span class="fs-4">{{ latest_time.timestamp|date:"D jS F Y" }}</span>
-            <span class="fs-4">{{ latest_time.timestamp|date:"H:i" }}</span>
-            <a href="{% url "hours:clock" %}" class="btn btn-primary btn-lg m-3">Clock
-                {% if latest_time.direction == "In" %}
-                    Out
-                {% else %}
-                    In
-                {% endif %}
-            </a>
         </div>
     </div>
 
