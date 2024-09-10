@@ -7,10 +7,10 @@ from calendar import Calendar
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic import RedirectView, TemplateView
+from django.views.generic import FormView, RedirectView, TemplateView
 
 from home.views import UserLoginMixin
-from hours import models
+from hours import forms, models
 
 
 class UserCanClockInMixin(UserLoginMixin, UserPassesTestMixin):
@@ -78,3 +78,50 @@ class ClockedTooSoon(UserCanClockInMixin, TemplateView):
     """Error page when a user clocks twice in the same minute."""
 
     template_name = "hours/clocked_too_soon.html"
+
+
+class UpdateHours(UserCanClockInMixin, FormView):
+    """Form for updating hours for a day."""
+
+    template_name = "hours/update_hours.html"
+    form_class = forms.ClockFormSet
+
+    def get_context_data(self, *args, **kwargs):
+        """Return context for the template."""
+        context = super().get_context_data(*args, **kwargs)
+        context["formset"] = context.pop("form")
+        return context
+
+    def get_date(self):
+        """Return the date to be edited."""
+        return timezone.make_aware(
+            dt.datetime.strptime(self.kwargs["date"], "%Y%m%d")
+        ).date()
+
+    def get_form_kwargs(self):
+        """Return form kwargs."""
+        kwargs = super().get_form_kwargs()
+        kwargs["date"] = self.get_date()
+        kwargs["user"] = self.request.user.staff_member
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        """Process the formset."""
+        formset = self.get_form()
+        if formset.is_valid():
+            return self.form_valid(formset)
+        else:
+            return self.form_invalid(formset)
+
+    def form_valid(self, formset):
+        """Save form."""
+        formset.save()
+        return super().form_valid(formset)
+
+    def form_invalid(self, formset):
+        """If the form is invalid, render the invalid form."""
+        return self.render_to_response(self.get_context_data(formset=formset))
+
+    def get_success_url(self):
+        """Return redrect URL."""
+        return reverse("hours:hours")

@@ -32,26 +32,30 @@ class ClockTime(models.Model):
         def clock(self, user):
             """Create a clock time."""
             now = timezone.now()
-            latest = self.filter(user=user).latest().timestamp
-            if all(
-                (
-                    latest.year == now.year,
-                    latest.month == now.month,
-                    latest.day == now.day,
-                    latest.hour == now.hour,
-                    latest.minute == now.minute,
-                ),
-            ):
-                raise self.ClockedTooSoonError()
+            try:
+                latest = self.filter(user=user).latest().timestamp
+            except self.model.DoesNotExist:
+                pass
+            else:
+                if all(
+                    (
+                        latest.year == now.year,
+                        latest.month == now.month,
+                        latest.day == now.day,
+                        latest.hour == now.hour,
+                        latest.minute == now.minute,
+                    ),
+                ):
+                    raise self.model.ClockedTooSoonError()
             obj = self.create(user=user, timestamp=now)
             return obj
 
-        class ClockedTooSoonError(ValueError):
-            """Error raised when two clocks are recorded for the same user in the same minute."""
+    class ClockedTooSoonError(ValueError):
+        """Error raised when two clocks are recorded for the same user in the same minute."""
 
-            def __init__(self, *args, **kwargs):
-                """Raise error."""
-                super().__init__(self, "Clocked too soon.")
+        def __init__(self, *args, **kwargs):
+            """Raise error."""
+            super().__init__(self, "Clocked too soon.")
 
     objects = ClockTimeManager()
 
