@@ -69,7 +69,7 @@ class Clock(UserCanClockInMixin, RedirectView):
         """Add a clock time."""
         try:
             models.ClockTime.objects.clock(self.request.user.staff_member)
-        except models.ClockTime.objects.ClockedTooSoonError:
+        except models.ClockTime.ClockedTooSoonError:
             return reverse("hours:clocked_too_soon")
         return reverse("hours:hours")
 

@@ -51,21 +51,21 @@ class ClockTime(models.Model):
         def clock(self, user):
             """Create a clock time."""
             now = timezone.now()
-            try:
-                latest = self.filter(user=user).latest().timestamp
-            except self.model.DoesNotExist:
-                pass
-            else:
-                if all(
-                    (
-                        latest.year == now.year,
-                        latest.month == now.month,
-                        latest.day == now.day,
-                        latest.hour == now.hour,
-                        latest.minute == now.minute,
-                    ),
-                ):
-                    raise self.model.ClockedTooSoonError()
+            now_naive = timezone.make_naive(now)
+            lower_bound = timezone.make_aware(
+                dt.datetime(
+                    year=now_naive.year,
+                    month=now_naive.month,
+                    day=now_naive.day,
+                    hour=now_naive.hour,
+                    minute=now_naive.minute,
+                )
+            )
+            upper_bound = lower_bound + dt.timedelta(minutes=1)
+            if self.filter(
+                user=user, timestamp__gte=lower_bound, timestamp__lte=upper_bound
+            ).exists():
+                raise self.model.ClockedTooSoonError()
             obj = self.create(user=user, timestamp=now)
             return obj
 
@@ -83,8 +83,12 @@ class ClockTime(models.Model):
 
     def direction(self):
         """Return ClockTime.IN or ClockTime.OUT."""
+        day_start = timezone.make_aware(
+            dt.datetime.combine(self.timestamp.date(), dt.datetime.min.time())
+        )
         earlier_times = ClockTime.objects.filter(
-            user=self.user, timestamp__range=(self.timestamp.date().min, self.timestamp)
+            user=self.user,
+            timestamp__range=(day_start, self.timestamp),
         ).exclude(id=self.id)
         if earlier_times.count() % 2 == 0:
             return self.IN
@@ -159,7 +163,7 @@ class HoursExport(models.Model):
 
     def get_report_filename(self):
         """Return a filename for .csv reports based on this expot."""
-        return f"hours_{self.export_date.strftime('%b_%Y')}.csv"
+        return f"staff_hours_{self.export_date.strftime('%b_%Y')}.csv"
 
     def send_report_email(self):
         """Send montly staff hours report email."""

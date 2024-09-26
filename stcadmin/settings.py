@@ -18,6 +18,11 @@ from storages.backends.s3boto3 import S3Boto3Storage
 
 models.FieldDoesNotExist = FieldDoesNotExist  # Compatibility for django-polymorphic
 
+LANGUAGE_CODE = "en-gb"
+TIME_ZONE = "Europe/London"
+USE_I18N = True
+USE_TZ = True
+
 CI_ENVIRONMENT = "CI" in os.environ
 
 SOURCE_DIR = Path(__file__).parent.parent.absolute()
@@ -61,6 +66,7 @@ DATABASES = {
         "PASSWORD": get_config("DATABASE_PASSWORD"),
         "PORT": get_config("DATABASE_PORT"),
         "TEST": {"NAME": get_config("TEST_DATABASE_NAME")},
+        "TIME_ZONE": TIME_ZONE,
     }
 }
 
@@ -331,11 +337,6 @@ LOGGING = {
         },
     },
 }
-
-LANGUAGE_CODE = "en-gb"
-TIME_ZONE = "Europe/London"
-USE_I18N = True
-USE_TZ = True
 
 
 class ManifestStaticFilesStorageForgiving(ManifestStaticFilesStorage):
