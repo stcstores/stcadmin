@@ -180,6 +180,8 @@ class BaseProduct(PolymorphicModel):
     height = models.PositiveSmallIntegerField(default=0, verbose_name="Height (cm)")
     depth = models.PositiveSmallIntegerField(default=0, verbose_name="Depth (cm)")
 
+    notes = models.TextField(blank=True, default="")
+
     is_end_of_line = models.BooleanField(default=False, verbose_name="Is EOL")
     is_archived = models.BooleanField(default=False, verbose_name="Is Archived")
     end_of_line_reason = models.ForeignKey(

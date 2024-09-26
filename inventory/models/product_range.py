@@ -89,6 +89,7 @@ class ProductRange(models.Model):
         max_length=255, unique=True, db_index=True, blank=False, null=False
     )
     description = models.TextField(blank=True, default="")
+    notes = models.TextField(blank=True, default="")
     search_terms = ArrayField(
         models.CharField(max_length=255), blank=True, null=True, size=5
     )
