@@ -1,0 +1,11 @@
+{% extends "hours/base.html" %}
+
+{% block content %}
+    <div class="text-center">
+        <h1 class="display-1 text-danger mb3">Clocked Too Soon</h1>
+        <span class="fs-4">Please wait one minute before clocking again.</span>
+        <div>
+            <a href="{% url "hours:hours" %}" class="btn btn-primary btn-lg m-3">Continue</a>
+        </div>
+    </div>
+{% endblock content %}

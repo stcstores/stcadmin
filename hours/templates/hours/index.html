@@ -1,0 +1,65 @@
+{% extends "hours/base.html" %}
+{% load humanize %}
+
+{% block content %}
+
+    <h3 class="display-3 mb-5">Hours for {{ request.user.staff_member.full_name }}</h3>
+
+    <div class="row m-1">
+        <div class="col-lg-2 order-lg-2 p-2 text-center rounded {% if latest_time.direction == "In" %}bg-success{% else %}bg-danger{% endif %}">
+            <h6 class="display-6">
+                {% if latest_time %}
+                    Clocked {{ latest_time.direction }} {{ latest_time.timestamp|timesince }} ago
+                {% else %}
+                    Never clocked in
+                {% endif %}
+            </h6>
+            <span class="fs-4">{{ latest_time.timestamp|date:"D jS F Y H:i" }}</span>
+            <div class="m-3">
+                <a href="{% url "hours:clock" %}" class="btn btn-primary btn-lg">Clock
+                    {% if latest_time.direction == "In" %}
+                        Out
+                    {% else %}
+                        In
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-10">
+            {% for month, days in times.items %}
+                <div class="row mb-3 m-1">
+                    <h4 class="display-4">{{ month|date:"F Y" }}</h4>
+                    {% now "Ym" as this_month %}
+                    {% for day, times in days.items %}
+                        {% now "Ymd" as today %}
+                        <div class="col-lg-1 col-5 m-1 mx-lg-1 py-1 text-light rounded {% if day|date:"Ymd" == today %}bg-success{% elif day|date:"Ymd" > today or day.weekday == 5 or day.weekday == 6 %}bg-secondary{% else %}bg-primary{% endif %}">
+                            <h6 class="text-nowrap">
+                                {{ day|date:"D jS" }}
+                                {% if day|date:"Ym" == this_month  and day|date:"Ymd" <= today %}
+                                    <span class="fs-6">
+                                        <a href="{% url "hours:update_hours" day|date:"Ymd" %}"
+                                           class="badge bg-info badge-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 width="16"
+                                                 height="16"
+                                                 fill="currentColor"
+                                                 class="bi bi-pencil-square"
+                                                 viewBox="0 0 16 16">
+                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                            </svg>
+                                        </a>
+                                    </span>
+                                {% endif %}
+                            </h6>
+                            {% for time in times %}
+                                <div>{{ time.0.timestamp|date:"H:i" }}&nbsp;-&nbsp;{{ time.1.timestamp|date:"H:i" }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock content %}

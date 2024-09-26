@@ -1,0 +1,47 @@
+{% extends "hours/base.html" %}
+{% load django_bootstrap5 %}
+
+{% block additional_head %}
+    <style>
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+{% endblock additional_head %}
+
+{% block content %}
+
+    <h3 class="display-3 mb-2">Hours for {{ request.user }}</h3>
+    <div class="fs-4 mb-5">{{ formset.date|date:"l jS M Y" }}</div>
+    <div class="row">
+        <div class="col-lg-3">
+            <form action="" method="post">
+                {% csrf_token %}
+                {{ formset.management_form }}
+                {% for form in formset %}
+                    {% for error in form.errors %}{{ error }}{% endfor %}
+                    {% if forloop.counter0|divisibleby:2 %}<div class="d-flex flex-row my-1 justify-content-center">{% endif %}
+                        <div class="mx-1">
+                            {% bootstrap_field form.hour wrapper_class='div' show_help=false show_label=false placeholder='' %}
+                            {% if field.errors %}<span class="invalid-feedback">{{ field.errors }}</span>{% endif %}
+                        </div>
+                        <div class="mx-1">
+                            {% bootstrap_field form.minute wrapper_class='div' show_help=false show_label=false placeholder='' %}
+                        </div>
+                        {% if forloop.counter0|divisibleby:2 %}&nbsp;-&nbsp;{% endif %}
+                        {% if forloop.counter|divisibleby:2 %}</div>{% endif %}
+                {% endfor %}
+                <button class="btn btn-primary mt-3 form-control">Save</button>
+            </form>
+        </div>
+    </div>
+ 
+{% endblock content %}
