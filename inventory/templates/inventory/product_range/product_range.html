@@ -28,11 +28,20 @@
         {% endif %}
       </div>
     </div>
- 
+
+    {% if product_range.notes %}
+      <dl class="bg-light p-1">
+        <h6>Notes:</h6>
+        <dd>
+          {{ product_range.notes|linebreaks }}
+        </dd>
+      </dl>
+    {% endif %}
+
     <div class="container-fluid">
       {% for product in products %}
         <div class="row mt-3 mt-lg-1 p-1 bg-light">
- 
+
           <div class="col-lg my-1">
             <div>
               <span class="font-monospace user-select-all me-2">{{ product.sku }}</span>
@@ -87,14 +96,14 @@
 
           <div class="col-lg-2">
             {% if product.is_archived %}
- 
+
             {% elif products_exist %}
               {% include "inventory/update_stock.html" %}
             {% else %}
               <span class="text-danger">Could not find product on Linnworks</span>
             {% endif %}
           </div>
- 
+
         </div>
       {% endfor %}
 

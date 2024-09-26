@@ -27,7 +27,7 @@
             {% if product.is_flammable %}<span class="badge bg-danger">Flammable</span>{% endif %}
 
         </div>
- 
+
         <div class="mb-2">
             <a href="{% url 'inventory:product_range' product_range.pk %}"
                class="me-3">
@@ -36,7 +36,7 @@
             <a href="{% url 'inventory:edit_product' product.pk %}"
                class="edit_variation btn btn-primary btn-sm">Edit Product</a>
         </div>
- 
+
         <div class="row">
 
             <div class="col-lg-7 mb-3 bg-light">
@@ -60,7 +60,7 @@
                     <dd class="col-md-3">
                         {{ product.supplier_sku }}
                     </dd>
- 
+
                     <dt class="col-md-3">Supplier Barcode</dt>
                     <dd class="col-md-3">
                         {{ product.supplier_barcode }}
@@ -139,6 +139,12 @@
                         {{ product.manufacturer }}
                     </dd>
                 </dl>
+                <dl class="row bg-white m-2 p-2">
+                    <h6>Notes</h6>
+                    <dd>
+                        {{ product.notes|linebreaks }}
+                    </dd>
+                </dl>
             </div>
 
             <div class="col-lg-5">
@@ -154,7 +160,7 @@
                 </div>
                 {% for variation in product_range.products.variations %}
                     <div class="row rounded mb-2 border border-2 {% if variation == product %}border-primary{% else %}border-light{% endif %}">
- 
+
                         <div class="col-lg mb-2">
                             <div>
                                 <span class="font-monospace user-select-all">{{ variation.sku }}</span>
