@@ -15,15 +15,16 @@
         <div id="listing_status" class="bg-light border rounded m-3">
             <div id="active_status"></div>
             <div id="operation_status">
-                <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+                <div class="spinner-border spinner-border-sm">
+                    <span class="sr-only"></span>
+                </div>
             </div>
             <div class="status_icon"></div>
         </div>
 
- 
         <a href="{% url 'channels:update_shopify_listing' listing.pk %}"
            class="btn btn-primary">Edit Listing</a>
- 
+
         <button id="upload_listing_button"
                 class="btn btn-primary"
                 data-listing_pk="{{ listing.pk }}"
@@ -42,6 +43,8 @@
 
     <script>
 
+        var loadingIcon = '<div class="spinner-border spinner-border-sm"><span class="sr-only"></span></div>';
+
     function disableInputs() {
         $("#upload_listing_button").attr("disabled", true);
     }
@@ -52,9 +55,9 @@
 
     function getListingStatus() {
         disableInputs();
-        $("#active_status").html('<i class="fa-solid fa-spinner fa-spin-pulse"></i>');
-        $("#operation_status").html('<i class="fa-solid fa-spinner fa-spin-pulse"></i>');
-        $("#status_icon").html('<i class="fa-solid fa-spinner fa-spin-pulse"></i>');
+        $("#active_status").html(loadingIcon);
+        $("#operation_status").html(loadingIcon);
+        $("#status_icon").html(loadingIcon);
         $.ajax({
             url: "{% url 'channels:shopify_listing_status' listing.pk %}",
             type: "GET",
@@ -66,7 +69,7 @@
 
     function updateListingStatus(status) {
         $("#listing_status").html(status);
-        var refresh_icon = $("#status_icon i.fa-arrows-rotate");
+        var refresh_icon = $("#refresh_icon");
         if (refresh_icon.length) {
             refresh_icon.click(function() {
                 getListingStatus();

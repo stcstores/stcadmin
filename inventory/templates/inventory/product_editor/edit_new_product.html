@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block page_content %}
- 
+
   <div class="mb-3">
     <a href="{% url 'inventory:edit_range_details' product_range.pk %}"
        class="btn btn-primary">Edit Range details</a>
@@ -92,19 +92,19 @@
       success: function (response) {
         $.each(response, function (product_id, stock_level) {
           $("#initial_stock_" + product_id).val(stock_level);
-          $("#stock_level_status_" + product_id).attr("class", get_stock_level_success_icon_class);
+          $("#stock_level_status_" + product_id).html(get_stock_level_success_icon);
           $("#initial_stock_" + product_id).attr("disabled", false);
         });
       },
       error: function (response) {
-        $(".update_status").attr("class", get_stock_level_error_icon_class);
+        $(".update_status").attr("class", get_stock_level_error_icon);
       },
     });
   }
 
   function update_stock_level(product_id) {
     var new_stock_level = $("#initial_stock_" + product_id).val();
-    $("#stock_level_status_" + product_id).attr("class", setting_stock_level_icon_class);
+    $("#stock_level_status_" + product_id).attr("class", setting_stock_level_icon);
     $("#initial_stock_" + product_id).attr("disabled", false);
     $("#stock_level_update_button_" + product_id).attr("disabled", true);
     $.ajax({
@@ -118,13 +118,13 @@
       success: function (response) {
         $.each(response, function (product_id, stock_level) {
           $("#initial_stock_" + product_id).val(stock_level);
-          $("#stock_level_status_" + product_id).attr("class", set_stock_level_success_icon_class);
+          $("#stock_level_status_" + product_id).html(set_stock_level_success_icon);
           $("#initial_stock_" + product_id).attr("disabled", false);
           $("#stock_level_update_button_" + product_id).attr("disabled", true);
         });
       },
       error: function (response) {
-        $("#stock_level_status_" + product_id).attr("class", set_stock_level_error_icon_class);
+        $("#stock_level_status_" + product_id).html(set_stock_level_error_icon);
       },
     });
   }

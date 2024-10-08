@@ -1,4 +1,4 @@
-var loading = '<i class="fa-solid fa-spinner fa-spin-pulse fa-xl"></i>';
+var loading = '<div class="spinner-border spinner-border-sm"><span class="sr-only"></span></div>';
 
 function arraymove(arr, fromIndex, toIndex) {
   var element = arr[fromIndex];

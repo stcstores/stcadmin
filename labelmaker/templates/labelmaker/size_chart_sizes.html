@@ -34,10 +34,10 @@
                         <tr class="size">
                             {% for field in form.visible_fields %}<td>{{ field }}{{ field.errors }}</td>{% endfor %}
                             <td>
-                                <a class="order_button up btn btn-sm btn-primary"><i class="fa-solid fa-arrow-up"></i></a>
+                                <a class="order_button up btn btn-sm btn-primary"><i class="bi bi-arrow-up-short fs-5"></i></a>
                             </td>
                             <td>
-                                <a class="order_button down btn btn-sm btn-primary"><i class="fa-solid fa-arrow-down"></i></a>
+                                <a class="order_button down btn btn-sm btn-primary"><i class="bi bi-arrow-down-short fs-5"></i></a>
                             </td>
                             {% for field in form.hidden_fields %}{{ field }}{% endfor %}
                         </tr>

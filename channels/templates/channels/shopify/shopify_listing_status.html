@@ -33,8 +33,12 @@
 {% endif %}
 <div id="status_icon" class="w-100 text-end">
     {% if ongoing %}
-        <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+        <div class="spinner-border spinner-border-sm">
+            <span class="sr-only"></span>
+        </div>
     {% else %}
-        <i class="fa-solid fa-arrows-rotate"></i>
+        <div id="refresh_icon">
+            <i class="bi bi-arrow-clockwise"></i>
+        </div>
     {% endif %}
 </div>

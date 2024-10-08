@@ -30,7 +30,7 @@
                           data-supplier_id="{{ supplier.id }}">{{ supplier.restock_comment }}</textarea>
                 <span class="supplier_comment_status"
                       id="suppliier_comment_status_{{ supplier.id }}">
-                    <i class="fa-solid fa-check"></i>
+                    <i class="bi bi-check"></i>
                 </span>
             </div>
         </div>
@@ -69,44 +69,52 @@
                             <p class="font-monospace user-select-all">{{ product.barcode }}</p>
                         </td>
                         <td>
-                            <input type="text"
-                                   value="{{ product.purchase_price }}"
-                                   size="6"
-                                   class="purchase_price_input form-control"
-                                   id="purchase_price_input_{{ product.id }}"
-                                   data-product_id="{{ product.id }}"
-                                   onclick="this.select()">
-                            <p class="purchase_price_status"
-                               id="purchase_price_status_{{ product.id }}">
-                                <i class="fa-solid fa-check"></i>
-                            </p>
+                            <div class="input-group">
+                                <input type="text"
+                                       value="{{ product.purchase_price }}"
+                                       size="6"
+                                       class="purchase_price_input form-control"
+                                       id="purchase_price_input_{{ product.id }}"
+                                       data-product_id="{{ product.id }}"
+                                       onclick="this.select()">
+                                <span class="input-group-text purchase_price_status"
+                                      id="purchase_price_status_{{ product.id }}">
+                                    <i class="bi bi-check"></i>
+                                </span>
+                            </div>
                         </td>
                         <td>
-                            <input type="text"
-                                   value="0"
-                                   size="2"
-                                   class="order_count_input form-control {% if product.is_end_of_line %}border-danger{% endif %}"
-                                   id="order_count_input_{{ product.id }}"
-                                   data-product_id="{{ product.id }}"
-                                   onclick="this.select()">
-                            <p class="order_count_status" id="order_count_status_{{ product.id }}">
-                                <i class="fa-solid fa-check"></i>
-                            </p>
+                            <div class="input-group">
+                                <input type="text"
+                                       value="0"
+                                       size="2"
+                                       class="order_count_input form-control {% if product.is_end_of_line %}border-danger{% endif %}"
+                                       id="order_count_input_{{ product.id }}"
+                                       data-product_id="{{ product.id }}"
+                                       onclick="this.select()">
+                                <span class="input-group-text order_count_status"
+                                      id="order_count_status_{{ product.id }}">
+                                    <i class="bi bi-check"></i>
+                                </span>
+                            </div>
                         </td>
                         <td>
                             <div>{% include "inventory/update_stock.html" %}</div>
- 
+
                         </td>
                         <td>
-                            <textarea name="comment"
-                                      id="comment_{{ product.id }}"
-                                      class="comment_input"
-                                      cols="30"
-                                      rows="1"
-                                      data-product_id="{{ product.id }}"></textarea>
-                            <span class="comment_status" id="comment_status_{{ product.id }}">
-                                <i class="fa-solid fa-check"></i>
-                            </span>
+                            <div class="input-group">
+                                <textarea name="comment"
+                                          id="comment_{{ product.id }}"
+                                          class="comment_input form-control"
+                                          cols="30"
+                                          rows="1"
+                                          data-product_id="{{ product.id }}"></textarea>
+                                <span class="input-group-text comment_status"
+                                      id="comment_status_{{ product.id }}">
+                                    <i class="bi bi-check"></i>
+                                </span>
+                            </div>
                             <div>
                                 <small>
                                     {% if product.fba_order_count > 0 %}

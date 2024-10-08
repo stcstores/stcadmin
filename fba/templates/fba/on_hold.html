@@ -96,13 +96,19 @@
                             </div>
                         </td>
                         <td class="total_stock" id="total_stock_{{ order.pk }}">
-                            <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
+                            <div class="spinner-border spinner-border-sm">
+                                <span class="sr-only"></span>
+                            </div>
                         </td>
                         <td class="in_order_stock" id="in_order_stock_{{ order.pk }}">
-                            <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
+                            <div class="spinner-border spinner-border-sm">
+                                <span class="sr-only"></span>
+                            </div>
                         </td>
                         <td class="available_stock" id="available_stock_{{ order.pk }}">
-                            <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
+                            <div class="spinner-border spinner-border-sm">
+                                <span class="sr-only"></span>
+                            </div>
                         </td>
                         <td>
                             <button class="take_off_hold btn btn-primary btn-sm mb-1"
@@ -123,7 +129,7 @@
         </table>
 
         {% include "home/pagination_navigation.html" %}
- 
+
     </div>
 
 {% endblock content %}

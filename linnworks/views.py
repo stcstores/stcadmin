@@ -96,7 +96,9 @@ def get_stock_records(request):
         try:
             stock_record = stock_records[product.sku]
         except KeyError:
-            output[product.id] = '<i class="fa-duotone fa-exclamation error"></i>'
+            output[product.id] = (
+                '<i class="bi bi-exclamation-triangle-fill fs-5 text-danger"></i>'
+            )
         else:
             output[product.pk] = template.render({"stock_record": stock_record})
     return JsonResponse(output)

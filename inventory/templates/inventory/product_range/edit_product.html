@@ -29,10 +29,10 @@
     </div>
     <div class="mb-5">
       <a href="{% url 'inventory:product_range' product_range.pk %}">
-        <i class="fa-solid fa-arrow-left"></i> Back to Product Range
+        <i class="bi bi-arrow-left-short fs-5"></i> Back to Product Range
       </a>
     </div>
- 
+
     <div class="row">
 
       <div class="col-lg-7 mb-3">
@@ -53,7 +53,7 @@
         </div>
         {% for variation in product_range.products.variations %}
           <div class="row rounded mb-2 border border-2 {% if variation == product %}border-primary{% else %}border-light{% endif %}">
- 
+
             <div class="col-lg mb-2">
               <div>
                 <span class="font-monospace user-select-all">{{ variation.sku }}</span>

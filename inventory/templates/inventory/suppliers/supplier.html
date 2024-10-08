@@ -5,8 +5,7 @@
     <div class="mb-3">
       <a href="{% url 'inventory:suppliers' %}" class="btn btn-primary btn-sm">← Back to suppliers</a>
     </div>
- 
- 
+
     <h3 class="display-3 mb-5">
       {{ supplier.name }}
       {% if supplier.active == False %}<span class="badge bg-warning rounded-pill fs-5">Inactive</span>{% endif %}
@@ -38,10 +37,10 @@
             <div class="card-body">
               <h5 class="card-title">{{ contact.name }}</h5>
               <p class="card-text">
-                <i class="fa-solid fa-phone"></i> {{ contact.phone }}
+                <i class="bi bi-telephone-fill"></i> {{ contact.phone }}
               </p>
               <p class="card-text">
-                <i class="fa-solid fa-at"></i> {{ contact.email }}
+                <i class="bi bi-envelope-at-fill"></i> {{ contact.email }}
               </p>
               <p class="card-text">{{ contact.notes|linebreaks }}</p>
               <div class="card-footer">

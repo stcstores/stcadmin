@@ -5,47 +5,55 @@
   <div class="product_stock_level bg-light rounded d-flex flex-row align-items-center text-center">
     <div class="stock_level_type_container available_container text-success">
       <div class="stock_level_update_widget d-flex flex-row align-items-center">
-        <input id="available_stock_{{ product.pk }}"
-               class="stock_level_field form-control text-success bg-white"
-               style="min-width: 4em"
-               data-productId="{{ product.pk }}"
-               type="text"
-               size="3"
-               value="0"
-               autocomplete="off"
-               disabled
-               {% if updatable is False %}readonly{% endif %}>
-        {% if updatable is not False %}
-          <button id="stock_level_update_button_{{ product.pk }}"
-                  class="stock_level_update_button btn btn-primary btn-sm d-flex flex-row align-items-center"
-                  disabled
-                  autocomplete="off">
-            <i class="fa-solid fa-floppy-disk" title="Overwrite stock level"></i>&nbsp;Update
-          </button>
+        <div class="input-group flex-nowrap">
+          <input id="available_stock_{{ product.pk }}"
+                 class="stock_level_field form-control text-success bg-white"
+                 style="min-width: 4em"
+                 data-productId="{{ product.pk }}"
+                 type="text"
+                 size="3"
+                 value="0"
+                 autocomplete="off"
+                 disabled
+                 {% if updatable is False %}readonly{% endif %}>
+          {% if updatable is not False %}
+            <button id="stock_level_update_button_{{ product.pk }}"
+                    class="stock_level_update_button btn btn-primary btn-sm d-flex flex-row align-items-center"
+                    disabled
+                    autocomplete="off">
+              <i class="bi bi-floppy-fill"></i>&nbsp;Update
+            </button>
+          </div>
         {% endif %}
-        <div class="stock_level_status_container text-muted m-1">
-          <i class="fa-solid fa-spinner fa-spin-pulse fa-l"
-             id="stock_level_status_{{ product.pk }}"></i>
+        <div id="stock_level_status_{{ product.pk }}"
+             class="stock_level_status_ text-muted m-1">
+          <div class="spinner-border spinner-border-sm">
+            <span class="sr-only"></span>
+          </div>
         </div>
       </div>
     </div>
     <div class="stock_level_type_container total_stock_container text-muted m-1">
-      <i class="fa-solid fa-plus"></i>
+      <i class="bi bi-plus"></i>
     </div>
-    <div class="stock_level_type_container in_orders_container text-danger">
+    <div class="stock_level_type_container in_orders_container text-danger fs-6">
       <span id="in_orders_{{ product.pk }}" class="stock_in_orders">
-        <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
+        <div class="spinner-border spinner-border-sm">
+          <span class="sr-only"></span>
+        </div>
       </span>
       <span class="stock_level_header">In&nbsp;Orders</span>
     </div>
     <div class="button_container d-flex flex-column m-1">
-      <i class="fa-solid fa-arrows-rotate refresh_button locked"
-         id="refresh_button_{{ product.pk }}"
-         title="Refresh stock levels from Linnworks"></i>
+      <div class="refresh_button"
+           id="refresh_button_{{ product.pk }}"
+           title="Refresh stock levels from Linnworks">
+        <i class="bi bi-arrow-clockwise text-muted"></i>
+      </div>
       <a href="{% url 'linnworks:stock_level_hisotry' product.id %}"
          title="Stock change history"
          target="_blank">
-        <i class="fa-solid fa-rectangle-list"></i>
+        <i class="bi bi-card-list"></i>
       </a>
     </div>
   </div>

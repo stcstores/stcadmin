@@ -1,4 +1,4 @@
- 
+
 <div class="container-fluid">
   {% for product in products %}
     <div class="row mt-3 mt-lg-1 p1 bg-white text-dark">
@@ -39,12 +39,14 @@
           {% for bay in bays %}<span class="me-1 font-monospace user-select-all">{{ bay }}</span>{% endfor %}
         {% endwith %}
       </div>
- 
+
       <div class="col-lg-2 my-1">
         {% if product.is_archived is False %}
           <span class="search_result_stock_level load_stock"
                 id="search_result_stock_level_{{ product.pk }}">
-            <i class="fa-solid fa-spinner fa-spin"></i>
+            <div class="spinner-border spinner-border-sm">
+              <span class="sr-only"></span>
+            </div>
           </span>
         {% endif %}
       </div>
