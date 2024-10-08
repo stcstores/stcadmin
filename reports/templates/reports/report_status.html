@@ -4,7 +4,10 @@
         {% if report_download.status == report_download.COMPLETE %}
             Report created {{ report_download.completed_at | naturaltime }}
         {% elif report_download.status == report_download.IN_PROGRESS %}
-            <i class="fa-solid fa-spinner fa-spin-pulse"></i> Requested {{ report_download.created_at | naturaltime }}
+            <div class="spinner-border spinner-border-sm">
+                <span class="sr-only"></span>
+            </div>
+            Requested {{ report_download.created_at | naturaltime }}
         {% else %}
             <span class="error">There was an error creating the report</span>
         {% endif %}

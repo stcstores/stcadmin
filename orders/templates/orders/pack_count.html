@@ -26,7 +26,7 @@
 
     function getSearchResults(e) {
         e.preventDefault();
-        $("#results").html('<i class="fa-solid fa-spinner fa-spin-pulse fa-xl"></i>');
+        $("#results").html('<div class="spinner-border spinner-border-sm"><span class="sr-only"></span></div>');
         $.ajax({
             url: "{% url 'orders:pack_count_results' %}",
             method: "GET",

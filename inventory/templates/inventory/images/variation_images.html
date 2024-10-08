@@ -45,7 +45,9 @@
             <div class="col-lg-9 product_images"
                  id="product_images_{{ product.id }}"
                  data-product-id="{{ product.id }}">
-                <i class="fa-solid fa-spinner fa-spin-pulse fa-xl"></i>
+                <div class="spinner-border spinner-border-sm">
+                    <span class="sr-only"></span>
+                </div>
             </div>
         </div>
     {% endfor %}

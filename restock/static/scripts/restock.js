@@ -1,3 +1,7 @@
+var successIcon = '<i class="bi bi-check text-success"></i>';
+var loadingIcon = '<div class="spinner-border spinner-border-sm text-warning"><span class="sr-only"></span></div>';
+var errorIcon = '<i class="bi bi-exclamation-triangle-fill text-danger"></i>';
+
 function setReorderCount() {
     $.each(reorderCounts, function(productId, count) {
         $("#order_count_input_" + productId).val(count);
@@ -62,37 +66,35 @@ function enableOrderedButton() {
 
 function updatePurchasePrice(productId, updatedPrice) {
     var status = $('#purchase_price_status_' + productId);
-    status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
+    status.html(loadingIcon);
     $.ajax({
         url: updatePriceUrl,
         type: "POST",
         data: {"product_id": productId, "updated_purchase_price": updatedPrice},
         success: function(response) {
             $("#purchase_price_input_" + productId).val(response['purchase_price']);
-            status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
-            status.html('<i class="fa-solid fa-square-check success"></i>');
+            status.html(successIcon);
         },
         error: function(response) {
-            status.html('<i class="fa-solid fa-triangle-exclamation error"></i>');
+            status.html(errorIcon);
         }
     });
 }
 
 function updateOrderCount(productId, updatedCount) {
     var status = $('#order_count_status_' + productId);
-    status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
+    status.html('<div class="spinner-border spinner-border-sm text-warning"><span class="sr-only"></span></div>');
     $.ajax({
         url: updateOrderCountUrl,
         type: "POST",
         data: {"product_id": productId, "updated_order_count": updatedCount},
         success: function(response) {
             $("#order_count_input_" + productId).val(response['count'])
-            status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
-            status.html('<i class="fa-solid fa-square-check success"></i>');
+            status.html(successIcon);
             updateCommentAvailability();
         },
         error: function(response) {
-            status.html('<i class="fa-solid fa-triangle-exclamation error"></i>');
+            status.html(errorIcon);
             updateCommentAvailability();
         }
     });
@@ -100,36 +102,34 @@ function updateOrderCount(productId, updatedCount) {
 
 function updateComment(productId, comment) {
     var status = $('#comment_status_' + productId);
-    status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
+    status.html(loadingIcon);
     $.ajax({
         url: updateCommentUrl,
         type: "POST",
         data: {"product_id": productId, "comment": comment},
         success: function(response) {
             $("#comment_" + productId).val(response['comment'])
-            status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
-            status.html('<i class="fa-solid fa-square-check success"></i>');
+            status.html(successIcon);
         },
         error: function(response) {
-            status.html('<i class="fa-solid fa-triangle-exclamation error"></i>');
+            status.html(errorIcon);
         }
     });
 }
 
 function updateSupplierComment(supplierId, comment) {
     var status = $('#supplier_comment_status' + supplierId);
-    status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
+    status.html(loadingIcon);
     $.ajax({
         url: updateSupplierCommentUrl,
         type: "POST",
         data: {"supplier_id": supplierId, "comment": comment},
         success: function(response) {
             $("#suplier_comment_" + supplierId).val(response['comment'])
-            status.html('<i class="fa-solid fa-spinner fa-spin warning"></i>');
-            status.html('<i class="fa-solid fa-square-check success"></i>');
+            status.html(successIcon);
         },
         error: function(response) {
-            status.html('<i class="fa-solid fa-triangle-exclamation error"></i>');
+            status.html(errorIcon);
         }
     });
 }

@@ -1,7 +1,7 @@
 {% load humanize %}
 <h5 class="display-5">Order Export</h5>
 {% if export_record %}
- 
+
     <p>Requested {{ export_record.created_at | naturaltime }}</p>
     {% if export_record.status == export_record.COMPLETE %}
         <p>Exported {{ order_count }} orders {{ export_record.completed_at | naturaltime }}</p>
@@ -11,7 +11,10 @@
         </p>
     {% elif export_record.status == export_record.IN_PROGRESS %}
         <p>
-            <i class="fa-solid fa-spinner fa-spin-pulse"></i> Currently exporting {{ order_count }} orders.
+            <div class="spinner-border spinner-border-sm">
+                <span class="sr-only"></span>
+            </div>
+            Currently exporting {{ order_count }} orders.
         </p>
     {% else %}
         <p class="error">There was an error creating the export.</p>

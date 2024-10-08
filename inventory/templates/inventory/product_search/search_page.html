@@ -8,26 +8,26 @@
 
 {% block content %}
   <div class="container">
- 
+
     <h3 class="display-3 mb-5">Inventory Search</h3>
- 
+
     <div class="mb-5">
       <form method="get" action="">
         {% include "home/bootstrap_inline_form.html" with col_width=4 %}
         <button class="btn btn-primary form-control">Search</button>
       </form>
     </div>
- 
+
     {% if page_obj.paginator.num_pages > 1 %}
       <div class="mb-3 text-center">{% include "home/pagination_navigation.html" %}</div>
     {% endif %}
- 
+
     {% include "inventory/product_search/result_list.html" %}
 
     {% if page_obj.paginator.num_pages > 1 %}
       <div class="mt-3 text-center">{% include "home/pagination_navigation.html" %}</div>
     {% endif %}
- 
+
   </div>
 
 {% endblock content %}
@@ -129,7 +129,7 @@
           },
           error: function (response) {
             product_ids.each(function (product_id) {
-              $("#search_result_stock_level_" + product_id).html('<i class="fa-duotone fa-exclamation error"></i>');
+              $("#search_result_stock_level_" + product_id).html('<i class="bi bi-exclamation-triangle-fill fs-5 text-danger"></i>');
             });
           }
         });

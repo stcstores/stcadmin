@@ -12,8 +12,7 @@
                 <button class="btn btn-primary form-control">Filter</button>
             </form>
         </div>
- 
- 
+
         {% include "home/pagination_navigation.html" %}
         <table class="table table-light table-hover table-sm mb-3">
             <thead class="table-primary">
@@ -104,7 +103,7 @@
                                         <span class="show_tracking"
                                               id="show_tracking_{{ order.id }}"
                                               data-order-id="{{ order.id }}">
-                                            <i class="fa-solid fa-chevron-down"></i>
+                                            <i class="bi bi-chevron-compact-down"></i>
                                         </span>
                                         <br>
                                     {% else %}
@@ -126,7 +125,9 @@
                             {% endif %}
                         </td>
                         <td class="available_stock" id="available_stock_{{ order.pk }}">
-                            <i class="fa-solid fa-spinner fa-spin-pulse fa-xs"></i>
+                            <div class="spinner-border spinner-border-sm">
+                                <span class="sr-only"></span>
+                            </div>
                         </td>
                         <td id="closed_at_{{ order.id }}">
                             <div>{{ order.fulfilled_by.full_name }}</div>

@@ -1,18 +1,13 @@
-var getting_stock_level_icon_class = "fa-solid fa-spinner fa-spin";
-var setting_stock_level_icon_class = "fa-solid fa-spinner fa-spin text-warning";
-var get_stock_level_success_icon_class = "fa-solid fa-check text-light";
-var set_stock_level_success_icon_class = "fa-solid fa-check text-success";
-var get_stock_level_error_icon_class =
-  "fa-solid fa-square-exclamation text-warning";
-var set_stock_level_error_icon_class =
-  "fa-solid fa-triangle-exclamation text-error";
+var getting_stock_level_icon = '<div class="spinner-border spinner-border-sm"><span class="sr-only"></span></div>';
+var setting_stock_level_icon = '<div class="spinner-border spinner-border-sm text-warning"><span class="sr-only"></span></div>';;
+var get_stock_level_success_icon = '<i class="bi bi-check text-muted"></i>';
+var set_stock_level_success_icon = '<i class="bi bi-check text-success"></i>';
+var get_stock_level_error_icon = '<i class="bi bi-exclamation-triangle-fill text-warning"></i>';
+var set_stock_level_error_icon = '<i class="bi bi-exclamation-triangle-fill text-danger"></i>';
 
-var refresh_icon_available_class =
-  "fa-solid fa-arrows-rotate refresh_button available";
-var refresh_icon_in_progress_class =
-  "fa-solid fa-arrows-rotate refresh_button fa-spin-pulse in_progress";
-var refresh_icon_locked_class =
-  "fa-solid fa-arrows-rotate refresh_button locked";
+var refresh_icon_available = '<i class="bi bi-arrow-clockwise"></i>';
+var refresh_icon_in_progress = '<div class="spinner-border spinner-border-sm"><span class="sr-only"></span></div>';;
+var refresh_icon_locked = '<i class="bi bi-arrow-clockwise text-muted"></i>';
 
 class StockLevelWidget {
   constructor(product_id) {
@@ -32,7 +27,7 @@ class StockLevelWidget {
   refresh() {
     this.write_stock_level("");
     this.write_in_orders("");
-    this.set_status_icon(getting_stock_level_icon_class);
+    this.set_status_icon(getting_stock_level_icon);
     this.set_refresh_in_progress();
     stock_level_widget_manager.get_stock_level(this.product_id);
   }
@@ -48,7 +43,7 @@ class StockLevelWidget {
   set_error_getting_stock_level() {
     this.write_stock_level("");
     this.write_in_orders("");
-    this.set_status_icon(get_stock_level_error_icon_class);
+    this.set_status_icon(get_stock_level_error_icon);
   }
 
   update_stock_level() {
@@ -56,7 +51,7 @@ class StockLevelWidget {
     this.disable_update_field();
     this.set_refresh_locked();
     this.disable_update_button();
-    this.set_status_icon(getting_stock_level_icon_class);
+    this.set_status_icon(getting_stock_level_icon);
     stock_level_widget_manager.update_stock_level(
       this.product_id,
       new_stock_level
@@ -65,7 +60,7 @@ class StockLevelWidget {
 
   display_updated_stock_level(new_stock_level) {
     this.write_stock_level(new_stock_level);
-    this.set_status_icon(set_stock_level_success_icon_class);
+    this.set_status_icon(set_stock_level_success_icon);
     this.set_refresh_available();
     this.set_refresh_available();
     this.enable_update_field();
@@ -78,14 +73,14 @@ class StockLevelWidget {
   display_stock_level_update_error() {
     this.write_stock_level("");
     this.write_in_orders("");
-    this.set_status_icon(set_stock_level_error_icon_class);
+    this.set_status_icon(set_stock_level_error_icon);
     this.set_refresh_available();
   }
 
   display_loaded_stock_level(stock_level_info) {
     this.write_stock_level(stock_level_info["available"]);
     this.write_in_orders(stock_level_info["in_orders"]);
-    this.set_status_icon(get_stock_level_success_icon_class);
+    this.set_status_icon(get_stock_level_success_icon);
     this.enable_update_field();
     this.set_refresh_available();
     this.stock_level_field.trigger("stockLevelChange", [
@@ -95,7 +90,7 @@ class StockLevelWidget {
   }
 
   set_status_icon(icon_css) {
-    this.status_icon.attr("class", icon_css);
+    this.status_icon.html(icon_css);
   }
 
   disable_update_button() {
@@ -117,17 +112,17 @@ class StockLevelWidget {
   }
 
   set_refresh_available() {
-    this.refresh_button.attr("class", refresh_icon_available_class);
+    this.refresh_button.html(refresh_icon_available);
     this.refresh_button.on("click", () => this.refresh());
   }
 
   set_refresh_in_progress() {
-    this.refresh_button.attr("class", refresh_icon_in_progress_class);
+    this.refresh_button.html(refresh_icon_in_progress);
     this.refresh_button.off("click");
   }
 
   set_refresh_locked() {
-    this.refresh_button.attr("class", refresh_icon_locked_class);
+    this.refresh_button.html(refresh_icon_locked);
     this.refresh_button.off("click");
   }
 }
