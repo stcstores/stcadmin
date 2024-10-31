@@ -162,35 +162,34 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "bleach"
-version = "6.1.0"
+version = "6.2.0"
 description = "An easy safelist-based HTML-sanitizing tool."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "bleach-6.1.0-py3-none-any.whl", hash = "sha256:3225f354cfc436b9789c66c4ee030194bee0568fbf9cbdad3bc8b5c26c5f12b6"},
-    {file = "bleach-6.1.0.tar.gz", hash = "sha256:0a31f1837963c41d46bbf1331b8778e1308ea0791db03cc4e7357b97cf42a8fe"},
+    {file = "bleach-6.2.0-py3-none-any.whl", hash = "sha256:117d9c6097a7c3d22fd578fcd8d35ff1e125df6736f554da4e432fdd63f31e5e"},
+    {file = "bleach-6.2.0.tar.gz", hash = "sha256:123e894118b8a599fd80d3ec1a6d4cc7ce4e5882b1317a7e1ba69b56e95f991f"},
 ]
 
 [package.dependencies]
-six = ">=1.9.0"
 webencodings = "*"
 
 [package.extras]
-css = ["tinycss2 (>=1.1.0,<1.3)"]
+css = ["tinycss2 (>=1.1.0,<1.5)"]
 
 [[package]]
 name = "boto3"
-version = "1.35.44"
+version = "1.35.52"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "boto3-1.35.44-py3-none-any.whl", hash = "sha256:18416d07b41e6094101a44f8b881047dcec6b846dad0b9f83b9bbf2f0cd93d07"},
-    {file = "boto3-1.35.44.tar.gz", hash = "sha256:7f8e8a252458d584d8cf7877c372c4f74ec103356eedf43d2dd9e479f47f3639"},
+    {file = "boto3-1.35.52-py3-none-any.whl", hash = "sha256:ec0e797441db56af63b1150bba49f114b0f885f5d76c3b6dc18075f73030d2bb"},
+    {file = "boto3-1.35.52.tar.gz", hash = "sha256:68299da8ab2bb37cc843d61b9f4c1c9367438406cfd65a8f593afc7b3bfe226d"},
 ]
 
 [package.dependencies]
-botocore = ">=1.35.44,<1.36.0"
+botocore = ">=1.35.52,<1.36.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.10.0,<0.11.0"
 
@@ -199,13 +198,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.35.44"
+version = "1.35.52"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "botocore-1.35.44-py3-none-any.whl", hash = "sha256:55388e80624401d017a9a2b8109afd94814f7e666b53e28fce51375cfa8d9326"},
-    {file = "botocore-1.35.44.tar.gz", hash = "sha256:1fcd97b966ad8a88de4106fe1bd3bbd6d8dadabe99bbd4a6aadcf11cb6c66b39"},
+    {file = "botocore-1.35.52-py3-none-any.whl", hash = "sha256:cdbb5e43c9c3a977763e2a10d3b8b9c405d51279f9fcfd4ca4800763b22acba5"},
+    {file = "botocore-1.35.52.tar.gz", hash = "sha256:1fe7485ea13d638b089103addd818c12984ff1e4d208de15f180b1e25ad944c5"},
 ]
 
 [package.dependencies]
@@ -928,13 +927,13 @@ dev = ["django-dummy-plug", "pytest", "pytest-django"]
 
 [[package]]
 name = "djlint"
-version = "1.35.2"
+version = "1.35.3"
 description = "HTML Template Linter and Formatter"
 optional = false
-python-versions = "<4.0,>=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "djlint-1.35.2-py3-none-any.whl", hash = "sha256:4ba995bad378f2afa77c8ea56ba1c14429d9ff26a18e8ae23bc71eedb9152243"},
-    {file = "djlint-1.35.2.tar.gz", hash = "sha256:318de9d4b9b0061a111f8f5164ecbacd8215f449dd4bd5a76d2a691c815ee103"},
+    {file = "djlint-1.35.3-py3-none-any.whl", hash = "sha256:bf2f23798909f9c5a110925c369538383de0141f9a2be37ee0d26422d41b7543"},
+    {file = "djlint-1.35.3.tar.gz", hash = "sha256:780ea3e25662fca89033fa96ecf656099954d6f81dce039eac90f4bba3cbe850"},
 ]
 
 [package.dependencies]
@@ -942,11 +941,11 @@ click = ">=8.0.1"
 colorama = ">=0.4.4"
 cssbeautifier = ">=1.14.4"
 html-tag-names = ">=0.1.2"
-html-void-elements = ">=0.1.0"
+html-void-elements = ">=0.1"
 jsbeautifier = ">=1.14.4"
 json5 = ">=0.9.11"
-pathspec = ">=0.12.0"
-PyYAML = ">=6.0"
+pathspec = ">=0.12"
+pyyaml = ">=6"
 regex = ">=2023"
 tqdm = ">=4.62.2"
 
@@ -1013,13 +1012,13 @@ files = [
 
 [[package]]
 name = "et-xmlfile"
-version = "1.1.0"
+version = "2.0.0"
 description = "An implementation of lxml.xmlfile for the standard library"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.8"
 files = [
-    {file = "et_xmlfile-1.1.0-py3-none-any.whl", hash = "sha256:a2ba85d1d6a74ef63837eed693bcb89c3f752169b0e3e7ae5b16ca5e1b3deada"},
-    {file = "et_xmlfile-1.1.0.tar.gz", hash = "sha256:8eb9e2bc2f8c97e37a2dc85a09ecdcdec9d8a396530a6d5a33b30b9a92da0c5c"},
+    {file = "et_xmlfile-2.0.0-py3-none-any.whl", hash = "sha256:7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa"},
+    {file = "et_xmlfile-2.0.0.tar.gz", hash = "sha256:dab3f4764309081ce75662649be815c4c9081e88f0837825f90fd28317d4da54"},
 ]
 
 [[package]]
@@ -1053,13 +1052,13 @@ files = [
 
 [[package]]
 name = "faker"
-version = "30.6.0"
+version = "30.8.1"
 description = "Faker is a Python package that generates fake data for you."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "Faker-30.6.0-py3-none-any.whl", hash = "sha256:37b5ab951f7367ea93edb865120e9717a7a649d6a4b223f1e4a47a8a20d9e85f"},
-    {file = "faker-30.6.0.tar.gz", hash = "sha256:be0e548352c1be6f6d9c982003848a0d305868f160bb1fb7f945acffc347e676"},
+    {file = "Faker-30.8.1-py3-none-any.whl", hash = "sha256:4f7f133560b9d4d2a915581f4ba86f9a6a83421b89e911f36c4c96cff58135a5"},
+    {file = "faker-30.8.1.tar.gz", hash = "sha256:93e8b70813f76d05d98951154681180cb795cfbcff3eced7680d963bcc0da2a9"},
 ]
 
 [package.dependencies]
@@ -1084,7 +1083,7 @@ setuptools = "^75.2.0"
 type = "git"
 url = "https://github.com/stcstores/django-file_exchange.git"
 reference = "main"
-resolved_reference = "f472ff422ce3c2653e2864caab1339523abc3fee"
+resolved_reference = "09e42409fdc7232dd23f2093437c04827ecbea97"
 
 [[package]]
 name = "flake8"
@@ -1358,7 +1357,7 @@ reportlab = ">=3.6.8"
 type = "git"
 url = "https://github.com/stcstores/labeler.git"
 reference = "main"
-resolved_reference = "d704c21c8faac3bed8739187682c09d7f583f27f"
+resolved_reference = "55b89423842958e9454a83dc120e8dd8bc8f31e5"
 
 [[package]]
 name = "linnapi"
@@ -2346,17 +2345,17 @@ sqs = ["boto3", "botocore", "pycurl", "urllib3"]
 
 [[package]]
 name = "pytest-cov"
-version = "5.0.0"
+version = "6.0.0"
 description = "Pytest plugin for measuring coverage."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "pytest-cov-5.0.0.tar.gz", hash = "sha256:5837b58e9f6ebd335b0f8060eecce69b662415b16dc503883a02f45dfeb14857"},
-    {file = "pytest_cov-5.0.0-py3-none-any.whl", hash = "sha256:4f0764a1219df53214206bf1feea4633c3b558a2925c8b59f144f682861ce652"},
+    {file = "pytest-cov-6.0.0.tar.gz", hash = "sha256:fde0b595ca248bb8e2d76f020b465f3b107c9632e6a1d1705f17834c89dcadc0"},
+    {file = "pytest_cov-6.0.0-py3-none-any.whl", hash = "sha256:eee6f1b9e61008bd34975a4d5bab25801eb31898b032dd55addc93e96fcaaa35"},
 ]
 
 [package.dependencies]
-coverage = {version = ">=5.2.1", extras = ["toml"]}
+coverage = {version = ">=7.5", extras = ["toml"]}
 pytest = ">=4.6"
 
 [package.extras]
@@ -2415,13 +2414,13 @@ typing_extensions = "*"
 
 [[package]]
 name = "python-amazon-sp-api"
-version = "1.6.75"
+version = "1.6.85"
 description = "Python wrapper for the Amazon Selling-Partner API"
 optional = false
 python-versions = "*"
 files = [
-    {file = "python-amazon-sp-api-1.6.75.tar.gz", hash = "sha256:3e3001cbedca8bcd294eb1845c1f27c6dc4a29aeec8f11bdd0ae3111c91e800f"},
-    {file = "python_amazon_sp_api-1.6.75-py3-none-any.whl", hash = "sha256:d9aedbccb80d83f6c7da580afc65d74670910a03f0201901cdf2b08c48c8be9b"},
+    {file = "python-amazon-sp-api-1.6.85.tar.gz", hash = "sha256:3ad19419faa22196e46838865ce38c625dea2481d9962170c6a0b1def3ae0c4c"},
+    {file = "python_amazon_sp_api-1.6.85-py3-none-any.whl", hash = "sha256:fdba72fce1b7609cd504ed05dda2a92dabacc70302b6394fe011596a8b04e37b"},
 ]
 
 [package.dependencies]
@@ -2574,13 +2573,13 @@ files = [
 
 [[package]]
 name = "redis"
-version = "5.1.1"
+version = "5.2.0"
 description = "Python client for Redis database and key-value store"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "redis-5.1.1-py3-none-any.whl", hash = "sha256:f8ea06b7482a668c6475ae202ed8d9bcaa409f6e87fb77ed1043d912afd62e24"},
-    {file = "redis-5.1.1.tar.gz", hash = "sha256:f6c997521fedbae53387307c5d0bf784d9acc28d9f1d058abeac566ec4dbed72"},
+    {file = "redis-5.2.0-py3-none-any.whl", hash = "sha256:ae174f2bb3b1bf2b09d54bf3e51fbc1469cf6c10aa03e21141f51969801a7897"},
+    {file = "redis-5.2.0.tar.gz", hash = "sha256:0b1087665a771b1ff2e003aa5bdd354f15a70c9e25d5a7dbf9c722c16528a7b0"},
 ]
 
 [package.extras]
@@ -2770,23 +2769,23 @@ crt = ["botocore[crt] (>=1.33.2,<2.0a.0)"]
 
 [[package]]
 name = "setuptools"
-version = "75.2.0"
+version = "75.3.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "setuptools-75.2.0-py3-none-any.whl", hash = "sha256:a7fcb66f68b4d9e8e66b42f9876150a3371558f98fa32222ffaa5bced76406f8"},
-    {file = "setuptools-75.2.0.tar.gz", hash = "sha256:753bb6ebf1f465a1912e19ed1d41f403a79173a9acf66a42e7e6aec45c3c16ec"},
+    {file = "setuptools-75.3.0-py3-none-any.whl", hash = "sha256:f2504966861356aa38616760c0f66568e535562374995367b4e69c7143cf6bcd"},
+    {file = "setuptools-75.3.0.tar.gz", hash = "sha256:fba5dd4d766e97be1b1681d98712680ae8f2f26d7881245f2ce9e40714f1a686"},
 ]
 
 [package.extras]
 check = ["pytest-checkdocs (>=2.4)", "pytest-ruff (>=0.2.1)", "ruff (>=0.5.2)"]
-core = ["importlib-metadata (>=6)", "importlib-resources (>=5.10.2)", "jaraco.collections", "jaraco.functools", "jaraco.text (>=3.7)", "more-itertools", "more-itertools (>=8.8)", "packaging", "packaging (>=24)", "platformdirs (>=2.6.2)", "tomli (>=2.0.1)", "wheel (>=0.43.0)"]
+core = ["importlib-metadata (>=6)", "importlib-resources (>=5.10.2)", "jaraco.collections", "jaraco.functools", "jaraco.text (>=3.7)", "more-itertools", "more-itertools (>=8.8)", "packaging", "packaging (>=24)", "platformdirs (>=4.2.2)", "tomli (>=2.0.1)", "wheel (>=0.43.0)"]
 cover = ["pytest-cov"]
 doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "pygments-github-lexers (==0.0.5)", "pyproject-hooks (!=1.1)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-favicon", "sphinx-inline-tabs", "sphinx-lint", "sphinx-notfound-page (>=1,<2)", "sphinx-reredirects", "sphinxcontrib-towncrier", "towncrier (<24.7)"]
 enabler = ["pytest-enabler (>=2.2)"]
-test = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "ini2toml[lite] (>=0.14)", "jaraco.develop (>=7.21)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "jaraco.test", "packaging (>=23.2)", "pip (>=19.1)", "pyproject-hooks (!=1.1)", "pytest (>=6,!=8.1.*)", "pytest-home (>=0.5)", "pytest-perf", "pytest-subprocess", "pytest-timeout", "pytest-xdist (>=3)", "tomli-w (>=1.0.0)", "virtualenv (>=13.0.0)", "wheel (>=0.44.0)"]
-type = ["importlib-metadata (>=7.0.2)", "jaraco.develop (>=7.21)", "mypy (==1.11.*)", "pytest-mypy"]
+test = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "ini2toml[lite] (>=0.14)", "jaraco.develop (>=7.21)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "jaraco.test (>=5.5)", "packaging (>=23.2)", "pip (>=19.1)", "pyproject-hooks (!=1.1)", "pytest (>=6,!=8.1.*)", "pytest-home (>=0.5)", "pytest-perf", "pytest-subprocess", "pytest-timeout", "pytest-xdist (>=3)", "tomli-w (>=1.0.0)", "virtualenv (>=13.0.0)", "wheel (>=0.44.0)"]
+type = ["importlib-metadata (>=7.0.2)", "jaraco.develop (>=7.21)", "mypy (==1.12.*)", "pytest-mypy"]
 
 [[package]]
 name = "shopify-api-py"
@@ -3107,13 +3106,13 @@ files = [
 
 [[package]]
 name = "tqdm"
-version = "4.66.5"
+version = "4.66.6"
 description = "Fast, Extensible Progress Meter"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "tqdm-4.66.5-py3-none-any.whl", hash = "sha256:90279a3770753eafc9194a0364852159802111925aa30eb3f9d85b0e805ac7cd"},
-    {file = "tqdm-4.66.5.tar.gz", hash = "sha256:e1020aef2e5096702d8a025ac7d16b1577279c9d63f8375b63083e9a5f0fcbad"},
+    {file = "tqdm-4.66.6-py3-none-any.whl", hash = "sha256:223e8b5359c2efc4b30555531f09e9f2f3589bcd7fdd389271191031b49b7a63"},
+    {file = "tqdm-4.66.6.tar.gz", hash = "sha256:4bdd694238bef1485ce839d67967ab50af8f9272aab687c0d7702a01da0be090"},
 ]
 
 [package.dependencies]
