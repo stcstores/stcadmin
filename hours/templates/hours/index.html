@@ -1,5 +1,10 @@
 {% extends "hours/base.html" %}
+{% load static %}
 {% load humanize %}
+
+{% block additional_head %}
+    <script src="{% static "scripts/moment.js" %}"></script>
+{% endblock additional_head %}
 
 {% block content %}
 
@@ -9,7 +14,7 @@
         <div class="col-lg-2 order-lg-2 p-2 text-center rounded {% if latest_time.direction == "In" %}bg-success{% else %}bg-danger{% endif %}">
             <h6 class="display-6">
                 {% if latest_time %}
-                    Clocked {{ latest_time.direction }} {{ latest_time.timestamp|timesince }} ago
+                    Clocked {{ latest_time.direction }} <span id="clockedSince"></span>
                 {% else %}
                     Never clocked in
                 {% endif %}
@@ -55,3 +60,21 @@
     </div>
 
 {% endblock content %}
+
+{% block script %}
+    {% if latest_time %}
+        <script>
+        var timestamp = moment.unix({{ latest_time.timestamp|date:"U" }});
+
+        function updateTimeSinceClock() {
+            var timeSince = timestamp.fromNow();
+            $("#clockedSince").html(timeSince);
+        }
+
+        $(document).ready(function(){
+            updateTimeSinceClock();
+            setInterval(updateTimeSinceClock, 10000)
+        });
+        </script>
+    {% endif %}
+{% endblock script %}
