@@ -98,33 +98,40 @@ class ClockTime(models.Model):
 class HoursExportReport:
     """Generate reports for hours exports."""
 
-    @classmethod
-    def generate_report_text(cls, month, year):
+    def __init__(self, month, year):
+        """Generate an hours report."""
+        self.month = month
+        self.year = year
+        self.month_length = calendar.monthrange(self.year, self.month)[1]
+        self.header = [f"{calendar.month_name[month]} {year}"]
+        self.header.extend(list(range(1, self.month_length + 1)))
+
+    def generate_report_text(self):
         """Return io.StringIO containing the report as a .csv."""
-        rows = cls._get_report_data(month, year)
+        rows = self._get_report_data()
         output = StringIO()
         writer = csv.writer(output)
         writer.writerows(rows)
         return output
 
-    @staticmethod
-    def _get_report_data(month, year):
-        number_of_days = calendar.monthrange(year, month)[1]
-        header = [f"{calendar.month_name[month]} {year}"]
-        header.extend(list(range(1, number_of_days + 1)))
+    def _get_report_data(self):
         staff = Staff.objects.filter(can_clock_in=True)
         rows = []
         for staff_member in staff:
-            rows.append(header)
-            row = [staff_member.full_name()]
-            for day_number in range(1, number_of_days + 1):
-                date = dt.date(day=day_number, month=month, year=year)
-                clocks = ClockTime.objects.filter(
-                    user=staff_member, timestamp__date=date
-                )
-                row.append("\n".join([_.timestamp.strftime("%H:%M") for _ in clocks]))
-            rows.append(row)
+            rows.append(self.header)
+            rows.append(self._get_row(staff_member))
         return rows
+
+    def _get_row(self, staff_member):
+        row = [staff_member.full_name()]
+        for day_number in range(1, self.month_length + 1):
+            date = dt.date(day=day_number, month=self.month, year=self.year)
+            row.append(self._get_day(staff_member, date))
+        return row
+
+    def _get_day(self, staff_member, date):
+        clocks = ClockTime.objects.filter(user=staff_member, timestamp__date=date)
+        return "\n".join([_.timestamp.strftime("%H:%M") for _ in clocks])
 
 
 class HoursExport(models.Model):
@@ -157,9 +164,9 @@ class HoursExport(models.Model):
 
     def generate_report(self):
         """Return a .csv report as io.StringIO."""
-        return HoursExportReport.generate_report_text(
+        return HoursExportReport(
             self.export_date.month, self.export_date.year
-        )
+        ).generate_report_text()
 
     def get_report_filename(self):
         """Return a filename for .csv reports based on this expot."""

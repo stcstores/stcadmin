@@ -94,11 +94,13 @@ def test_get_report_filename(hours_export):
 
 
 @pytest.mark.django_db
-@mock.patch("hours.models.HoursExportReport.generate_report_text")
-def test_generate_report(mock_generate_report_text, hours_export):
+@mock.patch("hours.models.HoursExportReport")
+def test_generate_report(mock_report_generator, hours_export):
     returned_value = hours_export.generate_report()
-    mock_generate_report_text.assert_called_once_with(2, 2022)
-    assert returned_value == mock_generate_report_text.return_value
+    mock_report_generator.assert_called_once_with(2, 2022)
+    mock_report_generator.return_value.generate_report_text.assert_called_once_with()
+    expected = mock_report_generator.return_value.generate_report_text.return_value
+    assert returned_value == expected
 
 
 @pytest.mark.django_db
