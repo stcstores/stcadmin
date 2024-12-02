@@ -43,8 +43,9 @@ class Hours(UserCanClockInMixin, TemplateView):
         calendar = Calendar()
         now = timezone.now()
         days = {}
+        month = now.replace(day=1)
         for i in range(3):
-            month = dt.date(now.year, (now.month - i) % 12, 1)
+            month = month.replace(day=1) - dt.timedelta(days=i)
             days[month] = {}
             for day in (
                 _
