@@ -50,7 +50,7 @@ class ClockTime(models.Model):
 
         def clock(self, user):
             """Create a clock time."""
-            now = timezone.now()
+            now = timezone.now().replace(microsecond=0)
             now_naive = timezone.make_naive(now)
             lower_bound = timezone.make_aware(
                 dt.datetime(

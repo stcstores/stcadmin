@@ -11,6 +11,9 @@ class ClockTimeAdmin(admin.ModelAdmin):
     """Model admin for the ClockTime model."""
 
     exclude = ()
+    list_filter = ["user"]
+    date_hierarchy = "timestamp"
+    ordering = ("-timestamp",)
 
 
 @admin.register(models.HoursSettings)

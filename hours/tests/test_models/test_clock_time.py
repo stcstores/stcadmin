@@ -64,7 +64,7 @@ def test_direction_method_with_previous(
 def test_clock_method(mock_now, user):
     obj = models.ClockTime.objects.clock(user=user)
     assert obj.user == user
-    assert obj.timestamp == mock_now.return_value
+    assert obj.timestamp == mock_now.return_value.replace(microsecond=0)
 
 
 @pytest.mark.django_db
