@@ -3,15 +3,17 @@
 from django.contrib import admin
 from solo.admin import SingletonModelAdmin
 
-from hours import models
+from hours import forms, models
 
 
 @admin.register(models.ClockTime)
 class ClockTimeAdmin(admin.ModelAdmin):
     """Model admin for the ClockTime model."""
 
+    form = forms.ClockTimeForm
+
     exclude = ()
-    list_filter = ["user"]
+    list_filter = [("user", admin.RelatedOnlyFieldListFilter)]
     date_hierarchy = "timestamp"
     ordering = ("-timestamp",)
 

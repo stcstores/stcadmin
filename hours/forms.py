@@ -9,6 +9,23 @@ from django.utils import timezone
 from hours import models
 
 
+class ClockTimeForm(forms.ModelForm):
+    """Admin form for the ClockTime model."""
+
+    class Meta:
+        """Meta class for ClockTimeForm."""
+
+        model = models.ClockTime
+        fields = ["user", "timestamp"]
+
+    def __init__(self, *args, **kwargs):
+        """Filter out users that cannot clock in."""
+        super().__init__(*args, **kwargs)
+        self.fields["user"].queryset = self.fields["user"].queryset.filter(
+            can_clock_in=True
+        )
+
+
 class ClockForm(forms.Form):
     """Form for adding a clock time."""
 
