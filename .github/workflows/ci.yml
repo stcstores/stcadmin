@@ -46,6 +46,7 @@ jobs:
           echo 'SECRET_KEY = "^)_u+s3-340oy0!12y)1o=5%4un+$66w%g@h^fxzq_o-=#@di1"' >> ../config/secret_key.toml
       - name: Install dependencies
         run: |
+          sudo apt-get update
           sudo apt-get install libxml2-dev libxslt-dev libcurl4-openssl-dev
           pip install poetry
           poetry config virtualenvs.create false
