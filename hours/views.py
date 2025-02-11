@@ -30,7 +30,7 @@ class Hours(UserCanClockInMixin, TemplateView):
         """Return context for the template."""
         context = super().get_context_data(*args, **kwargs)
         now = timezone.now()
-        start_date = dt.date(now.year, (now.month - 2) % 12, 1)
+        start_date = dt.date(now.year, ((now.month - 3) % 12) + 1, 1)
         times = models.ClockTime.objects.filter(
             user=self.request.user.staff_member, timestamp__date__gte=start_date
         )
