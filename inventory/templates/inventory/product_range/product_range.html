@@ -90,6 +90,9 @@
               {% if product.is_end_of_line == False %}
                 <a href="{% url 'inventory:set_product_eol' product.pk %}"
                    class="btn btn-danger btn-sm">EOL</a>
+              {% else %}
+                <a href="{% url "inventory:clear_product_eol" product.pk %}"
+                   class="btn btn-primary btn-sm">Clear EOL</a>
               {% endif %}
             {% endif %}
           </div>

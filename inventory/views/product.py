@@ -5,7 +5,7 @@ from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView
+from django.views.generic import RedirectView, TemplateView
 from django.views.generic.edit import FormView, UpdateView
 
 from inventory import forms, models
@@ -78,6 +78,22 @@ class SetProductEndOfLine(InventoryUserMixin, FormView):
         """Return the url to redirect to after form submission."""
         return reverse(
             "inventory:product_range", kwargs={"range_pk": self.object.product_range.pk}
+        )
+
+
+class ClearEndOfLine(InventoryUserMixin, RedirectView):
+    """View for unsetting products End of Line."""
+
+    def get_redirect_url(self, *args, **kwargs):
+        """Clear product EOL status."""
+        product_id = self.kwargs.get("pk")
+        product = models.BaseProduct.objects.get(id=product_id)
+        if product.is_end_of_line and not product.is_archived:
+            product.is_end_of_line = False
+            product.end_of_line_reason = None
+            product.save()
+        return reverse(
+            "inventory:product_range", kwargs={"range_pk": product.product_range.pk}
         )
 
 

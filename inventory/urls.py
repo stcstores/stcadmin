@@ -33,6 +33,11 @@ inventory_urlpatterns = [
         name="set_product_eol",
     ),
     path(
+        "clear_product_eol/<int:pk>",
+        views.product.ClearEndOfLine.as_view(),
+        name="clear_product_eol",
+    ),
+    path(
         "set_product_range_eol/<int:pk>",
         views.product.SetProductRangeEndOfLine.as_view(),
         name="set_product_range_eol",
