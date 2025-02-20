@@ -1,0 +1,14 @@
+{% extends "logs/base.html" %}
+
+{% block content %}
+
+    <div class="container">
+        <h1 class="display-1 mb-5">Logs</h1>
+
+        <div class="list-group col-6">
+            <a class="list-group-item" href="{% url 'logs:fba_logs' %}">FBA Logs</a>
+        </div>
+
+    </div>
+
+{% endblock content %}
