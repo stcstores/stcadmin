@@ -16,7 +16,10 @@
                 </form>
             </div>
             <div class="col">
-                <a href="{{ tomorrow_url }}">Next Day <i class="bi bi-arrow-right"></i></a>
+                {% now "Y-m-d" as todays_date %}
+                {% if date|date:"Y-m-d" < todays_date %}
+                    <a href="{{ tomorrow_url }}">Next Day <i class="bi bi-arrow-right"></i></a>
+                {% endif %}
             </div>
             <div class="col">
                 <a href="{{ today_url }}">Today <i class="bi bi-arrow-up"></i></a>
