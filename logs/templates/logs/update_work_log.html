@@ -1,0 +1,20 @@
+{% extends "logs/base.html" %}
+
+{% block content %}
+
+    <div class="container">
+        <h3 class="display-3">Work Logs - {{ date|date:"l jS F o" }}</h3>
+        <h3 class="display-4 mb-5">{{ user.staff_member }}</h3>
+
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            {% if formset.errors %}{{ formset.errors }}{% endif %}
+            {% for form in formset %}
+                {% include "home/bootstrap_inline_form.html" %}
+            {% endfor %}
+            <button class="btn btn-primary">Update</button>
+        </form>
+    </div>
+
+{% endblock content %}
