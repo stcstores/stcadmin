@@ -1,0 +1,59 @@
+{% extends "logs/base.html" %}
+
+{% block content %}
+
+    <div class="container">
+        <h3 class="display-3 mb-5">FBA Logs - {{ date|date:"l jS F o" }}</h3>
+        <a href="{% url "logs:update_work_logs" year=date.year month=date.month day=date.day %}"
+           class="btn btn-primary">Update Jobs</a>
+        <div class="date_nav mb-3 row">
+            <div class="col">
+                <a href="{{ yesterday_url }}"><i class="bi bi-arrow-left"></i> Previous Day</a>
+            </div>
+            <div class="col">
+                <form action="{% url "logs:fba_logs" %}" method="get" id="date_select_form">
+                    {{ form.date }}
+                </form>
+            </div>
+            <div class="col">
+                {% now "Y-m-d" as todays_date %}
+                {% if date|date:"Y-m-d" < todays_date %}
+                    <a href="{{ tomorrow_url }}">Next Day <i class="bi bi-arrow-right"></i></a>
+                {% endif %}
+            </div>
+            <div class="col">
+                <a href="{{ today_url }}">Today <i class="bi bi-arrow-up"></i></a>
+            </div>
+        </div>
+        <div class="d-flex flex-column">
+            {% for staff_member in staff %}
+                <div class="staff_member d-flex flex-row bg-light m-3 p-3 rounded">
+                    <div class="d-flex flex-column">{{ staff_member }}</div>
+                    <div class="dflex flex-column">
+                        {% for order in staff_member.orders %}
+                            <div class="mx-3">
+                                <a href="{% url "fba:update_fba_order" order.pk %}">{{ order.product.name }}</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="dflex flex-column">
+                        {% for job in staff_member.jobs %}<div class="mx-3">{{ job.job }}</div>{% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block script %}
+
+    <script>
+    $(document).ready(function() {
+        $("#{{form.date.auto_id}}").change(function() {
+            $("#date_select_form").submit();
+        });
+    });
+    </script>
+
+{% endblock script %}

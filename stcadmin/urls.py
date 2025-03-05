@@ -31,6 +31,7 @@ urlpatterns = [
     path("linnworks/", include("linnworks.urls", namespace="linnworks")),
     path("restock/", include("restock.urls", namespace="restock")),
     path("hours/", include("hours.urls", namespace="hours")),
+    path("logs/", include("logs.urls", namespace="logs")),
     path("", include("home.urls", namespace="home")),
     path(
         "password_change_done/",
