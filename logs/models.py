@@ -6,6 +6,23 @@ from django.utils import timezone
 from home.models import Staff
 
 
+class FBALogUsers(models.Model):
+    """Model for users shown in FBA logs."""
+
+    staff_member = models.OneToOneField(
+        Staff, related_name="is_on_fba_log", on_delete=models.PROTECT
+    )
+
+    class Meta:
+        """Meta class for WorkLog."""
+
+        verbose_name = "Work Log User"
+        verbose_name_plural = "Work Log Users"
+
+    def __str__(self):
+        return self.staff_member.full_name()
+
+
 class WorkLog(models.Model):
     """Model for work logs."""
 
