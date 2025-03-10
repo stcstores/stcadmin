@@ -32,7 +32,7 @@
                     <div class="dflex flex-column">
                         {% for order in staff_member.orders %}
                             <div class="mx-3">
-                                <a href="{% url "fba:update_fba_order" order.pk %}">{{ order.product.name }}</a>
+                                <a href="{% url "fba:update_fba_order" order.pk %}">{{ order.product.name }}</a><span>&nbsp;x {{ order.quantity_sent }}</span>
                             </div>
                         {% endfor %}
                     </div>
