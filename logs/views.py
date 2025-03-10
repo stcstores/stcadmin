@@ -81,7 +81,7 @@ class FBALog(LogsUserMixin, TemplateView):
         context["today_url"] = self.get_day_url(timezone.now().date())
         context["yesterday_url"] = self.get_day_url(date - dt.timedelta(days=1))
         context["tomorrow_url"] = self.get_day_url(date + dt.timedelta(days=1))
-        staff = Staff.objects.filter(fba_packer=True, hidden=False)
+        staff = Staff.objects.filter(is_on_fba_log__isnull=False, hidden=False)
         for staff_member in staff:
             staff_member.orders = self.get_fba_orders(staff_member, date)
             staff_member.jobs = self.get_work_logs(staff_member, date)
