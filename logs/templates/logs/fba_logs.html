@@ -25,20 +25,21 @@
                 <a href="{{ today_url }}">Today <i class="bi bi-arrow-up"></i></a>
             </div>
         </div>
-        <div class="d-flex flex-column">
+        <div class="col">
             {% for staff_member in staff %}
-                <div class="staff_member d-flex flex-row bg-light m-3 p-3 rounded">
-                    <div class="d-flex flex-column">{{ staff_member }}</div>
-                    <div class="dflex flex-column">
+                <div class="staff_member row bg-light m-3 p-3 rounded">
+                    <div class="col-1 mx-3">{{ staff_member }}</div>
+                    <div class="col-4 flex-column mx-3">
                         {% for order in staff_member.orders %}
                             <div class="mx-3">
                                 <a href="{% url "fba:update_fba_order" order.pk %}">{{ order.product.name }}</a><span>&nbsp;x {{ order.quantity_sent }}</span>
                             </div>
                         {% endfor %}
                     </div>
-                    <div class="dflex flex-column">
+                    <div class="col-4 mx-3">
                         {% for job in staff_member.jobs %}<div class="mx-3">{{ job.job }}</div>{% endfor %}
                     </div>
+                    <div class="col-1 mx-3">Orders Packed: {{ staff_member.orders_packed }}</div>
                 </div>
             {% endfor %}
         </div>

@@ -11,6 +11,7 @@ from fba.models import FBAOrder
 from home.models import Staff
 from home.views import UserInGroupMixin
 from logs import forms, models
+from orders.models import Order
 
 
 class LogsUserMixin(UserInGroupMixin):
@@ -72,6 +73,12 @@ class FBALog(LogsUserMixin, TemplateView):
             kwargs={"year": date.year, "month": date.month, "day": date.day},
         )
 
+    def get_packed_count(self, staff_member, date):
+        """Return the number of orders packed by staff_member for date."""
+        return Order.objects.filter(
+            dispatched_at__date=date, packed_by=staff_member
+        ).count()
+
     def get_context_data(self, *args, **kwargs):
         """Return context for the template."""
         context = super().get_context_data(*args, **kwargs)
@@ -85,6 +92,7 @@ class FBALog(LogsUserMixin, TemplateView):
         for staff_member in staff:
             staff_member.orders = self.get_fba_orders(staff_member, date)
             staff_member.jobs = self.get_work_logs(staff_member, date)
+            staff_member.orders_packed = self.get_packed_count(staff_member, date)
         context["staff"] = staff
         return context
 
