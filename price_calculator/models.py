@@ -119,7 +119,7 @@ class ShippingMethodManager(models.Manager):
         if len(shipping_methods) == 0:
             raise NoShippingService(
                 (
-                    f'No shipping method found for "{product_type}" to "{country}"" '
+                    f"No shipping method found for {product_type!r} to {country!r} "
                     f"at {weight}g and {price}p"
                 )
             )
@@ -128,13 +128,13 @@ class ShippingMethodManager(models.Manager):
         )
         try:
             return shipping_prices[0]
-        except IndexError:
+        except IndexError as e:
             raise NoShippingService(
                 (
-                    f'No shipping price found for "{product_type}" to "{country}"" '
+                    f"No shipping price found for {product_type!r} to {country!r} "
                     f"at {weight}g and {price}p"
                 )
-            )
+            ) from e
 
     def _get_prices_for_shipping_methods(self, shipping_methods, weight):
         prices = []
@@ -207,13 +207,13 @@ class ShippingMethod(models.Model):
                 shipping_service=self.shipping_service,
                 active=True,
             )
-        except ShippingPrice.DoesNotExist:
+        except ShippingPrice.DoesNotExist as e:
             raise NoShippingService(
                 (
-                    f'No price found for country "{self.country.name}" and '
-                    f'service "{self.shipping_service.name}"'
+                    f"No price found for country {self.country.name!r} and "
+                    f"service {self.shipping_service.name!r}"
                 )
-            )
+            ) from e
         else:
             return shipping_price
 

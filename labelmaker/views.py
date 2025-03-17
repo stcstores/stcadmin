@@ -171,7 +171,7 @@ class ProductLabelsPDFNoSizeChart(BaseProductPDFLabelView):
         self.product_code = self.request.POST["product_code"]
         data = []
         for item in self.read_json():
-            for number in range(int(item["quantity"])):
+            for _ in range(int(item["quantity"])):
                 data.append([item["size"], item["colour"], self.product_code])
         return data
 
@@ -208,7 +208,7 @@ class ProductLabelsPDFFromSizeChart(BaseProductPDFLabelView):
             )
             colour = label["colour"]
             foriegn_size_data = self.foriegn_size_data(size)
-            for i in range(int(label["quantity"])):
+            for _ in range(int(label["quantity"])):
                 if size.name:
                     size_name = size.name
                 else:

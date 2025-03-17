@@ -52,7 +52,7 @@ def test_get_initial(
 ):
     products = product_factory.create_batch(3, product_range=product_range)
     bays = bay_factory.create_batch(3)
-    for product, bay in zip(products, bays):
+    for product, bay in zip(products, bays, strict=True):
         product_bay_link_factory.create(product=product, bay=bay)
     response = group_logged_in_client.get(url)
     initial = response.context["form"].initial

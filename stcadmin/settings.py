@@ -35,14 +35,14 @@ try:
     with open(CONFIG_PATH, "r") as config_file:
         CONFIG = toml.load(config_file)
 except Exception:
-    raise ImproperlyConfigured("Config file not found.")
+    raise ImproperlyConfigured("Config file not found.") from None
 
 
 def get_config(key):
     """Return the associated value for key from the config file."""
     value = CONFIG.get(key)
     if value is None:
-        raise ImproperlyConfigured(f"Config value '{key}' is not set.")
+        raise ImproperlyConfigured(f"Config value {key!r} is not set.")
     else:
         return value
 
@@ -53,7 +53,9 @@ try:
     with open(secret_key_path, "r") as secret_key_file:
         SECRET_KEY = toml.load(secret_key_file)["SECRET_KEY"]
 except Exception:
-    raise ImproperlyConfigured("A secret key must be set in stcadmin/secret_key.toml")
+    raise ImproperlyConfigured(
+        "A secret key must be set in stcadmin/secret_key.toml"
+    ) from None
 
 
 DEBUG = get_config("DEBUG")
