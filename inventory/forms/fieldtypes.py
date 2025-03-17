@@ -262,7 +262,10 @@ class SelectizeModelMultipleChoiceField(forms.ModelMultipleChoiceField, Selectiz
     def __init__(self, *args, **kwargs):
         """Create a ModelChoiceField with a Selectize widget."""
         forms.ModelMultipleChoiceField.__init__(
-            self, queryset=self.get_queryset(), *args, **kwargs
+            self,
+            *args,
+            **kwargs,
+            queryset=self.get_queryset(),
         )
         # SelectizeField.__init__(self, *args, **kwargs)
 

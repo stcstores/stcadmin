@@ -15,7 +15,7 @@ from .views import InventoryUserMixin
 class GetNewSKUView(InventoryUserMixin, View):
     """Return new Product SKU."""
 
-    def post(*args, **kwargs):
+    def post(self, *args, **kwargs):
         """Return a new product SKU."""
         sku = models.new_product_sku()
         return HttpResponse(sku)

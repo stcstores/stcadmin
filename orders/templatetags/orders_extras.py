@@ -32,4 +32,4 @@ def format_percentage(percentage):
         html_class = "warning"
     else:
         html_class = "success"
-    return mark_safe(f'<span class="{html_class}">{percentage}%</span>')
+    return mark_safe(f"<span class={html_class!r}>{percentage}%</span>")

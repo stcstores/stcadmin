@@ -266,8 +266,8 @@ class StockLevelExportManager(models.Manager):
                 continue
             try:
                 product = BaseProduct.objects.get(sku=row[export.SKU])
-            except BaseProduct.DoesNotExist:
-                raise ValueError(f"Could not find product {row[export.SKU]}.")
+            except BaseProduct.DoesNotExist as e:
+                raise ValueError(f"Could not find product {row[export.SKU]}.") from e
             record = StockLevelExportRecord(
                 stock_level_update=update,
                 product=product,

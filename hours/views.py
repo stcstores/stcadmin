@@ -58,6 +58,7 @@ class Hours(UserCanClockInMixin, TemplateView):
                             user=self.request.user.staff_member, timestamp__date=day
                         ),
                         2,
+                        strict=True,
                     )
                 )
         return days

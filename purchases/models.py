@@ -255,7 +255,10 @@ class ShippingPurchase(BasePurchase):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.quantity} X {self.shipping_service.shipping_service.name} for {self.purchased_by}"
+        return (
+            f"{self.quantity} X {self.shipping_service.shipping_service.name} "
+            f"for {self.purchased_by}"
+        )
 
     def get_absolute_url(self):
         """Return the absolute url for the purchase."""

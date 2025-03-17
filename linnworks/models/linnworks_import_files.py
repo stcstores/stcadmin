@@ -302,7 +302,7 @@ class LinnworksProductImportFile(BaseImportFile):
         return bay_text
 
     @classmethod
-    def convert_dimension(self, distance):
+    def convert_dimension(cls, distance):
         """Ensure every dimension is at least 1.
 
         Args:
@@ -356,7 +356,7 @@ class LinnworksProductImportFile(BaseImportFile):
         product_attributes = product.attributes()
         if missing_attributes := set(product_attributes.keys()) - set(cls.header):
             raise ValueError(
-                f'Product attributes "{list(missing_attributes)}" not recognised.'
+                f"Product attributes {list(missing_attributes)!r} not recognised."
             )
         for attribute, value in product_attributes.items():
             row[attribute] = value

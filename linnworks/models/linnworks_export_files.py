@@ -61,7 +61,9 @@ class BaseExportFile:
                 if i == 0:
                     header = row
                 else:
-                    row_dict = {key: value for key, value in zip(header, row)}
+                    row_dict = {
+                        key: value for key, value in zip(header, row, strict=True)
+                    }
                     rows.append(row_dict)
         return header, rows
 

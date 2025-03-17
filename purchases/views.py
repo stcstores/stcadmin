@@ -93,7 +93,8 @@ class CreateProductPurchase(PurchasesUserMixin, FormView):
                 messages.add_message(
                     self.request,
                     messages.ERROR,
-                    f"Purchase created. Failed to reduce stock level by {form.instance.quantity} for "
+                    f"Purchase created. Failed to reduce stock level "
+                    f"by {form.instance.quantity} for "
                     f"{form.instance.product.sku} - {form.instance.product.full_name}",
                 )
             else:
