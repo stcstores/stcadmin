@@ -308,7 +308,12 @@ class BaseProduct(PolymorphicModel):
 
     @transaction.atomic
     def set_archived(self):
-        """Set the product and any combination or multipack products containing it as archived."""
+        """
+        Set the product as archived.
+
+        Any combination or multipack products containing this product will also be
+        marked archived.
+        """
         MultipackProduct.objects.filter(base_product=self).update(
             is_archived=True, is_end_of_line=True
         )

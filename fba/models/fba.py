@@ -44,8 +44,8 @@ class FBARegion(models.Model):
     def flag(self):
         """Return an image tag with the countries flag."""
         return mark_safe(
-            f'<img src="{self.country.flag.url}" height="20" '
-            f'width="20" alt="{self.country.ISO_code}">'
+            f'<img src={self.country.flag.url!r} height="20" '
+            f'width="20" alt={self.country.ISO_code!r}>'
         )
 
     def size_unit(self):

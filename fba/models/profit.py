@@ -2,6 +2,7 @@
 
 import csv
 import time
+from dataclasses import dataclass
 
 import requests
 from amapi import request
@@ -189,29 +190,17 @@ class FBAProfit(models.Model):
         return self._local_price(self.profit)
 
 
+@dataclass
 class _FBAFee:
-
-    def __init__(
-        self,
-        channel_sku,
-        asin,
-        country,
-        listing_name,
-        selling_price,
-        total_fee,
-        referral_fee,
-        closing_fee,
-        handling_fee,
-    ):
-        self.channel_sku = channel_sku
-        self.asin = asin
-        self.country = country
-        self.listing_name = listing_name
-        self.selling_price = selling_price
-        self.total_fee = total_fee
-        self.referral_fee = referral_fee
-        self.closing_fee = closing_fee
-        self.handling_fee = handling_fee
+    channel_sku: str
+    asin: str
+    country: str
+    listing_name: str
+    selling_price: int
+    total_fee: int
+    referral_fee: int
+    closing_fee: int
+    handling_fee: int
 
 
 class _FBAProfitCalculation:
@@ -334,7 +323,7 @@ class BaseFeeEstimateFile:
             if i == 0:
                 header = row
             else:
-                row_dict = {key: value for key, value in zip(header, row)}
+                row_dict = {key: value for key, value in zip(header, row, strict=True)}
                 if row_dict[self.COUNTRY] in self.countries:
                     rows.append(row_dict)
         return header, rows
