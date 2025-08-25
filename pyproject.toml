@@ -44,7 +44,7 @@ shopify_api_py = {git = "https://github.com/stcstores/shopify_api_py.git", rev =
 parcelhubapi = {git = "https://github.com/stcstores/parcelhubapi.git", rev = "main"}
 setuptools = ">=68.2.2"
 amapi = {git = "https://github.com/stcstores/amapi.git", rev = "main"}
-lxml = {extras = ["html-clean"], version = "^6.0.0"}
+lxml = {extras = ["html-clean"], version = "^6.0.1"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=6.2.4"
